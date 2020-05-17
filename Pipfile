@@ -6,10 +6,13 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-django-cors-headers = "*"
-djangorestframework = "*"
-django = "*"
-pymysql = "*"
+asgiref = "==3.2.7"
+django-cors-headers = "==3.2.1"
+djangorestframework = "==3.11.0"
+pytz = "==2020.1"
+sqlparse = "==0.3.1"
+Django = "==3.0.6"
+PyMySQL = "==0.9.3"
 
 [requires]
 python_version = "3.7"
