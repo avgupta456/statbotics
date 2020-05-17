@@ -1,0 +1,6 @@
+TODOS
+ - create react frontend
+ - add google analytics, travis CI
+ - API documentation
+ - increase features for teams
+ - add matches model

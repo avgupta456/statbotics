@@ -1,0 +1,49 @@
+PIPENV:
+pipenv shell #enters venv
+pipenv install LIBRARY --dev #installs dependency
+pipenv graph #displays dependencies
+pipenv run pip freeze > requirements.txt #creates requirements.txt
+
+DJANGO:
+django-admin startproject PROJECT
+python manage.py startapp APP
+
+python manage.py makemigrations #set up migrattions for new models
+python manage.py migrate #actually does the migration
+
+python manage.py createsuperuser #creates superuser
+python manage.py runserver #starts localhost
+
+python manage.py collectstatic #collects static files in prep for deploy
+
+GCLOUD:
+gcloud auth application-default login #authenticate/login to gcloud (one-time)
+gcloud config set project PROJECT_ID #updates working project
+gcloud services enable sqladmin #enables sql admin API
+
+gcloud sql instances list #gets sql instances
+gcloud sqp instances describe INSTANCE #gets details for instance
+start cloud_sql_proxy_x64.exe -instances=INSTANCE=tcp:3307 #starts cloud proxy
+
+gcloud app deploy app.yaml --promote --stop-previous-version
+#deploys app, stops previous version (after collectstatic)
+
+gcloud app browse #opens app in browser
+
+
+STARTUP (localhost)
+(in terminal)
+cd to directory
+python -m pipenv shell
+
+(in google cloud sdk)
+start cloud_sql_proxy_x64.exe -instances=INSTANCE=tcp:3307 #starts cloud proxy
+
+(in terminal)
+python manage.py runserver
+
+PRODUCTION
+pipenv run pip freeze > requirements.txt
+python manage.py collectstatic
+gcloud app deploy app.yaml --promote --stop-previous-version
+gcloud app browse
