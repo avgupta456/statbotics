@@ -1,6 +1,6 @@
 deploy:
   provider: gae
-  keyfile: travis.json
+  keyfile: travis.json.enc
   project: statbotics-io-276522
   config: app.yaml
   on: master
