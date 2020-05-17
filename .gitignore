@@ -1,3 +1,5 @@
 
 *.pyc
 *.p
+
+constants.py
