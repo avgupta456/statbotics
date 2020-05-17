@@ -9,7 +9,7 @@ script: pytest
 
 deploy:
   provider: gae
-  keyfile: travis.json.enc --add
+  keyfile: travis.json.enc
   project: statbotics-io-276522
   verbosity: debug
   config: app.yaml
