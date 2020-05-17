@@ -8,7 +8,6 @@ deploy:
   provider: gae
   keyfile: travis.json
   project: statbotics-io-276522
-  verbosity: debug
   config: app.yaml
   on: master
 before_install:
