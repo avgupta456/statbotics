@@ -1,2 +1,5 @@
 GOOGLE CLOUD:
 To use Cloud SQL Proxy, copy cloud_sql_proxy_x64.exe to gcloud root dir
+
+TRAVIS CI:
+travis encrypt-file FILE -add #needs to be on linux :|
