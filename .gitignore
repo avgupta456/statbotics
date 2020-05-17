@@ -1,3 +1,7 @@
 docs/hidden.txt
 docs/ssl.txt
-billing/*
+docs/billing/*
+
+backend/cloudsql.py
+backend/key.py
+static/*
