@@ -6,7 +6,7 @@ install:
 script: pytest
 deploy:
   provider: gae
-  keyfile: travis.json.enc
+  keyfile: travis.json
   project: statbotics-io-276522
   verbosity: debug
   config: app.yaml
