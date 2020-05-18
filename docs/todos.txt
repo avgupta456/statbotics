@@ -1,0 +1,4 @@
+TODOS
+ - bring in TBA
+ - store all teams and matches
+ - Finalize ELO model

@@ -1,0 +1,2 @@
+REQUESTS
+ - csrf token tricky, changes after login
