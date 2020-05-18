@@ -5,8 +5,9 @@ node_js:
 cache:
   directories:
     - node_modules
-  script:
-    - yarn build
+
+before_deploy:
+  - yarn build
 
 deploy:
   provider: firebase
