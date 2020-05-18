@@ -6,3 +6,6 @@ backend/cloudsql.py
 backend/key.py
 
 travis.json
+
+__pycache__/*
+*.pyc
