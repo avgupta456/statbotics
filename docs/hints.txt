@@ -6,5 +6,5 @@ TRAVIS CI:
  - need to give Travis CI google IAM the App Engine Admin and Cloud Build Service Account roles
  - make sure skip_cleanup = True
 
-(doesn't work)
-environment variable  must be set in local, travis, gae (trouble with gae, not using env vars for now)
+INCOMPLETE
+ - environment variable  must be set in local, travis, gae (trouble with gae, not using env vars for now)
