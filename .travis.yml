@@ -14,3 +14,5 @@ deploy:
 before_install:
 - openssl aes-256-cbc -K $encrypted_7e3b9f3f674f_key -iv $encrypted_7e3b9f3f674f_iv
   -in travis.json.enc -out travis.json -d
+before_script:
+- python manage.py collectstatic
