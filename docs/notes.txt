@@ -32,7 +32,7 @@ gcloud app browse #opens app in browser
 
 TRAVIS-CI:
 travis login --pro --github-token GITHUB_TOKEN #logs into github account
-travis encrypt-file FILE -add #encrypts json file so can be uploaded
+travis encrypt-file FILE --add #encrypts json file so can be uploaded
 
 STARTUP (localhost)
 (in terminal)

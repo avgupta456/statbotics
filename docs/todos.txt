@@ -1,6 +1,15 @@
 TODOS
+
+Frontend
  - create react frontend
  - add google analytics, travis CI
+
+Backend
  - API documentation
+ - Travis CI integration
  - increase features for teams
  - add matches model
+
+ELO
+ - store all teams and matches
+ - Finalize ELO model
