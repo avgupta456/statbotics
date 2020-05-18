@@ -20,8 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-from .key import *
-SECRET_KEY = SECRET_KEY
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -85,8 +84,6 @@ import pymysql  # noqa: 402
 pymysql.version_info = (1, 4, 6, 'final', 0)  # change mysqlclient version
 pymysql.install_as_MySQLdb()
 
-from .cloudsql import *
-
 # [START db_setup]
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google Cloud SQL using
@@ -94,10 +91,10 @@ if os.getenv('GAE_APPLICATION', None):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/'+CLOUDSQL_CONNECTION,
-            'USER': CLOUDSQL_USER,
-            'PASSWORD': CLOUDSQL_PASSWORD,
-            'NAME': CLOUDSQL_DATABASE,
+            'HOST': '/cloudsql/'+os.environ.get('CLOUDSQL_CONNECTION'),
+            'USER': os.environ.get('CLOUDSQL_USER'),
+            'PASSWORD': os.environ.get('CLOUDSQL_PASSWORD'),
+            'NAME': os.environ.get('CLOUDSQL_DATABASE'),
         }
     }
 else:

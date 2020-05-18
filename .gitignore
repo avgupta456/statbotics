@@ -1,9 +1,6 @@
 docs/hidden.txt
 docs/ssl.txt
 docs/billing/*
-
-backend/cloudsql.py
-backend/key.py
 static/*
 
 travis.json
