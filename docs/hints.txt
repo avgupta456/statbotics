@@ -4,5 +4,7 @@ To use Cloud SQL Proxy, copy cloud_sql_proxy_x64.exe to gcloud root dir
 TRAVIS CI:
 travis encrypt-file FILE -add #needs to be on linux :|
 need to give Travis CI google IAM App Engine Admin and Cloud Build Service Account roles
-need to use environment variables, must be set in local, travis, gae (app.yaml)
 skip_cleanup = True
+
+need to use environment variables, must be set in local, travis, gae
+gae env vars, use gae datastore https://stackoverflow.com/questions/22669528/securely-storing-environment-variables-in-gae-with-app-yaml

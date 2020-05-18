@@ -88,13 +88,23 @@ pymysql.install_as_MySQLdb()
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google Cloud SQL using
     # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    from google.appengine.ext import ndb
+
+    class Settings(ndb.Model):
+        name = ndb.StringProperty()
+        value = ndb.StringProperty()
+
+        @staticmethod
+        def get(name):
+        return Settings.query(Settings.name == name).get().value
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/'+os.environ.get('CLOUDSQL_CONNECTION'),
-            'USER': os.environ.get('CLOUDSQL_USER'),
-            'PASSWORD': os.environ.get('CLOUDSQL_PASSWORD'),
-            'NAME': os.environ.get('CLOUDSQL_DATABASE'),
+            'HOST': '/cloudsql/'+Settings.get('CLOUDSQL_CONNECTION'),
+            'USER': Settings.get('CLOUDSQL_USER'),
+            'PASSWORD': Settings.get('CLOUDSQL_PASSWORD'),
+            'NAME': Settings.get('CLOUDSQL_DATABASE'),
         }
     }
 else:
