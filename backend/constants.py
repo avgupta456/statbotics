@@ -1,0 +1,5 @@
+SECRET_KEY = "qxo+-n1&fqve3t(z)g2+o_^74o%59-^eplpqbrt%!w&39jv@ly"
+CLOUDSQL_USER = "user"
+CLOUDSQL_PASSWORD = "timpw4u"
+CLOUDSQL_CONNECTION = "statbotics-io-276522:us-east1:statbotics-io"
+CLOUDSQL_DATABASE = "statbotics"
