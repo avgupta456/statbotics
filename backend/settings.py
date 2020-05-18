@@ -96,7 +96,7 @@ if os.getenv('GAE_APPLICATION', None):
 
         @staticmethod
         def get(name):
-        return Settings.query(Settings.name == name).get().value
+            return Settings.query(Settings.name == name).get().value
 
     DATABASES = {
         'default': {
