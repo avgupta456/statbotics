@@ -1,3 +1,4 @@
 REACT
 yarn create react-app . #creates new project in current directory
 yarn add LIBRARY #installs dependancy
+yarn start #runs on localhost:3000
