@@ -109,9 +109,9 @@ else:
             'ENGINE': 'django.db.backends.mysql',
             'HOST': '127.0.0.1',
             'PORT': '3307',
-            'NAME': CLOUDSQL_DATABASE,
-            'USER': CLOUDSQL_USER,
-            'PASSWORD': CLOUDSQL_PASSWORD,
+            'NAME': os.environ.get('CLOUDSQL_DATABASE'),
+            'USER': os.environ.get('CLOUDSQL_USER'),
+            'PASSWORD': os.environ.get('CLOUDSQL_PASSWORD'),
         }
     }
 # [END db_setup]
