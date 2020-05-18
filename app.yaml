@@ -13,6 +13,13 @@ handlers:
 - url: /.*
   script: auto
 
+env_variables:
+  SECRET_KEY: ${SECRET_KEY}
+  CLOUDSQL_USER: ${CLOUDSQL_USER}
+  CLOUDSQL_PASSWORD: ${CLOUDSQL_PASSWORD}
+  CLOUDSQL_CONNECTION: ${CLOUDSQL_CONNECTION}
+  CLOUDSQL_DATABASE: ${CLOUDSQL_DATABASE}
+
 #smallest instance class
 instance_class: B1
 
