@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - "stable"
+
+cache:
+  directories:
+    - node_modules
+  script:
+    - npm run build
+
+deploy:
+  provider: firebase
+  skip_cleanup: true
+  token:
+    secure:secure: mVoCwMBJCDuF81Fg60p4SRkajroHZQttKZm02vxwc+MvgqlnSNEIKvxN9fi/++rBHKAWefQidbMHnYSwKNmKH6bRUmdPHMHtygT1B7Ujxn17MwFdnF0Hf9ftArLWDSLvMBLxQVZ0UPrmeH06zfdrGYAyxw5z8krBY3FnUm62z5gbZz1VW+RqRRd7w4Mt8Gwa/0KL7ycdXmcjUORkPWYVhU/k8IwPH9gBj7A0Y4uVTlqxPDZ7zlEbQrNTETWomvfBkhM2eCshmHZZRO44dd+XrLePWhM7zvx0hrR6xp+vX1LbURZqi2SuS5o72oQUWQddCFf+AxkPBGzdOOYO7TTPNdsPIn/O5Fc+OnjVfSZgmIHS5F+g2jQ4kr3HFtKBdKeTAIvaxa7UUBZrM68Iw+5KAgvyih1ftq3kEvt+iE951U5sLz8G6zi02e3BnUSTQNgZnNNJMDILqN7rdanoZVwyVhlDdyfUvj9IQ1xUvS34r1qsueghwJt+w1U5QTLzhY3SzHijI3t8FygqdfJEwSqUqUjzZjaerky9EZgP7fVnHh8SrjsLscfBZnCGJoDMVn0dBiesLEPgXxEjkLUtY3xBfKsDdy/vJTXI2FNgIZQQMaxFSifquRJyk2ODz67DRUO0/buoggzY5YK4kC6/TWpoyzBJ/xdjLhMru42a1LCSyCU=
+  local_dir: build
+  on:
+    branch: master
