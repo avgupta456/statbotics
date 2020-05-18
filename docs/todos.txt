@@ -1,0 +1,6 @@
+TODOS
+ - create basic frontend
+ - load data from backend
+ - push to google cloud
+ - add Travis CI/CD
+ - add google analytics
