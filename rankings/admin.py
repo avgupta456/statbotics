@@ -3,7 +3,7 @@ from .models import TeamMatch, TeamEvent, TeamYear, Team, Event, Year
 
 class TeamMatchAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'event', 'match',
-        'team', 'start_elo', 'end_elo', 'elo_diff')
+        'team', 'elo_start', 'elo_end', 'elo_diff')
 
 class TeamEventAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'event', 'team', 'elo_start',

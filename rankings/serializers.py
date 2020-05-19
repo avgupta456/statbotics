@@ -7,7 +7,7 @@ class TeamMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamMatch
         fields = ('id', 'year', 'event', 'match',
-            'team', 'start_elo', 'end_elo', 'elo_diff')
+            'team', 'elo_start', 'elo_end', 'elo_diff')
 
 class TeamEventSerializer(serializers.ModelSerializer):
     class Meta:

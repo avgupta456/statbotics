@@ -7,8 +7,8 @@ class TeamMatch(models.Model):
     event = models.CharField(max_length=10) #ex: ncwak
     match = models.CharField(max_length=10) #ex: sf1m1
     team = models.IntegerField() #ex: 5511
-    start_elo = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
-    end_elo = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
+    elo_start = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
+    elo_end = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_diff = models.DecimalField(max_digits=6, decimal_places=2) #ex: 100
 
     class Meta:
