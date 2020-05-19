@@ -47,6 +47,7 @@ class TeamYear(models.Model):
 
 class Team(models.Model):
     team = models.IntegerField(primary_key=True) #ex: 5511
+    elo = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1700
     elos = models.CharField(max_length=200, validators=[validate_comma_separated_integer_list]) #ex: [1500, 1600, 1400, ...]
     elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1600
     elo_max = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1900

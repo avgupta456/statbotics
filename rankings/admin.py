@@ -14,7 +14,7 @@ class TeamYearAdmin(admin.ModelAdmin):
         'elo_end', 'elo_mean', 'elo_max', 'elo_diff', 'rank', 'percentile')
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('team', 'elos', 'elo_mean', 'elo_max', 'elo_max_year')
+    list_display = ('team', 'elo', 'elos', 'elo_mean', 'elo_max', 'elo_max_year')
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'event', 'elo_max', 'elo_top8', 'elo_top24', 'elo_mean', 'elo_sd')

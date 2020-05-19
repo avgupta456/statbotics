@@ -24,7 +24,7 @@ class TeamYearSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('team', 'elos',  'elo_mean', 'elo_max', 'elo_max_year')
+        fields = ('team', 'elo', 'elos',  'elo_mean', 'elo_max', 'elo_max_year')
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
