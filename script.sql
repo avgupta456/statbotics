@@ -1,5 +1,4 @@
-SHOW Databases;
+SHOW DATABASES;
 USE statbotics;
 
-SHOW Tables;
-SELECT * FROM rankings_team;
+SHOW TABLES;
