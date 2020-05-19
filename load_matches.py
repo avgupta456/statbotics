@@ -4,8 +4,8 @@ import statistics
 
 import requests
 
-from classes import Match
-import utils
+from helper.classes import Match
+from helper import utils
 
 '''
 Helper class to read the TheBlueAlliance (TBA) API
@@ -61,12 +61,14 @@ def getMatchesYear(year):
 
 def saveMatches(start_year, end_year):
     for year in range(start_year, end_year+1):
+        print(year)
         matches = getMatchesYear(year)
         utils.saveMatches(year, matches)
 
 def getSD(year):
     scores = []
     for match in getMatchesYear(year):
+        print(year)
         scores.append(match.red_score)
         scores.append(match.blue_score)
     return statistics.pstdev(scores)
@@ -76,8 +78,8 @@ def getSDs(start_year, end_year):
         print(str(year)+":\t"+str(getSD(year)))
 
 def main():
-    getSDs(2002, 2020)
-    #saveMatches(2002, 2020)
+    #getSDs(2002, 2020)
+    saveMatches(2002, 2020)
 
 if __name__ == "__main__":
     main()

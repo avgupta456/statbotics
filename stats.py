@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import utils
+from helper import utils
 
 def getStats(year):
     matches = utils.loadProcessedMatches(year)
@@ -34,10 +34,10 @@ def mean():
     for year in range(2002, 2021):
         print(year)
         teams = utils.loadTeams(year)
+
         elos = []
         for team in teams.values():
             elos.append(team.get_rating())
-
         elos.sort()
 
         print("Elo Avg: " + str(sum(elos)/len(elos)))

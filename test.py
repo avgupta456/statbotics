@@ -1,6 +1,6 @@
-import utils
+from helper import utils
+from helper import elo
 import argparse
-import elo
 
 def get_args():
     parser = argparse.ArgumentParser()
