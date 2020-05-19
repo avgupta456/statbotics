@@ -51,10 +51,10 @@ def getMatchesEvent(year, event):
     return matches
 
 def getMatchesYear(year):
+    matches = []
     events = getEvents(year)
     for event in events:
-        print(event)
-        for match in getMatches(year, event):
+        for match in getMatchesEvent(year, event):
             matches.append(match)
     matches.sort()
     return matches
@@ -69,15 +69,15 @@ def getSD(year):
     for match in getMatchesYear(year):
         scores.append(match.red_score)
         scores.append(match.blue_score)
-    return statistics.pstdev(test_list)
+    return statistics.pstdev(scores)
 
 def getSDs(start_year, end_year):
     for year in range(start_year, end_year+1):
         print(str(year)+":\t"+str(getSD(year)))
 
 def main():
-    for year in range(2002,2021):
-        saveMatches(year)
+    getSDs(2002, 2020)
+    #saveMatches(2002, 2020)
 
 if __name__ == "__main__":
     main()

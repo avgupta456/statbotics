@@ -30,7 +30,6 @@ def stats():
     print("Total mse ELO:  " + str(total_mse/19))
     print("Total mse Sykes: " + str(total_mse_sykes/19))
 
-
 def mean():
     for year in range(2002, 2021):
         print(year)
