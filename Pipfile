@@ -7,8 +7,9 @@ verify_ssl = true
 
 [packages]
 requests = "*"
-trueskill = "*"
 matplotlib = "*"
+numpy = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"

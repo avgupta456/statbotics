@@ -26,7 +26,7 @@ def leaderboard(year):
     for i in range(len(board)):
         print(str(i+1)+"\t"+str(board[i].number)+"\t"+str(board[i].get_rating_max()))
 
-def rank(year, team, print=True):
+def rank(year, team, display=True):
     teams = utils.loadTeams(year)
     num_teams = len(teams)
 
@@ -34,11 +34,11 @@ def rank(year, team, print=True):
     for t in teams.values(): ratings.append(t.get_rating_max())
     ratings.sort()
 
-    rank = num_teams-ratings.index(teams[team].get_rating_max())
-    percent = int(1000*rank/num_teams)/10
+    ranking = num_teams-ratings.index(teams[team].get_rating_max())
+    percent = int(1000*ranking/num_teams)/10
 
-    if(print): print("Rank:\t" + str(rank) + "\t(Top " + str(percent) + "%)")
-    return rank
+    if(display): print("Rank:\t" + str(ranking) + "\t(Top " + str(percent) + "%)")
+    return ranking
 
 def ranks(team):
     for year in range(2002, 2021):

@@ -19,11 +19,14 @@ session.headers.update({'X-TBA-Auth-Key': auth_key, 'X-TBA-Auth-Id': ''})
 
 def get(url): return session.get(read_pre+url).json()
 
-def getEvents(year=2020):
+def getEvents(year):
     events = []
     for event in get("events/"+str(year)+"/simple"):
         if(event["event_type"]<=10): events.append(event["key"])
     return events
+
+def getTeams(event):
+    return get("event/"+str(event)+"/teams/keys")
 
 def getEventTime(event):
     date = get("event/"+str(event)+"/simple")["start_date"] #for pre 2016 events
