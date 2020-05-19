@@ -1,6 +1,8 @@
 import math
-import requests
 import datetime
+import statistics
+
+import requests
 
 from classes import Match
 import utils
@@ -27,32 +29,54 @@ def getEventTime(event):
     date = get("event/"+str(event)+"/simple")["start_date"] #for pre 2016 events
     return int(datetime.datetime.strptime(date, "%Y-%m-%d").timestamp())
 
-def getMatches(event):
+def getMatchTime(match, event_time):
+    if match["actual_time"]!=None: return match["actual_time"]
+    match_time = event_time #start value
+    if match["comp_level"]=="qm": match_time += match["match_number"]
+    elif match["comp_level"]=="qf": match_time += 200 + 10 * match["set_number"] + match["match_number"]
+    elif match["comp_level"]=="sf": match_time += 400 + 10 * match["set_number"] + match["match_number"]
+    else: match_time += 600 + match["match_number"]
+    return match_time
+
+def getMatchesEvent(year, event):
     matches = []
-    time = getEventTime(event)
+    event_time = getEventTime(event)
     for match in get("event/"+str(event)+"/matches/simple"):
-        if(match["actual_time"]==None):
-            new_time = time+200*match["set_number"]+match["match_number"]
-            match["actual_time"] = new_time #correctly orders matches pre 2016
+        match["actual_time"] = getMatchTime(match, event_time) #correctly orders matches pre 2016
         red_teams = len(match["alliances"]["red"]["team_keys"])
         blue_teams = len(match["alliances"]["blue"]["team_keys"])
-        if(red_teams==3 and blue_teams==3): matches.append(Match(match))
+        if(year>2004 and red_teams==3 and blue_teams==3): matches.append(Match(match))
+        elif(year<=2004 and red_teams>=2 and blue_teams>=2): matches.append(Match(match))
+    matches.sort()
     return matches
 
-def saveMatches(year):
-    matches = []
+def getMatchesYear(year):
     events = getEvents(year)
-
     for event in events:
         print(event)
-        for match in getMatches(event):
+        for match in getMatches(year, event):
             matches.append(match)
-
     matches.sort()
-    utils.saveMatches(year, matches)
+    return matches
+
+def saveMatches(start_year, end_year):
+    for year in range(start_year, end_year+1):
+        matches = getMatchesYear(year)
+        utils.saveMatches(year, matches)
+
+def getSD(year):
+    scores = []
+    for match in getMatchesYear(year):
+        scores.append(match.red_score)
+        scores.append(match.blue_score)
+    return statistics.pstdev(test_list)
+
+def getSDs(start_year, end_year):
+    for year in range(start_year, end_year+1):
+        print(str(year)+":\t"+str(getSD(year)))
 
 def main():
-    for year in range(2005,2021):
+    for year in range(2002,2021):
         saveMatches(year)
 
 if __name__ == "__main__":
