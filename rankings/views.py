@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
 
 from .serializers import (
     TeamMatchSerializer,
@@ -14,7 +14,9 @@ from .serializers import (
 
 from .models import TeamMatch, TeamEvent, TeamYear, Team, Event, Year
 from django.contrib.auth.models import User
+from django.db import transaction
 
+@transaction.non_atomic_requests
 class TeamMatchView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer

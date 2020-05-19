@@ -73,5 +73,5 @@ class Year(models.Model):
     elo_median = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1550
     elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1500
     elo_sd = models.DecimalField(max_digits=6, decimal_places=2) #ex: 500
-    acc = models.DecimalField(max_digits=6, decimal_places=2) #ex: 0.70
-    mse = models.DecimalField(max_digits=6, decimal_places=2) #ex: 0.17
+    acc = models.DecimalField(max_digits=6, decimal_places=4) #ex: 0.70
+    mse = models.DecimalField(max_digits=6, decimal_places=4) #ex: 0.17
