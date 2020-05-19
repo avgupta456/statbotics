@@ -1,12 +1,14 @@
 from helper import utils
 import pandas as pd
+import stats
+
+import statistics
 
 start_year = 2002
 end_year = 2020
 
 team_matches = []
 for year in range(start_year, end_year+1):
-    print(year)
     for m in utils.loadProcessedMatches(year):
         event = m.key.split("_")[0][4:]
         match = m.key.split("_")[1]
@@ -22,12 +24,10 @@ for year in range(start_year, end_year+1):
             team_matches.append([year, event, match, m.blue[i], start_elo, end_elo, elo_diff])
 
 team_matches = pd.DataFrame(team_matches, columns = ["year", "event", "match", "team", "elo_start", "elo_end", "elo_diff"])
-
 print(team_matches)
 
 team_events = []
 for year in range(start_year, end_year+1):
-    print(year)
     year_data = team_matches[team_matches.year == year]
     for event in year_data['event'].unique():
         event_data = year_data[year_data.event == event]
@@ -56,7 +56,6 @@ champ_keys = ['arc', 'cars', 'carv', 'cur', 'dal', 'dar', 'gal', 'hop', 'new', '
 
 team_years = []
 for year in range(start_year, end_year+1):
-    print(year)
     year_data_events = team_events[team_events.year == year]
     year_data_matches = team_matches[team_matches.year == year]
 
@@ -92,14 +91,57 @@ print(team_years)
 teams = []
 for team in team_years['team'].unique():
     team_data = team_years[team_years.team==team]
-    elos, sum, count = [-1]*(end_year-start_year+1), 0, 0
+    elos, elo_sum, count = [-1]*(end_year-start_year+1), 0, 0
     for i in range(team_data.shape[0]):
         elos[team_data["year"].iloc[i]-start_year]=team_data["elo_max"].iloc[i]
-        sum, count = sum + team_data["elo_max"].iloc[i], count + 1
-    elo, elo_mean, elo_max = elos[-1], sum/count, max(elos)
+        elo_sum, count = elo_sum + team_data["elo_max"].iloc[i], count + 1
+    elo, elo_mean, elo_max = elos[-1], elo_sum/count, max(elos)
     elo_max_year = start_year+elos.index(elo_max)
     elos = ", ".join(str(x) for x in elos)
     teams.append([team, elo, elos, elo_mean, elo_max, elo_max_year])
 
 teams = pd.DataFrame(teams, columns=["team", "elo", "elos", "elo_mean", "elo_max", "elo_max_year"])
 print(teams)
+
+events = []
+for year in range(start_year, end_year+1):
+    year_data = team_events[team_events.year == year]
+    for event in year_data["event"].unique():
+        elos = []
+        event_data = year_data[year_data.event == event]
+        for i in range(event_data.shape[0]):
+            elos.append(event_data["elo_max"].iloc[i])
+
+        try: elo_max = elos[0]
+        except Exception as e: elo_max= -1
+
+        try: elo_top8 = elos[7]
+        except Exception as e: elo_top8= -1
+
+        try: elo_top24 = elos[23]
+        except Exception as e: elo_top24= -1
+
+        elo_mean, elo_sd = sum(elos)/len(elos), statistics.pstdev(elos)
+        events.append([year, event, elo_max, elo_top8, elo_top24, elo_mean, elo_sd])
+
+events = pd.DataFrame(events, columns=["year", "event", "elo_max", "elo_top8", "elo_top24", "elo_mean", "elo_sd"])
+print(events)
+
+years = []
+for year in range(start_year, end_year+1):
+    teams = utils.loadTeams(year)
+    board, elos = sorted(teams.values()), []
+    for team in board: elos.append(team.get_rating())
+    elo_max = elos[0]
+    elo_1p = elos[int(0.01*len(elos))]
+    elo_5p = elos[int(0.05*len(elos))]
+    elo_10p = elos[int(0.10*len(elos))]
+    elo_25p = elos[int(0.25*len(elos))]
+    elo_median = elos[int(0.50*len(elos))]
+    elo_mean = sum(elos)/len(elos)
+    elo_sd = statistics.pstdev(elos)
+    mse, acc = stats.getStats(year)
+    years.append([year, elo_max, elo_1p, elo_5p, elo_10p, elo_25p, elo_median, elo_mean, elo_sd, acc, mse])
+
+years = pd.DataFrame(years, columns=["year", "elo_max", "elo_1p", "elo_5p", "elo_10p", "elo_25p", "elo_median", "elo_mean", "elo_sd", "acc", "mse"])
+print(years)

@@ -84,7 +84,7 @@ class Team:
         return self.get_rating_max() > other.get_rating_max()
 
     def __repr__(self):
-        return "Team " + str(self.number) + ":\t"+ str(self.get_rating_elo())
+        return "Team " + str(self.number) + ":\t"+ str(self.get_rating())
 
     def __str__(self):
         return self.__repr__()
