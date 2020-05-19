@@ -3,8 +3,6 @@ from helper import utils
 
 def getStats(year):
     matches = utils.loadProcessedMatches(year)
-    print(len(matches))
-
     error, true_preds = 0, 0
 
     for m in matches:
