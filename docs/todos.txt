@@ -1,4 +1,3 @@
 TODOS
  - API documentation
- - increase features for teams
- - add matches model
+ - add match model
