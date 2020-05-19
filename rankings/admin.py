@@ -17,10 +17,11 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ('team', 'elos', 'elo_mean', 'elo_max', 'elo_max_year')
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('id', 'year', 'event', 'elo_max', 'elo_top8', 'elo_top24', 'elo_mean')
+    list_display = ('id', 'year', 'event', 'elo_max', 'elo_top8', 'elo_top24', 'elo_mean', 'elo_sd')
 
 class YearAdmin(admin.ModelAdmin):
-    list_display = ('year', 'elo_max', 'elo_10p', 'elo_25p', 'elo_median', 'elo_mean', 'acc', 'mse')
+    list_display = ('year', 'elo_max', 'elo_1p', 'elo_5p', 'elo_10p', 'elo_25p',
+        'elo_median', 'elo_mean', 'elo_sd', 'acc', 'mse')
 
 admin.site.register(TeamMatch, TeamMatchAdmin)
 admin.site.register(TeamEvent, TeamEventAdmin)

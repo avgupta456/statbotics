@@ -60,13 +60,17 @@ class Event(models.Model):
     elo_top8 = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1800
     elo_top24 = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1700
     elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1600
+    elo_sd = models.DecimalField(max_digits=6, decimal_places=2) #ex: 500
 
 class Year(models.Model):
     year = models.IntegerField(primary_key=True) #ex: 2019
     elo_max = models.DecimalField(max_digits=6, decimal_places=2) #ex: 2000
-    elo_10p = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1950
-    elo_25p = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1900
+    elo_1p = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1950
+    elo_5p = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1900
+    elo_10p = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1850
+    elo_25p = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1800
     elo_median = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1550
     elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1500
+    elo_sd = models.DecimalField(max_digits=6, decimal_places=2) #ex: 500
     acc = models.DecimalField(max_digits=6, decimal_places=2) #ex: 0.70
     mse = models.DecimalField(max_digits=6, decimal_places=2) #ex: 0.17

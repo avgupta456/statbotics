@@ -29,12 +29,13 @@ class TeamSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ('id', 'year', 'event', 'elo_max', 'elo_top8', 'elo_top24', 'elo_mean')
+        fields = ('id', 'year', 'event', 'elo_max', 'elo_top8', 'elo_top24', 'elo_mean', 'elo_sd')
 
 class YearSerializer(serializers.ModelSerializer):
     class Meta:
         model = Year
-        fields = ('year', 'elo_max', 'elo_10p', 'elo_25p', 'elo_median', 'elo_mean', 'acc', 'mse')
+        fields = ('year', 'elo_max', 'elo_1p', 'elo_5p', 'elo_10p', 'elo_25p',
+            'elo_median', 'elo_mean', 'elo_sd', 'acc', 'mse')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
