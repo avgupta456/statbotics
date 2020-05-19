@@ -23,6 +23,9 @@ class Match:
         self.red_ratings = []
         self.blue_ratings = []
 
+        self.red_ratings_end = []
+        self.blue_ratings_end = []
+
     def get_win_actual(self):
         if self.winner=="red": return 1
         elif self.winner=="blue": return 0
@@ -32,8 +35,15 @@ class Match:
         self.red_ratings = red_ratings
         self.blue_ratings = blue_ratings
 
+    def set_ratings_end(self, red_ratings, blue_ratings):
+        self.red_ratings_end = red_ratings
+        self.blue_ratings_end = blue_ratings
+
     def get_ratings(self):
         return [self.red_ratings, self.blue_ratings]
+
+    def get_ratings_end(self):
+        return [self.red_ratings_end, self.blue_ratings_end]
 
     def get_win_prob(self):
         return elo.win_probability(self.red_ratings, self.blue_ratings)

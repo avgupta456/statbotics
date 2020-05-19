@@ -21,14 +21,18 @@ def update_rating(year, teams, match):
     r, b = [], []
     for i in range(len(match.red)): r.append(teams[match.red[i]].rating)
     for i in range(len(match.blue)): b.append(teams[match.blue[i]].rating)
-    match.set_ratings(r, b)
+    match.set_ratings(r.copy(), b.copy())
 
     win_margin = (match.red_score - match.blue_score)/sd[year]
     pred_win_margin = 4/1000*(sum(r)-sum(b))
 
     k = 4 if match.playoff else 12
-    for i in range(len(r)): teams[match.red[i]].set_rating(r[i]+k*(win_margin-pred_win_margin))
-    for i in range(len(b)): teams[match.blue[i]].set_rating(b[i]-k*(win_margin-pred_win_margin))
+    for i in range(len(r)): r[i] = r[i] + k*(win_margin-pred_win_margin)
+    for i in range(len(b)): b[i] = b[i] - k*(win_margin-pred_win_margin)
+    match.set_ratings_end(r.copy(), b.copy())
+
+    for i in range(len(r)): teams[match.red[i]].set_rating(r[i])
+    for i in range(len(b)): teams[match.blue[i]].set_rating(b[i])
 
 def win_probability(red, blue):
     return 1/(10**((sum(blue)-sum(red))/400)+1)
