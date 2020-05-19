@@ -13,18 +13,18 @@ class TeamEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamEvent
         fields = ('id', 'year', 'event', 'team', 'elo_start',
-            'elo_pre_playoffs', 'elo_end', 'elo_max', 'elo_diff')
+            'elo_pre_playoffs', 'elo_end', 'elo_mean', 'elo_max', 'elo_diff')
 
 class TeamYearSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamYear
         fields = ('id', 'year', 'team', 'elo_start', 'elo_pre_champs',
-            'elo_end', 'elo_max', 'elo_diff', 'rank', 'percentile')
+            'elo_end', 'elo_mean', 'elo_max', 'elo_diff', 'rank', 'percentile')
 
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('team', 'elos', 'elo_max', 'elo_max_year', 'elo_mean')
+        fields = ('team', 'elos',  'elo_mean', 'elo_max', 'elo_max_year')
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:

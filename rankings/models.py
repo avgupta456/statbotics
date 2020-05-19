@@ -22,6 +22,7 @@ class TeamEvent(models.Model):
     elo_start = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_pre_playoffs = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_end = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
+    elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_max = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_diff = models.DecimalField(max_digits=6, decimal_places=2) #ex: 100
 
@@ -35,6 +36,7 @@ class TeamYear(models.Model):
     elo_start = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_pre_champs = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_end = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
+    elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_max = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_diff = models.DecimalField(max_digits=6, decimal_places=2) #ex: 100
     rank = models.IntegerField() #ex: 546
@@ -46,9 +48,9 @@ class TeamYear(models.Model):
 class Team(models.Model):
     team = models.IntegerField(primary_key=True) #ex: 5511
     elos = models.CharField(max_length=200, validators=[validate_comma_separated_integer_list]) #ex: [1500, 1600, 1400, ...]
+    elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1600
     elo_max = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1900
     elo_max_year = models.IntegerField() #ex: 2015
-    elo_mean = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1600
 
 class Event(models.Model):
     id = models.AutoField(primary_key=True)

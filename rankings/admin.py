@@ -7,14 +7,14 @@ class TeamMatchAdmin(admin.ModelAdmin):
 
 class TeamEventAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'event', 'team', 'elo_start',
-        'elo_pre_playoffs', 'elo_end', 'elo_max', 'elo_diff')
+        'elo_pre_playoffs', 'elo_end', 'elo_mean', 'elo_max', 'elo_diff')
 
 class TeamYearAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'team', 'elo_start', 'elo_pre_champs',
-        'elo_end', 'elo_max', 'elo_diff', 'rank', 'percentile')
+        'elo_end', 'elo_mean', 'elo_max', 'elo_diff', 'rank', 'percentile')
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('team', 'elos', 'elo_max', 'elo_max_year', 'elo_mean')
+    list_display = ('team', 'elos', 'elo_mean', 'elo_max', 'elo_max_year')
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'event', 'elo_max', 'elo_top8', 'elo_top24', 'elo_mean')
