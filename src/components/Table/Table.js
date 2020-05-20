@@ -66,6 +66,7 @@ function DefaultColumnFilter({column: { filterValue, preFilteredRows, setFilter 
   )
 }
 
+/*
 // This is a custom filter UI for selecting a unique option from a list
 function SelectColumnFilter({column: { filterValue, setFilter, preFilteredRows, id }}) {
   const options = React.useMemo(() => {
@@ -93,6 +94,7 @@ function SelectColumnFilter({column: { filterValue, setFilter, preFilteredRows, 
     </select>
   )
 }
+*/
 
 // This is a custom filter UI that uses a slider to filter between in and max
 function SliderColumnFilter({column: { filterValue, setFilter, preFilteredRows, id }}) {
@@ -121,6 +123,7 @@ function SliderColumnFilter({column: { filterValue, setFilter, preFilteredRows, 
   )
 }
 
+/*
 // This is a custom UI for our 'between' or number range
 function NumberRangeColumnFilter({column: { filterValue = [], preFilteredRows, setFilter, id }}) {
   const [min, max] = React.useMemo(() => {
@@ -165,6 +168,7 @@ function NumberRangeColumnFilter({column: { filterValue = [], preFilteredRows, s
     </div>
   )
 }
+*/
 
 function Table({ columns, data}) {
   const filterTypes = React.useMemo(
