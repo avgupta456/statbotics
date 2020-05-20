@@ -163,3 +163,8 @@ CORS_ORIGIN_WHITELIST = [
     'https://statbotics.io',
     'https://www.statbotics.io',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20
+}

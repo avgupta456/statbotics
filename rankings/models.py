@@ -40,7 +40,7 @@ class TeamYear(models.Model):
     elo_max = models.DecimalField(max_digits=6, decimal_places=2) #ex: 1746.45
     elo_diff = models.DecimalField(max_digits=6, decimal_places=2) #ex: 100
     rank = models.IntegerField() #ex: 546
-    percentile = models.DecimalField(max_digits=6, decimal_places=2) #ex: 5.24
+    percentile = models.DecimalField(max_digits=6, decimal_places=4) #ex: 5.24
 
     class Meta:
         unique_together = (("year", "team"))

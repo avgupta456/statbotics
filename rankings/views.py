@@ -14,9 +14,7 @@ from .serializers import (
 
 from .models import TeamMatch, TeamEvent, TeamYear, Team, Event, Year
 from django.contrib.auth.models import User
-from django.db import transaction
 
-@transaction.non_atomic_requests
 class TeamMatchView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer
