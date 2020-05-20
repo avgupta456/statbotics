@@ -33,6 +33,7 @@ def get_data(start_year, end_year):
                 if(append): team_matches.append([year, event, match, m.blue[i], start_elo, end_elo, elo_diff])
 
     team_matches = pd.DataFrame(team_matches, columns = ["year", "event", "match", "team", "elo_start", "elo_end", "elo_diff"])
+    team_matches = team_matches.sort_values(by=['year', 'event', 'match', 'team'])
     team_matches.columns.names = ['id']
 
     team_events = []
@@ -59,7 +60,8 @@ def get_data(start_year, end_year):
                     elo_pre_playoffs, elo_end, elo_mean, elo_max, elo_diff])
 
     team_events = pd.DataFrame(team_events, columns = ["year", "event", "team", "elo_start", "elo_pre_playoffs", "elo_end", "elo_mean", "elo_max", "elo_diff"])
-    team_matches.columns.names = ['id']
+    yeam_events = team_events.sort_values(by=['year', 'event', 'team'])
+    team_events.columns.names = ['id']
 
     champ_keys = ['arc', 'cars', 'carv', 'cur', 'dal', 'dar', 'gal', 'hop', 'new', 'roe', 'tes', 'tur']
 
@@ -96,7 +98,8 @@ def get_data(start_year, end_year):
             team_years.append([year, team, elo_start, elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff, rank, percentile])
 
     team_years = pd.DataFrame(team_years, columns = ["year", "team", "elo_start", "elo_pre_champs", "elo_end", "elo_mean", "elo_max", "elo_diff", "rank", "percentile"])
-    team_matches.columns.names = ['id']
+    team_years = team_years.sort_values(by=['year', 'team'])
+    team_years.columns.names = ['id']
 
     teams = []
     for team in team_years['team'].unique():
@@ -112,7 +115,8 @@ def get_data(start_year, end_year):
         teams.append([team, elo, elos, elo_mean, elo_max, elo_max_year])
 
     teams = pd.DataFrame(teams, columns=["team", "elo", "elos", "elo_mean", "elo_max", "elo_max_year"])
-    team_matches.columns.names = ['id']
+    teams = teams.sort_values(by=['team'])
+    teams.columns.names = ['id']
 
     events = []
     for year in range(start_year, end_year+1):
@@ -137,7 +141,8 @@ def get_data(start_year, end_year):
             events.append([year, event, elo_max, elo_top8, elo_top24, elo_mean, elo_sd])
 
     events = pd.DataFrame(events, columns=["year", "event", "elo_max", "elo_top8", "elo_top24", "elo_mean", "elo_sd"])
-    team_matches.columns.names = ['id']
+    events = events.sort_values(by=['year', 'event'])
+    events.columns.names = ['id']
 
     years = []
     for year in range(start_year, end_year+1):
@@ -157,6 +162,7 @@ def get_data(start_year, end_year):
         years.append([year, elo_max, elo_1p, elo_5p, elo_10p, elo_25p, elo_median, elo_mean, elo_sd, acc, mse])
 
     years = pd.DataFrame(years, columns=["year", "elo_max", "elo_1p", "elo_5p", "elo_10p", "elo_25p", "elo_median", "elo_mean", "elo_sd", "acc", "mse"])
-    team_matches.columns.names = ['id']
+    years = years.sort_values(by=['year'])
+    years.columns.names = ['id']
 
     return team_matches, team_events, team_years, teams, events, years
