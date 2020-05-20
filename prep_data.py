@@ -17,16 +17,16 @@ def get_data(start_year, end_year):
             match = m.key.split("_")[1]
 
             for i in range(len(m.red)):
-                start_elo, end_elo = round(m.red_ratings[i], 2), round(m.red_ratings_end[i], 2)
-                elo_diff, append = round(end_elo - start_elo, 2), True
+                start_elo, end_elo = round(m.red_ratings[i]), round(m.red_ratings_end[i])
+                elo_diff, append = round(end_elo - start_elo), True
 
                 for item in blacklist:
                     if(year==item[0] and event==item[1] and match==item[2]): append = False
                 if(append): team_matches.append([year, event, match, m.red[i], start_elo, end_elo, elo_diff])
 
             for i in range(len(m.blue)):
-                start_elo, end_elo = round(m.blue_ratings[i], 2), round(m.blue_ratings_end[i], 2)
-                elo_diff, append = round(end_elo - start_elo, 2), True
+                start_elo, end_elo = round(m.blue_ratings[i]), round(m.blue_ratings_end[i])
+                elo_diff, append = round(end_elo - start_elo), True
 
                 for item in blacklist:
                     if(year==item[0] and event==item[1] and match==item[2]): append = False
@@ -49,12 +49,12 @@ def get_data(start_year, end_year):
                     elo_pre_playoffs = elo_start
                 else:
                     temp = team_data[team_data.match.str.startswith("qm")]
-                    elo_pre_playoffs = temp.iloc[temp.shape[0]-1,5]
+                    elo_pre_playoffs = round(temp.iloc[temp.shape[0]-1,5])
 
                 elo_end = team_data.iloc[team_data.shape[0]-1, 5]
-                elo_mean = round(team_data['elo_end'].mean(), 2)
+                elo_mean = round(team_data['elo_end'].mean())
                 elo_max = team_data['elo_end'].max()
-                elo_diff = round(elo_end - elo_start, 2)
+                elo_diff = round(elo_end - elo_start)
 
                 team_events.append([year, event, team, elo_start,
                     elo_pre_playoffs, elo_end, elo_mean, elo_max, elo_diff])
@@ -83,17 +83,17 @@ def get_data(start_year, end_year):
             team_data_matches = year_data_matches[year_data_matches.team == team]
             elo_start = team_data_events.iloc[0, 3]
             elo_end = team_data_events.iloc[team_data_events.shape[0]-1, 5]
-            elo_diff = round(elo_end - elo_start, 2)
+            elo_diff = round(elo_end - elo_start)
 
             if(len(set(champ_keys).intersection(set(team_data_events["event"])))==0): elo_pre_champs = elo_end
-            else: elo_pre_champs = team_data_events[team_data_events.event.isin(champ_keys)].iloc[0, 3]
+            else: elo_pre_champs = round(team_data_events[team_data_events.event.isin(champ_keys)].iloc[0, 3])
 
-            elo_mean = round(team_data_matches['elo_end'].mean(), 2)
+            elo_mean = round(team_data_matches['elo_end'].mean())
             elo_max = teams_temp[team].get_rating_max()
 
             rank = num_teams-ratings.index(elo_max)
             percentile = round((rank/num_teams), 4)
-            elo_max = round(elo_max, 2) #after so doesn't mess with index
+            elo_max = round(elo_max) #after so doesn't mess with index
 
             team_years.append([year, team, elo_start, elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff, rank, percentile])
 
@@ -106,9 +106,9 @@ def get_data(start_year, end_year):
         team_data = team_years[team_years.team==team]
         elos, elo_sum, count = [-1]*(end_year-start_year+1), 0, 0
         for i in range(team_data.shape[0]):
-            elos[team_data["year"].iloc[i]-start_year]=team_data["elo_max"].iloc[i]
+            elos[team_data["year"].iloc[i]-start_year]=round(team_data["elo_max"].iloc[i])
             elo_sum, count = elo_sum + team_data["elo_max"].iloc[i], count + 1
-        elo, elo_mean, elo_max = elos[-1], round(elo_sum/count, 2), max(elos)
+        elo, elo_mean, elo_max = elos[-1], round(elo_sum/count), max(elos)
         if(elo==-1): elo=elos[-2] #accounts for 2020 season suspension
         elo_max_year = start_year+elos.index(elo_max)
         elos = ", ".join(str(x) for x in elos)
@@ -125,7 +125,7 @@ def get_data(start_year, end_year):
             elos = []
             event_data = year_data[year_data.event == event]
             for i in range(event_data.shape[0]):
-                elos.append(event_data["elo_max"].iloc[i])
+                elos.append(round(event_data["elo_max"].iloc[i]))
             elos.sort(reverse=True)
 
             try: elo_max = elos[0]
@@ -137,7 +137,7 @@ def get_data(start_year, end_year):
             try: elo_top24 = elos[23]
             except Exception as e: elo_top24= -1
 
-            elo_mean, elo_sd = round(sum(elos)/len(elos), 2), round(statistics.pstdev(elos), 2)
+            elo_mean, elo_sd = round(sum(elos)/len(elos)), round(statistics.pstdev(elos))
             events.append([year, event, elo_max, elo_top8, elo_top24, elo_mean, elo_sd])
 
     events = pd.DataFrame(events, columns=["year", "event", "elo_max", "elo_top8", "elo_top24", "elo_mean", "elo_sd"])
@@ -148,15 +148,15 @@ def get_data(start_year, end_year):
     for year in range(start_year, end_year+1):
         teams_temp = utils.loadTeams(year)
         board, elos = sorted(teams_temp.values()), []
-        for team in board: elos.append(round(team.get_rating_max(), 2))
+        for team in board: elos.append(round(team.get_rating_max()))
         elo_max = elos[0]
-        elo_1p = elos[int(0.01*len(elos))]
-        elo_5p = elos[int(0.05*len(elos))]
-        elo_10p = elos[int(0.10*len(elos))]
-        elo_25p = elos[int(0.25*len(elos))]
-        elo_median = elos[int(0.50*len(elos))]
-        elo_mean = round(sum(elos)/len(elos), 2)
-        elo_sd = round(statistics.pstdev(elos), 2)
+        elo_1p = round(elos[round(0.01*len(elos))])
+        elo_5p = round(elos[round(0.05*len(elos))])
+        elo_10p = round(elos[round(0.10*len(elos))])
+        elo_25p = round(elos[round(0.25*len(elos))])
+        elo_median = round(elos[round(0.50*len(elos))])
+        elo_mean = round(sum(elos)/len(elos))
+        elo_sd = round(statistics.pstdev(elos))
         mse, acc = stats.getStats(year)
         mse, acc = round(mse, 4), round(acc, 4)
         years.append([year, elo_max, elo_1p, elo_5p, elo_10p, elo_25p, elo_median, elo_mean, elo_sd, acc, mse])
