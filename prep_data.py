@@ -42,7 +42,7 @@ def get_data(start_year, end_year):
             event_data = year_data[year_data.event == event]
             for team in event_data['team'].unique():
                 team_data = event_data[event_data.team == team]
-                
+
                 elo_start = team_data.iloc[0, 4]
                 if team_data["match"].iloc[0][:2]!="qm":
                     elo_pre_playoffs = elo_start
@@ -106,6 +106,7 @@ def get_data(start_year, end_year):
             elos[team_data["year"].iloc[i]-start_year]=team_data["elo_max"].iloc[i]
             elo_sum, count = elo_sum + team_data["elo_max"].iloc[i], count + 1
         elo, elo_mean, elo_max = elos[-1], round(elo_sum/count, 2), max(elos)
+        if(elo==-1): elo=elos[-2] #accounts for 2020 season suspension
         elo_max_year = start_year+elos.index(elo_max)
         elos = ", ".join(str(x) for x in elos)
         teams.append([team, elo, elos, elo_mean, elo_max, elo_max_year])
@@ -159,6 +160,3 @@ def get_data(start_year, end_year):
     team_matches.columns.names = ['id']
 
     return team_matches, team_events, team_years, teams, events, years
-
-for table in get_data(2010, 2010):
-    print(table)
