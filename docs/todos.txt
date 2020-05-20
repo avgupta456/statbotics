@@ -1,3 +1,4 @@
 TODOS
  - API documentation
- - add match model
+ - expand model parameters
+ - check if get has enough parameters
