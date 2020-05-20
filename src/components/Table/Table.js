@@ -310,19 +310,19 @@ function ReactTable({teams}) {
             Header: 'ELO',
             accessor: 'elo',
             Filter: NumberRangeColumnFilter,
-            filter: 'includes',
+            filter: 'between',
           },
           {
             Header: 'ELO Mean',
             accessor: 'elo_mean',
             Filter: NumberRangeColumnFilter,
-            filter: 'includes',
+            filter: 'between',
           },
           {
             Header: 'ELO Max',
             accessor: 'elo_max',
             Filter: NumberRangeColumnFilter,
-            filter: 'includes',
+            filter: 'between',
           },
           {
             Header: 'ELO Max Year',
