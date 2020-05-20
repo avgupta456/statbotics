@@ -5,6 +5,10 @@ import stats
 import statistics
 import json
 
+blacklist = [
+    [2005, 'ga', 'f1m1'],
+]
+
 def get_data(start_year, end_year):
     team_matches = []
     for year in range(start_year, end_year+1):
@@ -14,15 +18,22 @@ def get_data(start_year, end_year):
 
             for i in range(len(m.red)):
                 start_elo, end_elo = round(m.red_ratings[i], 2), round(m.red_ratings_end[i], 2)
-                elo_diff = end_elo - start_elo
-                team_matches.append([year, event, match, m.red[i], start_elo, end_elo, elo_diff])
+                elo_diff, append = round(end_elo - start_elo, 2), True
+
+                for item in blacklist:
+                    if(year==item[0] and event==item[1] and match==item[2]): append = False
+                if(append): team_matches.append([year, event, match, m.red[i], start_elo, end_elo, elo_diff])
 
             for i in range(len(m.blue)):
                 start_elo, end_elo = round(m.blue_ratings[i], 2), round(m.blue_ratings_end[i], 2)
-                elo_diff = end_elo - start_elo
-                team_matches.append([year, event, match, m.blue[i], start_elo, end_elo, elo_diff])
+                elo_diff, append = round(end_elo - start_elo, 2), True
+
+                for item in blacklist:
+                    if(year==item[0] and event==item[1] and match==item[2]): append = False
+                if(append): team_matches.append([year, event, match, m.blue[i], start_elo, end_elo, elo_diff])
 
     team_matches = pd.DataFrame(team_matches, columns = ["year", "event", "match", "team", "elo_start", "elo_end", "elo_diff"])
+    team_matches.columns.names = ['id']
 
     team_events = []
     for year in range(start_year, end_year+1):
@@ -31,7 +42,7 @@ def get_data(start_year, end_year):
             event_data = year_data[year_data.event == event]
             for team in event_data['team'].unique():
                 team_data = event_data[event_data.team == team]
-
+                
                 elo_start = team_data.iloc[0, 4]
                 if team_data["match"].iloc[0][:2]!="qm":
                     elo_pre_playoffs = elo_start
@@ -42,12 +53,13 @@ def get_data(start_year, end_year):
                 elo_end = team_data.iloc[team_data.shape[0]-1, 5]
                 elo_mean = round(team_data['elo_end'].mean(), 2)
                 elo_max = team_data['elo_end'].max()
-                elo_diff = elo_end - elo_start
+                elo_diff = round(elo_end - elo_start, 2)
 
                 team_events.append([year, event, team, elo_start,
                     elo_pre_playoffs, elo_end, elo_mean, elo_max, elo_diff])
 
     team_events = pd.DataFrame(team_events, columns = ["year", "event", "team", "elo_start", "elo_pre_playoffs", "elo_end", "elo_mean", "elo_max", "elo_diff"])
+    team_matches.columns.names = ['id']
 
     champ_keys = ['arc', 'cars', 'carv', 'cur', 'dal', 'dar', 'gal', 'hop', 'new', 'roe', 'tes', 'tur']
 
@@ -69,7 +81,7 @@ def get_data(start_year, end_year):
             team_data_matches = year_data_matches[year_data_matches.team == team]
             elo_start = team_data_events.iloc[0, 3]
             elo_end = team_data_events.iloc[team_data_events.shape[0]-1, 5]
-            elo_diff = elo_end - elo_start
+            elo_diff = round(elo_end - elo_start, 2)
 
             if(len(set(champ_keys).intersection(set(team_data_events["event"])))==0): elo_pre_champs = elo_end
             else: elo_pre_champs = team_data_events[team_data_events.event.isin(champ_keys)].iloc[0, 3]
@@ -78,11 +90,13 @@ def get_data(start_year, end_year):
             elo_max = teams_temp[team].get_rating_max()
 
             rank = num_teams-ratings.index(elo_max)
-            percent = round((rank/num_teams), 2)
+            percentile = round((rank/num_teams), 4)
+            elo_max = round(elo_max, 2) #after so doesn't mess with index
 
-            team_years.append([year, team, elo_start, elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff, rank, percent])
+            team_years.append([year, team, elo_start, elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff, rank, percentile])
 
     team_years = pd.DataFrame(team_years, columns = ["year", "team", "elo_start", "elo_pre_champs", "elo_end", "elo_mean", "elo_max", "elo_diff", "rank", "percentile"])
+    team_matches.columns.names = ['id']
 
     teams = []
     for team in team_years['team'].unique():
@@ -97,6 +111,7 @@ def get_data(start_year, end_year):
         teams.append([team, elo, elos, elo_mean, elo_max, elo_max_year])
 
     teams = pd.DataFrame(teams, columns=["team", "elo", "elos", "elo_mean", "elo_max", "elo_max_year"])
+    team_matches.columns.names = ['id']
 
     events = []
     for year in range(start_year, end_year+1):
@@ -121,6 +136,7 @@ def get_data(start_year, end_year):
             events.append([year, event, elo_max, elo_top8, elo_top24, elo_mean, elo_sd])
 
     events = pd.DataFrame(events, columns=["year", "event", "elo_max", "elo_top8", "elo_top24", "elo_mean", "elo_sd"])
+    team_matches.columns.names = ['id']
 
     years = []
     for year in range(start_year, end_year+1):
@@ -140,37 +156,9 @@ def get_data(start_year, end_year):
         years.append([year, elo_max, elo_1p, elo_5p, elo_10p, elo_25p, elo_median, elo_mean, elo_sd, acc, mse])
 
     years = pd.DataFrame(years, columns=["year", "elo_max", "elo_1p", "elo_5p", "elo_10p", "elo_25p", "elo_median", "elo_mean", "elo_sd", "acc", "mse"])
+    team_matches.columns.names = ['id']
+
     return team_matches, team_events, team_years, teams, events, years
 
-start_year = 2002
-end_year = 2003
-team_matches, team_events, team_years, teams, events, years = get_data(start_year, end_year)
-
-'''
-print("TEAM_MATCHES")
-print(team_matches)
-print()
-
-print("TEAM EVENTS")
-print(team_events)
-print()
-
-print("TEAM_YEARS")
-print(team_years)
-print()
-
-print("TEAMS")
-print(teams)
-print()
-
-print("EVENTS")
-print(events)
-print()
-
-print("YEARS")
-print(years)
-print()
-'''
-
-team_matches_json = json.loads(team_matches.to_json(orient='records'))
-print(team_matches_json)
+for table in get_data(2010, 2010):
+    print(table)
