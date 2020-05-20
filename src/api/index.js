@@ -4,7 +4,7 @@ const url = 'https://backend.statbotics.io/api';
 
 export const fetchTeams = async () => {
   try {
-    const teams = await axios.get(`${url}/teams/?limit=1000`);
+    const teams = await axios.get(`${url}/teams/?limit=10000`);
     console.log(teams.data)
     return teams.data;
   } catch (error) {

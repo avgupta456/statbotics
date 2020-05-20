@@ -287,6 +287,13 @@ function Table({ columns, data}) {
   )
 }
 
+// Define a custom filter filter function!
+function filterGreaterThan(rows, id, filterValue) {
+  return rows.filter(row => {
+    const rowValue = row.values[id]
+    return rowValue >= filterValue
+  })
+}
 
 function ReactTable({teams}) {
   console.log(teams)
@@ -298,8 +305,6 @@ function ReactTable({teams}) {
           {
             Header: 'Team',
             accessor: 'team',
-            Filter: SelectColumnFilter,
-            filter: 'equals'
           },
         ],
       },
@@ -309,26 +314,20 @@ function ReactTable({teams}) {
           {
             Header: 'ELO',
             accessor: 'elo',
-            Filter: NumberRangeColumnFilter,
-            filter: 'between',
+            Filter: SliderColumnFilter,
+            filter: filterGreaterThan,
           },
           {
             Header: 'ELO Mean',
             accessor: 'elo_mean',
-            Filter: NumberRangeColumnFilter,
-            filter: 'between',
+            Filter: SliderColumnFilter,
+            filter: filterGreaterThan,
           },
           {
             Header: 'ELO Max',
             accessor: 'elo_max',
-            Filter: NumberRangeColumnFilter,
-            filter: 'between',
-          },
-          {
-            Header: 'ELO Max Year',
-            accessor: 'elo_max_year',
             Filter: SliderColumnFilter,
-            filter: 'equals',
+            filter: filterGreaterThan,
           },
         ],
       },

@@ -20,8 +20,6 @@ const App = () => {
   return (
     <div>
       <ReactTable teams={teams}/>
-      <h1>Teams in Database:</h1>
-      {teams.map((team, i) => <h2 key={i}>{team.team}: {team.elo}</h2>)}
     </div>
   );
 }
