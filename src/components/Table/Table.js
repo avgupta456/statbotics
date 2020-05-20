@@ -8,8 +8,6 @@ import {
   useExpanded,
 } from 'react-table'
 
-import makeData from './makeData'
-
 const Styles = styled.div`
   padding: 1rem;
 
@@ -288,56 +286,49 @@ function Table({ columns, data}) {
     </>
   )
 }
-// Define a custom filter filter function!
-function filterGreaterThan(rows, id, filterValue) {
-  return rows.filter(row => {
-    const rowValue = row.values[id]
-    return rowValue >= filterValue
-  })
-}
 
-function ReactTable() {
+
+function ReactTable({teams}) {
+  console.log(teams)
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Name',
+        Header: 'Team',
         columns: [
           {
-            Header: 'First Name',
-            accessor: 'firstName',
-          },
-          {
-            Header: 'Last Name',
-            accessor: 'lastName',
+            Header: 'Team',
+            accessor: 'team',
+            Filter: SelectColumnFilter,
+            filter: 'equals'
           },
         ],
       },
       {
-        Header: 'Info',
+        Header: 'Elo',
         columns: [
           {
-            Header: 'Age',
-            accessor: 'age',
-            Filter: SliderColumnFilter,
-            filter: 'equals',
-          },
-          {
-            Header: 'Visits',
-            accessor: 'visits',
+            Header: 'ELO',
+            accessor: 'elo',
             Filter: NumberRangeColumnFilter,
-            filter: 'between',
-          },
-          {
-            Header: 'Status',
-            accessor: 'status',
-            Filter: SelectColumnFilter,
             filter: 'includes',
           },
           {
-            Header: 'Profile Progress',
-            accessor: 'progress',
+            Header: 'ELO Mean',
+            accessor: 'elo_mean',
+            Filter: NumberRangeColumnFilter,
+            filter: 'includes',
+          },
+          {
+            Header: 'ELO Max',
+            accessor: 'elo_max',
+            Filter: NumberRangeColumnFilter,
+            filter: 'includes',
+          },
+          {
+            Header: 'ELO Max Year',
+            accessor: 'elo_max_year',
             Filter: SliderColumnFilter,
-            filter: filterGreaterThan,
+            filter: 'equals',
           },
         ],
       },
@@ -345,12 +336,9 @@ function ReactTable() {
     []
   )
 
-  //get from api
-  const [data] = React.useState(() => makeData(10000))
-
   return (
     <Styles>
-      <Table columns={columns} data={data}/>
+      <Table columns={columns} data={teams}/>
     </Styles>
   )
 }
