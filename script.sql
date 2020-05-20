@@ -2,12 +2,12 @@ SHOW DATABASES;
 USE statbotics;
 
 SHOW TABLES;
-SELECT * FROM rankings_teammatch;
-SELECT * FROM rankings_teamevent;
-SELECT * FROM rankings_teamyear;
-SELECT * FROM rankings_team;
-SELECT * FROM rankings_event;
-SELECT * FROM rankings_year;
+SELECT * FROM rankings_teammatch LIMIT 1000000;
+SELECT * FROM rankings_teamevent LIMIT 100000;
+SELECT * FROM rankings_teamyear LIMIT 100000;
+SELECT * FROM rankings_team LIMIT 10000;
+SELECT * FROM rankings_event LIMIT 10000;
+SELECT * FROM rankings_year LIMIT 100;
 
 TRUNCATE TABLE rankings_teammatch;
 TRUNCATE TABLE rankings_teamevent;
