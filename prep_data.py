@@ -42,7 +42,7 @@ def get_data(start_year, end_year):
                     id += 1
 
     team_matches = pd.DataFrame(team_matches, columns = ["id", "year", "event", "match", "time", "team", "elo_start", "elo_end", "elo_diff"])
-    team_matches = team_matches.sort_values(by=['year', 'event', 'match', 'team'])
+    team_matches = team_matches.sort_values(by=['year', 'event', 'team'])
 
     team_events = []
     id = 1
@@ -54,13 +54,14 @@ def get_data(start_year, end_year):
             time = event_data["time"].iloc[0]
             for team in event_data['team'].unique():
                 team_data = event_data[event_data.team == team]
+                team_data.sort_values(by=['time'])
 
                 elo_start = team_data["elo_start"].iloc[0]
                 if (team_data["match"].iloc[0])[:2]!="qm":
                     elo_pre_playoffs = elo_start #handles only elim events
                 else:
                     temp = team_data[team_data.match.str.startswith("qm")] #handles no playoffs
-                    elo_pre_playoffs = round(temp["elo_end"].iloc[temp.shape[0]-1])
+                    elo_pre_playoffs = temp["elo_end"].iloc[temp.shape[0]-1]
 
                 elo_end = team_data["elo_end"].iloc[team_data.shape[0]-1]
                 elo_mean = round(team_data['elo_end'].mean())
