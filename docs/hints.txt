@@ -9,6 +9,7 @@ TRAVIS CI:
 DJANGO
  - if django migrations are not working, drop database in google cloud, run makemigrations and migrate
  - if makemigrations/migrate are not working, include the app name as well.
+ - if filterset_fields not working, add django_filters to installed apps
 
 INCOMPLETE
  - environment variable  must be set in local, travis, gae (trouble with gae, not using env vars for now)

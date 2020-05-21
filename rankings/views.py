@@ -13,12 +13,22 @@ from .serializers import (
 )
 
 from .models import TeamMatch, TeamEvent, TeamYear, Team, Event, Year
+from .filters import TeamMatchFilterSet
 from django.contrib.auth.models import User
 
 class TeamMatchView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer
     queryset = TeamMatch.objects.all()
+    filterset_class = TeamMatchFilterSet
+    #filterset_fields = ('team', )
+
+    '''
+    def get_queryset(self):
+       qs = super().get_queryset()
+       only_team = str(self.request.query_params.get('team')).lower()
+       return qs.filter(team=int(only_team))
+    '''
 
 class TeamMatchViewQuery(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
