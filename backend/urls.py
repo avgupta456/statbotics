@@ -15,20 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from rankings import views
-
-router = routers.DefaultRouter()
-router.register(r'team_matches', views.TeamMatchView, 'team_match')
-router.register(r'team_events', views.TeamEventView, 'team_event')
-router.register(r'team_years', views.TeamYearView, 'team_year')
-router.register(r'teams', views.TeamView, 'team')
-router.register(r'events', views.EventView, 'event')
-router.register(r'years', views.YearView, 'year')
+from rankings import urls as rankings_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/team_matches/team/<num>', views.TeamRedirect.as_view()),
-    path('api/', include(router.urls)),
-
 ]
+
+urlpatterns += rankings_urls.urlpatterns

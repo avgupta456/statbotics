@@ -2,11 +2,11 @@ from django.contrib import admin
 from .models import TeamMatch, TeamEvent, TeamYear, Team, Event, Year
 
 class TeamMatchAdmin(admin.ModelAdmin):
-    list_display = ('year', 'event', 'match',
+    list_display = ('year', 'event', 'match', 'time',
         'team', 'elo_start', 'elo_end', 'elo_diff')
 
 class TeamEventAdmin(admin.ModelAdmin):
-    list_display = ('year', 'event', 'team', 'elo_start',
+    list_display = ('year', 'event', 'time', 'team', 'elo_start',
         'elo_pre_playoffs', 'elo_end', 'elo_mean', 'elo_max', 'elo_diff')
 
 class TeamYearAdmin(admin.ModelAdmin):
