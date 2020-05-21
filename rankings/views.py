@@ -77,3 +77,27 @@ class UserView(viewsets.ModelViewSet):
 
 class Team(RedirectView):
     url = '/api/teams/?team=%(num)s'
+
+class Team_Years(RedirectView):
+    url = '/api/team_years/?team=%(num)s&limit=100&o=year'
+
+class Team_Events(RedirectView):
+    url = '/api/team_events/?team=%(num)s&limit=1000&o=time'
+
+class Team_Matches(RedirectView):
+    url = '/api/team_matches/?team=%(num)s&limit=10000&o=time'
+
+class TeamYear(RedirectView):
+    url = '/api/team_years/?team=%(num)s&year=%(year)s'
+
+class TeamYear_Events(RedirectView):
+    url = '/api/team_events/?team=%(num)s&year=%(year)s&limit=100&o=time'
+
+class TeamYear_Matches(RedirectView):
+    url = '/api/team_matches/?team=%(num)s&year=%(year)s&limit=1000&o=time'
+
+class TeamYearEvent(RedirectView):
+    url = '/api/team_events/?team=%(num)s&year=%(year)s&event=%(event)s'
+
+class TeamYearEvent_Matches(RedirectView):
+    url = '/api/team_matches/?team=%(num)s&year=%(year)s&event=%(event)s&limit=100o=time'

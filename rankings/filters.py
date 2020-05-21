@@ -38,7 +38,7 @@ class TeamMatchFilterSet(django_filters.FilterSet):
         fields = ['year', 'event', 'team']
 
 class TeamEventFilterSet(django_filters.FilterSet):
-    year = django_filters.NumberFilter(method='get_year', filed_name='year')
+    year = django_filters.NumberFilter(method='get_year', field_name='year')
     event = django_filters.CharFilter(method='get_event', field_name='event')
     team = django_filters.NumberFilter(method='get_team', field_name='team')
     o = django_filters.OrderingFilter(
