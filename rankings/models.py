@@ -5,6 +5,7 @@ class TeamMatch(models.Model):
     year = models.IntegerField() #ex: 2019
     event = models.CharField(max_length=10) #ex: ncwak
     match = models.CharField(max_length=10) #ex: sf1m1
+    time = models.IntegerField() #ex: 15212615
     team = models.IntegerField() #ex: 5511
     elo_start = models.IntegerField() #ex: 1746
     elo_end = models.IntegerField() #ex: 1746
@@ -17,6 +18,7 @@ class TeamEvent(models.Model):
     id = models.IntegerField(primary_key=True)
     year = models.IntegerField() #ex: 2019
     event = models.CharField(max_length=10) #ex: ncwak
+    time = models.IntegerField() #ex: 15212615
     team = models.IntegerField() #ex: 5511
     elo_start = models.IntegerField() #ex: 1746
     elo_pre_playoffs = models.IntegerField() #ex: 1746
