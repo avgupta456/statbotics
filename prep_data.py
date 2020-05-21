@@ -17,6 +17,7 @@ def get_data(start_year, end_year):
         for m in utils.loadProcessedMatches(year):
             event = m.key.split("_")[0][4:]
             match = m.key.split("_")[1]
+            time = m.time
 
             for i in range(len(m.red)):
                 start_elo, end_elo = round(m.red_ratings[i]), round(m.red_ratings_end[i])
@@ -26,7 +27,7 @@ def get_data(start_year, end_year):
                     if(year==item[0] and event==item[1] and match==item[2]): append = False
 
                 if(append):
-                    team_matches.append([id, year, event, match, m.red[i], start_elo, end_elo, elo_diff])
+                    team_matches.append([id, year, event, match, time, m.red[i], start_elo, end_elo, elo_diff])
                     id += 1
 
             for i in range(len(m.blue)):
@@ -37,10 +38,10 @@ def get_data(start_year, end_year):
                     if(year==item[0] and event==item[1] and match==item[2]): append = False
 
                 if(append):
-                    team_matches.append([id, year, event, match, m.blue[i], start_elo, end_elo, elo_diff])
+                    team_matches.append([id, year, event, match, time, m.blue[i], start_elo, end_elo, elo_diff])
                     id += 1
 
-    team_matches = pd.DataFrame(team_matches, columns = ["id", "year", "event", "match", "team", "elo_start", "elo_end", "elo_diff"])
+    team_matches = pd.DataFrame(team_matches, columns = ["id", "year", "event", "match", "time", "team", "elo_start", "elo_end", "elo_diff"])
     team_matches = team_matches.sort_values(by=['year', 'event', 'match', 'team'])
 
     team_events = []
@@ -50,26 +51,27 @@ def get_data(start_year, end_year):
         year_data = team_matches[team_matches.year == year]
         for event in year_data['event'].unique():
             event_data = year_data[year_data.event == event]
+            time = event_data["time"].iloc[0]
             for team in event_data['team'].unique():
                 team_data = event_data[event_data.team == team]
 
-                elo_start = team_data.iloc[0, 4]
-                if team_data["match"].iloc[0][:2]!="qm":
-                    elo_pre_playoffs = elo_start
+                elo_start = team_data["elo_start"].iloc[0]
+                if (team_data["match"].iloc[0])[:2]!="qm":
+                    elo_pre_playoffs = elo_start #handles only elim events
                 else:
-                    temp = team_data[team_data.match.str.startswith("qm")]
-                    elo_pre_playoffs = round(temp.iloc[temp.shape[0]-1,5])
+                    temp = team_data[team_data.match.str.startswith("qm")] #handles no playoffs
+                    elo_pre_playoffs = round(temp["elo_end"].iloc[temp.shape[0]-1])
 
-                elo_end = team_data.iloc[team_data.shape[0]-1, 5]
+                elo_end = team_data["elo_end"].iloc[team_data.shape[0]-1]
                 elo_mean = round(team_data['elo_end'].mean())
                 elo_max = team_data['elo_end'].max()
                 elo_diff = round(elo_end - elo_start)
 
-                team_events.append([id, year, event, team, elo_start,
+                team_events.append([id, year, event, time, team, elo_start,
                     elo_pre_playoffs, elo_end, elo_mean, elo_max, elo_diff])
                 id += 1
 
-    team_events = pd.DataFrame(team_events, columns = ["id", "year", "event", "team",
+    team_events = pd.DataFrame(team_events, columns = ["id", "year", "event", "time", "team",
         "elo_start", "elo_pre_playoffs", "elo_end", "elo_mean", "elo_max", "elo_diff"])
     yeam_events = team_events.sort_values(by=['year', 'event', 'team'])
 
@@ -93,12 +95,12 @@ def get_data(start_year, end_year):
         for team in year_data_events['team'].unique():
             team_data_events = year_data_events[year_data_events.team == team]
             team_data_matches = year_data_matches[year_data_matches.team == team]
-            elo_start = team_data_events.iloc[0, 3]
-            elo_end = team_data_events.iloc[team_data_events.shape[0]-1, 5]
+            elo_start = team_data_events["elo_start"].iloc[0]
+            elo_end = team_data_events["elo_end"].iloc[team_data_events.shape[0]-1]
             elo_diff = round(elo_end - elo_start)
 
             if(len(set(champ_keys).intersection(set(team_data_events["event"])))==0): elo_pre_champs = elo_end
-            else: elo_pre_champs = round(team_data_events[team_data_events.event.isin(champ_keys)].iloc[0, 3])
+            else: elo_pre_champs = round(team_data_events[team_data_events.event.isin(champ_keys)]["elo_start"].iloc[0])
 
             elo_mean = round(team_data_matches['elo_end'].mean())
             elo_max = teams_temp[team].get_rating_max()

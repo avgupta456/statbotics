@@ -1,6 +1,5 @@
 TODOS
- - add logistic function on output of difference between pred and actual (469 2010)
+ - normalize ELO by standard deviation?
  - move to Cloud Functions, figure out how to just push new matches (live updating)
  - Add a match model (re Caleb's message on best matches, biggest upsets, etc)
- - Add ELO lists to more models (teamevent, teamyear, event)
- - compare trueskill again? machine learning again?
+ - Add win/draw/loss results

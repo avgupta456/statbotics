@@ -9,7 +9,6 @@ class Match:
         for blue in data["alliances"]["blue"]["team_keys"]: self.blue.append(int(blue[3:]))
 
         self.time = data["actual_time"]
-        if(self.time==None): print(self.key)
         self.winner = data["winning_alliance"]
 
         self.red_score = data["alliances"]["red"]["score"]
