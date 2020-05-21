@@ -9,9 +9,9 @@ SELECT * FROM rankings_team LIMIT 10000;
 SELECT * FROM rankings_event LIMIT 10000;
 SELECT * FROM rankings_year LIMIT 100;
 
-TRUNCATE TABLE rankings_teammatch;
-TRUNCATE TABLE rankings_teamevent;
-TRUNCATE TABLE rankings_teamyear;
-TRUNCATE TABLE rankings_team;
-TRUNCATE TABLE rankings_event;
-TRUNCATE TABLE rankings_year;
+DROP TABLE rankings_teammatch;
+DROP TABLE rankings_teamevent;
+DROP TABLE rankings_teamyear;
+DROP TABLE rankings_team;
+DROP TABLE rankings_event;
+DROP TABLE rankings_year;

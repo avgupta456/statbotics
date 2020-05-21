@@ -6,12 +6,12 @@ from django.contrib.auth.models import User
 class TeamMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamMatch
-        fields = fields = '__all__'
-        
+        fields = '__all__'
+
 class TeamEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamEvent
-        fields = fields = '__all__'
+        fields = '__all__'
 
 class TeamYearSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,7 +20,6 @@ class TeamYearSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
-
         model = Team
         fields = '__all__'
 

@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import validate_comma_separated_integer_list
 
 class TeamMatch(models.Model):
     id = models.AutoField(primary_key=True)
@@ -47,8 +46,12 @@ class TeamYear(models.Model):
 
 class Team(models.Model):
     team = models.IntegerField(primary_key=True) #ex: 5511
+    name = models.CharField(max_length=100) #ex: Cortechs Robotics
+    region = models.CharField(max_length=30) #ex: California
+    district = models.CharField(max_length=10) #ex: FNC
+    years_active = models.IntegerField() #ex: 19
+    active = models.BooleanField() #ex: True
     elo = models.IntegerField() #ex: 1700
-    elos = models.CharField(max_length=200, validators=[validate_comma_separated_integer_list]) #ex: [1500, 1600, 1400, ...]
     elo_mean = models.IntegerField() #ex: 1600
     elo_max = models.IntegerField() #ex: 1900
     elo_max_year = models.IntegerField() #ex: 2015

@@ -19,6 +19,7 @@ class TeamMatchView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer
     queryset = TeamMatch.objects.all()
+    filterset_fields = ['year', 'event', 'team', 'match']
 
 class TeamEventView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
