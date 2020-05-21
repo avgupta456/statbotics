@@ -1,6 +1,7 @@
 from django.db import models
 
 class TeamMatch(models.Model):
+    id = models.IntegerField(primary_key=True)
     year = models.IntegerField() #ex: 2019
     event = models.CharField(max_length=10) #ex: ncwak
     match = models.CharField(max_length=10) #ex: sf1m1
@@ -13,6 +14,7 @@ class TeamMatch(models.Model):
         unique_together = (("year", "event", "match", "team"))
 
 class TeamEvent(models.Model):
+    id = models.IntegerField(primary_key=True)
     year = models.IntegerField() #ex: 2019
     event = models.CharField(max_length=10) #ex: ncwak
     team = models.IntegerField() #ex: 5511
@@ -27,6 +29,7 @@ class TeamEvent(models.Model):
         unique_together = (("year", "event", "team"))
 
 class TeamYear(models.Model):
+    id = models.IntegerField(primary_key=True)
     year = models.IntegerField() #ex: 2019
     team = models.IntegerField() #ex: 5511
     elo_start = models.IntegerField() #ex: 1746
@@ -54,6 +57,7 @@ class Team(models.Model):
     elo_max_year = models.IntegerField() #ex: 2015
 
 class Event(models.Model):
+    id = models.IntegerField(primary_key=True)
     year = models.IntegerField() #ex: 2019
     event = models.CharField(max_length=10) #ex: ncwak
     elo_max = models.IntegerField() #ex: 1900
