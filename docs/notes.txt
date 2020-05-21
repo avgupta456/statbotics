@@ -16,6 +16,8 @@ python manage.py runserver #starts localhost
 
 python manage.py collectstatic #collects static files in prep for deploy
 
+301 is permanent redirect, 302 is temporary redirect 
+
 GCLOUD:
 gcloud auth application-default login #authenticate/login to gcloud (one-time)
 gcloud config set project PROJECT_ID #updates working project

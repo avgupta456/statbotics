@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets, generics, mixins, permissions, status
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
 from .serializers import (
@@ -13,29 +13,20 @@ from .serializers import (
 )
 
 from .models import TeamMatch, TeamEvent, TeamYear, Team, Event, Year
-from .filters import TeamMatchFilterSet
 from django.contrib.auth.models import User
+
+from .filters import TeamMatchFilterSet
+
+from django.views.generic.base import RedirectView
 
 class TeamMatchView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer
     queryset = TeamMatch.objects.all()
     filterset_class = TeamMatchFilterSet
-    #filterset_fields = ('team', )
 
-    '''
-    def get_queryset(self):
-       qs = super().get_queryset()
-       only_team = str(self.request.query_params.get('team')).lower()
-       return qs.filter(team=int(only_team))
-    '''
-
-class TeamMatchViewQuery(mixins.ListModelMixin, viewsets.GenericViewSet):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    serializer_class = TeamMatchSerializer
-    queryset = User.objects.all()
-
-    filterset_fields = ['year', 'event', 'team', 'match']
+class TeamRedirect(RedirectView):
+    url = '/api/team_matches/?team=%(num)s'
 
 class TeamEventView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
