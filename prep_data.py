@@ -114,13 +114,13 @@ def get_data(start_year, end_year):
         elo_max_year = start_year+elos.index(elo_max)
         elos = ", ".join(str(x) for x in elos)
         [name, region, district, years] = read_tba.getTeamInfo(team)
-        active = (elo==-1) #have a current elo
+        active = (elo!=-1) #have a current elo
 
         teams.append([team, name, region, district, years, active,
             elo, elo_mean, elo_max, elo_max_year])
 
     teams = pd.DataFrame(teams, columns=["team", "name", "region", "district",
-        "years_active", "active", "elo", "elos", "elo_mean", "elo_max", "elo_max_year"])
+        "years_active", "active", "elo", "elo_mean", "elo_max", "elo_max_year"])
     teams = teams.sort_values(by=['team'])
     teams.columns.names = ['id']
 

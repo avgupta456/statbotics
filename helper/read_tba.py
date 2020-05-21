@@ -23,7 +23,3 @@ def getTeamInfo(number):
     except Exception as e: district = "None"
 
     return [name, region, district, years]
-
-print(getTeamInfo(254))
-print(getTeamInfo(5511))
-print(getTeamInfo(1690))
