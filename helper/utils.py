@@ -25,3 +25,15 @@ def saveTeams(year, teams):
 
 def loadTeams(year):
     return load("./data/teams/teams_"+str(year)+".p")
+
+def saveAllTeams(teams):
+    dump("./data/teams/teams.p", teams)
+
+def loadAllTeams():
+    return load("./data/teams/teams.p")
+
+def saveAllTeamsInfo(teams):
+    dump("./data/teams/teams_info.p", teams)
+
+def loadAllTeamsInfo():
+    return load("./data/teams/teams_info.p")

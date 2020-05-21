@@ -10,16 +10,3 @@ session = requests.Session()
 session.headers.update({'X-TBA-Auth-Key': auth_key, 'X-TBA-Auth-Id': ''})
 
 def get(url): return session.get(read_pre+url).json()
-
-
-def getTeamInfo(number):
-    data = get("team/frc"+str(number)+"/simple")
-    name, state, country = data["nickname"], data["state_prov"], data["country"]
-    region = state if country=="USA" else country
-
-    years = len(get("team/frc"+str(number)+"/years_participated"))
-
-    try: district = get("team/frc"+str(number)+"/districts")[-1]["abbreviation"]
-    except Exception as e: district = "None"
-
-    return [name, region, district, years]

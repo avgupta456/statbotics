@@ -1,4 +1,3 @@
-from helper import read_tba
 from helper import utils
 import stats
 
@@ -12,6 +11,8 @@ blacklist = [
 
 def get_data(start_year, end_year):
     team_matches = []
+    id = 1
+
     for year in range(start_year, end_year+1):
         for m in utils.loadProcessedMatches(year):
             event = m.key.split("_")[0][4:]
@@ -23,7 +24,10 @@ def get_data(start_year, end_year):
 
                 for item in blacklist:
                     if(year==item[0] and event==item[1] and match==item[2]): append = False
-                if(append): team_matches.append([year, event, match, m.red[i], start_elo, end_elo, elo_diff])
+
+                if(append):
+                    team_matches.append([id, year, event, match, m.red[i], start_elo, end_elo, elo_diff])
+                    id += 1
 
             for i in range(len(m.blue)):
                 start_elo, end_elo = round(m.blue_ratings[i]), round(m.blue_ratings_end[i])
@@ -31,13 +35,17 @@ def get_data(start_year, end_year):
 
                 for item in blacklist:
                     if(year==item[0] and event==item[1] and match==item[2]): append = False
-                if(append): team_matches.append([year, event, match, m.blue[i], start_elo, end_elo, elo_diff])
 
-    team_matches = pd.DataFrame(team_matches, columns = ["year", "event", "match", "team", "elo_start", "elo_end", "elo_diff"])
+                if(append):
+                    team_matches.append([id, year, event, match, m.blue[i], start_elo, end_elo, elo_diff])
+                    id += 1
+
+    team_matches = pd.DataFrame(team_matches, columns = ["id", "year", "event", "match", "team", "elo_start", "elo_end", "elo_diff"])
     team_matches = team_matches.sort_values(by=['year', 'event', 'match', 'team'])
-    team_matches.columns.names = ['id']
 
     team_events = []
+    id = 1
+
     for year in range(start_year, end_year+1):
         year_data = team_matches[team_matches.year == year]
         for event in year_data['event'].unique():
@@ -57,16 +65,19 @@ def get_data(start_year, end_year):
                 elo_max = team_data['elo_end'].max()
                 elo_diff = round(elo_end - elo_start)
 
-                team_events.append([year, event, team, elo_start,
+                team_events.append([id, year, event, team, elo_start,
                     elo_pre_playoffs, elo_end, elo_mean, elo_max, elo_diff])
+                id += 1
 
-    team_events = pd.DataFrame(team_events, columns = ["year", "event", "team", "elo_start", "elo_pre_playoffs", "elo_end", "elo_mean", "elo_max", "elo_diff"])
+    team_events = pd.DataFrame(team_events, columns = ["id", "year", "event", "team",
+        "elo_start", "elo_pre_playoffs", "elo_end", "elo_mean", "elo_max", "elo_diff"])
     yeam_events = team_events.sort_values(by=['year', 'event', 'team'])
-    team_events.columns.names = ['id']
 
     champ_keys = ['arc', 'cars', 'carv', 'cur', 'dal', 'dar', 'gal', 'hop', 'new', 'roe', 'tes', 'tur']
 
     team_years = []
+    id = 1
+
     for year in range(start_year, end_year+1):
         year_data_events = team_events[team_events.year == year]
         year_data_matches = team_matches[team_matches.year == year]
@@ -96,14 +107,19 @@ def get_data(start_year, end_year):
             percentile = round((rank/num_teams), 4)
             elo_max = round(elo_max) #after so doesn't mess with index
 
-            team_years.append([year, team, elo_start, elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff, rank, percentile])
+            team_years.append([id, year, team, elo_start, elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff, rank, percentile])
+            id += 1
 
-    team_years = pd.DataFrame(team_years, columns = ["year", "team", "elo_start", "elo_pre_champs", "elo_end", "elo_mean", "elo_max", "elo_diff", "rank", "percentile"])
+    team_years = pd.DataFrame(team_years, columns = ["id", "year", "team", "elo_start",
+        "elo_pre_champs", "elo_end", "elo_mean", "elo_max", "elo_diff", "rank", "percentile"])
     team_years = team_years.sort_values(by=['year', 'team'])
-    team_years.columns.names = ['id']
 
     teams = []
+    all_teams_info = utils.loadAllTeamsInfo()
+
+    utils.saveAllTeams(team_years['team'].unique())
     for team in team_years['team'].unique():
+
         team_data = team_years[team_years.team==team]
         elos, elo_sum, count = [-1]*(end_year-start_year+1), 0, 0
         for i in range(team_data.shape[0]):
@@ -113,7 +129,7 @@ def get_data(start_year, end_year):
         if(elo==-1): elo=elos[-2] #accounts for 2020 season suspension
         elo_max_year = start_year+elos.index(elo_max)
         elos = ", ".join(str(x) for x in elos)
-        [name, region, district, years] = read_tba.getTeamInfo(team)
+        [name, region, district, years] = all_teams_info[team]
         active = (elo!=-1) #have a current elo
 
         teams.append([team, name, region, district, years, active,
@@ -122,9 +138,10 @@ def get_data(start_year, end_year):
     teams = pd.DataFrame(teams, columns=["team", "name", "region", "district",
         "years_active", "active", "elo", "elo_mean", "elo_max", "elo_max_year"])
     teams = teams.sort_values(by=['team'])
-    teams.columns.names = ['id']
 
     events = []
+    id = 1
+
     for year in range(start_year, end_year+1):
         year_data = team_events[team_events.year == year]
         for event in year_data["event"].unique():
@@ -144,11 +161,11 @@ def get_data(start_year, end_year):
             except Exception as e: elo_top24= -1
 
             elo_mean, elo_sd = round(sum(elos)/len(elos)), round(statistics.pstdev(elos))
-            events.append([year, event, elo_max, elo_top8, elo_top24, elo_mean, elo_sd])
+            events.append([id, year, event, elo_max, elo_top8, elo_top24, elo_mean, elo_sd])
+            id += 1
 
-    events = pd.DataFrame(events, columns=["year", "event", "elo_max", "elo_top8", "elo_top24", "elo_mean", "elo_sd"])
+    events = pd.DataFrame(events, columns=["id", "year", "event", "elo_max", "elo_top8", "elo_top24", "elo_mean", "elo_sd"])
     events = events.sort_values(by=['year', 'event'])
-    events.columns.names = ['id']
 
     years = []
     for year in range(start_year, end_year+1):
