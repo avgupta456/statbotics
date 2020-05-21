@@ -11,3 +11,13 @@ export const fetchTeams = async () => {
     return error;
   }
 };
+
+export const fetchTeam = async () => {
+  try {
+    const team = await axios.get(`${url}/team_matches/team/5511`);
+    console.log(team.data)
+    return team.data;
+  } catch (error) {
+    return error;
+  }
+};
