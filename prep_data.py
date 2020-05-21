@@ -96,6 +96,8 @@ def get_data(start_year, end_year):
         for team in year_data_events['team'].unique():
             team_data_events = year_data_events[year_data_events.team == team]
             team_data_matches = year_data_matches[year_data_matches.team == team]
+            team_data_events.sort_values(by=['time'])
+            team_data_matches.sort_values(by=['time'])
             elo_start = team_data_events["elo_start"].iloc[0]
             elo_end = team_data_events["elo_end"].iloc[team_data_events.shape[0]-1]
             elo_diff = round(elo_end - elo_start)
