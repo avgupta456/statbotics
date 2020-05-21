@@ -2,34 +2,21 @@ import math
 import datetime
 import statistics
 
-import requests
-
 from helper.classes import Match
+from helper import read_tba
 from helper import utils
-
-'''
-Helper class to read the TheBlueAlliance (TBA) API
-'''
-
-auth_key = "V3FDGbXKFVDRWOeHmotTdbOFBMZPvwG5VulPsEXFwZ5tI6hxK6FbCgOm200OKLm7"
-read_pre = "https://www.thebluealliance.com/api/v3/"
-
-session = requests.Session()
-session.headers.update({'X-TBA-Auth-Key': auth_key, 'X-TBA-Auth-Id': ''})
-
-def get(url): return session.get(read_pre+url).json()
 
 def getEvents(year):
     events = []
-    for event in get("events/"+str(year)+"/simple"):
+    for event in read_tba.get("events/"+str(year)+"/simple"):
         if(event["event_type"]<=10): events.append(event["key"])
     return events
 
 def getTeams(event):
-    return get("event/"+str(event)+"/teams/keys")
+    return read_tba.get("event/"+str(event)+"/teams/keys")
 
 def getEventTime(event):
-    date = get("event/"+str(event)+"/simple")["start_date"] #for pre 2016 events
+    date = read_tba.get("event/"+str(event)+"/simple")["start_date"] #for pre 2016 events
     return int(datetime.datetime.strptime(date, "%Y-%m-%d").timestamp())
 
 def getMatchTime(match, event_time):
@@ -44,7 +31,7 @@ def getMatchTime(match, event_time):
 def getMatchesEvent(year, event):
     matches = []
     event_time = getEventTime(event)
-    for match in get("event/"+str(event)+"/matches/simple"):
+    for match in read_tba.get("event/"+str(event)+"/matches/simple"):
         match["actual_time"] = getMatchTime(match, event_time) #correctly orders matches pre 2016
         red_teams = len(match["alliances"]["red"]["team_keys"])
         blue_teams = len(match["alliances"]["blue"]["team_keys"])

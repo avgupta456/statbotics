@@ -1,7 +1,8 @@
+from helper import read_tba
 from helper import utils
-import pandas as pd
 import stats
 
+import pandas as pd
 import statistics
 import json
 
@@ -112,9 +113,14 @@ def get_data(start_year, end_year):
         if(elo==-1): elo=elos[-2] #accounts for 2020 season suspension
         elo_max_year = start_year+elos.index(elo_max)
         elos = ", ".join(str(x) for x in elos)
-        teams.append([team, elo, elos, elo_mean, elo_max, elo_max_year])
+        [name, region, district, years] = read_tba.getTeamInfo(team)
+        active = (elo==-1) #have a current elo
 
-    teams = pd.DataFrame(teams, columns=["team", "elo", "elos", "elo_mean", "elo_max", "elo_max_year"])
+        teams.append([team, name, region, district, years, active,
+            elo, elo_mean, elo_max, elo_max_year])
+
+    teams = pd.DataFrame(teams, columns=["team", "name", "region", "district",
+        "years_active", "active", "elo", "elos", "elo_mean", "elo_max", "elo_max_year"])
     teams = teams.sort_values(by=['team'])
     teams.columns.names = ['id']
 

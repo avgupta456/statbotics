@@ -5,7 +5,7 @@ import prep_data
 import constants
 
 start_year = 2002
-end_year = 2020
+end_year = 2002
 
 team_matches, team_events, team_years, teams, events, years = prep_data.get_data(start_year, end_year)
 engine = create_engine('mysql+pymysql://'+constants.CLOUDSQL_USER+':'+constants.CLOUDSQL_PASSWORD
