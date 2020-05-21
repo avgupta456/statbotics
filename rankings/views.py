@@ -76,28 +76,49 @@ class UserView(viewsets.ModelViewSet):
 #syntax: '/api/teams/?team=%(num)s&limit=2000&o=time'
 
 class Team(RedirectView):
-    url = '/api/teams/?team=%(num)s'
+    url = '/api/_teams/?team=%(num)s'
 
 class Team_Years(RedirectView):
-    url = '/api/team_years/?team=%(num)s&limit=100&o=year'
+    url = '/api/_team_years/?team=%(num)s&limit=100&o=year'
 
 class Team_Events(RedirectView):
-    url = '/api/team_events/?team=%(num)s&limit=1000&o=time'
+    url = '/api/_team_events/?team=%(num)s&limit=1000&o=time'
 
 class Team_Matches(RedirectView):
-    url = '/api/team_matches/?team=%(num)s&limit=10000&o=time'
+    url = '/api/_team_matches/?team=%(num)s&limit=10000&o=time'
 
 class TeamYear(RedirectView):
-    url = '/api/team_years/?team=%(num)s&year=%(year)s'
+    url = '/api/_team_years/?team=%(num)s&year=%(year)s'
 
 class TeamYear_Events(RedirectView):
-    url = '/api/team_events/?team=%(num)s&year=%(year)s&limit=100&o=time'
+    url = '/api/_team_events/?team=%(num)s&year=%(year)s&limit=100&o=time'
 
 class TeamYear_Matches(RedirectView):
-    url = '/api/team_matches/?team=%(num)s&year=%(year)s&limit=1000&o=time'
+    url = '/api/_team_matches/?team=%(num)s&year=%(year)s&limit=1000&o=time'
 
 class TeamYearEvent(RedirectView):
-    url = '/api/team_events/?team=%(num)s&year=%(year)s&event=%(event)s'
+    url = '/api/_team_events/?team=%(num)s&year=%(year)s&event=%(event)s'
 
 class TeamYearEvent_Matches(RedirectView):
-    url = '/api/team_matches/?team=%(num)s&year=%(year)s&event=%(event)s&limit=100o=time'
+    url = '/api/_team_matches/?team=%(num)s&year=%(year)s&event=%(event)s&limit=100o=time'
+
+class Teams(RedirectView):
+    url = '/api/_teams/?limit=10000'
+
+class TeamsActive(RedirectView):
+    url = '/api/_teams/?active=1&limit=10000'
+
+class TeamsYear(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&limit=10000'
+
+class TeamsDistrict(RedirectView):
+    url = '/api/_teams?district=%(district)s&limit=10000'
+
+class TeamsRegion(RedirectView):
+    url = '/api/_teams?region=%(region)s&limit=10000'
+
+class TeamsDistrictActive(RedirectView):
+    url = '/api/_teams?district=%(district)s&active=1&limit=10000'
+
+class TeamsRegionActive(RedirectView):
+    url = '/api/_teams?region=%(region)s&active=1&limit=10000'

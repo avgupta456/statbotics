@@ -1,4 +1,3 @@
 TODOS
  - API documentation
- - expand model parameters
- - check if get has enough parameters
+ - possibly add rank/percentile to team

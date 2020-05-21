@@ -97,6 +97,9 @@ class TeamFilterSet(django_filters.FilterSet):
             ('team', 'team'),
             ('years_active'),
             ('years_active'),
+            ('elo_mean', 'elo_mean'),
+            ('elo_max', 'elo_max'),
+            ('elo', 'elo'),
         ),
     )
 
