@@ -26,7 +26,7 @@ class TeamMatchView(viewsets.ModelViewSet):
     filterset_class = TeamMatchFilterSet
 
 class TeamRedirect(RedirectView):
-    url = '/api/team_matches/?team=%(num)s'
+    url = '/api/team_matches/?team=%(num)s&limit=2000'
 
 class TeamEventView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
