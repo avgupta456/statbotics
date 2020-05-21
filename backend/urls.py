@@ -25,6 +25,7 @@ router.register(r'team_years', views.TeamYearView, 'team_year')
 router.register(r'teams', views.TeamView, 'team')
 router.register(r'events', views.EventView, 'event')
 router.register(r'years', views.YearView, 'year')
+router.register(r'team_matches2', views.TeamMatchViewQuery, 'team_match')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

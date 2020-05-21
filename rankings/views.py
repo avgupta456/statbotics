@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, generics, mixins, permissions, status
 from rest_framework.response import Response
 
 from .serializers import (
@@ -19,6 +19,12 @@ class TeamMatchView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer
     queryset = TeamMatch.objects.all()
+
+class TeamMatchViewQuery(mixins.ListModelMixin, viewsets.GenericViewSet):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = TeamMatchSerializer
+    queryset = User.objects.all()
+
     filterset_fields = ['year', 'event', 'team', 'match']
 
 class TeamEventView(viewsets.ModelViewSet):

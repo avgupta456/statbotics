@@ -6,5 +6,9 @@ TRAVIS CI:
  - need to give Travis CI google IAM the App Engine Admin and Cloud Build Service Account roles
  - make sure skip_cleanup = True
 
+DJANGO
+ - if django migrations are not working, drop database in google cloud, run makemigrations and migrate
+ - if makemigrations/migrate are not working, include the app name as well.
+
 INCOMPLETE
  - environment variable  must be set in local, travis, gae (trouble with gae, not using env vars for now)

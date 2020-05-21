@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class TeamMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamMatch
-        fields = '__all__'
+        fields = ['year', 'event', 'match', 'team', 'elo_start', 'elo_end', 'elo_diff']
 
 class TeamEventSerializer(serializers.ModelSerializer):
     class Meta:
