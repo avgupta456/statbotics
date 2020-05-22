@@ -132,17 +132,25 @@ def get_data(start_year, end_year):
             elos[team_data["year"].iloc[i]-start_year]=round(team_data["elo_max"].iloc[i])
             elo_sum, count = elo_sum + team_data["elo_max"].iloc[i], count + 1
         elo, elo_mean, elo_max = elos[-1], round(elo_sum/count), max(elos)
-        if(elo==-1): elo=elos[-2] #accounts for 2020 season suspension
+
+        length = min(len(elos), 5)
+        elo_recent = sum(elos[-length:])
+
+         #accounts for 2020 season suspension
+        if(elo==-1): length, elo_recent, elo = length -1, elo_recent + 1, elos[-2]
+        elo_recent = elo_recent/length #handles new teams and 2020 season suspension
+        #essentially takes whatever portion exists for 2016-2020
+
         elo_max_year = start_year+elos.index(elo_max)
         elos = ", ".join(str(x) for x in elos)
         [name, region, district, years] = all_teams_info[team]
         active = (elo!=-1) #have a current elo
 
         teams.append([team, name, region, district, years, active,
-            elo, elo_mean, elo_max, elo_max_year])
+            elo, elo_mean, elo_recent, elo_max, elo_max_year])
 
-    teams = pd.DataFrame(teams, columns=["team", "name", "region", "district",
-        "years_active", "active", "elo", "elo_mean", "elo_max", "elo_max_year"])
+    teams = pd.DataFrame(teams, columns=["team", "name", "region", "district", "years_active",
+        "active", "elo", "elo_recent", "elo_mean", "elo_max", "elo_max_year"])
     teams = teams.sort_values(by=['team'])
 
     events = []
