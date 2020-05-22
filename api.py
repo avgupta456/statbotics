@@ -18,27 +18,30 @@ with requests.Session() as s:
         resp = s.post(constants.BASE_URL+"/admin/login/",
             data=login_data, headers=dict(Referer=constants.BASE_URL))
 
-    def get():
-        resp = s.get(constants.BASE_URL+'/api/teams/')
+    def get(url):
+        resp = s.get(constants.BASE_URL+url)
         if resp.status_code != 200: print("Something Went Wrong")
         else: return resp.json()
-
-    def post(number, name, token):
-        data = {
-            "number": number,
-            "name": name,
-            "csrfmiddlewaretoken": token,
-            "next": constants.BASE_URL+"/api/teams/"
-        }
-
-        resp = s.post(constants.BASE_URL+'/api/teams/',
-            data=data, headers=dict(Referer=constants.BASE_URL))
-        if resp.status_code != 201: print("Something Went Wrong")
-        else: print("Successful POST")
 
     token = getToken()
     login(token)
     token = getToken()
-    print(get())
-    post(179, "Children of the Swamp", token)
-    print(get())
+    print(get('/api/_teams/?active=1&limit=10000&o=-elo_mean'))
+    print(get('/api/teams/active/by/elo_mean'))
+
+
+'''
+FOR DOCUMENTATION PURPOSES (UNUSED)
+def post(number, name, token):
+    data = {
+        "number": number,
+        "name": name,
+        "csrfmiddlewaretoken": token,
+        "next": constants.BASE_URL+"/api/teams/"
+    }
+
+    resp = s.post(constants.BASE_URL+'/api/teams/',
+        data=data, headers=dict(Referer=constants.BASE_URL))
+    if resp.status_code != 201: print("Something Went Wrong")
+    else: print("Successful POST")
+'''
