@@ -22,12 +22,23 @@ urlpatterns = [
     path('api/team/<num>/year/<year>/event/<event>/matches', views.TeamYearEvent_Matches.as_view()),
     path('api/teams', views.Teams.as_view()), #automatically adds a / on Chrome
     path('api/teams/', views.Teams.as_view()), #better safe then sorry though
+    path('api/teams/by/<elo>', views.Teams_byElo.as_view()),
     path('api/teams/active', views.TeamsActive.as_view()),
-    path('api/teams/year/<year>', views.TeamsYear.as_view()),
+    path('api/teams/active/by/<elo>', views.TeamsActive_byElo.as_view()),
     path('api/teams/district/<district>', views.TeamsDistrict.as_view()),
-    path('api/teams/region/<region>', views.TeamsRegion.as_view()),
+    path('api/teams/district/<district>/by/<elo>', views.TeamDistrict_byElo.as_view()),
     path('api/teams/district/<district>/active', views.TeamsDistrictActive.as_view()),
+    path('api/teams/district/<district>/active/by/<elo>', views.TeamsDistrictActive_byElo.as_view()),
+    path('api/teams/region/<region>', views.TeamsRegion.as_view()),
+    path('api/teams/region/<region>/by/<elo>', views.TeamsRegion_byElo.as_view()),
     path('api/teams/region/<region>/active', views.TeamsRegionActive.as_view()),
+    path('api/teams/region/<region>/active/by/<elo>', views.TeamsRegionActive_byElo.as_view()),
+    path('api/teams/year/<year>', views.TeamsYear.as_view()),
+    path('api/teams/year/<year>/by/<elo>', views.TeamsYear_byElo.as_view()),
+    path('api/teams/year/<year>/district/<district>', views.TeamsYearDistrict.as_view()),
+    path('api/teams/year/<year>/district/<district>/by/<elo>', views.TeamsYearDistrict_byElo.as_view()),
+    path('api/teams/year/<year>/region/<region>', views.TeamsYearRegion.as_view()),
+    path('api/teams/year/<year>/region/<region>/by/<elo>', views.TeamsYearRegion_byElo.as_view()),
 
     path('api/', include(router.urls)),
 ]

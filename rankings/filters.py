@@ -72,6 +72,11 @@ class TeamYearFilterSet(django_filters.FilterSet):
         fields=(
             ('year', 'year'),
             ('team', 'team'),
+            ('elo_mean', 'elo_mean'),
+            ('elo_max', 'elo_max'),
+            ('elo_start', 'elo_start'),
+            ('elo_pre_champs', 'elo_pre_champs'),
+            ('elo_end', 'elo_end'),
         ),
     )
     def get_year(self, queryset, field_name, value):
@@ -95,8 +100,7 @@ class TeamFilterSet(django_filters.FilterSet):
     o = django_filters.OrderingFilter(
         fields=(
             ('team', 'team'),
-            ('years_active'),
-            ('years_active'),
+            ('years_active', 'years_active'),
             ('elo_mean', 'elo_mean'),
             ('elo_max', 'elo_max'),
             ('elo', 'elo'),

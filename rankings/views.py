@@ -105,20 +105,53 @@ class TeamYearEvent_Matches(RedirectView):
 class Teams(RedirectView):
     url = '/api/_teams/?limit=10000'
 
+class Teams_byElo(RedirectView):
+    url = '/api/_teams/?limit=10000&o=-%(elo)s'
+
 class TeamsActive(RedirectView):
     url = '/api/_teams/?active=1&limit=10000'
 
-class TeamsYear(RedirectView):
-    url = '/api/_team_years/?year=%(year)s&limit=10000'
+class TeamsActive_byElo(RedirectView):
+    url = '/api/_teams/?active=1&limit=10000&o=-%(elo)s'
 
 class TeamsDistrict(RedirectView):
     url = '/api/_teams?district=%(district)s&limit=10000'
 
-class TeamsRegion(RedirectView):
-    url = '/api/_teams?region=%(region)s&limit=10000'
+class TeamDistrict_byElo(RedirectView):
+    url = '/api/_teams?district=%(district)s&limit=10000&o=-%(elo)s'
 
 class TeamsDistrictActive(RedirectView):
     url = '/api/_teams?district=%(district)s&active=1&limit=10000'
 
+class TeamsDistrictActive_byElo(RedirectView):
+    url = '/api/_teams?district=%(district)s&active=1&limit=10000&o=-%(elo)s'
+
+class TeamsRegion(RedirectView):
+    url = '/api/_teams?region=%(region)s&limit=10000'
+
+class TeamsRegion_byElo(RedirectView):
+    url = '/api/_teams?region=%(region)s&limit=10000&o=-%(elo)s'
+
 class TeamsRegionActive(RedirectView):
     url = '/api/_teams?region=%(region)s&active=1&limit=10000'
+
+class TeamsRegionActive_byElo(RedirectView):
+    url = '/api/_teams?region=%(region)s&active=1&limit=10000&o=-%(elo)s'
+
+class TeamsYear(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&limit=10000'
+
+class TeamsYear_byElo(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&limit=10000&o=-%(elo)s'
+
+class TeamsYearDistrict(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&district=%(district)s&limit=10000'
+
+class TeamsYearDistrict_byElo(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&district=%(district)s&limit=10000&o=-%(elo)s'
+
+class TeamsYearRegion(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&region=%(region)s&limit=10000'
+
+class TeamsYearRegion_byElo(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&region=%(region)s&limit=10000&o=-%(elo)s'
