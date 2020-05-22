@@ -39,6 +39,17 @@ urlpatterns = [
     path('api/teams/year/<year>/district/<district>/by/<elo>', views.TeamsYearDistrict_byElo.as_view()),
     path('api/teams/year/<year>/region/<region>', views.TeamsYearRegion.as_view()),
     path('api/teams/year/<year>/region/<region>/by/<elo>', views.TeamsYearRegion_byElo.as_view()),
-
     path('api/', include(router.urls)),
 ]
+
+'''
+path('api/year/<year>', views.Year.as_view()),
+path('api/year/<year>/events', views.Year_Events.as_view()),
+path('api/year/<year>/events/by/<elo>', views.Year_Events_Elo.as_view()),
+#path('api/year/<year>/matches', views.Year_Matches.as_view()),
+path('api/year/<year>/event/<event>', views.YearEvent.as_view()),
+#path('api/year/<year>/event/<event>/matches', views.YearEvent_Matches.as_view()),
+#path('api/year/<year>/event/<event>/match/<match>', views.YearEventMatch.as_view()),
+path('api/years', views.Years.as_view()),
+path('api/years/', views.Years.as_view()),
+'''

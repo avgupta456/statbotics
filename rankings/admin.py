@@ -10,12 +10,12 @@ class TeamEventAdmin(admin.ModelAdmin):
         'elo_pre_playoffs', 'elo_end', 'elo_mean', 'elo_max', 'elo_diff')
 
 class TeamYearAdmin(admin.ModelAdmin):
-    list_display = ('year', 'team', 'elo_start', 'elo_pre_champs',
-        'elo_end', 'elo_mean', 'elo_max', 'elo_diff', 'rank', 'percentile')
+    list_display = ('year', 'team', 'name', 'region', 'district', 'elo_start',
+        'elo_pre_champs', 'elo_end', 'elo_mean', 'elo_max', 'elo_diff')
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('team', 'name', 'region', 'district', 'years_active',
-        'active', 'elo', 'elo_mean', 'elo_max', 'elo_max_year')
+        'active', 'elo', 'elo_recent', 'elo_mean', 'elo_max', 'elo_max_year')
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('year', 'event', 'elo_max', 'elo_top8', 'elo_top24', 'elo_mean', 'elo_sd')
