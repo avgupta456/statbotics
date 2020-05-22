@@ -5,5 +5,7 @@ static/*
 
 travis.json
 
+rankings/migrations/*
+
 __pycache__/*
 *.pyc

@@ -65,7 +65,7 @@ class EventView(viewsets.ModelViewSet):
 class YearView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = YearSerializer
-    queryset = Event.objects.all()
+    queryset = Year.objects.all()
     filterset_class = YearFilterSet
 
 class UserView(viewsets.ModelViewSet):
@@ -155,3 +155,24 @@ class TeamsYearRegion(RedirectView):
 
 class TeamsYearRegion_byElo(RedirectView):
     url = '/api/_team_years/?year=%(year)s&region=%(region)s&limit=10000&o=-%(elo)s'
+
+class Year(RedirectView):
+    url = '/api/_years/?year=%(year)s'
+
+class YearEvent(RedirectView):
+    url = '/api/_events/?year=%(year)s&event=%(event)s'
+
+class Years(RedirectView):
+    url = '/api/_years/?limit=100'
+
+class Events(RedirectView):
+    url = '/api/_events/?limit=10000'
+
+class Events_byElo(RedirectView):
+    url = '/api/_events/?limit=10000&o=-%(elo)s'
+
+class EventYear(RedirectView):
+    url = '/api/_events/?year=%(year)s&limit=1000'
+
+class EventYear_byElo(RedirectView):
+    url = '/api/_events/?year=%(year)s&limit=1000&o=-%(elo)s'

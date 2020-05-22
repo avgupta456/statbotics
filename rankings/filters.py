@@ -68,6 +68,8 @@ class TeamEventFilterSet(django_filters.FilterSet):
 class TeamYearFilterSet(django_filters.FilterSet):
     year = django_filters.NumberFilter(method='get_year', field_name='year')
     team = django_filters.NumberFilter(method='get_team', field_name='team')
+    region = django_filters.CharFilter(method='get_region', field_name='region')
+    district = django_filters.CharFilter(method='get_district', field_name='district')
     o = django_filters.OrderingFilter(
         fields=(
             ('year', 'year'),
@@ -85,6 +87,14 @@ class TeamYearFilterSet(django_filters.FilterSet):
 
     def get_team(self, queryset, field_name, value):
         if value: return queryset.filter(team=value)
+        return queryset
+
+    def get_region(self, queryset, field_name, value):
+        if value: return queryset.filter(region=value)
+        return queryset
+
+    def get_district(self, queryset, field_name, value):
+        if value: return queryset.filter(district=value)
         return queryset
 
     class Meta:
@@ -138,6 +148,9 @@ class EventFilterSet(django_filters.FilterSet):
     o = django_filters.OrderingFilter(
         fields=(
             ('year', 'year'),
+            ('elo_max', 'elo_max'),
+            ('elo_top8', 'elo_top8'),
+            ('elo_top24', 'elo_top24'),
             ('elo_mean', 'elo_mean'),
         ),
     )
