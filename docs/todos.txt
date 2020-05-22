@@ -3,3 +3,5 @@ TODOS
  - move to Cloud Functions, figure out how to just push new matches (live updating)
  - Add a match model (re Caleb's message on best matches, biggest upsets, etc)
  - Add win/draw/loss results
+ - elo doesn't account for ranking points (ex: 5511 2019)
+ - region/district models?
