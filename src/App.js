@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchTeams } from './api/index.js';
 import { ReactTable } from './components'
+import styles from './App.module.css'
 
 const App = () => {
   const [teams, setTeams] = useState([]);
@@ -15,53 +16,13 @@ const App = () => {
   }, []);
 
   const columns = [
-    {
-      label: "Number",
-      options: {
-        filter: false,
-        sort: true,
-      }
-    },
-    {
-      label: "Name",
-      options: {
-        filter: false,
-        sort: true,
-      }
-    },
-    {
-      label: "ELO",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: false,
-      }
-    },
-    {
-      label: "ELO Recent",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: false,
-      }
-    },
-    {
-      label: "ELO Mean",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: false,
-      }
-    },
-    {
-      label: "ELO Max",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: false,
-      }
-    },
-  ]
+    ["Number", true],
+    ["Name", true],
+    ["Current ELO", false],
+    ["Recent ELO", false],
+    ["Mean ELO", false],
+    ["Max ELO", false],
+  ];
 
   const data = teams.map(function(x){ return [
     x["team"],
@@ -73,8 +34,8 @@ const App = () => {
   ]});
 
   return (
-    <div>
-    <ReactTable columns={columns} data={data}/>
+    <div className={styles.main}>
+      <ReactTable columns={columns} data={data}/>
     </div>
   );
 }
