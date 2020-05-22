@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { fetchTeams, fetchTeam } from './api/index.js';
-
+import { fetchTeams } from './api/index.js';
 import { ReactTable } from './components'
 
 const App = () => {
   const [teams, setTeams] = useState([]);
-  const [team, setTeam] = useState([]);
 
   useEffect(() => {
     const fetchMyAPI = async () => {
@@ -16,21 +14,12 @@ const App = () => {
     fetchMyAPI();
   }, []);
 
-  useEffect(() => {
-    const fetchMyAPI = async () => {
-      const new_team = await fetchTeam();
-      setTeam(new_team.results);
-    };
-
-    fetchMyAPI();
-  }, []);
-
   console.log(teams);
-  console.log(team)
+  const data = teams.map(function(x){ return [x["team"], x["name"], x["elo"], x["elo_recent"], x["elo_mean"], x["elo_max"]] });
 
   return (
     <div>
-      <ReactTable teams={teams}/>
+    <ReactTable data={data}/>
     </div>
   );
 }
