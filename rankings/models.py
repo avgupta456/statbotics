@@ -34,27 +34,29 @@ class TeamYear(models.Model):
     id = models.IntegerField(primary_key=True)
     year = models.IntegerField() #ex: 2019
     team = models.IntegerField() #ex: 5511
+    name = models.CharField(max_length=50) #ex: Cortechs Robotics
+    region = models.CharField(max_length=30) #ex: Israel
+    district = models.CharField(max_length=10) #ex: fnc
     elo_start = models.IntegerField() #ex: 1746
     elo_pre_champs = models.IntegerField() #ex: 1746
     elo_end = models.IntegerField() #ex: 1746
     elo_mean = models.IntegerField() #ex: 1746
     elo_max = models.IntegerField() #ex: 1746
     elo_diff = models.IntegerField() #ex: 100
-    rank = models.IntegerField() #ex: 546
-    percentile = models.DecimalField(max_digits=6, decimal_places=4) #ex: 5.24
 
     class Meta:
         unique_together = (("year", "team"))
 
 class Team(models.Model):
     team = models.IntegerField(primary_key=True) #ex: 5511
-    name = models.CharField(max_length=100) #ex: Cortechs Robotics
-    region = models.CharField(max_length=30) #ex: California
+    name = models.CharField(max_length=50) #ex: Cortechs Robotics
+    region = models.CharField(max_length=30) #ex: CA
     district = models.CharField(max_length=10) #ex: FNC
     years_active = models.IntegerField() #ex: 19
     active = models.BooleanField() #ex: True
     elo = models.IntegerField() #ex: 1700
     elo_mean = models.IntegerField() #ex: 1600
+    elo_recent = models.IntegerField() #ex: 1600
     elo_max = models.IntegerField() #ex: 1900
     elo_max_year = models.IntegerField() #ex: 2015
 
