@@ -86,6 +86,7 @@ def get_data(start_year, end_year):
     champ_keys = ['arc', 'cars', 'carv', 'cur', 'dal', 'dar', 'gal', 'hop', 'new', 'roe', 'tes', 'tur']
 
     team_years = []
+    all_teams_info = utils.loadAllTeamsInfo()
     id = 1
 
     for year in range(start_year, end_year+1):
@@ -93,13 +94,6 @@ def get_data(start_year, end_year):
         year_data_matches = team_matches[team_matches.year == year]
 
         teams_temp = utils.loadTeams(year)
-        num_teams = len(teams_temp)
-
-        ratings = []
-        for t in teams_temp.values():
-            ratings.append(t.get_rating_max())
-        ratings.sort()
-
         for team in year_data_events['team'].unique():
             team_data_events = year_data_events[year_data_events.team == team]
             team_data_matches = year_data_matches[year_data_matches.team == team]
@@ -115,19 +109,19 @@ def get_data(start_year, end_year):
             elo_mean = round(team_data_matches['elo_end'].mean())
             elo_max = teams_temp[team].get_rating_max()
 
-            rank = num_teams-ratings.index(elo_max)
-            percentile = round((rank/num_teams), 4)
             elo_max = round(elo_max) #after so doesn't mess with index
 
-            team_years.append([id, year, team, elo_start, elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff, rank, percentile])
+            [name, region, district, _] = all_teams_info[team]
+
+            team_years.append([id, year, team, name, region, district, elo_start,
+                elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff])
             id += 1
 
-    team_years = pd.DataFrame(team_years, columns = ["id", "year", "team", "elo_start",
-        "elo_pre_champs", "elo_end", "elo_mean", "elo_max", "elo_diff", "rank", "percentile"])
+    team_years = pd.DataFrame(team_years, columns = ["id", "year", "team", "name", "region", "district",
+        "elo_start", "elo_pre_champs", "elo_end", "elo_mean", "elo_max", "elo_diff"])
     team_years = team_years.sort_values(by=['year', 'team'])
 
     teams = []
-    all_teams_info = utils.loadAllTeamsInfo()
 
     utils.saveAllTeams(team_years['team'].unique())
     for team in team_years['team'].unique():
