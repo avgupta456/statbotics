@@ -1,6 +1,7 @@
 import React from 'react';
 import MUIDataTable from "mui-datatables";
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
 
 class ReactTable extends React.Component {
 
@@ -9,6 +10,7 @@ class ReactTable extends React.Component {
       MuiTableCell: {
         root: {
           width: "200px",
+          padding: "10px 16px",
         }
       },
       MUIDataTableHeadCell: {
