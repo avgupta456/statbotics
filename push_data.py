@@ -133,13 +133,16 @@ def get_data(start_year, end_year):
             elo_sum, count = elo_sum + team_data["elo_max"].iloc[i], count + 1
         elo, elo_mean, elo_max = elos[-1], round(elo_sum/count), max(elos)
 
-        length = min(len(elos), 5)
-        elo_recent = sum(elos[-length:])
+        #takes whatever years exist 2016-Present
+        total, years = sum(elos[-5:]), 5
+        for i in range(5):
+            if(elos[-i-1]==-1):
+                total, years = total + 1, years - 1
+        if(years==0): elo_recent = -1
+        else: elo_recent = round(total/years)
 
          #accounts for 2020 season suspension
-        if(elo==-1): length, elo_recent, elo = length -1, elo_recent + 1, elos[-2]
-        elo_recent = round(elo_recent/length) #handles new teams and 2020 season suspension
-        #essentially takes whatever portion exists for 2016-2020
+        if(elo==-1): elo = elos[-2]
 
         elo_max_year = start_year+elos.index(elo_max)
         elos = ", ".join(str(x) for x in elos)
