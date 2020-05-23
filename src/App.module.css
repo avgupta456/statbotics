@@ -1,3 +1,41 @@
 .link {
-  padding: 0px 16px;
+  padding: 0px 12px;
+}
+
+.white_text {
+  color: "white";
+}
+
+.header {
+  width: 200px;
+}
+
+.row {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.left_column {
+  flex: 0 0 150px; /* fixed */
+  margin-left: 50px;
+}
+
+.middle_column {
+  flex: 1;  /* grow */
+}
+
+.right_column {
+  flex: 0 0 150px;
+  margin-right: 50px;
+  height: 20px;
+}
+
+.white {
+  color: "white";
 }
