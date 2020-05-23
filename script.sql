@@ -15,3 +15,5 @@ DROP TABLE rankings_teamyear;
 DROP TABLE rankings_team;
 DROP TABLE rankings_event;
 DROP TABLE rankings_year;
+
+SELECT * FROM rankings_teamevent WHERE team=5511;
