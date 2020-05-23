@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
+import { Nav, Navbar, NavItem } from "react-bootstrap";
+
+import { LinkContainer } from "react-router-bootstrap";
+import { Link } from "react-router-dom";
 
 import { ReactTable } from './components'
 import { fetchTeams } from './api';
+
+import { Routes } from './components'
 
 import styles from './App.module.css'
 import logo from "./static/favicon.ico";
@@ -55,12 +59,23 @@ const App = () => {
           Statbotics.io
         </Navbar.Brand>
         <Nav className="mr-auto">
-          <Nav.Link href="#home">Lookup</Nav.Link>
-          <Nav.Link href="#features">Tables</Nav.Link>
-          <Nav.Link href="#pricing">About</Nav.Link>
+          <Link to="/">Scratch</Link>
+          <Link to="/">Scratch</Link>
+          <Link to="/">Scratch</Link>
         </Nav>
+        <Navbar.Collapse>
+        <Nav pullRight>
+          <LinkContainer to="/Home">
+            <NavItem>Signup</NavItem>
+          </LinkContainer>
+          <LinkContainer to="/login">
+            <NavItem>Login</NavItem>
+          </LinkContainer>
+        </Nav>
+      </Navbar.Collapse>
       </Navbar>
       <ReactTable columns={columns} data={data}  className={styles.main}/>
+      <Routes />
     </div>
   );
 }
