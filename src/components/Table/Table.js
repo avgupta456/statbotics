@@ -38,13 +38,14 @@ class ReactTable extends React.Component {
     };
 
     const new_columns = this.props.columns.map(
-      function([name, searchable]) {
+      function([name, searchable, visible, filterable]) {
         return {
           label: `${name}`,
           options: {
-            filter: false,
             sort: true,
+            filter: `${filterable}`==="true",
             searchable: `${searchable}`,
+            display: `${visible}`,
           },
         }
       }
