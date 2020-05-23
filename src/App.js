@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Nav, Navbar, NavItem } from "react-bootstrap";
-
 import { LinkContainer } from "react-router-bootstrap";
-import { Link } from "react-router-dom";
 
 import { ReactTable } from './components'
 import { fetchTeams } from './api';
@@ -47,7 +45,7 @@ const App = () => {
 
   return (
     <div>
-      <Navbar bg="dark" variant="dark">
+      <Navbar>
         <Navbar.Brand href="#home">
           <img
             alt="Logo"
@@ -59,20 +57,19 @@ const App = () => {
           Statbotics.io
         </Navbar.Brand>
         <Nav className="mr-auto">
-          <Link to="/">Scratch</Link>
-          <Link to="/">Scratch</Link>
-          <Link to="/">Scratch</Link>
-        </Nav>
-        <Navbar.Collapse>
-        <Nav pullRight>
-          <LinkContainer to="/Home">
-            <NavItem>Signup</NavItem>
+          <LinkContainer className={styles.link} to="/">
+            <NavItem>Home</NavItem>
           </LinkContainer>
-          <LinkContainer to="/login">
-            <NavItem>Login</NavItem>
+          <LinkContainer className={styles.link} to="/About">
+            <NavItem>About</NavItem>
+          </LinkContainer>
+          <LinkContainer className={styles.link} to="/Teams">
+            <NavItem>Teams</NavItem>
+          </LinkContainer>
+          <LinkContainer className={styles.link} to="/Years">
+            <NavItem>Years</NavItem>
           </LinkContainer>
         </Nav>
-      </Navbar.Collapse>
       </Navbar>
       <ReactTable columns={columns} data={data}  className={styles.main}/>
       <Routes />
