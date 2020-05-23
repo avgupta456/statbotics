@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 
+import Paper from '@material-ui/core/Paper';
+
 import { ReactTable } from './../../../components';
 import { fetchTeams } from './../../../api';
+import styles from './TeamLookup.module.css';
 
 export default function TeamLookup() {
   const [teams, setTeams] = useState([]);
@@ -20,25 +23,35 @@ export default function TeamLookup() {
     ["Number", true, true, false],
     ["Name", true, true, false],
     ["Active", false, false, true],
+    ["District", false, false, true],
+    ["Region", false, false, true],
     ["Current ELO", false, true, false],
     ["Recent ELO", false, true, false],
     ["Mean ELO", false, true, false],
     ["Max ELO", false, true, false],
   ];
 
-  const data = teams.map(function(x){ return [
+  const data = teams.map(function(x, i){ return [
     x["team"],
     <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
-    (x["active"]?"active":"inactive"),
+    (x["active"]?"Active":"Inactive"),
+    x["district"],
+    x["region"],
     x["elo"],
     x["elo_recent"],
     x["elo_mean"],
-    x["elo_max"]
+    x["elo_max"],
   ]});
 
   return (
     <div>
-      <ReactTable columns={columns} data={data}/>
+      <Paper
+        elevation={3}
+        className = {styles.body}
+        children = {
+          <ReactTable columns={columns} data={data}/>
+        }
+      />
     </div>
   );
 }

@@ -34,7 +34,11 @@ class ReactTable extends React.Component {
       filterType: 'multiselect',
       responsive: 'scrollMaxHeight',
       rowsPerPageOptions: [10, 20, 50],
-      selectableRows: "none"
+      selectableRows: "none",
+      fixedHeaderOptions: {
+        xAxis: false,
+        yAxis: true
+      },
     };
 
     const new_columns = this.props.columns.map(
@@ -50,7 +54,7 @@ class ReactTable extends React.Component {
         }
       }
     );
-
+    
     return (
       <MuiThemeProvider theme={this.getMuiTheme()}>
         <MUIDataTable
