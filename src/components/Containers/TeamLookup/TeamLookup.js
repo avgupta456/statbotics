@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import Paper from '@material-ui/core/Paper';
 
-import { DropdownButton, Dropdown } from "react-bootstrap";
+import { DropdownButton, Dropdown, Button } from "react-bootstrap";
 
 import faker from 'faker';
 import _ from 'lodash';
@@ -15,6 +15,7 @@ export default function TeamLookup() {
   const [region, setRegion] = useState("None");
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Teams");
+  const [title, setTitle] = useState("Team Lookup")
   const [data, setData] = useState([]);
 
   //column name, searchable, visible, filterable
@@ -22,8 +23,6 @@ export default function TeamLookup() {
     ["Number", true, true, false],
     ["Name", true, true, false],
     ["Active", false, false, true],
-    ["District", false, false, false],
-    ["Region", false, false, false],
     ["Current ELO", false, true, false],
     ["Recent ELO", false, true, false],
     ["Mean ELO", false, true, false],
@@ -35,8 +34,6 @@ export default function TeamLookup() {
       x["team"],
       <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
       (x["active"]?"Active":"Inactive"),
-      x["district"],
-      x["region"],
       x["elo"],
       x["elo_recent"],
       x["elo_mean"],
@@ -46,40 +43,24 @@ export default function TeamLookup() {
 
   useEffect(() => {
     const getTeams = async () => {
-      console.log("getTeams")
       const new_teams = await fetchTeams();
-      console.log(clean(new_teams.results))
       setData(clean(new_teams.results));
-      console.log(data)
     };
 
     const getTeams_byRegion = async () => {
-      console.log("getTeams_byRegion")
       const new_teams = await fetchTeams_byRegion(region);
-      console.log(new_teams.results)
       setData(clean(new_teams.results));
-      console.log(data)
     }
 
     const getTeams_byDistrict = async () => {
-      console.log("getTeams_byDistrict")
       const new_teams = await fetchTeams_byDistrict(district);
-      console.log(new_teams.results)
       setData(clean(new_teams.results));
-      console.log(data)
     }
 
-    if(format==="Teams") {
-      getTeams()
-    }
-    else if(format==="Region") {
-      getTeams_byRegion()
-    }
-    else {
-      getTeams_byDistrict()
-    }
+    if(format==="Teams") {getTeams()}
+    else if(format==="Region") {getTeams_byRegion()}
+    else {getTeams_byDistrict()}
   }, [format, region, district]);
-
 
   const addressDefinitions = faker.definitions.address
   const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
@@ -87,15 +68,49 @@ export default function TeamLookup() {
     text: state,
   }));
 
-  function regionClick(key) {
-    setRegion(key);
-    setFormat("Region");
+  const countryOptions = [
+    {key: "Australia", text: "Australia"},
+    {key: "Brazil", text: "Brazil"},
+    {key: "Canada", text: "Canada"},
+    {key: "Chile", text: "Chile"},
+    {key: "China", text: "China"},
+    {key: "Israel", text: "Israel"},
+    {key: "Mexico", text: "Mexico"},
+    {key: "Netherlands", text: "Netherlands"},
+    {key: "Turkey", text: "Turkey"},
+  ]
+
+  const districtOptions = [
+    {key: "chs", text: "Chesapeake"},
+    {key: "fim", text: "Michigan"},
+    {key: "fin", text: "Indiana"},
+    {key: "fit", text: "Texas"},
+    {key: "fma", text: "Mid-Atlantic"},
+    {key: "fnc", text: "North Carolina"},
+    {key: "isr", text: "Israel"},
+    {key: "ne", text: "New England"},
+    {key: "ont", text: "Ontario"},
+    {key: "pch", text: "Peachtree"},
+    {key: "pnw", text: "Pacific NW"},
+  ]
+
+  function allClick() {
+    setFormat("Teams")
+    setTitle("Team Lookup");
   };
 
-  function districtClick(key) {
+  function regionClick(key, value) {
+    setRegion(key);
+    setFormat("Region");
+    setTitle(`Team Lookup - ${value}`);
+  };
+
+  function districtClick(key, value) {
     setDistrict(key);
     setFormat("District");
-  }
+    setTitle(`Team Lookup - ${value}`);
+  };
+
 
   return (
     <div>
@@ -105,16 +120,53 @@ export default function TeamLookup() {
 
         children = {
           <dir>
-            <DropdownButton title="Select State">
-              {stateOptions.map( x => (<Dropdown.Item onClick={() => regionClick(x["key"])} key={x["key"]}>{x["text"]}</Dropdown.Item>))}
+
+            <Button
+              variant="primary"
+              onClick={() => allClick()}
+            >
+              All Teams
+            </Button>
+
+            <DropdownButton title="Select US State">
+              {stateOptions.map(x => (
+                <Dropdown.Item
+                  onClick={() => regionClick(x["key"], x["text"])}
+                  key={x["key"]}
+                >
+                  {x["text"]}
+                </Dropdown.Item>
+              ))}
             </DropdownButton>
+
+            <DropdownButton title="Select Country">
+              {countryOptions.map( x => (
+                <Dropdown.Item
+                  onClick={()=>regionClick(x["key"], x["text"])}
+                  key={x["key"]}
+                >
+                  {x["text"]}
+                </Dropdown.Item>
+              ))}
+            </DropdownButton>
+
             <DropdownButton title="Select District">
-              {stateOptions.map( x => (<Dropdown.Item onClick={() => districtClick(x["key"])} key={x["key"]}>{x["text"]}</Dropdown.Item>))}
+              {districtOptions.map( x => (
+                <Dropdown.Item
+                  onClick={() => districtClick(x["key"])}
+                  key={x["key"]}
+                >
+                  {x["text"]}
+                </Dropdown.Item>
+              ))}
             </DropdownButton>
-            <ReactTable title={"Team Lookup"} columns={columns} data={data}/>
-            <h1>{region}</h1>
-            <h1>{district}</h1>
-            <h1>{format}</h1>
+
+
+            <ReactTable
+              title={title}
+              columns={columns}
+              data={data}
+            />
           </dir>
         }
       />
