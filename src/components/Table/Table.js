@@ -46,6 +46,7 @@ class ReactTable extends React.Component {
         xAxis: false,
         yAxis: true
       },
+      elevation: 0,
     };
 
     const new_columns = this.props.columns.map(

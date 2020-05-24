@@ -119,7 +119,7 @@ export default function TeamLookup() {
   return (
     <div>
       <Paper
-        elevation={1}
+        elevation={3}
         className = {styles.body}
 
         children = {
