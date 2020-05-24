@@ -23,8 +23,8 @@ export default function TeamLookup() {
     ["Number", true, true, false],
     ["Name", true, true, false],
     ["Active", false, false, true],
-    ["District", false, false, true],
-    ["Region", false, false, true],
+    ["District", false, false, false],
+    ["Region", false, false, false],
     ["Current ELO", false, true, false],
     ["Recent ELO", false, true, false],
     ["Mean ELO", false, true, false],
@@ -43,13 +43,16 @@ export default function TeamLookup() {
     x["elo_max"],
   ]});
 
+  const title = "Team Lookup"
+
   return (
     <div>
       <Paper
         elevation={3}
         className = {styles.body}
+
         children = {
-          <ReactTable columns={columns} data={data}/>
+          <ReactTable title={title} columns={columns} data={data}/>
         }
       />
     </div>

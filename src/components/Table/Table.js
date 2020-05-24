@@ -7,10 +7,16 @@ class ReactTable extends React.Component {
 
   getMuiTheme = () => createMuiTheme({
     overrides: {
+      MUIDataTableFilterList: {
+        root: {
+          marginBottom: "10px",
+        },
+      },
       MuiTableCell: {
         root: {
           width: "200px",
           padding: "10px 16px",
+          textAlign: "center",
         }
       },
       MUIDataTableHeadCell: {
@@ -19,9 +25,10 @@ class ReactTable extends React.Component {
         },
 
         sortAction: {
+          margin: "auto",
           marginTop: "6px",
           color: "white",
-          '& path': {  color: "white" }
+          '& path': {  color: "white" },
         },
         sortActive: { color: "white", },
         data: { color: "white", },
@@ -54,11 +61,11 @@ class ReactTable extends React.Component {
         }
       }
     );
-    
+
     return (
       <MuiThemeProvider theme={this.getMuiTheme()}>
         <MUIDataTable
-          title={"Team List"}
+          title={this.props.title}
           data={this.props.data}
           columns={new_columns}
           options={options}
