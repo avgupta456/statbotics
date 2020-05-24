@@ -19,7 +19,6 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-table": "^7.1.0",
-    "semantic-ui-react": "^0.88.2",
     "styled-components": "^5.1.0"
   },
   "scripts": {

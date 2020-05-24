@@ -177,7 +177,7 @@ export default function TeamLookup() {
             >
               {districtOptions.map( x => (
                 <Dropdown.Item
-                  onClick={() => districtClick(x["key"])}
+                  onClick={() => districtClick(x["key"], x["text"])}
                   key={x["key"]}
                 >
                   {x["text"]}
