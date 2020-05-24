@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import Paper from '@material-ui/core/Paper';
 
-import { DropdownButton, Dropdown, Button } from "react-bootstrap";
+import { ButtonGroup, Button, DropdownButton, Dropdown } from "react-bootstrap";
 
 import faker from 'faker';
 import _ from 'lodash';
@@ -24,7 +24,6 @@ export default function TeamLookup() {
   const columns = [
     ["Number", true, true, false],
     ["Name", true, true, false],
-    ["Active", false, false, true],
     ["Current ELO", false, true, false],
     ["Recent ELO", false, true, false],
     ["Mean ELO", false, true, false],
@@ -35,7 +34,6 @@ export default function TeamLookup() {
     return teams.map(function(x, i){ return [
       x["team"],
       <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
-      (x["active"]?"Active":"Inactive"),
       x["elo"],
       x["elo_recent"],
       x["elo_mean"],
@@ -121,38 +119,48 @@ export default function TeamLookup() {
   return (
     <div>
       <Paper
-        elevation={0}
+        elevation={1}
         className = {styles.body}
 
         children = {
-          <dir>
-
+          <div>
+          <ButtonGroup className={styles.button_group}>
           <Button
             variant="primary"
             onClick={() => activeClick()}
+            className={styles.button}
           >
-              { active? "Include" : "Remove" } Inactive Teams
+              { active? "Include" : "Remove" } Inactives
           </Button>
 
             <Button
               variant="primary"
               onClick={() => allClick()}
+              className={styles.button}
             >
-              All Locations
+              All Teams
             </Button>
 
-            <DropdownButton title="Select US State">
-              {stateOptions.map(x => (
-                <Dropdown.Item
-                  onClick={() => regionClick(x["key"], x["text"])}
-                  key={x["key"]}
-                >
-                  {x["text"]}
-                </Dropdown.Item>
-              ))}
+            <DropdownButton
+              title="Select US State"
+              className={styles.button}
+              >
+                <Dropdown.Menu className={styles.dropdown}>
+                {stateOptions.map(x => (
+                  <Dropdown.Item
+                    onClick={() => regionClick(x["key"], x["text"])}
+                    key={x["key"]}
+                  >
+                    {x["text"]}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
             </DropdownButton>
 
-            <DropdownButton title="Select Country">
+            <DropdownButton
+              title="Select Country"
+              className={styles.button}
+              >
               {countryOptions.map( x => (
                 <Dropdown.Item
                   onClick={()=>regionClick(x["key"], x["text"])}
@@ -163,7 +171,10 @@ export default function TeamLookup() {
               ))}
             </DropdownButton>
 
-            <DropdownButton title="Select District">
+            <DropdownButton
+              title="Select District"
+              className={styles.button}
+            >
               {districtOptions.map( x => (
                 <Dropdown.Item
                   onClick={() => districtClick(x["key"])}
@@ -173,14 +184,14 @@ export default function TeamLookup() {
                 </Dropdown.Item>
               ))}
             </DropdownButton>
-
+            </ButtonGroup>
 
             <ReactTable
               title={title}
               columns={columns}
               data={data}
             />
-          </dir>
+          </div>
         }
       />
     </div>
