@@ -12,6 +12,8 @@ import { fetchTeams, fetchTeams_byRegion, fetchTeams_byDistrict } from './../../
 import styles from './TeamLookup.module.css';
 
 export default function TeamLookup() {
+  const [active, setActive] = useState(true)
+
   const [region, setRegion] = useState("None");
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Teams");
@@ -43,24 +45,24 @@ export default function TeamLookup() {
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeams();
+      const new_teams = await fetchTeams(active);
       setData(clean(new_teams.results));
     };
 
     const getTeams_byRegion = async () => {
-      const new_teams = await fetchTeams_byRegion(region);
+      const new_teams = await fetchTeams_byRegion(region, active);
       setData(clean(new_teams.results));
     }
 
     const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeams_byDistrict(district);
+      const new_teams = await fetchTeams_byDistrict(district, active);
       setData(clean(new_teams.results));
     }
 
     if(format==="Teams") {getTeams()}
     else if(format==="Region") {getTeams_byRegion()}
     else {getTeams_byDistrict()}
-  }, [format, region, district]);
+  }, [format, region, district, active]);
 
   const addressDefinitions = faker.definitions.address
   const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
@@ -94,6 +96,10 @@ export default function TeamLookup() {
     {key: "pnw", text: "Pacific NW"},
   ]
 
+  function activeClick() {
+    setActive(!active)
+  }
+
   function allClick() {
     setFormat("Teams")
     setTitle("Team Lookup");
@@ -121,11 +127,18 @@ export default function TeamLookup() {
         children = {
           <dir>
 
+          <Button
+            variant="primary"
+            onClick={() => activeClick()}
+          >
+              { active? "Include" : "Remove" } Inactive Teams
+          </Button>
+
             <Button
               variant="primary"
               onClick={() => allClick()}
             >
-              All Teams
+              All Locations
             </Button>
 
             <DropdownButton title="Select US State">

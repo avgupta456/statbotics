@@ -55,8 +55,8 @@ class ReactTable extends React.Component {
           options: {
             sort: true,
             filter: `${filterable}`==="true",
-            searchable: `${searchable}`,
-            display: `${visible}`,
+            searchable: `${searchable}`==="true",
+            display: `${visible}`==="true",
           },
         }
       }

@@ -2,9 +2,15 @@ import axios from 'axios';
 
 const url = 'https://backend.statbotics.io/api';
 
-export const fetchTeams = async () => {
+export const fetchTeams = async (active) => {
   try {
-    const teams = await axios.get(`${url}/teams/by/elo_recent`);
+    var teams;
+    if(active) {
+      teams = await axios.get(`${url}/teams/active/by/elo_recent`);
+    }
+    else {
+      teams = await axios.get(`${url}/teams/by/elo_recent`);
+    }
     console.log(teams.data);
     return teams.data;
   } catch (error) {
@@ -12,9 +18,15 @@ export const fetchTeams = async () => {
   }
 };
 
-export const fetchTeams_byRegion = async (region) => {
+export const fetchTeams_byRegion = async (region, active) => {
   try {
-    const teams = await axios.get(`${url}/teams/region/${region}/by/elo_recent`);
+    var teams;
+    if(active) {
+      teams = await axios.get(`${url}/teams/region/${region}/by/elo_recent`);
+    }
+    else {
+      teams = await axios.get(`{url}/teams/region/${region}/active/by/elo_recent`);
+    }
     console.log(teams.data);
     return teams.data;
   } catch (error) {
@@ -22,9 +34,15 @@ export const fetchTeams_byRegion = async (region) => {
   }
 }
 
-export const fetchTeams_byDistrict = async (district) => {
+export const fetchTeams_byDistrict = async (district, active) => {
   try {
-    const teams = await axios.get(`${url}/teams/district/${district}/by/elo_recent`);
+    var teams;
+    if(active) {
+      teams = await axios.get(`${url}/teams/district/${district}/active/by/elo_recent`);
+    }
+    else {
+      teams = await axios.get(`${url}/teams/district/${district}/by/elo_recent`);
+    }
     console.log(teams.data);
     return teams.data;
   } catch (error) {
