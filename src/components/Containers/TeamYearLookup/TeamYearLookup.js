@@ -23,7 +23,7 @@ export default function TeamLookup() {
   const [region, setRegion] = useState("None");
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Teams");
-  const [title, setTitle] = useState("Team Lookup")
+  const [title, setTitle] = useState(`${year} Team Lookup`)
   const [data, setData] = useState([]);
 
   const [stateDropdown, setStateDropdown] = useState("Select State")
@@ -34,10 +34,11 @@ export default function TeamLookup() {
   const columns = [
     ["Number", true, true, false],
     ["Name", true, true, false],
+    ["Rank", false, true, false],
     ["Max ELO", false, true, false],
     ["Mean ELO", false, true, false],
     ["Start ELO", false, true, false],
-    ["Pre Champs ELO", false, true, false],
+    ["Pre Champs ELO", false, false, false],
     ["End ELO", false, true, false],
   ];
 
@@ -45,6 +46,7 @@ export default function TeamLookup() {
     return teams.map(function(x, i){ return [
       x["team"],
       <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
+      i+1,
       x["elo_max"],
       x["elo_mean"],
       x["elo_start"],
@@ -84,7 +86,6 @@ export default function TeamLookup() {
     {value: "Australia", label: "Australia"},
     {value: "Brazil", label: "Brazil"},
     {value: "Canada", label: "Canada"},
-    {value: "Chile", label: "Chile"},
     {value: "China", label: "China"},
     {value: "Israel", label: "Israel"},
     {value: "Mexico", label: "Mexico"},
@@ -134,7 +135,7 @@ export default function TeamLookup() {
 
   function allClick() {
     setFormat("Teams")
-    setTitle("Team Lookup");
+    setTitle(`${year} Team Lookup`);
     setStateDropdown("Select State")
     setCountryDropdown("Select Country")
     setDistrictDropdown("Select District")
@@ -143,7 +144,7 @@ export default function TeamLookup() {
   const stateClick = (state) => {
     setRegion(state["value"]);
     setFormat("Region");
-    setTitle(`Team Lookup - ${state["label"]}`);
+    setTitle(`${year} Team Lookup - ${state["label"]}`);
     setStateDropdown(state["label"])
     setCountryDropdown("Select Country")
     setDistrictDropdown("Select District")
@@ -152,7 +153,7 @@ export default function TeamLookup() {
   const countryClick = (country) => {
     setRegion(country["value"]);
     setFormat("Region");
-    setTitle(`Team Lookup - ${country["label"]}`);
+    setTitle(`${year} Team Lookup - ${country["label"]}`);
     setStateDropdown("Select State")
     setCountryDropdown(country["label"])
     setDistrictDropdown("Select District")
@@ -161,7 +162,7 @@ export default function TeamLookup() {
   const districtClick = (district) => {
     setDistrict(district["value"]);
     setFormat("District");
-    setTitle(`Team Lookup - ${district["label"]}`);
+    setTitle(`${year} Team Lookup - ${district["label"]}`);
     setStateDropdown("Select State")
     setCountryDropdown("Select Country")
     setDistrictDropdown(district["label"])
