@@ -5,7 +5,7 @@ import { Route, Switch } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
-import { Home, About, TeamLookup, TeamYearLookup } from "./components/Containers";
+import { Home, About, TeamLookup, TeamYearLookup, TeamView } from "./components/Containers";
 
 import styles from './App.module.css'
 import logo from "./static/favicon.ico";
@@ -45,6 +45,7 @@ const App = () => {
         </Route>
         <Route exact path="/About">
           <About />
+          <TeamView />
         </Route>
         <Route exact path="/Teams">
           <TeamLookup />
