@@ -28,7 +28,7 @@ export default function TeamView() {
 
   useEffect(() => {
     const getTeam = async (team) => {
-      const new_teams = await fetchTeam(team);
+      const new_teams = await fetchTeam(team, "elo");
       setTeamData(clean(team, new_teams.results));
     };
 

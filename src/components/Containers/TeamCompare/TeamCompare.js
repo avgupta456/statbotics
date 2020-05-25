@@ -36,7 +36,7 @@ export default function TeamCompare() {
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeams(true);
+      const new_teams = await fetchTeams(true, "elo_recent");
       setTeams(cleanList(new_teams.results))
     }
 
@@ -44,7 +44,7 @@ export default function TeamCompare() {
       var new_teams = []
       for(var i=0;i<teams.length;i++) {
         const team = teams[i].value;
-        const teamData = await fetchTeam(team);
+        const teamData = await fetchTeam(team, "elo_recent");
         new_teams.push(clean(team, teamData.results))
       }
       setTeamsData(new_teams)
@@ -75,7 +75,8 @@ export default function TeamCompare() {
         onChange = {teamsClick}
         options={teams.map(function(x) {return({value: x, label: x})})}
       />
-      <Typography variant="h6">Team Comparison - ELO through Time</Typography>
+      <br/>
+      <Typography variant="h6">Team Comparison - Max ELO through Time</Typography>
       <LineChart data={teamsData} />
     </Paper>
   );

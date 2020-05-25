@@ -4,14 +4,14 @@ const url = 'https://backend.statbotics.io/api';
 
 /*TEAMS API CALLS*/
 
-export const fetchTeams = async (active) => {
+export const fetchTeams = async (active, method) => {
   try {
     var teams;
     if(active) {
-      teams = await axios.get(`${url}/teams/active/by/elo`);
+      teams = await axios.get(`${url}/teams/active/by/${method}`);
     }
     else {
-      teams = await axios.get(`${url}/teams/by/elo`);
+      teams = await axios.get(`${url}/teams/by/${method}`);
     }
     return teams.data;
   } catch (error) {
@@ -19,14 +19,14 @@ export const fetchTeams = async (active) => {
   }
 };
 
-export const fetchTeams_byRegion = async (region, active) => {
+export const fetchTeams_byRegion = async (region, active, method) => {
   try {
     var teams;
     if(active) {
-      teams = await axios.get(`${url}/teams/region/${region}/active/by/elo`);
+      teams = await axios.get(`${url}/teams/region/${region}/active/by/${method}`);
     }
     else {
-      teams = await axios.get(`${url}/teams/region/${region}/by/elo`);
+      teams = await axios.get(`${url}/teams/region/${region}/by/${method}`);
     }
     return teams.data;
   } catch (error) {
@@ -34,14 +34,14 @@ export const fetchTeams_byRegion = async (region, active) => {
   }
 }
 
-export const fetchTeams_byDistrict = async (district, active) => {
+export const fetchTeams_byDistrict = async (district, active, method) => {
   try {
     var teams;
     if(active) {
-      teams = await axios.get(`${url}/teams/district/${district}/active/by/elo`);
+      teams = await axios.get(`${url}/teams/district/${district}/active/by/${method}`);
     }
     else {
-      teams = await axios.get(`${url}/teams/district/${district}/by/elo`);
+      teams = await axios.get(`${url}/teams/district/${district}/by/${method}`);
     }
     return teams.data;
   } catch (error) {
@@ -51,27 +51,27 @@ export const fetchTeams_byDistrict = async (district, active) => {
 
 /*TEAMS-YEAR API CALLS*/
 
-export const fetchTeamYears = async (year) => {
+export const fetchTeamYears = async (year, method) => {
   try {
-    const teams = await axios.get(`${url}/teams/year/${year}/by/elo_max`);
+    const teams = await axios.get(`${url}/teams/year/${year}/by/${method}`);
     return teams.data;
   } catch (error) {
     return error;
   }
 };
 
-export const fetchTeamYears_byRegion = async (region, year) => {
+export const fetchTeamYears_byRegion = async (region, year, method) => {
   try {
-    const teams = await axios.get(`${url}/teams/region/${region}/year/${year}/by/elo_max`);
+    const teams = await axios.get(`${url}/teams/region/${region}/year/${year}/by/${method}`);
     return teams.data;
   } catch (error) {
     return error;
   }
 }
 
-export const fetchTeamYears_byDistrict = async (district, year) => {
+export const fetchTeamYears_byDistrict = async (district, year, method) => {
   try {
-    const teams = await axios.get(`${url}/teams/district/${district}/year/${year}/by/elo_max`);
+    const teams = await axios.get(`${url}/teams/district/${district}/year/${year}/by/${method}`);
     return teams.data;
   } catch (error) {
     return error;

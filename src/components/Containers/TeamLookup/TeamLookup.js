@@ -50,17 +50,17 @@ export default function TeamLookup() {
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeams(active);
+      const new_teams = await fetchTeams(active, "elo");
       setData(clean(new_teams.results));
     };
 
     const getTeams_byRegion = async () => {
-      const new_teams = await fetchTeams_byRegion(region, active);
+      const new_teams = await fetchTeams_byRegion(region, active, "elo");
       setData(clean(new_teams.results));
     }
 
     const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeams_byDistrict(district, active);
+      const new_teams = await fetchTeams_byDistrict(district, active, "elo");
       setData(clean(new_teams.results));
     }
 
