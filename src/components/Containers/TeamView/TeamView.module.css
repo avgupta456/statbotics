@@ -1,6 +1,7 @@
 .chart {
-  height: 450px;
+  height: auto;
   width: 80%;
   margin: auto;
-  padding: 50px;
+  margin-top: 25px;
+  padding: 30px;
 }

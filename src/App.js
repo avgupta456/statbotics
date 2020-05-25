@@ -43,15 +43,17 @@ const App = () => {
         <Route exact path="/">
           <Home />
         </Route>
-        <Route exact path="/About">
+        <Route exact path="/about">
           <About />
-          <TeamView />
         </Route>
-        <Route exact path="/Teams">
+        <Route exact path="/teams">
           <TeamLookup />
         </Route>
-        <Route exact path="/Years">
+        <Route exact path="/years">
           <TeamYearLookup />
+        </Route>
+        <Route path="/teams/:team">
+         <TeamView />
         </Route>
       </Switch>
     </div>

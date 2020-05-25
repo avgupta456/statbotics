@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import  { useParams } from "react-router-dom";
 
 import { Paper, Typography } from '@material-ui/core';
 
@@ -9,6 +10,7 @@ import styles from './TeamView.module.css'
 
 export default function TeamView() {
   const [teamData, setTeamData] = useState({id:"", data:[{x:0, y:0}]})
+  let { team } = useParams();
 
   function clean(team, data) {
     return {
@@ -30,12 +32,12 @@ export default function TeamView() {
       setTeamData(clean(team, new_teams.results));
     };
 
-    getTeam(254)
+    getTeam(team)
   }, [])
 
   return (
     <Paper elevation={3} className={styles.chart}>
-      <Typography variant="h6">Team 254 - ELO through Time</Typography>
+      <Typography variant="h6">Team {team} - ELO through Time</Typography>
       <LineChart data={[teamData]} />
     </Paper>
   );
