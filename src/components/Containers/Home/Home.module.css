@@ -1,0 +1,11 @@
+.link :hover {
+  cursor: "pointer";
+  text-decoration: none;
+  color: white;
+}
+
+.link :visited {
+  cursor: "pointer";
+  text-decoration: none;
+  color: white;
+}
