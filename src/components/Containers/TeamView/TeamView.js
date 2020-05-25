@@ -33,7 +33,7 @@ export default function TeamView() {
     };
 
     getTeam(team)
-  }, [])
+  }, [team])
 
   return (
     <Paper elevation={3} className={styles.chart}>
