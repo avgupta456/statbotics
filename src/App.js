@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
-import { About, TeamLookup, TeamYearLookup } from "./components/Containers";
+import { Home, About, TeamLookup, TeamYearLookup } from "./components/Containers";
 
 import styles from './App.module.css'
 import logo from "./static/favicon.ico";
@@ -41,6 +41,9 @@ const App = () => {
         </Nav>
       </Navbar>
       <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
         <Route exact path="/About">
           <About />
         </Route>
