@@ -7,7 +7,7 @@ class LineChart extends React.Component {
     return (
       <ResponsiveLine
         data={this.props.data}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+        margin={{ top: 50, right: 80, bottom: 50, left: 60 }}
         xScale={{ type: 'point' }}
         yScale={{ type: 'linear', min: 1300, max: 2300, stacked: false, reverse: false }}
         curve="linear"

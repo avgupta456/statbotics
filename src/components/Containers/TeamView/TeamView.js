@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Jumbotron } from "react-bootstrap";
+import { Paper, Typography } from '@material-ui/core';
 
 import { fetchTeam } from './../../../api'
 import { LineChart } from './../../'
@@ -34,8 +34,9 @@ export default function TeamView() {
   }, [])
 
   return (
-    <Jumbotron className={styles.height}>
+    <Paper elevation={3} className={styles.chart}>
+      <Typography variant="h6">Team 254 - ELO through Time</Typography>
       <LineChart data={[teamData]} />
-    </Jumbotron>
+    </Paper>
   );
 }
