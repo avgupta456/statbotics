@@ -9,7 +9,7 @@ class LineChart extends React.Component {
         data={this.props.data}
         margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
         xScale={{ type: 'point' }}
-        yScale={{ type: 'linear', min: 1200, max: 2200, stacked: false, reverse: false }}
+        yScale={{ type: 'linear', min: 1300, max: 2300, stacked: false, reverse: false }}
         curve="linear"
         axisBottom={{
           orient: 'bottom',
