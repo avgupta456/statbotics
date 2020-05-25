@@ -71,7 +71,7 @@ export const fetchTeamYears_byRegion = async (region, year) => {
 
 export const fetchTeamYears_byDistrict = async (district, year) => {
   try {
-    const teams = await axios.get(`${url}/teams/district/${district}/year/${year}/active/by/elo_max`);
+    const teams = await axios.get(`${url}/teams/district/${district}/year/${year}/by/elo_max`);
     return teams.data;
   } catch (error) {
     return error;
