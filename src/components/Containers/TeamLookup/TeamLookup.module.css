@@ -14,8 +14,8 @@
   max-width: 175px;
 }
 
+
 .dropdown {
-  height: 150px;
-  padding: 0;
-  overflow-y: scroll;
+  margin: 0% auto;
+  width: 175px;
 }

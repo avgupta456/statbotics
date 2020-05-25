@@ -38,7 +38,7 @@ class ReactTable extends React.Component {
 
   render() {
     const options = {
-      filterType: 'multiselect',
+      filter: false,
       responsive: 'scrollMaxHeight',
       rowsPerPageOptions: [10, 20, 50],
       selectableRows: "none",

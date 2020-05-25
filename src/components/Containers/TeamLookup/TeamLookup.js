@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-import Paper from '@material-ui/core/Paper';
-
-import { ButtonGroup, Button, DropdownButton, Dropdown } from "react-bootstrap";
+import { Paper, Typography } from '@material-ui/core';
+import { ButtonGroup, Button } from "react-bootstrap";
+import Select from 'react-select';
 
 import faker from 'faker';
 import _ from 'lodash';
@@ -19,6 +19,10 @@ export default function TeamLookup() {
   const [format, setFormat] = useState("Teams");
   const [title, setTitle] = useState("Team Lookup")
   const [data, setData] = useState([]);
+
+  const [stateDropdown, setStateDropdown] = useState("Select State")
+  const [countryDropdown, setCountryDropdown] = useState("Select Country")
+  const [districtDropdown, setDistrictDropdown] = useState("Select District")
 
   //column name, searchable, visible, filterable
   const columns = [
@@ -64,34 +68,34 @@ export default function TeamLookup() {
 
   const addressDefinitions = faker.definitions.address
   const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
-    key: addressDefinitions.state_abbr[index],
-    text: state,
+    value: addressDefinitions.state_abbr[index],
+    label: state,
   }));
 
   const countryOptions = [
-    {key: "Australia", text: "Australia"},
-    {key: "Brazil", text: "Brazil"},
-    {key: "Canada", text: "Canada"},
-    {key: "Chile", text: "Chile"},
-    {key: "China", text: "China"},
-    {key: "Israel", text: "Israel"},
-    {key: "Mexico", text: "Mexico"},
-    {key: "Netherlands", text: "Netherlands"},
-    {key: "Turkey", text: "Turkey"},
+    {value: "Australia", label: "Australia"},
+    {value: "Brazil", label: "Brazil"},
+    {value: "Canada", label: "Canada"},
+    {value: "Chile", label: "Chile"},
+    {value: "China", label: "China"},
+    {value: "Israel", label: "Israel"},
+    {value: "Mexico", label: "Mexico"},
+    {value: "Netherlands", label: "Netherlands"},
+    {value: "Turkey", label: "Turkey"},
   ]
 
   const districtOptions = [
-    {key: "chs", text: "Chesapeake"},
-    {key: "fim", text: "Michigan"},
-    {key: "fin", text: "Indiana"},
-    {key: "fit", text: "Texas"},
-    {key: "fma", text: "Mid-Atlantic"},
-    {key: "fnc", text: "North Carolina"},
-    {key: "isr", text: "Israel"},
-    {key: "ne", text: "New England"},
-    {key: "ont", text: "Ontario"},
-    {key: "pch", text: "Peachtree"},
-    {key: "pnw", text: "Pacific NW"},
+    {value: "chs", label: "Chesapeake"},
+    {value: "fim", label: "Michigan"},
+    {value: "fin", label: "Indiana"},
+    {value: "fit", label: "Texas"},
+    {value: "fma", label: "Mid-Atlantic"},
+    {value: "fnc", label: "North Carolina"},
+    {value: "isr", label: "Israel"},
+    {value: "ne", label: "New England"},
+    {value: "ont", label: "Ontario"},
+    {value: "pch", label: "Peachtree"},
+    {value: "pnw", label: "Pacific NW"},
   ]
 
   function activeClick() {
@@ -101,20 +105,37 @@ export default function TeamLookup() {
   function allClick() {
     setFormat("Teams")
     setTitle("Team Lookup");
+    setStateDropdown("Select State")
+    setCountryDropdown("Select Country")
+    setDistrictDropdown("Select District")
   };
 
-  function regionClick(key, value) {
-    setRegion(key);
+  const stateClick = (state) => {
+    setRegion(state["value"]);
     setFormat("Region");
-    setTitle(`Team Lookup - ${value}`);
-  };
+    setTitle(`Team Lookup - ${state["label"]}`);
+    setStateDropdown(state["label"])
+    setCountryDropdown("Select Country")
+    setDistrictDropdown("Select District")
+  }
 
-  function districtClick(key, value) {
-    setDistrict(key);
+  const countryClick = (country) => {
+    setRegion(country["value"]);
+    setFormat("Region");
+    setTitle(`Team Lookup - ${country["label"]}`);
+    setStateDropdown("Select State")
+    setCountryDropdown(country["label"])
+    setDistrictDropdown("Select District")
+  }
+
+  const districtClick = (district) => {
+    setDistrict(district["value"]);
     setFormat("District");
-    setTitle(`Team Lookup - ${value}`);
-  };
-
+    setTitle(`Team Lookup - ${district["label"]}`);
+    setStateDropdown("Select State")
+    setCountryDropdown("Select Country")
+    setDistrictDropdown(district["label"])
+  }
 
   return (
     <div>
@@ -125,65 +146,56 @@ export default function TeamLookup() {
         children = {
           <div>
           <ButtonGroup className={styles.button_group}>
+
           <Button
-            variant="primary"
+            variant="outline-dark"
             onClick={() => activeClick()}
             className={styles.button}
           >
-              { active? "Include" : "Remove" } Inactives
+              <Typography>{ active? "Include" : "Remove" } Inactives</Typography>
           </Button>
 
             <Button
-              variant="primary"
+              variant="outline-dark"
               onClick={() => allClick()}
               className={styles.button}
             >
-              All Teams
+              <Typography>All Teams</Typography>
             </Button>
 
-            <DropdownButton
-              title="Select US State"
-              className={styles.button}
-              >
-                <Dropdown.Menu className={styles.dropdown}>
-                {stateOptions.map(x => (
-                  <Dropdown.Item
-                    onClick={() => regionClick(x["key"], x["text"])}
-                    key={x["key"]}
-                  >
-                    {x["text"]}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </DropdownButton>
+            <Select
+              className={styles.dropdown}
+              styles={{
+                menu: provided => ({ ...provided, zIndex: 9999 })
+              }}
+              placeholder = "State"
+              options = {stateOptions}
+              onChange = {stateClick}
+              value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
+            />
 
-            <DropdownButton
-              title="Select Country"
-              className={styles.button}
-              >
-              {countryOptions.map( x => (
-                <Dropdown.Item
-                  onClick={()=>regionClick(x["key"], x["text"])}
-                  key={x["key"]}
-                >
-                  {x["text"]}
-                </Dropdown.Item>
-              ))}
-            </DropdownButton>
+            <Select
+              className={styles.dropdown}
+              styles={{
+                menu: provided => ({ ...provided, zIndex: 9999 })
+              }}
+              placeholder = "Country"
+              options = {countryOptions}
+              onChange = {countryClick}
+              value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
+            />
 
-            <DropdownButton
-              title="Select District"
-              className={styles.button}
-            >
-              {districtOptions.map( x => (
-                <Dropdown.Item
-                  onClick={() => districtClick(x["key"], x["text"])}
-                  key={x["key"]}
-                >
-                  {x["text"]}
-                </Dropdown.Item>
-              ))}
-            </DropdownButton>
+            <Select
+              className={styles.dropdown}
+              styles={{
+                menu: provided => ({ ...provided, zIndex: 9999 })
+              }}
+              placeholder = "District"
+              options = {districtOptions}
+              onChange = {districtClick}
+              value = {{value:`${districtDropdown}`, label:`${districtDropdown}`}}
+            />
+
             </ButtonGroup>
 
             <ReactTable
