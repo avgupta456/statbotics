@@ -28,6 +28,7 @@ export default function TeamLookup() {
   const columns = [
     ["Number", true, true, false],
     ["Name", true, true, false],
+    ["Rank", false, true, false],
     ["Current ELO", false, true, false],
     ["Recent ELO", false, true, false],
     ["Mean ELO", false, true, false],
@@ -38,6 +39,7 @@ export default function TeamLookup() {
     return teams.map(function(x, i){ return [
       x["team"],
       <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
+      i+1,
       x["elo"],
       x["elo_recent"],
       x["elo_mean"],
@@ -76,7 +78,6 @@ export default function TeamLookup() {
     {value: "Australia", label: "Australia"},
     {value: "Brazil", label: "Brazil"},
     {value: "Canada", label: "Canada"},
-    {value: "Chile", label: "Chile"},
     {value: "China", label: "China"},
     {value: "Israel", label: "Israel"},
     {value: "Mexico", label: "Mexico"},
