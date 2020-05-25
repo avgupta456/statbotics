@@ -8,11 +8,17 @@ import faker from 'faker';
 import _ from 'lodash';
 
 import { ReactTable } from './../../../components';
-import { fetchTeams, fetchTeams_byRegion, fetchTeams_byDistrict } from './../../../api';
-import styles from './TeamLookup.module.css';
+
+import {
+  fetchTeamYears,
+  fetchTeamYears_byRegion,
+  fetchTeamYears_byDistrict
+} from './../../../api';
+
+import styles from './TeamYearLookup.module.css';
 
 export default function TeamLookup() {
-  const [active, setActive] = useState(true)
+  const [year, setYear] = useState(2020)
 
   const [region, setRegion] = useState("None");
   const [district, setDistrict] = useState("None");
@@ -28,43 +34,45 @@ export default function TeamLookup() {
   const columns = [
     ["Number", true, true, false],
     ["Name", true, true, false],
-    ["Current ELO", false, true, false],
-    ["Recent ELO", false, true, false],
-    ["Mean ELO", false, true, false],
     ["Max ELO", false, true, false],
+    ["Mean ELO", false, true, false],
+    ["Start ELO", false, true, false],
+    ["Pre Champs ELO", false, true, false],
+    ["End ELO", false, true, false],
   ];
 
   function clean(teams) {
     return teams.map(function(x, i){ return [
       x["team"],
       <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
-      x["elo"],
-      x["elo_recent"],
-      x["elo_mean"],
       x["elo_max"],
+      x["elo_mean"],
+      x["elo_start"],
+      x["elo_pre_champs"],
+      x["elo_end"],
     ]});
   }
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeams(active);
+      const new_teams = await fetchTeamYears(year);
       setData(clean(new_teams.results));
     };
 
     const getTeams_byRegion = async () => {
-      const new_teams = await fetchTeams_byRegion(region, active);
+      const new_teams = await fetchTeamYears_byRegion(region, year);
       setData(clean(new_teams.results));
     }
 
     const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeams_byDistrict(district, active);
+      const new_teams = await fetchTeamYears_byDistrict(district, year);
       setData(clean(new_teams.results));
     }
 
     if(format==="Teams") {getTeams()}
     else if(format==="Region") {getTeams_byRegion()}
     else {getTeams_byDistrict()}
-  }, [format, region, district, active]);
+  }, [format, region, district, year]);
 
   const addressDefinitions = faker.definitions.address
   const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
@@ -98,8 +106,30 @@ export default function TeamLookup() {
     {value: "pnw", label: "Pacific NW"},
   ]
 
-  function activeClick() {
-    setActive(!active)
+  const yearOptions = [
+    {value: "2020", label: "2020"},
+    {value: "2019", label: "2019"},
+    {value: "2018", label: "2018"},
+    {value: "2017", label: "2017"},
+    {value: "2016", label: "2016"},
+    {value: "2015", label: "2015"},
+    {value: "2014", label: "2014"},
+    {value: "2013", label: "2013"},
+    {value: "2012", label: "2012"},
+    {value: "2011", label: "2011"},
+    {value: "2010", label: "2010"},
+    {value: "2009", label: "2009"},
+    {value: "2008", label: "2008"},
+    {value: "2007", label: "2007"},
+    {value: "2006", label: "2006"},
+    {value: "2005", label: "2005"},
+    {value: "2004", label: "2004"},
+    {value: "2003", label: "2003"},
+    {value: "2002", label: "2002"},
+  ]
+
+  const yearClick = (state) => {
+    setYear(state["value"])
   }
 
   function allClick() {
@@ -147,13 +177,15 @@ export default function TeamLookup() {
           <div>
           <ButtonGroup className={styles.button_group}>
 
-          <Button
-            variant="outline-dark"
-            onClick={() => activeClick()}
-            className={styles.button}
-          >
-              <Typography>{ active? "Include" : "Remove" } Inactives</Typography>
-          </Button>
+            <Select
+              className={styles.dropdown}
+              styles={{
+                menu: provided => ({ ...provided, zIndex: 9999 })
+              }}
+              options = {yearOptions}
+              onChange = {yearClick}
+              value = {{value:`${year}`, label:`${year}`}}
+            />
 
             <Button
               variant="outline-dark"

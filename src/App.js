@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
-import { About, TeamLookup } from "./components/Containers";
+import { About, TeamLookup, TeamYearLookup } from "./components/Containers";
 
 import styles from './App.module.css'
 import logo from "./static/favicon.ico";
@@ -46,6 +46,9 @@ const App = () => {
         </Route>
         <Route exact path="/Teams">
           <TeamLookup />
+        </Route>
+        <Route exact path="/Years">
+          <TeamYearLookup />
         </Route>
       </Switch>
     </div>

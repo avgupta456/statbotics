@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const url = 'https://backend.statbotics.io/api';
 
+/*TEAM API CALLS*/
+
 export const fetchTeams = async (active) => {
   try {
     var teams;
@@ -41,6 +43,35 @@ export const fetchTeams_byDistrict = async (district, active) => {
     else {
       teams = await axios.get(`${url}/teams/district/${district}/by/elo`);
     }
+    return teams.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+/*TEAM-YEAR API CALLS*/
+
+export const fetchTeamYears = async (year) => {
+  try {
+    const teams = await axios.get(`${url}/teams/year/${year}/by/elo_max`);
+    return teams.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const fetchTeamYears_byRegion = async (region, year) => {
+  try {
+    const teams = await axios.get(`${url}/teams/region/${region}/year/${year}/by/elo_max`);
+    return teams.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const fetchTeamYears_byDistrict = async (district, year) => {
+  try {
+    const teams = await axios.get(`${url}/teams/district/${district}/year/${year}/active/by/elo_max`);
     return teams.data;
   } catch (error) {
     return error;
