@@ -1,5 +1,5 @@
 export { default as Home } from './Home/Home'
-export { default as About } from './About/About'
+export { default as Coming } from './Coming/Coming'
 export { default as TeamLookup } from './TeamLookup/TeamLookup'
 export { default as TeamYearLookup } from './TeamYearLookup/TeamYearLookup'
 export { default as TeamView } from './TeamView/TeamView'

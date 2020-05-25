@@ -7,12 +7,13 @@ import { LinkContainer } from "react-router-bootstrap";
 
 import {
   Home,
-  About,
+  Coming,
   TeamLookup,
   TeamYearLookup,
   TeamView,
   TeamCompare
-} from "./components/Containers";
+}
+from "./components/Containers";
 
 import styles from './App.module.css'
 import logo from "./static/favicon.ico";
@@ -39,13 +40,19 @@ const App = () => {
             <NavItem>About</NavItem>
           </LinkContainer>
           <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/teams">
-            <NavItem>Teams</NavItem>
+            <NavItem>Teams Table</NavItem>
           </LinkContainer>
           <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/years">
-            <NavItem>Years</NavItem>
+            <NavItem>Years Table</NavItem>
+          </LinkContainer>
+          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/search">
+            <NavItem>Teams Search</NavItem>
           </LinkContainer>
           <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/compare">
             <NavItem>Compare Teams</NavItem>
+          </LinkContainer>
+          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/predict">
+            <NavItem>Predict Match</NavItem>
           </LinkContainer>
         </Nav>
       </Navbar>
@@ -54,7 +61,7 @@ const App = () => {
           <Home />
         </Route>
         <Route exact path="/about">
-          <About />
+          <Coming />
         </Route>
         <Route exact path="/teams">
           <TeamLookup />
@@ -62,11 +69,17 @@ const App = () => {
         <Route exact path="/years">
           <TeamYearLookup />
         </Route>
+        <Route exact path = "/search">
+          <Coming />
+        </Route>
         <Route path="/teams/:team">
          <TeamView />
         </Route>
         <Route path="/compare">
           <TeamCompare />
+        </Route>
+        <Route path="/predict">
+          <Coming />
         </Route>
       </Switch>
     </div>

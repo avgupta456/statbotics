@@ -1,3 +1,8 @@
+.link {
+  margin-right: 4%;
+  width: 150px;
+}
+
 .link :hover {
   cursor: "pointer";
   text-decoration: none;
