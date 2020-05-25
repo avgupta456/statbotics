@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 
 import { Paper, Typography } from '@material-ui/core';
 import WindowedSelect from "react-windowed-select";
@@ -24,7 +24,6 @@ export default function TeamCompare() {
   }
 
   function clean(team, data) {
-    console.log(data)
     return {
       id: team,
       data: data.map(
@@ -45,7 +44,6 @@ export default function TeamCompare() {
       var new_teams = []
       for(var i=0;i<teams.length;i++) {
         const team = teams[i].value;
-          console.log(team)
         const teamData = await fetchTeam(team);
         new_teams.push(clean(team, teamData.results))
       }
@@ -61,18 +59,22 @@ export default function TeamCompare() {
   }, [teams, chosenTeams])
 
   function teamsClick(teams) {
-    setChosenTeams(teams)
+    if(teams===null) {
+      setChosenTeams([])
+    }
+    else {
+      setChosenTeams(teams)
+    }
   }
 
   return (
     <Paper elevation={3} className={styles.chart}>
-      {console.log(teams)}
       <WindowedSelect
         className={styles.dropdown}
         isMulti = {true}
         onChange = {teamsClick}
         options={teams.map(function(x) {return({value: x, label: x})})}
-      />;
+      />
       <Typography variant="h6">Team Comparison - ELO through Time</Typography>
       <LineChart data={teamsData} />
     </Paper>
