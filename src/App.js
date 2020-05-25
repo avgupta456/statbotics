@@ -5,7 +5,14 @@ import { Route, Switch } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
-import { Home, About, TeamLookup, TeamYearLookup, TeamView } from "./components/Containers";
+import {
+  Home,
+  About,
+  TeamLookup,
+  TeamYearLookup,
+  TeamView,
+  TeamCompare
+} from "./components/Containers";
 
 import styles from './App.module.css'
 import logo from "./static/favicon.ico";
@@ -37,6 +44,9 @@ const App = () => {
           <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/years">
             <NavItem>Years</NavItem>
           </LinkContainer>
+          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/compare">
+            <NavItem>Compare Teams</NavItem>
+          </LinkContainer>
         </Nav>
       </Navbar>
       <Switch>
@@ -54,6 +64,9 @@ const App = () => {
         </Route>
         <Route path="/teams/:team">
          <TeamView />
+        </Route>
+        <Route path="/compare">
+          <TeamCompare />
         </Route>
       </Switch>
     </div>
