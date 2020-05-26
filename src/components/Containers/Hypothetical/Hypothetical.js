@@ -1,8 +1,8 @@
 import React, {useEffect} from "react";
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, TextField, Typography, Button } from "@material-ui/core";
-import { ButtonGroup, ProgressBar } from "react-bootstrap";
+import { TextField, Typography, Button } from "@material-ui/core";
+import { Card, ButtonGroup, ProgressBar } from "react-bootstrap";
 
 import { fetchTeamYear } from './../../../api';
 import styles from './Hypothetical.module.css';
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight:  theme.spacing(3),
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-    width: "25%",
+    width: "175",
     maxWidth: "175px",
     '@media (max-width: 800px)': {
       width: "100px"
@@ -103,7 +103,7 @@ export default function Hypothetical() {
       redElo1, redElo2, redElo3, blueElo1, blueElo2, blueElo3])
 
   return (
-    <Paper className={styles.main}>
+    <Card className={styles.main}>
     <Typography variant="h6">Predict a Match using ELO!</Typography>
     <br/>
     <ButtonGroup className={styles.button_group}>
@@ -189,6 +189,6 @@ export default function Hypothetical() {
     <div className={classes.container}>
     <ProgressBar now={winProb} variant="danger" className={styles.progress}/>
     </div>
-    </Paper>
+    </Card>
   );
 }

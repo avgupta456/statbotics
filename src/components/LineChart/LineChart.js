@@ -7,12 +7,18 @@ import styles from './LineChart.module.css'
 class LineChart extends React.Component {
   render() {
     var data = this.props.data
-    data.unshift({id:"Baseline", data:[{x:2002, y:1500}, {x:2020, y:1500}]})
+    
+    try {
+      if(data[0].id!=="Baseline") {
+        data.unshift({id:"Baseline", data:[{x:2002, y:1500}, {x:2020, y:1500}]})
+      }
+    } catch (e) {}
+
     return (
       <div className={styles.gray}>
         <ResponsiveLine
           data={data}
-          margin={{ top: 50, right: 90, bottom: 50, left: 60 }}
+          margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
           xScale={{ type: 'linear', min: 2002, max: 2020 }}
           yScale={{ type: 'linear', min: 1300, max: 2300, stacked: false, reverse: false }}
           curve="linear"
@@ -44,7 +50,7 @@ class LineChart extends React.Component {
               anchor: 'top-right',
               direction: 'column',
               justify: false,
-              translateX: 100,
+              translateX: 12,
               translateY: 0,
               itemsSpacing: 0,
               itemDirection: 'left-to-right',

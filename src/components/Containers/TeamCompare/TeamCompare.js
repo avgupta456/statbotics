@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 
-import { Paper, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import { Card } from 'react-bootstrap'
 import WindowedSelect from "react-windowed-select";
 
 import { fetchTeams, fetchTeam } from './../../../api'
@@ -68,7 +69,8 @@ export default function TeamCompare() {
   }
 
   return (
-    <Paper elevation={3} className={styles.chart}>
+    <Card className={styles.chart}>
+      <br/>
       <WindowedSelect
         className={styles.dropdown}
         isMulti = {true}
@@ -76,8 +78,9 @@ export default function TeamCompare() {
         options={teams.map(function(x) {return({value: x, label: x})})}
       />
       <br/>
-      <Typography variant="h6">Team Comparison - Max ELO through Time</Typography>
+      <Typography variant="h6">Team Comparison - ELO through Time</Typography>
+      <br/>
       <LineChart data={teamsData} />
-    </Paper>
+    </Card>
   );
 }

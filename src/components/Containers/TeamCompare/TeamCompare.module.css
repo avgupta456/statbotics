@@ -6,7 +6,21 @@
   padding: 30px;
 }
 
+
 .dropdown {
   margin: 0% auto;
   width: 500px;
+}
+
+
+@media (max-width: 750px) {
+  .chart {
+    width: 100%;
+    margin: 0;
+    padding: 5px;
+  }
+
+  .dropdown {
+    width: 80%;
+  }
 }

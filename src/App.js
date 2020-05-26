@@ -14,8 +14,6 @@ import {
   Hypothetical,
 }
 from "./components/Containers";
-
-import style from './App.module.css'
 import logo from "./static/favicon.ico";
 
 const App = () => {
@@ -33,7 +31,7 @@ const App = () => {
           Statbotics.io
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav" className={style.collapse}>
+        <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link href="/">Home</Nav.Link>
           <Nav.Link href="/about">About</Nav.Link>

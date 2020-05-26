@@ -4,7 +4,7 @@
   padding: 2% 5%;
 }
 
-@media (max-width: 880px) {
+@media (max-width: 750px) {
   .main {
     width: 100%;
     margin: 0;
