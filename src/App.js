@@ -2,8 +2,7 @@ import React from 'react';
 
 import { Route, Switch } from "react-router-dom";
 
-import { Nav, Navbar, NavItem } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import { Nav, Navbar } from "react-bootstrap";
 
 import {
   Home,
@@ -16,13 +15,13 @@ import {
 }
 from "./components/Containers";
 
-import styles from './App.module.css'
+import style from './App.module.css'
 import logo from "./static/favicon.ico";
 
 const App = () => {
   return (
     <div>
-      <Navbar bg="light">
+      <Navbar collapseOnSelect expand="md" bg="dark" variant="dark">
         <Navbar.Brand href="/">
           <img
             alt="Logo"
@@ -33,26 +32,17 @@ const App = () => {
           />{' '}
           Statbotics.io
         </Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav" className={style.collapse}>
         <Nav className="mr-auto">
-          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/">
-            <NavItem>Home</NavItem>
-          </LinkContainer>
-          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }}to="/about">
-            <NavItem>About</NavItem>
-          </LinkContainer>
-          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/teams">
-            <NavItem>Teams Table</NavItem>
-          </LinkContainer>
-          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/years">
-            <NavItem>Years Table</NavItem>
-          </LinkContainer>
-          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/compare">
-            <NavItem>Compare Teams</NavItem>
-          </LinkContainer>
-          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/predict">
-            <NavItem>Predict Match</NavItem>
-          </LinkContainer>
+          <Nav.Link href="/">Home</Nav.Link>
+          <Nav.Link href="/about">About</Nav.Link>
+          <Nav.Link href="/teams">Teams Table</Nav.Link>
+          <Nav.Link href="/years">Years Table</Nav.Link>
+          <Nav.Link href="/compare">Compare Teams</Nav.Link>
+          <Nav.Link href="/predict">Predict Match</Nav.Link>
         </Nav>
+      </Navbar.Collapse>
       </Navbar>
       <Switch>
         <Route exact path="/">
