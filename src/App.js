@@ -11,7 +11,8 @@ import {
   TeamLookup,
   TeamYearLookup,
   TeamView,
-  TeamCompare
+  TeamCompare,
+  Hypothetical,
 }
 from "./components/Containers";
 
@@ -45,9 +46,6 @@ const App = () => {
           <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/years">
             <NavItem>Years Table</NavItem>
           </LinkContainer>
-          <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/search">
-            <NavItem>Teams Search</NavItem>
-          </LinkContainer>
           <LinkContainer className={styles.link} style={{ cursor: 'pointer' }} to="/compare">
             <NavItem>Compare Teams</NavItem>
           </LinkContainer>
@@ -69,9 +67,6 @@ const App = () => {
         <Route exact path="/years">
           <TeamYearLookup />
         </Route>
-        <Route exact path = "/search">
-          <Coming />
-        </Route>
         <Route path="/teams/:team">
          <TeamView />
         </Route>
@@ -79,7 +74,7 @@ const App = () => {
           <TeamCompare />
         </Route>
         <Route path="/predict">
-          <Coming />
+          <Hypothetical />
         </Route>
       </Switch>
     </div>

@@ -1,0 +1,13 @@
+.main {
+  width: 90%;
+  margin: 25px auto;
+  padding: 5%;
+}
+
+.button_group {
+  width: 100%;
+  padding: 10px 0%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
