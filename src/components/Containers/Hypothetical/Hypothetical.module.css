@@ -1,13 +1,36 @@
 .main {
   width: 90%;
   margin: 25px auto;
-  padding: 5%;
+  padding: 2% 5%;
 }
 
 .button_group {
   width: 100%;
-  padding: 5px 0%;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
+}
+
+.red {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  justify-content: center;
+  border-radius: 5px;
+  background: rgba(255, 221, 221);
+}
+
+.blue {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  justify-content: center;
+  border-radius: 5px;
+  background: rgba(221, 221, 255);
+}
+
+.progress {
+  width: 60%;
+  margin: auto;
+  background-color: rgba(1, 123, 255);
 }

@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, TextField, Typography, Button } from "@material-ui/core";
-import { ButtonGroup } from "react-bootstrap";
+import { ButtonGroup, ProgressBar } from "react-bootstrap";
 
 import { fetchTeamYear } from './../../../api';
 import styles from './Hypothetical.module.css';
@@ -13,12 +13,18 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
   },
   textField: {
-    margin: theme.spacing(3),
-    flex: "0 0 175px",
+    marginLeft:  theme.spacing(3),
+    marginRight:  theme.spacing(3),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    width: "175px",
   },
   button: {
-    margin: theme.spacing(3),
-    flex: "0 0 200px",
+    marginLeft:  theme.spacing(3),
+    marginRight:  theme.spacing(3),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    width: "200px",
     height: "40px",
   },
   container: {
@@ -95,57 +101,62 @@ export default function Hypothetical() {
   return (
     <Paper className={styles.main}>
     <Typography variant="h6">Predict a Match using ELO!</Typography>
+    <br/>
     <ButtonGroup className={styles.button_group}>
-      <TextField
-        defaultValue=""
-        variant="outlined"
-        className={classes.textField}
-        onChange={updateRed1}
-        helperText="Enter Red 1"
-        margin="dense"
-      />
-      <TextField
-        defaultValue=""
-        variant="outlined"
-        className={classes.textField}
-        onChange={updateRed2}
-        helperText="Enter Red 2"
-        margin="dense"
-      />
-      <TextField
-        defaultValue=""
-        variant="outlined"
-        className={classes.textField}
-        onChange={updateRed3}
-        helperText="Enter Red 3"
-        margin="dense"
-      />
+      <div className={styles.red}>
+        <TextField
+          defaultValue=""
+          variant="outlined"
+          className={classes.textField}
+          onChange={updateRed1}
+          helperText="Enter Red 1"
+          margin="dense"
+        />
+        <TextField
+          defaultValue=""
+          variant="outlined"
+          className={classes.textField}
+          onChange={updateRed2}
+          helperText="Enter Red 2"
+          margin="dense"
+        />
+        <TextField
+          defaultValue=""
+          variant="outlined"
+          className={classes.textField}
+          onChange={updateRed3}
+          helperText="Enter Red 3"
+          margin="dense"
+        />
+      </div>
     </ButtonGroup>
     <ButtonGroup className={styles.button_group}>
-      <TextField
-        defaultValue=""
-        variant="outlined"
-        className={classes.textField}
-        onChange={updateBlue1}
-        helperText="Enter Blue 1"
-        margin="dense"
-      />
-      <TextField
-        defaultValue=""
-        variant="outlined"
-        className={classes.textField}
-        onChange={updateBlue2}
-        helperText="Enter Blue 2"
-        margin="dense"
-      />
-      <TextField
-        defaultValue=""
-        variant="outlined"
-        className={classes.textField}
-        onChange={updateBlue3}
-        helperText="Enter Blue 3"
-        margin="dense"
-      />
+      <div className={styles.blue}>
+        <TextField
+          defaultValue=""
+          variant="outlined"
+          className={classes.textField}
+          onChange={updateBlue1}
+          helperText="Enter Blue 1"
+          margin="dense"
+        />
+        <TextField
+          defaultValue=""
+          variant="outlined"
+          className={classes.textField}
+          onChange={updateBlue2}
+          helperText="Enter Blue 2"
+          margin="dense"
+        />
+        <TextField
+          defaultValue=""
+          variant="outlined"
+          className={classes.textField}
+          onChange={updateBlue3}
+          helperText="Enter Blue 3"
+          margin="dense"
+        />
+      </div>
     </ButtonGroup>
     <ButtonGroup className={styles.button_group}>
       <TextField
@@ -169,6 +180,10 @@ export default function Hypothetical() {
       <Typography className={classes.type}>
         ELO predicts Red Alliance has a {winProb}% chance of winning.
       </Typography>
+    </div>
+    <br/>
+    <div className={classes.container}>
+    <ProgressBar now={winProb} variant="danger" className={styles.progress}/>
     </div>
     </Paper>
   );
