@@ -30,8 +30,24 @@ class ReactTable extends React.Component {
           color: "white",
           '& path': {  color: "white" },
         },
-        sortActive: { color: "white", },
-        data: { color: "white", },
+
+        sortActive: {
+          color: "white",
+        },
+
+        data: {
+          color: "white",
+        },
+        
+        hintIconAlone: {
+          marginTop: "6px",
+          color: "white"
+        },
+
+        hintIconWithSortIcon: {
+          marginTop: "6px",
+           color: "white"
+         },
       },
     },
   });
@@ -50,7 +66,7 @@ class ReactTable extends React.Component {
     };
 
     const new_columns = this.props.columns.map(
-      function([name, searchable, visible, filterable]) {
+      function([name, searchable, visible, filterable, hint]) {
         return {
           label: `${name}`,
           options: {
@@ -58,6 +74,7 @@ class ReactTable extends React.Component {
             filter: `${filterable}`==="true",
             searchable: `${searchable}`==="true",
             display: `${visible}`==="true",
+            hint: hint
           },
         }
       }

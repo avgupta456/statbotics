@@ -27,13 +27,13 @@ export default function TeamLookup() {
 
   //column name, searchable, visible, filterable
   const columns = [
-    ["Number", true, true, false],
-    ["Name", true, true, false],
-    ["Rank", false, true, false],
-    ["Current ELO", false, true, false],
-    ["Recent ELO", false, true, false],
-    ["Mean ELO", false, true, false],
-    ["Max ELO", false, true, false],
+    ["Number", true, true, false, ""],
+    ["Name", true, true, false, "Click names for details"],
+    ["Rank", false, true, false, "By Current ELO"],
+    ["Current ELO", false, true, false, "All ELOs are sortable"],
+    ["Recent ELO", false, true, false, ""],
+    ["Mean ELO", false, true, false, ""],
+    ["Max ELO", false, true, false, ""],
   ];
 
   function clean(teams) {
