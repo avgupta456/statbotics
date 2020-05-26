@@ -1,8 +1,8 @@
 import React, {useEffect} from "react";
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, TextField, Typography } from "@material-ui/core";
-import { ButtonGroup, Button } from "react-bootstrap";
+import { Paper, TextField, Typography, Button } from "@material-ui/core";
+import { ButtonGroup } from "react-bootstrap";
 
 import { fetchTeamYear } from './../../../api';
 import styles from './Hypothetical.module.css';
@@ -15,6 +15,18 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     margin: theme.spacing(3),
     flex: "0 0 175px",
+  },
+  button: {
+    margin: theme.spacing(3),
+    flex: "0 0 200px",
+    height: "40px",
+  },
+  container: {
+    width: "100%",
+    display: 'flex',
+  },
+  type: {
+    margin: "auto",
   },
 }));
 
@@ -82,7 +94,7 @@ export default function Hypothetical() {
 
   return (
     <Paper className={styles.main}>
-    <Typography variant="h6">Predict a Match!</Typography>
+    <Typography variant="h6">Predict a Match using ELO!</Typography>
     <ButtonGroup className={styles.button_group}>
       <TextField
         defaultValue=""
@@ -90,7 +102,7 @@ export default function Hypothetical() {
         className={classes.textField}
         onChange={updateRed1}
         helperText="Enter Red 1"
-        margin="normal"
+        margin="dense"
       />
       <TextField
         defaultValue=""
@@ -98,7 +110,7 @@ export default function Hypothetical() {
         className={classes.textField}
         onChange={updateRed2}
         helperText="Enter Red 2"
-        margin="normal"
+        margin="dense"
       />
       <TextField
         defaultValue=""
@@ -106,7 +118,7 @@ export default function Hypothetical() {
         className={classes.textField}
         onChange={updateRed3}
         helperText="Enter Red 3"
-        margin="normal"
+        margin="dense"
       />
     </ButtonGroup>
     <ButtonGroup className={styles.button_group}>
@@ -116,7 +128,7 @@ export default function Hypothetical() {
         className={classes.textField}
         onChange={updateBlue1}
         helperText="Enter Blue 1"
-        margin="normal"
+        margin="dense"
       />
       <TextField
         defaultValue=""
@@ -124,7 +136,7 @@ export default function Hypothetical() {
         className={classes.textField}
         onChange={updateBlue2}
         helperText="Enter Blue 2"
-        margin="normal"
+        margin="dense"
       />
       <TextField
         defaultValue=""
@@ -132,27 +144,32 @@ export default function Hypothetical() {
         className={classes.textField}
         onChange={updateBlue3}
         helperText="Enter Blue 3"
-        margin="normal"
+        margin="dense"
       />
     </ButtonGroup>
-    <TextField
-      defaultValue={default_year}
-      variant="outlined"
-      className={classes.textField}
-      onChange={updateYear}
-      helperText="Enter Year"
-      margin="normal"
-    />
-    <Button
-      variant="outline-dark"
-      onClick={() => buttonClick()}
-      className={styles.button}
-    >
-      Predict Match
-    </Button>
-    <Typography>
-      ELO predicts Red Alliance has a {winProb}% chance of winning.
-    </Typography>
+    <ButtonGroup className={styles.button_group}>
+      <TextField
+        defaultValue={default_year}
+        variant="outlined"
+        className={classes.textField}
+        onChange={updateYear}
+        helperText="Enter Year"
+        margin="dense"
+      />
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={() => buttonClick()}
+        className={classes.button}
+      >
+        Predict Match
+      </Button>
+    </ButtonGroup>
+    <div className={classes.container}>
+      <Typography className={classes.type}>
+        ELO predicts Red Alliance has a {winProb}% chance of winning.
+      </Typography>
+    </div>
     </Paper>
   );
 }
