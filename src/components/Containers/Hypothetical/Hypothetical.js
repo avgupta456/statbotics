@@ -17,7 +17,11 @@ const useStyles = makeStyles((theme) => ({
     marginRight:  theme.spacing(3),
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-    width: "175px",
+    width: "25%",
+    maxWidth: "175px",
+    '@media (max-width: 800px)': {
+      width: "100px"
+    }
   },
   button: {
     marginLeft:  theme.spacing(3),
@@ -103,7 +107,7 @@ export default function Hypothetical() {
     <Typography variant="h6">Predict a Match using ELO!</Typography>
     <br/>
     <ButtonGroup className={styles.button_group}>
-      <div className={styles.red}>
+      <div className={[styles.red, styles.row].join(' ')}>
         <TextField
           defaultValue=""
           variant="outlined"
@@ -131,7 +135,7 @@ export default function Hypothetical() {
       </div>
     </ButtonGroup>
     <ButtonGroup className={styles.button_group}>
-      <div className={styles.blue}>
+      <div className={[styles.blue, styles.row].join(' ')}>
         <TextField
           defaultValue=""
           variant="outlined"

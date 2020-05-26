@@ -4,6 +4,14 @@
   padding: 2% 5%;
 }
 
+@media (max-width: 880px) {
+  .main {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+
 .button_group {
   width: 100%;
   display: flex;
@@ -11,21 +19,28 @@
   justify-content: center;
 }
 
-.red {
+.row {
   display: flex;
   flex-wrap: wrap;
-  width: 80%;
+  width: auto;
+  padding: 0 5%;
   justify-content: center;
   border-radius: 5px;
+}
+
+@media (max-width: 500px) {
+  .row {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+  }
+}
+
+.red {
   background: rgba(255, 221, 221);
 }
 
 .blue {
-  display: flex;
-  flex-wrap: wrap;
-  width: 80%;
-  justify-content: center;
-  border-radius: 5px;
   background: rgba(221, 221, 255);
 }
 
