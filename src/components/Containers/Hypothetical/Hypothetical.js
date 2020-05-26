@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, TextField, Typography } from "@material-ui/core";
-import { ButtonGroup } from "react-bootstrap";
+import { ButtonGroup, Button } from "react-bootstrap";
 
+import { fetchTeamYear } from './../../../api';
 import styles from './Hypothetical.module.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,6 +31,7 @@ export default function Hypothetical() {
   const [blue3, setBlue3] = React.useState(0)
 
   const [year, setYear] = React.useState(default_year)
+  const [button, setButton] = React.useState(0)
 
   function updateRed1(e) {setRed1(e.target.value)}
   function updateRed2(e) {setRed2(e.target.value)}
@@ -41,15 +43,44 @@ export default function Hypothetical() {
 
   function updateYear(e) {setYear(e.target.value)}
 
+  function buttonClick() {setButton(button+1)}
+
+  const [redElo1, setRedElo1] = React.useState(0)
+  const [redElo2, setRedElo2] = React.useState(0)
+  const [redElo3, setRedElo3] = React.useState(0)
+
+  const [blueElo1, setBlueElo1] = React.useState(0)
+  const [blueElo2, setBlueElo2] = React.useState(0)
+  const [blueElo3, setBlueElo3] = React.useState(0)
+
+  useEffect(() => {
+    const setElo = async (team, func) => {
+      const data = await fetchTeamYear(team, year, "elo")
+      func(data.results[0].elo_max)
+    };
+
+    if(button>0) {
+      console.log("Made It")
+      setElo(red1, setRedElo1)
+      setElo(red2, setRedElo2)
+      setElo(red3, setRedElo3)
+      setElo(blue1, setBlueElo1)
+      setElo(blue2, setBlueElo2)
+      setElo(blue3, setBlueElo3)
+      setButton(0)
+    }
+
+    const redTotal = redElo1+redElo2+redElo3
+    const blueTotal = blueElo1+blueElo2+blueElo3
+
+    console.log(redTotal)
+    console.log(blueTotal)
+
+  }, [button, red1, red2, red3, blue1, blue2, blue3, year,
+      redElo1, redElo2, redElo3, blueElo1, blueElo2, blueElo3])
+
   return (
     <Paper className={styles.main}>
-    {console.log(red1)}
-    {console.log(red2)}
-    {console.log(red3)}
-    {console.log(blue1)}
-    {console.log(blue2)}
-    {console.log(blue3)}
-    {console.log(year)}
     <Typography variant="h6">Predict a Match!</Typography>
     <ButtonGroup className={styles.button_group}>
       <TextField
@@ -111,6 +142,13 @@ export default function Hypothetical() {
       helperText="Enter Year"
       margin="normal"
     />
+    <Button
+      variant="outline-dark"
+      onClick={() => buttonClick()}
+      className={styles.button}
+    >
+      Predict Match
+    </Button>
     </Paper>
   );
 }

@@ -51,7 +51,7 @@ export const fetchTeams_byDistrict = async (district, active, method) => {
 
 /*TEAMS-YEAR API CALLS*/
 
-export const fetchTeamYears = async (year, method) => {
+export const fetchTeamsYear = async (year, method) => {
   try {
     const teams = await axios.get(`${url}/teams/year/${year}/by/${method}`);
     return teams.data;
@@ -60,7 +60,7 @@ export const fetchTeamYears = async (year, method) => {
   }
 };
 
-export const fetchTeamYears_byRegion = async (region, year, method) => {
+export const fetchTeamsYear_byRegion = async (region, year, method) => {
   try {
     const teams = await axios.get(`${url}/teams/region/${region}/year/${year}/by/${method}`);
     return teams.data;
@@ -69,7 +69,7 @@ export const fetchTeamYears_byRegion = async (region, year, method) => {
   }
 }
 
-export const fetchTeamYears_byDistrict = async (district, year, method) => {
+export const fetchTeamsYear_byDistrict = async (district, year, method) => {
   try {
     const teams = await axios.get(`${url}/teams/district/${district}/year/${year}/by/${method}`);
     return teams.data;
@@ -82,7 +82,15 @@ export const fetchTeamYears_byDistrict = async (district, year, method) => {
 export const fetchTeam = async (num) => {
   try {
     const team = await axios.get(`${url}/team/${num}/years`);
-    console.log(team.data)
+    return team.data
+  } catch (error) {
+    return error;
+  }
+}
+
+export const fetchTeamYear = async (num, year) => {
+  try {
+    const team = await axios.get(`${url}/team/${num}/year/${year}`);
     return team.data
   } catch (error) {
     return error;

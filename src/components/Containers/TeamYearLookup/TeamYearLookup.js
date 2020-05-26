@@ -10,9 +10,9 @@ import _ from 'lodash';
 import { ReactTable } from './../../../components';
 
 import {
-  fetchTeamYears,
-  fetchTeamYears_byRegion,
-  fetchTeamYears_byDistrict
+  fetchTeamsYear,
+  fetchTeamsYear_byRegion,
+  fetchTeamsYear_byDistrict
 } from './../../../api';
 
 import styles from './TeamYearLookup.module.css';
@@ -57,17 +57,17 @@ export default function TeamLookup() {
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeamYears(year, "elo_max");
+      const new_teams = await fetchTeamsYear(year, "elo_max");
       setData(clean(new_teams.results));
     };
 
     const getTeams_byRegion = async () => {
-      const new_teams = await fetchTeamYears_byRegion(region, year, "elo_max");
+      const new_teams = await fetchTeamsYear_byRegion(region, year, "elo_max");
       setData(clean(new_teams.results));
     }
 
     const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeamYears_byDistrict(district, year, "elo_max");
+      const new_teams = await fetchTeamsYear_byDistrict(district, year, "elo_max");
       setData(clean(new_teams.results));
     }
 
