@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 
 import { Paper, Typography } from '@material-ui/core';
 import { ButtonGroup, Button } from "react-bootstrap";
@@ -39,7 +38,7 @@ export default function TeamLookup() {
   function clean(teams) {
     return teams.map(function(x, i){ return [
       x["team"],
-      <Link to={`teams/${x["team"]}`} target="_blank">{x["name"]}</Link>,
+      <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
       i+1,
       x["elo"],
       x["elo_recent"],
