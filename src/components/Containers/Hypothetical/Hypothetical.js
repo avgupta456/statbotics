@@ -53,6 +53,8 @@ export default function Hypothetical() {
   const [blueElo2, setBlueElo2] = React.useState(0)
   const [blueElo3, setBlueElo3] = React.useState(0)
 
+  const [winProb, setWinProb] = React.useState(0.5)
+
   useEffect(() => {
     const setElo = async (team, func) => {
       const data = await fetchTeamYear(team, year, "elo")
@@ -60,7 +62,6 @@ export default function Hypothetical() {
     };
 
     if(button>0) {
-      console.log("Made It")
       setElo(red1, setRedElo1)
       setElo(red2, setRedElo2)
       setElo(red3, setRedElo3)
@@ -72,9 +73,9 @@ export default function Hypothetical() {
 
     const redTotal = redElo1+redElo2+redElo3
     const blueTotal = blueElo1+blueElo2+blueElo3
-
-    console.log(redTotal)
-    console.log(blueTotal)
+    const diff = blueTotal-redTotal
+    const prob = 1/(1+10**(diff/400))
+    setWinProb((100*prob).toFixed(1))
 
   }, [button, red1, red2, red3, blue1, blue2, blue3, year,
       redElo1, redElo2, redElo3, blueElo1, blueElo2, blueElo3])
@@ -149,6 +150,9 @@ export default function Hypothetical() {
     >
       Predict Match
     </Button>
+    <Typography>
+      ELO predicts Red Alliance has a {winProb}% chance of winning.
+    </Typography>
     </Paper>
   );
 }
