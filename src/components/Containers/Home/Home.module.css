@@ -1,4 +1,26 @@
+.card {
+  margin: 2%;
+  padding: 2%;
+}
+
+@media (max-width: 750px) {
+  .card {
+    width: 100%;
+    margin: 0;
+    padding: 3%;
+  }
+}
+
+.button_group {
+  width: 100%;
+  padding: 10px 0%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
 .link {
+  margin-top: 4%;
   margin-right: 4%;
   width: 150px;
 }

@@ -1,6 +1,4 @@
 import React from 'react';
-
-import { Divider } from '@material-ui/core';
 import Typist from 'react-typist';
 
 import styles from './Header.module.css';
@@ -10,8 +8,6 @@ export default function Header() {
 
   return (
     <div>
-      <br/>
-      <Divider/>
       <br/>
       <Typist
         cursor={{blink: true, hideWhenDone: true}}
@@ -30,9 +26,6 @@ export default function Header() {
       >
         Modernizing FRC Data Analytics
       </Typist>
-      <br/>
-      <Divider/>
-      <br/>
     </div>
   );
 }
