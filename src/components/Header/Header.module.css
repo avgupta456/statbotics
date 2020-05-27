@@ -1,0 +1,53 @@
+.header {
+  font-family: "Playfair Display SC", "Courier New";
+  font-size: 5em;
+  text-align: center;
+  display: block;
+  margin: 0;
+}
+
+.subheader {
+  font-family: "Playfair Display SC", "Courier New";
+  color: #3F51B5; /*primary-main*/
+  font-size: 2em;
+  text-align: center;
+  margin: 0;
+}
+
+.fix_height {
+  height: 40px;
+}
+
+@media (max-width: 750px) {
+  .header {
+    font-size: 4em;
+  }
+}
+
+@media (max-width: 620px) {
+  .header {
+    font-size: 3em;
+  }
+
+  .subheader {
+    font-size: 1.5em;
+  }
+
+  .fix_height {
+    height: 30px;
+  }
+}
+
+@media (max-width: 500px) {
+  .header {
+    font-size: 2em;
+  }
+
+  .subheader {
+    font-size: 1.25em;
+  }
+
+  .fix_height {
+    height: 20px;
+  }
+}

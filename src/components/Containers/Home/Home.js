@@ -1,14 +1,21 @@
 import React from "react";
 
 import { Jumbotron, Button } from "react-bootstrap";
+import { Typography, Divider } from '@material-ui/core'
 
+import { Header } from './../..'
 import styles from './Home.module.css'
 
 export default function Home() {
   return (
+    <div>
+    <Header />
     <Jumbotron>
-      <h1>Welcome to Statbotics.io!</h1>
-      <h2>Modernizing FRC Data Analytics</h2>
+      <Typography variant="h2">Statbotics.io</Typography>
+      <Typography variant="h5">Modernizing FRC Data Analytics</Typography>
+      <br/>
+      <Divider />
+      <br/>
       <p>
         Welcome to Statbotics.io. We are working towards modernizing and distributing FRC data analytics. Currently focusing on ELO ratings, building of Caleb Sykes' work. Check the tabs above for tables and charts displaying ELO rankings for FRC teams. We're in the early stages, more coming soon!
       </p>
@@ -24,5 +31,6 @@ export default function Home() {
         </Button>
       </p>
     </Jumbotron>
+    </div>
   );
 }

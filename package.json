@@ -12,6 +12,7 @@
     "axios": "^0.19.2",
     "faker": "^4.1.0",
     "mui-datatables": "^2.14.0",
+    "node-sass": "^4.14.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
@@ -20,7 +21,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-select": "^3.1.0",
-    "react-table": "^7.1.0",
+    "react-typist": "^2.0.5",
     "react-windowed-select": "^2.0.2",
     "styled-components": "^5.1.0"
   },
