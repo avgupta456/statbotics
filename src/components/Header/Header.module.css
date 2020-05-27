@@ -14,10 +14,6 @@
   margin: 0;
 }
 
-.fix_height {
-  height: 40px;
-}
-
 @media (max-width: 750px) {
   .header {
     font-size: 4em;
@@ -32,10 +28,6 @@
   .subheader {
     font-size: 1.5em;
   }
-
-  .fix_height {
-    height: 30px;
-  }
 }
 
 @media (max-width: 500px) {
@@ -44,10 +36,6 @@
   }
 
   .subheader {
-    font-size: 1.25em;
-  }
-
-  .fix_height {
-    height: 20px;
+    font-size: 1em;
   }
 }

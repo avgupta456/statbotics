@@ -10,9 +10,9 @@ export default function Header() {
 
   return (
     <div>
-    <br/>
-    <Divider/>
-    <br/>
+      <br/>
+      <Divider/>
+      <br/>
       <Typist
         cursor={{blink: true, hideWhenDone: true}}
         className={styles.header}
@@ -21,17 +21,15 @@ export default function Header() {
       >
         Statbotics.io
       </Typist>
-      <div className={styles.fix_height}>
-        <Typist
-          cursor={{blink: true, hideWhenDone: true}}
-          className={styles.subheader}
-          avgTypingDelay={50}
-          stdTypingDelay={10}
-          startDelay = {1500}
-        >
-          Modernizing FRC Data Analytics
-        </Typist>
-      </div>
+      <Typist
+        cursor={{blink: true, hideWhenDone: true}}
+        className={styles.subheader}
+        avgTypingDelay={50}
+        stdTypingDelay={10}
+        startDelay = {1500}
+      >
+        Modernizing FRC Data Analytics
+      </Typist>
       <br/>
       <Divider/>
       <br/>
