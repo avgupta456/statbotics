@@ -6,7 +6,6 @@ import { Nav, Navbar } from "react-bootstrap";
 
 import {
   Home,
-  Coming,
   TeamLookup,
   TeamYearLookup,
   TeamView,
@@ -34,7 +33,6 @@ const App = () => {
         <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link href="/">Home</Nav.Link>
-          <Nav.Link href="/about">About</Nav.Link>
           <Nav.Link href="/teams">Teams Table</Nav.Link>
           <Nav.Link href="/years">Years Table</Nav.Link>
           <Nav.Link href="/compare">Compare Teams</Nav.Link>
@@ -45,9 +43,6 @@ const App = () => {
       <Switch>
         <Route exact path="/">
           <Home />
-        </Route>
-        <Route exact path="/about">
-          <Coming />
         </Route>
         <Route exact path="/teams">
           <TeamLookup />
