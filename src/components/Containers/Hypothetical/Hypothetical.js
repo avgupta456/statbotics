@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { TextField, Typography, Button } from "@material-ui/core";
 import { Card, ButtonGroup, ProgressBar } from "react-bootstrap";
 
-import { fetchTeamYear } from './../../../api';
+import { fetchTeamYearElo } from './../../../api';
 import styles from './Hypothetical.module.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -79,8 +79,8 @@ export default function Hypothetical() {
 
   useEffect(() => {
     const setElo = async (team, func) => {
-      const data = await fetchTeamYear(team, year, "elo")
-      func(data.results[0].elo_max)
+      const data = await fetchTeamYearElo(team, year)
+      func(data)
     };
 
     if(button>1) {
@@ -189,7 +189,11 @@ export default function Hypothetical() {
     </div>
     <br/>
     <div className={classes.container}>
-    <ProgressBar now={winProb} variant="danger" className={styles.progress}/>
+      <ProgressBar now={winProb} variant="danger" className={styles.progress}/>
+    </div>
+    <br/>
+    <div className={classes.container}>
+      Note: If a team does not exist, they are assigned an ELO of 0, so double check your team numbers!
     </div>
     </Card>
   );

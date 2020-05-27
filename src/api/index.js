@@ -88,11 +88,12 @@ export const fetchTeam = async (num) => {
   }
 }
 
-export const fetchTeamYear = async (num, year) => {
+export const fetchTeamYearElo = async (num, year) => {
   try {
+    if(num===0) {return 0;}
     const team = await axios.get(`${url}/team/${num}/year/${year}`);
-    return team.data
+    return team.data.results[0].elo_max;
   } catch (error) {
-    return error;
+    return 0;
   }
 }
