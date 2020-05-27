@@ -65,7 +65,7 @@ export default function Hypothetical() {
 
   function updateYear(e) {setYear(e.target.value)}
 
-  function buttonClick() {setButton(button+1)}
+  function buttonClick() {setButton(button+2)}
 
   const [redElo1, setRedElo1] = React.useState(0)
   const [redElo2, setRedElo2] = React.useState(0)
@@ -83,14 +83,14 @@ export default function Hypothetical() {
       func(data.results[0].elo_max)
     };
 
-    if(button>0) {
+    if(button>1) {
       setElo(red1, setRedElo1)
       setElo(red2, setRedElo2)
       setElo(red3, setRedElo3)
       setElo(blue1, setBlueElo1)
       setElo(blue2, setBlueElo2)
       setElo(blue3, setBlueElo3)
-      setButton(0)
+      setButton(1)
     }
 
     const redTotal = redElo1+redElo2+redElo3
@@ -182,7 +182,9 @@ export default function Hypothetical() {
     </ButtonGroup>
     <div className={classes.container}>
       <Typography className={classes.type}>
-        ELO predicts Red Alliance has a {winProb}% chance of winning.
+        {button===0 ? "Enter teams and click 'Predict Match'" :
+          winProb>50 ? `ELO predicts Red Alliance has a ${winProb}% chance of winning.` :
+            `ELO predicts Blue Alliance has a ${100-winProb}% chance of winning.`}
       </Typography>
     </div>
     <br/>
