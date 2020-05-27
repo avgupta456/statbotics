@@ -11,6 +11,10 @@
   }
 }
 
+.height {
+  height: 20px;
+}
+
 .button_group {
   width: 100%;
   padding: 10px 0%;
@@ -19,20 +23,8 @@
   justify-content: center;
 }
 
-.link {
+.button {
   margin-top: 4%;
   margin-right: 4%;
   width: 150px;
-}
-
-.link :hover {
-  cursor: "pointer";
-  text-decoration: none;
-  color: white;
-}
-
-.link :visited {
-  cursor: "pointer";
-  text-decoration: none;
-  color: white;
 }

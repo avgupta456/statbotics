@@ -105,7 +105,7 @@ export default function Hypothetical() {
   return (
     <Card className={styles.main}>
     <Typography variant="h6">Predict a Match using ELO!</Typography>
-    <br/>
+    <div className={styles.height}></div>
     <ButtonGroup className={styles.button_group}>
       <div className={[styles.red, styles.row].join(' ')}>
         <TextField

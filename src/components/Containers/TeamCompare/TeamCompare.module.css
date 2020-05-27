@@ -6,12 +6,14 @@
   padding: 30px;
 }
 
-
 .dropdown {
   margin: 0% auto;
   width: 500px;
 }
 
+.height {
+  height: 20px;
+}
 
 @media (max-width: 750px) {
   .chart {

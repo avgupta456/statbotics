@@ -70,16 +70,14 @@ export default function TeamCompare() {
 
   return (
     <Card className={styles.chart}>
-      <br/>
       <WindowedSelect
         className={styles.dropdown}
         isMulti = {true}
         onChange = {teamsClick}
         options={teams.map(function(x) {return({value: x, label: x})})}
       />
-      <br/>
+      <div className={styles.height}></div>
       <Typography variant="h6">Team Comparison - ELO through Time</Typography>
-      <br/>
       <LineChart data={teamsData} />
     </Card>
   );
