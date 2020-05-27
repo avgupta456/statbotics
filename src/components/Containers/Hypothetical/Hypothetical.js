@@ -192,9 +192,9 @@ export default function Hypothetical() {
       <ProgressBar now={winProb} variant="danger" className={styles.progress}/>
     </div>
     <br/>
-    <div className={classes.container}>
+    <p className={styles.center}>
       Note: If a team does not exist, they are assigned an ELO of 0, so double check your team numbers!
-    </div>
+    </p>
     </Card>
   );
 }

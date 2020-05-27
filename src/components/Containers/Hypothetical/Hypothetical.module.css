@@ -53,3 +53,7 @@
   margin: auto;
   background-color: rgba(1, 123, 255);
 }
+
+.center {
+  text-align: center;
+}
