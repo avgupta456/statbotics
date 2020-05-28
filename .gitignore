@@ -7,3 +7,5 @@ rankings/migrations/*
 
 __pycache__/*
 *.pyc
+
+*.sql
