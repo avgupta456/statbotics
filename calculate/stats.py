@@ -14,7 +14,7 @@ def getStats(year):
 
     return [mse, acc]
 
-def stats():
+def metrics():
     total_mse = 0
     for year in range(2002, 2021):
         print(year)
@@ -44,5 +44,5 @@ def mean():
         #plt.show()
 
 if __name__ == "__main__":
-    stats()
+    metrics()
     mean()

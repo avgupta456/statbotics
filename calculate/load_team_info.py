@@ -1,25 +1,6 @@
 import read_tba
 import utils
 
-def getTeamInfo(number):
-    data = read_tba.get("team/frc"+str(number)+"/simple")
-    name, state, country = data["nickname"], data["state_prov"], data["country"]
-    region = state if country=="USA" else country
-
-    years = len(read_tba.get("team/frc"+str(number)+"/years_participated"))
-
-    try: district = read_tba.get("team/frc"+str(number)+"/districts")[-1]["abbreviation"]
-    except Exception as e: district = "None"
-
-    return [name, region, district, years]
-
-def saveAllTeamsInfo():
-    out = {}
-    for team in utils.loadAllTeams():
-        out[team] = getTeamInfo(team)
-        print(out[team])
-    utils.saveAllTeamsInfo(out)
-
 states = {
     'Alabama': 'AL',
     'Alaska': 'AK',
@@ -87,17 +68,27 @@ districts = {
 
 }
 
-def cleanTeamInfo():
-    teams = utils.loadAllTeamsInfo()
-    for team in teams:
-        data = teams[team]
-        if(data[1] in states): data[1] = states[data[1]]
-        if(data[2] in districts): data[2] = districts[data[2]]
-        teams[team] = data
-    utils.saveAllTeamsInfo(teams)
+def getTeamInfo(number):
+    data = read_tba.get("team/frc"+str(number)+"/simple")
+    name, state, country = data["nickname"], data["state_prov"], data["country"]
+    region = state if country=="USA" else country
 
+    years = len(read_tba.get("team/frc"+str(number)+"/years_participated"))
+
+    try: district = read_tba.get("team/frc"+str(number)+"/districts")[-1]["abbreviation"]
+    except Exception as e: district = "None"
+
+    if(state in states): state = states[state]
+    if(district in districts): district = districts[district]
+
+    return [name, region, district, years]
+
+def saveAllTeamsInfo():
+    out = {}
+    for team in utils.loadAllTeams():
+        out[team] = getTeamInfo(team)
+        print(out[team])
+    utils.saveAllTeamsInfo(out)
 
 if __name__ == "__main__":
-    #saveAllTeamsInfo()
-    #cleanTeamInfo()
-    print(utils.loadAllTeamsInfo())
+    saveAllTeamsInfo()

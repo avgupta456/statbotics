@@ -1,6 +1,3 @@
-import datetime
-start = datetime.datetime.now()
-
 import constants
 import utils
 import stats
@@ -10,6 +7,7 @@ import pandas as pd
 import pymysql
 
 import statistics
+import datetime
 import json
 
 blacklist = [
@@ -219,15 +217,13 @@ def push_data(data):
     events.to_sql('rankings_event', engine, if_exists='replace', index=False)
     years.to_sql('rankings_year', engine, if_exists='replace', index=False)
 
-def main():
-    start_year = 2002
-    end_year = 2020
-
-    data = get_data(start_year, end_year)
+def main(startYear, endYear):
+    data = get_data(startYear, endYear)
     push_data(data)
 
 if __name__ == "__main__":
+    start = datetime.datetime.now()
     main()
 
-end = datetime.datetime.now()
-print("Total Time: " + str(end-start))
+    end = datetime.datetime.now()
+    print("Total Time: " + str(end-start))

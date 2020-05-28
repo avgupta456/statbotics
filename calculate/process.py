@@ -30,10 +30,9 @@ def processYear(year):
     utils.saveProcessedMatches(year, matches)
     utils.saveTeams(year, teams)
 
-def main():
-    for year in range(2002,2021):
-        print(year)
+def processYears(startYear, endYear):
+    for year in range(startYear, endYear+1):
         processYear(year)
 
 if __name__ == "__main__":
-    main()
+    processYears()

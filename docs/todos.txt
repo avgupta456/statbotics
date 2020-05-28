@@ -5,3 +5,4 @@ TODOS
  - Add win/draw/loss results
  - elo doesn't account for ranking points (ex: 5511 2019)
  - region/district models?
+ - clean calculate python (full refactoring)
