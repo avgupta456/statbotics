@@ -12,7 +12,7 @@ React Frontend: https://github.com/avgupta456/statbotics_frontend
 
 Currently, we are focused on Elo Ratings, building upon Caleb Sykes' previous work. We're in the early stages, and hope to add content related to OPR, event prediction, and Zebra MotionWorks soon. Stay tuned!
 
-Elo is a measure of a team's on-field strength, calculated using win margins from over 100,000 matches dating back to 2002. A Elo of 1500 is roughly average, and an Elo of 1800+ is in the top 1% worldwide. Head over to statbotics.io for tables and charts displaying Elo trends. Remember, this is just one method to rank teams, and shouldn't be taken too seriously ;)
+Elo is a measure of a team's on-field strength, calculated using win margins from over 100,000 matches dating back to 2002. A Elo of 1500 is roughly average, and an Elo of 1800+ is in the top 1% worldwide. Head over to https://statbotics.io for tables and charts displaying Elo trends. Remember, this is just one method to rank teams, and shouldn't be taken too seriously ;)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Reach out to avgupta456@gmail.com for guidance.
