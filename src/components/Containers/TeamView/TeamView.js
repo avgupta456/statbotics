@@ -37,7 +37,7 @@ export default function TeamView() {
 
   return (
     <Paper elevation={3} className={styles.chart}>
-      <Typography variant="h6">Team {team} - ELO through Time</Typography>
+      <Typography variant="h6">Team {team} - Elo through Time</Typography>
       <LineChart data={[teamData]} />
     </Paper>
   );

@@ -34,12 +34,12 @@ export default function TeamLookup() {
   const columns = [
     ["Number", true, true, false, ""],
     ["Name", true, true, false, "Click names for details"],
-    ["Rank", false, true, false, "By Max ELO"],
-    ["Max ELO", false, true, false, "All ELOs are sortable"],
-    ["Mean ELO", false, true, false, ""],
-    ["Start ELO", false, true, false, ""],
-    ["Pre Champs ELO", false, false, false, ""],
-    ["End ELO", false, true, false, ""],
+    ["Rank", false, true, false, "By Max Elo"],
+    ["Max Elo", false, true, false, "All Elos are sortable"],
+    ["Mean Elo", false, true, false, ""],
+    ["Start Elo", false, true, false, ""],
+    ["Pre Champs Elo", false, false, false, ""],
+    ["End Elo", false, true, false, ""],
   ];
 
   function clean(teams) {

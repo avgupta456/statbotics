@@ -104,7 +104,7 @@ export default function Hypothetical() {
 
   return (
     <Card className={styles.main}>
-    <Typography variant="h6">Predict a Match using ELO!</Typography>
+    <Typography variant="h6">Predict a Match using Elo!</Typography>
     <div className={styles.height}></div>
     <ButtonGroup className={styles.button_group}>
       <div className={[styles.red, styles.row].join(' ')}>
@@ -183,8 +183,8 @@ export default function Hypothetical() {
     <div className={classes.container}>
       <Typography className={classes.type}>
         {button===0 ? "Enter teams and click 'Predict Match'" :
-          winProb>50 ? `ELO predicts Red Alliance has a ${winProb}% chance of winning.` :
-            `ELO predicts Blue Alliance has a ${100-winProb}% chance of winning.`}
+          winProb>50 ? `Elo predicts Red Alliance has a ${winProb}% chance of winning.` :
+            `Elo predicts Blue Alliance has a ${100-winProb}% chance of winning.`}
       </Typography>
     </div>
     <br/>
@@ -193,7 +193,7 @@ export default function Hypothetical() {
     </div>
     <br/>
     <p className={styles.center}>
-      Note: If a team does not exist, they are assigned an ELO of 0, so double check your team numbers!
+      Note: If a team does not exist, they are assigned an Elo of 0, so double check your team numbers!
     </p>
     </Card>
   );

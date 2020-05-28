@@ -77,7 +77,7 @@ export default function TeamCompare() {
         options={teams.map(function(x) {return({value: x, label: x})})}
       />
       <div className={styles.height}></div>
-      <Typography variant="h6">Team Comparison - ELO through Time</Typography>
+      <Typography variant="h6">Team Comparison - Elo through Time</Typography>
       <LineChart data={teamsData} />
     </Card>
   );

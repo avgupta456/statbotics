@@ -7,7 +7,7 @@ import styles from './LineChart.module.css'
 class LineChart extends React.Component {
   render() {
     var data = this.props.data
-    
+
     try {
       if(data[0].id!=="Baseline") {
         data.unshift({id:"Baseline", data:[{x:2002, y:1500}, {x:2020, y:1500}]})
@@ -36,7 +36,7 @@ class LineChart extends React.Component {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'Max ELO',
+            legend: 'Max Elo',
             legendOffset: -50,
             legendPosition: 'middle'
           }}
