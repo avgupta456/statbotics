@@ -1,7 +1,0 @@
-List of tutorials/references:
-
-Setting up DRF - https://scotch.io/tutorials/build-a-to-do-application-using-django-and-react
-Adding Auth - https://www.django-rest-framework.org/tutorial/4-authentication-and-permissions/
-Google Cloud Deploy - https://cloud.google.com/python/django/appengine
-Django Filters - https://sunscrapers.com/blog/the-ultimate-tutorial-for-django-rest-framework-filtering-part-5/
-Django Redirects - https://realpython.com/django-redirects/
