@@ -2,9 +2,9 @@ import math
 import datetime
 import statistics
 
-from helper.classes import Match
-from helper import read_tba
-from helper import utils
+from classes import Match
+import read_tba
+import utils
 
 def getEvents(year):
     events = []

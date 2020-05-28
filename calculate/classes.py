@@ -1,4 +1,4 @@
-from helper import elo
+import elo
 
 class Match:
     def __init__(self, data):

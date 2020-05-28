@@ -1,5 +1,5 @@
-from helper import read_tba
-from helper import utils
+import read_tba
+import utils
 
 def getTeamInfo(number):
     data = read_tba.get("team/frc"+str(number)+"/simple")

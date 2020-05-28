@@ -1,6 +1,6 @@
-from helper.classes import Team
-from helper import utils
-from helper import elo
+from classes import Team
+import utils
+import elo
 
 def processYear(year):
     matches = utils.loadMatches(year)

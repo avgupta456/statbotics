@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from helper import utils
+import utils
 
 def getStats(year):
     matches = utils.loadProcessedMatches(year)

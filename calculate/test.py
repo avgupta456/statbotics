@@ -1,5 +1,6 @@
-from helper import utils
-from helper import elo
+import utils
+import elo
+
 import argparse
 
 def get_args():

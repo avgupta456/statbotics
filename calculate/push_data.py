@@ -2,7 +2,7 @@ import datetime
 start = datetime.datetime.now()
 
 import constants
-from helper import utils
+import utils
 import stats
 
 from sqlalchemy import create_engine

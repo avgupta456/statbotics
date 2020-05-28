@@ -1,4 +1,5 @@
 import requests
+
 '''
 Helper class to read the TheBlueAlliance (TBA) API
 '''
