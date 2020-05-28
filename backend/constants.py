@@ -1,3 +1,10 @@
+from google.cloud import datastore
+
+def getEnvVar(client, name):
+    key = client.key("secret", name)
+    entry = client.get(key)
+    return entry["value"]
+
 #accessed by settings.py
 CLOUDSQL_CONNECTION = ""
 CLOUDSQL_DATABASE = ""
@@ -14,16 +21,22 @@ try:
     CLOUDSQL_USER = os.environ.get("CLOUDSQL_USER")
     SECRET_KEY = os.environ.get("SECRET_KEY")
 except Exception as e:
-    from google.cloud import datastore
     client = datastore.Client()
+    CLOUDSQL_CONNECTION = getEnvVar(client, "CLOUDSQL_CONNECTION")
+    CLOUDSQL_DATABASE = getEnvVar(client, "CLOUDSQL_DATABASE")
+    CLOUDSQL_PASSWORD = getEnvVar(client, "CLOUDSQL_PASSWORD")
+    CLOUDSQL_USER = getEnvVar(client, "CLOUDSQL_USER")
+    SECRET_KEY = getEnvVar(client, "SECRET_KEY")
 
-    def getEnvVar(name):
-        key = client.key("secret", name)
-        entry = client.get(key)
-        return entry["value"]
+if (CLOUDSQL_CONNECTION==None or
+    CLOUDSQL_DATABASE==None or
+    CLOUDSQL_PASSWORD==None or
+    CLOUDSQL_USER==None or
+    SECRET_KEY==None):
 
-    CLOUDSQL_CONNECTION = getEnvVar("CLOUDSQL_CONNECTION")
-    CLOUDSQL_DATABASE = getEnvVar("CLOUDSQL_DATABASE")
-    CLOUDSQL_PASSWORD = getEnvVar("CLOUDSQL_PASSWORD")
-    CLOUDSQL_USER = getEnvVar("CLOUDSQL_USER")
-    SECRET_KEY = getEnvVar("SECRET_KEY")
+    client = datastore.Client()
+    CLOUDSQL_CONNECTION = getEnvVar(client, "CLOUDSQL_CONNECTION")
+    CLOUDSQL_DATABASE = getEnvVar(client, "CLOUDSQL_DATABASE")
+    CLOUDSQL_PASSWORD = getEnvVar(client, "CLOUDSQL_PASSWORD")
+    CLOUDSQL_USER = getEnvVar(client, "CLOUDSQL_USER")
+    SECRET_KEY = getEnvVar(client, "SECRET_KEY")
