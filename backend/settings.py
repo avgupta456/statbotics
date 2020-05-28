@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from . import constants
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = constants.SECRET_KEY
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -94,10 +93,10 @@ if os.getenv('GAE_APPLICATION', None):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/'+constants.CLOUDSQL_CONNECTION,
-            'USER': constants.CLOUDSQL_USER,
-            'PASSWORD': constants.CLOUDSQL_PASSWORD,
-            'NAME': constants.CLOUDSQL_DATABASE,
+            'HOST': '/cloudsql/'+os.environ.get("CLOUDSQL_CONNECTION"),
+            'USER': os.environ.get("CLOUDSQL_USER"),
+            'PASSWORD': os.environ.get("CLOUDSQL_PASSWORD"),
+            'NAME': os.environ.get("CLOUDSQL_DATABASE"),
         }
     }
 else:
@@ -112,9 +111,9 @@ else:
             'ENGINE': 'django.db.backends.mysql',
             'HOST': '127.0.0.1',
             'PORT': '3307',
-            'NAME': constants.CLOUDSQL_DATABASE,
-            'USER': constants.CLOUDSQL_USER,
-            'PASSWORD': constants.CLOUDSQL_PASSWORD,
+            'NAME': os.environ.get("CLOUDSQL_DATABASE"),
+            'USER': os.environ.get("CLOUDSQL_USER"),
+            'PASSWORD': os.environ.get("CLOUDSQL_PASSWORD"),
         }
     }
 # [END db_setup]
