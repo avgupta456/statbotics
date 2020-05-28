@@ -1,8 +1,14 @@
 TODOS
+
+ELO improvements
  - normalize ELO by standard deviation?
- - move to Cloud Functions, figure out how to just push new matches (live updating)
- - Add a match model (re Caleb's message on best matches, biggest upsets, etc)
- - Add win/draw/loss results
- - elo doesn't account for ranking points (ex: 5511 2019)
- - region/district models?
- - clean calculate python (full refactoring)
+ - account for ranking points somehow?
+
+Functionality
+- Add a match model (to find best matches, biggest upsets, etc)
+- Cron jobs for live updating (celery, cloud functions?)
+- record win/loss/draw results?
+
+General
+- code refactor to clean python code
+- build Python library in /api

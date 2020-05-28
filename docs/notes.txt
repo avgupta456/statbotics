@@ -1,8 +1,8 @@
-pipenv shell
-
-load_matches.py #loads data from blue alliance
-process.py #calculates ELO ratings
-calc_stats.py #gets mse and mean
-prep_data.py #calculations for teams, events, years
-push_data.py #ships to CloudSQL database
-test.py #command line simple tests
+Python Functions
+ - main.py #centralizes some of the below commands
+ - load_matches.py #loads data from blue alliance
+ - load_team_info.py #loads district/region data from blue alliance
+ - process.py #calculates ELO ratings
+ - calc_stats.py #gets mse, acc, mean, std
+ - push_data.py #ships to CloudSQL database
+ - test.py #command line simple tests
