@@ -1,6 +1,6 @@
 # Statbotics Backend
 
-Statbotics aims to create and distribute modern data analytics for the FIRST Robotics Competition. This repository houses code related to managing the backend REST API, using Django Rest Framework.
+Statbotics aims to create and distribute modern data analytics for the FIRST Robotics Competition. This repository houses code related to managing the backend REST API, using the Django Rest Framework.
 
 ## Installation
 
