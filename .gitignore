@@ -1,6 +1,4 @@
-docs/constants.txt
-docs/billing.txt
-docs/ssl.txt
+docs/*
 static/*
 
 travis.json
