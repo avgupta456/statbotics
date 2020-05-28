@@ -1,5 +1,0 @@
-REQUESTS
- - csrf token tricky, changes after login
-
-DJANGO/SQL
- - django pushes slow, use SQL instead
