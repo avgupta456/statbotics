@@ -8,6 +8,8 @@ Django Backend: https://github.com/avgupta456/statbotics_backend
 
 React Frontend: https://github.com/avgupta456/statbotics_frontend
 
+In the future, additional documentation, examples, and resources will be stored in this repository.
+
 ## Overview
 
 Currently, we are focused on Elo Ratings, building upon Caleb Sykes' previous work. We're in the early stages, and hope to add content related to OPR, event prediction, and Zebra MotionWorks soon. Stay tuned!
