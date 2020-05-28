@@ -1,2 +1,0 @@
-TODOS
- - create basic frontend
