@@ -25,7 +25,7 @@ def metrics():
         print()
 
     total_mse_sykes = 3.716 #see baseline
-    print("Total mse ELO:  " + str(total_mse/19))
+    print("Total mse Elo:  " + str(total_mse/19))
     print("Total mse Sykes: " + str(total_mse_sykes/19))
 
 def mean():
