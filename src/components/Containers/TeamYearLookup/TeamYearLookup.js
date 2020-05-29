@@ -129,8 +129,9 @@ export default function TeamLookup() {
     {value: "2002", label: "2002"},
   ]
 
-  const yearClick = (state) => {
-    setYear(state["value"])
+  const yearClick = (year) => {
+    setYear(year["value"])
+    setTitle(`${year["value"]} Team Lookup`)
   }
 
   function allClick() {
