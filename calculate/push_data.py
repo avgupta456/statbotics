@@ -139,8 +139,20 @@ def get_data(start_year, end_year):
         if(years==0): elo_recent = -1
         else: elo_recent = round(total/years)
 
-         #accounts for 2020 season suspension
-        if(elo==-1): elo = elos[-2]
+        '''accounts for 2020 season suspension (with mean revision)'''
+        if(elo==-1):
+            try: elo_1yr = elo[-2]
+            except Exception as e: elo_1yr = -1
+
+            try: elo_2yr = elo[-3]
+            except Exception as e: elo_2yr = -1
+
+            if(elo_1yr==-1):
+                elo = -1 #team has not played last two years, inactive
+            elif(elo_2yr==-1):
+                elo = elo_1yr * 0.56 + 1450 * 0.44 #rookie team
+            else:
+                elo = elo_1yr * 0.56 + elo_2yr * 0.24 + 1450 * 0.20
 
         elo_max_year = start_year+elos.index(elo_max)
         [name, country, state, district, years] = all_teams_info[team]
