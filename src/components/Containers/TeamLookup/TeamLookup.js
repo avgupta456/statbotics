@@ -121,8 +121,6 @@ export default function TeamLookup() {
     {value: "SK", label: "Saskatchewan"},
   ]
 
-  const noOptions = []
-
   const districtOptions = [
     {value: "chs", label: "Chesapeake"},
     {value: "fim", label: "Michigan"},
