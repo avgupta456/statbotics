@@ -92,18 +92,23 @@ def getTeamInfo(number):
     try: district = read_tba.get("team/frc"+str(number)+"/districts")[-1]["abbreviation"]
     except Exception as e: district = "None"
 
-    if(state in USA): state = USA[state]
-    if(state in Canada): state = Canada[state]
     if(country=="Canada" and state not in Canada): print(state)
+    
+    if(state in USA): state = USA[state]
+    elif(state in Canada): state = Canada[state]
+    else: state="All"
+
     if(district in districts): district = districts[district]
 
     return [name, country, state, district, years]
 
 def saveAllTeamsInfo():
     out = {}
+    count = 0
     for team in utils.loadAllTeams():
+        count+=1
+        if(count%100==0): print(count)
         out[team] = getTeamInfo(team)
-        print(out[team])
     utils.saveAllTeamsInfo(out)
 
 if __name__ == "__main__":
