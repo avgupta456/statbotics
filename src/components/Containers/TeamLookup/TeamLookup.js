@@ -8,13 +8,21 @@ import faker from 'faker';
 import _ from 'lodash';
 
 import { ReactTable } from './../../../components';
-import { fetchTeams, fetchTeams_byRegion, fetchTeams_byDistrict } from './../../../api';
+
+import {
+  fetchTeams,
+  fetchTeams_byCountry,
+  fetchTeams_byState,
+  fetchTeams_byDistrict
+} from './../../../api';
+
 import styles from './TeamLookup.module.css';
 
 export default function TeamLookup() {
   const [active, setActive] = useState(true)
 
-  const [region, setRegion] = useState("None");
+  const [country, setCountry] = useState("None");
+  const [stateProv, setStateProv] = useState("None")
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Teams");
   const [title, setTitle] = useState("Team Lookup")
@@ -53,8 +61,13 @@ export default function TeamLookup() {
       setData(clean(new_teams.results));
     };
 
-    const getTeams_byRegion = async () => {
-      const new_teams = await fetchTeams_byRegion(region, active, "elo");
+    const getTeams_byCountry = async () => {
+      const new_teams = await fetchTeams_byCountry(country, active, "elo");
+      setData(clean(new_teams.results));
+    }
+
+    const getTeams_byState = async () => {
+      const new_teams = await fetchTeams_byState(country, stateProv, active, "elo");
       setData(clean(new_teams.results));
     }
 
@@ -64,9 +77,10 @@ export default function TeamLookup() {
     }
 
     if(format==="Teams") {getTeams()}
-    else if(format==="Region") {getTeams_byRegion()}
+    else if(format==="Country") {getTeams_byCountry()}
+    else if(format==="State") {getTeams_byState()}
     else {getTeams_byDistrict()}
-  }, [format, region, district, active]);
+  }, [format, country, stateProv, district, active]);
 
   const addressDefinitions = faker.definitions.address
   const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
@@ -83,6 +97,22 @@ export default function TeamLookup() {
     {value: "Mexico", label: "Mexico"},
     {value: "Netherlands", label: "Netherlands"},
     {value: "Turkey", label: "Turkey"},
+  ]
+
+  const canadaOptions = [
+    {value: "AB", label: "Alberta"},
+    {value: "BC", label: "British Columbia"},
+    {value: "MB", label: "Manitoba"},
+    {value: "NB", label: "New Brunswick"},
+    {value: "NL", label: "Newfoundland"},
+    {value: "NT", label: "Northwest Territories"},
+    {value: "NS", label: "Nova Scotia"},
+    {value: "NU", label: "Nunavut"},
+    {value: "ON", label: "Ontario"},
+    {value: "PE", label: "Prince Edward Island"},
+    {value: "QC", label: "Québec"},
+    {value: "SK", label: "Saskatchewan"},
+    {value: "YT", label: "Yukon"},
   ]
 
   const districtOptions = [
@@ -106,23 +136,22 @@ export default function TeamLookup() {
   function allClick() {
     setFormat("Teams")
     setTitle("Team Lookup");
-    setStateDropdown("Select State")
     setCountryDropdown("Select Country")
+    setStateDropdown("Select State")
     setDistrictDropdown("Select District")
   };
 
   const stateClick = (state) => {
-    setRegion(state["value"]);
-    setFormat("Region");
+    setStateProv(state["value"]);
+    setFormat("State");
     setTitle(`Team Lookup - ${state["label"]}`);
     setStateDropdown(state["label"])
-    setCountryDropdown("Select Country")
     setDistrictDropdown("Select District")
   }
 
   const countryClick = (country) => {
-    setRegion(country["value"]);
-    setFormat("Region");
+    setCountry(country["value"]);
+    setFormat("Country");
     setTitle(`Team Lookup - ${country["label"]}`);
     setStateDropdown("Select State")
     setCountryDropdown(country["label"])
@@ -169,9 +198,9 @@ export default function TeamLookup() {
               styles={{
                 menu: provided => ({ ...provided, zIndex: 9999 })
               }}
-              options = {stateOptions}
-              onChange = {stateClick}
-              value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
+              options = {countryOptions}
+              onChange = {countryClick}
+              value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
             />
 
             <Select
@@ -179,9 +208,9 @@ export default function TeamLookup() {
               styles={{
                 menu: provided => ({ ...provided, zIndex: 9999 })
               }}
-              options = {countryOptions}
-              onChange = {countryClick}
-              value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
+              options = {stateOptions}
+              onChange = {stateClick}
+              value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
             />
 
             <Select

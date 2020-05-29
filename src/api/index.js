@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const url = 'https://backend.statbotics.io/api';
+//const url = 'https://backend.statbotics.io/api';
+const url = 'http://localhost:8000/api';
 
 /*TEAMS API CALLS*/
 
@@ -19,14 +20,33 @@ export const fetchTeams = async (active, method) => {
   }
 };
 
-export const fetchTeams_byRegion = async (region, active, method) => {
+export const fetchTeams_byCountry = async (country, active, method) => {
   try {
     var teams;
     if(active) {
-      teams = await axios.get(`${url}/teams/region/${region}/active/by/${method}`);
+      teams = await axios.get(`${url}/teams/country/${country}/active/by/${method}`);
     }
     else {
-      teams = await axios.get(`${url}/teams/region/${region}/by/${method}`);
+      teams = await axios.get(`${url}/teams/country/${country}/by/${method}`);
+    }
+    return teams.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const fetchTeams_byState = async (country, state, active, method) => {
+  if(state==="All") {
+    return fetchTeams_byCountry(country, active, method)
+  }
+
+  try {
+    var teams;
+    if(active) {
+      teams = await axios.get(`${url}/teams/country/${country}/state/${state}/active/by/${method}`);
+    }
+    else {
+      teams = await axios.get(`${url}/teams/country/${country}/state/${state}/by/${method}`);
     }
     return teams.data;
   } catch (error) {
@@ -60,9 +80,22 @@ export const fetchTeamsYear = async (year, method) => {
   }
 };
 
-export const fetchTeamsYear_byRegion = async (region, year, method) => {
+export const fetchTeamsYear_byCountry = async (country, year, method) => {
   try {
-    const teams = await axios.get(`${url}/teams/region/${region}/year/${year}/by/${method}`);
+    const teams = await axios.get(`${url}/teams/country/${country}/year/${year}/by/${method}`);
+    return teams.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export const fetchTeamsYear_byState = async (country, state, year, method) => {
+  if(state==="All") {
+    return fetchTeamsYear_byCountry(country, year, method)
+  }
+
+  try {
+    const teams = await axios.get(`${url}/teams/country/${country}/state/${state}/year/${year}/by/${method}`);
     return teams.data;
   } catch (error) {
     return error;
