@@ -27,7 +27,7 @@ if (CLOUDSQL_CONNECTION==None or
     SECRET_KEY = getEnvVar(client, "SECRET_KEY")
 
 #comment out to use the production database
-CLOUDSQL_DATABASE += "2"
+#CLOUDSQL_DATABASE += "2"
 
 print(CLOUDSQL_CONNECTION)
 print(CLOUDSQL_DATABASE)
