@@ -68,7 +68,8 @@ class TeamEventFilterSet(django_filters.FilterSet):
 class TeamYearFilterSet(django_filters.FilterSet):
     year = django_filters.NumberFilter(method='get_year', field_name='year')
     team = django_filters.NumberFilter(method='get_team', field_name='team')
-    region = django_filters.CharFilter(method='get_region', field_name='region')
+    country = django_filters.CharFilter(method='get_country', field_name='country')
+    state = django_filters.CharFilter(method='get_state', field_name='state')
     district = django_filters.CharFilter(method='get_district', field_name='district')
     o = django_filters.OrderingFilter(
         fields=(
@@ -89,8 +90,12 @@ class TeamYearFilterSet(django_filters.FilterSet):
         if value: return queryset.filter(team=value)
         return queryset
 
-    def get_region(self, queryset, field_name, value):
-        if value: return queryset.filter(region=value)
+    def get_country(self, queryset, field_name, value):
+        if value: return queryset.filter(country=value)
+        return queryset
+
+    def get_state(self, queryset, field_name, value):
+        if value: return queryset.filter(state=value)
         return queryset
 
     def get_district(self, queryset, field_name, value):
@@ -99,13 +104,14 @@ class TeamYearFilterSet(django_filters.FilterSet):
 
     class Meta:
         model = TeamYear
-        fields = ['year', 'team']
+        fields = ['year', 'team', 'country', 'state', 'district']
 
 class TeamFilterSet(django_filters.FilterSet):
     team = django_filters.NumberFilter(method='get_team', field_name='team')
     active = django_filters.NumberFilter(method='get_active', field_name='active')
     years_active = django_filters.NumberFilter(method='get_years_active', field_name='years_active')
-    region = django_filters.CharFilter(method='get_region', field_name='region')
+    country = django_filters.CharFilter(method='get_country', field_name='country')
+    state = django_filters.CharFilter(method='get_state', field_name='state')
     district = django_filters.CharFilter(method='get_district', field_name='district')
     o = django_filters.OrderingFilter(
         fields=(
@@ -130,8 +136,12 @@ class TeamFilterSet(django_filters.FilterSet):
         if value: return queryset.filter(years_active=value)
         return queryset
 
-    def get_region(self, queryset, field_name, value):
-        if value: return queryset.filter(region=value)
+    def get_country(self, queryset, field_name, value):
+        if value: return queryset.filter(country=value)
+        return queryset
+
+    def get_state(self, queryset, field_name, value):
+        if value: return queryset.filter(state=value)
         return queryset
 
     def get_district(self, queryset, field_name, value):
@@ -140,7 +150,7 @@ class TeamFilterSet(django_filters.FilterSet):
 
     class Meta:
         model = Team
-        fields = ['team', 'active', 'years_active', 'region', 'district']
+        fields = ['team', 'active', 'years_active', 'country', 'state', 'district']
 
 class EventFilterSet(django_filters.FilterSet):
     event = django_filters.CharFilter(method='get_event', field_name='event')

@@ -35,7 +35,8 @@ class TeamYear(models.Model):
     year = models.IntegerField() #ex: 2019
     team = models.IntegerField() #ex: 5511
     name = models.CharField(max_length=50) #ex: Cortechs Robotics
-    region = models.CharField(max_length=30) #ex: Israel
+    country = models.CharField(max_length=30) #ex: Israel
+    state = models.CharField(max_length=10) #ex: California
     district = models.CharField(max_length=10) #ex: fnc
     elo_start = models.IntegerField() #ex: 1746
     elo_pre_champs = models.IntegerField() #ex: 1746
@@ -50,7 +51,8 @@ class TeamYear(models.Model):
 class Team(models.Model):
     team = models.IntegerField(primary_key=True) #ex: 5511
     name = models.CharField(max_length=50) #ex: Cortechs Robotics
-    region = models.CharField(max_length=30) #ex: CA
+    country = models.CharField(max_length=30) #ex: Israel
+    state = models.CharField(max_length=10) #ex: CA
     district = models.CharField(max_length=10) #ex: FNC
     years_active = models.IntegerField() #ex: 19
     active = models.BooleanField() #ex: True
