@@ -35,4 +35,4 @@ def processYears(startYear, endYear):
         processYear(year)
 
 if __name__ == "__main__":
-    processYears()
+    processYears(2002, 2020)

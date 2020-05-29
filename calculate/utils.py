@@ -36,4 +36,5 @@ def saveAllTeamsInfo(teams):
     dump("./data/teams/teams_info.p", teams)
 
 def loadAllTeamsInfo():
-    return load("./data/teams/teams_info.p")
+    try: return load("./data/teams/teams_info.p")
+    except Exception as e: return {}

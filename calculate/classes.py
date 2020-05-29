@@ -13,6 +13,7 @@ class Match:
 
         self.red_score = data["alliances"]["red"]["score"]
         self.blue_score = data["alliances"]["blue"]["score"]
+
         if(self.red_score>self.blue_score): self.winner="red"
         elif(self.blue_score>self.red_score): self.winner="blue"
         else: self.winner = ""
