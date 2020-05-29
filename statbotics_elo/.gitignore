@@ -1,0 +1,6 @@
+
+*.pyc
+*.p
+
+constants.py
+docs/*
