@@ -75,6 +75,8 @@ class UserView(viewsets.ModelViewSet):
 '''API SECTION'''
 #syntax: '/api/teams/?team=%(num)s&limit=2000&o=time'
 
+'''TEAM VIEWS'''
+
 class Team(RedirectView):
     url = '/api/_teams/?team=%(num)s'
 
@@ -87,6 +89,9 @@ class Team_Events(RedirectView):
 class Team_Matches(RedirectView):
     url = '/api/_team_matches/?team=%(num)s&limit=10000&o=time'
 
+
+'''TEAM YEAR VIEWS'''
+
 class TeamYear(RedirectView):
     url = '/api/_team_years/?team=%(num)s&year=%(year)s'
 
@@ -96,11 +101,17 @@ class TeamYear_Events(RedirectView):
 class TeamYear_Matches(RedirectView):
     url = '/api/_team_matches/?team=%(num)s&year=%(year)s&limit=1000&o=time'
 
+
+'''TEAM YEAR EVENT VIEWS'''
+
 class TeamYearEvent(RedirectView):
     url = '/api/_team_events/?team=%(num)s&year=%(year)s&event=%(event)s'
 
 class TeamYearEvent_Matches(RedirectView):
     url = '/api/_team_matches/?team=%(num)s&year=%(year)s&event=%(event)s&limit=100o=time'
+
+
+'''TEAMS VIEWS'''
 
 class Teams(RedirectView):
     url = '/api/_teams/?limit=10000'
@@ -126,17 +137,32 @@ class TeamsDistrictActive(RedirectView):
 class TeamsDistrictActive_byElo(RedirectView):
     url = '/api/_teams?district=%(district)s&active=1&limit=10000&o=-%(elo)s'
 
-class TeamsRegion(RedirectView):
-    url = '/api/_teams?region=%(region)s&limit=10000'
+class TeamsCountry(RedirectView):
+    url = '/api/_teams?country=%(country)s&limit=10000'
 
-class TeamsRegion_byElo(RedirectView):
-    url = '/api/_teams?region=%(region)s&limit=10000&o=-%(elo)s'
+class TeamsCountry_byElo(RedirectView):
+    url = '/api/_teams?country=%(country)s&limit=10000&o=-%(elo)s'
 
-class TeamsRegionActive(RedirectView):
-    url = '/api/_teams?region=%(region)s&active=1&limit=10000'
+class TeamsCountryActive(RedirectView):
+    url = '/api/_teams?country=%(country)s&active=1&limit=10000'
 
-class TeamsRegionActive_byElo(RedirectView):
-    url = '/api/_teams?region=%(region)s&active=1&limit=10000&o=-%(elo)s'
+class TeamsCountryActive_byElo(RedirectView):
+    url = '/api/_teams?country=%(country)s&active=1&limit=10000&o=-%(elo)s'
+
+class TeamsState(RedirectView):
+    url = '/api/_teams?country=%(country)s&state=%(state)s&limit=10000'
+
+class TeamsState_byElo(RedirectView):
+    url = '/api/_teams?country=%(country)s&state=%(state)s&limit=10000&o=-%(elo)s'
+
+class TeamsStateActive(RedirectView):
+    url = '/api/_teams?country=%(country)s&state=%(state)s&active=1&limit=10000'
+
+class TeamsStateActive_byElo(RedirectView):
+    url = '/api/_teams?country=%(country)s&state=%(state)s&active=1&limit=10000&o=-%(elo)s'
+
+
+'''TEAMS YEARs VIEWS'''
 
 class TeamsYear(RedirectView):
     url = '/api/_team_years/?year=%(year)s&limit=10000'
@@ -150,23 +176,38 @@ class TeamsDistrict_Years(RedirectView):
 class TeamsDistrict_Years_byElo(RedirectView):
     url = '/api/_team_years/?district=%(district)s&limit=10000&o=-%(elo)s'
 
-class TeamsRegion_Years(RedirectView):
-    url = '/api/_team_years/?region=%(region)s&limit=10000'
-
-class TeamsRegion_Years_byElo(RedirectView):
-    url = '/api/_team_years/?region=%(region)s&limit=10000&o=-%(elo)s'
-
 class TeamsDistrictYear(RedirectView):
     url = '/api/_team_years/?year=%(year)s&district=%(district)s&limit=10000'
 
 class TeamsDistrictYear_byElo(RedirectView):
     url = '/api/_team_years/?year=%(year)s&district=%(district)s&limit=10000&o=-%(elo)s'
 
-class TeamsRegionYear(RedirectView):
-    url = '/api/_team_years/?year=%(year)s&region=%(region)s&limit=10000'
+class TeamsCountry_Years(RedirectView):
+    url = '/api/_team_years/?country=%(country)s&limit=10000'
 
-class TeamsRegionYear_byElo(RedirectView):
-    url = '/api/_team_years/?year=%(year)s&region=%(region)s&limit=10000&o=-%(elo)s'
+class TeamsCountry_Years_byElo(RedirectView):
+    url = '/api/_team_years/?country=%(country)s&limit=10000&o=-%(elo)s'
+
+class TeamsCountryYear(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&country=%(country)s&limit=10000'
+
+class TeamsCountryYear_byElo(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&country=%(country)s&limit=10000&o=-%(elo)s'
+
+class TeamsState_Years(RedirectView):
+    url = '/api/_team_years/?country=%(country)s&state=%(state)s&limit=10000'
+
+class TeamsState_Years_byElo(RedirectView):
+    url = '/api/_team_years/?country=%(country)s&state=%(state)s&limit=10000&o=-%(elo)s'
+
+class TeamsStateYear(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&country=%(country)s&state=%(state)s&limit=10000'
+
+class TeamsStateYear_byElo(RedirectView):
+    url = '/api/_team_years/?year=%(year)s&country=%(country)s&state=%(state)s&limit=10000&o=-%(elo)s'
+
+
+'''YEAR VIEWS'''
 
 class Year(RedirectView):
     url = '/api/_years/?year=%(year)s'
@@ -176,6 +217,9 @@ class YearEvent(RedirectView):
 
 class Years(RedirectView):
     url = '/api/_years/?limit=100'
+
+
+'''EVENT VIEWS'''
 
 class Events(RedirectView):
     url = '/api/_events/?limit=10000'
