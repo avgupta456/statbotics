@@ -93,22 +93,28 @@ def getTeamInfo(number):
     except Exception as e: district = "None"
 
     if(country=="Canada" and state not in Canada): print(state)
-    
+
     if(state in USA): state = USA[state]
     elif(state in Canada): state = Canada[state]
-    else: state="All"
+    elif(country!="USA" and country!="Canada"): state="All"
 
     if(district in districts): district = districts[district]
 
     return [name, country, state, district, years]
 
 def saveAllTeamsInfo():
-    out = {}
+    out = utils.loadAllTeamsInfo()
     count = 0
     for team in utils.loadAllTeams():
         count+=1
-        if(count%100==0): print(count)
-        out[team] = getTeamInfo(team)
+
+        if(count%100==0):
+            print(count)
+            utils.saveAllTeamsInfo(out)
+
+        if team in out: pass
+        else: out[team] = getTeamInfo(team)
+        
     utils.saveAllTeamsInfo(out)
 
 if __name__ == "__main__":
