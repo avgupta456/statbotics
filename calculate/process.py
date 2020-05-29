@@ -2,7 +2,7 @@ from classes import Team
 import utils
 import elo
 
-def processYear(year):
+def processYear(year, all_teams):
     matches = utils.loadMatches(year)
     teams = {}
 
@@ -30,9 +30,14 @@ def processYear(year):
     utils.saveProcessedMatches(year, matches)
     utils.saveTeams(year, teams)
 
+    for team in teams:
+        all_teams.add(team)
+
 def processYears(startYear, endYear):
+    all_teams = set()
     for year in range(startYear, endYear+1):
-        processYear(year)
+        processYear(year, all_teams)
+    utils.saveAllTeams(all_teams)
 
 if __name__ == "__main__":
     processYears(2002, 2020)
