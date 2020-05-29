@@ -84,38 +84,46 @@ export default function TeamLookup() {
     else {getTeams_byDistrict()}
   }, [format, country, stateProv, district, year]);
 
+
+  const countryOptions = [
+    {value: "USA", label: "USA"},
+    {value: "Canada", label: "Canada"},
+    {value: "Turkey", label: "Turkey"},
+    {value: "Israel", label: "Israel"},
+    {value: "China", label: "China"},
+    {value: "Mexico", label: "Mexico"},
+    {value: "Australia", label: "Australia"},
+    {value: "Brazil", label: "Brazil"},
+    {value: "Chinese Taipei", label: "Chinese Taipei"},
+    {value: "Netherlands", label: "Netherlands"},
+    {value: "Chile", label: "Chile"},
+    {value: "United Kingdom", label: "United Kingdom"},
+    {value: "Colombia", label: "Colombia"},
+    {value: "Japan", label: "Japan"},
+    {value: "Poland", label: "Poland"},
+    {value: "India", label: "India"},
+    {value: "Switzerland", label: "Switzerland"}
+  ]
+
   const addressDefinitions = faker.definitions.address
   const usaOptions = _.map(addressDefinitions.state, (state, index) => ({
     value: addressDefinitions.state_abbr[index],
     label: state,
   }));
 
+  usaOptions.unshift({value: "All", label: "All"})
+
   const canadaOptions = [
+    {value: "All", label: "All"},
     {value: "AB", label: "Alberta"},
     {value: "BC", label: "British Columbia"},
     {value: "MB", label: "Manitoba"},
-    {value: "NB", label: "New Brunswick"},
-    {value: "NL", label: "Newfoundland"},
-    {value: "NT", label: "Northwest Territories"},
-    {value: "NS", label: "Nova Scotia"},
-    {value: "NU", label: "Nunavut"},
     {value: "ON", label: "Ontario"},
-    {value: "PE", label: "Prince Edward Island"},
     {value: "QC", label: "Québec"},
     {value: "SK", label: "Saskatchewan"},
-    {value: "YT", label: "Yukon"},
   ]
 
-  const countryOptions = [
-    {value: "Australia", label: "Australia"},
-    {value: "Brazil", label: "Brazil"},
-    {value: "Canada", label: "Canada"},
-    {value: "China", label: "China"},
-    {value: "Israel", label: "Israel"},
-    {value: "Mexico", label: "Mexico"},
-    {value: "Netherlands", label: "Netherlands"},
-    {value: "Turkey", label: "Turkey"},
-  ]
+  const noOptions = [];
 
   const districtOptions = [
     {value: "chs", label: "Chesapeake"},
@@ -161,38 +169,47 @@ export default function TeamLookup() {
   function allClick() {
     setFormat("Teams")
     setTitle(`${year} Team Lookup`);
+
     setCountryDropdown("Select Country")
     setStateDropdown("Select State")
     setDistrictDropdown("Select District")
   };
 
   const stateClick = (state) => {
-    setStateProv(state["value"]);
     setFormat("State");
-    setTitle(`${year} Team Lookup - ${state["label"]}`);
+    if(state["value"]==="All") {setTitle(`Team Lookup - ${country}`)}
+    else {setTitle(`Team Lookup - ${state["label"]}`)}
+
+    setStateProv(state["value"]);
+
     setStateDropdown(state["label"])
     setDistrictDropdown("Select District")
   }
 
   const countryClick = (country) => {
-    setCountry(country["value"]);
     setFormat("Country");
     setTitle(`${year} Team Lookup - ${country["label"]}`);
-    if(country==="USA") {setStateDropdown("Select State")}
-    else if(country==="Canada") {setStateDropdown("Select Province")}
-    else {setStateDropdown("All")}
+
+    setCountry(country["value"]);
 
     setCountryDropdown(country["label"])
+    if(country["label"]==="USA") {setStateDropdown("Select State")}
+    else if(country["label"]==="Canada") {setStateDropdown("Select Province")}
+    else {setStateDropdown("All")}
     setDistrictDropdown("Select District")
   }
 
   const districtClick = (district) => {
-    setDistrict(district["value"]);
     setFormat("District");
     setTitle(`${year} Team Lookup - ${district["label"]}`);
-    setStateDropdown("Select State")
-    setCountryDropdown("Select Country")
-    setDistrictDropdown(district["label"])
+
+    setCountry("None");
+    setStateProv("None");
+    setDistrict(district["value"]);
+
+    setCountryDropdown("Select Country");
+    setStateDropdown("Select State");
+    setDistrictDropdown(district["label"]);
   }
 
   return (
@@ -238,7 +255,7 @@ export default function TeamLookup() {
               styles={{
                 menu: provided => ({ ...provided, zIndex: 9999 })
               }}
-              options = {usaOptions}
+              options = {country==="USA" ? usaOptions : country==="Canada" ? canadaOptions: noOptions}
               onChange = {stateClick}
               value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
             />
