@@ -15,10 +15,12 @@ blacklist = [
 ]
 
 def get_data(start_year, end_year):
+    print("Team Matches")
     team_matches = []
     id = 1
 
     for year in range(start_year, end_year+1):
+        print(year)
         for m in utils.loadProcessedMatches(year):
             event = m.key.split("_")[0][4:]
             match = m.key.split("_")[1]
@@ -49,17 +51,19 @@ def get_data(start_year, end_year):
     team_matches = pd.DataFrame(team_matches, columns = ["id", "year", "event", "match", "time", "team", "elo_start", "elo_end", "elo_diff"])
     team_matches = team_matches.sort_values(by=['year', 'event', 'team'])
 
+    print("Team Events")
     team_events = []
     id = 1
 
     for year in range(start_year, end_year+1):
+        print(year)
         year_data = team_matches[team_matches.year == year]
         for event in year_data['event'].unique():
             event_data = year_data[year_data.event == event]
             time = event_data["time"].iloc[0]
             for team in event_data['team'].unique():
                 team_data = event_data[event_data.team == team]
-                tea_data = team_data.sort_values(by=['time'], ascending=True)
+                team_data = team_data.sort_values(by=['time'], ascending=True)
 
                 elo_start = team_data["elo_start"].iloc[0]
                 if (team_data["match"].iloc[0])[:2]!="qm":
@@ -83,11 +87,13 @@ def get_data(start_year, end_year):
 
     champ_keys = ['arc', 'cars', 'carv', 'cur', 'dal', 'dar', 'gal', 'hop', 'new', 'roe', 'tes', 'tur']
 
+    print("Team Years")
     team_years = []
     all_teams_info = utils.loadAllTeamsInfo()
     id = 1
 
     for year in range(start_year, end_year+1):
+        print(year)
         year_data_events = team_events[team_events.year == year]
         year_data_matches = team_matches[team_matches.year == year]
 
@@ -111,7 +117,7 @@ def get_data(start_year, end_year):
 
             [name, country, state, district, _] = all_teams_info[team]
 
-            team_years.append([id, year, team, name, region, district, elo_start,
+            team_years.append([id, year, team, name, country, state, district, elo_start,
                 elo_pre_champs, elo_end, elo_mean, elo_max, elo_diff])
             id += 1
 
@@ -119,6 +125,7 @@ def get_data(start_year, end_year):
     "district", "elo_start", "elo_pre_champs", "elo_end", "elo_mean", "elo_max", "elo_diff"])
     team_years = team_years.sort_values(by=['year', 'team'])
 
+    print("Teams")
     teams = []
 
     utils.saveAllTeams(team_years['team'].unique())
@@ -141,18 +148,18 @@ def get_data(start_year, end_year):
 
         '''accounts for 2020 season suspension (with mean revision)'''
         if(elo==-1):
-            try: elo_1yr = elo[-2]
+            try: elo_1yr = elos[-2]
             except Exception as e: elo_1yr = -1
 
-            try: elo_2yr = elo[-3]
+            try: elo_2yr = elos[-3]
             except Exception as e: elo_2yr = -1
 
             if(elo_1yr==-1):
                 elo = -1 #team has not played last two years, inactive
             elif(elo_2yr==-1):
-                elo = elo_1yr * 0.56 + 1450 * 0.44 #rookie team
+                elo = int(elo_1yr * 0.56 + 1450 * 0.44) #rookie team
             else:
-                elo = elo_1yr * 0.56 + elo_2yr * 0.24 + 1450 * 0.20
+                elo = int(elo_1yr * 0.56 + elo_2yr * 0.24 + 1450 * 0.20)
 
         elo_max_year = start_year+elos.index(elo_max)
         [name, country, state, district, years] = all_teams_info[team]
@@ -165,6 +172,7 @@ def get_data(start_year, end_year):
     "years_active", "active", "elo", "elo_recent", "elo_mean", "elo_max", "elo_max_year"])
     teams = teams.sort_values(by=['team'])
 
+    print("Events")
     events = []
     id = 1
 
@@ -193,7 +201,9 @@ def get_data(start_year, end_year):
     events = pd.DataFrame(events, columns=["id", "year", "event", "elo_max", "elo_top8", "elo_top24", "elo_mean", "elo_sd"])
     events = events.sort_values(by=['year', 'event'])
 
+    print("Years")
     years = []
+
     for year in range(start_year, end_year+1):
         teams_temp = utils.loadTeams(year)
         board, elos = sorted(teams_temp.values()), []
@@ -234,7 +244,7 @@ def main(startYear, endYear):
 
 if __name__ == "__main__":
     start = datetime.datetime.now()
-    main()
+    main(2002, 2020)
 
     end = datetime.datetime.now()
     print("Total Time: " + str(end-start))
