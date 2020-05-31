@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 
 import WindowedSelect from "react-windowed-select";
-import { fetchTeams } from './../../api'
+import { fetchTeams_Simple } from './../../api'
 
 export default function TeamSelect({className, onChange, isMulti}) {
   const [teams, setTeams] = React.useState([])
@@ -9,14 +9,19 @@ export default function TeamSelect({className, onChange, isMulti}) {
   function cleanList(teams) {
     return (
       teams.map(
-        function(x, i) {return x["team"]}
+        function(x, i) {
+          return {
+            value: x["team"],
+            label: x["team"] + " | " + x["name"],
+          }
+        }
       )
     )
   }
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeams(true, "elo_recent");
+      const new_teams = await fetchTeams_Simple();
       setTeams(cleanList(new_teams.results))
     }
 
@@ -26,10 +31,11 @@ export default function TeamSelect({className, onChange, isMulti}) {
 
   return (
       <WindowedSelect
+        placeholder={"Search Teams"}
         className={className}
         isMulti = {isMulti}
         onChange = {onChange}
-        options={teams.map(function(x) {return({value: x, label: x})})}
+        options={teams}
       />
   );
 }
