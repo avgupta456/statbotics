@@ -10,6 +10,9 @@ export default function TeamSelect({className, onChange, isMulti}) {
     return (
       teams.map(
         function(x, i) {
+          if(x["name"].length>30) {
+            x["name"]=x["name"].substring(0, 27)+"..."
+          }
           return {
             value: x["team"],
             label: x["team"] + " | " + x["name"],
