@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useHistory } from "react-router-dom";
 
-import { Nav, Navbar } from "react-bootstrap";
+import { Nav, Navbar, NavDropdown } from "react-bootstrap";
+
+import { TeamSelect } from "./components"
 
 import {
   Home,
@@ -13,12 +15,20 @@ import {
   Hypothetical,
 }
 from "./components/Containers";
+
+import styles from "./App.module.css";
 import logo from "./static/favicon.ico";
 
 const App = () => {
+  const history = useHistory();
+
+  const routeChange = (team) => {
+    history.push(`/teams/${team.value}`);
+  }
+
   return (
     <div>
-      <Navbar collapseOnSelect expand="md" bg="dark" variant="dark">
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Navbar.Brand href="/">
           <img
             alt="Logo"
@@ -32,11 +42,19 @@ const App = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="/">Home</Nav.Link>
-          <Nav.Link href="/teams">Teams Table</Nav.Link>
-          <Nav.Link href="/years">Years Table</Nav.Link>
-          <Nav.Link href="/compare">Compare Teams</Nav.Link>
-          <Nav.Link href="/predict">Predict Match</Nav.Link>
+          <Nav.Link className={styles.navItem} href="/">Home</Nav.Link>
+          <Nav.Link className={styles.navItem} href="/teams">Teams Table</Nav.Link>
+          <Nav.Link className={styles.navItem} href="/years">Years Table</Nav.Link>
+          <Nav.Link className={styles.navItem} href="/compare">Compare Teams</Nav.Link>
+          <Nav.Link className={styles.navItem} href="/predict">Predict Match</Nav.Link>
+        </Nav>
+        <NavDropdown.Divider />
+        <Nav>
+          <TeamSelect
+          className={styles.search}
+          onChange={routeChange}
+          isMulti={false}
+          />
         </Nav>
       </Navbar.Collapse>
       </Navbar>

@@ -5,6 +5,15 @@ const url = 'https://backend.statbotics.io/api';
 
 /*TEAMS API CALLS*/
 
+export const fetchTeams_Simple = async () => {
+  try {
+    var teams = await axios.get(`${url}/teams`);
+    return teams.data;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const fetchTeams = async (active, method) => {
   try {
     var teams;

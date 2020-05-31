@@ -1,0 +1,15 @@
+.navItem {
+  margin-right: 8px;
+}
+
+.search {
+  width: 200px;
+  font-size: 12px;
+}
+
+@media (max-width: 950px) {
+  .search {
+    width: 90%;
+    margin: 10px 5% 0 5%;
+  }
+}
