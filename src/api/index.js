@@ -6,6 +6,11 @@ const url = 'https://backend.statbotics.io/api';
 /*TEAMS API CALLS*/
 
 export const fetchTeams_Simple = async () => {
+  const key = "Teams_Simple"
+  if(localStorage.getItem(key)!==undefined && localStorage.getItem(key)!==null) {
+    return JSON.parse(localStorage.getItem(key))
+  }
+
   try {
     var teams = await axios.get(`${url}/teams`);
     return teams.data;

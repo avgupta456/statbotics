@@ -26,6 +26,8 @@ export default function TeamSelect({className, onChange, isMulti}) {
   useEffect(() => {
     const getTeams = async () => {
       const new_teams = await fetchTeams_Simple();
+      const key = "Teams_Simple"
+      localStorage.setItem(key, JSON.stringify(new_teams))
       setTeams(cleanList(new_teams.results))
     }
 
