@@ -54,7 +54,7 @@ export default function ReactTable({title, columns, data}) {
   const options = {
     filter: false,
     print: false,
-    responsive: 'scrollMaxHeight',
+    responsive: 'scrollFullHeight',
     rowsPerPageOptions: [10, 20, 50],
     selectableRows: "none",
     fixedHeaderOptions: {
