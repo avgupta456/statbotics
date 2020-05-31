@@ -36,7 +36,7 @@ export default function TeamCompare() {
 
     getTeamsData(chosenTeams)
 
-  }, [chosenTeams])
+  }, [chosenTeams, teamsData])
 
   function teamsClick(teams) {
     if(teams===null) {setChosenTeams([])}

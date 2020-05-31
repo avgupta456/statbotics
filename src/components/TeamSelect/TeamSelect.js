@@ -5,13 +5,14 @@ import { fetchTeams_Simple } from './../../api'
 
 export default function TeamSelect({className, onChange, isMulti}) {
   const [teams, setTeams] = React.useState([])
+  const max_length = 30
 
   function cleanList(teams) {
     return (
       teams.map(
         function(x, i) {
-          if(x["name"].length>30) {
-            x["name"]=x["name"].substring(0, 27)+"..."
+          if(x["name"].length>max_length) {
+            x["name"]=x["name"].substring(0, max_length-3)+"..."
           }
           return {
             value: x["team"],

@@ -1,16 +1,19 @@
 .navItem {
-  margin-right: 8px;
+  margin-right: 5px;
+
 }
 
 .search {
-  width: 200px;
-  font-size: 10px;
+  width: 225px;
+  margin-right: 25px;
+  font-size: 11px;
   z-index: 9999;
 }
 
-@media (max-width: 950px) {
+@media (max-width: 992px) {
   .search {
-    width: 90%;
-    margin: 10px 5% 0 5%;
+    width: 80%;
+    margin: 10px 10% 0 10%;
+    font-size: 14px;
   }
 }
