@@ -8,7 +8,8 @@ const url = 'https://backend.statbotics.io/api';
 export const fetchTeams_Simple = async () => {
   const key = "Teams_Simple"
   if(localStorage.getItem(key)!==undefined && localStorage.getItem(key)!==null) {
-    return JSON.parse(localStorage.getItem(key))
+    const data = JSON.parse(localStorage.getItem(key))
+    if(data.length>6000) { return data }
   }
 
   try {
