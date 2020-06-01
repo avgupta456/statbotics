@@ -70,7 +70,12 @@ export default function ReactTable({title, columns, data}) {
       console.log("Here")
       if(rows<=10) {setResponsive("scrollMaxHeight")}
       else {setResponsive("ScrollFullHeight")}
-    }
+    },
+    textLabels: {
+      body: {
+        noMatch: "Data on the way, hang tight!",
+      },
+    },
   };
 
   const new_columns = columns.map(
