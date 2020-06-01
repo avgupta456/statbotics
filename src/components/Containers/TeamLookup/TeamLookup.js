@@ -32,10 +32,10 @@ export default function TeamLookup() {
   const [countryDropdown, setCountryDropdown] = useState("Select Country")
   const [districtDropdown, setDistrictDropdown] = useState("Select District")
 
-  //column name, searchable, visible, filterable
+  //column name, searchable, visible, link, hint
   const columns = [
-    ["Number", true, true, false, ""],
-    ["Name", true, true, false, "Click names for details"],
+    ["Number", true, true, true, ""],
+    ["Name", true, true, true, "Click names for details"],
     ["Rank", false, true, false, "By Current Elo"],
     ["Current Elo", false, true, false, "All Elos are sortable"],
     ["Recent Elo", false, true, false, ""],
@@ -46,7 +46,7 @@ export default function TeamLookup() {
   function clean(teams) {
     return teams.map(function(x, i){ return [
       x["team"],
-      <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
+      x["name"],
       i+1,
       x["elo"],
       x["elo_recent"],

@@ -74,17 +74,28 @@ export default function ReactTable({title, columns, data}) {
   };
 
   const new_columns = columns.map(
-    function([name, searchable, visible, filterable, hint]) {
-      return {
+    function([name, searchable, visible, link, hint]) {
+      var dict = {
         label: `${name}`,
         options: {
           sort: true,
-          filter: `${filterable}`==="true",
+          filter: "false",
           searchable: `${searchable}`==="true",
           display: `${visible}`==="true",
-          hint: hint
+          viewColumns: `${visible}`==="true",
+          hint: hint,
         },
       }
+
+      if(link) {
+        dict["options"]["customBodyRender"] = (value, tableMeta, updateValue) => {
+          return (
+            <a href={`teams/${value}`}>{value}</a>
+          )
+        }
+      }
+      
+      return dict
     }
   );
 
