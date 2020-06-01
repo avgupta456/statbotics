@@ -193,72 +193,69 @@ export default function TeamLookup() {
       <Paper
         elevation={3}
         className = {styles.body}
+      >
+        <div>
+        <ButtonGroup className={styles.button_group}>
 
-        children = {
-          <div>
-          <ButtonGroup className={styles.button_group}>
+        <Button
+          variant="outline-dark"
+          onClick={() => activeClick()}
+          className={styles.button}
+          disabled={data.length===0}
+        >
+            <Typography>{ active? "Include" : "Remove" } Inactives</Typography>
+        </Button>
 
           <Button
             variant="outline-dark"
-            onClick={() => activeClick()}
+            onClick={() => allClick()}
             className={styles.button}
             disabled={data.length===0}
           >
-              <Typography>{ active? "Include" : "Remove" } Inactives</Typography>
+            <Typography>All Teams</Typography>
           </Button>
 
-            <Button
-              variant="outline-dark"
-              onClick={() => allClick()}
-              className={styles.button}
-              disabled={data.length===0}
-            >
-              <Typography>All Teams</Typography>
-            </Button>
+          <Select
+            className={styles.dropdown}
+            styles={{
+              menu: provided => ({ ...provided, zIndex: 9999 })
+            }}
+            options = {countryOptions}
+            onChange = {countryClick}
+            value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
+            isDisabled={data.length===0}
+          />
 
-            <Select
-              className={styles.dropdown}
-              styles={{
-                menu: provided => ({ ...provided, zIndex: 9999 })
-              }}
-              options = {countryOptions}
-              onChange = {countryClick}
-              value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
-              isDisabled={data.length===0}
-            />
+          <Select
+            className={styles.dropdown}
+            styles={{
+              menu: provided => ({ ...provided, zIndex: 9999 })
+            }}
+            options = {country==="USA" ? usaOptions : country==="Canada" ? canadaOptions: usaOptions}
+            onChange = {stateClick}
+            value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
+            isDisabled={data.length===0}
+          />
 
-            <Select
-              className={styles.dropdown}
-              styles={{
-                menu: provided => ({ ...provided, zIndex: 9999 })
-              }}
-              options = {country==="USA" ? usaOptions : country==="Canada" ? canadaOptions: usaOptions}
-              onChange = {stateClick}
-              value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
-              isDisabled={data.length===0}
-            />
+          <Select
+            className={styles.dropdown}
+            styles={{
+              menu: provided => ({ ...provided, zIndex: 9999 })
+            }}
+            options = {districtOptions}
+            onChange = {districtClick}
+            value = {{value:`${districtDropdown}`, label:`${districtDropdown}`}}
+            isDisabled={data.length===0}
+          />
 
-            <Select
-              className={styles.dropdown}
-              styles={{
-                menu: provided => ({ ...provided, zIndex: 9999 })
-              }}
-              options = {districtOptions}
-              onChange = {districtClick}
-              value = {{value:`${districtDropdown}`, label:`${districtDropdown}`}}
-              isDisabled={data.length===0}
-            />
-
-            </ButtonGroup>
-
-            <ReactTable
-              title={title}
-              columns={columns}
-              data={data}
-            />
-          </div>
-        }
-      />
+          </ButtonGroup>
+          <ReactTable
+            title={title}
+            columns={columns}
+            data={data}
+          />
+        </div>
+      </Paper>
     </div>
   );
 }

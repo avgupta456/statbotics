@@ -3,6 +3,8 @@ import MUIDataTable from "mui-datatables";
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
 
+import styles from "./Table.module.css"
+
 const getMuiTheme = () => createMuiTheme({
   overrides: {
     MuiTableCell: {
@@ -49,19 +51,26 @@ const getMuiTheme = () => createMuiTheme({
 });
 
 export default function ReactTable({title, columns, data}) {
-  const theme = getMuiTheme();
+  const [responsive, setResponsive] = React.useState("scrollMaxHeight")
 
+  const theme = getMuiTheme();
+  console.log(responsive)
   const options = {
     filter: false,
     print: false,
-    responsive: 'scrollFullHeight',
+    responsive: `${responsive}`,
     rowsPerPageOptions: [10, 20, 50],
     selectableRows: "none",
     fixedHeaderOptions: {
       xAxis: false,
-      yAxis: true
+      yAxis: true,
     },
     elevation: 1,
+    onChangeRowsPerPage: (rows) => {
+      console.log("Here")
+      if(rows<=10) {setResponsive("scrollMaxHeight")}
+      else {setResponsive("ScrollFullHeight")}
+    }
   };
 
   const new_columns = columns.map(
@@ -81,12 +90,14 @@ export default function ReactTable({title, columns, data}) {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <MUIDataTable
-        title={title}
-        data={data}
-        columns={new_columns}
-        options={options}
-      />
+      <div className={styles.table}>
+        <MUIDataTable
+          title={title}
+          data={data}
+          columns={new_columns}
+          options={options}
+        />
+      </div>
     </MuiThemeProvider>
   )
 }

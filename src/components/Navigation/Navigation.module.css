@@ -4,13 +4,13 @@
 }
 
 .search {
-  width: 225px;
-  margin-right: 25px;
+  width: 220px;
+  margin-right: 20px;
   font-size: 11px;
   z-index: 9999;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 991px) {
   .search {
     width: 80%;
     margin: 10px 10% 0 10%;
