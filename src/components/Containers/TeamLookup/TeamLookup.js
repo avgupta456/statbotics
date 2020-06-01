@@ -34,7 +34,7 @@ export default function TeamLookup() {
 
   //column name, searchable, visible, link, hint
   const columns = [
-    ["Number", true, true, true, ""],
+    ["Number", true, true, false, ""],
     ["Name", true, true, true, "Click names for details"],
     ["Rank", false, true, false, "By Current Elo"],
     ["Current Elo", false, true, false, "All Elos are sortable"],
@@ -43,10 +43,11 @@ export default function TeamLookup() {
     ["Max Elo", false, true, false, ""],
   ];
 
+  //Link format is assumed "team number|team name"
   function clean(teams) {
     return teams.map(function(x, i){ return [
       x["team"],
-      x["name"],
+      x["team"]+"|"+x["name"],
       i+1,
       x["elo"],
       x["elo_recent"],

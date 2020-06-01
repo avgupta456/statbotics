@@ -32,10 +32,10 @@ export default function TeamLookup() {
   const [countryDropdown, setCountryDropdown] = useState("Select Country")
   const [districtDropdown, setDistrictDropdown] = useState("Select District")
 
-  //column name, searchable, visible, filterable
+  //column name, searchable, visible, link, hint
   const columns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, false, "Click names for details"],
+    ["Name", true, true, true, "Click names for details"],
     ["Rank", false, true, false, "By Max Elo"],
     ["Max Elo", false, true, false, "All Elos are sortable"],
     ["Mean Elo", false, true, false, ""],
@@ -47,7 +47,7 @@ export default function TeamLookup() {
   function clean(teams) {
     return teams.map(function(x, i){ return [
       x["team"],
-      <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
+      x["team"]+"|"+x["name"],
       i+1,
       x["elo_max"],
       x["elo_mean"],
@@ -122,7 +122,7 @@ export default function TeamLookup() {
     {value: "QC", label: "Québec"},
     {value: "SK", label: "Saskatchewan"},
   ]
-  
+
   const districtOptions = [
     {value: "chs", label: "Chesapeake"},
     {value: "fim", label: "Michigan"},

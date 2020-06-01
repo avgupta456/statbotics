@@ -89,12 +89,12 @@ export default function ReactTable({title, columns, data}) {
 
       if(link) {
         dict["options"]["customBodyRender"] = (value, tableMeta, updateValue) => {
-          return (
-            <a href={`teams/${value}`}>{value}</a>
-          )
+          const number = value.split("|")[0].trim()
+          const name = value.split("|")[1].trim()
+          return (<a href={`teams/${number}`}>{name}</a>)
         }
       }
-      
+
       return dict
     }
   );
