@@ -39,7 +39,7 @@ USA = {
     'New York': 'NY',
     'North Carolina': 'NC',
     'North Dakota': 'ND',
-    'Northern Mariana Islands':'MP',
+    'Northern Mariana Islands': 'MP',
     'Ohio': 'OH',
     'Oklahoma': 'OK',
     'Oregon': 'OR',
@@ -84,38 +84,54 @@ districts = {
 
 }
 
+
 def getTeamInfo(number):
     data = read_tba.get("team/frc"+str(number)+"/simple")
-    name, state, country = data["nickname"], data["state_prov"], data["country"]
+    name = data["nickname"]
+    state = data["state_prov"]
+    country = data["country"]
+
     years = len(read_tba.get("team/frc"+str(number)+"/years_participated"))
 
-    try: district = read_tba.get("team/frc"+str(number)+"/districts")[-1]["abbreviation"]
-    except Exception as e: district = "None"
+    try:
+        district = read_tba.get("team/frc"+str(number) +
+                                "/districts")[-1]["abbreviation"]
+    except Exception:
+        district = "None"
 
-    if(country=="Canada" and state not in Canada): print(state)
+    if(state in USA):
+        state = USA[state]
 
-    if(state in USA): state = USA[state]
-    elif(state in Canada): state = Canada[state]
-    elif(country!="USA" and country!="Canada"): state="All"
+    elif(state in Canada):
+        state = Canada[state]
 
-    if(district in districts): district = districts[district]
+    elif(country != "USA" and country != "Canada"):
+        state = "All"
+
+    if(district in districts):
+        district = districts[district]
 
     return [name, country, state, district, years]
+
 
 def saveAllTeamsInfo():
     out = utils.loadAllTeamsInfo()
     count = 0
-    for team in utils.loadAllTeams():
-        count+=1
 
-        if(count%100==0):
+    for team in utils.loadAllTeams():
+        count += 1
+
+        if count % 100 == 0:
             print(count)
             utils.saveAllTeamsInfo(out)
 
-        if team in out: pass
-        else: out[team] = getTeamInfo(team)
-        
+        if team in out:
+            pass
+        else:
+            out[team] = getTeamInfo(team)
+
     utils.saveAllTeamsInfo(out)
+
 
 if __name__ == "__main__":
     saveAllTeamsInfo()
