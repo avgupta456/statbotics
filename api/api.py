@@ -4,8 +4,8 @@ import constants
 # Use 'with' to ensure the session context is closed after use.
 with requests.Session() as s:
     def getToken():
-        resp = s.get(constants.BASE_URL+"/admin/")
-        return s.cookies['csrftoken'] #csrf token
+        s.get(constants.BASE_URL+"/admin/")
+        return s.cookies['csrftoken']  # csrf token
 
     def login(token):
         login_data = {
@@ -15,13 +15,16 @@ with requests.Session() as s:
             "next": constants.BASE_URL+"/admin/"
         }
 
-        resp = s.post(constants.BASE_URL+"/admin/login/",
-            data=login_data, headers=dict(Referer=constants.BASE_URL))
+        s.post(constants.BASE_URL+"/admin/login/",
+               data=login_data,
+               headers=dict(Referer=constants.BASE_URL))
 
     def get(url):
         resp = s.get(constants.BASE_URL+url)
-        if resp.status_code != 200: print("Something Went Wrong")
-        else: return resp.json()
+        if resp.status_code != 200:
+            print("Something Went Wrong")
+        else:
+            return resp.json()
 
     token = getToken()
     login(token)
