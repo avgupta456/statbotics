@@ -3,6 +3,8 @@ import MUIDataTable from "mui-datatables";
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
 
+import styles from "./Table.module.css"
+
 const getMuiTheme = () => createMuiTheme({
   overrides: {
     MuiTableCell: {
@@ -49,44 +51,69 @@ const getMuiTheme = () => createMuiTheme({
 });
 
 export default function ReactTable({title, columns, data}) {
-  const theme = getMuiTheme();
+  const [responsive, setResponsive] = React.useState("scrollMaxHeight")
 
+  const theme = getMuiTheme();
+  console.log(responsive)
   const options = {
     filter: false,
     print: false,
-    responsive: 'scrollMaxHeight',
+    responsive: `${responsive}`,
     rowsPerPageOptions: [10, 20, 50],
     selectableRows: "none",
     fixedHeaderOptions: {
       xAxis: false,
-      yAxis: true
+      yAxis: true,
     },
     elevation: 1,
+    onChangeRowsPerPage: (rows) => {
+      console.log("Here")
+      if(rows<=10) {setResponsive("scrollMaxHeight")}
+      else {setResponsive("ScrollFullHeight")}
+    },
+    textLabels: {
+      body: {
+        noMatch: "Data on the way, hang tight!",
+      },
+    },
   };
 
   const new_columns = columns.map(
-    function([name, searchable, visible, filterable, hint]) {
-      return {
+    function([name, searchable, visible, link, hint]) {
+      var dict = {
         label: `${name}`,
         options: {
           sort: true,
-          filter: `${filterable}`==="true",
+          filter: "false",
           searchable: `${searchable}`==="true",
           display: `${visible}`==="true",
-          hint: hint
+          viewColumns: `${visible}`==="true",
+          hint: hint,
         },
       }
+
+      if(link) {
+        dict["options"]["customBodyRender"] = (value, tableMeta, updateValue) => {
+          const number = value.split("|")[0].trim()
+          const name = value.split("|")[1].trim()
+          return (<a href={`teams/${number}`}>{name}</a>)
+        }
+      }
+
+      return dict
     }
   );
 
   return (
     <MuiThemeProvider theme={theme}>
-      <MUIDataTable
-        title={title}
-        data={data}
-        columns={new_columns}
-        options={options}
-      />
+      <div className={styles.table}>
+        <MUIDataTable
+          title={title}
+          data={data}
+          columns={new_columns}
+          options={options}
+        />
+      </div>
     </MuiThemeProvider>
   )
 }

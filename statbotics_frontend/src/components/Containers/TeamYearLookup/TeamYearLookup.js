@@ -11,7 +11,8 @@ import { ReactTable } from './../../../components';
 
 import {
   fetchTeamsYear,
-  fetchTeamsYear_byRegion,
+  fetchTeamsYear_byCountry,
+  fetchTeamsYear_byState,
   fetchTeamsYear_byDistrict
 } from './../../../api';
 
@@ -20,7 +21,8 @@ import styles from './TeamYearLookup.module.css';
 export default function TeamLookup() {
   const [year, setYear] = useState(2020)
 
-  const [region, setRegion] = useState("None");
+  const [country, setCountry] = useState("None");
+  const [stateProv, setStateProv] = useState("None")
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Teams");
   const [title, setTitle] = useState(`${year} Team Lookup`)
@@ -30,10 +32,10 @@ export default function TeamLookup() {
   const [countryDropdown, setCountryDropdown] = useState("Select Country")
   const [districtDropdown, setDistrictDropdown] = useState("Select District")
 
-  //column name, searchable, visible, filterable
+  //column name, searchable, visible, link, hint
   const columns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, false, "Click names for details"],
+    ["Name", true, true, true, "Click names for details"],
     ["Rank", false, true, false, "By Max Elo"],
     ["Max Elo", false, true, false, "All Elos are sortable"],
     ["Mean Elo", false, true, false, ""],
@@ -45,7 +47,7 @@ export default function TeamLookup() {
   function clean(teams) {
     return teams.map(function(x, i){ return [
       x["team"],
-      <a href={`teams/${x["team"]}`}>{x["name"]}</a>,
+      x["team"]+"|"+x["name"],
       i+1,
       x["elo_max"],
       x["elo_mean"],
@@ -61,8 +63,13 @@ export default function TeamLookup() {
       setData(clean(new_teams.results));
     };
 
-    const getTeams_byRegion = async () => {
-      const new_teams = await fetchTeamsYear_byRegion(region, year, "elo_max");
+    const getTeams_byCountry = async () => {
+      const new_teams = await fetchTeamsYear_byCountry(country, year, "elo_max");
+      setData(clean(new_teams.results));
+    }
+
+    const getTeams_byState = async () => {
+      const new_teams = await fetchTeamsYear_byState(country, stateProv, year, "elo_max");
       setData(clean(new_teams.results));
     }
 
@@ -72,25 +79,48 @@ export default function TeamLookup() {
     }
 
     if(format==="Teams") {getTeams()}
-    else if(format==="Region") {getTeams_byRegion()}
+    else if(format==="Country") {getTeams_byCountry()}
+    else if(format==="State") {getTeams_byState()}
     else {getTeams_byDistrict()}
-  }, [format, region, district, year]);
+  }, [format, country, stateProv, district, year]);
+
+
+  const countryOptions = [
+    {value: "USA", label: "USA"},
+    {value: "Canada", label: "Canada"},
+    {value: "Turkey", label: "Turkey"},
+    {value: "Israel", label: "Israel"},
+    {value: "China", label: "China"},
+    {value: "Mexico", label: "Mexico"},
+    {value: "Australia", label: "Australia"},
+    {value: "Brazil", label: "Brazil"},
+    {value: "Chinese Taipei", label: "Chinese Taipei"},
+    {value: "Netherlands", label: "Netherlands"},
+    {value: "Chile", label: "Chile"},
+    {value: "United Kingdom", label: "United Kingdom"},
+    {value: "Colombia", label: "Colombia"},
+    {value: "Japan", label: "Japan"},
+    {value: "Poland", label: "Poland"},
+    {value: "India", label: "India"},
+    {value: "Switzerland", label: "Switzerland"}
+  ]
 
   const addressDefinitions = faker.definitions.address
-  const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
+  const usaOptions = _.map(addressDefinitions.state, (state, index) => ({
     value: addressDefinitions.state_abbr[index],
     label: state,
   }));
 
-  const countryOptions = [
-    {value: "Australia", label: "Australia"},
-    {value: "Brazil", label: "Brazil"},
-    {value: "Canada", label: "Canada"},
-    {value: "China", label: "China"},
-    {value: "Israel", label: "Israel"},
-    {value: "Mexico", label: "Mexico"},
-    {value: "Netherlands", label: "Netherlands"},
-    {value: "Turkey", label: "Turkey"},
+  usaOptions.unshift({value: "All", label: "All"})
+
+  const canadaOptions = [
+    {value: "All", label: "All"},
+    {value: "AB", label: "Alberta"},
+    {value: "BC", label: "British Columbia"},
+    {value: "MB", label: "Manitoba"},
+    {value: "ON", label: "Ontario"},
+    {value: "QC", label: "Québec"},
+    {value: "SK", label: "Saskatchewan"},
   ]
 
   const districtOptions = [
@@ -129,43 +159,57 @@ export default function TeamLookup() {
     {value: "2002", label: "2002"},
   ]
 
-  const yearClick = (state) => {
-    setYear(state["value"])
+  const yearClick = (year) => {
+    setYear(year["value"])
+    setTitle(`${year["value"]} Team Lookup`)
   }
 
   function allClick() {
     setFormat("Teams")
     setTitle(`${year} Team Lookup`);
-    setStateDropdown("Select State")
+
     setCountryDropdown("Select Country")
+    setStateDropdown("Select State")
     setDistrictDropdown("Select District")
   };
 
   const stateClick = (state) => {
-    setRegion(state["value"]);
-    setFormat("Region");
-    setTitle(`${year} Team Lookup - ${state["label"]}`);
+    setFormat("State");
+    if(state["value"]==="All") {setTitle(`Team Lookup - ${country}`)}
+    else {setTitle(`Team Lookup - ${state["label"]}`)}
+
+    if(usaOptions.includes(state)) {setCountry("USA")}
+    setStateProv(state["value"]);
+
+    if(usaOptions.includes(state)) {setCountryDropdown("USA")}
     setStateDropdown(state["label"])
-    setCountryDropdown("Select Country")
     setDistrictDropdown("Select District")
   }
 
   const countryClick = (country) => {
-    setRegion(country["value"]);
-    setFormat("Region");
+    setFormat("Country");
     setTitle(`${year} Team Lookup - ${country["label"]}`);
-    setStateDropdown("Select State")
+
+    setCountry(country["value"]);
+
     setCountryDropdown(country["label"])
+    if(country["label"]==="USA") {setStateDropdown("Select State")}
+    else if(country["label"]==="Canada") {setStateDropdown("Select Province")}
+    else {setStateDropdown("All")}
     setDistrictDropdown("Select District")
   }
 
   const districtClick = (district) => {
-    setDistrict(district["value"]);
     setFormat("District");
     setTitle(`${year} Team Lookup - ${district["label"]}`);
-    setStateDropdown("Select State")
-    setCountryDropdown("Select Country")
-    setDistrictDropdown(district["label"])
+
+    setCountry("None");
+    setStateProv("None");
+    setDistrict(district["value"]);
+
+    setCountryDropdown("Select Country");
+    setStateDropdown("Select State");
+    setDistrictDropdown(district["label"]);
   }
 
   return (
@@ -186,12 +230,14 @@ export default function TeamLookup() {
               options = {yearOptions}
               onChange = {yearClick}
               value = {{value:`${year}`, label:`${year}`}}
+              isDisabled={data.length===0}
             />
 
             <Button
               variant="outline-dark"
               onClick={() => allClick()}
               className={styles.button}
+              disabled={data.length===0}
             >
               <Typography>All Teams</Typography>
             </Button>
@@ -201,9 +247,10 @@ export default function TeamLookup() {
               styles={{
                 menu: provided => ({ ...provided, zIndex: 9999 })
               }}
-              options = {stateOptions}
-              onChange = {stateClick}
-              value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
+              options = {countryOptions}
+              onChange = {countryClick}
+              value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
+              isDisabled={data.length===0}
             />
 
             <Select
@@ -211,9 +258,10 @@ export default function TeamLookup() {
               styles={{
                 menu: provided => ({ ...provided, zIndex: 9999 })
               }}
-              options = {countryOptions}
-              onChange = {countryClick}
-              value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
+              options = {country==="USA" ? usaOptions : country==="Canada" ? canadaOptions: usaOptions}
+              onChange = {stateClick}
+              value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
+              isDisabled={data.length===0}
             />
 
             <Select
@@ -224,6 +272,7 @@ export default function TeamLookup() {
               options = {districtOptions}
               onChange = {districtClick}
               value = {{value:`${districtDropdown}`, label:`${districtDropdown}`}}
+              isDisabled={data.length===0}
             />
 
             </ButtonGroup>

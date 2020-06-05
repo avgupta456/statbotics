@@ -10,4 +10,5 @@ read_pre = "https://www.thebluealliance.com/api/v3/"
 session = requests.Session()
 session.headers.update({'X-TBA-Auth-Key': auth_key, 'X-TBA-Auth-Id': ''})
 
+
 def get(url): return session.get(read_pre+url).json()

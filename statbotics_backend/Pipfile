@@ -16,6 +16,7 @@ PyMySQL = "==0.9.3"
 pytest-django = "*"
 django-filter = "*"
 google-cloud-datastore = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.7"

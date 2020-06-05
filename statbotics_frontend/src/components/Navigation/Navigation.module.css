@@ -1,0 +1,19 @@
+.navItem {
+  margin-right: 8px;
+
+}
+
+.search {
+  width: 220px;
+  margin-right: 20px;
+  font-size: 11px;
+  z-index: 9999;
+}
+
+@media (max-width: 991px) {
+  .search {
+    width: 80%;
+    margin: 10px 10% 0 10%;
+    font-size: 14px;
+  }
+}

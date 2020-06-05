@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import utils
+
 
 def getStats(year):
     matches = utils.loadProcessedMatches(year)
@@ -7,12 +7,14 @@ def getStats(year):
 
     for m in matches:
         error += (m.get_win_prob()-m.get_win_actual())**2
-        if(m.correct_pred()): true_preds+=1
+        if(m.correct_pred()):
+            true_preds += 1
 
     mse = error/len(matches)
     acc = true_preds/len(matches)
 
     return [mse, acc]
+
 
 def metrics():
     total_mse = 0
@@ -24,9 +26,10 @@ def metrics():
         print("Accuracy: " + str(acc))
         print()
 
-    total_mse_sykes = 3.716 #see baseline
+    total_mse_sykes = 3.716  # see baseline.txt
     print("Total mse Elo:  " + str(total_mse/19))
     print("Total mse Sykes: " + str(total_mse_sykes/19))
+
 
 def mean():
     for year in range(2002, 2021):
@@ -40,8 +43,7 @@ def mean():
 
         print("Elo Avg: " + str(sum(elos)/len(elos)))
         print("Elo 1%: " + str(elos[-int(len(elos)/100)]))
-        #plt.hist(elos)
-        #plt.show()
+
 
 if __name__ == "__main__":
     metrics()

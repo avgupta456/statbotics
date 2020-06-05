@@ -17,8 +17,8 @@
 
 @media (max-width: 750px) {
   .chart {
-    width: 100%;
-    margin: 0;
+    width: 96%;
+    margin: 2%;
     padding: 5px;
   }
 

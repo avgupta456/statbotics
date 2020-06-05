@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { Route, Switch } from "react-router-dom";
-
-import { Nav, Navbar } from "react-bootstrap";
+import { Navigation } from "./components"
 
 import {
   Home,
@@ -13,34 +12,13 @@ import {
   Hypothetical,
 }
 from "./components/Containers";
-import logo from "./static/favicon.ico";
+import styles from "./App.module.css"
 
 const App = () => {
   return (
     <div>
-      <Navbar collapseOnSelect expand="md" bg="dark" variant="dark">
-        <Navbar.Brand href="/">
-          <img
-            alt="Logo"
-            src={logo}
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-          />{' '}
-          Statbotics.io
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="mr-auto">
-          <Nav.Link href="/">Home</Nav.Link>
-          <Nav.Link href="/teams">Teams Table</Nav.Link>
-          <Nav.Link href="/years">Years Table</Nav.Link>
-          <Nav.Link href="/compare">Compare Teams</Nav.Link>
-          <Nav.Link href="/predict">Predict Match</Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-      </Navbar>
-      <Switch>
+      <Navigation className={styles.nav}/>
+      <Switch className={styles.body}>
         <Route exact path="/">
           <Home />
         </Route>
