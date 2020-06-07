@@ -37,11 +37,17 @@ class Year:
     def getTeamYear(self, team):
         return self.TeamYear_c[team]
 
+    def getTeamYears(self):
+        return self.TeamYear_c
+
     def addEvent(self, event):
         self.Event_c[event] = Event.Event(self, event)
 
     def getEvent(self, event):
         return self.Event_c[event]
+
+    def getEvents(self):
+        return self.Event_c
 
     def addTeamEvent_fromTeamYear(self, TeamYear, event):
         Event = self.getEvent(event)

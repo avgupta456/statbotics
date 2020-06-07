@@ -45,3 +45,6 @@ class TeamEvent:
 
     def getTeamMatch(self, match):
         return self.TeamMatch_c[match]
+
+    def getTeamMatches(self):
+        return self.TeamMatch_c

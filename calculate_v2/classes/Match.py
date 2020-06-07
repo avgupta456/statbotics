@@ -31,3 +31,6 @@ class Match:
 
     def getTeamMatch(self, team):
         return self.TeamMatch_c[team]
+
+    def getTeamMatches(self):
+        return self.TeamMatch_c

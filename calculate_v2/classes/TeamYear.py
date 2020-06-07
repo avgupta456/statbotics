@@ -45,3 +45,6 @@ class TeamYear:
 
     def getTeamEvent(self, event):
         return self.TeamEvent_c[event]
+
+    def getTeamEvents(self):
+        return self.TeamEvent_c

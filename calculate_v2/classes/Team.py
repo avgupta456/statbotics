@@ -31,3 +31,6 @@ class Team:
 
     def getTeamYear(self, year):
         return self.TeamYear_c[year]
+
+    def getTeamYears(self):
+        return self.TeamYear_c

@@ -16,11 +16,17 @@ class Main:
     def getTeam(self, num):
         return self.Team_c[num]
 
+    def getTeams(self):
+        return self.Team_c
+
     def addYear(self, year):
         self.Year_c[year] = Year.Year(self, year)
 
     def getYear(self, year):
         return self.Year_C[year]
+
+    def getYears(self):
+        return self.Year_c
 
     def addTeamYear_fromTeam(self, Team, year):
         Year = self.getYear(year)

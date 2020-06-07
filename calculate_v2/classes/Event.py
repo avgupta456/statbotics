@@ -37,11 +37,17 @@ class Event:
     def getTeamEvent(self, team):
         return self.TeamEvent_c[team]
 
+    def getTeamEvents(self):
+        return self.TeamEvent_c
+
     def addMatch(self, match):
         self.Match_c[match] = Match.Match(self, match)
 
     def getMatch(self, match):
         return self.Match_c[match]
+
+    def getMatches(self):
+        return self.Match_c
 
     def addTeamMatch_fromTeamEvent(self, TeamEvent, match):
         Match = self.getMatch(match)
