@@ -1,11 +1,7 @@
 class Match:
-    key = ""
-
-    Event_p = None  # points to Event parent
-    TeamMatch_c = {}  # maps from position to TeamMatch children
-
     def __init__(self, Event, key):
         self.Event_p = Event
+        self.TeamMatch_c = {}
         self.key = key
 
     def __lt__(self, other):

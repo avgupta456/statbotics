@@ -1,14 +1,7 @@
 class Team:
-    number = -1
-    name = ""
-    state = ""
-    country = ""
-
-    Main_p = None  # points to Main object
-    TeamYear_c = {}  # maps from year to TeamYear children
-
     def __init__(self, Main, dict):
         self.Main_p = Main
+        self.TeamYear_c = {}
 
         self.number = int(dict["num"])
         self.name = dict["name"]

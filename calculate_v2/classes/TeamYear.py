@@ -1,14 +1,8 @@
 class TeamYear:
-    number = -1
-    year = -1
-
-    Team_p = None  # points to Team parent
-    Year_p = None  # poitns to Year parent
-    TeamEvent_c = {}  # maps from event key to TeamEvent children
-
     def __init__(self, Team, Year, dict):
         self.Team_p = Team
         self.Year_p = Year
+        self.TeamEvent_c = {}
 
         self.number = self.Team_p.getNumber()
         self.year = self.Year_p.getYear()

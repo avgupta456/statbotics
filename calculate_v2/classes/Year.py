@@ -3,14 +3,10 @@ import classes.TeamEvent as TeamEvent
 
 
 class Year:
-    year = -1  # numeric year, ex: 2019
-
-    Main_p = None  # points to Main parent
-    TeamYear_c = {}  # maps from team to TeamYear object children
-    Event_c = {}  # maps from event key to Event object children
-
     def __init__(self, Main, year):
         self.Main_p = Main
+        self.TeamYear_c = {}
+        self.Event_c = {}
         self.year = year
 
     def __lt__(self, other):

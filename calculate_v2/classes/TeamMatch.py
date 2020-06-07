@@ -1,13 +1,7 @@
 class TeamMatch:
-    number = -1
-    key = ""
-
-    TeamEvent_p = None  # points to Team Event parent
-    Match_p = None  # points to Match parent
-
     def __init__(self, TeamEvent, Match):
-        self.TeamEvent = TeamEvent
-        self.Match = Match
+        self.TeamEvent_p = TeamEvent
+        self.Match_p = Match
 
         self.number = self.TeamEvent.getNumber()
         self.key = self.Match.getKey()

@@ -4,11 +4,9 @@ import classes.TeamYear as TeamYear
 
 
 class Main:
-    Team_c = {}  # dict from team num to Team object children
-    Year_c = {}  # dict from year to Year object children
-
     def __init__(self):
-        return
+        self.Team_c = {}
+        self.Year_c = {}
 
     def addTeam(self, dict):
         self.Team_c[dict["num"]] = Team.Team(self, dict)

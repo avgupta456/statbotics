@@ -13,6 +13,7 @@ from helper import (
 start_year = 2002
 end_year = 2002
 
+'''
 M = Main.Main()
 
 for year in range(start_year, end_year + 1):
@@ -28,6 +29,7 @@ for year in range(start_year, end_year + 1):
         Y.addTeamYear(teamYear)
 
 utils.saveMain(M)
-M2 = utils.loadMain()
-print(M2.getTeams())
-print(M2.getYears())
+'''
+M = utils.loadMain()
+print(M.getTeams())
+print(M.getYears())
