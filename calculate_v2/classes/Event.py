@@ -1,3 +1,7 @@
+import Match
+import TeamMatch
+
+
 class Event:
     key = ""
 
@@ -32,3 +36,19 @@ class Event:
 
     def getTeamEvent(self, team):
         return self.TeamEvent_c[team]
+
+    def addMatch(self, match):
+        self.Match_c[match] = Match(self, match)
+
+    def getMatch(self, match):
+        return self.Match_c[match]
+
+    def addTeamMatch_fromTeamEvent(self, TeamEvent, match):
+        Match = self.getMatch(match)
+        TeamMatch_temp = TeamMatch(TeamEvent, Match)
+        TeamEvent.setTeamMatch(match, TeamMatch_temp)
+
+    def addTeamMatch_fromMatch(self, Match, team):
+        TeamEvent = self.getTeamEvent(team)
+        TeamMatch_temp = TeamMatch(TeamEvent, Match)
+        Match.setTeamMatch(team, TeamMatch_temp)

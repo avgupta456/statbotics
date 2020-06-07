@@ -25,17 +25,17 @@ class TeamYear:
     def __str__(self):
         return self.__repr__()
 
-    def getParentTeam(self):
-        return self.Team_p
-
-    def getParentYear(self):
-        return self.Year_p
-
     def getNumber(self):
         return self.number
 
     def getYear(self):
         return self.year
+
+    def getParentTeam(self):
+        return self.Team_p
+
+    def getParentYear(self):
+        return self.Year_p
 
     def addTeamEvent(self, event):
         self.getParentYear().addTeamEvent_fromTeamYear(self, event)

@@ -30,3 +30,18 @@ class TeamEvent:
 
     def getKey(self):
         return self.key
+
+    def getParentTeamYear(self):
+        return self.TeamYear_p
+
+    def getParentEvent(self):
+        return self.Event_p
+
+    def addTeamMatch(self, match):
+        self.getParentEvent().addTeamMatch_fromTeamEvent(self, match)
+
+    def setTeamMatch(self, match, TeamMatch):
+        self.TeamMatch_c[match] = TeamMatch
+
+    def getTeamMatch(self, match):
+        return self.TeamMatch_c[match]
