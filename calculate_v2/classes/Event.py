@@ -53,8 +53,12 @@ class Event:
         Match = self.getMatch(match)
         TeamMatch_temp = TeamMatch.TeamMatch(TeamEvent, Match)
         TeamEvent.setTeamMatch(match, TeamMatch_temp)
+        team = TeamEvent.getNumber()
+        Match.setTeamMatch(team, TeamMatch_temp)
 
     def addTeamMatch_fromMatch(self, Match, team):
         TeamEvent = self.getTeamEvent(team)
         TeamMatch_temp = TeamMatch.TeamMatch(TeamEvent, Match)
         Match.setTeamMatch(team, TeamMatch_temp)
+        match = Match.getKey()
+        TeamEvent.setTeamMatch(match, TeamMatch_temp)

@@ -53,8 +53,12 @@ class Year:
         Event = self.getEvent(event)
         TeamEvent_temp = TeamEvent.TeamEvent(TeamYear, Event)
         TeamYear.setTeamEvent(event, TeamEvent_temp)
+        team = TeamYear.getNumber()
+        Event.setTeamEvent(team, TeamEvent_temp)
 
     def addTeamEvent_fromEvent(self, Event, team):
-        Team = self.getTeam(team)
-        TeamEvent_temp = TeamEvent.TeamEvent(Team, Event)
+        TeamYear = self.getTeamYear(team)
+        TeamEvent_temp = TeamEvent.TeamEvent(TeamYear, Event)
         Year.setTeamEvent(team, TeamEvent_temp)
+        event = Event.getKey()
+        TeamYear.setTeamEvent(event, TeamEvent_temp)
