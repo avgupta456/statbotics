@@ -1,3 +1,7 @@
+import Event
+import TeamEvent
+
+
 class Year:
     year = -1  # numeric year, ex: 2019
 
@@ -32,3 +36,19 @@ class Year:
 
     def getTeamYear(self, team):
         return self.TeamYear_c[team]
+
+    def addEvent(self, event):
+        self.Event_c[event] = Event(self, event)
+
+    def getEvent(self, event):
+        return self.Event_c[event]
+
+    def addTeamEvent_fromTeamYear(self, TeamYear, event):
+        Event = self.getEvent(event)
+        TeamEvent_temp = TeamEvent(TeamYear, Event)
+        TeamYear.setTeamEvent(event, TeamEvent_temp)
+
+    def addTeamEvent_fromEvent(self, Event, team):
+        Team = self.getTeam(team)
+        TeamEvent_temp = TeamEvent(Team, Event)
+        Year.setTeamEvent(team, TeamEvent_temp)

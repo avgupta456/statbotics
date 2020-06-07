@@ -1,12 +1,34 @@
 class Event:
-    name = ""
     key = ""
 
-    start_timestamp = -1
-
     Year_p = None  # points to year parent
-    TeamEvent_c = None  # poitns to Team Match children
-    Match_c = None  # poitns to Match children
+    TeamEvent_c = {}  # maps from team to TeamEvent children
+    Match_c = {}  # maps from match key to Match children
 
-    def __init__(self, Year):
+    def __init__(self, Year, key):
         self.Year = Year
+        self.key = key
+
+    def __lt__(self, other):
+        return self.getKey() < other.getKey()
+
+    def __repr__(self):
+        return "Event " + str(self.getKey())
+
+    def __str__(self):
+        return self.__repr__()
+
+    def getKey(self):
+        return self.key
+
+    def getParentYear(self):
+        return self.Year_p
+
+    def addTeamEvent(self, team):
+        self.getParentYear().addTeamEvent_fromEvent(self, team)
+
+    def setTeamEvent(self, team, teamEvent):
+        self.TeamEvent_c[team] = teamEvent
+
+    def getTeamEvent(self, team):
+        return self.TeamEvent_c[team]
