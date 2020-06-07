@@ -33,8 +33,11 @@ class TeamEvent:
     def getParentEvent(self):
         return self.Event_p
 
+    '''
+    # Not yet implemented
     def addTeamMatch(self, match):
         self.getParentEvent().addTeamMatch(self.getKey(), match)
+    '''
 
     def setTeamMatch(self, match, TeamMatch):
         self.TeamMatch_c[match] = TeamMatch

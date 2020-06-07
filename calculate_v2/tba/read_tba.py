@@ -79,8 +79,10 @@ def getMatches(event):
             "comp_level": match["comp_level"],
             "set_number": match["set_number"],
             "match_number": match["match_number"],
-            "red": [t[3:] for t in match["alliances"]["red"]["team_keys"]],
-            "blue": [t[3:] for t in match["alliances"]["blue"]["team_keys"]],
+            "red": [int(t[3:]) for t in
+                    match["alliances"]["red"]["team_keys"]],
+            "blue": [int(t[3:]) for t in
+                     match["alliances"]["blue"]["team_keys"]],
             "winner": match["winning_alliance"],
             "time": match["actual_time"],
             "score_breakdown": match["score_breakdown"]

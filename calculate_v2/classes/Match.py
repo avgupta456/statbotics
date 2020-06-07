@@ -28,8 +28,14 @@ class Match:
     def getParentEvent(self):
         return self.Event_p
 
-    def addTeamMatch(self, team):
-        self.getParentEvent().addTeamMatch(team, self.getKey())
+    def addTeamMatches(self):
+        for t in self.red:
+            self.addTeamMatch({"team": t, "alliance": "red"})
+        for t in self.blue:
+            self.addTeamMatch({"team": t, "alliance": "blue"})
+
+    def addTeamMatch(self, dict):
+        self.getParentEvent().addTeamMatch(dict["team"], self.getKey(), dict)
 
     def setTeamMatch(self, team, TeamMatch):
         self.TeamMatch_c[team] = TeamMatch
