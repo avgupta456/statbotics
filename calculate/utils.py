@@ -44,11 +44,11 @@ def loadAllTeams():
 
 
 def saveAllTeamsInfo(teams):
-    dump("./data/teams/teams_info.p", teams)
+    dump("./data/teams_info.p", teams)
 
 
 def loadAllTeamsInfo():
     try:
-        return load("./data/teams/teams_info.p")
+        return load("./data/teams_info.p")
     except Exception:
         return {}
