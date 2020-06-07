@@ -16,7 +16,7 @@ start_year = 2002
 end_year = 2020
 
 # for pickling
-sys.setrecursionlimit(int(1e9))
+sys.setrecursionlimit(int(1e6))
 print("Recursion Limit: " + str(sys.getrecursionlimit()))
 print()
 
@@ -51,7 +51,6 @@ for year in range(start_year, end_year + 1):
         matches = TBA.getMatches(event["key"])
         for match in matches:
             E.addMatch(match)
-            M = E.getMatch(match["key"])
 
     print("TBA Calls: " + str(TBA.getCount()))
     print()

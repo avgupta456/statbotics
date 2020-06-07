@@ -1,6 +1,3 @@
-import classes.Match as Match
-
-
 class Event:
     def __init__(self, Year, dict):
         self.Year_p = Year
@@ -43,7 +40,7 @@ class Event:
         return self.TeamEvent_c
 
     def addMatch(self, dict):
-        self.Match_c[dict["key"]] = Match.Match(self, dict)
+        self.Match_c[dict["key"]] = dict
 
     def getMatch(self, match):
         return self.Match_c[match]
