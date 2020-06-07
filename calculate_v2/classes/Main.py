@@ -1,6 +1,6 @@
-import Team
-import Year
-import TeamYear
+import classes.Team as Team
+import classes.Year as Year
+import classes.TeamYear as TeamYear
 
 
 class Main:
@@ -11,23 +11,23 @@ class Main:
         return
 
     def addTeam(self, num):
-        self.Team_c[num] = Team(self, num)
+        self.Team_c[num] = Team.Team(self, num)
 
     def getTeam(self, num):
         return self.Team_c[num]
 
     def addYear(self, year):
-        self.Year_c[year] = Year(self, year)
+        self.Year_c[year] = Year.Year(self, year)
 
     def getYear(self, year):
         return self.Year_C[year]
 
     def addTeamYear_fromTeam(self, Team, year):
         Year = self.getYear(year)
-        TeamYear_temp = TeamYear(Team, Year)
+        TeamYear_temp = TeamYear.TeamYear(Team, Year)
         Team.setTeamYear(year, TeamYear_temp)
 
     def addTeamYear_fromYear(self, Year, team):
         Team = self.getTeam(team)
-        TeamYear_temp = TeamYear(Team, Year)
+        TeamYear_temp = TeamYear.TeamYear(Team, Year)
         Year.setTeamYear(team, TeamYear_temp)

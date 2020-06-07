@@ -1,5 +1,5 @@
-import Event
-import TeamEvent
+import classes.Event as Event
+import classes.TeamEvent as TeamEvent
 
 
 class Year:
@@ -38,17 +38,17 @@ class Year:
         return self.TeamYear_c[team]
 
     def addEvent(self, event):
-        self.Event_c[event] = Event(self, event)
+        self.Event_c[event] = Event.Event(self, event)
 
     def getEvent(self, event):
         return self.Event_c[event]
 
     def addTeamEvent_fromTeamYear(self, TeamYear, event):
         Event = self.getEvent(event)
-        TeamEvent_temp = TeamEvent(TeamYear, Event)
+        TeamEvent_temp = TeamEvent.TeamEvent(TeamYear, Event)
         TeamYear.setTeamEvent(event, TeamEvent_temp)
 
     def addTeamEvent_fromEvent(self, Event, team):
         Team = self.getTeam(team)
-        TeamEvent_temp = TeamEvent(Team, Event)
+        TeamEvent_temp = TeamEvent.TeamEvent(Team, Event)
         Year.setTeamEvent(team, TeamEvent_temp)
