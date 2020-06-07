@@ -2,7 +2,6 @@ class TeamEvent:
     def __init__(self, TeamYear, Event, dict):
         self.TeamYear_p = TeamYear
         self.Event_p = Event
-        self.TeamMatch_c = {}
 
         self.number = self.TeamYear_p.getNumber()
         self.key = self.Event_p.getKey()
@@ -32,18 +31,3 @@ class TeamEvent:
 
     def getParentEvent(self):
         return self.Event_p
-
-    '''
-    # Not yet implemented
-    def addTeamMatch(self, match):
-        self.getParentEvent().addTeamMatch(self.getKey(), match)
-    '''
-
-    def setTeamMatch(self, match, TeamMatch):
-        self.TeamMatch_c[match] = TeamMatch
-
-    def getTeamMatch(self, match):
-        return self.TeamMatch_c[match]
-
-    def getTeamMatches(self):
-        return self.TeamMatch_c

@@ -1,5 +1,4 @@
 import classes.Match as Match
-import classes.TeamMatch as TeamMatch
 
 
 class Event:
@@ -51,13 +50,6 @@ class Event:
 
     def getMatches(self):
         return self.Match_c
-
-    def addTeamMatch(self, team, match, dict):
-        Match = self.getMatch(match)
-        TeamEvent = self.getTeamEvent(team)
-        TeamMatch_temp = TeamMatch.TeamMatch(TeamEvent, Match, dict)
-        TeamEvent.setTeamMatch(match, TeamMatch_temp)
-        Match.setTeamMatch(team, TeamMatch_temp)
 
     def getName(self):
         return self.name

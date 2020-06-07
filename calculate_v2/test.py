@@ -13,17 +13,18 @@ from helper import (
 )
 
 start_year = 2002
-end_year = 2002
+end_year = 2020
 
 # for pickling
-sys.setrecursionlimit(int(1e6))
+sys.setrecursionlimit(int(1e9))
 print("Recursion Limit: " + str(sys.getrecursionlimit()))
 print()
 
 Main = Main.Main()
+TBA = read_tba.ReadTBA()
 
 print("Loading Teams")
-for team in read_tba.getTeams():
+for team in TBA.getTeams():
     Main.addTeam(team)
 
 for year in range(start_year, end_year + 1):
@@ -32,26 +33,32 @@ for year in range(start_year, end_year + 1):
     Y = Main.getYear(year)
 
     print("  TeamYears")
-    teamYears = read_tba.getTeamYears(year)
+    teamYears = TBA.getTeamYears(year)
     for teamYear in teamYears:
         Y.addTeamYear(teamYear)
 
     print("  Events")
-    events = read_tba.getEvents(year)
+    events = TBA.getEvents(year)
     for event in events:
         print("\tEvent " + str(event["key"]))
         Y.addEvent(event)
         E = Y.getEvent(event["key"])
 
-        teamEvents = read_tba.getTeamEvents(event["key"])
+        teamEvents = TBA.getTeamEvents(event["key"])
         for teamEvent in teamEvents:
             E.addTeamEvent(teamEvent)
 
-        matches = read_tba.getMatches(event["key"])
+        matches = TBA.getMatches(event["key"])
         for match in matches:
             E.addMatch(match)
             M = E.getMatch(match["key"])
 
-            M.addTeamMatches()
+    print("TBA Calls: " + str(TBA.getCount()))
+    print()
+
+    utils.saveMain(Main)
+
+print("Total TBA Calls: " + str(TBA.getCount()))
 print()
-utils.saveMain(M)
+
+utils.saveMain(Main)

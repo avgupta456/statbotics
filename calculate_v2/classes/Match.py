@@ -1,8 +1,5 @@
 class Match:
     def __init__(self, Event, dict):
-        self.Event_p = Event
-        self.TeamMatch_c = {}
-
         self.key = dict["key"]
         self.comp_level = dict["comp_level"]
         self.set_number = dict["set_number"]
@@ -24,27 +21,6 @@ class Match:
 
     def getKey(self):
         return self.key
-
-    def getParentEvent(self):
-        return self.Event_p
-
-    def addTeamMatches(self):
-        for t in self.red:
-            self.addTeamMatch({"team": t, "alliance": "red"})
-        for t in self.blue:
-            self.addTeamMatch({"team": t, "alliance": "blue"})
-
-    def addTeamMatch(self, dict):
-        self.getParentEvent().addTeamMatch(dict["team"], self.getKey(), dict)
-
-    def setTeamMatch(self, team, TeamMatch):
-        self.TeamMatch_c[team] = TeamMatch
-
-    def getTeamMatch(self, team):
-        return self.TeamMatch_c[team]
-
-    def getTeamMatches(self):
-        return self.TeamMatch_c
 
     def getCompLevel(self):
         return self.comp_level

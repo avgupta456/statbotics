@@ -7,6 +7,7 @@ class Year:
         self.Main_p = Main
         self.TeamYear_c = {}
         self.Event_c = {}
+
         self.year = dict["year"]
 
     def __lt__(self, other):
