@@ -1,28 +1,33 @@
-from classes import (
-    Main,
-    Team,
-    Year,
-    TeamYear,
-    Event,
-    TeamEvent,
-    Match,
-    TeamMatch
+from tba import (
+    read_tba
 )
 
+from classes import (
+    Main,
+)
+
+from helper import (
+    utils
+)
+
+start_year = 2002
+end_year = 2002
+
 M = Main.Main()
-print(M)
 
-M.addYear(2019)
+for year in range(start_year, end_year + 1):
+    M.addYear(year)
 
-M.addTeam(5511)
-M.addTeam(254)
-M.addTeam(1323)
+for team in read_tba.getTeams():
+    M.addTeam(team)
 
-print(M.getTeams())
+for year in range(start_year, end_year + 1):
+    Y = M.getYear(year)
+    data = read_tba.getTeamYears(year)
+    for teamYear in data:
+        Y.addTeamYear(teamYear)
 
-T = M.getTeam(5511)
-T.addTeamYear(2019)
-print(T.getTeamYears())
-
-Y = M.getYear(2019)
-print(Y.getTeamYears())
+utils.saveMain(M)
+M2 = utils.loadMain()
+print(M2.getTeams())
+print(M2.getYears())

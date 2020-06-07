@@ -1,11 +1,10 @@
 import datetime
 import statistics
 
-from classes import Match
-import read_tba
-import utils
+from tba import read_tba
+from helper import utils
 
-
+'''
 def getEvents(year):
     events = []
     for event in read_tba.get("events/"+str(year)+"/simple"):
@@ -97,3 +96,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''
