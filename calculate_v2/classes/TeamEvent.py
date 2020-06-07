@@ -20,7 +20,9 @@ class TeamEvent:
             return self.getNumber() < other.getNumber()
 
     def __repr__(self):
-        return "TeamEvent " + str(self.getNumber()) + " " + str(self.getKey())
+        return "(TeamEvent " + \
+                str(self.getNumber()) + " " + \
+                str(self.getKey()) + ")"
 
     def __str__(self):
         return self.__repr__()
@@ -38,7 +40,7 @@ class TeamEvent:
         return self.Event_p
 
     def addTeamMatch(self, match):
-        self.getParentEvent().addTeamMatch_fromTeamEvent(self, match)
+        self.getParentEvent().addTeamMatch(self.getKey(), match)
 
     def setTeamMatch(self, match, TeamMatch):
         self.TeamMatch_c[match] = TeamMatch

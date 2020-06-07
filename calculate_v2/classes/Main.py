@@ -28,16 +28,9 @@ class Main:
     def getYears(self):
         return self.Year_c
 
-    def addTeamYear_fromTeam(self, Team, year):
+    def addTeamYear(self, team, year):
         Year = self.getYear(year)
-        TeamYear_temp = TeamYear.TeamYear(Team, Year)
-        Team.setTeamYear(year, TeamYear_temp)
-        team = Team.getNumber()
-        Year.setTeamYear(team, TeamYear_temp)
-
-    def addTeamYear_fromYear(self, Year, team):
         Team = self.getTeam(team)
         TeamYear_temp = TeamYear.TeamYear(Team, Year)
-        Year.setTeamYear(team, TeamYear_temp)
-        year = Year.getYear()
         Team.setTeamYear(year, TeamYear_temp)
+        Year.setTeamYear(team, TeamYear_temp)

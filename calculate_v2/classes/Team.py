@@ -24,7 +24,7 @@ class Team:
         return self.Main_p
 
     def addTeamYear(self, year):
-        self.getParentMain().addTeamYear_fromTeam(self, year)
+        self.getParentMain().addTeamYear(self.getNumber(), year)
 
     def setTeamYear(self, year, TeamYear):
         self.TeamYear_c[year] = TeamYear

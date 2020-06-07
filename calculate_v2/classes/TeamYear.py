@@ -40,7 +40,7 @@ class TeamYear:
         return self.Year_p
 
     def addTeamEvent(self, event):
-        self.getParentYear().addTeamEvent_fromTeamYear(self, event)
+        self.getParentYear().addTeamEvent(self.getNumber(), event)
 
     def setTeamEvent(self, event, TeamEvent):
         self.TeamEvent_c[event] = TeamEvent
