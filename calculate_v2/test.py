@@ -30,9 +30,19 @@ for year in range(start_year, end_year + 1):
     events = read_tba.getEvents(year)
     for event in events:
         Y.addEvent(event)
+        E = Y.getEvent(event["key"])
+
+        teamEvents = read_tba.getTeamEvents(event["key"])
+        for teamEvent in teamEvents:
+            E.addTeamEvent(teamEvent)
+
+        matches = read_tba.getMatches(event["key"])
+        for match in matches:
+            E.addMatch(match)
 
 utils.saveMain(M)
 
 M = utils.loadMain()
 print(M.getYears())
 print(M.getYear(2002).getEvents())
+print(M.getYear(2002).getEvent('2002va').getMatches())

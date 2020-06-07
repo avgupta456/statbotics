@@ -45,9 +45,9 @@ class Year:
     def getEvents(self):
         return self.Event_c
 
-    def addTeamEvent(self, team, event):
+    def addTeamEvent(self, team, event, dict):
         TeamYear = self.getTeamYear(team)
         Event = self.getEvent(event)
-        TeamEvent_temp = TeamEvent.TeamEvent(TeamYear, Event)
+        TeamEvent_temp = TeamEvent.TeamEvent(TeamYear, Event, dict)
         TeamYear.setTeamEvent(event, TeamEvent_temp)
         Event.setTeamEvent(team, TeamEvent_temp)

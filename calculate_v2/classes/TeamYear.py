@@ -33,8 +33,8 @@ class TeamYear:
     def getParentYear(self):
         return self.Year_p
 
-    def addTeamEvent(self, event):
-        self.getParentYear().addTeamEvent(self.getNumber(), event)
+    def addTeamEvent(self, dict):
+        self.getParentYear().addTeamEvent(self.getNumber(), dict["key"], dict)
 
     def setTeamEvent(self, event, TeamEvent):
         self.TeamEvent_c[event] = TeamEvent

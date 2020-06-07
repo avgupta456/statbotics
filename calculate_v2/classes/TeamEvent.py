@@ -1,5 +1,5 @@
 class TeamEvent:
-    def __init__(self, TeamYear, Event):
+    def __init__(self, TeamYear, Event, dict):
         self.TeamYear_p = TeamYear
         self.Event_p = Event
         self.TeamMatch_c = {}

@@ -31,8 +31,8 @@ class Event:
     def getParentYear(self):
         return self.Year_p
 
-    def addTeamEvent(self, team):
-        self.getParentYear().addTeamEvent(team, self.getKey())
+    def addTeamEvent(self, dict):
+        self.getParentYear().addTeamEvent(dict["num"], self.getKey(), dict)
 
     def setTeamEvent(self, team, teamEvent):
         self.TeamEvent_c[team] = teamEvent
@@ -43,8 +43,8 @@ class Event:
     def getTeamEvents(self):
         return self.TeamEvent_c
 
-    def addMatch(self, match):
-        self.Match_c[match] = Match.Match(self, match)
+    def addMatch(self, dict):
+        self.Match_c[dict["key"]] = Match.Match(self, dict)
 
     def getMatch(self, match):
         return self.Match_c[match]
