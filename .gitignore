@@ -6,3 +6,6 @@ docs/*
 
 calculate/data/processed_matches/*
 calculate/data/teams/*
+
+calculate_v2/data/processed_matches/*
+calculate_v2/data/teams/*
