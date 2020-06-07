@@ -3,11 +3,18 @@ import classes.TeamMatch as TeamMatch
 
 
 class Event:
-    def __init__(self, Year, key):
+    def __init__(self, Year, dict):
         self.Year_p = Year
         self.TeamEvent_c = {}
         self.Match_c = {}
-        self.key = key
+
+        self.key = dict["key"]
+        self.name = dict["name"]
+        self.state = dict["state"]
+        self.country = dict["country"]
+        self.district = dict["district"]
+        self.start_date = dict["start_date"]
+        self.end_date = dict["end_date"]
 
     def __lt__(self, other):
         return self.getKey() < other.getKey()
@@ -51,3 +58,21 @@ class Event:
         TeamMatch_temp = TeamMatch.TeamMatch(TeamEvent, Match)
         TeamEvent.setTeamMatch(match, TeamMatch_temp)
         Match.setTeamMatch(team, TeamMatch_temp)
+
+    def getName(self):
+        return self.name
+
+    def getState(self):
+        return self.state
+
+    def getCountry(self):
+        return self.country
+
+    def getDistrict(self):
+        return self.district
+
+    def getStartDate(self):
+        return self.start_date
+
+    def getEndDate(self):
+        return self.end_date

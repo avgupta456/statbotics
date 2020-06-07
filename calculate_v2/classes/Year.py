@@ -3,11 +3,11 @@ import classes.TeamEvent as TeamEvent
 
 
 class Year:
-    def __init__(self, Main, year):
+    def __init__(self, Main, dict):
         self.Main_p = Main
         self.TeamYear_c = {}
         self.Event_c = {}
-        self.year = year
+        self.year = dict["year"]
 
     def __lt__(self, other):
         return self.getYear() < other.getYear()
@@ -36,8 +36,8 @@ class Year:
     def getTeamYears(self):
         return self.TeamYear_c
 
-    def addEvent(self, event):
-        self.Event_c[event] = Event.Event(self, event)
+    def addEvent(self, dict):
+        self.Event_c[dict["key"]] = Event.Event(self, dict)
 
     def getEvent(self, event):
         return self.Event_c[event]

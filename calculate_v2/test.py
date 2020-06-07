@@ -13,23 +13,26 @@ from helper import (
 start_year = 2002
 end_year = 2002
 
-'''
 M = Main.Main()
 
 for year in range(start_year, end_year + 1):
-    M.addYear(year)
+    M.addYear({"year": year})
 
 for team in read_tba.getTeams():
     M.addTeam(team)
 
 for year in range(start_year, end_year + 1):
     Y = M.getYear(year)
-    data = read_tba.getTeamYears(year)
-    for teamYear in data:
+    teamYears = read_tba.getTeamYears(year)
+    for teamYear in teamYears:
         Y.addTeamYear(teamYear)
 
+    events = read_tba.getEvents(year)
+    for event in events:
+        Y.addEvent(event)
+
 utils.saveMain(M)
-'''
+
 M = utils.loadMain()
-print(M.getTeams())
 print(M.getYears())
+print(M.getYear(2002).getEvents())

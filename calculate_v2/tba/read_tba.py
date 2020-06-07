@@ -15,6 +15,7 @@ def get(url):
     return session.get(read_pre+url).json()
 
 
+# Todo: get district
 def getTeams():
     out = []
     for i in range(20):
@@ -32,6 +33,7 @@ def getTeams():
     return out
 
 
+# Todo: get district
 def getTeamYears(year):
     out = []
     for i in range(20):
@@ -39,4 +41,22 @@ def getTeamYears(year):
         for data_team in data:
             if data_team["nickname"] != "Off-Season Demo Team":
                 out.append({"num": data_team["team_number"]})
+    return out
+
+
+def getEvents(year):
+    out = []
+    data = get("events/"+str(year)+"/simple")
+    for event in data:
+        if int(event["event_type"]) <= 10:
+            event_data = {
+                "key": event["key"],
+                "name": event["name"],
+                "state": event["state_prov"],
+                "country": event["country"],
+                "district": event["district"],
+                "start_date": event["start_date"],
+                "end_date": event["end_date"],
+            }
+            out.append(event_data)
     return out

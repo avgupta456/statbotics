@@ -17,8 +17,8 @@ class Main:
     def getTeams(self):
         return self.Team_c
 
-    def addYear(self, year):
-        self.Year_c[year] = Year.Year(self, year)
+    def addYear(self, dict):
+        self.Year_c[dict["year"]] = Year.Year(self, dict)
 
     def getYear(self, year):
         return self.Year_c[year]
