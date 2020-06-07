@@ -24,7 +24,7 @@ class Match:
         return self.Event_p
 
     def addTeamMatch(self, team):
-        self.getParentEvent().addTeamMatch(self.getKey(), team)
+        self.getParentEvent().addTeamMatch(team, self.getKey())
 
     def setTeamMatch(self, team, TeamMatch):
         self.TeamMatch_c[team] = TeamMatch

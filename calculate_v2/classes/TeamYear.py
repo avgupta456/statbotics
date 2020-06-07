@@ -6,7 +6,7 @@ class TeamYear:
     Year_p = None  # poitns to Year parent
     TeamEvent_c = {}  # maps from event key to TeamEvent children
 
-    def __init__(self, Team, Year):
+    def __init__(self, Team, Year, dict):
         self.Team_p = Team
         self.Year_p = Year
 

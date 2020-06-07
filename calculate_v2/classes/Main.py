@@ -10,8 +10,8 @@ class Main:
     def __init__(self):
         return
 
-    def addTeam(self, num):
-        self.Team_c[num] = Team.Team(self, num)
+    def addTeam(self, dict):
+        self.Team_c[dict["num"]] = Team.Team(self, dict)
 
     def getTeam(self, num):
         return self.Team_c[num]
@@ -28,9 +28,9 @@ class Main:
     def getYears(self):
         return self.Year_c
 
-    def addTeamYear(self, team, year):
+    def addTeamYear(self, team, year, dict):
         Year = self.getYear(year)
         Team = self.getTeam(team)
-        TeamYear_temp = TeamYear.TeamYear(Team, Year)
+        TeamYear_temp = TeamYear.TeamYear(Team, Year, dict)
         Team.setTeamYear(year, TeamYear_temp)
         Year.setTeamYear(team, TeamYear_temp)

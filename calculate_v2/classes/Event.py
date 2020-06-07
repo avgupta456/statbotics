@@ -29,7 +29,7 @@ class Event:
         return self.Year_p
 
     def addTeamEvent(self, team):
-        self.getParentYear().addTeamEvent(self.getKey(), team)
+        self.getParentYear().addTeamEvent(team, self.getKey())
 
     def setTeamEvent(self, team, teamEvent):
         self.TeamEvent_c[team] = teamEvent

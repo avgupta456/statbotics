@@ -28,8 +28,8 @@ class Year:
     def getParentMain(self):
         return self.Main_p
 
-    def addTeamYear(self, team):
-        self.getParentMain().addTeamYear_fromYear(self, team)
+    def addTeamYear(self, dict):
+        self.getParentMain().addTeamYear(dict["num"], self.getYear(), dict)
 
     def setTeamYear(self, team, TeamYear):
         self.TeamYear_c[team] = TeamYear
