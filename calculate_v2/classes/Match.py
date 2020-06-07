@@ -12,7 +12,7 @@ class Match:
         return self.getKey() < other.getKey()
 
     def __repr__(self):
-        return "Match " + str(self.getKey())
+        return "(Match " + str(self.getKey()) + ")"
 
     def __str__(self):
         return self.__repr__()

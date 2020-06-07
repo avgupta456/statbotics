@@ -17,7 +17,7 @@ class Year:
         return self.getYear() < other.getYear()
 
     def __repr__(self):
-        return "Year " + str(self.getYear())
+        return "(Year " + str(self.getYear()) + ")"
 
     def __str__(self):
         return self.__repr__()

@@ -20,7 +20,9 @@ class TeamYear:
             return self.getNumber() < other.getNumber()
 
     def __repr__(self):
-        return "TeamYear " + str(self.getNumber()) + "\t" + str(self.getYear())
+        return "(TeamYear " + \
+                str(self.getNumber()) + " " + \
+                str(self.getYear()) + ")"
 
     def __str__(self):
         return self.__repr__()

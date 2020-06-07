@@ -17,7 +17,7 @@ class Event:
         return self.getKey() < other.getKey()
 
     def __repr__(self):
-        return "Event " + str(self.getKey())
+        return "(Event " + str(self.getKey()) + ")"
 
     def __str__(self):
         return self.__repr__()

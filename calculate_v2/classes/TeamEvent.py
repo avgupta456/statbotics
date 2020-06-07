@@ -20,7 +20,7 @@ class TeamEvent:
             return self.getNumber() < other.getNumber()
 
     def __repr__(self):
-        return "TeamEvent " + str(self.getNumber()) + "\t" + str(self.getKey())
+        return "TeamEvent " + str(self.getNumber()) + " " + str(self.getKey())
 
     def __str__(self):
         return self.__repr__()

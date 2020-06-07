@@ -12,7 +12,7 @@ class Team:
         return self.getNumber() < other.getNumber()
 
     def __repr__(self):
-        return "Team " + str(self.getNumber())
+        return "(Team " + str(self.getNumber()) + ")"
 
     def __str__(self):
         return self.__repr__()

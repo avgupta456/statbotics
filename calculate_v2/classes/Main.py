@@ -23,7 +23,7 @@ class Main:
         self.Year_c[year] = Year.Year(self, year)
 
     def getYear(self, year):
-        return self.Year_C[year]
+        return self.Year_c[year]
 
     def getYears(self):
         return self.Year_c
