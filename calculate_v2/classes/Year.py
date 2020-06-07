@@ -10,7 +10,7 @@ class Year:
         self.year = year
 
     def __lt__(self, other):
-        return self.getYear() > other.getYear()
+        return self.getYear() < other.getYear()
 
     def __repr__(self):
         return "Year " + str(self.getYear())
@@ -21,11 +21,11 @@ class Year:
     def getYear(self):
         return self.year
 
-    def getMain(self):
+    def getParentMain(self):
         return self.Main_p
 
     def addTeamYear(self, team):
-        self.getMain().addTeamYear_fromYear(self, team)
+        self.getParentMain().addTeamYear_fromYear(self, team)
 
     def setTeamYear(self, team, TeamYear):
         self.TeamYear_c[team] = TeamYear

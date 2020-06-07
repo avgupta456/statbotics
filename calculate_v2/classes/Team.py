@@ -9,7 +9,7 @@ class Team:
         self.number = num
 
     def __lt__(self, other):
-        return self.get_number() > other.getNumber()
+        return self.getNumber() < other.getNumber()
 
     def __repr__(self):
         return "Team " + str(self.getNumber())
@@ -20,11 +20,11 @@ class Team:
     def getNumber(self):
         return self.number
 
-    def getMain(self):
+    def getParentMain(self):
         return self.Main_p
 
     def addTeamYear(self, year):
-        self.getMain().addTeamYear_fromTeam(self, year)
+        self.getParentMain().addTeamYear_fromTeam(self, year)
 
     def setTeamYear(self, year, TeamYear):
         self.TeamYear_c[year] = TeamYear
