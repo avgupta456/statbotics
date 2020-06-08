@@ -90,5 +90,37 @@ class ReadTBA:
                 "time": match["actual_time"],
                 "score_breakdown": match["score_breakdown"]
             }
+<<<<<<< HEAD
             out.append(match_data)
         return out
+=======
+            out.append(event_data)
+    return out
+
+
+def getTeamEvents(event):
+    out = []
+    data = get("event/"+str(event)+"/teams/simple")
+    for team in data:
+        out.append({"num": team["team_number"]})
+    return out
+
+
+def getMatches(event):
+    out = []
+    matches = get("event/"+str(event)+"/matches")
+    for match in matches:
+        match_data = {
+            "key": match["key"],
+            "comp_level": match["comp_level"],
+            "set_number": match["set_number"],
+            "match_number": match["match_number"],
+            "red": [t[3:] for t in match["alliances"]["red"]["team_keys"]],
+            "blue": [t[3:] for t in match["alliances"]["blue"]["team_keys"]],
+            "winner": match["winning_alliance"],
+            "time": match["actual_time"],
+            "score_breakdown": match["score_breakdown"]
+        }
+        out.append(match_data)
+    return out
+>>>>>>> parent of c7ccf6c... finished classes

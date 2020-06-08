@@ -12,13 +12,8 @@ def load(file):
 
 
 def saveMain(main):
-    print("Started Pickling")
     dump("./data/main.p", main)
-    print("Finished Pickling")
 
 
 def loadMain():
-    print("Started Fetching")
-    data = load("./data/main.p")
-    print("Finished Fetching")
-    return data
+    return load("./data/main.p")

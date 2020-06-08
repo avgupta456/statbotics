@@ -31,3 +31,18 @@ class TeamEvent:
 
     def getParentEvent(self):
         return self.Event_p
+<<<<<<< HEAD
+=======
+
+    def addTeamMatch(self, match):
+        self.getParentEvent().addTeamMatch(self.getKey(), match)
+
+    def setTeamMatch(self, match, TeamMatch):
+        self.TeamMatch_c[match] = TeamMatch
+
+    def getTeamMatch(self, match):
+        return self.TeamMatch_c[match]
+
+    def getTeamMatches(self):
+        return self.TeamMatch_c
+>>>>>>> parent of c7ccf6c... finished classes

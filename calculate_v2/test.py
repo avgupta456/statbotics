@@ -1,5 +1,3 @@
-import sys
-
 from tba import (
     read_tba
 )
@@ -15,11 +13,9 @@ from helper import (
 start_year = 2002
 end_year = 2020
 
-# for pickling
-sys.setrecursionlimit(int(1e6))
-print("Recursion Limit: " + str(sys.getrecursionlimit()))
-print()
+M = Main.Main()
 
+<<<<<<< HEAD
 Main = Main.Main()
 TBA = read_tba.ReadTBA()
 
@@ -39,8 +35,22 @@ for year in range(start_year, end_year + 1):
 
     print("  Events")
     events = TBA.getEvents(year)
+=======
+for year in range(start_year, end_year + 1):
+    M.addYear({"year": year})
+
+for team in read_tba.getTeams():
+    M.addTeam(team)
+
+for year in range(start_year, end_year + 1):
+    Y = M.getYear(year)
+    teamYears = read_tba.getTeamYears(year)
+    for teamYear in teamYears:
+        Y.addTeamYear(teamYear)
+
+    events = read_tba.getEvents(year)
+>>>>>>> parent of c7ccf6c... finished classes
     for event in events:
-        print("\tEvent " + str(event["key"]))
         Y.addEvent(event)
         E = Y.getEvent(event["key"])
 
@@ -52,6 +62,7 @@ for year in range(start_year, end_year + 1):
         for match in matches:
             E.addMatch(match)
 
+<<<<<<< HEAD
     print("TBA Calls: " + str(TBA.getCount()))
     print()
 
@@ -61,3 +72,11 @@ print("Total TBA Calls: " + str(TBA.getCount()))
 print()
 
 utils.saveMain(Main)
+=======
+utils.saveMain(M)
+
+M = utils.loadMain()
+print(M.getYears())
+print(M.getYear(2002).getEvents())
+print(M.getYear(2002).getEvent('2002va').getMatches())
+>>>>>>> parent of c7ccf6c... finished classes

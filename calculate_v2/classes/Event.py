@@ -48,6 +48,16 @@ class Event:
     def getMatches(self):
         return self.Match_c
 
+<<<<<<< HEAD
+=======
+    def addTeamMatch(self, team, match):
+        Match = self.getMatch(match)
+        TeamEvent = self.getTeamEvent(team)
+        TeamMatch_temp = TeamMatch.TeamMatch(TeamEvent, Match)
+        TeamEvent.setTeamMatch(match, TeamMatch_temp)
+        Match.setTeamMatch(team, TeamMatch_temp)
+
+>>>>>>> parent of c7ccf6c... finished classes
     def getName(self):
         return self.name
 
