@@ -1,3 +1,7 @@
+import classes.TeamMatch as TeamMatch
+import classes.Match as Match
+
+
 class Event:
     def __init__(self, Year, dict):
         self.Year_p = Year
@@ -40,7 +44,7 @@ class Event:
         return self.TeamEvent_c
 
     def addMatch(self, dict):
-        self.Match_c[dict["key"]] = dict
+        self.Match_c[dict["key"]] = Match.Match(self, dict)
 
     def getMatch(self, match):
         return self.Match_c[match]
@@ -48,16 +52,13 @@ class Event:
     def getMatches(self):
         return self.Match_c
 
-<<<<<<< HEAD
-=======
-    def addTeamMatch(self, team, match):
+    def addTeamMatch(self, team, match, dict):
         Match = self.getMatch(match)
         TeamEvent = self.getTeamEvent(team)
-        TeamMatch_temp = TeamMatch.TeamMatch(TeamEvent, Match)
+        TeamMatch_temp = TeamMatch.TeamMatch(TeamEvent, Match, dict)
         TeamEvent.setTeamMatch(match, TeamMatch_temp)
         Match.setTeamMatch(team, TeamMatch_temp)
 
->>>>>>> parent of c7ccf6c... finished classes
     def getName(self):
         return self.name
 

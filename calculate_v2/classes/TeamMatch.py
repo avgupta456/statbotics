@@ -1,10 +1,11 @@
 class TeamMatch:
-    def __init__(self, TeamEvent, Match):
+    def __init__(self, TeamEvent, Match, dict):
         self.TeamEvent_p = TeamEvent
         self.Match_p = Match
 
-        self.number = self.TeamEvent.getNumber()
-        self.key = self.Match.getKey()
+        self.number = dict["num"]
+        self.key = dict["key"]
+        self.alliance = dict["alliance"]
 
     def __lt__(self, other):
         if self.getNumber() == other.getNumber():
