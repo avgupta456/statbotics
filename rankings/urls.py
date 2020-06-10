@@ -41,18 +41,13 @@ urlpatterns = [
     path('api/team/<num>/events', views.Team_Events),
     path('api/team/<num>/matches', views.Team_Matches),
 
-    path('api/team/<num>/year/<year>', views.TeamYear.as_view()),
+    path('api/team/<num>/year/<year>', views.TeamYear),
+    path('api/team/<num>/year/<year>/events', views.TeamYear_Events),
+    path('api/team/<num>/year/<year>/matches', views.TeamYear_Matches),
 
-    path('api/team/<num>/year/<year>/events', views.TeamYear_Events.as_view()),
-
-    path('api/team/<num>/year/<year>/matches',
-         views.TeamYear_Matches.as_view()),
-
-    path('api/team/<num>/year/<year>/event/<event>',
-         views.TeamYearEvent.as_view()),
-
+    path('api/team/<num>/year/<year>/event/<event>', views.TeamYearEvent),
     path('api/team/<num>/year/<year>/event/<event>/matches',
-         views.TeamYearEvent_Matches.as_view()),
+         views.TeamYearEvent_Matches),
 
 
     path('api/teams', views.Teams.as_view()),  # automatically adds a /

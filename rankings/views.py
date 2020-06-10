@@ -103,21 +103,24 @@ def Team(request, num):
 
 @api_view(['GET'])
 def Team_Years(request, num):
-    teamYears = TeamYearModel.objects.all().filter(team=num)
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(team=num).order_by("year")
     serializer = TeamYearSerializer(teamYears, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 def Team_Events(request, num):
-    teamEvents = TeamEventModel.objects.all().filter(team=num)
+    teamEvents = TeamEventModel.objects.all()
+    teamEvents = teamEvents.filter(team=num).order_by("time")
     serializer = TeamEventSerializer(teamEvents, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 def Team_Matches(request, num):
-    teamMatches = TeamMatchModel.objects.all().filter(team=num)
+    teamMatches = TeamMatchModel.objects.all()
+    teamMatches = teamMatches.filter(team=num).order_by("time")
     serializer = TeamMatchSerializer(teamMatches, many=True)
     return Response(serializer.data)
 
@@ -125,28 +128,50 @@ def Team_Matches(request, num):
 '''TEAM YEAR VIEWS'''
 
 
-class TeamYear(RedirectView):
-    url = '/api/_team_years/?team=%(num)s&year=%(year)s'
+@api_view(['GET'])
+def TeamYear(request, num, year):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(team=num).filter(year=year)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamYear_Events(RedirectView):
-    url = '/api/_team_events/?team=%(num)s&year=%(year)s&limit=100&o=time'
+@api_view(['GET'])
+def TeamYear_Events(request, num, year):
+    teamEvents = TeamEventModel.objects.all()
+    teamEvents = teamEvents.filter(team=num).filter(year=year).order_by("time")
+    serializer = TeamEventSerializer(teamEvents, many=True)
+    return Response(serializer.data)
 
 
-class TeamYear_Matches(RedirectView):
-    url = '/api/_team_matches/?team=%(num)s&year=%(year)s&limit=1000&o=time'
+@api_view(['GET'])
+def TeamYear_Matches(request, num, year):
+    teamMatches = TeamMatchModel.objects.all()
+    teamMatches = teamMatches.filter(team=num) \
+        .filter(year=year).order_by("time")
+    serializer = TeamMatchSerializer(teamMatches, many=True)
+    return Response(serializer.data)
 
 
 '''TEAM YEAR EVENT VIEWS'''
 
 
-class TeamYearEvent(RedirectView):
-    url = '/api/_team_events/?team=%(num)s&year=%(year)s&event=%(event)s'
+@api_view(['GET'])
+def TeamYearEvent(request, num, year, event):
+    teamEvents = TeamEventModel.objects.all()
+    teamEvents = teamEvents.filter(team=num) \
+        .filter(year=year).filter(event=event)
+    serializer = TeamEventSerializer(teamEvents, many=True)
+    return Response(serializer.data)
 
 
-class TeamYearEvent_Matches(RedirectView):
-    url = '/api/_team_matches/?' \
-          'team=%(num)s&year=%(year)s&event=%(event)s&limit=100o=time'
+@api_view(['GET'])
+def TeamYearEvent_Matches(request, num, year, event):
+    teamMatches = TeamEventModel.objects.all()
+    teamMatches = teamMatches.filter(team=num).filter(year=year) \
+        .filter(event=event).order_by("time")
+    serializer = TeamMatchSerializer(teamMatches, many=True)
+    return Response(serializer.data)
 
 
 '''TEAMS VIEWS'''
