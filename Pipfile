@@ -17,6 +17,7 @@ pytest-django = "*"
 django-filter = "*"
 google-cloud-datastore = "*"
 flake8 = "*"
+drf-yasg = "*"
 
 [requires]
 python_version = "3.7"
