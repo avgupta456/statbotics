@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const url = 'https://backend.statbotics.io/api';
-//const url = 'http://localhost:8000/api';
+//const url = 'https://backend.statbotics.io/api';
+const url = 'http://localhost:8000/api';
 
 /*TEAMS API CALLS*/
 

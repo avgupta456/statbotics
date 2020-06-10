@@ -13,6 +13,7 @@ export default function TeamView() {
   let { team } = useParams();
 
   function clean(team, data) {
+    console.log(data)
     return {
       id: team,
       data: data.map(
@@ -28,8 +29,8 @@ export default function TeamView() {
 
   useEffect(() => {
     const getTeam = async (team) => {
-      const new_teams = await fetchTeam(team, "elo");
-      setTeamData(clean(team, new_teams.results));
+      const new_teams = await fetchTeam(team);
+      setTeamData(clean(team, new_teams));
     };
 
     getTeam(team)
