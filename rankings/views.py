@@ -19,57 +19,66 @@ from .filters import (
     YearFilterSet,
 )
 from .models import (
-    TeamMatch,
-    TeamEvent,
-    TeamYear,
-    Team,
-    Event,
-    Year,
+    TeamMatch as TeamMatchModel,
+    TeamEvent as TeamEventModel,
+    TeamYear as TeamYearModel,
+    Team as TeamModel,
+    Event as EventModel,
+    Year as YearModel,
 )
 
 from django.contrib.auth.models import User
 from django.views.generic.base import RedirectView
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
+@api_view(['GET'])
+def hello_world(request):
+    years = YearModel.objects.all()
+    serializer = YearSerializer(years, many=True)
+    return Response(serializer.data)
 
 
 class TeamMatchView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer
-    queryset = TeamMatch.objects.all()
+    queryset = TeamMatchModel.objects.all()
     filterset_class = TeamMatchFilterSet
 
 
 class TeamEventView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamEventSerializer
-    queryset = TeamEvent.objects.all()
+    queryset = TeamEventModel.objects.all()
     filterset_class = TeamEventFilterSet
 
 
 class TeamYearView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamYearSerializer
-    queryset = TeamYear.objects.all()
+    queryset = TeamYearModel.objects.all()
     filterset_class = TeamYearFilterSet
 
 
 class TeamView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamSerializer
-    queryset = Team.objects.all()
+    queryset = TeamModel.objects.all()
     filterset_class = TeamFilterSet
 
 
 class EventView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = EventSerializer
-    queryset = Event.objects.all()
+    queryset = EventModel.objects.all()
     filterset_class = EventFilterSet
 
 
 class YearView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = YearSerializer
-    queryset = Year.objects.all()
+    queryset = YearModel.objects.all()
     filterset_class = YearFilterSet
 
 
@@ -85,20 +94,32 @@ class UserView(viewsets.ModelViewSet):
 '''TEAM VIEWS'''
 
 
-class Team(RedirectView):
-    url = '/api/_teams/?team=%(num)s'
+@api_view(['GET'])
+def Team(request, num):
+    teams = TeamModel.objects.all().filter(team=num)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class Team_Years(RedirectView):
-    url = '/api/_team_years/?team=%(num)s&limit=100&o=year'
+@api_view(['GET'])
+def Team_Years(request, num):
+    teamYears = TeamYearModel.objects.all().filter(team=num)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class Team_Events(RedirectView):
-    url = '/api/_team_events/?team=%(num)s&limit=1000&o=time'
+@api_view(['GET'])
+def Team_Events(request, num):
+    teamEvents = TeamEventModel.objects.all().filter(team=num)
+    serializer = TeamEventSerializer(teamEvents, many=True)
+    return Response(serializer.data)
 
 
-class Team_Matches(RedirectView):
-    url = '/api/_team_matches/?team=%(num)s&limit=10000&o=time'
+@api_view(['GET'])
+def Team_Matches(request, num):
+    teamMatches = TeamMatchModel.objects.all().filter(team=num)
+    serializer = TeamMatchSerializer(teamMatches, many=True)
+    return Response(serializer.data)
 
 
 '''TEAM YEAR VIEWS'''

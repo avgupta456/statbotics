@@ -2,6 +2,26 @@ from django.urls import path, include
 from rest_framework import routers
 from rankings import views
 
+# for swagger
+from django.conf.urls import url
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Statbotics.io API",
+      default_version='v1',
+      description="API Documentation for Statbotics.io",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="avgupta456@gmail.com"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
 router = routers.DefaultRouter()
 router.register(r'_team_matches', views.TeamMatchView, 'team_match')
 router.register(r'_team_events', views.TeamEventView, 'team_event')
@@ -12,13 +32,14 @@ router.register(r'_years', views.YearView, 'year')
 
 # commented out url patterns still need models
 urlpatterns = [
-    path('api/team/<num>', views.Team.as_view()),
+    url(r'^swagger/$',
+        schema_view.with_ui('swagger', cache_timeout=0),
+        name='schema-swagger-ui'),
 
-    path('api/team/<num>/years', views.Team_Years.as_view()),
-
-    path('api/team/<num>/events', views.Team_Events.as_view()),
-
-    path('api/team/<num>/matches', views.Team_Matches.as_view()),
+    path('api/team/<num>', views.TeamView),
+    path('api/team/<num>/years', views.Team_Years),
+    path('api/team/<num>/events', views.Team_Events),
+    path('api/team/<num>/matches', views.Team_Matches),
 
     path('api/team/<num>/year/<year>', views.TeamYear.as_view()),
 
