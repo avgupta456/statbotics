@@ -28,7 +28,7 @@ export default function TeamSelect({className, onChange, isMulti}) {
       const new_teams = await fetchTeams_Simple();
       const key = "Teams_Simple"
       localStorage.setItem(key, JSON.stringify(new_teams))
-      setTeams(cleanList(new_teams.results))
+      setTeams(cleanList(new_teams))
     }
 
     if(teams.length===0) {getTeams()}

@@ -59,22 +59,22 @@ export default function TeamLookup() {
   useEffect(() => {
     const getTeams = async () => {
       const new_teams = await fetchTeams(active, "elo");
-      setData(clean(new_teams.results));
+      setData(clean(new_teams));
     };
 
     const getTeams_byCountry = async () => {
       const new_teams = await fetchTeams_byCountry(country, active, "elo");
-      setData(clean(new_teams.results));
+      setData(clean(new_teams));
     }
 
     const getTeams_byState = async () => {
       const new_teams = await fetchTeams_byState(country, stateProv, active, "elo");
-      setData(clean(new_teams.results));
+      setData(clean(new_teams));
     }
 
     const getTeams_byDistrict = async () => {
       const new_teams = await fetchTeams_byDistrict(district, active, "elo");
-      setData(clean(new_teams.results));
+      setData(clean(new_teams));
     }
 
     if(format==="Teams") {getTeams()}
