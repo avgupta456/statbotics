@@ -177,71 +177,134 @@ def TeamYearEvent_Matches(request, num, year, event):
 '''TEAMS VIEWS'''
 
 
-class Teams(RedirectView):
-    url = '/api/_teams/?limit=10000'
+@api_view(['GET'])
+def Teams(request):
+    teams = TeamModel.objects.all()
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class Teams_byElo(RedirectView):
-    url = '/api/_teams/?limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def Teams_byElo(request, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsActive(RedirectView):
-    url = '/api/_teams/?active=1&limit=10000'
+@api_view(['GET'])
+def TeamsActive(request):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(active=1)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsActive_byElo(RedirectView):
-    url = '/api/_teams/?active=1&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsActive_byElo(request, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(active=1).order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsDistrict(RedirectView):
-    url = '/api/_teams?district=%(district)s&limit=10000'
+@api_view(['GET'])
+def TeamsDistrict(request, district):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(district=district)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamDistrict_byElo(RedirectView):
-    url = '/api/_teams?district=%(district)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsDistrict_byElo(request, district, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(district=district).order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsDistrictActive(RedirectView):
-    url = '/api/_teams?district=%(district)s&active=1&limit=10000'
+@api_view(['GET'])
+def TeamsDistrictActive(request, district):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(district=district).filter(active=1)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsDistrictActive_byElo(RedirectView):
-    url = '/api/_teams?district=%(district)s&active=1&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsDistrictActive_byElo(request, district, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(district=district) \
+        .filter(active=1).order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountry(RedirectView):
-    url = '/api/_teams?country=%(country)s&limit=10000'
+@api_view(['GET'])
+def TeamsCountry(request, country):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountry_byElo(RedirectView):
-    url = '/api/_teams?country=%(country)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsCountry_byElo(request, country, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country).order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountryActive(RedirectView):
-    url = '/api/_teams?country=%(country)s&active=1&limit=10000'
+@api_view(['GET'])
+def TeamsCountryActive(request, country):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country).filter(active=1)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountryActive_byElo(RedirectView):
-    url = '/api/_teams?country=%(country)s&active=1&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsCountryActive_byElo(request, country, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country).filter(active=1).order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsState(RedirectView):
-    url = '/api/_teams?country=%(country)s&state=%(state)s&limit=10000'
+@api_view(['GET'])
+def TeamsState(request, country, state):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country).filter(state=state)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsState_byElo(RedirectView):
-    url = '/api/_teams?' \
-          'country=%(country)s&state=%(state)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsState_byElo(request, country, state, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country) \
+        .filter(state=state).order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsStateActive(RedirectView):
-    url = '/api/_teams?' \
-          'country=%(country)s&state=%(state)s&active=1&limit=10000'
+@api_view(['GET'])
+def TeamsStateActive(request, country, state):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country).filter(state=state).filter(active=1)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
-class TeamsStateActive_byElo(RedirectView):
-    url = '/api/_teams?' \
-          'country=%(country)s&state=%(state)s&active=1&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsStateActive_byElo(request, country, state, elo):
+    teams = TeamModel.objects.all()
+    teams = teams.filter(country=country) \
+        .filter(state=state).filter(active=1).order_by("-" + elo)
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
 
 
 '''TEAMS YEARs VIEWS'''

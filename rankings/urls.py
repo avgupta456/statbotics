@@ -50,46 +50,31 @@ urlpatterns = [
          views.TeamYearEvent_Matches),
 
 
-    path('api/teams', views.Teams.as_view()),  # automatically adds a /
-    path('api/teams/', views.Teams.as_view()),  # better safe then sorry though
+    path('api/teams', views.Teams),  # automatically adds a /
+    path('api/teams/', views.Teams),  # better safe then sorry though
+    path('api/teams/by/<elo>', views.Teams_byElo),
+    path('api/teams/active', views.TeamsActive),
+    path('api/teams/active/by/<elo>', views.TeamsActive_byElo),
 
-    path('api/teams/by/<elo>', views.Teams_byElo.as_view()),
-
-    path('api/teams/active', views.TeamsActive.as_view()),
-
-    path('api/teams/active/by/<elo>', views.TeamsActive_byElo.as_view()),
-
-    path('api/teams/district/<district>', views.TeamsDistrict.as_view()),
-
-    path('api/teams/district/<district>/by/<elo>',
-         views.TeamDistrict_byElo.as_view()),
-
-    path('api/teams/district/<district>/active',
-         views.TeamsDistrictActive.as_view()),
-
+    path('api/teams/district/<district>', views.TeamsDistrict),
+    path('api/teams/district/<district>/by/<elo>', views.TeamsDistrict_byElo),
+    path('api/teams/district/<district>/active', views.TeamsDistrictActive),
     path('api/teams/district/<district>/active/by/<elo>',
-         views.TeamsDistrictActive_byElo.as_view()),
+         views.TeamsDistrictActive_byElo),
 
-    path('api/teams/country/<country>', views.TeamsCountry.as_view()),
-
-    path('api/teams/country/<country>/by/<elo>',
-         views.TeamsCountry_byElo.as_view()),
-
-    path('api/teams/country/<country>/active',
-         views.TeamsCountryActive.as_view()),
-
+    path('api/teams/country/<country>', views.TeamsCountry),
+    path('api/teams/country/<country>/by/<elo>', views.TeamsCountry_byElo),
+    path('api/teams/country/<country>/active', views.TeamsCountryActive),
     path('api/teams/country/<country>/active/by/<elo>',
-         views.TeamsCountryActive_byElo.as_view()),
+         views.TeamsCountryActive_byElo),
 
-    path('api/teams/country/<country>/state/<state>',
-         views.TeamsState.as_view()),
+    path('api/teams/country/<country>/state/<state>', views.TeamsState),
     path('api/teams/country/<country>/state/<state>/by/<elo>',
-         views.TeamsState_byElo.as_view()),
+         views.TeamsState_byElo),
     path('api/teams/country/<country>/state/<state>/active',
-         views.TeamsStateActive.as_view()),
-
+         views.TeamsStateActive),
     path('api/teams/country/<country>/state/<state>/active/by/<elo>',
-         views.TeamsStateActive_byElo.as_view()),
+         views.TeamsStateActive_byElo),
 
     path('api/teams/year/<year>', views.TeamsYear.as_view()),
 
