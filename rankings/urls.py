@@ -36,7 +36,7 @@ urlpatterns = [
         schema_view.with_ui('swagger', cache_timeout=0),
         name='schema-swagger-ui'),
 
-    path('api/team/<num>', views.TeamView),
+    path('api/team/<num>', views.Team),
     path('api/team/<num>/years', views.Team_Years),
     path('api/team/<num>/events', views.Team_Events),
     path('api/team/<num>/matches', views.Team_Matches),
@@ -50,8 +50,7 @@ urlpatterns = [
          views.TeamYearEvent_Matches),
 
 
-    path('api/teams', views.Teams),  # automatically adds a /
-    path('api/teams/', views.Teams),  # better safe then sorry though
+    path('api/teams', views.Teams),
     path('api/teams/by/<elo>', views.Teams_byElo),
     path('api/teams/active', views.TeamsActive),
     path('api/teams/active/by/<elo>', views.TeamsActive_byElo),
@@ -103,11 +102,10 @@ urlpatterns = [
     path('api/teams/country/<country>/state/<state>/year/<year>/by/<elo>',
          views.TeamsState_Year_byElo),
 
-    path('api/year/<year>', views.Year),
     path('api/years', views.Years),
-    path('api/years/', views.Years),
+    path('api/year/<year>', views.Year),
 
-    path('api/events/', views.Events),
+    path('api/events', views.Events),
     path('api/events/by/<elo>', views.Events_byElo),
     path('api/events/year/<year>', views.EventYear),
     path('api/events/year/<year>/by/<elo>', views.EventYear_byElo),

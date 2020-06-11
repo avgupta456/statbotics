@@ -31,8 +31,12 @@ from .models import (
 
 from django.contrib.auth.models import User
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 
 class TeamMatchView(viewsets.ModelViewSet):
+    swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamMatchSerializer
     queryset = TeamMatchModel.objects.all()
@@ -40,6 +44,7 @@ class TeamMatchView(viewsets.ModelViewSet):
 
 
 class TeamEventView(viewsets.ModelViewSet):
+    swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamEventSerializer
     queryset = TeamEventModel.objects.all()
@@ -47,6 +52,7 @@ class TeamEventView(viewsets.ModelViewSet):
 
 
 class TeamYearView(viewsets.ModelViewSet):
+    swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamYearSerializer
     queryset = TeamYearModel.objects.all()
@@ -54,6 +60,7 @@ class TeamYearView(viewsets.ModelViewSet):
 
 
 class TeamView(viewsets.ModelViewSet):
+    swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = TeamSerializer
     queryset = TeamModel.objects.all()
@@ -61,6 +68,7 @@ class TeamView(viewsets.ModelViewSet):
 
 
 class EventView(viewsets.ModelViewSet):
+    swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = EventSerializer
     queryset = EventModel.objects.all()
@@ -68,6 +76,7 @@ class EventView(viewsets.ModelViewSet):
 
 
 class YearView(viewsets.ModelViewSet):
+    swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = YearSerializer
     queryset = YearModel.objects.all()
@@ -75,6 +84,7 @@ class YearView(viewsets.ModelViewSet):
 
 
 class UserView(viewsets.ModelViewSet):
+    swagger_schema = None
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -85,7 +95,13 @@ class UserView(viewsets.ModelViewSet):
 
 '''TEAM VIEWS'''
 
+TeamResponse = openapi.Response(
+    'Returns a summary of Elo statistics for a particular team.',
+    TeamSerializer
+)
 
+
+@swagger_auto_schema(method='GET', responses={200: TeamResponse})
 @api_view(['GET'])
 def Team(request, num):
     teams = TeamModel.objects.all().filter(team=num)
@@ -423,16 +439,16 @@ def TeamsState_Year_byElo(request, year, country, state, elo):
 
 
 @api_view(['GET'])
-def Year(request, year):
+def Years(request):
     years = YearModel.objects.all()
-    years = years.filter(year=year)
     serializer = YearSerializer(years, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
-def Years(request):
+def Year(request, year):
     years = YearModel.objects.all()
+    years = years.filter(year=year)
     serializer = YearSerializer(years, many=True)
     return Response(serializer.data)
 

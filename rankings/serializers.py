@@ -27,6 +27,8 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = '__all__'
 
+    message = "test"
+
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
