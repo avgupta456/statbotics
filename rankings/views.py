@@ -218,6 +218,10 @@ def TeamYearEvent_Matches(request, num, year, event):
 '''TEAMS VIEWS'''
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo statistics",
+)
 @api_view(['GET'])
 def Teams(request):
     teams = TeamModel.objects.all()
@@ -225,6 +229,11 @@ def Teams(request):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo " +
+                          "statistics, sorted by descending Elo",
+)
 @api_view(['GET'])
 def Teams_byElo(request, elo):
     teams = TeamModel.objects.all()
@@ -233,6 +242,11 @@ def Teams_byElo(request, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and " +
+                          "their basic Elo statistics",
+)
 @api_view(['GET'])
 def TeamsActive(request):
     teams = TeamModel.objects.all()
@@ -241,6 +255,11 @@ def TeamsActive(request):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and their " +
+                          "basic Elo statistics, sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsActive_byElo(request, elo):
     teams = TeamModel.objects.all()
@@ -249,6 +268,11 @@ def TeamsActive_byElo(request, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo " +
+                          "statistics, from a particular district",
+)
 @api_view(['GET'])
 def TeamsDistrict(request, district):
     teams = TeamModel.objects.all()
@@ -257,6 +281,12 @@ def TeamsDistrict(request, district):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo " +
+                          "statistics, from a particular district, " +
+                          "sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsDistrict_byElo(request, district, elo):
     teams = TeamModel.objects.all()
@@ -265,6 +295,11 @@ def TeamsDistrict_byElo(request, district, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and their basic Elo" +
+                          " statistics, from a particular district",
+)
 @api_view(['GET'])
 def TeamsDistrictActive(request, district):
     teams = TeamModel.objects.all()
@@ -273,6 +308,12 @@ def TeamsDistrictActive(request, district):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and their basic Elo " +
+                          "statistics, from a particular district, " +
+                          "sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsDistrictActive_byElo(request, district, elo):
     teams = TeamModel.objects.all()
@@ -282,6 +323,11 @@ def TeamsDistrictActive_byElo(request, district, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo " +
+                          "statistics, from a particular country",
+)
 @api_view(['GET'])
 def TeamsCountry(request, country):
     teams = TeamModel.objects.all()
@@ -290,6 +336,12 @@ def TeamsCountry(request, country):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo " +
+                          "statistics, from a particular country, " +
+                          "sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsCountry_byElo(request, country, elo):
     teams = TeamModel.objects.all()
@@ -298,6 +350,11 @@ def TeamsCountry_byElo(request, country, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and their basic Elo " +
+                          "statistics, from a particular country",
+)
 @api_view(['GET'])
 def TeamsCountryActive(request, country):
     teams = TeamModel.objects.all()
@@ -306,6 +363,12 @@ def TeamsCountryActive(request, country):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and their basic Elo " +
+                          "statistics, from a particular country, " +
+                          "sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsCountryActive_byElo(request, country, elo):
     teams = TeamModel.objects.all()
@@ -314,6 +377,11 @@ def TeamsCountryActive_byElo(request, country, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo " +
+                          "statistics, from a particular state",
+)
 @api_view(['GET'])
 def TeamsState(request, country, state):
     teams = TeamModel.objects.all()
@@ -322,6 +390,12 @@ def TeamsState(request, country, state):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of all teams and their basic Elo " +
+                          "statistics, from a particular state, " +
+                          "sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsState_byElo(request, country, state, elo):
     teams = TeamModel.objects.all()
@@ -331,6 +405,11 @@ def TeamsState_byElo(request, country, state, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and their basic Elo " +
+                          "statistics, from a particular state",
+)
 @api_view(['GET'])
 def TeamsStateActive(request, country, state):
     teams = TeamModel.objects.all()
@@ -339,6 +418,12 @@ def TeamsStateActive(request, country, state):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description="A list of active teams and their basic Elo " +
+                          "statistics, from a particular state, " +
+                          "sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsStateActive_byElo(request, country, state, elo):
     teams = TeamModel.objects.all()
@@ -351,6 +436,11 @@ def TeamsStateActive_byElo(request, country, state, elo):
 '''TEAMS YEARs VIEWS'''
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of teams and their basic Elo statistics" +
+                          " for a given year",
+)
 @api_view(['GET'])
 def TeamsYear(request, year):
     teamYears = TeamYearModel.objects.all()
@@ -359,6 +449,11 @@ def TeamsYear(request, year):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of teams and their basic Elo statistics" +
+                          " for a given year, sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsYear_byElo(request, year, elo):
     teamYears = TeamYearModel.objects.all()
@@ -367,6 +462,11 @@ def TeamsYear_byElo(request, year, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " all year, from a particular district",
+)
 @api_view(['GET'])
 def TeamsDistrict_Years(request, district):
     teamYears = TeamYearModel.objects.all()
@@ -375,6 +475,12 @@ def TeamsDistrict_Years(request, district):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " all year, from a particular district, sorted by" +
+                          " descending Elo",
+)
 @api_view(['GET'])
 def TeamsDistrict_Years_byElo(request, district, elo):
     teamYears = TeamYearModel.objects.all()
@@ -383,6 +489,11 @@ def TeamsDistrict_Years_byElo(request, district, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " a particular year, from a particular district",
+)
 @api_view(['GET'])
 def TeamsDistrict_Year(request, year, district):
     teamYears = TeamYearModel.objects.all()
@@ -391,6 +502,12 @@ def TeamsDistrict_Year(request, year, district):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " a particular year, from a particular district," +
+                          " sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsDistrict_Year_byElo(request, year, district, elo):
     teamYears = TeamYearModel.objects.all()
@@ -400,6 +517,11 @@ def TeamsDistrict_Year_byElo(request, year, district, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " all year, from a particular country",
+)
 @api_view(['GET'])
 def TeamsCountry_Years(request, country):
     teamYears = TeamYearModel.objects.all()
@@ -408,6 +530,12 @@ def TeamsCountry_Years(request, country):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " all year, from a particular country, sorted by" +
+                          " descending Elo",
+)
 @api_view(['GET'])
 def TeamsCountry_Years_byElo(request, country, elo):
     teamYears = TeamYearModel.objects.all()
@@ -416,6 +544,11 @@ def TeamsCountry_Years_byElo(request, country, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " a particular year, from a particular country",
+)
 @api_view(['GET'])
 def TeamsCountry_Year(request, year, country):
     teamYears = TeamYearModel.objects.all()
@@ -424,6 +557,12 @@ def TeamsCountry_Year(request, year, country):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " a particular year, from a particular country," +
+                          " sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsCountry_Year_byElo(request, year, country, elo):
     teamYears = TeamYearModel.objects.all()
@@ -433,6 +572,11 @@ def TeamsCountry_Year_byElo(request, year, country, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " all year, from a particular state",
+)
 @api_view(['GET'])
 def TeamsState_Years(request, country, state):
     teamYears = TeamYearModel.objects.all()
@@ -441,6 +585,12 @@ def TeamsState_Years(request, country, state):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " all year, from a particular state, sorted by" +
+                          " descending Elo",
+)
 @api_view(['GET'])
 def TeamsState_Years_byElo(request, country, state, elo):
     teamYears = TeamYearModel.objects.all()
@@ -450,6 +600,11 @@ def TeamsState_Years_byElo(request, country, state, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " a particular year, from a particular state",
+)
 @api_view(['GET'])
 def TeamsState_Year(request, year, country, state):
     teamYears = TeamYearModel.objects.all()
@@ -459,6 +614,12 @@ def TeamsState_Year(request, year, country, state):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A list of single season team Elos statistics, for" +
+                          " a particular year, from a particular state," +
+                          " sorted by descending Elo",
+)
 @api_view(['GET'])
 def TeamsState_Year_byElo(request, year, country, state, elo):
     teamYears = TeamYearModel.objects.all()
@@ -471,6 +632,10 @@ def TeamsState_Year_byElo(request, year, country, state, elo):
 '''YEAR VIEWS'''
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", YearSerializer)},
+    operation_description="A list of years and their aggregate Elo statistics",
+)
 @api_view(['GET'])
 def Years(request):
     years = YearModel.objects.all()
@@ -478,6 +643,10 @@ def Years(request):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", YearSerializer)},
+    operation_description="Aggregate Elo statistics for a particular year",
+)
 @api_view(['GET'])
 def Year(request, year):
     years = YearModel.objects.all()
@@ -489,6 +658,11 @@ def Year(request, year):
 '''EVENT VIEWS'''
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", EventSerializer)},
+    operation_description="A list of events and their aggregate " +
+                          "Elo statistics",
+)
 @api_view(['GET'])
 def Events(request):
     events = EventModel.objects.all()
@@ -496,6 +670,11 @@ def Events(request):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", EventSerializer)},
+    operation_description="A list of events and their aggregate " +
+                          "Elo statistics, sorted by descending Elo",
+)
 @api_view(['GET'])
 def Events_byElo(request, elo):
     events = EventModel.objects.all()
@@ -504,6 +683,11 @@ def Events_byElo(request, elo):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", EventSerializer)},
+    operation_description="A list of events and their aggregate " +
+                          "Elo statistics, for a given year",
+)
 @api_view(['GET'])
 def EventYear(request, year):
     events = EventModel.objects.all()
@@ -512,6 +696,12 @@ def EventYear(request, year):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", EventSerializer)},
+    operation_description="A list of events and their aggregate " +
+                          "Elo statistics, for a given year, sorted by " +
+                          "descending Elo",
+)
 @api_view(['GET'])
 def EventYear_byElo(request, year, elo):
     events = EventModel.objects.all()
