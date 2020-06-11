@@ -95,13 +95,11 @@ class UserView(viewsets.ModelViewSet):
 
 '''TEAM VIEWS'''
 
-TeamResponse = openapi.Response(
-    'Returns a summary of Elo statistics for a particular team.',
-    TeamSerializer
+
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamSerializer)},
+    operation_description='Basic information and Elo summary for a team',
 )
-
-
-@swagger_auto_schema(method='GET', responses={200: TeamResponse})
 @api_view(['GET'])
 def Team(request, num):
     teams = TeamModel.objects.all().filter(team=num)
@@ -109,6 +107,10 @@ def Team(request, num):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="List of a team's Elo history separated by year",
+)
 @api_view(['GET'])
 def Team_Years(request, num):
     teamYears = TeamYearModel.objects.all()
@@ -117,6 +119,10 @@ def Team_Years(request, num):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamEventSerializer)},
+    operation_description="List of a team's Elo history separated by event",
+)
 @api_view(['GET'])
 def Team_Events(request, num):
     teamEvents = TeamEventModel.objects.all()
@@ -125,6 +131,10 @@ def Team_Events(request, num):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamMatchSerializer)},
+    operation_description="List of a team's Elo history separated by match",
+)
 @api_view(['GET'])
 def Team_Matches(request, num):
     teamMatches = TeamMatchModel.objects.all()
@@ -136,6 +146,10 @@ def Team_Matches(request, num):
 '''TEAM YEAR VIEWS'''
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamYearSerializer)},
+    operation_description="A team's Elo performance in a given year",
+)
 @api_view(['GET'])
 def TeamYear(request, num, year):
     teamYears = TeamYearModel.objects.all()
@@ -144,6 +158,11 @@ def TeamYear(request, num, year):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamEventSerializer)},
+    operation_description="A team's Elo performance in a given year, " +
+                          "separated by events",
+)
 @api_view(['GET'])
 def TeamYear_Events(request, num, year):
     teamEvents = TeamEventModel.objects.all()
@@ -152,6 +171,11 @@ def TeamYear_Events(request, num, year):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamMatchSerializer)},
+    operation_description="A team's Elo performance in a given year, " +
+                          "separated by matches",
+)
 @api_view(['GET'])
 def TeamYear_Matches(request, num, year):
     teamMatches = TeamMatchModel.objects.all()
@@ -164,6 +188,10 @@ def TeamYear_Matches(request, num, year):
 '''TEAM YEAR EVENT VIEWS'''
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamEventSerializer)},
+    operation_description="A team's Elo performance in a given event",
+)
 @api_view(['GET'])
 def TeamYearEvent(request, num, year, event):
     teamEvents = TeamEventModel.objects.all()
@@ -173,6 +201,11 @@ def TeamYearEvent(request, num, year, event):
     return Response(serializer.data)
 
 
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", TeamMatchSerializer)},
+    operation_description="A team's Elo performance in a given event, " +
+                          "separated by matches",
+)
 @api_view(['GET'])
 def TeamYearEvent_Matches(request, num, year, event):
     teamMatches = TeamEventModel.objects.all()
