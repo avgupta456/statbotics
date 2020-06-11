@@ -1,4 +1,6 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from .serializers import (
     TeamMatchSerializer,
@@ -28,16 +30,6 @@ from .models import (
 )
 
 from django.contrib.auth.models import User
-from django.views.generic.base import RedirectView
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-
-
-@api_view(['GET'])
-def hello_world(request):
-    years = YearModel.objects.all()
-    serializer = YearSerializer(years, many=True)
-    return Response(serializer.data)
 
 
 class TeamMatchView(viewsets.ModelViewSet):
@@ -310,97 +302,170 @@ def TeamsStateActive_byElo(request, country, state, elo):
 '''TEAMS YEARs VIEWS'''
 
 
-class TeamsYear(RedirectView):
-    url = '/api/_team_years/?year=%(year)s&limit=10000'
+@api_view(['GET'])
+def TeamsYear(request, year):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsYear_byElo(RedirectView):
-    url = '/api/_team_years/?year=%(year)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsYear_byElo(request, year, elo):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year).order_by("-" + elo)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsDistrict_Years(RedirectView):
-    url = '/api/_team_years/?district=%(district)s&limit=10000'
+@api_view(['GET'])
+def TeamsDistrict_Years(request, district):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(district=district)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsDistrict_Years_byElo(RedirectView):
-    url = '/api/_team_years/?district=%(district)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsDistrict_Years_byElo(request, district, elo):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(district=district).order_by("-" + elo)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsDistrictYear(RedirectView):
-    url = '/api/_team_years/?year=%(year)s&district=%(district)s&limit=10000'
+@api_view(['GET'])
+def TeamsDistrict_Year(request, year, district):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year).filter(district=district)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsDistrictYear_byElo(RedirectView):
-    url = '/api/_team_years/?' \
-          'year=%(year)s&district=%(district)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsDistrict_Year_byElo(request, year, district, elo):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year) \
+        .filter(district=district).order_by("-" + elo)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountry_Years(RedirectView):
-    url = '/api/_team_years/?country=%(country)s&limit=10000'
+@api_view(['GET'])
+def TeamsCountry_Years(request, country):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(country=country)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountry_Years_byElo(RedirectView):
-    url = '/api/_team_years/?country=%(country)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsCountry_Years_byElo(request, country, elo):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(country=country).order_by("-" + elo)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountryYear(RedirectView):
-    url = '/api/_team_years/?year=%(year)s&country=%(country)s&limit=10000'
+@api_view(['GET'])
+def TeamsCountry_Year(request, year, country):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year).filter(country=country)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsCountryYear_byElo(RedirectView):
-    url = '/api/_team_years/?' \
-          'year=%(year)s&country=%(country)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsCountry_Year_byElo(request, year, country, elo):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year) \
+        .filter(country=country).order_by("-" + elo)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsState_Years(RedirectView):
-    url = '/api/_team_years/?country=%(country)s&state=%(state)s&limit=10000'
+@api_view(['GET'])
+def TeamsState_Years(request, country, state):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(country=country).filter(state=state)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsState_Years_byElo(RedirectView):
-    url = '/api/_team_years/?' \
-          'country=%(country)s&state=%(state)s&limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def TeamsState_Years_byElo(request, country, state, elo):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(country=country) \
+        .filter(state=state).order_by("-" + elo)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsStateYear(RedirectView):
-    url = '/api/_team_years/?' \
-          'year=%(year)s&country=%(country)s&state=%(state)s&limit=10000'
+@api_view(['GET'])
+def TeamsState_Year(request, year, country, state):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year) \
+        .filter(country=country).filter(state=state)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
-class TeamsStateYear_byElo(RedirectView):
-    url = '/api/_team_years/?' \
-          'year=%(year)s&country=%(country)s&state=%(state)s&limit=10000&' \
-          'o=-%(elo)s'
+@api_view(['GET'])
+def TeamsState_Year_byElo(request, year, country, state, elo):
+    teamYears = TeamYearModel.objects.all()
+    teamYears = teamYears.filter(year=year) \
+        .filter(country=country).filter(state=state).order_by("-" + elo)
+    serializer = TeamYearSerializer(teamYears, many=True)
+    return Response(serializer.data)
 
 
 '''YEAR VIEWS'''
 
 
-class Year(RedirectView):
-    url = '/api/_years/?year=%(year)s'
+@api_view(['GET'])
+def Year(request, year):
+    years = YearModel.objects.all()
+    years = years.filter(year=year)
+    serializer = YearSerializer(years, many=True)
+    return Response(serializer.data)
 
 
-class YearEvent(RedirectView):
-    url = '/api/_events/?year=%(year)s&event=%(event)s'
-
-
-class Years(RedirectView):
-    url = '/api/_years/?limit=100'
+@api_view(['GET'])
+def Years(request):
+    years = YearModel.objects.all()
+    serializer = YearSerializer(years, many=True)
+    return Response(serializer.data)
 
 
 '''EVENT VIEWS'''
 
 
-class Events(RedirectView):
-    url = '/api/_events/?limit=10000'
+@api_view(['GET'])
+def Events(request):
+    events = EventModel.objects.all()
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
 
 
-class Events_byElo(RedirectView):
-    url = '/api/_events/?limit=10000&o=-%(elo)s'
+@api_view(['GET'])
+def Events_byElo(request, elo):
+    events = EventModel.objects.all()
+    events = events.order_by("-" + elo)
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
 
 
-class EventYear(RedirectView):
-    url = '/api/_events/?year=%(year)s&limit=1000'
+@api_view(['GET'])
+def EventYear(request, year):
+    events = EventModel.objects.all()
+    events = events.filter(year=year)
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
 
 
-class EventYear_byElo(RedirectView):
-    url = '/api/_events/?year=%(year)s&limit=1000&o=-%(elo)s'
+@api_view(['GET'])
+def EventYear_byElo(request, year, elo):
+    events = EventModel.objects.all()
+    events = events.filter(year=year).order_by("-" + elo)
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)

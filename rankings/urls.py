@@ -76,71 +76,41 @@ urlpatterns = [
     path('api/teams/country/<country>/state/<state>/active/by/<elo>',
          views.TeamsStateActive_byElo),
 
-    path('api/teams/year/<year>', views.TeamsYear.as_view()),
+    path('api/teams/year/<year>', views.TeamsYear),
+    path('api/teams/year/<year>/by/<elo>', views.TeamsYear_byElo),
 
-    path('api/teams/year/<year>/by/<elo>', views.TeamsYear_byElo.as_view()),
-
-    path('api/teams/district/<district>/years',
-         views.TeamsDistrict_Years.as_view()),
-
+    path('api/teams/district/<district>/years', views.TeamsDistrict_Years),
     path('api/teams/district/<district>/years/by/<elo>',
-         views.TeamsDistrict_Years_byElo.as_view()),
-
+         views.TeamsDistrict_Years_byElo),
     path('api/teams/district/<district>/year/<year>',
-         views.TeamsDistrictYear.as_view()),
-
+         views.TeamsDistrict_Year),
     path('api/teams/district/<district>/year/<year>/by/<elo>',
-         views.TeamsDistrictYear_byElo.as_view()),
+         views.TeamsDistrict_Year_byElo),
 
-    path('api/teams/country/<country>/years',
-         views.TeamsCountry_Years.as_view()),
-
+    path('api/teams/country/<country>/years', views.TeamsCountry_Years),
     path('api/teams/country/<country>/years/by/<elo>',
-         views.TeamsCountry_Years_byElo.as_view()),
-
-    path('api/teams/country/<country>/year/<year>',
-         views.TeamsCountryYear.as_view()),
-
+         views.TeamsCountry_Years_byElo),
+    path('api/teams/country/<country>/year/<year>', views.TeamsCountry_Year),
     path('api/teams/country/<country>/year/<year>/by/<elo>',
-         views.TeamsCountryYear_byElo.as_view()),
-
+         views.TeamsCountry_Year_byElo),
 
     path('api/teams/country/<country>/state/<state>/years',
-         views.TeamsState_Years.as_view()),
-
+         views.TeamsState_Years),
     path('api/teams/country/<country>/state/<state>/years/by/<elo>',
-         views.TeamsState_Years_byElo.as_view()),
-
+         views.TeamsState_Years_byElo),
     path('api/teams/country/<country>/state/<state>/year/<year>',
-         views.TeamsStateYear.as_view()),
-
+         views.TeamsState_Year),
     path('api/teams/country/<country>/state/<state>/year/<year>/by/<elo>',
-         views.TeamsStateYear_byElo.as_view()),
+         views.TeamsState_Year_byElo),
 
+    path('api/year/<year>', views.Year),
+    path('api/years', views.Years),
+    path('api/years/', views.Years),
 
-    path('api/year/<year>', views.Year.as_view()),
-
-    # path('api/year/<year>/matches', views.Year_Matches.as_view()),
-
-    path('api/year/<year>/event/<event>', views.YearEvent.as_view()),
-
-    # path('api/year/<year>/event/<event>/matches',
-    # views.YearEvent_Matches.as_view()),
-
-    # path('api/year/<year>/event/<event>/match/<match>',
-    # views.YearEventMatch.as_view()),
-
-    path('api/years', views.Years.as_view()),
-
-    path('api/years/', views.Years.as_view()),
-
-    path('api/events/', views.Events.as_view()),
-
-    path('api/events/by/<elo>', views.Events_byElo.as_view()),
-
-    path('api/events/year/<year>', views.EventYear.as_view()),
-
-    path('api/events/year/<year>/by/<elo>', views.EventYear_byElo.as_view()),
+    path('api/events/', views.Events),
+    path('api/events/by/<elo>', views.Events_byElo),
+    path('api/events/year/<year>', views.EventYear),
+    path('api/events/year/<year>/by/<elo>', views.EventYear_byElo),
 
     path('api/', include(router.urls)),
 ]
