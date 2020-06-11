@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
 import { Route, Switch } from "react-router-dom";
-import { Navigation } from "./components"
+import { Navigation } from "./components";
 
 import {
   Home,
@@ -11,14 +11,13 @@ import {
   TeamCompare,
   Hypothetical,
   Swagger,
-}
-from "./components/Containers";
-import styles from "./App.module.css"
+} from "./components/Containers";
+import styles from "./App.module.css";
 
 const App = () => {
   return (
     <div>
-      <Navigation className={styles.nav}/>
+      <Navigation className={styles.nav} />
       <Switch className={styles.body}>
         <Route exact path="/">
           <Home />
@@ -30,7 +29,7 @@ const App = () => {
           <TeamYearLookup />
         </Route>
         <Route path="/teams/:team">
-         <TeamView />
+          <TeamView />
         </Route>
         <Route path="/compare">
           <TeamCompare />
@@ -44,7 +43,6 @@ const App = () => {
       </Switch>
     </div>
   );
-}
-
+};
 
 export default App;

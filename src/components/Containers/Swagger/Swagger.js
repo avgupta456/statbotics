@@ -1,20 +1,18 @@
-import React, {Component} from 'react';
-import SwaggerUi, {presets} from 'swagger-ui';
-import 'swagger-ui/dist/swagger-ui.css';
+import React, { Component } from "react";
+import SwaggerUi, { presets } from "swagger-ui";
+import "swagger-ui/dist/swagger-ui.css";
 
 class SwaggerTest extends Component {
   componentDidMount() {
     SwaggerUi({
-      dom_id: '#swaggerContainer',
+      dom_id: "#swaggerContainer",
       url: `https://backend.statbotics.io/swagger/`,
       presets: [presets.apis],
     });
   }
 
   render() {
-    return (
-      <div id="swaggerContainer" />
-    );
+    return <div id="swaggerContainer" />;
   }
 }
 
