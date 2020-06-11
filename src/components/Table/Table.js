@@ -54,7 +54,6 @@ export default function ReactTable({title, columns, data}) {
   const [responsive, setResponsive] = React.useState("scrollMaxHeight")
 
   const theme = getMuiTheme();
-  console.log(responsive)
   const options = {
     filter: false,
     print: false,

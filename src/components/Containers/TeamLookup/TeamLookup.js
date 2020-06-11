@@ -202,7 +202,6 @@ export default function TeamLookup() {
           variant="outline-dark"
           onClick={() => activeClick()}
           className={styles.button}
-          disabled={data.length===0}
         >
             <Typography>{ active? "Include" : "Remove" } Inactives</Typography>
         </Button>
@@ -211,7 +210,6 @@ export default function TeamLookup() {
             variant="outline-dark"
             onClick={() => allClick()}
             className={styles.button}
-            disabled={data.length===0}
           >
             <Typography>All Teams</Typography>
           </Button>
@@ -224,7 +222,6 @@ export default function TeamLookup() {
             options = {countryOptions}
             onChange = {countryClick}
             value = {{value:`${countryDropdown}`, label:`${countryDropdown}`}}
-            isDisabled={data.length===0}
           />
 
           <Select
@@ -235,7 +232,6 @@ export default function TeamLookup() {
             options = {country==="USA" ? usaOptions : country==="Canada" ? canadaOptions: usaOptions}
             onChange = {stateClick}
             value = {{value:`${stateDropdown}`, label:`${stateDropdown}`}}
-            isDisabled={data.length===0}
           />
 
           <Select
@@ -246,7 +242,6 @@ export default function TeamLookup() {
             options = {districtOptions}
             onChange = {districtClick}
             value = {{value:`${districtDropdown}`, label:`${districtDropdown}`}}
-            isDisabled={data.length===0}
           />
 
           </ButtonGroup>
