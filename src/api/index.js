@@ -140,7 +140,7 @@ export const fetchTeamYearElo = async (num, year) => {
   try {
     if(num===0) {return 0;}
     const team = await axios.get(`${url}/team/${num}/year/${year}`);
-    return team.data.results[0].elo_max;
+    return team.data[0].elo_max;
   } catch (error) {
     return 0;
   }

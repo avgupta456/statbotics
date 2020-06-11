@@ -29,11 +29,11 @@ export default function TeamCompare() {
       for(var i=0;i<teams.length;i++) {
         const team = teams[i].value;
         const teamData = await fetchTeam(team, "elo_recent");
-        new_teams.push(clean(team, teamData.results))
+        new_teams.push(clean(team, teamData))
       }
       setTeamsData(new_teams)
     }
-    
+
     getTeamsData(chosenTeams)
   }, [chosenTeams])
 
