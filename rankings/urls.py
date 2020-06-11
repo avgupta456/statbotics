@@ -5,21 +5,19 @@ from rankings import views
 # for swagger
 from django.conf.urls import url
 from rest_framework import permissions
-from drf_yasg.views import get_schema_view
+
+from drf_yasg.views import SwaggerUIRenderer, get_schema_view
 from drf_yasg import openapi
 
+SwaggerUIRenderer.template = 'drf-yasg.html'  # monkey-patching is bad :(
 
 schema_view = get_schema_view(
    openapi.Info(
       title="Statbotics.io API",
       default_version='v1',
-      description="API Documentation for Statbotics.io",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="avgupta456@gmail.com"),
-      license=openapi.License(name="BSD License"),
    ),
    public=True,
-   permission_classes=(permissions.AllowAny,),
+   permission_classes=(permissions.AllowAny,)
 )
 
 router = routers.DefaultRouter()
