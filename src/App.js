@@ -10,6 +10,7 @@ import {
   TeamView,
   TeamCompare,
   Hypothetical,
+  Swagger,
 }
 from "./components/Containers";
 import styles from "./App.module.css"
@@ -36,6 +37,9 @@ const App = () => {
         </Route>
         <Route path="/predict">
           <Hypothetical />
+        </Route>
+        <Route path="/docs">
+          <Swagger />
         </Route>
       </Switch>
     </div>

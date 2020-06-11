@@ -18,7 +18,7 @@ export default function Navigation() {
   }
 
   return (
-    <Navbar expanded={navExpanded} expand="lg" bg="dark" variant="dark">
+    <Navbar expanded={navExpanded} expand="xl" bg="dark" variant="dark">
       <Navbar.Brand href="/">
         <img
           alt="Logo"
@@ -37,6 +37,7 @@ export default function Navigation() {
         <Nav.Link onClick={()=>setNavExpanded(false)} className={styles.navItem} href="/years">Years Table</Nav.Link>
         <Nav.Link onClick={()=>setNavExpanded(false)} className={styles.navItem} href="/compare">Compare Teams</Nav.Link>
         <Nav.Link onClick={()=>setNavExpanded(false)} className={styles.navItem} href="/predict">Predict Match</Nav.Link>
+        <Nav.Link onClick={()=>setNavExpanded(false)} className={styles.navItem} href="/docs">Docs</Nav.Link>
       </Nav>
       <NavDropdown.Divider />
       <Nav>
