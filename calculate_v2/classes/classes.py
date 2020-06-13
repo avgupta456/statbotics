@@ -1,31 +1,10 @@
-from sqlalchemy import (
-    create_engine,
-    Column,
-    ForeignKey,
-    Integer,
-    String
-)
-
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-from constants import (
-    MYSQL_USERNAME,
-    MYSQL_PASSWORD,
-    MYSQL_HOST,
-    MYSQL_PORT,
-    MYSQL_DATABASE
-)
+from classes import sql
 
-engine = create_engine('mysql+pymysql://' +
-                       MYSQL_USERNAME + ":" +
-                       MYSQL_PASSWORD + "@" +
-                       MYSQL_HOST + ":" +
-                       MYSQL_PORT + "/" +
-                       MYSQL_DATABASE,
-                       echo=False)  # make true to see sql queries
 
-session = sessionmaker(bind=engine)()  # sessionmake returns function
 Base = declarative_base()  # all classes inherit from Base
 
 
@@ -267,40 +246,6 @@ class TeamMatch(Base):
         return self.alliance
 
 
+engine = sql.getEngine()
 Base.metadata.drop_all(engine)  # remove later
 Base.metadata.create_all(engine)
-
-team = Team(name="Cortechs Robotics",
-            number=5511,
-            state="NC",
-            country="USA")
-
-year = Year(year=2015)
-team_year = TeamYear(team=team, year=year)
-event = Event(year=year, key='2019abc', name='test2', state='test3', country='test4', district='test5')
-team_event = TeamEvent(event=event, team_year=team_year)
-match = Match(event=event, key="a", comp_level="b", set_number=1, match_number=2, red1=3, red2=4, red3=5, blue1=6, blue2=7, blue3=8, winner="Red")
-team_match = TeamMatch(team_event=team_event, match=match)
-session.add_all([team, year, team_year, event, team_event, match, team_match])
-session.commit()
-
-query = session.query(Team).filter_by(name='Cortechs Robotics').first()
-print(query)
-
-query = session.query(Year).filter_by(year=2015).first()
-print(query)
-
-query = session.query(TeamYear).filter_by(id=1).first()
-print(query)
-
-query = session.query(Event).filter_by(id=1).first()
-print(query)
-
-query = session.query(TeamEvent).filter_by(id=1).first()
-print(query)
-
-query = session.query(Match).filter_by(id=1).first()
-print(query)
-
-query = session.query(TeamMatch).filter_by(id=1).first()
-print(query)
