@@ -27,7 +27,7 @@ class ReadTBA:
         return self.session.get(self.read_pre+url).json()
 
     # counts TBA calls
-    def getCount(self):
+    def getStats(self):
         return self.count
 
     # Todo: get district

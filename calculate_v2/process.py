@@ -1,3 +1,11 @@
+def printStats(TBA, SQL_Write, SQL_Read):
+    print("TBA Calls: " + str(TBA.getStats()))
+    print("SQL Writes: " + str(SQL_Write.getStats()[0]))
+    print("SQL Commits: " + str(SQL_Write.getStats()[1]))
+    print("SQL Reads: " + str(SQL_Read.getStats()))
+    print()
+
+
 def process(start_year, end_year, TBA, SQL_Write, SQL_Read):
     print("Loading Teams")
     for team in TBA.getTeams():
@@ -35,8 +43,5 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read):
 
         SQL_Write.commit()
 
-        print("TBA Calls: " + str(TBA.getCount()))
-        print()
-
-    print("Total TBA Calls: " + str(TBA.getCount()))
-    print()
+        printStats(TBA, SQL_Write, SQL_Read)
+    printStats(TBA, SQL_Write, SQL_Read)

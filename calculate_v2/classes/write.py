@@ -11,8 +11,22 @@ from classes.classes import (
 
 class SQL_Write:
     def __init__(self, SQL, SQL_Read):
+        self.writes = 0
+        self.commits = 0
+
         self.session = SQL.getSession()
         self.read = SQL_Read
+
+    def add(self, obj, commit):
+        self.session.add(obj)
+        self.writes += 1
+        if(commit):
+            self.session.commit()
+            self.commits += 1
+        return obj
+
+    def getStats(self):
+        return [self.writes, self.commits]
 
     def addTeam(self, dict, commit=False):
         team = Team(
@@ -22,22 +36,14 @@ class SQL_Write:
             country=dict["country"],
         )
 
-        self.session.add(team)
-        if commit:
-            self.commit()
-
-        return team
+        return self.add(team, commit)
 
     def addYear(self, dict, commit=False):
         year = Year(
             id=dict["year"],
         )
 
-        self.session.add(year)
-        if commit:
-            self.commit()
-
-        return year
+        return self.add(year, commit)
 
     def addTeamYear(self, dict, commit=False):
         teamYear = TeamYear(
@@ -45,11 +51,7 @@ class SQL_Write:
             team_id=dict["team"]
         )
 
-        self.session.add(teamYear)
-        if commit:
-            self.commit()
-
-        return teamYear
+        return self.add(teamYear, commit)
 
     def addEvent(self, dict, commit=False):
         event = Event(
@@ -61,11 +63,7 @@ class SQL_Write:
             district=dict["district"],
         )
 
-        self.session.add(event)
-        if commit:
-            self.commit()
-
-        return event
+        return self.add(event, commit)
 
     def addTeamEvent(self, dict, commit=False):
         teamEvent = TeamEvent(
@@ -76,11 +74,7 @@ class SQL_Write:
             event_id=dict["event"],
         )
 
-        self.session.add(teamEvent)
-        if commit:
-            self.commit()
-
-        return teamEvent
+        return self.add(teamEvent, commit)
 
     def addMatch(self, dict, commit=False):
         year_id = dict["year"]
@@ -99,6 +93,7 @@ class SQL_Write:
         )
 
         self.session.add(match)
+        self.writes += 1
 
         for (alliance, list) in [("red", match.getRed()),
                                  ("blue", match.getBlue())]:
@@ -121,7 +116,8 @@ class SQL_Write:
                 self.addTeamMatch(teamMatchDict, False)
 
         if commit:
-            self.commit()
+            self.sessions.commit()
+            self.commits += 1
 
         return match
 
@@ -136,11 +132,4 @@ class SQL_Write:
             alliance=dict["alliance"]
         )
 
-        self.session.add(teamMatch)
-        if commit:
-            self.commit()
-
-        return teamMatch
-
-    def commit(self):
-        self.session.commit()
+        return self.add(teamMatch, commit)
