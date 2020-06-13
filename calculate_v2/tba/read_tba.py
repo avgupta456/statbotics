@@ -31,6 +31,7 @@ class ReadTBA:
 
     # Todo: get district
     def getTeams(self):
+        # print("TBA Start")
         out = []
         for i in range(20):
             data = self.get("teams/"+str(i)+"/simple")
@@ -42,15 +43,22 @@ class ReadTBA:
                     "country": data_team["country"]
                 }
                 out.append(new_data)
+        # print("TBA Done")
         return out
 
     # Todo: get district
     def getTeamYears(self, year):
+        # print("TBA Start")
         out = []
         for i in range(20):
             data = self.get("teams/"+str(year)+"/"+str(i)+"/simple")
             for team in data:
-                out.append({"num": team["team_number"]})
+                new_data = {
+                    "team": team["team_number"],
+                    "year": year
+                }
+                out.append(new_data)
+        # print("TBA Done")
         return out
 
     def getEvents(self, year):
