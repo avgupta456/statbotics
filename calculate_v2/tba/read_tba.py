@@ -1,5 +1,9 @@
 import requests
 
+from tba.clean_data import (
+    cleanState,
+)
+
 '''
 Helper class to read the TheBlueAlliance (TBA) API
 '''
@@ -32,9 +36,9 @@ class ReadTBA:
             data = self.get("teams/"+str(i)+"/simple")
             for data_team in data:
                 new_data = {
-                    "num": data_team["team_number"],
+                    "number": data_team["team_number"],
                     "name": data_team["nickname"],
-                    "state": data_team["state_prov"],
+                    "state": cleanState(data_team["state_prov"]),
                     "country": data_team["country"]
                 }
                 out.append(new_data)

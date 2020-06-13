@@ -2,8 +2,6 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-from classes import sql
-
 
 Base = declarative_base()  # all classes inherit from Base
 
@@ -13,7 +11,7 @@ class Team(Base):
     number = Column(Integer, primary_key=True)
     name = Column(String(100))
     state = Column(String(10))
-    country = Column(String(10))
+    country = Column(String(30))
     '''district = Column(String(10)) TODO'''
 
     def __lt__(self, other):
@@ -246,6 +244,6 @@ class TeamMatch(Base):
         return self.alliance
 
 
-engine = sql.getEngine()
-Base.metadata.drop_all(engine)  # remove later
-Base.metadata.create_all(engine)
+def createTables(engine):
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
