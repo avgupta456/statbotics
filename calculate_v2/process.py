@@ -11,21 +11,27 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read):
         teamYears = TBA.getTeamYears(year)
         for teamYear in teamYears:
             SQL_Write.addTeamYear(teamYear, False)
+        SQL_Write.commit()
 
-            print("  Events")
-            events = TBA.getEvents(year)
-            for event in events:
-                event_key = event["key"]
-                print("\tEvent: " + str(event_key))
-                SQL_Write.addEvent(event, False)
+        print("  Events")
+        events = TBA.getEvents(year)
+        for event in events:
+            event_key = event["key"]
+            print("\tEvent: " + str(event_key))
+            SQL_Write.addEvent(event, False)
+            event_id = SQL_Read.getEvent_byKey(event_key).getId()
 
-                teamEvents = TBA.getTeamEvents(year, event["key"])
-                for teamEvent in teamEvents:
-                    SQL_Write.addTeamEvent(teamEvent)
+            teamEvents = TBA.getTeamEvents(event_key)
+            for teamEvent in teamEvents:
+                teamEvent["year"] = year
+                teamEvent["event"] = event_id
+                SQL_Write.addTeamEvent(teamEvent, False)
 
-                matches = TBA.getMatches(year, event["key"])
-                for match in matches:
-                    SQL_Write.addMatch(match)
+            matches = TBA.getMatches(event_key)
+            for match in matches:
+                match["year"] = year
+                match["event"] = event_id
+                SQL_Write.addMatch(match, False)
 
         SQL_Write.commit()
 

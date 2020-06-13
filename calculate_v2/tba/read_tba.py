@@ -2,6 +2,7 @@ import requests
 
 from tba.clean_data import (
     cleanState,
+    cleanDistrict,
 )
 
 '''
@@ -31,7 +32,6 @@ class ReadTBA:
 
     # Todo: get district
     def getTeams(self):
-        # print("TBA Start")
         out = []
         for i in range(20):
             data = self.get("teams/"+str(i)+"/simple")
@@ -43,12 +43,10 @@ class ReadTBA:
                     "country": data_team["country"]
                 }
                 out.append(new_data)
-        # print("TBA Done")
         return out
 
     # Todo: get district
     def getTeamYears(self, year):
-        # print("TBA Start")
         out = []
         for i in range(20):
             data = self.get("teams/"+str(year)+"/"+str(i)+"/simple")
@@ -58,7 +56,6 @@ class ReadTBA:
                     "team": team["team_number"],
                 }
                 out.append(new_data)
-        # print("TBA Done")
         return out
 
     def getEvents(self, year):
@@ -70,33 +67,30 @@ class ReadTBA:
                     "year": year,
                     "key": event["key"],
                     "name": event["name"],
-                    "state": event["state_prov"],
+                    "state": cleanState(event["state_prov"]),
                     "country": event["country"],
-                    "district": event["district"],
+                    "district": cleanDistrict(event["district"]),
                     "start_date": event["start_date"],
                     "end_date": event["end_date"],
                 }
                 out.append(new_data)
         return out
 
-    def getTeamEvents(self, year, event):
+    def getTeamEvents(self, event):
         out = []
         data = self.get("event/"+str(event)+"/teams/simple")
         for team in data:
             new_data = {
-                "year": year,
-                "event": event,
                 "team": team["team_number"],
             }
             out.append(new_data)
         return out
 
-    def getMatches(self, year, event):
+    def getMatches(self, event):
         out = []
         matches = self.get("event/"+str(event)+"/matches")
         for match in matches:
             match_data = {
-                "year": year,
                 "event": event,
                 "key": match["key"],
                 "comp_level": match["comp_level"],

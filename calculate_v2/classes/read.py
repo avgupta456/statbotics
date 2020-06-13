@@ -4,8 +4,8 @@ from classes.classes import (
     TeamYear,
     Event,
     TeamEvent,
-    # Match,
-    # TeamMatch
+    Match,
+    TeamMatch
 )
 
 
@@ -16,93 +16,113 @@ class SQL_Read:
     '''Team'''
 
     def getTeam(self, number):
-        return self.session.query(Team).filter_by(number=number).first()
+        return self.session.query(Team).filter_by(id=number).first()
 
     def getTeams(self):
-        return self.session.query(Team).order_by('number').all()
+        return self.session.query(Team).order_by('id').all()
 
     '''Year'''
 
     def getYear(self, year):
-        return self.session.query(Year).filter_by(year=year).first()
+        return self.session.query(Year).filter_by(id=year).first()
 
     def getYears(self):
-        return self.session.query(Year).order_by('year').all()
+        return self.session.query(Year).order_by('id').all()
 
     '''Team Year'''
 
-    def getTeamYear(self, team, year):
-        return self.session.query(TeamYear) \
-               .filter_by(team_id=team) \
-               .filter_by(year_id=year) \
-               .first()
+    def getTeamYear(self, teamYear):
+        return self.session.query(TeamYear).filter_by(id=teamYear).first()
 
-    def getTeamYears(self):
+    def getTeamYear_byParts(self, team, year):
         return self.session.query(TeamYear) \
-               .order_by('year_id') \
-               .order_by('number_id') \
-               .all()
+            .filter_by(team_id=team, year_id=year).first()
 
-    def getTeamYears_byTeam(self, team):
-        return self.session.query(TeamYear) \
-               .filter_by(team_id=team) \
-               .order_by('year_id') \
-               .all()
-
-    def getTeamYears_byYear(self, year):
-        return self.session.query(TeamYear) \
-               .filter_by(year_id=year) \
-               .order_by('team_id') \
-               .all()
+    def getTeamYears(self, team=None, year=None, teamYear=None):
+        out = self.session.query(TeamYear)
+        if team is not None:
+            out = out.filter_by(team_id=team)
+        if year is not None:
+            out = out.filter_by(year_id=year)
+        if teamYear is not None:
+            out = out.filter_by(id=teamYear)
+        return out.order_by('id').all()
 
     '''Event'''
 
     def getEvent(self, event):
-        '''Todo'''
+        return self.session.query(Event).filter_by(id=event).first()
 
-    def getEvent_byKey(self, event):
-        return self.session.query(Event) \
-               .filter_by(key=event) \
-               .first()
+    def getEvent_byKey(self, event_key):
+        return self.session.query(Event).filter_by(key=event_key).first()
 
-    def getEvents(self):
-        '''Todo'''
-
-    def getEvents_byYear(self, year):
-        '''Todo'''
+    def getEvents(self, year=None, event=None):
+        out = self.session.query(Event)
+        if year is not None:
+            out = out.filter_by(year_id=year)
+        if event is not None:
+            out = out.filter_by(id=event)
+        return out.order_by('id').all()
 
     '''Team Event'''
 
-    def getTeamEvent(self, team, event):
+    def getTeamEvent(self, teamEvent):
+        return self.session.query(TeamEvent).filter_by(id=teamEvent).first()
+
+    def getTeamEvent_byParts(self, team, event):
         return self.session.query(TeamEvent) \
-               .filter_by(team_id=team) \
-               .filter_by(event_id=event) \
-               .first()
+            .filter_by(team_id=team, event_id=event).first()
 
-    def getTeamEvents(self):
-        '''Todo'''
-
-    def getTeamEvents_byTeam(self, team):
-        '''Todo'''
+    def getTeamEvents(self, team=None, year=None,
+                      teamYear=None, event=None, teamEvent=None):
+        out = self.session.query(TeamEvent)
+        if team is not None:
+            out = out.filter_by(team_id=team)
+        if year is not None:
+            out = out.filter_by(year_id=year)
+        if teamYear is not None:
+            out = out.filter_by(team_year_id=teamYear)
+        if event is not None:
+            out = out.filter_by(event_id=event)
+        if teamEvent is not None:
+            out = out.filter_by(id=teamEvent)
+        return out.order_by('id').all()
 
     '''Match'''
 
     def getMatch(self, match):
-        '''Todo'''
+        return self.session.query(Match).filter_by(id=match).first()
 
-    def getMatches(self):
-        '''Todo'''
-
-    def getMatches_byEvent(self, event):
-        '''Todo'''
+    def getMatches(self, year=None, event=None, match=None):
+        out = self.session.query(Event)
+        if year is not None:
+            out = out.filter_by(year_id=year)
+        if event is not None:
+            out = out.filter_by(event_id=event)
+        if match is not None:
+            out = out.filter_by(id=match)
+        return out.order_by('id').all()
 
     '''Team Match'''
 
-    def getTeamMatch(self, team, match):
-        '''Todo'''
+    def getTeamMatch(self, teamMatch):
+        return self.session.query(TeamMatch).filter_by(id=teamMatch).first()
 
-    def getTeamMatches(self):
-        '''Todo'''
-
-    def getTeamMatches_byMatch(self, match):
-        '''Todo'''
+    def getTeamMatches(self, team=None, year=None, teamYear=None, event=None,
+                       teamEvent=None, match=None, teamMatch=None):
+        out = self.session.query(TeamEvent)
+        if team is not None:
+            out = out.filter_by(team_id=team)
+        if year is not None:
+            out = out.filter_by(year_id=year)
+        if teamYear is not None:
+            out = out.filter_by(team_year_id=teamYear)
+        if event is not None:
+            out = out.filter_by(event_id=event)
+        if teamEvent is not None:
+            out = out.filter_by(team_event_id=teamEvent)
+        if match is not None:
+            out = out.filter_by(match_id=match)
+        if teamMatch is not None:
+            out = out.filter_by(id=teamMatch)
+        return out.order_by('id').all()

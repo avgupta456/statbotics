@@ -16,10 +16,10 @@ import search
 start = datetime.datetime.now()
 
 start_year = 2002
-end_year = 2005
+end_year = 2002
 
 TBA = read_tba.ReadTBA()
-SQL = sql.SQL(clean=True, echo=True)
+SQL = sql.SQL(clean=True, echo=False)
 SQL_Read = read.SQL_Read(SQL)
 SQL_Write = write.SQL_Write(SQL, SQL_Read)
 
