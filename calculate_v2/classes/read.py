@@ -27,6 +27,10 @@ class SQL_Read:
         self.reads += 1
         return self.session.query(Team).order_by('id').all()
 
+    def getTotalTeams(self):
+        self.reads += 1
+        return self.session.query(Team).count()
+
     '''Year'''
 
     def getYear(self, year):
@@ -36,6 +40,10 @@ class SQL_Read:
     def getYears(self):
         self.reads += 1
         return self.session.query(Year).order_by('id').all()
+
+    def getTotalYears(self):
+        self.reads += 1
+        return self.session.query(Year).count()
 
     '''Team Year'''
 
@@ -59,6 +67,10 @@ class SQL_Read:
             out = out.filter_by(id=teamYear)
         return out.order_by('id').all()
 
+    def getTotalTeamYears(self):
+        self.reads += 1
+        return self.session.query(TeamYear).count()
+
     '''Event'''
 
     def getEvent(self, event):
@@ -77,6 +89,10 @@ class SQL_Read:
         if event is not None:
             out = out.filter_by(id=event)
         return out.order_by('id').all()
+
+    def getTotalEvents(self):
+        self.reads += 1
+        return self.session.query(Event).count()
 
     '''Team Event'''
 
@@ -105,6 +121,10 @@ class SQL_Read:
             out = out.filter_by(id=teamEvent)
         return out.order_by('id').all()
 
+    def getTotalTeamEvents(self):
+        self.reads += 1
+        return self.session.query(TeamEvent).count()
+
     '''Match'''
 
     def getMatch(self, match):
@@ -121,6 +141,10 @@ class SQL_Read:
         if match is not None:
             out = out.filter_by(id=match)
         return out.order_by('id').all()
+
+    def getTotalMatches(self):
+        self.reads += 1
+        return self.session.query(Match).count()
 
     '''Team Match'''
 
@@ -147,3 +171,7 @@ class SQL_Read:
         if teamMatch is not None:
             out = out.filter_by(id=teamMatch)
         return out.order_by('id').all()
+
+    def getTotalTeamMatches(self):
+        self.reads += 1
+        return self.session.query(TeamMatch).count()

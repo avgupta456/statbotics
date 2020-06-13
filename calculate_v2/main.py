@@ -1,5 +1,3 @@
-import datetime
-
 from classes import (
     sql,
     read,
@@ -13,8 +11,6 @@ from tba import (
 import process
 import search
 
-start = datetime.datetime.now()
-
 start_year = 2002
 end_year = 2020
 
@@ -25,6 +21,3 @@ SQL_Write = write.SQL_Write(SQL, SQL_Read)
 
 process.process(start_year, end_year, TBA, SQL_Write, SQL_Read)
 search.search(SQL_Read)
-
-end = datetime.datetime.now()
-print("\nLog Time: " + str(end-start))

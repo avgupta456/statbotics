@@ -21,9 +21,12 @@ class SQL_Write:
         self.session.add(obj)
         self.writes += 1
         if(commit):
-            self.session.commit()
-            self.commits += 1
+            self.commit()
         return obj
+
+    def commit(self):
+        self.session.commit()
+        self.commits += 1
 
     def getStats(self):
         return [self.writes, self.commits]
@@ -116,8 +119,7 @@ class SQL_Write:
                 self.addTeamMatch(teamMatchDict, False)
 
         if commit:
-            self.sessions.commit()
-            self.commits += 1
+            self.commit()
 
         return match
 

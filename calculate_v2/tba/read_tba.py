@@ -90,6 +90,23 @@ class ReadTBA:
         out = []
         matches = self.get("event/"+str(event)+"/matches")
         for match in matches:
+            # handles issues such as 2005wat qf1
+            red = [0] * len(match["alliances"]["red"]["team_keys"])
+            try:
+                arr = [t[3:] for t in
+                       match["alliances"]["red"]["team_keys"]]
+                red = ",".join(arr) # noqa
+            except ValueError:
+                print("Value Error at ", event, match)
+
+            blue = [0] * len(match["alliances"]["blue"]["team_keys"])
+            try:
+                arr = [t[3:] for t in
+                       match["alliances"]["blue"]["team_keys"]]
+                blue = ",".join(arr) # noqa
+            except ValueError:
+                print("Value Error at ", event, match)
+
             match_data = {
                 "event": event,
                 "key": match["key"],
