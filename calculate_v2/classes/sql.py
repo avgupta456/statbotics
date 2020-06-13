@@ -12,7 +12,7 @@ from classes.constants import (
 
 
 class SQL:
-    def __init__(self, clean=True):
+    def __init__(self, clean=True, echo=False):
         # set echo to true to see SQL queries in console
         self.engine = create_engine('mysql+pymysql://' +
                                     MYSQL_USERNAME + ":" +
@@ -20,7 +20,7 @@ class SQL:
                                     MYSQL_HOST + ":" +
                                     MYSQL_PORT + "/" +
                                     MYSQL_DATABASE,
-                                    echo=False)
+                                    echo=echo)
 
         # sessionmake returns function
         self.session = sessionmaker(bind=self.engine)()

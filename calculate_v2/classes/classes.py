@@ -9,6 +9,7 @@ Base = declarative_base()  # all classes inherit from Base
 class Team(Base):
     __tablename__ = 'teams'
     number = Column(Integer, primary_key=True)
+
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
@@ -61,6 +62,7 @@ class Year(Base):
 class TeamYear(Base):
     __tablename__ = 'team_years'
     id = Column(Integer, primary_key=True)
+
     year_id = Column(Integer, ForeignKey('years.year'))
     year = relationship('Year')
 
@@ -89,9 +91,11 @@ class TeamYear(Base):
 class Event(Base):
     __tablename__ = 'events'
     id = Column(Integer, primary_key=True)
+
     year_id = Column(Integer, ForeignKey('years.year'))
     year = relationship('Year')
-    key = Column(String(10))
+
+    key = Column(String(20))
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
@@ -128,8 +132,15 @@ class Event(Base):
 class TeamEvent(Base):
     __tablename__ = 'team_events'
     id = Column(Integer, primary_key=True)
+
+    year_id = Column(Integer, ForeignKey('years.year'))
+    year = relationship('Year')
+
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship('Event')
+
+    team_id = Column(Integer, ForeignKey('teams.number'))
+    team = relationship('Team')
 
     team_year_id = Column(Integer, ForeignKey('team_years.id'))
     team_year = relationship('TeamYear')
@@ -159,21 +170,19 @@ class Match(Base):
     __tablename__ = 'matches'
     id = Column(Integer, primary_key=True)
 
+    year_id = Column(Integer, ForeignKey('years.year'))
+    year = relationship('Year')
+
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship('Event')
 
-    key = Column(String(10))
+    key = Column(String(20))
     comp_level = Column(String(10))
     set_number = Column(Integer)
     match_number = Column(Integer)
 
-    red1 = Column(Integer)
-    red2 = Column(Integer)
-    red3 = Column(Integer)
-
-    blue1 = Column(Integer)
-    blue2 = Column(Integer)
-    blue3 = Column(Integer)
+    red = Column(String(20))
+    blue = Column(String(20))
 
     winner = Column(String(10))
 
@@ -199,10 +208,10 @@ class Match(Base):
         return self.match_number
 
     def getRed(self):
-        return [self.red1, self.red2, self.red3]
+        return [int(x) for x in self.red.split(',')]
 
     def getBlue(self):
-        return [self.blue1, self.blue2, self.blue3]
+        return [int(x) for x in self.blue.split(',')]
 
     def getWinner(self):
         return self.winner
@@ -210,13 +219,25 @@ class Match(Base):
 
 class TeamMatch(Base):
     __tablename__ = 'team_matches'
-
     id = Column(Integer, primary_key=True)
-    team_event_id = Column(Integer, ForeignKey('team_events.id'))
-    team_event = relationship('TeamEvent')
+
+    year_id = Column(Integer, ForeignKey('years.year'))
+    year = relationship('Year')
+
+    event_id = Column(Integer, ForeignKey('events.id'))
+    event = relationship('Event')
 
     match_id = Column(Integer, ForeignKey('matches.id'))
     match = relationship('Match')
+
+    team_id = Column(Integer, ForeignKey('teams.number'))
+    team = relationship('Team')
+
+    team_year_id = Column(Integer, ForeignKey('team_years.id'))
+    team_year = relationship('TeamYear')
+
+    team_event_id = Column(Integer, ForeignKey('team_events.id'))
+    team_event = relationship('TeamEvent')
 
     alliance = Column(String(10))
 

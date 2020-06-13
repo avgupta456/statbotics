@@ -54,8 +54,8 @@ class ReadTBA:
             data = self.get("teams/"+str(year)+"/"+str(i)+"/simple")
             for team in data:
                 new_data = {
+                    "year": year,
                     "team": team["team_number"],
-                    "year": year
                 }
                 out.append(new_data)
         # print("TBA Done")
@@ -66,7 +66,8 @@ class ReadTBA:
         data = self.get("events/"+str(year)+"/simple")
         for event in data:
             if int(event["event_type"]) <= 10:
-                event_data = {
+                new_data = {
+                    "year": year,
                     "key": event["key"],
                     "name": event["name"],
                     "state": event["state_prov"],
@@ -75,29 +76,36 @@ class ReadTBA:
                     "start_date": event["start_date"],
                     "end_date": event["end_date"],
                 }
-                out.append(event_data)
+                out.append(new_data)
         return out
 
-    def getTeamEvents(self, event):
+    def getTeamEvents(self, year, event):
         out = []
         data = self.get("event/"+str(event)+"/teams/simple")
         for team in data:
-            out.append({"num": team["team_number"]})
+            new_data = {
+                "year": year,
+                "event": event,
+                "team": team["team_number"],
+            }
+            out.append(new_data)
         return out
 
-    def getMatches(self, event):
+    def getMatches(self, year, event):
         out = []
         matches = self.get("event/"+str(event)+"/matches")
         for match in matches:
             match_data = {
+                "year": year,
+                "event": event,
                 "key": match["key"],
                 "comp_level": match["comp_level"],
                 "set_number": match["set_number"],
                 "match_number": match["match_number"],
-                "red": [int(t[3:]) for t in
-                        match["alliances"]["red"]["team_keys"]],
-                "blue": [int(t[3:]) for t in
-                         match["alliances"]["blue"]["team_keys"]],
+                "red": ",".join([t[3:] for t in
+                                match["alliances"]["red"]["team_keys"]]),
+                "blue": ",".join([t[3:] for t in
+                                 match["alliances"]["blue"]["team_keys"]]),
                 "winner": match["winning_alliance"],
                 "time": match["actual_time"],
                 "score_breakdown": match["score_breakdown"]
