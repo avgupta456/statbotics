@@ -74,7 +74,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
                                        check=not clean,
                                        add=False,
                                        commit=False)
-
+            SQL_Write.add()
             matches = TBA.getMatches(event_key, event_time)
             for match in matches:
                 match["year"] = year
@@ -86,7 +86,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
         SQL_Write.add()
         printStats(TBA, SQL_Write, SQL_Read)
 
-    SQL_Write.commit()  # any loose ends
+    SQL_Write.add(match_objects=True)  # match objects
     post_process(TBA, SQL_Write, SQL_Read)
     printStats(TBA, SQL_Write, SQL_Read)
 

@@ -31,3 +31,11 @@ def getTime(date):
     timestamp = int(time.mktime(datetime.datetime.
                                 strptime(date, "%Y-%m-%d").timetuple()))
     return timestamp
+
+
+def getTeamYearId(team, year):
+    return int(str(year)+str(team))
+
+
+def getTeamEventId(team, event):
+    return int("1"+str(event).zfill(4)+str(team))

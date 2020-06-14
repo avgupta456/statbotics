@@ -55,6 +55,11 @@ class SQL_Read:
         return self.session.query(TeamYear) \
             .filter_by(team_id=team, year_id=year).first()
 
+    def getTeamYearId_byParts(self, team, year):
+        self.reads += 1
+        return self.session.query(TeamYear.id) \
+            .filter_by(team_id=team, year_id=year).first()[0]
+
     def getTeamYears(self, team=None, year=None, teamYear=None):
         self.reads += 1
         out = self.session.query(TeamYear)
@@ -103,6 +108,11 @@ class SQL_Read:
         self.reads += 1
         return self.session.query(TeamEvent) \
             .filter_by(team_id=team, event_id=event).first()
+
+    def getTeamEventId_byParts(self, team, event):
+        self.reads += 1
+        return self.session.query(TeamEvent.id) \
+            .filter_by(team_id=team, event_id=event).first()[0]
 
     def getTeamEvents(self, team=None, year=None,
                       teamYear=None, event=None, teamEvent=None):

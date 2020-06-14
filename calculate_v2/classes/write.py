@@ -10,34 +10,40 @@ from classes.classes import (
     teamEvent_match_table,
 )
 
+from helper import utils
+
 
 class SQL_Write:
     def __init__(self, SQL, SQL_Read):
         self.writes = 0
         self.commits = 0
         self.objects = []
-        self.match_objects = []
+        self.match_objects_1 = []
+        self.match_objects_2 = []
+        self.match_objects_3 = []
 
         self.match_id = 0
 
         self.session = SQL.getSession()
         self.read = SQL_Read
 
-    def add(self):
+    def add(self, match_objects=False):
         if self.objects != []:
             self.session.add_all(self.objects)
             self.objects = []
             self.writes += 1
             self.commit()
 
-        if self.match_objects != []:
+        if self.match_objects_1 != [] and match_objects:
             self.session.execute(team_match_table.insert().
-                                 values(self.match_objects))
+                                 values(self.match_objects_1))
             self.session.execute(teamYear_match_table.insert().
-                                 values(self.match_objects))
+                                 values(self.match_objects_2))
             self.session.execute(teamEvent_match_table.insert().
-                                 values(self.match_objects))
-            self.match_objects = []
+                                 values(self.match_objects_3))
+            self.match_objects_1 = []
+            self.match_objects_2 = []
+            self.match_objects_3 = []
             self.writes += 3
             self.commit()
 
@@ -46,8 +52,6 @@ class SQL_Write:
         self.commits += 1
 
     def commit(self):
-        if len(self.objects) > 0 or len(self.match_objects) > 0:
-            self.add()
         self.session.commit()
         self.commits += 1
 
@@ -98,6 +102,7 @@ class SQL_Write:
         team, year = dict["team"], dict["year"]
         if not check or self.read.getTeamYear_byParts(team, year) is None:
             teamYear = TeamYear(
+                id=int(str(year)+str(team)),
                 year_id=year,
                 team_id=team
             )
@@ -135,10 +140,11 @@ class SQL_Write:
     def addTeamEvent(self, dict, check=True, add=False, commit=False):
         team, event_id = dict["team"], dict["event_id"]
         if not check or self.read.getTeamEvent_byParts(team, event_id) is None:
-            team_year_id = self.read.getTeamYear_byParts(
+            team_year_id = self.read.getTeamYearId_byParts(
                 team=dict["team"], year=dict["year"]
-            ).getId()
+            )
             teamEvent = TeamEvent(
+                id=int("1"+str(event_id).zfill(4)+str(team)),
                 team_id=team,
                 team_year_id=team_year_id,
                 year_id=dict["year"],
@@ -176,12 +182,17 @@ class SQL_Write:
                 time=dict["time"]
             )
             self.objects.append(match)
-            arr = []
-            for team in dict["red"].split(","):
-                arr.append((int(team), self.match_id))
-            for team in dict["blue"].split(","):
-                arr.append((int(team), self.match_id))
-            self.match_objects.extend(arr)
+            arr1, arr2, arr3 = [], [], []
+            for teams in [dict["red"].split(","), dict["blue"].split(",")]:
+                for team in teams:
+                    team_year_id = utils.getTeamYearId(team, year_id)
+                    team_event_id = utils.getTeamEventId(team, event_id)
+                    arr1.append((int(team), self.match_id))
+                    arr2.append((team_year_id, self.match_id))
+                    arr3.append((team_event_id, self.match_id))
+            self.match_objects_1.extend(arr1)
+            self.match_objects_2.extend(arr2)
+            self.match_objects_3.extend(arr3)
             if add:
                 self.add()
             if commit:
