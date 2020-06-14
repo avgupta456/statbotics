@@ -74,12 +74,19 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
     printStats(TBA, SQL_Write, SQL_Read)
 
 
+# removes REALLY old teams and adds district labels
 def post_process(SQL_Write, SQL_Read):
     teams = SQL_Read.getTeams()
     for team in teams:
-        years = len(SQL_Read.getTeamYears(team=team.getNumber()))
-        if years == 0:
-            print("Removed " + str(team.getName()))
+        years = SQL_Read.getTeamYears(team=team.getNumber())
+        if len(years) == 0:
             SQL_Write.remove(team)
+        else:
+            events = SQL_Read.getTeamEvents(team=team.getNumber())
+            district = "None"
+            for event in events:
+                if event.event.getDistrict() is not None:
+                    district = event.event.getDistrict()
+            team.district = district
     SQL_Write.commit()
     printStats(None, SQL_Write, SQL_Read)

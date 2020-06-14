@@ -14,7 +14,7 @@ class Team(Base):
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
-    '''district = Column(String(10)) TODO'''
+    district = Column(String(10))
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -34,10 +34,8 @@ class Team(Base):
     def getName(self):
         return self.name
 
-    ''' TODO
     def getDistrict(self):
         return self.district
-    '''
 
     def getState(self):
         return self.state

@@ -12,3 +12,5 @@ SELECT COUNT(*) FROM team_matches;
 
 DELETE FROM team_years WHERE year_id=2020;
 DELETE FROM years WHERE id=2020;
+
+ALTER TABLE teams ADD district VARCHAR(10);
