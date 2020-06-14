@@ -84,6 +84,7 @@ class SQL_Write:
                 state=dict["state"],
                 country=dict["country"],
                 district=dict["district"],
+                time=dict["time"],
             )
             self.add(event, commit)
             return False
@@ -101,6 +102,7 @@ class SQL_Write:
                 team_year_id=team_year_id,
                 year_id=dict["year"],
                 event_id=event_id,
+                time=dict["time"],
             )
             self.add(teamEvent, commit)
             return False
@@ -121,7 +123,10 @@ class SQL_Write:
                 match_number=dict["match_number"],
                 red=dict["red"],
                 blue=dict["blue"],
+                red_score=dict["red_score"],
+                blue_score=dict["blue_score"],
                 winner=dict["winner"],
+                time=dict["time"]
             )
             self.add(match, commit)
             for (color, list) in [
@@ -140,7 +145,8 @@ class SQL_Write:
                         "team": team,
                         "team_year": team_year,
                         "team_event": team_event,
-                        "alliance": color
+                        "alliance": color,
+                        "time": dict["time"],
                     }
                     self.addTeamMatch(teamMatchDict, False)
             return False
@@ -156,6 +162,7 @@ class SQL_Write:
             team_id=dict["team"],
             team_year_id=dict["team_year"],
             team_event_id=dict["team_event"],
-            alliance=dict["alliance"]
+            alliance=dict["alliance"],
+            time=dict["time"],
         )
         self.add(teamMatch, commit)

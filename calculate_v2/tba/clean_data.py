@@ -151,3 +151,19 @@ def cleanDistrict(district):
     if district in districts:
         return districts[district]
     return district
+
+
+def getMatchTime(match, event_time):
+    if match["actual_time"] is not None:
+        return match["actual_time"]
+
+    match_time = event_time  # start value
+    if match["comp_level"] == "qm":
+        match_time += match["match_number"]
+    elif match["comp_level"] == "qf":
+        match_time += 200 + 10 * match["set_number"] + match["match_number"]
+    elif match["comp_level"] == "sf":
+        match_time += 400 + 10 * match["set_number"] + match["match_number"]
+    else:
+        match_time += 600 + match["match_number"]
+    return match_time

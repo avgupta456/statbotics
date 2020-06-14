@@ -1,6 +1,9 @@
 import pickle
 import os
 
+import time
+import datetime
+
 
 def dump(path, data):
     os.makedirs(path)
@@ -22,3 +25,9 @@ def dump_cache(path, data):
 def load_cache(file):
     with open(file+"/data.p", 'rb') as f:
         return pickle.load(f)
+
+
+def getTime(date):
+    timestamp = int(time.mktime(datetime.datetime.
+                                strptime(date, "%Y-%m-%d").timetuple()))
+    return timestamp

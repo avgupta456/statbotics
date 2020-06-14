@@ -56,15 +56,18 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
             print("\tEvent: " + str(event_key))
             event_exists = SQL_Write.addEvent(event, False)
             if not event_exists or year == end_year:
-                event_id = SQL_Read.getEvent_byKey(event_key).getId()
+                event_obj = SQL_Read.getEvent_byKey(event_key)
+                event_id = event_obj.getId()
+                event_time = event["time"]
 
                 teamEvents = TBA.getTeamEvents(event_key)
                 for teamEvent in teamEvents:
                     teamEvent["year"] = year
                     teamEvent["event"] = event_id
+                    teamEvent["time"] = event_time
                     SQL_Write.addTeamEvent(teamEvent, False)
 
-                matches = TBA.getMatches(event_key)
+                matches = TBA.getMatches(event_key, event_time)
                 for match in matches:
                     match["year"] = year
                     match["event"] = event_id

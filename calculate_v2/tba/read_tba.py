@@ -4,6 +4,7 @@ import os
 from tba.clean_data import (
     cleanState,
     cleanDistrict,
+    getMatchTime,
 )
 
 from helper import (
@@ -85,8 +86,7 @@ class ReadTBA:
                     "state": cleanState(event["state_prov"]),
                     "country": event["country"],
                     "district": cleanDistrict(event["district"]),
-                    "start_date": event["start_date"],
-                    "end_date": event["end_date"],
+                    "time": utils.getTime(event["start_date"])
                 }
                 out.append(new_data)
         return out
@@ -101,7 +101,7 @@ class ReadTBA:
             out.append(new_data)
         return out
 
-    def getMatches(self, event):
+    def getMatches(self, event, event_time):
         out = []
         matches = self.get("event/"+str(event)+"/matches")
         for match in matches:
@@ -118,14 +118,14 @@ class ReadTBA:
                     "blue": ",".join([t[3:] for t in
                                      match["alliances"]["blue"]["team_keys"]]),
                     "winner": match["winning_alliance"],
-                    "time": match["actual_time"],
+                    "time": getMatchTime(match, event_time),
+                    "red_score": match["alliances"]["red"]["score"],
+                    "blue_score": match["alliances"]["blue"]["score"],
                     "score_breakdown": match["score_breakdown"]
                 }
                 out.append(match_data)
         return out
 
     def getTeamDistrict(self, team):
-        if team == 426:
-            return "None"
         teams_info = utils.load("tba/cache/teams_info.p")
         return teams_info[team][3]

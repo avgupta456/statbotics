@@ -143,6 +143,7 @@ class Event(Base):
 
     key = Column(String(20))
     name = Column(String(100))
+    time = Column(Integer)
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
@@ -190,6 +191,9 @@ class Event(Base):
     def getDistrict(self):
         return self.district
 
+    def getTime(self):
+        return self.time
+
 
 class TeamEvent(Base):
     '''DECLARATIONS'''
@@ -207,6 +211,8 @@ class TeamEvent(Base):
 
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship('Event')
+
+    time = Column(Integer)
 
     '''NEW'''
     elo_start = Column(Integer)
@@ -271,11 +277,14 @@ class Match(Base):
     red = Column(String(20))
     blue = Column(String(20))
 
+    red_score = Column(Integer)
+    blue_score = Column(Integer)
+
     winner = Column(String(10))
 
+    time = Column(Integer)
+
     '''NEW'''
-    score_red = Column(Integer)
-    score_blue = Column(Integer)
     elo_red = Column(Integer)
     elo_blue = Column(Integer)
     elo_diff = Column(Integer)  # abs value
@@ -348,6 +357,8 @@ class TeamMatch(Base):
     team_event = relationship('TeamEvent')
 
     alliance = Column(String(10))
+
+    time = Column(Integer)
 
     '''NEW'''
     elo_start = Column(Integer)
