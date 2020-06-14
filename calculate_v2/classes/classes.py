@@ -30,10 +30,10 @@ class Team(Base):
     def getNumber(self):
         return self.id
 
+    '''GETTERS'''
     def getName(self):
         return self.name
 
-    '''GETTERS'''
     ''' TODO
     def getDistrict(self):
         return self.district

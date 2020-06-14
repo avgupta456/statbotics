@@ -24,12 +24,19 @@ class SQL_Write:
             self.commit()
         return obj
 
+    def remove(self, obj, commit=False):
+        self.session.delete(obj)
+        if commit:
+            self.commit()
+
     def commit(self):
         self.session.commit()
         self.commits += 1
 
     def getStats(self):
         return [self.writes, self.commits]
+
+    '''Team'''
 
     def addTeam(self, dict, commit=False):
         team = Team(
@@ -41,12 +48,16 @@ class SQL_Write:
 
         return self.add(team, commit)
 
+    '''Year'''
+
     def addYear(self, dict, commit=False):
         year = Year(
             id=dict["year"],
         )
 
         return self.add(year, commit)
+
+    '''TeamYear'''
 
     def addTeamYear(self, dict, commit=False):
         teamYear = TeamYear(
@@ -55,6 +66,8 @@ class SQL_Write:
         )
 
         return self.add(teamYear, commit)
+
+    '''Event'''
 
     def addEvent(self, dict, commit=False):
         event = Event(
@@ -68,6 +81,8 @@ class SQL_Write:
 
         return self.add(event, commit)
 
+    '''TeamEvent'''
+
     def addTeamEvent(self, dict, commit=False):
         teamEvent = TeamEvent(
             team_id=dict["team"],
@@ -78,6 +93,8 @@ class SQL_Write:
         )
 
         return self.add(teamEvent, commit)
+
+    '''Match'''
 
     def addMatch(self, dict, commit=False):
         year_id = dict["year"]
@@ -122,6 +139,8 @@ class SQL_Write:
             self.commit()
 
         return match
+
+    '''TeamMatch'''
 
     def addTeamMatch(self, dict, commit=False):
         teamMatch = TeamMatch(

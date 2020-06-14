@@ -62,6 +62,8 @@ class ReadTBA:
         out = []
         data = self.get("events/"+str(year)+"/simple")
         for event in data:
+            if event["district"] is not None:
+                event["district"] = event["district"]["abbreviation"]
             if int(event["event_type"]) <= 10:
                 new_data = {
                     "year": year,

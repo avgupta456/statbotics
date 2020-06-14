@@ -8,4 +8,7 @@ SELECT * FROM team_years;
 SELECT * FROM events;
 SELECT * FROM team_events;
 SELECT * FROM matches;
-SELECT * FROM team_matches;
+SELECT COUNT(*) FROM team_matches;
+
+DELETE FROM team_years WHERE year_id=2020;
+DELETE FROM years WHERE id=2020;

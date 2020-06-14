@@ -4,13 +4,20 @@ start = datetime.datetime.now()
 
 def printStats(TBA, SQL_Write, SQL_Read):
     print()
-    print("TBA Calls: " + str(TBA.getStats()))
-    print()
 
-    print("SQL Writes: " + str(SQL_Write.getStats()[0]))
-    print("SQL Commits: " + str(SQL_Write.getStats()[1]))
-    print("SQL Reads: " + str(SQL_Read.getStats()))
-    print()
+    if TBA is not None:
+        print("TBA Calls: " + str(TBA.getStats()))
+        print()
+
+    if SQL_Write is not None:
+        print("SQL Writes: " + str(SQL_Write.getStats()[0]))
+        print("SQL Commits: " + str(SQL_Write.getStats()[1]))
+
+    if SQL_Read is not None:
+        print("SQL Reads: " + str(SQL_Read.getStats()))
+
+    if SQL_Write is not None or SQL_Read is not None:
+        print()
 
     print("Total Teams: " + str(SQL_Read.getTotalTeams()))
     print("Total Years: " + str(SQL_Read.getTotalYears()))
@@ -25,11 +32,12 @@ def printStats(TBA, SQL_Write, SQL_Read):
     print()
 
 
-def process(start_year, end_year, TBA, SQL_Write, SQL_Read):
-    print("Loading Teams")
-    for team in TBA.getTeams():
-        SQL_Write.addTeam(team, False)
-    SQL_Write.commit()
+def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
+    if clean:
+        print("Loading Teams")
+        for team in TBA.getTeams():
+            SQL_Write.addTeam(team, False)
+        SQL_Write.commit()
 
     for year in range(start_year, end_year + 1):
         print("Year " + str(year))
@@ -64,3 +72,14 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read):
 
         printStats(TBA, SQL_Write, SQL_Read)
     printStats(TBA, SQL_Write, SQL_Read)
+
+
+def post_process(SQL_Write, SQL_Read):
+    teams = SQL_Read.getTeams()
+    for team in teams:
+        years = len(SQL_Read.getTeamYears(team=team.getNumber()))
+        if years == 0:
+            print("Removed " + str(team.getName()))
+            SQL_Write.remove(team)
+    SQL_Write.commit()
+    printStats(None, SQL_Write, SQL_Read)

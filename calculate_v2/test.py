@@ -2,6 +2,6 @@ from tba import read_tba
 
 TBA = read_tba.ReadTBA()
 
-data = TBA.getMatches('2005wat')
+data = TBA.getEvents(2009)
 for match in data:
     print(match)
