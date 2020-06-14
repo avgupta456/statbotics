@@ -17,14 +17,14 @@ team_match_table = Table(
 teamYear_match_table = Table(
     'association2',
     Base.metadata,
-    Column('left_id', Integer, ForeignKey('team_years.id')),
+    Column('left_id', Integer, ForeignKey('team_years.team_id')),
     Column('right_id', Integer, ForeignKey('matches.id'))
 )
 
 teamEvent_match_table = Table(
     'association3',
     Base.metadata,
-    Column('left_id', Integer, ForeignKey('team_events.id')),
+    Column('left_id', Integer, ForeignKey('team_events.team_id')),
     Column('right_id', Integer, ForeignKey('matches.id'))
 )
 

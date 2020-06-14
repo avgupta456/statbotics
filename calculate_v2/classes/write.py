@@ -4,7 +4,10 @@ from classes.classes import (
     TeamYear,
     Event,
     TeamEvent,
-    Match
+    Match,
+    team_match_table,
+    teamYear_match_table,
+    teamEvent_match_table,
 )
 
 
@@ -13,21 +16,37 @@ class SQL_Write:
         self.writes = 0
         self.commits = 0
         self.objects = []
+        self.match_objects = []
+
+        self.match_id = 0
 
         self.session = SQL.getSession()
         self.read = SQL_Read
 
     def add(self):
-        self.session.add_all(self.objects)
-        self.objects = []
-        self.writes += 1
+        if self.objects != []:
+            self.session.add_all(self.objects)
+            self.objects = []
+            self.writes += 1
+            self.commit()
+
+        if self.match_objects != []:
+            self.session.execute(team_match_table.insert().
+                                 values(self.match_objects))
+            self.session.execute(teamYear_match_table.insert().
+                                 values(self.match_objects))
+            self.session.execute(teamEvent_match_table.insert().
+                                 values(self.match_objects))
+            self.match_objects = []
+            self.writes += 3
+            self.commit()
 
     def flush(self):
         self.session.flush()
         self.commits += 1
 
     def commit(self):
-        if len(self.objects) > 0:
+        if len(self.objects) > 0 or len(self.match_objects) > 0:
             self.add()
         self.session.commit()
         self.commits += 1
@@ -140,7 +159,9 @@ class SQL_Write:
         year_id = dict["year"]
         event_id = dict["event"]
         if not check or self.read.getMatch_byKey(dict["key"]) is None:
+            self.match_id += 1
             match = Match(
+                id=self.match_id,
                 year_id=year_id,
                 event_id=event_id,
                 key=dict["key"],
@@ -155,6 +176,12 @@ class SQL_Write:
                 time=dict["time"]
             )
             self.objects.append(match)
+            arr = []
+            for team in dict["red"].split(","):
+                arr.append((int(team), self.match_id))
+            for team in dict["blue"].split(","):
+                arr.append((int(team), self.match_id))
+            self.match_objects.extend(arr)
             if add:
                 self.add()
             if commit:

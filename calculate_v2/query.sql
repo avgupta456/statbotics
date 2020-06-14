@@ -2,6 +2,8 @@ CREATE DATABASE IF NOT EXISTS statbotics;
 USE statbotics;
 SHOW TABLES;
 
+SELECT * FROM association1;
+
 # get head of tables
 SELECT * FROM teams;
 SELECT * FROM years;

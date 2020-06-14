@@ -38,13 +38,13 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
     print("Loading Teams")
     for team in TBA.getTeams():
         SQL_Write.addTeam(team, check=not clean, add=False, commit=False)
-    SQL_Write.commit()
+    SQL_Write.add()
 
     for year in range(start_year, end_year + 1):
         print("Year " + str(year))
         SQL_Write.addYear({"year": year},
                           check=not clean,
-                          add=True,
+                          add=False,
                           commit=False)
 
         teamYears = TBA.getTeamYears(year)
@@ -53,7 +53,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
                                   check=not clean,
                                   add=False,
                                   commit=False)
-        SQL_Write.commit()
+        SQL_Write.add()
 
         print("    Events")
         events = TBA.getEvents(year)
@@ -61,7 +61,6 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
             event_key = event["key"]
             print("\tEvent: " + str(event_key))
             SQL_Write.addEvent(event, check=not clean, add=True, commit=False)
-            SQL_Write.add()
 
             event_id = SQL_Read.getEvent_byKey(event_key).getId()
             event_time = event["time"]
@@ -75,7 +74,6 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
                                        check=not clean,
                                        add=False,
                                        commit=False)
-            SQL_Write.add()
 
             matches = TBA.getMatches(event_key, event_time)
             for match in matches:
@@ -85,8 +83,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
                                    check=not clean,
                                    add=False,
                                    commit=False)
-            SQL_Write.add()
-        SQL_Write.commit()
+        SQL_Write.add()
         printStats(TBA, SQL_Write, SQL_Read)
 
     SQL_Write.commit()  # any loose ends
