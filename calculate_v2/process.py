@@ -6,7 +6,8 @@ def printStats(TBA, SQL_Write, SQL_Read):
     print()
 
     if TBA is not None:
-        print("TBA Calls: " + str(TBA.getStats()))
+        print("TBA Calls: " + str(TBA.getStats()[0]))
+        print("TBA Cache: " + str(TBA.getStats()[1]))
         print()
 
     if SQL_Write is not None:
@@ -53,20 +54,21 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
         for event in events:
             event_key = event["key"]
             print("\tEvent: " + str(event_key))
-            SQL_Write.addEvent(event, False)
-            event_id = SQL_Read.getEvent_byKey(event_key).getId()
+            event_exists = SQL_Write.addEvent(event, False)
+            if not event_exists:
+                event_id = SQL_Read.getEvent_byKey(event_key).getId()
 
-            teamEvents = TBA.getTeamEvents(event_key)
-            for teamEvent in teamEvents:
-                teamEvent["year"] = year
-                teamEvent["event"] = event_id
-                SQL_Write.addTeamEvent(teamEvent, False)
+                teamEvents = TBA.getTeamEvents(event_key)
+                for teamEvent in teamEvents:
+                    teamEvent["year"] = year
+                    teamEvent["event"] = event_id
+                    SQL_Write.addTeamEvent(teamEvent, False)
 
-            matches = TBA.getMatches(event_key)
-            for match in matches:
-                match["year"] = year
-                match["event"] = event_id
-                SQL_Write.addMatch(match, False)
+                matches = TBA.getMatches(event_key)
+                for match in matches:
+                    match["year"] = year
+                    match["event"] = event_id
+                    SQL_Write.addMatch(match, False)
 
         SQL_Write.commit()
 
@@ -75,18 +77,23 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
 
 
 # removes REALLY old teams and adds district labels
-def post_process(SQL_Write, SQL_Read):
+def post_process(TBA, SQL_Write, SQL_Read):
     teams = SQL_Read.getTeams()
+
     for team in teams:
+        '''Removes Teams Before 2002'''
         years = SQL_Read.getTeamYears(team=team.getNumber())
         if len(years) == 0:
             SQL_Write.remove(team)
         else:
-            events = SQL_Read.getTeamEvents(team=team.getNumber())
-            district = "None"
-            for event in events:
-                if event.event.getDistrict() is not None:
-                    district = event.event.getDistrict()
+            '''Checks if active in 2020'''
+            team.active = 0
+            for year in years:
+                if year.getId() == 2020:
+                    team.active = 1
+
+            '''Retrieves district'''
+            district = TBA.getTeamDistrict(team.getNumber())
             team.district = district
     SQL_Write.commit()
     printStats(None, SQL_Write, SQL_Read)

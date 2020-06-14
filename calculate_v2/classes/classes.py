@@ -15,6 +15,7 @@ class Team(Base):
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
+    active = Column(Integer)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):

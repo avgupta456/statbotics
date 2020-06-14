@@ -9,7 +9,6 @@ from tba.clean_data import (
 
 
 def dump(path, data):
-    print(path)
     os.makedirs(path)
     with open(path, 'wb') as f:
         pickle.dump(data, f)
@@ -17,6 +16,17 @@ def dump(path, data):
 
 def load(file):
     with open(file, 'rb') as f:
+        return pickle.load(f)
+
+
+def dump_cache(path, data):
+    os.makedirs(path)
+    with open(path+"/data.p", 'wb') as f:
+        pickle.dump(data, f)
+
+
+def load_cache(file):
+    with open(file+"/data.p", 'rb') as f:
         return pickle.load(f)
 
 
@@ -41,17 +51,16 @@ class ReadTBA:
     def get(self, url):
         if os.path.exists("tba/cache/"+url):
             self.cache += 1
-            return load("tba/cache/"+url)
+            return load_cache("tba/cache/"+url)
         else:
             self.count += 1
             data = self.session.get(self.read_pre+url).json()
-            print(data)
-            dump("tba/cache/"+url, data)
+            dump_cache("tba/cache/"+url, data)
             return data
 
     # counts TBA calls
     def getStats(self):
-        return self.count
+        return [self.count, self.cache]
 
     # Todo: get district
     def getTeams(self):
@@ -133,3 +142,7 @@ class ReadTBA:
                 }
                 out.append(match_data)
         return out
+
+    def getTeamDistrict(self, team):
+        teams_info = load("tba/cache/teams_info.p")
+        return teams_info[team][3]
