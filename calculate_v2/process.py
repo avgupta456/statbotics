@@ -2,7 +2,7 @@ import datetime
 start = datetime.datetime.now()
 
 
-def printStats(TBA, SQL_Write, SQL_Read):
+def printStats(TBA, SQL_Write, SQL_Read, print_sql=False):
     print()
 
     if TBA is not None:
@@ -20,25 +20,25 @@ def printStats(TBA, SQL_Write, SQL_Read):
     if SQL_Write is not None or SQL_Read is not None:
         print()
 
-    print("Total Teams: " + str(SQL_Read.getTotalTeams()))
-    print("Total Years: " + str(SQL_Read.getTotalYears()))
-    print("Total TeamYears: " + str(SQL_Read.getTotalTeamYears()))
-    print("Total Events: " + str(SQL_Read.getTotalEvents()))
-    print("Total TeamEvents: " + str(SQL_Read.getTotalTeamEvents()))
-    print("Total Matches: " + str(SQL_Read.getTotalMatches()))
-    print("Total TeamMatches: " + str(SQL_Read.getTotalTeamMatches()))
-    print()
+    if print_sql:
+        print("Total Teams: " + str(SQL_Read.getTotalTeams()))
+        print("Total Years: " + str(SQL_Read.getTotalYears()))
+        print("Total TeamYears: " + str(SQL_Read.getTotalTeamYears()))
+        print("Total Events: " + str(SQL_Read.getTotalEvents()))
+        print("Total TeamEvents: " + str(SQL_Read.getTotalTeamEvents()))
+        print("Total Matches: " + str(SQL_Read.getTotalMatches()))
+        print("Total TeamMatches: " + str(SQL_Read.getTotalTeamMatches()))
+        print()
 
     print("Time Elapsed: " + str(datetime.datetime.now()-start))
     print()
 
 
 def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
-    if clean:
-        print("Loading Teams")
-        for team in TBA.getTeams():
-            SQL_Write.addTeam(team, False)
-        SQL_Write.commit()
+    print("Loading Teams")
+    for team in TBA.getTeams():
+        SQL_Write.addTeam(team, False)
+    SQL_Write.commit()
 
     for year in range(start_year, end_year + 1):
         print("Year " + str(year))
@@ -81,15 +81,22 @@ def post_process(TBA, SQL_Write, SQL_Read):
     teams = SQL_Read.getTeams()
 
     for team in teams:
-        '''Removes Teams Before 2002'''
+        '''Removes Teams With No Events'''
+        matches = SQL_Read.getTeamMatches(team=team.getNumber())
+        events = SQL_Read.getTeamEvents(team=team.getNumber())
         years = SQL_Read.getTeamYears(team=team.getNumber())
-        if len(years) == 0:
+        if len(matches) == 0:
+            print("Remove " + team.getName())
+            for event in events:
+                SQL_Write.remove(event)
+            for year in years:
+                SQL_Write.remove(year)
             SQL_Write.remove(team)
         else:
             '''Checks if active in 2020'''
             team.active = 0
             for year in years:
-                if year.getId() == 2020:
+                if year.getYear() == 2020:
                     team.active = 1
 
             '''Retrieves district'''

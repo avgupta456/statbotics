@@ -44,6 +44,9 @@ class Team(Base):
     def getCountry(self):
         return self.country
 
+    def isActive(self):
+        return self.active == 1
+
 
 class Year(Base):
     '''DECLARATION'''
@@ -201,6 +204,8 @@ class TeamEvent(Base):
         return self.event_id
 
     '''GETTERS'''
+    def getKey(self):
+        return self.event.getKey()
 
 
 class Match(Base):

@@ -1,2 +1,2 @@
 def search(SQL_Read):
-    print(SQL_Read.getTeam(254).getName())
+    print(SQL_Read.getTeam(5511).isActive())

@@ -1,5 +1,4 @@
 import requests
-import pickle
 import os
 
 from tba.clean_data import (
@@ -7,27 +6,9 @@ from tba.clean_data import (
     cleanDistrict,
 )
 
-
-def dump(path, data):
-    os.makedirs(path)
-    with open(path, 'wb') as f:
-        pickle.dump(data, f)
-
-
-def load(file):
-    with open(file, 'rb') as f:
-        return pickle.load(f)
-
-
-def dump_cache(path, data):
-    os.makedirs(path)
-    with open(path+"/data.p", 'wb') as f:
-        pickle.dump(data, f)
-
-
-def load_cache(file):
-    with open(file+"/data.p", 'rb') as f:
-        return pickle.load(f)
+from helper import (
+    utils
+)
 
 
 '''
@@ -51,11 +32,11 @@ class ReadTBA:
     def get(self, url):
         if os.path.exists("tba/cache/"+url):
             self.cache += 1
-            return load_cache("tba/cache/"+url)
+            return utils.load_cache("tba/cache/"+url)
         else:
             self.count += 1
             data = self.session.get(self.read_pre+url).json()
-            dump_cache("tba/cache/"+url, data)
+            utils.dump_cache("tba/cache/"+url, data)
             return data
 
     # counts TBA calls
@@ -144,5 +125,7 @@ class ReadTBA:
         return out
 
     def getTeamDistrict(self, team):
-        teams_info = load("tba/cache/teams_info.p")
+        if team == 426:
+            return "None"
+        teams_info = utils.load("tba/cache/teams_info.p")
         return teams_info[team][3]

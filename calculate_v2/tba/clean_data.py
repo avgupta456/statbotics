@@ -1,3 +1,6 @@
+import requests
+from helper import utils
+
 USA = {
     'Alabama': 'AL',
     'Alaska': 'AK',
@@ -79,6 +82,61 @@ districts = {
     "tx": "fit",
     "in": "fin",
 }
+
+
+auth_key = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr"
+read_pre = "https://www.thebluealliance.com/api/v3/"
+session = requests.Session()
+session.headers.update({'X-TBA-Auth-Key': auth_key, 'X-TBA-Auth-Id': ''})
+
+
+def get(url):
+    return session.get(read_pre+url).json()
+
+
+def getTeamInfo(number):
+    data = get("team/frc"+str(number)+"/simple")
+    name = data["nickname"]
+    state = data["state_prov"]
+    country = data["country"]
+
+    years = len(get("team/frc"+str(number)+"/years_participated"))
+
+    try:
+        district = get("team/frc"+str(number)+"/districts")[-1]["abbreviation"]
+    except Exception:
+        district = "None"
+
+    if(state in USA):
+        state = USA[state]
+    elif(state in Canada):
+        state = Canada[state]
+    elif(country != "USA" and country != "Canada"):
+        state = "All"
+
+    if(district in districts):
+        district = districts[district]
+
+    return [name, country, state, district, years]
+
+
+def saveAllTeamsInfo():
+    out = utils.loadAllTeamsInfo()
+    count = 0
+
+    for team in utils.loadAllTeams():
+        count += 1
+
+        if count % 100 == 0:
+            print(count)
+            utils.saveAllTeamsInfo(out)
+
+        if team in out:
+            pass
+        else:
+            out[team] = getTeamInfo(team)
+
+    utils.saveAllTeamsInfo(out)
 
 
 def cleanState(state):

@@ -159,7 +159,7 @@ class SQL_Read:
     def getTeamMatches(self, team=None, year=None, teamYear=None, event=None,
                        teamEvent=None, match=None, teamMatch=None):
         self.reads += 1
-        out = self.session.query(TeamEvent)
+        out = self.session.query(TeamMatch)
         if team is not None:
             out = out.filter_by(team_id=team)
         if year is not None:
