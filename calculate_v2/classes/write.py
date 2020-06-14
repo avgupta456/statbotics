@@ -11,35 +11,34 @@ from classes.classes import (
 class SQL_Write:
     def __init__(self, SQL, SQL_Read):
         self.writes = 0
-        self.flushes = 0
         self.commits = 0
+        self.objects = []
 
         self.session = SQL.getSession()
         self.read = SQL_Read
 
-    def add(self, obj, commit):
-        if not type(obj) is list:
-            obj = [obj]
-        self.session.add_all(obj)
+    def add(self):
+        self.session.add_all(self.objects)
+        self.objects = []
         self.writes += 1
-        if(commit):
-            self.commit()
+
+    def flush(self):
+        self.session.flush()
+        self.commits += 1
+
+    def commit(self):
+        if len(self.objects) > 0:
+            self.add()
+        self.session.commit()
+        self.commits += 1
 
     def remove(self, obj, commit=False):
         self.session.delete(obj)
         if commit:
             self.commit()
 
-    def flush(self):
-        self.flushes += 1
-        self.session.flush()
-
-    def commit(self):
-        self.session.commit()
-        self.commits += 1
-
     def getStats(self):
-        return [self.writes, self.flushes, self.commits]
+        return [self.writes, self.commits]
 
     '''Team'''
 
@@ -51,10 +50,13 @@ class SQL_Write:
                 state=dict["state"],
                 country=dict["country"],
             )
+            self.objects.append(team)
             if add:
-                self.add(team, commit)
-            return team
-        return None
+                self.add()
+            if commit:
+                self.commit()
+            return True
+        return False
 
     '''Year'''
 
@@ -63,10 +65,13 @@ class SQL_Write:
             year = Year(
                 id=dict["year"],
             )
+            self.objects.append(year)
             if add:
-                self.add(year, commit)
-            return year
-        return None
+                self.add()
+            if commit:
+                self.commit()
+            return True
+        return False
 
     '''TeamYear'''
 
@@ -77,10 +82,13 @@ class SQL_Write:
                 year_id=year,
                 team_id=team
             )
+            self.objects.append(teamYear)
             if add:
-                self.add(teamYear, commit)
-            return teamYear
-        return None
+                self.add()
+            if commit:
+                self.commit()
+            return True
+        return False
 
     '''Event'''
 
@@ -95,10 +103,13 @@ class SQL_Write:
                 district=dict["district"],
                 time=dict["time"],
             )
+            self.objects.append(event)
             if add:
-                self.add(event, commit)
-            return event
-        return None
+                self.add()
+            if commit:
+                self.commit()
+            return True
+        return False
 
     '''TeamEvent'''
 
@@ -115,10 +126,13 @@ class SQL_Write:
                 event_id=event_id,
                 time=dict["time"],
             )
+            self.objects.append(teamEvent)
             if add:
-                self.add(teamEvent, commit)
-            return teamEvent
-        return None
+                self.add()
+            if commit:
+                self.commit()
+            return True
+        return False
 
     '''Match'''
 
@@ -140,7 +154,10 @@ class SQL_Write:
                 winner=dict["winner"],
                 time=dict["time"]
             )
+            self.objects.append(match)
             if add:
-                self.add(match, commit)
-            return match
-        return None
+                self.add()
+            if commit:
+                self.commit()
+            return True
+        return False
