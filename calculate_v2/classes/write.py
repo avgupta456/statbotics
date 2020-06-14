@@ -4,8 +4,7 @@ from classes.classes import (
     TeamYear,
     Event,
     TeamEvent,
-    Match,
-    TeamMatch
+    Match
 )
 
 
@@ -44,8 +43,8 @@ class SQL_Write:
 
     '''Team'''
 
-    def addTeam(self, dict, add=False, commit=False):
-        if self.read.getTeam(dict["number"]) is None:
+    def addTeam(self, dict, check=True, add=False, commit=False):
+        if not check or self.read.getTeam(dict["number"]) is None:
             team = Team(
                 id=dict["number"],
                 name=dict["name"],
@@ -59,8 +58,8 @@ class SQL_Write:
 
     '''Year'''
 
-    def addYear(self, dict, add=False, commit=False):
-        if self.read.getYear(dict["year"]) is None:
+    def addYear(self, dict, check=True, add=False, commit=False):
+        if not check or self.read.getYear(dict["year"]) is None:
             year = Year(
                 id=dict["year"],
             )
@@ -71,9 +70,9 @@ class SQL_Write:
 
     '''TeamYear'''
 
-    def addTeamYear(self, dict, add=False, commit=False):
+    def addTeamYear(self, dict, check=True, add=False, commit=False):
         team, year = dict["team"], dict["year"]
-        if self.read.getTeamYear_byParts(team, year) is None:
+        if not check or self.read.getTeamYear_byParts(team, year) is None:
             teamYear = TeamYear(
                 year_id=year,
                 team_id=team
@@ -85,8 +84,8 @@ class SQL_Write:
 
     '''Event'''
 
-    def addEvent(self, dict, add=False, commit=False):
-        if self.read.getEvent_byKey(dict["key"]) is None:
+    def addEvent(self, dict, check=True, add=False, commit=False):
+        if not check or self.read.getEvent_byKey(dict["key"]) is None:
             event = Event(
                 year_id=dict["year"],
                 key=dict["key"],
@@ -103,11 +102,12 @@ class SQL_Write:
 
     '''TeamEvent'''
 
-    def addTeamEvent(self, dict, add=False, commit=False):
+    def addTeamEvent(self, dict, check=True, add=False, commit=False):
         team, event_id = dict["team"], dict["event_id"]
-        if self.read.getTeamEvent_byParts(team, event_id) is None:
+        if not check or self.read.getTeamEvent_byParts(team, event_id) is None:
             team_year_id = self.read.getTeamYear_byParts(
-                team=dict["team"], year=dict["year"]).getId()
+                team=dict["team"], year=dict["year"]
+            ).getId()
             teamEvent = TeamEvent(
                 team_id=team,
                 team_year_id=team_year_id,
@@ -122,10 +122,10 @@ class SQL_Write:
 
     '''Match'''
 
-    def addMatch(self, dict, add=False, commit=False):
+    def addMatch(self, dict, check=True, add=False, commit=False):
         year_id = dict["year"]
         event_id = dict["event"]
-        if self.read.getMatch_byKey(dict["key"]) is None:
+        if not check or self.read.getMatch_byKey(dict["key"]) is None:
             match = Match(
                 year_id=year_id,
                 event_id=event_id,
@@ -142,47 +142,5 @@ class SQL_Write:
             )
             if add:
                 self.add(match, commit)
-
-            teamMatches = []
-            for (color, arr) in [
-                ("red", match.getRed()),
-                ("blue", match.getBlue())
-            ]:
-                for team in arr:
-                    team_event = self.read. \
-                        getTeamEvent_byParts(team, event_id).getId()
-                    team_year = self.read. \
-                        getTeamYear_byParts(team, year_id).getId()
-                    teamMatchDict = {
-                        "year": year_id,
-                        "event": event_id,
-                        "match": match.getId(),
-                        "team": team,
-                        "team_year": team_year,
-                        "team_event": team_event,
-                        "alliance": color,
-                        "time": dict["time"],
-                    }
-                    teamMatches.append(
-                        self.addTeamMatch(teamMatchDict, add, False)
-                    )
-
-            return match, teamMatches
+            return match
         return None
-
-    '''TeamMatch'''
-
-    def addTeamMatch(self, dict, add=False, commit=False):
-        teamMatch = TeamMatch(
-            year_id=dict["year"],
-            event_id=dict["event"],
-            match_id=dict["match"],
-            team_id=dict["team"],
-            team_year_id=dict["team_year"],
-            team_event_id=dict["team_event"],
-            alliance=dict["alliance"],
-            time=dict["time"],
-        )
-        if add:
-            self.add(teamMatch, commit)
-        return teamMatch

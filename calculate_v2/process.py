@@ -39,18 +39,27 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
     print("Loading Teams")
     teams_obj = []
     for team in TBA.getTeams():
-        teams_obj.append(SQL_Write.addTeam(team, add=False, commit=False))
+        teams_obj.append(SQL_Write.addTeam(team,
+                                           check=(not clean),
+                                           add=False,
+                                           commit=False))
     SQL_Write.add(teams_obj, commit=True)
 
     for year in range(start_year, end_year + 1):
         print("Year " + str(year))
-        SQL_Write.addYear({"year": year}, add=True, commit=False)
+        SQL_Write.addYear({"year": year},
+                          check=(not clean),
+                          add=True,
+                          commit=False)
 
         teamYears = TBA.getTeamYears(year)
         teamYears_obj = []
         for teamYear in teamYears:
             teamYears_obj.append(
-                SQL_Write.addTeamYear(teamYear, add=False, commit=False)
+                SQL_Write.addTeamYear(teamYear,
+                                      check=(not clean),
+                                      add=False,
+                                      commit=False)
             )
         SQL_Write.add(teamYears_obj, commit=True)
 
@@ -60,11 +69,14 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
             objects = []
             event_key = event["key"]
             print("\tEvent: " + str(event_key))
-            event_obj = SQL_Write.addEvent(event, add=True, commit=False)
-            SQL_Write.flush()
+            event_obj = SQL_Write.addEvent(event,
+                                           check=(not clean),
+                                           add=True,
+                                           commit=False)
 
             # run if no event or current year (possibly happening live)
             if event_obj is not None or year == end_year:
+                SQL_Write.flush()
                 event_id = event_obj.getId()
                 event_time = event["time"]
 
@@ -74,6 +86,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
                     teamEvent["event_id"] = event_id
                     teamEvent["time"] = event_time
                     objects.append(SQL_Write.addTeamEvent(teamEvent,
+                                                          check=(not clean),
                                                           add=False,
                                                           commit=False))
                 SQL_Write.add(objects, commit=False)
@@ -83,10 +96,11 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
                 for match in matches:
                     match["year"] = year
                     match["event"] = event_id
-                    match_obj, team_matches_obj = \
-                        SQL_Write.addMatch(match, add=False, commit=False)
+                    match_obj = SQL_Write.addMatch(match,
+                                                   check=(not clean),
+                                                   add=False,
+                                                   commit=False)
                     objects.append(match_obj)
-                    objects.extend(team_matches_obj)
                 SQL_Write.add(objects, commit=False)
 
         SQL_Write.commit()

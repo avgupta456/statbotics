@@ -5,7 +5,6 @@ from classes.classes import (
     Event,
     TeamEvent,
     Match,
-    TeamMatch
 )
 
 
@@ -149,33 +148,3 @@ class SQL_Read:
     def getTotalMatches(self):
         self.reads += 1
         return self.session.query(Match).count()
-
-    '''Team Match'''
-
-    def getTeamMatch(self, teamMatch):
-        self.reads += 1
-        return self.session.query(TeamMatch).filter_by(id=teamMatch).first()
-
-    def getTeamMatches(self, team=None, year=None, teamYear=None, event=None,
-                       teamEvent=None, match=None, teamMatch=None):
-        self.reads += 1
-        out = self.session.query(TeamMatch)
-        if team is not None:
-            out = out.filter_by(team_id=team)
-        if year is not None:
-            out = out.filter_by(year_id=year)
-        if teamYear is not None:
-            out = out.filter_by(team_year_id=teamYear)
-        if event is not None:
-            out = out.filter_by(event_id=event)
-        if teamEvent is not None:
-            out = out.filter_by(team_event_id=teamEvent)
-        if match is not None:
-            out = out.filter_by(match_id=match)
-        if teamMatch is not None:
-            out = out.filter_by(id=teamMatch)
-        return out.order_by('id').all()
-
-    def getTotalTeamMatches(self):
-        self.reads += 1
-        return self.session.query(TeamMatch).count()
