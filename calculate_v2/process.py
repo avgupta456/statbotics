@@ -55,7 +55,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
             event_key = event["key"]
             print("\tEvent: " + str(event_key))
             event_exists = SQL_Write.addEvent(event, False)
-            if not event_exists:
+            if not event_exists or year == end_year:
                 event_id = SQL_Read.getEvent_byKey(event_key).getId()
 
                 teamEvents = TBA.getTeamEvents(event_key)
@@ -73,6 +73,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
         SQL_Write.commit()
 
         printStats(TBA, SQL_Write, SQL_Read)
+    post_process(TBA, SQL_Write, SQL_Read)
     printStats(TBA, SQL_Write, SQL_Read)
 
 
@@ -102,5 +103,15 @@ def post_process(TBA, SQL_Write, SQL_Read):
             '''Retrieves district'''
             district = TBA.getTeamDistrict(team.getNumber())
             team.district = district
+
+    events = SQL_Read.getEvents()
+    for event in events:
+        matches = SQL_Read.getMatches(event=event.getId())
+        if len(matches) == 0:
+            team_events = SQL_Read.getTeamEvents(event=event.getId())
+            for team_event in team_events:
+                SQL_Write.remove(team_event)
+            SQL_Write.remove(event)
+
     SQL_Write.commit()
     printStats(None, SQL_Write, SQL_Read)

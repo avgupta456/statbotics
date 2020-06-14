@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, Float, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -16,6 +16,12 @@ class Team(Base):
     country = Column(String(30))
     district = Column(String(10))
     active = Column(Integer)
+
+    '''NEW'''
+    elo = Column(Integer)
+    elo_recent = Column(Integer)
+    elo_mean = Column(Integer)
+    elo_max = Column(Integer)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -53,6 +59,18 @@ class Year(Base):
     __tablename__ = 'years'
     id = Column(Integer, primary_key=True)
 
+    '''NEW'''
+    elo_max = Column(Integer)
+    elo_1p = Column(Integer)
+    elo_5p = Column(Integer)
+    elo_10p = Column(Integer)
+    elo_25p = Column(Integer)
+    elo_median = Column(Integer)
+    elo_mean = Column(Integer)
+    elo_sd = Column(Integer)
+    elo_acc = Column(Float)
+    elo_mse = Column(Float)
+
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
         return self.getYear() < other.getYear()
@@ -80,6 +98,14 @@ class TeamYear(Base):
 
     team_id = Column(Integer, ForeignKey('teams.id'))
     team = relationship('Team')
+
+    '''NEW'''
+    elo_start = Column(Integer)
+    elo_pre_champs = Column(Integer)
+    elo_end = Column(Integer)
+    elo_mean = Column(Integer)
+    elo_max = Column(Integer)
+    elo_diff = Column(Integer)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -120,6 +146,16 @@ class Event(Base):
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
+
+    '''NEW'''
+    # regional, district, district championship,
+    #   elims_only, worlds division, einstein
+    type = Column(Integer)
+    elo_max = Column(Integer)
+    elo_top8 = Column(Integer)
+    elo_top24 = Column(Integer)
+    elo_mean = Column(Integer)
+    elo_sd = Column(Integer)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -171,6 +207,14 @@ class TeamEvent(Base):
 
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship('Event')
+
+    '''NEW'''
+    elo_start = Column(Integer)
+    elo_pre_playoffs = Column(Integer)
+    elo_end = Column(Integer)
+    elo_mean = Column(Integer)
+    elo_max = Column(Integer)
+    elo_diff = Column(Integer)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -228,6 +272,14 @@ class Match(Base):
     blue = Column(String(20))
 
     winner = Column(String(10))
+
+    '''NEW'''
+    score_red = Column(Integer)
+    score_blue = Column(Integer)
+    elo_red = Column(Integer)
+    elo_blue = Column(Integer)
+    elo_diff = Column(Integer)  # abs value
+    elo_prob = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -296,6 +348,11 @@ class TeamMatch(Base):
     team_event = relationship('TeamEvent')
 
     alliance = Column(String(10))
+
+    '''NEW'''
+    elo_start = Column(Integer)
+    elo_end = Column(Integer)
+    elo_diff = Column(Integer)  # not abs
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
