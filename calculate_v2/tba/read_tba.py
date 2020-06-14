@@ -1,9 +1,24 @@
 import requests
+import pickle
+import os
 
 from tba.clean_data import (
     cleanState,
     cleanDistrict,
 )
+
+
+def dump(path, data):
+    print(path)
+    os.makedirs(path)
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
+
+
+def load(file):
+    with open(file, 'rb') as f:
+        return pickle.load(f)
+
 
 '''
 Helper class to read the TheBlueAlliance (TBA) API
@@ -20,11 +35,19 @@ class ReadTBA:
         self.session.headers.update({'X-TBA-Auth-Key': self.auth_key,
                                      'X-TBA-Auth-Id': ''})
 
+        self.cache = 0
         self.count = 0
 
     def get(self, url):
-        self.count += 1
-        return self.session.get(self.read_pre+url).json()
+        if os.path.exists("tba/cache/"+url):
+            self.cache += 1
+            return load("tba/cache/"+url)
+        else:
+            self.count += 1
+            data = self.session.get(self.read_pre+url).json()
+            print(data)
+            dump("tba/cache/"+url, data)
+            return data
 
     # counts TBA calls
     def getStats(self):

@@ -7,4 +7,4 @@ docs/*
 calculate/data/processed_matches/*
 calculate/data/teams/*
 
-calculate_v2/data/main.p
+calculate_v2/tba/cache/*
