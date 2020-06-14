@@ -11,6 +11,12 @@ class Team(Base):
     __tablename__ = 'teams'
     id = Column(Integer, primary_key=True)
 
+    '''
+    team_years = relationship("TeamYear", back_populates="team_years")
+    team_events = relationship("TeamEvent", back_populates="team_events")
+    matches = relationship("Match", back_populates="matches")
+    '''
+
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
@@ -59,6 +65,13 @@ class Year(Base):
     __tablename__ = 'years'
     id = Column(Integer, primary_key=True)
 
+    '''
+    events = relationship("Event", back_populates="events")
+    matches = relationship("Match", back_populates="matches")
+    team_years = relationship("TeamYear", back_populates="team_years")
+    team_events = relationship("TeamEvent", back_opulates="team_events")
+    '''
+
     '''NEW'''
     elo_max = Column(Integer)
     elo_1p = Column(Integer)
@@ -92,6 +105,11 @@ class TeamYear(Base):
     '''DECLARATION'''
     __tablename__ = 'team_years'
     id = Column(Integer, primary_key=True)
+
+    '''
+    team_events = relationship("TeamEvent", back_populates="team_events")
+    matches = relationship("Match", back_populates="matches")
+    '''
 
     year_id = Column(Integer, ForeignKey('years.id'))
     year = relationship('Year')

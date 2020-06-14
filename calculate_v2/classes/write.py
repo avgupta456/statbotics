@@ -12,13 +12,16 @@ from classes.classes import (
 class SQL_Write:
     def __init__(self, SQL, SQL_Read):
         self.writes = 0
+        self.flushes = 0
         self.commits = 0
 
         self.session = SQL.getSession()
         self.read = SQL_Read
 
     def add(self, obj, commit):
-        self.session.add(obj)
+        if not type(obj) is list:
+            obj = [obj]
+        self.session.add_all(obj)
         self.writes += 1
         if(commit):
             self.commit()
@@ -28,16 +31,20 @@ class SQL_Write:
         if commit:
             self.commit()
 
+    def flush(self):
+        self.flushes += 1
+        self.session.flush()
+
     def commit(self):
         self.session.commit()
         self.commits += 1
 
     def getStats(self):
-        return [self.writes, self.commits]
+        return [self.writes, self.flushes, self.commits]
 
     '''Team'''
 
-    def addTeam(self, dict, commit=False):
+    def addTeam(self, dict, add=False, commit=False):
         if self.read.getTeam(dict["number"]) is None:
             team = Team(
                 id=dict["number"],
@@ -45,37 +52,40 @@ class SQL_Write:
                 state=dict["state"],
                 country=dict["country"],
             )
-            self.add(team, commit)
-            return False
-        return True
+            if add:
+                self.add(team, commit)
+            return team
+        return None
 
     '''Year'''
 
-    def addYear(self, dict, commit=False):
+    def addYear(self, dict, add=False, commit=False):
         if self.read.getYear(dict["year"]) is None:
             year = Year(
                 id=dict["year"],
             )
-            self.add(year, commit)
-            return False
-        return True
+            if add:
+                self.add(year, commit)
+            return year
+        return None
 
     '''TeamYear'''
 
-    def addTeamYear(self, dict, commit=False):
+    def addTeamYear(self, dict, add=False, commit=False):
         team, year = dict["team"], dict["year"]
         if self.read.getTeamYear_byParts(team, year) is None:
             teamYear = TeamYear(
                 year_id=year,
                 team_id=team
             )
-            self.add(teamYear, commit)
-            return False
-        return True
+            if add:
+                self.add(teamYear, commit)
+            return teamYear
+        return None
 
     '''Event'''
 
-    def addEvent(self, dict, commit=False):
+    def addEvent(self, dict, add=False, commit=False):
         if self.read.getEvent_byKey(dict["key"]) is None:
             event = Event(
                 year_id=dict["year"],
@@ -86,14 +96,15 @@ class SQL_Write:
                 district=dict["district"],
                 time=dict["time"],
             )
-            self.add(event, commit)
-            return False
-        return True
+            if add:
+                self.add(event, commit)
+            return event
+        return None
 
     '''TeamEvent'''
 
-    def addTeamEvent(self, dict, commit=False):
-        team, event_id = dict["team"], dict["event"]
+    def addTeamEvent(self, dict, add=False, commit=False):
+        team, event_id = dict["team"], dict["event_id"]
         if self.read.getTeamEvent_byParts(team, event_id) is None:
             team_year_id = self.read.getTeamYear_byParts(
                 team=dict["team"], year=dict["year"]).getId()
@@ -104,13 +115,14 @@ class SQL_Write:
                 event_id=event_id,
                 time=dict["time"],
             )
-            self.add(teamEvent, commit)
-            return False
-        return True
+            if add:
+                self.add(teamEvent, commit)
+            return teamEvent
+        return None
 
     '''Match'''
 
-    def addMatch(self, dict, commit=False):
+    def addMatch(self, dict, add=False, commit=False):
         year_id = dict["year"]
         event_id = dict["event"]
         if self.read.getMatch_byKey(dict["key"]) is None:
@@ -128,12 +140,15 @@ class SQL_Write:
                 winner=dict["winner"],
                 time=dict["time"]
             )
-            self.add(match, commit)
-            for (color, list) in [
+            if add:
+                self.add(match, commit)
+
+            teamMatches = []
+            for (color, arr) in [
                 ("red", match.getRed()),
                 ("blue", match.getBlue())
             ]:
-                for team in list:
+                for team in arr:
                     team_event = self.read. \
                         getTeamEvent_byParts(team, event_id).getId()
                     team_year = self.read. \
@@ -148,13 +163,16 @@ class SQL_Write:
                         "alliance": color,
                         "time": dict["time"],
                     }
-                    self.addTeamMatch(teamMatchDict, False)
-            return False
-        return True
+                    teamMatches.append(
+                        self.addTeamMatch(teamMatchDict, add, False)
+                    )
+
+            return match, teamMatches
+        return None
 
     '''TeamMatch'''
 
-    def addTeamMatch(self, dict, commit=False):
+    def addTeamMatch(self, dict, add=False, commit=False):
         teamMatch = TeamMatch(
             year_id=dict["year"],
             event_id=dict["event"],
@@ -165,4 +183,6 @@ class SQL_Write:
             alliance=dict["alliance"],
             time=dict["time"],
         )
-        self.add(teamMatch, commit)
+        if add:
+            self.add(teamMatch, commit)
+        return teamMatch

@@ -12,7 +12,8 @@ def printStats(TBA, SQL_Write, SQL_Read, print_sql=False):
 
     if SQL_Write is not None:
         print("SQL Writes: " + str(SQL_Write.getStats()[0]))
-        print("SQL Commits: " + str(SQL_Write.getStats()[1]))
+        print("SQL Flushes: " + str(SQL_Write.getStats()[1]))
+        print("SQL Commits: " + str(SQL_Write.getStats()[2]))
 
     if SQL_Read is not None:
         print("SQL Reads: " + str(SQL_Read.getStats()))
@@ -36,46 +37,62 @@ def printStats(TBA, SQL_Write, SQL_Read, print_sql=False):
 
 def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
     print("Loading Teams")
+    teams_obj = []
     for team in TBA.getTeams():
-        SQL_Write.addTeam(team, False)
-    SQL_Write.commit()
+        teams_obj.append(SQL_Write.addTeam(team, add=False, commit=False))
+    SQL_Write.add(teams_obj, commit=True)
 
     for year in range(start_year, end_year + 1):
         print("Year " + str(year))
-        SQL_Write.addYear({"year": year}, False)
+        SQL_Write.addYear({"year": year}, add=True, commit=False)
 
         teamYears = TBA.getTeamYears(year)
+        teamYears_obj = []
         for teamYear in teamYears:
-            SQL_Write.addTeamYear(teamYear, False)
-        SQL_Write.commit()
+            teamYears_obj.append(
+                SQL_Write.addTeamYear(teamYear, add=False, commit=False)
+            )
+        SQL_Write.add(teamYears_obj, commit=True)
 
         print("    Events")
         events = TBA.getEvents(year)
         for event in events:
+            objects = []
             event_key = event["key"]
             print("\tEvent: " + str(event_key))
-            event_exists = SQL_Write.addEvent(event, False)
-            if not event_exists or year == end_year:
-                event_obj = SQL_Read.getEvent_byKey(event_key)
+            event_obj = SQL_Write.addEvent(event, add=True, commit=False)
+            SQL_Write.flush()
+
+            # run if no event or current year (possibly happening live)
+            if event_obj is not None or year == end_year:
                 event_id = event_obj.getId()
                 event_time = event["time"]
 
                 teamEvents = TBA.getTeamEvents(event_key)
                 for teamEvent in teamEvents:
                     teamEvent["year"] = year
-                    teamEvent["event"] = event_id
+                    teamEvent["event_id"] = event_id
                     teamEvent["time"] = event_time
-                    SQL_Write.addTeamEvent(teamEvent, False)
+                    objects.append(SQL_Write.addTeamEvent(teamEvent,
+                                                          add=False,
+                                                          commit=False))
+                SQL_Write.add(objects, commit=False)
+                objects = []
 
                 matches = TBA.getMatches(event_key, event_time)
                 for match in matches:
                     match["year"] = year
                     match["event"] = event_id
-                    SQL_Write.addMatch(match, False)
+                    match_obj, team_matches_obj = \
+                        SQL_Write.addMatch(match, add=False, commit=False)
+                    objects.append(match_obj)
+                    objects.extend(team_matches_obj)
+                SQL_Write.add(objects, commit=False)
 
         SQL_Write.commit()
-
         printStats(TBA, SQL_Write, SQL_Read)
+
+    SQL_Write.commit()  # any loose ends
     post_process(TBA, SQL_Write, SQL_Read)
     printStats(TBA, SQL_Write, SQL_Read)
 
