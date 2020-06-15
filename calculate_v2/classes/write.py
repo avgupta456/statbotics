@@ -141,9 +141,7 @@ class SQL_Write:
     def addTeamEvent(self, dict, check=True, add=False, commit=False):
         team, event_id = dict["team"], dict["event_id"]
         if not check or self.read.getTeamEvent_byParts(team, event_id) is None:
-            team_year_id = self.read.getTeamYearId_byParts(
-                team=dict["team"], year=dict["year"]
-            )
+            team_year_id = int(str(dict["year"])+str(dict["team"]))
             teamEvent = TeamEvent(
                 id=int("1"+str(event_id).zfill(4)+str(team)),
                 team_id=team,

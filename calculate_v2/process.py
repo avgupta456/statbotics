@@ -63,13 +63,9 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
                                       commit=False)
         SQL_Write.add()
 
-        if clean:
-            print("    Events")
         events = TBA.getEvents(year)
         for event in events:
             event_key = event["key"]
-            if clean:
-                print("\tEvent: " + str(event_key))
             event_written = SQL_Write.addEvent(event,
                                                check=(not clean),
                                                add=True,
@@ -103,7 +99,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
         printStats(TBA, SQL_Write, SQL_Read)
 
     SQL_Write.add(match_objects=True)  # match objects
-    post_process(TBA, SQL_Write, SQL_Read)
+    post_process(TBA, SQL_Write, SQL_Read, clean)
     printStats(TBA, SQL_Write, SQL_Read)
 
 
@@ -117,23 +113,11 @@ def post_process(TBA, SQL_Write, SQL_Read, clean=False):
             if len(matches) == 0:
                 events = team.team_events
                 years = team.team_years
-                print("Remove " + team.getName())
                 for event in events:
                     SQL_Write.remove(event)
                 for year in years:
                     SQL_Write.remove(year)
                 SQL_Write.remove(team)
-        SQL_Write.commit()
-
-        print("Removing Empty Events")
-        events = SQL_Read.getEvents()
-        for event in events:
-            matches = SQL_Read.getMatches(event=event.getId())
-            if len(matches) == 0:
-                team_events = SQL_Read.getTeamEvents(event=event.getId())
-                for team_event in team_events:
-                    SQL_Write.remove(team_event)
-                SQL_Write.remove(event)
         SQL_Write.commit()
 
     print("Updating Team Entries")

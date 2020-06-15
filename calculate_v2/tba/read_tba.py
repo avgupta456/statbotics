@@ -77,14 +77,18 @@ class ReadTBA:
         out = []
         data = self.get("events/"+str(year)+"/simple")
         for event in data:
-            if event["key"] in self.event_blacklist:
+            key = event["key"]
+            if key in self.event_blacklist:
                 continue
             if event["district"] is not None:
                 event["district"] = event["district"]["abbreviation"]
             if int(event["event_type"]) <= 10:
+                # filters out events with no matches
+                if len(self.get("event/"+str(key)+"/matches")) == 0:
+                    continue
                 new_data = {
                     "year": year,
-                    "key": event["key"],
+                    "key": key,
                     "name": event["name"],
                     "state": cleanState(event["state_prov"]),
                     "country": event["country"],
