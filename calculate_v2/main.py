@@ -11,11 +11,9 @@ from tba import (
 import process
 import search
 
-# possible stack overflow, do in chunks
-# recommend 2002 - 2015, 2016 - 2020
 start_year = 2002
-end_year = 2010
-clean = True
+end_year = 2020
+clean = False
 
 TBA = read_tba.ReadTBA()
 SQL = sql.SQL(clean=clean, echo=False)

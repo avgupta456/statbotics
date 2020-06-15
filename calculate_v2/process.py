@@ -1,5 +1,8 @@
+import time
 import datetime
+
 start = datetime.datetime.now()
+curr_time = int(time.time())
 
 
 def printStats(TBA, SQL_Write, SQL_Read, print_sql=False):
@@ -34,56 +37,69 @@ def printStats(TBA, SQL_Write, SQL_Read, print_sql=False):
     print()
 
 
-def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
-    print("Loading Teams")
-    for team in TBA.getTeams():
-        SQL_Write.addTeam(team, check=not clean, add=False, commit=False)
-    SQL_Write.add()
+def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
+    if clean:
+        print("Loading Teams")
+        for team in TBA.getTeams():
+            SQL_Write.addTeam(team, check=False, add=False, commit=False)
+        SQL_Write.add()
 
+    all_teams = [t.getNumber() for t in SQL_Read.getTeams()]
     for year in range(start_year, end_year + 1):
         print("Year " + str(year))
         SQL_Write.addYear({"year": year},
-                          check=not clean,
+                          check=(not clean),
                           add=False,
                           commit=False)
 
-        teamYears = TBA.getTeamYears(year)
-        for teamYear in teamYears:
-            SQL_Write.addTeamYear(teamYear,
-                                  check=not clean,
-                                  add=False,
-                                  commit=False)
+        team_years = [t.getTeam() for t in SQL_Read.getTeamYears(year=year)]
+        for teamYear in TBA.getTeamYears(year):
+            # handles teams with no matches removed in postprocessing
+            team_year = teamYear["team"]
+            if team_year not in team_years and team_year in all_teams:
+                SQL_Write.addTeamYear(teamYear,
+                                      check=False,
+                                      add=False,
+                                      commit=False)
         SQL_Write.add()
 
-        print("    Events")
+        if clean:
+            print("    Events")
         events = TBA.getEvents(year)
         for event in events:
             event_key = event["key"]
-            print("\tEvent: " + str(event_key))
-            SQL_Write.addEvent(event, check=not clean, add=True, commit=False)
+            if clean:
+                print("\tEvent: " + str(event_key))
+            event_written = SQL_Write.addEvent(event,
+                                               check=(not clean),
+                                               add=True,
+                                               commit=False)
 
-            event_id = SQL_Read.getEvent_byKey(event_key).getId()
-            event_time = event["time"]
+            # if the match is within five days
+            if event_written or abs(curr_time - event["time"]) < 432000:
+                event_id = SQL_Read.getEventId_byKey(event_key)
+                event_time = event["time"]
 
-            teamEvents = TBA.getTeamEvents(event_key)
-            for teamEvent in teamEvents:
-                teamEvent["year"] = year
-                teamEvent["event_id"] = event_id
-                teamEvent["time"] = event_time
-                SQL_Write.addTeamEvent(teamEvent,
-                                       check=not clean,
+                teamEvents = TBA.getTeamEvents(event_key)
+                for teamEvent in teamEvents:
+                    teamEvent["year"] = year
+                    teamEvent["event_id"] = event_id
+                    teamEvent["time"] = event_time
+                    SQL_Write.addTeamEvent(teamEvent,
+                                           check=(not clean),
+                                           add=False,
+                                           commit=False)
+                SQL_Write.add()
+                matches = TBA.getMatches(event_key, event_time)
+                for match in matches:
+                    match["year"] = year
+                    match["event"] = event_id
+                    SQL_Write.addMatch(match,
+                                       check=(not clean),
                                        add=False,
                                        commit=False)
-            SQL_Write.add()
-            matches = TBA.getMatches(event_key, event_time)
-            for match in matches:
-                match["year"] = year
-                match["event"] = event_id
-                SQL_Write.addMatch(match,
-                                   check=not clean,
-                                   add=False,
-                                   commit=False)
-        SQL_Write.add()
+
+        SQL_Write.add(match_objects=True)
         printStats(TBA, SQL_Write, SQL_Read)
 
     SQL_Write.add(match_objects=True)  # match objects
@@ -92,40 +108,41 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=True):
 
 
 # removes REALLY old teams and adds district labels
-def post_process(TBA, SQL_Write, SQL_Read):
-    teams = SQL_Read.getTeams()
+def post_process(TBA, SQL_Write, SQL_Read, clean=False):
+    if clean:
+        print("Removing Old Teams")
+        for team in SQL_Read.getTeams():
+            '''Removes Teams With No Matches'''
+            matches = team.matches
+            if len(matches) == 0:
+                events = team.team_events
+                years = team.team_years
+                print("Remove " + team.getName())
+                for event in events:
+                    SQL_Write.remove(event)
+                for year in years:
+                    SQL_Write.remove(year)
+                SQL_Write.remove(team)
+        SQL_Write.commit()
 
-    for team in teams:
-        '''Removes Teams With No Matches'''
-        matches = SQL_Read.getTeamMatches(team=team.getNumber())
-        events = SQL_Read.getTeamEvents(team=team.getNumber())
-        years = SQL_Read.getTeamYears(team=team.getNumber())
-        if len(matches) == 0:
-            print("Remove " + team.getName())
-            for event in events:
+        print("Removing Empty Events")
+        events = SQL_Read.getEvents()
+        for event in events:
+            matches = SQL_Read.getMatches(event=event.getId())
+            if len(matches) == 0:
+                team_events = SQL_Read.getTeamEvents(event=event.getId())
+                for team_event in team_events:
+                    SQL_Write.remove(team_event)
                 SQL_Write.remove(event)
-            for year in years:
-                SQL_Write.remove(year)
-            SQL_Write.remove(team)
-        else:
-            '''Checks if active in 2020'''
-            team.active = 0
-            for year in years:
-                if year.getYear() == 2020:
-                    team.active = 1
+        SQL_Write.commit()
 
-            '''Retrieves district'''
-            district = TBA.getTeamDistrict(team.getNumber())
-            team.district = district
+    print("Updating Team Entries")
+    active_teams = [t.getTeam() for t in SQL_Read.getTeamYears(year=2020)]
+    for team in SQL_Read.getTeams():
+        '''Checks if active in 2020'''
+        team.active = 1 if team.getNumber() in active_teams else 0
 
-    events = SQL_Read.getEvents()
-    for event in events:
-        matches = SQL_Read.getMatches(event=event.getId())
-        if len(matches) == 0:
-            team_events = SQL_Read.getTeamEvents(event=event.getId())
-            for team_event in team_events:
-                SQL_Write.remove(team_event)
-            SQL_Write.remove(event)
-
+        '''Retrieves district'''
+        if team.district is None:
+            team.district = TBA.getTeamDistrict(team.getNumber())
     SQL_Write.commit()
-    printStats(None, SQL_Write, SQL_Read)

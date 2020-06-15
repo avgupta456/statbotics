@@ -30,6 +30,9 @@ class ReadTBA:
         self.cache = 0
         self.count = 0
 
+        # some events where no matches were played must be blacklisted
+        self.event_blacklist = ["2005va", "2007ga"]
+
     def get(self, url):
         if os.path.exists("tba/cache/"+url):
             self.cache += 1
@@ -44,7 +47,6 @@ class ReadTBA:
     def getStats(self):
         return [self.count, self.cache]
 
-    # Todo: get district
     def getTeams(self):
         out = []
         for i in range(20):
@@ -59,7 +61,6 @@ class ReadTBA:
                 out.append(new_data)
         return out
 
-    # Todo: get district
     def getTeamYears(self, year):
         out = []
         for i in range(20):
@@ -76,6 +77,8 @@ class ReadTBA:
         out = []
         data = self.get("events/"+str(year)+"/simple")
         for event in data:
+            if event["key"] in self.event_blacklist:
+                continue
             if event["district"] is not None:
                 event["district"] = event["district"]["abbreviation"]
             if int(event["event_type"]) <= 10:

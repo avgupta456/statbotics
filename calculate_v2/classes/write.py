@@ -57,6 +57,7 @@ class SQL_Write:
 
     def remove(self, obj, commit=False):
         self.session.delete(obj)
+        self.writes += 1
         if commit:
             self.commit()
 

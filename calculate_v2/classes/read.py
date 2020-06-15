@@ -85,6 +85,10 @@ class SQL_Read:
         self.reads += 1
         return self.session.query(Event).filter_by(key=event_key).first()
 
+    def getEventId_byKey(self, event_key):
+        self.reads += 1
+        return self.session.query(Event.id).filter_by(key=event_key).first()[0]
+
     def getEvents(self, year=None, event=None):
         self.reads += 1
         out = self.session.query(Event)
@@ -146,7 +150,7 @@ class SQL_Read:
 
     def getMatches(self, year=None, event=None, match=None):
         self.reads += 1
-        out = self.session.query(Event)
+        out = self.session.query(Match)
         if year is not None:
             out = out.filter_by(year_id=year)
         if event is not None:
