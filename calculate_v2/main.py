@@ -8,8 +8,10 @@ from tba import (
     read_tba,
 )
 
-import process
-import search
+from scripts import (
+    process,
+    search,
+)
 
 start_year = 2002
 end_year = 2020

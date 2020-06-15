@@ -37,10 +37,12 @@ def printStats(TBA, SQL_Write, SQL_Read, print_sql=False):
     print()
 
 
-def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
+def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
+            clean=False, cache=True):
+
     if clean:
         print("Loading Teams")
-        for team in TBA.getTeams():
+        for team in TBA.getTeams(cache=cache):
             SQL_Write.addTeam(team, check=False, add=False, commit=False)
         SQL_Write.add()
 
@@ -53,7 +55,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
                           commit=False)
 
         team_years = [t.getTeam() for t in SQL_Read.getTeamYears(year=year)]
-        for teamYear in TBA.getTeamYears(year):
+        for teamYear in TBA.getTeamYears(year, cache=cache):
             # handles teams with no matches removed in postprocessing
             team_year = teamYear["team"]
             if team_year not in team_years and team_year in all_teams:
@@ -63,7 +65,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
                                       commit=False)
         SQL_Write.add()
 
-        events = TBA.getEvents(year)
+        events = TBA.getEvents(year, cache=cache)
         for event in events:
             event_key = event["key"]
             event_written = SQL_Write.addEvent(event,
@@ -76,7 +78,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
                 event_id = SQL_Read.getEventId_byKey(event_key)
                 event_time = event["time"]
 
-                teamEvents = TBA.getTeamEvents(event_key)
+                teamEvents = TBA.getTeamEvents(event_key, cache=cache)
                 for teamEvent in teamEvents:
                     teamEvent["year"] = year
                     teamEvent["event_id"] = event_id
@@ -86,7 +88,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=False):
                                            add=False,
                                            commit=False)
                 SQL_Write.add()
-                matches = TBA.getMatches(event_key, event_time)
+                matches = TBA.getMatches(event_key, event_time, cache=cache)
                 for match in matches:
                     match["year"] = year
                     match["event"] = event_id

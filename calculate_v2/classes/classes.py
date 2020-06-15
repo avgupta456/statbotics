@@ -207,7 +207,7 @@ class Event(Base):
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
-        return self.getKey() < other.getKey()
+        return self.time < other.time
 
     def __repr__(self):
         return "(Event " + str(self.getKey()) + ")"
@@ -278,7 +278,7 @@ class TeamEvent(Base):
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
         if self.getTeam() == other.getTeam():
-            return self.getKey() < other.getKey()
+            return self.time < other.time
         else:
             return self.getTeam() < other.getTeam()
 
@@ -363,7 +363,7 @@ class Match(Base):
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
-        return self.getKey() < other.getKey()
+        return self.time < other.time
 
     def __repr__(self):
         return "(Match " + str(self.getKey()) + ")"

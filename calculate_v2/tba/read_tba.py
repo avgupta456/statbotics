@@ -33,8 +33,8 @@ class ReadTBA:
         # some events where no matches were played must be blacklisted
         self.event_blacklist = ["2005va", "2007ga"]
 
-    def get(self, url):
-        if os.path.exists("tba/cache/"+url):
+    def get(self, url, cache=True):
+        if cache and os.path.exists("tba/cache/"+url):
             self.cache += 1
             return utils.load_cache("tba/cache/"+url)
         else:
@@ -47,10 +47,10 @@ class ReadTBA:
     def getStats(self):
         return [self.count, self.cache]
 
-    def getTeams(self):
+    def getTeams(self, cache=True):
         out = []
         for i in range(20):
-            data = self.get("teams/"+str(i)+"/simple")
+            data = self.get("teams/"+str(i)+"/simple", cache=cache)
             for data_team in data:
                 new_data = {
                     "number": data_team["team_number"],
@@ -61,10 +61,11 @@ class ReadTBA:
                 out.append(new_data)
         return out
 
-    def getTeamYears(self, year):
+    def getTeamYears(self, year, cache=True):
         out = []
         for i in range(20):
-            data = self.get("teams/"+str(year)+"/"+str(i)+"/simple")
+            data = self.get("teams/"+str(year)+"/"+str(i)+"/simple",
+                            cache=cache)
             for team in data:
                 new_data = {
                     "year": year,
@@ -73,9 +74,9 @@ class ReadTBA:
                 out.append(new_data)
         return out
 
-    def getEvents(self, year):
+    def getEvents(self, year, cache=True):
         out = []
-        data = self.get("events/"+str(year)+"/simple")
+        data = self.get("events/"+str(year)+"/simple", cache=cache)
         for event in data:
             key = event["key"]
             if key in self.event_blacklist:
@@ -84,7 +85,8 @@ class ReadTBA:
                 event["district"] = event["district"]["abbreviation"]
             if int(event["event_type"]) <= 10:
                 # filters out events with no matches
-                if len(self.get("event/"+str(key)+"/matches")) == 0:
+                matches = self.get("event/"+str(key)+"/matches", cache=cache)
+                if len(matches) == 0:
                     continue
                 new_data = {
                     "year": year,
@@ -98,9 +100,9 @@ class ReadTBA:
                 out.append(new_data)
         return out
 
-    def getTeamEvents(self, event):
+    def getTeamEvents(self, event, cache=True):
         out = []
-        data = self.get("event/"+str(event)+"/teams/simple")
+        data = self.get("event/"+str(event)+"/teams/simple", cache=cache)
         for team in data:
             new_data = {
                 "team": team["team_number"],
@@ -108,9 +110,9 @@ class ReadTBA:
             out.append(new_data)
         return out
 
-    def getMatches(self, event, event_time):
+    def getMatches(self, event, event_time, cache=True):
         out = []
-        matches = self.get("event/"+str(event)+"/matches")
+        matches = self.get("event/"+str(event)+"/matches", cache=cache)
         for match in matches:
             # handles issues such as 2005wat qf1 blue alliance
             if len(match["alliances"]["blue"]["team_keys"]) > 0:
