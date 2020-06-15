@@ -12,6 +12,8 @@ SELECT * FROM events;
 SELECT * FROM team_events;
 SELECT * FROM matches;
 
+SELECT COUNT(*) FROM matches;
+
 # To restart process.py at a specific year
 DELETE FROM team_years WHERE year_id=2020;
 DELETE FROM years WHERE id=2020;
