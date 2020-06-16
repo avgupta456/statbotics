@@ -5,13 +5,19 @@ sd = {2002: 11.3, 2003: 31.4, 2004: 33.7, 2005: 15.5, 2006: 20.5, 2007: 32.9,
       2020: 58.3}
 
 
-def new_rating():
+# rating for 2002
+def start_rating():
+    return 1500
+
+
+# standard mean reversion rating
+def mean_reversion():
     return 1450
 
 
 def existing_rating(team_1yr, team_2yr):
     rating = 0.70 * team_1yr + 0.30 * team_2yr  # previous seasons elo
-    rating = 0.80 * rating + 0.20 * new_rating()  # to avoid drift
+    rating = 0.80 * rating + 0.20 * mean_reversion()  # to avoid drift
     return rating
 
 
