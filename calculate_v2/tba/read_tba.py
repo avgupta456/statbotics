@@ -32,6 +32,7 @@ class ReadTBA:
 
         # some events where no matches were played must be blacklisted
         self.event_blacklist = ["2005va", "2007ga"]
+        self.team_year_blacklist = [[2005, 28]]
 
     def get(self, url, cache=True):
         if cache and os.path.exists("tba/cache/"+url):
@@ -67,6 +68,9 @@ class ReadTBA:
             data = self.get("teams/"+str(year)+"/"+str(i)+"/simple",
                             cache=cache)
             for team in data:
+                for (year_b, team_b) in self.team_year_blacklist:
+                    if team["team_number"] == team_b and year == year_b:
+                        continue
                 new_data = {
                     "year": year,
                     "team": team["team_number"],
