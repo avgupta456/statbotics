@@ -148,6 +148,11 @@ class SQL_Read:
         self.reads += 1
         return self.session.query(Match).filter_by(key=match_key).first()
 
+    def getMatches_year(self, year):
+        self.reads += 1
+        return self.session.query(Match).filter_by(year_id=year) \
+            .order_by('time').all()
+
     def getMatches(self, year=None, event=None, match=None):
         self.reads += 1
         out = self.session.query(Match)
