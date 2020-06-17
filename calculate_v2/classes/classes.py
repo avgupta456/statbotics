@@ -49,10 +49,10 @@ class Team(Base):
     active = Column(Integer)
 
     '''NEW'''
-    elo = Column(Integer)
-    elo_recent = Column(Integer)
-    elo_mean = Column(Integer)
-    elo_max = Column(Integer)
+    elo = Column(Float)
+    elo_recent = Column(Float)
+    elo_mean = Column(Float)
+    elo_max = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -97,14 +97,14 @@ class Year(Base):
     team_events = relationship("TeamEvent", back_populates="year")
 
     '''NEW'''
-    elo_max = Column(Integer)
-    elo_1p = Column(Integer)
-    elo_5p = Column(Integer)
-    elo_10p = Column(Integer)
-    elo_25p = Column(Integer)
-    elo_median = Column(Integer)
-    elo_mean = Column(Integer)
-    elo_sd = Column(Integer)
+    elo_max = Column(Float)
+    elo_1p = Column(Float)
+    elo_5p = Column(Float)
+    elo_10p = Column(Float)
+    elo_25p = Column(Float)
+    elo_median = Column(Float)
+    elo_mean = Column(Float)
+    elo_sd = Column(Float)
     elo_acc = Column(Float)
     elo_mse = Column(Float)
 
@@ -144,12 +144,12 @@ class TeamYear(Base):
     team = relationship('Team', back_populates="team_years")
 
     '''NEW'''
-    elo_start = Column(Integer)
-    elo_pre_champs = Column(Integer)
-    elo_end = Column(Integer)
-    elo_mean = Column(Integer)
-    elo_max = Column(Integer)
-    elo_diff = Column(Integer)
+    elo_start = Column(Float)
+    elo_pre_champs = Column(Float)
+    elo_end = Column(Float)
+    elo_mean = Column(Float)
+    elo_max = Column(Float)
+    elo_diff = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -199,11 +199,11 @@ class Event(Base):
     # regional, district, district championship,
     #   elims_only, worlds division, einstein
     type = Column(Integer)
-    elo_max = Column(Integer)
-    elo_top8 = Column(Integer)
-    elo_top24 = Column(Integer)
-    elo_mean = Column(Integer)
-    elo_sd = Column(Integer)
+    elo_max = Column(Float)
+    elo_top8 = Column(Float)
+    elo_top24 = Column(Float)
+    elo_mean = Column(Float)
+    elo_sd = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -268,12 +268,12 @@ class TeamEvent(Base):
     time = Column(Integer)
 
     '''NEW'''
-    elo_start = Column(Integer)
-    elo_pre_playoffs = Column(Integer)
-    elo_end = Column(Integer)
-    elo_mean = Column(Integer)
-    elo_max = Column(Integer)
-    elo_diff = Column(Integer)
+    elo_start = Column(Float)
+    elo_pre_playoffs = Column(Float)
+    elo_end = Column(Float)
+    elo_mean = Column(Float)
+    elo_max = Column(Float)
+    elo_diff = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -346,20 +346,22 @@ class Match(Base):
     match_number = Column(Integer)
 
     red = Column(String(20))
+    red_elo_pre = Column(String(30))
+    red_elo_post = Column(String(30))
+
     blue = Column(String(20))
+    blue_elo_pre = Column(String(30))
+    blue_elo_post = Column(String(30))
 
     red_score = Column(Integer)
     blue_score = Column(Integer)
 
     winner = Column(String(10))
+    elo_winner = Column(String(10))
+    elo_win_prob = Column(Float)
 
+    playoff = Column(Integer)  # 0 is qual, 1 is playoff
     time = Column(Integer)
-
-    '''NEW'''
-    elo_red = Column(Integer)
-    elo_blue = Column(Integer)
-    elo_diff = Column(Integer)  # abs value
-    elo_prob = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -400,8 +402,46 @@ class Match(Base):
     def getBlue(self):
         return [int(x) for x in self.blue.split(',')]
 
+    def getTeams(self):
+        return [self.getRed(), self.getBlue()]
+
     def getWinner(self):
         return self.winner
+
+    '''ELO GETTERS'''
+    def getRedEloPre(self):
+        return [int(x) for x in self.red_elo_pre.split(',')]
+
+    def getRedEloPost(self):
+        return [int(x) for x in self.red_elo_post.split(',')]
+
+    def getBlueEloPre(self):
+        return [int(x) for x in self.blue_elo_pre.split(',')]
+
+    def getBlueEloPost(self):
+        return [int(x) for x in self.blue_elo_post.split(',')]
+
+    def getTeamElo(self, team):
+        red, blue = self.getTeams()
+        for i in range(len(red)):
+            if red[i] == team:
+                return self.getRedEloPost()[i]
+        for i in range(len(blue)):
+            if blue[i] == team:
+                return self.getBlueEloPost()[i]
+
+    '''ELO SETTERS'''
+    def setRedEloPre(self, elos):
+        self.red_elo_pre = ','.join(map(str, elos))
+
+    def setRedEloPost(self, elos):
+        self.red_elo_post = ','.join(map(str, elos))
+
+    def setBlueEloPre(self, elos):
+        self.blue_elo_pre = ','.join(map(str, elos))
+
+    def setBlueEloPost(self, elos):
+        self.blue_elo_post = ','.join(map(str, elos))
 
 
 def createTables(engine):
