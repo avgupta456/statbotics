@@ -7,7 +7,7 @@ SELECT * FROM association1;
 # get head of tables
 SELECT * FROM teams;
 SELECT * FROM years;
-SELECT * FROM team_years WHERE year_id=2002 order by elo_max desc;
+SELECT * FROM team_years WHERE year_id=2015 order by elo_max desc;
 SELECT * FROM events;
 SELECT * FROM team_events;
 SELECT * FROM matches;

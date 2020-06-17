@@ -69,6 +69,11 @@ def process_elo(start_year, end_year, SQL_Write, SQL_Read):
         team_years_all[year] = team_years
     SQL_Write.commit()
 
+    '''
+    DONE: Elo matches, Elo team years
+    TODO: Elo events, Elo team events, Elo teams, Elo years
+    '''
+
 
 def main(start_year, end_year, SQL_Write, SQL_Read):
     process_elo(start_year, end_year, SQL_Write, SQL_Read)
