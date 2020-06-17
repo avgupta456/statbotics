@@ -16,7 +16,7 @@ from scripts import (
 
 start_year = 2002
 end_year = 2020
-clean = True
+clean = False
 
 TBA = read_tba.ReadTBA()
 SQL = sql.SQL(clean=clean, echo=False)

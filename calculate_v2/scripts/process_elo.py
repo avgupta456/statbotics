@@ -55,6 +55,7 @@ def process_elo(start_year, end_year, SQL_Write, SQL_Read):
             win_prob = elo.win_probability(red_elo_pre, blue_elo_pre)
             match.elo_win_prob = win_prob
             match.elo_winner = "Red" if win_prob > 0.5 else "Blue"
+
         for team in team_matches:
             elos = team_matches[team]
             if elos == []:

@@ -32,7 +32,6 @@ class ReadTBA:
 
         # some events where no matches were played must be blacklisted
         self.event_blacklist = ["2005va", "2007ga"]
-        self.team_year_blacklist = [[2005, 28]]
 
     def get(self, url, cache=True):
         if cache and os.path.exists("tba/cache/"+url):
@@ -68,9 +67,6 @@ class ReadTBA:
             data = self.get("teams/"+str(year)+"/"+str(i)+"/simple",
                             cache=cache)
             for team in data:
-                for (year_b, team_b) in self.team_year_blacklist:
-                    if team["team_number"] == team_b and year == year_b:
-                        continue
                 new_data = {
                     "year": year,
                     "team": team["team_number"],
@@ -81,27 +77,30 @@ class ReadTBA:
     def getEvents(self, year, cache=True):
         out = []
         data = self.get("events/"+str(year)+"/simple", cache=cache)
+        # print(len(data))
         for event in data:
             key = event["key"]
+            # filters out partial/missing events
             if key in self.event_blacklist:
+                continue
+            # filters out offseason events
+            if int(event["event_type"]) > 10:
+                continue
+            # filters out events with no matches
+            if len(self.get("event/"+str(key)+"/matches", cache=cache)) == 0:
                 continue
             if event["district"] is not None:
                 event["district"] = event["district"]["abbreviation"]
-            if int(event["event_type"]) <= 10:
-                # filters out events with no matches
-                matches = self.get("event/"+str(key)+"/matches", cache=cache)
-                if len(matches) == 0:
-                    continue
-                new_data = {
-                    "year": year,
-                    "key": key,
-                    "name": event["name"],
-                    "state": cleanState(event["state_prov"]),
-                    "country": event["country"],
-                    "district": cleanDistrict(event["district"]),
-                    "time": utils.getTime(event["start_date"])
-                }
-                out.append(new_data)
+            out.append({
+                "year": year,
+                "key": key,
+                "name": event["name"],
+                "state": cleanState(event["state_prov"]),
+                "country": event["country"],
+                "district": cleanDistrict(event["district"]),
+                "time": utils.getTime(event["start_date"])
+            })
+        # print(len(out))
         return out
 
     def getTeamEvents(self, event, cache=True):
@@ -114,29 +113,36 @@ class ReadTBA:
             out.append(new_data)
         return out
 
-    def getMatches(self, event, event_time, cache=True):
+    def getMatches(self, year, event, event_time, cache=True):
         out = []
         matches = self.get("event/"+str(event)+"/matches", cache=cache)
+        # print(len(matches))
         for match in matches:
             # handles issues such as 2005wat qf1 blue alliance
-            if len(match["alliances"]["blue"]["team_keys"]) > 0:
-                match_data = {
-                    "event": event,
-                    "key": match["key"],
-                    "comp_level": match["comp_level"],
-                    "set_number": match["set_number"],
-                    "match_number": match["match_number"],
-                    "red": ",".join([t[3:] for t in
-                                    match["alliances"]["red"]["team_keys"]]),
-                    "blue": ",".join([t[3:] for t in
-                                     match["alliances"]["blue"]["team_keys"]]),
-                    "winner": match["winning_alliance"],
-                    "time": getMatchTime(match, event_time),
-                    "red_score": match["alliances"]["red"]["score"],
-                    "blue_score": match["alliances"]["blue"]["score"],
-                    "score_breakdown": match["score_breakdown"]
-                }
-                out.append(match_data)
+            red_teams = match["alliances"]["red"]["team_keys"]
+            blue_teams = match["alliances"]["blue"]["team_keys"]
+            if year > 2004 and (len(red_teams) < 3 or len(blue_teams) < 3):
+                continue
+            if year <= 2004 and (len(red_teams) < 2 or len(blue_teams) < 2):
+                continue
+            match_data = {
+                "event": event,
+                "key": match["key"],
+                "comp_level": match["comp_level"],
+                "set_number": match["set_number"],
+                "match_number": match["match_number"],
+                "red": ",".join([t[3:] for t in
+                                match["alliances"]["red"]["team_keys"]]),
+                "blue": ",".join([t[3:] for t in
+                                 match["alliances"]["blue"]["team_keys"]]),
+                "winner": match["winning_alliance"],
+                "time": getMatchTime(match, event_time),
+                "red_score": match["alliances"]["red"]["score"],
+                "blue_score": match["alliances"]["blue"]["score"],
+                "score_breakdown": match["score_breakdown"]
+            }
+            out.append(match_data)
+        # print(len(out))
         return out
 
     def getTeamDistrict(self, team):

@@ -55,7 +55,10 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
                                            add=False,
                                            commit=False)
                 SQL_Write.add()
-                matches = TBA.getMatches(event_key, event_time, cache=cache)
+                matches = TBA.getMatches(year,
+                                         event_key,
+                                         event_time,
+                                         cache=cache)
                 for match in matches:
                     match["year"] = year
                     match["event"] = event_id
