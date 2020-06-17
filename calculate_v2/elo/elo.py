@@ -18,33 +18,20 @@ def mean_reversion():
 def existing_rating(team_1yr, team_2yr):
     rating = 0.70 * team_1yr + 0.30 * team_2yr  # previous seasons elo
     rating = 0.80 * rating + 0.20 * mean_reversion()  # to avoid drift
-    return rating
+    return round(rating, 3)
 
 
-def update_rating(year, teams, match):
-    r, b = [], []
-    for i in range(len(match.red)):
-        r.append(teams[match.red[i]].rating)
-    for i in range(len(match.blue)):
-        b.append(teams[match.blue[i]].rating)
+def update_rating(year, red, blue, red_score, blue_score, playoff):
+    win_margin = (red_score - blue_score)/sd[year]
+    pred_win_margin = 4/1000*(sum(red)-sum(blue))
+    k = 4 if playoff == 1 else 12
 
-    match.set_ratings(r.copy(), b.copy())
+    for i in range(len(red)):
+        red[i] = round(red[i] + k*(win_margin-pred_win_margin), 3)
+    for i in range(len(blue)):
+        blue[i] = round(blue[i] - k*(win_margin-pred_win_margin), 3)
 
-    win_margin = (match.red_score - match.blue_score)/sd[year]
-    pred_win_margin = 4/1000*(sum(r)-sum(b))
-
-    k = 4 if match.playoff else 12
-    for i in range(len(r)):
-        r[i] = r[i] + k*(win_margin-pred_win_margin)
-    for i in range(len(b)):
-        b[i] = b[i] - k*(win_margin-pred_win_margin)
-
-    match.set_ratings_end(r.copy(), b.copy())
-
-    for i in range(len(r)):
-        teams[match.red[i]].set_rating(r[i])
-    for i in range(len(b)):
-        teams[match.blue[i]].set_rating(b[i])
+    return red, blue
 
 
 def win_probability(red, blue):

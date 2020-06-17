@@ -178,6 +178,7 @@ class SQL_Write:
                 red_score=dict["red_score"],
                 blue_score=dict["blue_score"],
                 winner=dict["winner"],
+                playoff=(dict["comp_level"] != "qm"),
                 time=dict["time"]
             )
             self.objects.append(match)
