@@ -5,12 +5,12 @@ SHOW TABLES;
 SELECT * FROM association1;
 
 # get head of tables
-SELECT * FROM teams;
+SELECT * FROM teams LIMIT 10000;
 SELECT * FROM years;
-SELECT * FROM team_years WHERE year_id=2015 order by elo_max desc;
-SELECT * FROM events;
-SELECT * FROM team_events;
-SELECT * FROM matches;
+SELECT * FROM team_years LIMIT 100000;
+SELECT * FROM events LIMIT 10000;
+SELECT * FROM team_events LIMIT 100000;
+SELECT * FROM matches LIMIT 1000000;
 
 SELECT COUNT(*) FROM matches;
 

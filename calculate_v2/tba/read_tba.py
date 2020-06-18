@@ -76,7 +76,7 @@ class ReadTBA:
 
     def getEvents(self, year, cache=True):
         out = []
-        data = self.get("events/"+str(year)+"/simple", cache=cache)
+        data = self.get("events/"+str(year), cache=cache)
         # print(len(data))
         for event in data:
             key = event["key"]

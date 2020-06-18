@@ -399,10 +399,10 @@ class Match(Base):
         return self.match_number
 
     def getRed(self):
-        return [int(x) for x in self.red.split(',')]
+        return [float(x) for x in self.red.split(',')]
 
     def getBlue(self):
-        return [int(x) for x in self.blue.split(',')]
+        return [float(x) for x in self.blue.split(',')]
 
     def getTeams(self):
         return [self.getRed(), self.getBlue()]
@@ -412,16 +412,16 @@ class Match(Base):
 
     '''ELO GETTERS'''
     def getRedEloPre(self):
-        return [int(x) for x in self.red_elo_pre.split(',')]
+        return [float(x) for x in self.red_elo_pre.split(',')]
 
     def getRedEloPost(self):
-        return [int(x) for x in self.red_elo_post.split(',')]
+        return [float(x) for x in self.red_elo_post.split(',')]
 
     def getBlueEloPre(self):
-        return [int(x) for x in self.blue_elo_pre.split(',')]
+        return [float(x) for x in self.blue_elo_pre.split(',')]
 
     def getBlueEloPost(self):
-        return [int(x) for x in self.blue_elo_post.split(',')]
+        return [float(x) for x in self.blue_elo_post.split(',')]
 
     def getTeamElo(self, team):
         red, blue = self.getTeams()
