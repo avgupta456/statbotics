@@ -18,7 +18,7 @@ def mean_reversion():
 def existing_rating(team_1yr, team_2yr):
     rating = 0.70 * team_1yr + 0.30 * team_2yr  # previous seasons elo
     rating = 0.80 * rating + 0.20 * mean_reversion()  # to avoid drift
-    return round(rating, 3)
+    return round(rating, 2)
 
 
 def update_rating(year, red, blue, red_score, blue_score, playoff):
@@ -27,9 +27,9 @@ def update_rating(year, red, blue, red_score, blue_score, playoff):
     k = 4 if playoff == 1 else 12
 
     for i in range(len(red)):
-        red[i] = round(red[i] + k*(win_margin-pred_win_margin), 3)
+        red[i] = round(red[i] + k*(win_margin-pred_win_margin), 2)
     for i in range(len(blue)):
-        blue[i] = round(blue[i] - k*(win_margin-pred_win_margin), 3)
+        blue[i] = round(blue[i] - k*(win_margin-pred_win_margin), 2)
 
     return red, blue
 
