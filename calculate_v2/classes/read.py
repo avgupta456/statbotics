@@ -85,6 +85,11 @@ class SQL_Read:
         self.reads += 1
         return self.session.query(Event).filter_by(key=event_key).first()
 
+    def getEvents_year(self, year):
+        self.reads += 1
+        return self.session.query(Year).filter_by(year_id=year) \
+            .order_by('time').all()
+
     def getEventId_byKey(self, event_key):
         self.reads += 1
         return self.session.query(Event.id).filter_by(key=event_key).first()[0]

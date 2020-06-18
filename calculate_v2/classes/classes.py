@@ -195,10 +195,12 @@ class Event(Base):
     country = Column(String(30))
     district = Column(String(10))
 
-    '''NEW'''
-    # regional, district, district championship,
-    #   elims_only, worlds division, einstein
+    # 0 is regional, 1 is district, 2 is district champ,
+    # 3 is worlds division, 4 is einsteins/FOC
     type = Column(Integer)
+    week = Column(Integer)
+
+    '''NEW'''
     elo_max = Column(Float)
     elo_top8 = Column(Float)
     elo_top24 = Column(Float)

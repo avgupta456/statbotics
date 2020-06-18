@@ -1,4 +1,3 @@
 def search(SQL_Read):
-    matches = SQL_Read.getTeam(5511).matches
-    matches.sort()
-    print(matches)
+    print(SQL_Read.getTeam(5511).active)
+    print(SQL_Read.getTeam(599).active)

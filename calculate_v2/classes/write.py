@@ -119,14 +119,19 @@ class SQL_Write:
 
     def addEvent(self, dict, check=True, add=False, commit=False):
         if not check or self.read.getEvent_byKey(dict["key"]) is None:
+            district = dict["district"]
+            if district is None:
+                district = "None"
             event = Event(
                 year_id=dict["year"],
                 key=dict["key"],
                 name=dict["name"],
                 state=dict["state"],
                 country=dict["country"],
-                district=dict["district"],
+                district=district,
                 time=dict["time"],
+                type=dict["type"],
+                week=dict["week"],
             )
             self.objects.append(event)
             if add:

@@ -80,6 +80,7 @@ class ReadTBA:
         # print(len(data))
         for event in data:
             key = event["key"]
+
             # filters out partial/missing events
             if key in self.event_blacklist:
                 continue
@@ -89,8 +90,18 @@ class ReadTBA:
             # filters out events with no matches
             if len(self.get("event/"+str(key)+"/matches", cache=cache)) == 0:
                 continue
+
             if event["district"] is not None:
                 event["district"] = event["district"]["abbreviation"]
+
+            type = event["event_type"]
+            # renames district divisions to district championship
+            if type == 5:
+                type = 2
+            # renames festival of championships to einsteins
+            if type == 6:
+                type = 4
+
             out.append({
                 "year": year,
                 "key": key,
@@ -98,7 +109,9 @@ class ReadTBA:
                 "state": cleanState(event["state_prov"]),
                 "country": event["country"],
                 "district": cleanDistrict(event["district"]),
-                "time": utils.getTime(event["start_date"])
+                "time": utils.getTime(event["start_date"]),
+                "type": type,
+                "week": event["week"],
             })
         # print(len(out))
         return out
@@ -118,27 +131,33 @@ class ReadTBA:
         matches = self.get("event/"+str(event)+"/matches", cache=cache)
         # print(len(matches))
         for match in matches:
-            # handles issues such as 2005wat qf1 blue alliance
             red_teams = match["alliances"]["red"]["team_keys"]
             blue_teams = match["alliances"]["blue"]["team_keys"]
+            red_score = match["alliances"]["red"]["score"]
+            blue_score = match["alliances"]["blue"]["score"]
+            winner = "draw"
+            if red_score > blue_score:
+                winner = "red"
+            elif blue_score > red_score:
+                winner = "blue"
+
             if year > 2004 and (len(red_teams) < 3 or len(blue_teams) < 3):
                 continue
             if year <= 2004 and (len(red_teams) < 2 or len(blue_teams) < 2):
                 continue
+
             match_data = {
                 "event": event,
                 "key": match["key"],
                 "comp_level": match["comp_level"],
                 "set_number": match["set_number"],
                 "match_number": match["match_number"],
-                "red": ",".join([t[3:] for t in
-                                match["alliances"]["red"]["team_keys"]]),
-                "blue": ",".join([t[3:] for t in
-                                 match["alliances"]["blue"]["team_keys"]]),
-                "winner": match["winning_alliance"],
+                "red": ",".join([t[3:] for t in red_teams]),
+                "blue": ",".join([t[3:] for t in blue_teams]),
+                "winner": winner,
                 "time": getMatchTime(match, event_time),
-                "red_score": match["alliances"]["red"]["score"],
-                "blue_score": match["alliances"]["blue"]["score"],
+                "red_score": red_score,
+                "blue_score": blue_score,
                 "score_breakdown": match["score_breakdown"]
             }
             out.append(match_data)
