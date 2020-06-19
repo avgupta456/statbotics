@@ -1,10 +1,12 @@
 
 *.pyc
 
-constants.py
+calculate/constants.py
+calculate_v2/classes/constants.py
 docs/*
 
 calculate/data/processed_matches/*
 calculate/data/teams/*
 
 calculate_v2/tba/cache/*
+api/constants.py

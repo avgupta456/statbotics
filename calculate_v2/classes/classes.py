@@ -42,13 +42,14 @@ class Team(Base):
         back_populates="teams"
     )
 
+    '''GENERAL'''
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
     active = Column(Integer)
 
-    '''NEW'''
+    '''ELO'''
     elo = Column(Float)
     elo_recent = Column(Float)
     elo_mean = Column(Float)
@@ -96,7 +97,7 @@ class Year(Base):
     team_years = relationship("TeamYear", back_populates="year")
     team_events = relationship("TeamEvent", back_populates="year")
 
-    '''NEW'''
+    '''ELO'''
     elo_max = Column(Float)
     elo_1p = Column(Float)
     elo_5p = Column(Float)
@@ -143,7 +144,7 @@ class TeamYear(Base):
     team_id = Column(Integer, ForeignKey('teams.id'))
     team = relationship('Team', back_populates="team_years")
 
-    '''NEW'''
+    '''ELO'''
     elo_start = Column(Float)
     elo_pre_champs = Column(Float)
     elo_end = Column(Float)
@@ -188,6 +189,7 @@ class Event(Base):
     year_id = Column(Integer, ForeignKey('years.id'))
     year = relationship('Year', back_populates="events")
 
+    '''GENERAL'''
     key = Column(String(20))
     name = Column(String(100))
     time = Column(Integer)
@@ -200,7 +202,7 @@ class Event(Base):
     type = Column(Integer)
     week = Column(Integer)
 
-    '''NEW'''
+    '''ELO'''
     elo_max = Column(Float)
     elo_top8 = Column(Float)
     elo_top24 = Column(Float)
@@ -243,6 +245,12 @@ class Event(Base):
     def getTime(self):
         return self.time
 
+    def getTeamEvent(self, team):
+        for team_event in self.team_events:
+            if team_event.team_id == team:
+                return team_event
+        return None
+
 
 class TeamEvent(Base):
     '''DECLARATIONS'''
@@ -267,9 +275,10 @@ class TeamEvent(Base):
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship('Event', back_populates="team_events")
 
+    '''GENERAL'''
     time = Column(Integer)
 
-    '''NEW'''
+    '''ELO'''
     elo_start = Column(Float)
     elo_pre_playoffs = Column(Float)
     elo_end = Column(Float)
@@ -342,6 +351,7 @@ class Match(Base):
         back_populates="matches"
     )
 
+    '''GENERAL'''
     key = Column(String(20))
     comp_level = Column(String(10))
     set_number = Column(Integer)
@@ -399,10 +409,10 @@ class Match(Base):
         return self.match_number
 
     def getRed(self):
-        return [float(x) for x in self.red.split(',')]
+        return [int(x) for x in self.red.split(',')]
 
     def getBlue(self):
-        return [float(x) for x in self.blue.split(',')]
+        return [int(x) for x in self.blue.split(',')]
 
     def getTeams(self):
         return [self.getRed(), self.getBlue()]
