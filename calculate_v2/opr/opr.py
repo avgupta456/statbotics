@@ -1,12 +1,28 @@
 import numpy as np
-
 from helper import constants
 
 
-def computeOPR(input, output):
+def computeOPR(input, output, year):
     MTM = np.matmul(input.T, input)
     MTs = np.matmul(input.T, output)
-    return np.matmul(np.linalg.inv(MTM), MTs)
+    try:
+        out = np.matmul(np.linalg.inv(MTM), MTs)
+    except np.linalg.LinAlgError:
+        out = computeAverages(input, output)
+    if np.min(out) < - constants.mean[year]/3:
+        out = computeAverages(input, output)
+    return out
+
+
+def computeAverages(input, output):
+    out = np.zeros(shape=(input.shape[1], 1))
+    for i in range(input.shape[1]):
+        scores = []
+        for j in range(input.shape[0]):
+            if input[j][i] == 1:
+                scores.append(output[j])
+        out[i] = sum(scores)/len(scores)
+    return out
 
 
 # matches assumed to be list of [r1, r2, r3, b1, b2, b3, r_s, b_s]
@@ -34,13 +50,18 @@ def formatMatches(matches):
 
 
 def getOPR(event):
-    matches = []
-    for m in event.matches:
+    matches, out = [], {}
+    match_objs = sorted(event.getMatches(playoffs=False))
+    for m in match_objs:
         if m.playoff == 0:
             match = m.getRed()
             match.extend(m.getBlue())
             match.extend([m.red_score, m.blue_score])
             matches.append(match)
+
     teams, input, output = formatMatches(matches)
-    oprs = computeOPR(input, output)
-    return teams, oprs
+    oprs = computeOPR(input, output, event.getYear())
+    for i in range(len(teams)):
+        out[teams[i]] = round(float(oprs[i][0]), 2)
+
+    return out

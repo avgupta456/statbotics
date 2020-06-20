@@ -109,6 +109,19 @@ class Year(Base):
     elo_acc = Column(Float)
     elo_mse = Column(Float)
 
+    '''OPR'''
+    # stats are for team's max opr in given year, NOT EVENT
+    opr_max = Column(Float)
+    opr_1p = Column(Float)
+    opr_5p = Column(Float)
+    opr_10p = Column(Float)
+    opr_25p = Column(Float)
+    opr_median = Column(Float)
+    opr_mean = Column(Float)
+    opr_sd = Column(Float)
+    opr_acc = Column(Float)
+    opr_mse = Column(Float)
+
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
         return self.getYear() < other.getYear()
@@ -151,6 +164,10 @@ class TeamYear(Base):
     elo_mean = Column(Float)
     elo_max = Column(Float)
     elo_diff = Column(Float)
+
+    '''OPR'''
+    opr_start = Column(Float)
+    opr_end = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -209,6 +226,13 @@ class Event(Base):
     elo_mean = Column(Float)
     elo_sd = Column(Float)
 
+    '''OPR'''
+    opr_max = Column(Float)
+    opr_top8 = Column(Float)
+    opr_top24 = Column(Float)
+    opr_mean = Column(Float)
+    opr_sd = Column(Float)
+
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
         return self.time < other.time
@@ -251,6 +275,24 @@ class Event(Base):
                 return team_event
         return None
 
+    def getMatches(self, playoffs=None):
+        if playoffs is None:
+            # everything
+            return self.matches
+        if playoffs:
+            # only playoffs
+            matches = []
+            for match in self.matches:
+                if match.playoff == 1:
+                    matches.append(match)
+            return matches
+        # only quals
+        matches = []
+        for match in self.matches:
+            if match.playoff == 0:
+                matches.append(match)
+        return matches
+
 
 class TeamEvent(Base):
     '''DECLARATIONS'''
@@ -285,6 +327,10 @@ class TeamEvent(Base):
     elo_mean = Column(Float)
     elo_max = Column(Float)
     elo_diff = Column(Float)
+
+    '''OPR'''
+    opr_start = Column(Float)
+    opr_end = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -360,10 +406,14 @@ class Match(Base):
     red = Column(String(20))
     red_elo_pre = Column(String(30))
     red_elo_post = Column(String(30))
+    red_elo_sum = Column(Float)
+    red_opr = Column(String(30))
 
     blue = Column(String(20))
     blue_elo_pre = Column(String(30))
     blue_elo_post = Column(String(30))
+    blue_elo_sum = Column(Float)
+    blue_opr = Column(String(30))
 
     red_score = Column(Integer)
     blue_score = Column(Integer)
@@ -371,6 +421,8 @@ class Match(Base):
     winner = Column(String(10))
     elo_winner = Column(String(10))
     elo_win_prob = Column(Float)
+    opr_winner = Column(String(10))
+    opr_win_prob = Column(Float)
 
     playoff = Column(Integer)  # 0 is qual, 1 is playoff
     time = Column(Integer)
@@ -444,12 +496,14 @@ class Match(Base):
 
     '''ELO SETTERS'''
     def setRedEloPre(self, elos):
+        self.red_elo_sum = sum(elos)
         self.red_elo_pre = ','.join(map(str, elos))
 
     def setRedEloPost(self, elos):
         self.red_elo_post = ','.join(map(str, elos))
 
     def setBlueEloPre(self, elos):
+        self.blue_elo_sum = sum(elos)
         self.blue_elo_pre = ','.join(map(str, elos))
 
     def setBlueEloPost(self, elos):
