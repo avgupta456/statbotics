@@ -74,42 +74,36 @@ def process_opr(start_year, end_year, SQL_Read, SQL_Write):
         events = sorted(SQL_Read.getEvents(year=year))
         for event in events:
             print(event)
-            M = len(event.getMatches(playoffs=False))
-            if M == 0:
-                for team_event in event.team_events:
-                    num = team_event.getTeam()
+            for team_event in event.team_events:
+                num = team_event.getTeam()
+                if num in teams:
                     team_event.opr_start = team_oprs[num]
-                    team_event.opr_end = team_oprs[num]
-            else:
-                for team_event in event.team_events:
-                    num = team_event.getTeam()
-                    if num in teams:
-                        team_event.opr_start = team_oprs[num]
 
-                oprs, stats = process_event(event, year)
-                opr_acc += stats[0]
-                opr_mse += stats[1]
-                mix_acc += stats[2]
-                mix_mse += stats[3]
-                count += stats[4]
+            oprs, stats = process_event(event, year)
+            opr_acc += stats[0]
+            opr_mse += stats[1]
+            mix_acc += stats[2]
+            mix_mse += stats[3]
+            count += stats[4]
 
-                for team_event in event.team_events:
-                    num = team_event.getTeam()
-                    if num not in oprs:
-                        continue
-                    opr = oprs[num][-1]
-                    team_event.opr_end = opr
-                    team_oprs[num] = opr
-                    if num not in team_events:
-                        team_events[num] = []
-                    team_events[num].append(opr)
+            for team_event in event.team_events:
+                num = team_event.getTeam()
+                # 832 2004va didn't play matches
+                if num not in oprs:
+                    continue
+                opr = oprs[num][-1]
+                team_event.opr_end = opr
+                team_oprs[num] = opr
+                if num not in team_events:
+                    team_events[num] = []
+                team_events[num].append(opr)
 
-                oprs_end = sorted([oprs[t][-1] for t in oprs], reverse=True)
-                event.opr_max = oprs_end[0]
-                event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
-                event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
-                event.opr_mean = round(sum(oprs_end)/len(oprs_end), 2)
-                event.opr_sd = round(statistics.pstdev(oprs_end), 2)
+            oprs_end = sorted([oprs[t][-1] for t in oprs], reverse=True)
+            event.opr_max = oprs_end[0]
+            event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
+            event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
+            event.opr_mean = round(sum(oprs_end)/len(oprs_end), 2)
+            event.opr_sd = round(statistics.pstdev(oprs_end), 2)
 
         oprs = []
         for num in team_years:

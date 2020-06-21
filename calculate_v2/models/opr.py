@@ -25,14 +25,28 @@ def computeAverages(input, output, year):
         for j in range(M):
             if input[j][i] == 1:
                 scores.append(output[j])
-        if len(scores) > 0:
-            out[i] = sum(scores)/len(scores)/TM
-        else:
-            out[i] = 0
+        avg = sum(scores)/len(scores)/TM
+        out[i][0] = round(float(avg), 2) if len(scores) > 0 else 0
     return out
 
 
-def get_OPR(event):
+def opr_base(event):
+    team_events = {}
+    for team_event in event.team_events:
+        team_events[team_event.getTeam()] = team_event
+
+    # case of only playoffs
+    if len(event.getMatches(playoffs=False)) == 0:
+        teams, out = set(), {}
+        for m in event.matches:
+            [teams.add(t) for t in m.getRed()]
+            [teams.add(t) for t in m.getBlue()]
+        teams = list(teams)
+        for t in teams:
+            out[t] = [round(team_events[t].opr_start, 2)]
+        early_exit = True
+        return out, early_exit, 0, 0, 0, 0, 0, 0, 0
+
     teams, out = set(), {}
     match_objs = sorted(event.getMatches(playoffs=False))
     for m in match_objs:
@@ -42,6 +56,16 @@ def get_OPR(event):
     M, T = len(match_objs), len(teams)
     input = np.zeros(shape=(2*M, T), dtype="float")
     output = np.zeros(shape=(2*M, 1), dtype="float")
+    early_exit = False
+    return out, early_exit, team_events, teams, match_objs, M, T, input, output
+
+
+def get_OPR(event):
+    out, early_exit, team_events, teams, \
+        match_objs, M, T, input, output = opr_base(event)
+    if early_exit:
+        return out
+
     for i in range(T):
         out[teams[i]] = [0]
     for i in range(M):
@@ -61,18 +85,11 @@ def get_OPR(event):
 
 
 def get_xOPR(event):
-    team_events, out = {}, []
-    for team_event in event.team_events:
-        team_events[team_event.getTeam()] = team_event
-    teams, out = set(), {}
-    match_objs = sorted(event.getMatches(playoffs=False))
-    for m in match_objs:
-        [teams.add(t) for t in m.getRed()]
-        [teams.add(t) for t in m.getBlue()]
-    teams = list(teams)
-    M, T = len(match_objs), len(teams)
-    input = np.zeros(shape=(2*M, T), dtype="float")
-    output = np.zeros(shape=(2*M, 1), dtype="float")
+    out, early_exit, team_events, teams, \
+        match_objs, M, T, input, output = opr_base(event)
+    if early_exit:
+        return out
+
     for i in range(M):
         m = match_objs[i]
         for t in m.getRed():
@@ -94,20 +111,12 @@ def get_xOPR(event):
     return out
 
 
-def get_ixOPR(event):
-    iterations = 2
-    team_events, out = {}, []
-    for team_event in event.team_events:
-        team_events[team_event.getTeam()] = team_event
-    teams, out = set(), {}
-    match_objs = sorted(event.getMatches(playoffs=False))
-    for m in match_objs:
-        [teams.add(t) for t in m.getRed()]
-        [teams.add(t) for t in m.getBlue()]
-    teams = list(teams)
-    M, T = len(match_objs), len(teams)
-    input = np.zeros(shape=(2*M, T), dtype="float")
-    output = np.zeros(shape=(2*M, 1), dtype="float")
+def get_ixOPR(event, iterations=2):
+    out, early_exit, team_events, teams, \
+        match_objs, M, T, input, output = opr_base(event)
+    if early_exit:
+        return out
+
     for i in range(M):
         m = match_objs[i]
         for t in m.getRed():
