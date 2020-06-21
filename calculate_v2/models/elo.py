@@ -30,5 +30,5 @@ def update_rating(year, red, blue, red_score, blue_score, playoff):
     return red, blue
 
 
-def win_probability(red, blue):
+def win_prob(red, blue):
     return 1/(10**((sum(blue)-sum(red))/400)+1)

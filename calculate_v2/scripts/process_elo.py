@@ -1,29 +1,30 @@
 import statistics
 
 from scripts.logging import printStats
-from elo import elo
+from models import elo
 
 
 def process_elo(start_year, end_year, SQL_Write, SQL_Read):
-    teams = {}
+    teams = {}   # dict of team nums to team objs
     for team in SQL_Read.getTeams():
         teams[team.getNumber()] = team
 
+    # constants from elo model
     start, mean_reversion = elo.start_rating(), elo.mean_reversion()
 
-    team_years_all = {}
+    team_years_all = {}  # master dictionary
     for year in range(start_year, end_year + 1):
-        print(year)
-        team_years = {}
-        team_matches = {}
-        team_elos = {}
+        print(year)  # dicts for num to TeamYear, TeamMatch, most recent elo
+        team_years, team_matches, team_elos = {}, {}, {}
 
         print("Team Year Setup")
         for teamYear in SQL_Read.getTeamYears(year=year):
-            # eventually will need 2021 logic here
+            # eventually will need 2021 logic here (continuation season)
             num = teamYear.getTeam()
             team_years[num] = teamYear
             team_matches[num] = []
+
+            # gets elo using mean reversion
             elo_2yr = mean_reversion
             if year-2 in team_years_all and \
                     num in team_years_all[year-2] and \
@@ -36,28 +37,41 @@ def process_elo(start_year, end_year, SQL_Write, SQL_Read):
                 elo_1yr = team_years_all[year-1][num].elo_max
             start_rating = elo.existing_rating(elo_1yr, elo_2yr)
             team_elos[num] = start if year == 2002 else start_rating
-            teamYear.elo_start = team_elos[num]
-            # print(teamYear, teamYear.start_rating)
+            teamYear.elo_start = team_elos[num]  # saves new elo
 
         print("Matches")
-        correct, error = 0, 0
+        acc, mse = 0, 0  # for statistics
         matches = SQL_Read.getMatches_year(year=year)
         for match in matches:
             red, blue = match.getTeams()
             red_elo_pre = [team_elos[t] for t in red]
             blue_elo_pre = [team_elos[t] for t in blue]
+
+            # elims in 2 team era had 3 teams
+            if year <= 2004 and len(red_elo_pre) > 2:
+                red_elo_pre = red_elo_pre[:2]
+            if year <= 2004 and len(blue_elo_pre) > 2:
+                blue_elo_pre = blue_elo_pre[:2]
+
+            # update object
             match.setRedEloPre(red_elo_pre)
             match.setBlueEloPre(blue_elo_pre)
 
-            win_prob = elo.win_probability(red_elo_pre, blue_elo_pre)
+            # updates win probability fields
+            win_prob = elo.win_prob(red_elo_pre, blue_elo_pre)
             match.elo_win_prob = win_prob
             match.elo_winner = "red" if win_prob > 0.5 else "blue"
 
+            # compute elo changes
             red_elo_post, blue_elo_post = elo.update_rating(
                 year, red_elo_pre, blue_elo_pre, match.red_score,
                 match.blue_score, match.playoff)
+
+            # update object
             match.setRedEloPost(red_elo_post)
             match.setBlueEloPost(blue_elo_post)
+
+            # update dictionaries
             for i in range(len(red)):
                 team_elos[red[i]] = red_elo_post[i]
                 team_matches[red[i]].append(red_elo_post[i])
@@ -65,20 +79,18 @@ def process_elo(start_year, end_year, SQL_Write, SQL_Read):
                 team_elos[blue[i]] = blue_elo_post[i]
                 team_matches[blue[i]].append(blue_elo_post[i])
 
+            # update stats
+            win_probs = {"red": 1, "blue": 0, "draw": 0.5}
+            mse += (win_probs[match.winner] - match.elo_win_prob) ** 2
             if match.winner == match.elo_winner:
-                correct += 1
-            win_prob = 0.5
-            if match.winner == "red":
-                win_prob = 1
-            elif match.winner == "blue":
-                win_prob = 0
-            error += (win_prob - match.elo_win_prob) ** 2
+                acc += 1
 
-        acc = round(correct / len(matches), 4)
-        mse = round(error / len(matches), 4)
+        # aggregate stats
+        acc = round(acc / len(matches), 4)
+        mse = round(mse / len(matches), 4)
         year_elos = []
 
-        SQL_Write.commit()
+        SQL_Write.commit()  # optional
 
         print("Team Events")
         for team in SQL_Read.getTeamYears(year=year):

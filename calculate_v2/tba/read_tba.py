@@ -94,13 +94,17 @@ class ReadTBA:
             if event["district"] is not None:
                 event["district"] = event["district"]["abbreviation"]
 
-            type = event["event_type"]
             # renames district divisions to district championship
+            # renames festival of championships to einsteins
+            type = event["event_type"]
             if type == 5:
                 type = 2
-            # renames festival of championships to einsteins
             if type == 6:
                 type = 4
+
+            # assigns worlds to week 8
+            if type >= 3:
+                event["week"] = 8
 
             out.append({
                 "year": year,

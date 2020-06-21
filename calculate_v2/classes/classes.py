@@ -122,6 +122,10 @@ class Year(Base):
     opr_acc = Column(Float)
     opr_mse = Column(Float)
 
+    ''''MIX'''
+    mix_acc = Column(Float)
+    mix_mse = Column(Float)
+
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
         return self.getYear() < other.getYear()
@@ -408,12 +412,14 @@ class Match(Base):
     red_elo_post = Column(String(30))
     red_elo_sum = Column(Float)
     red_opr = Column(String(30))
+    red_opr_sum = Column(Float)
 
     blue = Column(String(20))
     blue_elo_pre = Column(String(30))
     blue_elo_post = Column(String(30))
     blue_elo_sum = Column(Float)
     blue_opr = Column(String(30))
+    blue_opr_sum = Column(Float)
 
     red_score = Column(Integer)
     blue_score = Column(Integer)
@@ -423,6 +429,8 @@ class Match(Base):
     elo_win_prob = Column(Float)
     opr_winner = Column(String(10))
     opr_win_prob = Column(Float)
+    mix_winner = Column(String(10))
+    mix_win_prob = Column(Float)
 
     playoff = Column(Integer)  # 0 is qual, 1 is playoff
     time = Column(Integer)
@@ -472,7 +480,7 @@ class Match(Base):
     def getWinner(self):
         return self.winner
 
-    '''ELO GETTERS'''
+    '''GETTERS'''
     def getRedEloPre(self):
         return [float(x) for x in self.red_elo_pre.split(',')]
 
@@ -494,7 +502,22 @@ class Match(Base):
             if blue[i] == team:
                 return self.getBlueEloPost()[i]
 
-    '''ELO SETTERS'''
+    def getRedOpr(self):
+        return [float(x) for x in self.red_opr.split(',')]
+
+    def getBlueOpr(self):
+        return [float(x) for x in self.blue_opr.split(',')]
+
+    def getTeamOpr(self, team):
+        red, blue = self.getTeams()
+        for i in range(len(red)):
+            if red[i] == team:
+                return self.getRedOpr()[i]
+        for i in range(len(blue)):
+            if blue[i] == team:
+                return self.getBlueOpr()[i]
+
+    '''SETTERS'''
     def setRedEloPre(self, elos):
         self.red_elo_sum = sum(elos)
         self.red_elo_pre = ','.join(map(str, elos))
@@ -508,6 +531,14 @@ class Match(Base):
 
     def setBlueEloPost(self, elos):
         self.blue_elo_post = ','.join(map(str, elos))
+
+    def setRedOpr(self, oprs):
+        self.red_opr_sum = sum(oprs)
+        self.red_opr = ','.join(map(str, oprs))
+
+    def setBlueOpr(self, oprs):
+        self.blue_opr_sum = sum(oprs)
+        self.blue_opr = ','.join(map(str, oprs))
 
 
 def createTables(engine):

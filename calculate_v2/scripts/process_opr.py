@@ -2,19 +2,61 @@ import statistics
 
 from scripts.logging import printStats
 from helper import constants
-from opr import opr
+from models import opr as opr_model
+
+
+def process_event(event, year):
+    oprs = opr_model.get_ixOPR(event)
+    opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
+    for i, m in enumerate(sorted(event.matches)):
+        red, blue = m.getRed(), m.getBlue()
+        if year <= 2004:
+            red, blue = red[:2], blue[:2]
+        red_oprs, blue_oprs = [], []
+        ind = -1 if m.playoff else i-1
+
+        for r in red:
+            opr = 0 if r not in oprs or ind not in oprs[r] else oprs[r][ind]
+            red_oprs.append(opr)
+        for b in blue:
+            opr = 0 if b not in oprs or ind not in oprs[b] else oprs[b][ind]
+            blue_oprs.append(opr)
+
+        m.setRedOpr(red_oprs)
+        m.setBlueOpr(blue_oprs)
+
+        win_probs = {"red": 1, "blue": 0, "draw": 0.5}
+        red_sum, blue_sum = sum(red_oprs), sum(blue_oprs)
+        m.opr_winner = "red" if red_sum > blue_sum else "blue"
+        m.opr_win_prob = opr_model.win_prob(red_sum, blue_sum, year)
+        opr_mse += (win_probs[m.winner] - m.opr_win_prob) ** 2
+        if m.opr_winner == m.winner:
+            opr_acc += 1
+
+        m.mix_win_prob = 0.5 * (m.elo_win_prob+m.opr_win_prob)
+        m.mix_winner = "red" if m.mix_win_prob > 0.5 else "blue"
+        mix_mse += (win_probs[m.winner] - m.mix_win_prob) ** 2
+        if m.winner == m.mix_winner:
+            mix_acc += 1
+
+        count += 1
+
+    stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
+    return oprs, stats
 
 
 def process_opr(start_year, end_year, SQL_Read, SQL_Write):
-    teams = {}
+    teams = {}  # dict mapping num to team objs
     for team in SQL_Read.getTeams():
         teams[team.getNumber()] = team
 
-    team_years_all = {}
+    team_years_all = {}  # master dict
     for year in range(start_year, end_year + 1):
         print(year)
-        team_years = {}
-        team_oprs = {}
+        team_years, team_oprs = {}, {}
+        opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
+
+        # populate starting elo from previous year
         mean_score = constants.mean[year]
         prior_opr_global = mean_score / 3
         for teamYear in SQL_Read.getTeamYears(year=year):
@@ -31,35 +73,45 @@ def process_opr(start_year, end_year, SQL_Read, SQL_Write):
             team_oprs[num] = prior_opr
 
         team_events = {}
-        events = SQL_Read.getEvents(year=year)
+        events = sorted(SQL_Read.getEvents(year=year))
         for event in events:
-            matches = len(event.getMatches(playoffs=False))
-            if matches == 0:
+            print(event)
+            M = len(event.getMatches(playoffs=False))
+            if M == 0:
                 for team_event in event.team_events:
                     num = team_event.getTeam()
                     team_event.opr_start = team_oprs[num]
                     team_event.opr_end = team_oprs[num]
             else:
-                teams, oprs = opr.getOPR(event), []
                 for team_event in event.team_events:
                     num = team_event.getTeam()
-                    if num not in teams:
+                    if num in teams:
+                        team_event.opr_start = team_oprs[num]
+
+                oprs, stats = process_event(event, year)
+                opr_acc += stats[0]
+                opr_mse += stats[1]
+                mix_acc += stats[2]
+                mix_mse += stats[3]
+                count += stats[4]
+
+                for team_event in event.team_events:
+                    num = team_event.getTeam()
+                    if num not in oprs:
                         continue
-                    team_opr = teams[num]
-                    team_event.opr_start = team_oprs[num]
-                    team_event.opr_end = team_opr
-                    team_oprs[num] = team_opr
-                    oprs.append(teams[num])
+                    opr = oprs[num][-1]
+                    team_event.opr_end = opr
+                    team_oprs[num] = opr
                     if num not in team_events:
                         team_events[num] = []
-                    team_events[num].append(team_opr)
+                    team_events[num].append(opr)
 
-                oprs.sort(reverse=True)
-                event.opr_max = oprs[0]
-                event.opr_top8 = -1 if len(oprs) < 8 else oprs[7]
-                event.opr_top24 = -1 if len(oprs) < 24 else oprs[23]
-                event.opr_mean = round(sum(oprs)/len(oprs), 2)
-                event.opr_sd = round(statistics.pstdev(oprs), 2)
+                oprs_end = sorted([oprs[t][-1] for t in oprs], reverse=True)
+                event.opr_max = oprs_end[0]
+                event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
+                event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
+                event.opr_mean = round(sum(oprs_end)/len(oprs_end), 2)
+                event.opr_sd = round(statistics.pstdev(oprs_end), 2)
 
         oprs = []
         for num in team_years:
@@ -81,19 +133,24 @@ def process_opr(start_year, end_year, SQL_Read, SQL_Write):
         year_obj.opr_mean = round(sum(oprs)/len(oprs), 2)
         year_obj.opr_sd = round(statistics.pstdev(oprs), 2)
 
+        year_obj.opr_acc = round(opr_acc/count, 4)
+        year_obj.opr_mse = round(opr_mse/count, 4)
+        year_obj.mix_acc = round(mix_acc/count, 4)
+        year_obj.mix_mse = round(mix_mse/count, 4)
+
         # for faster feedback, could be removed
         SQL_Write.commit()
     SQL_Write.commit()
 
 
 def test(start_year, end_year, SQL_Read, SQL_Write):
-    event = SQL_Read.getEvent_byKey('2019gal')
-    oprs = sorted(opr.getOPR(event).items(), key=lambda x: x[1], reverse=True)
-    for (num, team_opr) in oprs:
-        print(str(num)+"\t"+str(team_opr))
+    event = SQL_Read.getEvent_byKey('2002ca')
+    oprs = opr_model.get_OPR(event)
+    for team in oprs:
+        print(team, oprs[team][-1])
 
 
 def main(start_year, end_year, SQL_Write, SQL_Read):
     process_opr(start_year, end_year, SQL_Read, SQL_Write)
-    test(start_year, end_year, SQL_Read, SQL_Write)
+    # test(start_year, end_year, SQL_Read, SQL_Write)
     printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
