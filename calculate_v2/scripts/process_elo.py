@@ -47,12 +47,6 @@ def process_elo(start_year, end_year, SQL_Write, SQL_Read):
             red_elo_pre = [team_elos[t] for t in red]
             blue_elo_pre = [team_elos[t] for t in blue]
 
-            # elims in 2 team era had 3 teams
-            if year <= 2004 and len(red_elo_pre) > 2:
-                red_elo_pre = red_elo_pre[:2]
-            if year <= 2004 and len(blue_elo_pre) > 2:
-                blue_elo_pre = blue_elo_pre[:2]
-
             # update object
             match.setRedEloPre(red_elo_pre)
             match.setBlueEloPre(blue_elo_pre)

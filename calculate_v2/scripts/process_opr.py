@@ -10,8 +10,6 @@ def process_event(event, year):
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(event.matches)):
         red, blue = m.getRed(), m.getBlue()
-        if year <= 2004:
-            red, blue = red[:2], blue[:2]
         red_oprs, blue_oprs = [], []
         ind = -1 if m.playoff else i-1
 

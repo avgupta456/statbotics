@@ -150,6 +150,11 @@ class ReadTBA:
             if year <= 2004 and (len(red_teams) < 2 or len(blue_teams) < 2):
                 continue
 
+            # handles elims in 2 team alliance era
+            if year <= 2004:
+                red_teams = red_teams[:2]
+                blue_teams = blue_teams[:2]
+
             match_data = {
                 "event": event,
                 "key": match["key"],
