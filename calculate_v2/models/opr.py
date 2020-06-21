@@ -39,11 +39,11 @@ def get_OPR(event):
         [teams.add(t) for t in m.getRed()]
         [teams.add(t) for t in m.getBlue()]
     teams = list(teams)
-    for t in teams:
-        out[t] = []
     M, T = len(match_objs), len(teams)
     input = np.zeros(shape=(2*M, T), dtype="float")
     output = np.zeros(shape=(2*M, 1), dtype="float")
+    for i in range(T):
+        out[teams[i]] = [0]
     for i in range(M):
         m = match_objs[i]
         for t in m.getRed():
@@ -70,8 +70,6 @@ def get_xOPR(event):
         [teams.add(t) for t in m.getRed()]
         [teams.add(t) for t in m.getBlue()]
     teams = list(teams)
-    for t in teams:
-        out[t] = []
     M, T = len(match_objs), len(teams)
     input = np.zeros(shape=(2*M, T), dtype="float")
     output = np.zeros(shape=(2*M, 1), dtype="float")
@@ -84,6 +82,8 @@ def get_xOPR(event):
             input[2*i+1][teams.index(t)] = 1
         output[2*i+1][0] = sum([team_events[t].opr_start for t in m.getBlue()])
     oprs = computeOPR(input, output, event.getYear())
+    for i in range(T):
+        out[teams[i]] = [round(float(oprs[i][0]), 2)]
     for i in range(M):
         m = match_objs[i]
         output[2*i][0] = m.red_score
@@ -105,8 +105,6 @@ def get_ixOPR(event):
         [teams.add(t) for t in m.getRed()]
         [teams.add(t) for t in m.getBlue()]
     teams = list(teams)
-    for t in teams:
-        out[t] = []
     M, T = len(match_objs), len(teams)
     input = np.zeros(shape=(2*M, T), dtype="float")
     output = np.zeros(shape=(2*M, 1), dtype="float")
@@ -119,6 +117,8 @@ def get_ixOPR(event):
             input[2*i+1][teams.index(t)] = 1
         output[2*i+1][0] = sum([team_events[t].opr_start for t in m.getBlue()])
     oprs = computeOPR(input, output, event.getYear())
+    for i in range(T):
+        out[teams[i]] = [round(float(oprs[i][0]), 2)]
     for i in range(M):
         m = match_objs[i]
         output[2*i][0] = m.red_score

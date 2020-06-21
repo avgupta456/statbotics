@@ -12,12 +12,12 @@ def process_event(event, year):
         red, blue = m.getRed(), m.getBlue()
         red_oprs, blue_oprs = [], []
         ind = -1 if m.playoff else i-1
-
+        # print(oprs)
         for r in red:
-            opr = 0 if r not in oprs or ind not in oprs[r] else oprs[r][ind]
+            opr = 0 if r not in oprs or ind >= len(oprs[r]) else oprs[r][ind]
             red_oprs.append(opr)
         for b in blue:
-            opr = 0 if b not in oprs or ind not in oprs[b] else oprs[b][ind]
+            opr = 0 if b not in oprs or ind >= len(oprs[r]) else oprs[b][ind]
             blue_oprs.append(opr)
 
         m.setRedOpr(red_oprs)
