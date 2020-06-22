@@ -103,8 +103,7 @@ def post_process(TBA, SQL_Write, SQL_Read, clean=False):
     SQL_Write.commit()
 
 
-def main(start_year, end_year, TBA, SQL_Write, SQL_Read,
-         clean=False, cache=True):
+def main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean, cache=True):
     process(start_year, end_year, TBA, SQL_Write, SQL_Read, clean, cache)
     post_process(TBA, SQL_Write, SQL_Read, clean)
     printStats()

@@ -126,6 +126,19 @@ class Year(Base):
     mix_acc = Column(Float)
     mix_mse = Column(Float)
 
+    '''CONSTANTS'''
+    score_mean = Column(Float)
+    score_sd = Column(Float)
+    auto_mean = Column(Float)
+    teleop1_mean = Column(Float)
+    teleop2_mean = Column(Float)
+    teleop21_mean = Column(Float)
+    teleop22_mean = Column(Float)
+    teleop23_mean = Column(Float)
+    endgame_mean = Column(Float)
+    foul_mean = Column(Float)
+    no_foul_mean = Column(Float)
+
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
         return self.getYear() < other.getYear()

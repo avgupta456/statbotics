@@ -4,7 +4,7 @@ from scripts.logging import printStats
 from models import elo
 
 
-def process_elo(start_year, end_year, SQL_Write, SQL_Read):
+def process(start_year, end_year, SQL_Write, SQL_Read):
     teams = {}   # dict of team nums to team objs
     for team in SQL_Read.getTeams():
         teams[team.getNumber()] = team
@@ -16,6 +16,7 @@ def process_elo(start_year, end_year, SQL_Write, SQL_Read):
     for year in range(start_year, end_year + 1):
         print(year)  # dicts for num to TeamYear, TeamMatch, most recent elo
         team_years, team_matches, team_elos = {}, {}, {}
+        sd_score = SQL_Read.getYear(year=year).score_sd
 
         print("Team Year Setup")
         for teamYear in SQL_Read.getTeamYears(year=year):
@@ -58,8 +59,8 @@ def process_elo(start_year, end_year, SQL_Write, SQL_Read):
 
             # compute elo changes
             red_elo_post, blue_elo_post = elo.update_rating(
-                year, red_elo_pre, blue_elo_pre, match.red_score,
-                match.blue_score, match.playoff)
+                year, sd_score, red_elo_pre, blue_elo_pre,
+                match.red_score, match.blue_score, match.playoff)
 
             # update object
             match.setRedEloPost(red_elo_post)
@@ -201,7 +202,7 @@ def test(start_year, end_year, SQL_Write, SQL_Read):
     return
 
 
-def main(start_year, end_year, SQL_Write, SQL_Read):
-    process_elo(start_year, end_year, SQL_Write, SQL_Read)
+def main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean):
+    process(start_year, end_year, SQL_Write, SQL_Read)
     test(start_year, end_year, SQL_Write, SQL_Read)
     printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)

@@ -1,11 +1,10 @@
 import statistics
 
 from scripts.logging import printStats
-from helper import constants
 from models import opr as opr_model
 
 
-def process_event(event, year):
+def process_event(event, year, sd_score):
     oprs = opr_model.get_ixOPR(event)
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(event.matches)):
@@ -26,7 +25,7 @@ def process_event(event, year):
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
         red_sum, blue_sum = sum(red_oprs), sum(blue_oprs)
         m.opr_winner = "red" if red_sum > blue_sum else "blue"
-        m.opr_win_prob = opr_model.win_prob(red_sum, blue_sum, year)
+        m.opr_win_prob = opr_model.win_prob(red_sum, blue_sum, year, sd_score)
         opr_mse += (win_probs[m.winner] - m.opr_win_prob) ** 2
         if m.opr_winner == m.winner:
             opr_acc += 1
@@ -43,19 +42,22 @@ def process_event(event, year):
     return oprs, stats
 
 
-def process_opr(start_year, end_year, SQL_Read, SQL_Write):
-    teams = {}  # dict mapping num to team objs
+def process(start_year, end_year, SQL_Read, SQL_Write):
+    teams, means = {}, {}
     for team in SQL_Read.getTeams():
         teams[team.getNumber()] = team
 
     team_years_all = {}  # master dict
     for year in range(start_year, end_year + 1):
         print(year)
+        year_obj = SQL_Read.getYear(year)
+        sd_score, mean_score = year_obj.score_sd, year_obj.score_mean
+        means[year] = mean_score
+
         team_years, team_oprs = {}, {}
         opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
 
         # populate starting elo from previous year
-        mean_score = constants.mean[year]
         prior_opr_global = mean_score / 3
         for teamYear in SQL_Read.getTeamYears(year=year):
             num = teamYear.getTeam()
@@ -64,7 +66,7 @@ def process_opr(start_year, end_year, SQL_Read, SQL_Write):
                     num in team_years_all[year-1] and \
                     team_years_all[year-1][num].opr_end is not None:
                 prior_opr = team_years_all[year-1][num].opr_end
-                prior_opr = prior_opr/constants.mean[year-1]*mean_score
+                prior_opr = prior_opr/means[year-1]*mean_score
                 prior_opr = 0.90 * prior_opr + 0.10 * prior_opr_global
             teamYear.opr_start = prior_opr
             team_years[num] = teamYear
@@ -79,7 +81,7 @@ def process_opr(start_year, end_year, SQL_Read, SQL_Write):
                 if num in teams:
                     team_event.opr_start = team_oprs[num]
 
-            oprs, stats = process_event(event, year)
+            oprs, stats = process_event(event, year, sd_score)
             opr_acc += stats[0]
             opr_mse += stats[1]
             mix_acc += stats[2]
@@ -142,7 +144,7 @@ def test(start_year, end_year, SQL_Read, SQL_Write):
         print(team, oprs[team][-1])
 
 
-def main(start_year, end_year, SQL_Write, SQL_Read):
-    process_opr(start_year, end_year, SQL_Read, SQL_Write)
+def main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean):
+    process(start_year, end_year, SQL_Read, SQL_Write)
     # test(start_year, end_year, SQL_Read, SQL_Write)
     printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)

@@ -1,16 +1,42 @@
 import numpy as np
-from helper import constants
 
 
-def computeOPR(input, output, year):
+def score(match, alliance): return match.red_score if alliance == "red" else match.blue_score  # noqa 501
+def event_score(event): return event.opr_start
+
+def auto(match, alliance): return match.red_auto if alliance == "red" else match.blue_auto  # noqa 501
+def event_auto(event): return event.opr_auto_start
+
+def teleop1(match, alliance): return match.red_teleop_1 if alliance == "red" else match.blue_teleop_1  # noqa 501
+def event_teleop1(event): return event.opr_teleop_1_start
+def teleop2(match, alliance): return match.red_teleop_2 if alliance == "red" else match.blue_teleop_2  # noqa 501
+def event_teleop2(event): return event.opr_teleop_2_start
+def teleop21(match, alliance): return match.red_teleop_2_1 if alliance == "red" else match.blue_teleop_2_1  # noqa 501
+def event_teleop21(event): return event.opr_teleop_2_1_start
+def teleop22(match, alliance): return match.red_teleop_2 if alliance == "red" else match.blue_teleop_2  # noqa 501
+def event_teleop22(event): return event.opr_teleop_2_2_start
+def teleop23(match, alliance): return match.red_teleop_2_2 if alliance == "red" else match.blue_teleop_2_3  # noqa 501
+def event_teleop23(event): return event.opr_teleop_2_3_start
+
+def endgame(match, alliance): return match.red_endgame if alliance == "red" else match.blue_endgame  # noqa 501
+def event_endgame(event): return event.opr_endgame_start
+
+def foul(match, alliance): return match.blue_fouls if alliance == "red" else match.red_fouls  # noqa 501
+def event_foul(event): return event.opr_fouls
+
+def no_fouls(match, alliance): return match.red_no_fouls if alliance == "red" else match.blue_no_fouls  # noqa 501
+def event_no_foul(event): return event.opr_no_fouls
+
+def computeOPR(input, output, year, year_mean):
     MTM = np.matmul(input.T, input)
     MTs = np.matmul(input.T, output)
     try:
         out = np.matmul(np.linalg.inv(MTM), MTs)
     except np.linalg.LinAlgError:
+        # if singular (not enough matches, etc)
         out = computeAverages(input, output, year)
-    neg_cutoff = -constants.mean[year]/(2 if year <= 2004 else 3)
-    if np.min(out) < neg_cutoff:
+    # if highly unstable
+    if np.min(out) < -year_mean/(2 if year <= 2004 else 3):
         out = computeAverages(input, output, year)
     return out
 
@@ -60,7 +86,8 @@ def opr_base(event):
     return out, early_exit, team_events, teams, match_objs, M, T, input, output
 
 
-def get_OPR(event):
+def get_OPR(event, func=score):
+    mean_score = event.year.score_mean
     out, early_exit, team_events, teams, \
         match_objs, M, T, input, output = opr_base(event)
     if early_exit:
@@ -72,11 +99,11 @@ def get_OPR(event):
         m = match_objs[i]
         for t in m.getRed():
             input[2*i][teams.index(t)] = 1
-        output[2*i] = m.red_score
+        output[2*i] = func(m, "red")
         for t in m.getBlue():
             input[2*i+1][teams.index(t)] = 1
-        output[2*i+1] = m.blue_score
-        oprs = computeOPR(input, output, event.getYear())
+        output[2*i+1] = func(m, "blue")
+        oprs = computeOPR(input, output, event.getYear(), mean_score)
         for j in range(len(teams)):
             out[teams[j]].append(round(float(oprs[j][0]), 2))
     for team in out:
@@ -84,7 +111,8 @@ def get_OPR(event):
     return out
 
 
-def get_xOPR(event):
+def get_xOPR(event, func=score):
+    mean_score = event.year.score_mean
     out, early_exit, team_events, teams, \
         match_objs, M, T, input, output = opr_base(event)
     if early_exit:
@@ -98,20 +126,21 @@ def get_xOPR(event):
         for t in m.getBlue():
             input[2*i+1][teams.index(t)] = 1
         output[2*i+1][0] = sum([team_events[t].opr_start for t in m.getBlue()])
-    oprs = computeOPR(input, output, event.getYear())
+    oprs = computeOPR(input, output, event.getYear(), mean_score)
     for i in range(T):
         out[teams[i]] = [round(float(oprs[i][0]), 2)]
     for i in range(M):
         m = match_objs[i]
-        output[2*i][0] = m.red_score
-        output[2*i+1][0] = m.blue_score
-        oprs = computeOPR(input, output, event.getYear())
+        output[2*i][0] = func(m, "red")
+        output[2*i+1][0] = func(m, "blue")
+        oprs = computeOPR(input, output, event.getYear(), mean_score)
         for j in range(T):
             out[teams[j]].append(round(float(oprs[j][0]), 2))
     return out
 
 
-def get_ixOPR(event, iterations=2):
+def get_ixOPR(event, iterations=2, func=score):
+    mean_score = event.year.score_mean
     out, early_exit, team_events, teams, \
         match_objs, M, T, input, output = opr_base(event)
     if early_exit:
@@ -125,25 +154,25 @@ def get_ixOPR(event, iterations=2):
         for t in m.getBlue():
             input[2*i+1][teams.index(t)] = 1
         output[2*i+1][0] = sum([team_events[t].opr_start for t in m.getBlue()])
-    oprs = computeOPR(input, output, event.getYear())
+    oprs = computeOPR(input, output, event.getYear(), mean_score)
     for i in range(T):
         out[teams[i]] = [round(float(oprs[i][0]), 2)]
     for i in range(M):
         m = match_objs[i]
-        output[2*i][0] = m.red_score
-        output[2*i+1][0] = m.blue_score
-        oprs = computeOPR(input, output, event.getYear())
+        output[2*i][0] = func(m, "red")
+        output[2*i+1][0] = func(m, "blue")
+        oprs = computeOPR(input, output, event.getYear(), mean_score)
         for j in range(iterations - 1):
             temp = output.copy()
             for k in range(i, M):
                 red, blue = match_objs[k].getRed(), match_objs[k].getBlue()
                 temp[2*k][0] = sum([oprs[teams.index(t)] for t in red])
                 temp[2*k+1][0] = sum([oprs[teams.index(t)] for t in blue])
-            oprs = computeOPR(input, temp, event.getYear())
+            oprs = computeOPR(input, temp, event.getYear(), mean_score)
         for j in range(T):
             out[teams[j]].append(round(float(oprs[j][0]), 2))
     return out
 
 
-def win_prob(red, blue, year):
-    return 1/(10**(5/8*(blue-red)/constants.sd[year])+1)
+def win_prob(red, blue, year, sd_score):
+    return 1/(10**(5/8*(blue-red)/sd_score)+1)

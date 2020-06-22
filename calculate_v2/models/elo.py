@@ -1,6 +1,3 @@
-from helper import constants
-
-
 # rating for 2002
 def start_rating():
     return 1500
@@ -17,8 +14,8 @@ def existing_rating(team_1yr, team_2yr):
     return round(rating, 2)
 
 
-def update_rating(year, red, blue, red_score, blue_score, playoff):
-    win_margin = (red_score - blue_score)/constants.sd[year]
+def update_rating(year, sd_score, red, blue, red_score, blue_score, playoff):
+    win_margin = (red_score - blue_score)/sd_score
     pred_win_margin = 4/1000*(sum(red)-sum(blue))
     k = 4 if playoff == 1 else 12
 

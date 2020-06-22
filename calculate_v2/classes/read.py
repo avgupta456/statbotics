@@ -94,11 +94,13 @@ class SQL_Read:
         self.reads += 1
         return self.session.query(Event.id).filter_by(key=event_key).first()[0]
 
-    def getEvents(self, year=None, event=None):
+    def getEvents(self, year=None, week=None, event=None):
         self.reads += 1
         out = self.session.query(Event)
         if year is not None:
             out = out.filter_by(year_id=year)
+        if week is not None:
+            out = out.filter_by(week=week)
         if event is not None:
             out = out.filter_by(id=event)
         return out.order_by('id').all()
