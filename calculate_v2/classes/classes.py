@@ -435,7 +435,7 @@ class Match(Base):
     red_score = Column(Integer)
     blue_score = Column(Integer)
 
-    red_auto_total = Column(Integer)
+    red_auto = Column(Integer)
     red_auto_movement = Column(Integer)
     red_auto_1 = Column(Integer)
     red_auto_2 = Column(Integer)
@@ -456,7 +456,7 @@ class Match(Base):
     red_rp_1 = Column(Integer)
     red_rp_2 = Column(Integer)
 
-    blue_auto_total = Column(Integer)
+    blue_auto = Column(Integer)
     blue_auto_movement = Column(Integer)
     blue_auto_1 = Column(Integer)
     blue_auto_2 = Column(Integer)

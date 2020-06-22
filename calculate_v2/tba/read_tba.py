@@ -5,6 +5,7 @@ from tba.clean_data import (
     cleanState,
     cleanDistrict,
     getMatchTime,
+    getBreakdown,
 )
 
 from helper import (
@@ -133,9 +134,7 @@ class ReadTBA:
     def getMatches(self, year, event, event_time, cache=True):
         out = []
         matches = self.get("event/"+str(event)+"/matches", cache=cache)
-        # print(len(matches))
         for match in matches:
-            print(match["key"])
             red_teams = match["alliances"]["red"]["team_keys"]
             blue_teams = match["alliances"]["blue"]["team_keys"]
             red_score = match["alliances"]["red"]["score"]
@@ -157,8 +156,11 @@ class ReadTBA:
                 blue_teams = blue_teams[:2]
 
             breakdown = match["score_breakdown"]
-            red_breakdown = self.getBreakdown(breakdown["red"], year)
-            blue_breakdown = self.getBreakdown(breakdown["blue"], year)
+            if breakdown is None or year < 2016:
+                red_breakdown, blue_breakdown = getBreakdown(), getBreakdown()
+            else:
+                red_breakdown = getBreakdown(breakdown["red"], year)
+                blue_breakdown = getBreakdown(breakdown["blue"], year)
 
             match_data = {
                 "event": event,
@@ -178,50 +180,6 @@ class ReadTBA:
             out.append(match_data)
         # print(len(out))
         return out
-
-    def getBreakdown(self, breakdown, year):
-        if year < 2016:
-            out = {
-                "auto": -1, "auto_movement": -1, "auto_1": -1, "auto_2": -1,
-                "auto_2_1": -1, "auto_2_2": -1, "auto_2_3": -1, "teleop_1": -1,
-                "teleop_2": -1, "teleop_2_1": -1, "teleop_2_2": -1,
-                "teleop_2_3": -1, "1": -1, "2": -1, "teleop": -1,
-                "endgame": -1, "no_fouls": -1, "fouls": -1, "rp1": -1,
-                "rp2": -1
-            }
-            return out
-        if year == 2016:
-            out = {
-                "auto": breakdown["autoPoints"],
-                "auto_movement": breakdown["autoReachPoints"],
-                "auto_1": breakdown["autoCrossingPoints"],
-                "auto_2": breakdown["autoBoulderPoints"],
-                "auto_2_1": breakdown["autoBouldersLow"] * 5,
-                "auto_2_2": breakdown["autoBouldersHigh"] * 10,
-                "auto_2_3": 0,
-                "teleop_1": breakdown["teleopCrossingPoints"],
-                "teleop_2": breakdown["teleopBoulderPoints"],
-                "teleop_2_1": breakdown["teleopBouldersLow"] * 2,
-                "teleop_2_2": breakdown["teleopBouldersHigh"] * 5,
-                "teleop_2_3": 0,
-            }
-            out["1"] = out["auto_1"] + out["teleop_1"]
-            out["2"] = out["auto_2"] + out["teleop_2"]
-            out["teleop"] = out["teleop_1"] + out["teleop_2"]
-            out["endgame"] = breakdown["teleopChallengePoints"]
-            out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
-            out["fouls"] = breakdown["foulPoints"]
-            out["rp1"] = breakdown["teleopDefensesBreached"]
-            out["rp2"] = breakdown["teleopTowerCaptured"]
-            return out
-        if year == 2017:
-            return breakdown
-        if year == 2018:
-            return breakdown
-        if year == 2019:
-            return breakdown
-        if year == 2020:
-            return breakdown
 
     def getTeamDistrict(self, team):
         teams_info = utils.load("tba/cache/teams_info.p")
