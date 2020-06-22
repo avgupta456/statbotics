@@ -421,9 +421,6 @@ class Match(Base):
     blue_opr = Column(String(30))
     blue_opr_sum = Column(Float)
 
-    red_score = Column(Integer)
-    blue_score = Column(Integer)
-
     winner = Column(String(10))
     elo_winner = Column(String(10))
     elo_win_prob = Column(Float)
@@ -434,6 +431,51 @@ class Match(Base):
 
     playoff = Column(Integer)  # 0 is qual, 1 is playoff
     time = Column(Integer)
+
+    red_score = Column(Integer)
+    blue_score = Column(Integer)
+
+    red_auto_total = Column(Integer)
+    red_auto_movement = Column(Integer)
+    red_auto_1 = Column(Integer)
+    red_auto_2 = Column(Integer)
+    red_auto_2_1 = Column(Integer)
+    red_auto_2_2 = Column(Integer)
+    red_auto_2_3 = Column(Integer)
+    red_teleop_1 = Column(Integer)
+    red_teleop_2 = Column(Integer)
+    red_teleop_2_1 = Column(Integer)
+    red_teleop_2_2 = Column(Integer)
+    red_teleop_2_3 = Column(Integer)
+    red_1 = Column(Integer)
+    red_2 = Column(Integer)
+    red_teleop = Column(Integer)
+    red_endgame = Column(Integer)
+    red_no_fouls = Column(Integer)
+    red_fouls = Column(Integer)
+    red_rp_1 = Column(Integer)
+    red_rp_2 = Column(Integer)
+
+    blue_auto_total = Column(Integer)
+    blue_auto_movement = Column(Integer)
+    blue_auto_1 = Column(Integer)
+    blue_auto_2 = Column(Integer)
+    blue_auto_2_1 = Column(Integer)
+    blue_auto_2_2 = Column(Integer)
+    blue_auto_2_3 = Column(Integer)
+    blue_teleop_1 = Column(Integer)
+    blue_teleop_2 = Column(Integer)
+    blue_teleop_2_1 = Column(Integer)
+    blue_teleop_2_2 = Column(Integer)
+    blue_teleop_2_3 = Column(Integer)
+    blue_1 = Column(Integer)
+    blue_2 = Column(Integer)
+    blue_teleop = Column(Integer)
+    blue_endgame = Column(Integer)
+    blue_no_fouls = Column(Integer)
+    blue_fouls = Column(Integer)
+    blue_rp_1 = Column(Integer)
+    blue_rp_2 = Column(Integer)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
