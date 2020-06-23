@@ -5,7 +5,7 @@ from models import opr as opr_model
 
 
 def process_event(event, year, sd_score):
-    oprs = opr_model.get_ixOPR(event)
+    oprs = opr_model.opr_v2(event)
     if year >= 2016:
         autos = opr_model.opr_auto(event)
         teleops = opr_model.opr_teleop(event)
@@ -124,6 +124,14 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 num = team_event.getTeam()
                 if num not in oprs["all"]:
                     continue
+
+                team_event.opr_auto = -1 if year < 2016 else oprs["auto"][num][-1]  # noqa 502
+                team_event.opr_teleop = -1 if year < 2016 else oprs["teleop"][num][-1]  # noqa 502
+                team_event.opr_1 = -1 if year < 2016 else oprs["one"][num][-1]  # noqa 502
+                team_event.opr_2 = -1 if year < 2016 else oprs["two"][num][-1]  # noqa 502
+                team_event.opr_endgame = -1 if year < 2016 else oprs["endgame"][num][-1]  # noqa 502
+                team_event.opr_fouls = -1 if year < 2016 else oprs["foul"][num][-1]  # noqa 502
+                team_event.opr_no_fouls = -1 if year < 2016 else oprs["no_foul"][num][-1]  # noqa 502
 
                 team_years[num].opr_auto = -1 if year < 2016 else oprs["auto"][num][-1]  # noqa 502
                 team_years[num].opr_teleop = -1 if year < 2016 else oprs["teleop"][num][-1]  # noqa 502

@@ -25,13 +25,22 @@ def endgame(match, alliance): return match.red_endgame if alliance == "red" else
 def event_endgame(event): return event.opr_endgame
 def year_endgame(year): return year.endgame_mean
 
-def foul(match, alliance): return -match.blue_fouls if alliance == "red" else -match.red_fouls  # noqa 501
+def foul(match, alliance): return match.blue_fouls if alliance == "red" else match.red_fouls  # noqa 501
 def event_foul(event): return event.opr_fouls
 def year_foul(year): return year.foul_mean
 
 def no_foul(match, alliance): return match.red_no_fouls if alliance == "red" else match.blue_no_fouls  # noqa 501
 def event_no_foul(event): return event.opr_no_fouls
 def year_no_foul(year): return year.no_foul_mean
+
+
+def v2(match, alliance):
+    if alliance == "red":
+        return match.red_no_fouls + match.blue_fouls
+    elif alliance == "blue":
+        return match.blue_no_fouls + match.red_fouls
+def event_v2(event): return event.opr_no_fouls + event.opr_no_fouls  # noqa 302
+def year_v2(year): return year.no_foul_mean + year.foul_mean
 
 
 def computeOPR(input, output, year, year_mean):
@@ -62,8 +71,8 @@ def computeAverages(input, output, year):
         for j in range(M):
             if input[j][i] == 1:
                 scores.append(output[j])
-        avg = sum(scores)/len(scores)/TM
-        out[i][0] = round(float(avg), 2) if len(scores) > 0 else 0
+        avg = 0 if len(scores) == 0 else sum(scores)/len(scores)/TM
+        out[i][0] = round(float(avg), 2)
     return out
 
 
@@ -97,6 +106,29 @@ def opr_base(event, event_func=event_score):
     return out, early_exit, team_events, teams, match_objs, M, T, input, output
 
 
+def get_OPR_end(event, func=score, event_func=event_score, year_func=year_score):  # noqa 502
+    mean_score = year_func(event.year)
+    out, early_exit, team_events, teams, match_objs, \
+        M, T, input, output = opr_base(event, event_func)
+    if early_exit:
+        return out
+
+    for i in range(T):
+        out[teams[i]] = [0]
+    for i in range(M):
+        m = match_objs[i]
+        for t in m.getRed():
+            input[2*i][teams.index(t)] = 1
+        output[2*i] = func(m, "red")
+        for t in m.getBlue():
+            input[2*i+1][teams.index(t)] = 1
+        output[2*i+1] = func(m, "blue")
+        oprs = computeOPR(input, output, event.getYear(), mean_score)
+        for j in range(len(teams)):
+            out[teams[j]].append(round(float(oprs[j][0]), 2))
+    return out
+
+
 def get_OPR(event, func=score, event_func=event_score, year_func=year_score):
     mean_score = year_func(event.year)
     out, early_exit, team_events, teams, match_objs, \
@@ -117,8 +149,6 @@ def get_OPR(event, func=score, event_func=event_score, year_func=year_score):
         oprs = computeOPR(input, output, event.getYear(), mean_score)
         for j in range(len(teams)):
             out[teams[j]].append(round(float(oprs[j][0]), 2))
-    for team in out:
-        print(team, out[team][::5])
     return out
 
 
@@ -186,32 +216,14 @@ def get_ixOPR(event, func=score, event_func=event_score, year_func=year_score):
     return out
 
 
-def opr_auto(event):
-    return get_ixOPR(event, auto, event_auto, year_auto)
-
-
-def opr_teleop(event):
-    return get_ixOPR(event, teleop, event_teleop, year_teleop)
-
-
-def opr_one(event):
-    return get_ixOPR(event, one, event_one, year_one)
-
-
-def opr_two(event):
-    return get_ixOPR(event, two, event_two, year_two)
-
-
-def opr_endgame(event):
-    return get_ixOPR(event, endgame, event_endgame, year_endgame)
-
-
-def opr_foul(event):
-    return get_ixOPR(event, foul, event_foul, year_foul)
-
-
-def opr_no_foul(event):
-    return get_ixOPR(event, no_foul, event_no_foul, year_no_foul)
+def opr_auto(event): return get_OPR_end(event, auto, event_auto, year_auto)
+def opr_teleop(event): return get_OPR_end(event, teleop, event_teleop, year_teleop)  # noqa 502
+def opr_one(event): return get_OPR_end(event, one, event_one, year_one)
+def opr_two(event): return get_OPR_end(event, two, event_two, year_two)
+def opr_endgame(event): return get_OPR_end(event, endgame, event_endgame, year_endgame)  # noqa 502
+def opr_foul(event): return get_OPR_end(event, foul, event_foul, year_foul)
+def opr_no_foul(event): return get_OPR_end(event, no_foul, event_no_foul, year_no_foul)  # noqa 502
+def opr_v2(event): return get_ixOPR(event) if event.year_id < 2016 else get_ixOPR(event, v2, event_v2, year_v2)  # noqa 502
 
 
 def win_prob(red, blue, year, sd_score):
