@@ -6,13 +6,14 @@ from models import opr as opr_model
 
 def process_event(event, year, sd_score):
     oprs = opr_model.get_ixOPR(event)
-    autos = opr_model.opr_auto(event)
-    teleops = opr_model.opr_teleop(event)
-    ones = opr_model.opr_one(event)
-    twos = opr_model.opr_two(event)
-    endgames = opr_model.opr_endgame(event)
-    fouls = opr_model.opr_foul(event)
-    no_fouls = opr_model.opr_no_foul(event)
+    if year >= 2016:
+        autos = opr_model.opr_auto(event)
+        teleops = opr_model.opr_teleop(event)
+        ones = opr_model.opr_one(event)
+        twos = opr_model.opr_two(event)
+        endgames = opr_model.opr_endgame(event)
+        fouls = opr_model.opr_foul(event)
+        no_fouls = opr_model.opr_no_foul(event)
 
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(event.matches)):
@@ -46,9 +47,13 @@ def process_event(event, year, sd_score):
 
         count += 1
 
+    if year < 2016:
+        oprs = {"all": oprs}
+    else:
+        oprs = {"all": oprs, "auto": autos, "teleop": teleops, "one": ones,
+                "two": twos, "endgame": endgames, "foul": fouls, "no_foul": no_fouls}  # noqa 502
+
     stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
-    oprs = {"all": oprs, "auto": autos, "teleop": teleops, "one": ones,
-            "two": twos, "endgame": endgame, "foul": fouls, "no_foul": no_fouls}  # noqa 502
     return oprs, stats
 
 
@@ -83,11 +88,11 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             rate = prior_opr/prior_opr_global
             teamYear.opr_auto = rate * year_obj.auto_mean
             teamYear.opr_teleop = rate * year_obj.teleop_mean
-            teamYear.opr_1 = rate * year_obj.teleop2_mean
-            teamYear.opr_2 = rate * year_obj.teleop21_mean
+            teamYear.opr_1 = rate * year_obj.one_mean
+            teamYear.opr_2 = rate * year_obj.two_mean
             teamYear.opr_endgame = rate * year_obj.endgame_mean
-            teamYear.opr_fouls = year_obj.fouls_mean  # assumed equal all teams
-            teamYear.opr_no_fouls = rate * year_obj.no_fouls_mean
+            teamYear.opr_fouls = year_obj.foul_mean  # assumed equal all teams
+            teamYear.opr_no_fouls = rate * year_obj.no_foul_mean
 
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
@@ -120,13 +125,13 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 if num not in oprs["all"]:
                     continue
 
-                team_years[num].opr_auto = oprs["auto"][num][-1]
-                team_years[num].opr_teleop = oprs["teleop"][num][-1]
-                team_years[num].opr_1 = oprs["one"][num][-1]
-                team_years[num].opr_2 = oprs["two"][num][-1]
-                team_years[num].opr_endgame = oprs["endgame"][num][-1]
-                team_years[num].opr_fouls = oprs["foul"][num][-1]
-                team_years[num].opr_no_fouls = oprs["no_foul"][num][-1]
+                team_years[num].opr_auto = -1 if year < 2016 else oprs["auto"][num][-1]  # noqa 502
+                team_years[num].opr_teleop = -1 if year < 2016 else oprs["teleop"][num][-1]  # noqa 502
+                team_years[num].opr_1 = -1 if year < 2016 else oprs["one"][num][-1]  # noqa 502
+                team_years[num].opr_2 = -1 if year < 2016 else oprs["two"][num][-1]  # noqa 502
+                team_years[num].opr_endgame = -1 if year < 2016 else oprs["endgame"][num][-1]  # noqa 502
+                team_years[num].opr_fouls = -1 if year < 2016 else oprs["foul"][num][-1]  # noqa 502
+                team_years[num].opr_no_fouls = -1 if year < 2016 else oprs["no_foul"][num][-1]  # noqa 502
 
                 opr = oprs["all"][num][-1]
                 team_event.opr_end = opr
@@ -135,7 +140,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_events[num] = []
                 team_events[num].append(opr)
 
-            oprs_end = sorted([oprs[t][-1] for t in oprs], reverse=True)
+            oprs_end = sorted([oprs["all"][t][-1] for t in oprs["all"]], reverse=True)  # noqa 502
             event.opr_max = oprs_end[0]
             event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
             event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
