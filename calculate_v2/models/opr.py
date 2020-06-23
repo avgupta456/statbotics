@@ -67,7 +67,7 @@ def computeAverages(input, output, year):
     return out
 
 
-def opr_base(event):
+def opr_base(event, event_func=event_score):
     team_events = {}
     for team_event in event.team_events:
         team_events[team_event.getTeam()] = team_event
@@ -80,7 +80,7 @@ def opr_base(event):
             [teams.add(t) for t in m.getBlue()]
         teams = list(teams)
         for t in teams:
-            out[t] = [round(team_events[t].opr_start, 2)]
+            out[t] = [round(event_func(team_events[t]), 2)]
         early_exit = True
         return out, early_exit, 0, 0, 0, 0, 0, 0, 0
 
@@ -99,8 +99,8 @@ def opr_base(event):
 
 def get_OPR(event, func=score, event_func=event_score, year_func=year_score):
     mean_score = year_func(event.year)
-    out, early_exit, team_events, teams, \
-        match_objs, M, T, input, output = opr_base(event)
+    out, early_exit, team_events, teams, match_objs, \
+        M, T, input, output = opr_base(event, event_func)
     if early_exit:
         return out
 
@@ -124,8 +124,8 @@ def get_OPR(event, func=score, event_func=event_score, year_func=year_score):
 
 def get_xOPR(event, func=score, event_func=event_score, year_func=year_score):
     mean_score = year_func(event.year)
-    out, early_exit, team_events, teams, \
-        match_objs, M, T, input, output = opr_base(event)
+    out, early_exit, team_events, teams, match_objs, \
+        M, T, input, output = opr_base(event, event_func)
     if early_exit:
         return out
 
@@ -152,8 +152,8 @@ def get_xOPR(event, func=score, event_func=event_score, year_func=year_score):
 
 def get_ixOPR(event, func=score, event_func=event_score, year_func=year_score):
     mean_score = year_func(event.year)
-    out, early_exit, team_events, teams, \
-        match_objs, M, T, input, output = opr_base(event)
+    out, early_exit, team_events, teams, match_objs, \
+        M, T, input, output = opr_base(event, event_func)
     if early_exit:
         return out
 

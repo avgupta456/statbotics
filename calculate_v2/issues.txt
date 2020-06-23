@@ -1,0 +1,6 @@
+BUGS
+Some pre-champs elos are not loading correctly
+
+TODOS
+Add profiling and improve speed (possibly don't calculate cOPRs so often)
+Add ILS for RPs 2016+
