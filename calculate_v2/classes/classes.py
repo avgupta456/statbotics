@@ -130,11 +130,9 @@ class Year(Base):
     score_mean = Column(Float)
     score_sd = Column(Float)
     auto_mean = Column(Float)
-    teleop1_mean = Column(Float)
-    teleop2_mean = Column(Float)
-    teleop21_mean = Column(Float)
-    teleop22_mean = Column(Float)
-    teleop23_mean = Column(Float)
+    teleop_mean = Column(Float)
+    one_mean = Column(Float)
+    two_mean = Column(Float)
     endgame_mean = Column(Float)
     foul_mean = Column(Float)
     no_foul_mean = Column(Float)
@@ -185,6 +183,14 @@ class TeamYear(Base):
     '''OPR'''
     opr_start = Column(Float)
     opr_end = Column(Float)
+
+    opr_auto = Column(Float)
+    opr_teleop = Column(Float)
+    opr_1 = Column(Float)
+    opr_2 = Column(Float)
+    opr_endgame = Column(Float)
+    opr_fouls = Column(Float)
+    opr_no_fouls = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -348,6 +354,14 @@ class TeamEvent(Base):
     '''OPR'''
     opr_start = Column(Float)
     opr_end = Column(Float)
+
+    opr_auto = Column(Float)
+    opr_teleop = Column(Float)
+    opr_1 = Column(Float)
+    opr_2 = Column(Float)
+    opr_endgame = Column(Float)
+    opr_fouls = Column(Float)
+    opr_no_fouls = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):

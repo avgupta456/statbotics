@@ -6,6 +6,14 @@ from models import opr as opr_model
 
 def process_event(event, year, sd_score):
     oprs = opr_model.get_ixOPR(event)
+    autos = opr_model.opr_auto(event)
+    teleops = opr_model.opr_teleop(event)
+    ones = opr_model.opr_one(event)
+    twos = opr_model.opr_two(event)
+    endgames = opr_model.opr_endgame(event)
+    fouls = opr_model.opr_foul(event)
+    no_fouls = opr_model.opr_no_foul(event)
+
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(event.matches)):
         red, blue = m.getRed(), m.getBlue()
@@ -39,6 +47,8 @@ def process_event(event, year, sd_score):
         count += 1
 
     stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
+    oprs = {"all": oprs, "auto": autos, "teleop": teleops, "one": ones,
+            "two": twos, "endgame": endgame, "foul": fouls, "no_foul": no_fouls}  # noqa 502
     return oprs, stats
 
 
@@ -69,6 +79,16 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 prior_opr = prior_opr/means[year-1]*mean_score
                 prior_opr = 0.90 * prior_opr + 0.10 * prior_opr_global
             teamYear.opr_start = prior_opr
+
+            rate = prior_opr/prior_opr_global
+            teamYear.opr_auto = rate * year_obj.auto_mean
+            teamYear.opr_teleop = rate * year_obj.teleop_mean
+            teamYear.opr_1 = rate * year_obj.teleop2_mean
+            teamYear.opr_2 = rate * year_obj.teleop21_mean
+            teamYear.opr_endgame = rate * year_obj.endgame_mean
+            teamYear.opr_fouls = year_obj.fouls_mean  # assumed equal all teams
+            teamYear.opr_no_fouls = rate * year_obj.no_fouls_mean
+
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
 
@@ -80,6 +100,13 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 num = team_event.getTeam()
                 if num in teams:
                     team_event.opr_start = team_oprs[num]
+                    team_event.opr_auto = team_years[num].opr_auto
+                    team_event.opr_teleop = team_years[num].opr_teleop
+                    team_event.opr_1 = team_years[num].opr_1
+                    team_event.opr_2 = team_years[num].opr_2
+                    team_event.opr_endgame = team_years[num].opr_endgame
+                    team_event.opr_fouls = team_years[num].opr_fouls
+                    team_event.opr_no_fouls = team_years[num].opr_no_fouls
 
             oprs, stats = process_event(event, year, sd_score)
             opr_acc += stats[0]
@@ -90,10 +117,18 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
 
             for team_event in event.team_events:
                 num = team_event.getTeam()
-                # 832 2004va didn't play matches
-                if num not in oprs:
+                if num not in oprs["all"]:
                     continue
-                opr = oprs[num][-1]
+
+                team_years[num].opr_auto = oprs["auto"][num][-1]
+                team_years[num].opr_teleop = oprs["teleop"][num][-1]
+                team_years[num].opr_1 = oprs["one"][num][-1]
+                team_years[num].opr_2 = oprs["two"][num][-1]
+                team_years[num].opr_endgame = oprs["endgame"][num][-1]
+                team_years[num].opr_fouls = oprs["foul"][num][-1]
+                team_years[num].opr_no_fouls = oprs["no_foul"][num][-1]
+
+                opr = oprs["all"][num][-1]
                 team_event.opr_end = opr
                 team_oprs[num] = opr
                 if num not in team_events:
