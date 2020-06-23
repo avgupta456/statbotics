@@ -34,15 +34,6 @@ def event_no_foul(event): return event.opr_no_fouls
 def year_no_foul(year): return year.no_foul_mean
 
 
-def v2(match, alliance):
-    if alliance == "red":
-        return match.red_no_fouls + match.blue_fouls
-    elif alliance == "blue":
-        return match.blue_no_fouls + match.red_fouls
-def event_v2(event): return event.opr_no_fouls + event.opr_no_fouls  # noqa 302
-def year_v2(year): return year.no_foul_mean + year.foul_mean
-
-
 def computeOPR(input, output, year, year_mean):
     MTM = np.matmul(input.T, input)
     MTs = np.matmul(input.T, output)
@@ -115,6 +106,7 @@ def get_OPR_end(event, func=score, event_func=event_score, year_func=year_score)
 
     for i in range(T):
         out[teams[i]] = [0]
+
     for i in range(M):
         m = match_objs[i]
         for t in m.getRed():
@@ -123,9 +115,10 @@ def get_OPR_end(event, func=score, event_func=event_score, year_func=year_score)
         for t in m.getBlue():
             input[2*i+1][teams.index(t)] = 1
         output[2*i+1] = func(m, "blue")
-        oprs = computeOPR(input, output, event.getYear(), mean_score)
-        for j in range(len(teams)):
-            out[teams[j]].append(round(float(oprs[j][0]), 2))
+
+    oprs = computeOPR(input, output, event.getYear(), mean_score)
+    for i in range(len(teams)):
+        out[teams[i]].append(round(float(oprs[i][0]), 2))
     return out
 
 
@@ -223,7 +216,10 @@ def opr_two(event): return get_OPR_end(event, two, event_two, year_two)
 def opr_endgame(event): return get_OPR_end(event, endgame, event_endgame, year_endgame)  # noqa 502
 def opr_foul(event): return get_OPR_end(event, foul, event_foul, year_foul)
 def opr_no_foul(event): return get_OPR_end(event, no_foul, event_no_foul, year_no_foul)  # noqa 502
-def opr_v2(event): return get_ixOPR(event) if event.year_id < 2016 else get_ixOPR(event, v2, event_v2, year_v2)  # noqa 502
+
+
+def opr_v1(event): return get_ixOPR(event, score, event_score, year_score)
+def opr_v2(event): return opr_v1(event) if event.year_id < 2016 else get_ixOPR(event, no_foul, event_no_foul, year_no_foul)  # noqa 502
 
 
 def win_prob(red, blue, year, sd_score):

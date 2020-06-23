@@ -5,7 +5,7 @@ from models import opr as opr_model
 
 
 def process_event(event, year, sd_score):
-    oprs = opr_model.opr_v2(event)
+    oprs = opr_model.opr_v1(event)
     if year >= 2016:
         autos = opr_model.opr_auto(event)
         teleops = opr_model.opr_teleop(event)
@@ -66,14 +66,15 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
     for year in range(start_year, end_year + 1):
         print(year)
         year_obj = SQL_Read.getYear(year)
-        sd_score, mean_score = year_obj.score_sd, year_obj.score_mean
-        means[year] = mean_score
+        sd_score = year_obj.score_sd
 
         team_years, team_oprs = {}, {}
         opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
 
         # populate starting elo from previous year
+        mean_score = year_obj.score_mean
         prior_opr_global = mean_score / 3
+        means[year] = mean_score
         for teamYear in SQL_Read.getTeamYears(year=year):
             num = teamYear.getTeam()
             prior_opr = prior_opr_global
@@ -100,7 +101,6 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         team_events = {}
         events = sorted(SQL_Read.getEvents(year=year))
         for event in events:
-            print(event)
             for team_event in event.team_events:
                 num = team_event.getTeam()
                 if num in teams:
@@ -182,7 +182,10 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
 
         # for faster feedback, could be removed
         SQL_Write.commit()
+        printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
+
     SQL_Write.commit()
+    printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
 
 
 def test(start_year, end_year, SQL_Read, SQL_Write):

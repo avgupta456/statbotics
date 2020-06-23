@@ -190,12 +190,11 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         team.elo_mean = -1 if y == 0 else round(sum(vals)/y, 2)
         team.elo_max = -1 if y == 0 else max(vals)
 
-    SQL_Write.commit()
+        SQL_Write.commit()
+        printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
 
-    '''
-    DONE: Elo matches, Elo team years, Elo years, Elo teams
-    TODO: Elo events, Elo team events
-    '''
+    SQL_Write.commit()
+    printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
 
 
 def test(start_year, end_year, SQL_Write, SQL_Read):
