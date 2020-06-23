@@ -2,24 +2,26 @@ CREATE DATABASE IF NOT EXISTS statbotics;
 USE statbotics;
 SHOW TABLES;
 
-SELECT * FROM association1;
+SELECT * FROM association3;
 
 # get head of tables
-SELECT * FROM teams LIMIT 10000;
-SELECT * FROM years;
-SELECT * FROM team_years LIMIT 100000;
-SELECT * FROM events LIMIT 10000;
-SELECT * FROM team_events LIMIT 100000;
-SELECT * FROM matches LIMIT 1000000;
+SELECT * FROM teams LIMIT 10000000;
+SELECT * FROM years LIMIT 10000000;
+SELECT * FROM team_years WHERE year_id=2016 LIMIT 10000000;
+SELECT * FROM events WHERE year_id=2019 LIMIT 10000000;
+SELECT * FROM team_events WHERE year_id=2019 LIMIT 10000000;
+SELECT * FROM matches LIMIT 10000000;
 
 SELECT COUNT(*) FROM matches;
+SELECT SUM(elo_mse)/COUNT(elo_mse), SUM(opr_mse)/COUNT(opr_mse), SUM(mix_mse)/COUNT(mix_mse) FROM years WHERE id >= 2010;
+SELECT SUM(elo_acc)/COUNT(elo_acc), SUM(opr_acc)/COUNT(opr_mse), SUM(mix_acc)/COUNT(mix_acc) FROM years WHERE id >= 2010;
 
 # To restart process.py at a specific year
 DELETE FROM team_years WHERE year_id=2020;
 DELETE FROM years WHERE id=2020;
 
 # Migrations
-ALTER TABLE teams ADD active INTEGER;
+ALTER TABLE years ADD mix_mse Float;
 
 # Create a backup
 CREATE DATABASE statbotics_backup;
