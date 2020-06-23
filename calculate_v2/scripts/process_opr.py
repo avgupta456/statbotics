@@ -86,13 +86,13 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             teamYear.opr_start = prior_opr
 
             rate = prior_opr/prior_opr_global
-            teamYear.opr_auto = rate * year_obj.auto_mean
-            teamYear.opr_teleop = rate * year_obj.teleop_mean
-            teamYear.opr_1 = rate * year_obj.one_mean
-            teamYear.opr_2 = rate * year_obj.two_mean
-            teamYear.opr_endgame = rate * year_obj.endgame_mean
-            teamYear.opr_fouls = year_obj.foul_mean  # assumed equal all teams
-            teamYear.opr_no_fouls = rate * year_obj.no_foul_mean
+            teamYear.opr_auto = rate * year_obj.auto_mean/3
+            teamYear.opr_teleop = rate * year_obj.teleop_mean/3
+            teamYear.opr_1 = rate * year_obj.one_mean/3
+            teamYear.opr_2 = rate * year_obj.two_mean/3
+            teamYear.opr_endgame = rate * year_obj.endgame_mean/3
+            teamYear.opr_fouls = year_obj.foul_mean/3  # no rate
+            teamYear.opr_no_fouls = rate * year_obj.no_foul_mean/3
 
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
