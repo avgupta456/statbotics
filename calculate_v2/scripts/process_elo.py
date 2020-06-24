@@ -18,8 +18,10 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         team_years, team_matches, team_elos = {}, {}, {}
         sd_score = SQL_Read.getYear(year=year).score_sd
 
+        teamYears = SQL_Read.getTeamYears(year=year)
+
         print("Team Year Setup")
-        for teamYear in SQL_Read.getTeamYears(year=year):
+        for teamYear in teamYears:
             # eventually will need 2021 logic here (continuation season)
             num = teamYear.getTeam()
             team_years[num] = teamYear
@@ -88,7 +90,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         SQL_Write.commit()  # optional
 
         print("Team Events")
-        for team in SQL_Read.getTeamYears(year=year):
+        for team in teamYears:
             team_id = team.team_id
             for team_event in team.team_events:
                 data = sorted(team_event.matches)
@@ -135,6 +137,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
                 team_years[team].elo_end = team_elos[team]
                 team_years[team].elo_diff = team_years[team].elo_end \
                     - team_years[team].elo_start
+                team_years[team].elo_pre_champs = 1000
 
                 pre_champs = -1
                 for team_event in sorted(team_years[team].team_events):
