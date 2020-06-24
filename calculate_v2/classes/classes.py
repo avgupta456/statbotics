@@ -298,24 +298,6 @@ class Event(Base):
                 return team_event
         return None
 
-    def getMatches(self, playoffs=None):
-        if playoffs is None:
-            # everything
-            return self.matches
-        if playoffs:
-            # only playoffs
-            matches = []
-            for match in self.matches:
-                if match.playoff == 1:
-                    matches.append(match)
-            return matches
-        # only quals
-        matches = []
-        for match in self.matches:
-            if match.playoff == 0:
-                matches.append(match)
-        return matches
-
 
 class TeamEvent(Base):
     '''DECLARATIONS'''

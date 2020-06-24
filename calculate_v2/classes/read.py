@@ -160,7 +160,7 @@ class SQL_Read:
         return self.session.query(Match).filter_by(year_id=year) \
             .order_by('time').all()
 
-    def getMatches(self, year=None, event=None, match=None):
+    def getMatches(self, year=None, event=None, match=None, playoff=None):
         self.reads += 1
         out = self.session.query(Match)
         if year is not None:
@@ -169,6 +169,8 @@ class SQL_Read:
             out = out.filter_by(event_id=event)
         if match is not None:
             out = out.filter_by(id=match)
+        if playoff is not None:
+            out = out.filter_by(playoff=playoff)
         return out.order_by('id').all()
 
     def getTotalMatches(self):

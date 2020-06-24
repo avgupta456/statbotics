@@ -4,16 +4,16 @@ from scripts.logging import printStats
 from models import opr as opr_model
 
 
-def process_event(event, year, sd_score):
-    oprs = opr_model.opr_v1(event)
+def process_event(event, quals, playoffs, year, sd_score):
+    oprs = opr_model.opr_v1(event, quals, playoffs)
     if year >= 2016:
-        autos = opr_model.opr_auto(event)
-        teleops = opr_model.opr_teleop(event)
-        ones = opr_model.opr_one(event)
-        twos = opr_model.opr_two(event)
-        endgames = opr_model.opr_endgame(event)
-        fouls = opr_model.opr_foul(event)
-        no_fouls = opr_model.opr_no_foul(event)
+        autos = opr_model.opr_auto(event, quals, playoffs)
+        teleops = opr_model.opr_teleop(event, quals, playoffs)
+        ones = opr_model.opr_one(event, quals, playoffs)
+        twos = opr_model.opr_two(event, quals, playoffs)
+        endgames = opr_model.opr_endgame(event, quals, playoffs)
+        fouls = opr_model.opr_foul(event, quals, playoffs)
+        no_fouls = opr_model.opr_no_foul(event, quals, playoffs)
 
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(event.matches)):
@@ -87,13 +87,14 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             teamYear.opr_start = prior_opr
 
             rate = prior_opr/prior_opr_global
-            teamYear.opr_auto = rate * year_obj.auto_mean/3
-            teamYear.opr_teleop = rate * year_obj.teleop_mean/3
-            teamYear.opr_1 = rate * year_obj.one_mean/3
-            teamYear.opr_2 = rate * year_obj.two_mean/3
-            teamYear.opr_endgame = rate * year_obj.endgame_mean/3
-            teamYear.opr_fouls = year_obj.foul_mean/3  # no rate
-            teamYear.opr_no_fouls = rate * year_obj.no_foul_mean/3
+            TM = 2 if year <= 2004 else 3
+            teamYear.opr_auto = rate * year_obj.auto_mean/TM
+            teamYear.opr_teleop = rate * year_obj.teleop_mean/TM
+            teamYear.opr_1 = rate * year_obj.one_mean/TM
+            teamYear.opr_2 = rate * year_obj.two_mean/TM
+            teamYear.opr_endgame = rate * year_obj.endgame_mean/TM
+            teamYear.opr_fouls = year_obj.foul_mean/TM  # no rate
+            teamYear.opr_no_fouls = rate * year_obj.no_foul_mean/TM
 
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
@@ -113,7 +114,9 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.opr_fouls = team_years[num].opr_fouls
                     team_event.opr_no_fouls = team_years[num].opr_no_fouls
 
-            oprs, stats = process_event(event, year, sd_score)
+            quals = SQL_Read.getMatches(event=event.getId(), playoff=False)
+            playoffs = SQL_Read.getMatches(event=event.getId(), playoff=True)
+            oprs, stats = process_event(event, quals, playoffs, year, sd_score)
             opr_acc += stats[0]
             opr_mse += stats[1]
             mix_acc += stats[2]

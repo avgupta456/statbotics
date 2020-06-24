@@ -13,6 +13,8 @@ pandas = "*"
 pymysql = "*"
 sqlalchemy = "*"
 flake8 = "*"
+pyinstrument = "*"
+scipy = "*"
 
 [requires]
 python_version = "3.7"
