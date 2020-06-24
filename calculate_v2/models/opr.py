@@ -57,7 +57,8 @@ def computeAverages(input, output, year):
     TM = (2 if year <= 2004 else 3)  # teams per alliance
     out = np.zeros(shape=(T, 1))
     for i in range(T):
-        avg = np.mean(output[np.where(input[i][:] == 1)])/TM
+        locs = np.where(input[i][:] == 1)
+        avg = 0 if len(locs[0]) == 0 else np.mean(output[locs])/TM
         out[i][0] = round(float(avg), 2)
     return out
 

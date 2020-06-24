@@ -16,10 +16,10 @@ def process_event(event, quals, playoffs, year, sd_score):
         no_fouls = opr_model.opr_no_foul(event, quals, playoffs)
 
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
-    for i, m in enumerate(sorted(event.matches)):
+    for i, m in enumerate(sorted(quals+playoffs)):
         red, blue = m.getRed(), m.getBlue()
         red_oprs, blue_oprs = [], []
-        ind = -1 if m.playoff else i-1
+        ind = -1 if m.playoff == 1 else i
         # print(oprs)
         for r in red:
             opr = 0 if r not in oprs or ind >= len(oprs[r]) else oprs[r][ind]
@@ -114,8 +114,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.opr_fouls = team_years[num].opr_fouls
                     team_event.opr_no_fouls = team_years[num].opr_no_fouls
 
-            quals = SQL_Read.getMatches(event=event.getId(), playoff=False)
-            playoffs = SQL_Read.getMatches(event=event.getId(), playoff=True)
+            quals = sorted(SQL_Read.getMatches(event=event.getId(), playoff=False))  # noqa 502
+            playoffs = sorted(SQL_Read.getMatches(event=event.getId(), playoff=True))  # noqa 502
             oprs, stats = process_event(event, quals, playoffs, year, sd_score)
             opr_acc += stats[0]
             opr_mse += stats[1]
