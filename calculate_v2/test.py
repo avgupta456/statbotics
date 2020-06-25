@@ -33,8 +33,8 @@ events = SQL_Read.getEvents(year=year)
 for event in events[:1]:
     quals = SQL_Read.getMatches(event=event.getId(), playoff=False)
     playoffs = SQL_Read.getMatches(event=event.getId(), playoff=True)
-    test, oprs, stats = process_opr.process_event(event, quals, playoffs, year, sd_score)
+    oprs, stats = process_opr.process_event(event, quals, playoffs, year, sd_score)
     for team in oprs:
-        print(team, oprs[team][-1][0], test[team][-1][0])
+        print(team, oprs[team][-1][0])
     print(len(oprs[team]))
     print(len(quals))

@@ -1,5 +1,6 @@
 BUGS
 Some pre-champs elos are not loading correctly
+Investigate 2007 opr poor mse
 
 TODOS
 Add ILS for RPs 2016+

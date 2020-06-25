@@ -7,7 +7,6 @@ from helper.utils import clean
 
 def process_event(event, quals, playoffs, year, sd_score):
     oprs = opr_model.opr_v2(event, quals, playoffs)
-
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(quals)+sorted(playoffs)):
         red, blue = m.getRed(), m.getBlue()
@@ -119,22 +118,13 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 if num not in oprs:
                     continue
 
-                if year < 2016:
-                    team_event.opr_auto = team_years[num].opr_auto = clean(oprs[num][-1][1])  # noqa 502
-                    team_event.opr_teleop = team_years[num].opr_teleop = clean(oprs[num][-1][2])  # noqa 502
-                    team_event.opr_1 = team_years[num].opr_1 = clean([num][-1][3])  # noqa 502
-                    team_event.opr_2 = team_years[num].opr_2 = clean(oprs[num][-1][4])  # noqa 502
-                    team_event.opr_endgame = team_years[num].opr_endgame = clean(oprs[num][-1][5])  # noqa 502
-                    team_event.opr_fouls = team_years[num].opr_fouls = clean(oprs[num][-1][6])  # noqa 502
-                    team_event.opr_no_fouls = team_years[num].opr_no_fouls = clean(oprs[num][-1][7])  # noqa 502
-                else:
-                    team_event.opr_auto = team_years[num].opr_auto = -1
-                    team_event.opr_teleop = team_years[num].opr_teleop = -1
-                    team_event.opr_1 = team_years[num].opr_1 = -1
-                    team_event.opr_2 = team_years[num].opr_2 = -1
-                    team_event.opr_endgame = team_years[num].opr_endgame = -1
-                    team_event.opr_fouls = team_years[num].opr_fouls = -1
-                    team_event.opr_no_fouls = team_years[num].opr_no_fouls = -1
+                team_event.opr_auto = team_years[num].opr_auto = clean(oprs[num][-1][1])  # noqa 502
+                team_event.opr_teleop = team_years[num].opr_teleop = clean(oprs[num][-1][2])  # noqa 502
+                team_event.opr_1 = team_years[num].opr_1 = clean(oprs[num][-1][3])  # noqa 502
+                team_event.opr_2 = team_years[num].opr_2 = clean(oprs[num][-1][4])  # noqa 502
+                team_event.opr_endgame = team_years[num].opr_endgame = clean(oprs[num][-1][5])  # noqa 502
+                team_event.opr_fouls = team_years[num].opr_fouls = clean(oprs[num][-1][6])  # noqa 502
+                team_event.opr_no_fouls = team_years[num].opr_no_fouls = clean(oprs[num][-1][7])  # noqa 502
 
                 opr = clean(oprs[num][-1][0])
                 team_event.opr_end = opr
@@ -176,10 +166,10 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         year_obj.mix_mse = round(mix_mse/count, 4)
 
         # for faster feedback, could be removed
-        # SQL_Write.commit()
+        SQL_Write.commit()
         printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
 
-    # SQL_Write.commit()
+    SQL_Write.commit()
     printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
 
 
