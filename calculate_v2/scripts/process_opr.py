@@ -5,27 +5,20 @@ from models import opr as opr_model
 
 
 def process_event(event, quals, playoffs, year, sd_score):
+    test = opr_model.opr_v2(event, quals, playoffs)
     oprs = opr_model.opr_v1(event, quals, playoffs)
-    if year >= 2016:
-        autos = opr_model.opr_auto(event, quals, playoffs)
-        teleops = opr_model.opr_teleop(event, quals, playoffs)
-        ones = opr_model.opr_one(event, quals, playoffs)
-        twos = opr_model.opr_two(event, quals, playoffs)
-        endgames = opr_model.opr_endgame(event, quals, playoffs)
-        fouls = opr_model.opr_foul(event, quals, playoffs)
-        no_fouls = opr_model.opr_no_foul(event, quals, playoffs)
 
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(quals+playoffs)):
         red, blue = m.getRed(), m.getBlue()
         red_oprs, blue_oprs = [], []
         ind = -1 if m.playoff == 1 else i
-        # print(oprs)
+
         for r in red:
-            opr = 0 if r not in oprs or ind >= len(oprs[r]) else oprs[r][ind]
+            opr = 0 if r not in oprs else oprs[r][ind][0]
             red_oprs.append(opr)
         for b in blue:
-            opr = 0 if b not in oprs or ind >= len(oprs[r]) else oprs[b][ind]
+            opr = 0 if b not in oprs else oprs[b][ind][0]
             blue_oprs.append(opr)
 
         m.setRedOpr(red_oprs)
@@ -47,14 +40,8 @@ def process_event(event, quals, playoffs, year, sd_score):
 
         count += 1
 
-    if year < 2016:
-        oprs = {"all": oprs}
-    else:
-        oprs = {"all": oprs, "auto": autos, "teleop": teleops, "one": ones,
-                "two": twos, "endgame": endgames, "foul": fouls, "no_foul": no_fouls}  # noqa 502
-
     stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
-    return oprs, stats
+    return test, oprs, stats
 
 
 def process(start_year, end_year, SQL_Read, SQL_Write):
@@ -125,33 +112,34 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
 
             for team_event in event.team_events:
                 num = team_event.getTeam()
-                if num not in oprs["all"]:
+                if num not in oprs:
                     continue
 
-                team_event.opr_auto = -1 if year < 2016 else oprs["auto"][num][-1]  # noqa 502
-                team_event.opr_teleop = -1 if year < 2016 else oprs["teleop"][num][-1]  # noqa 502
-                team_event.opr_1 = -1 if year < 2016 else oprs["one"][num][-1]  # noqa 502
-                team_event.opr_2 = -1 if year < 2016 else oprs["two"][num][-1]  # noqa 502
-                team_event.opr_endgame = -1 if year < 2016 else oprs["endgame"][num][-1]  # noqa 502
-                team_event.opr_fouls = -1 if year < 2016 else oprs["foul"][num][-1]  # noqa 502
-                team_event.opr_no_fouls = -1 if year < 2016 else oprs["no_foul"][num][-1]  # noqa 502
+                if year < 2016:
+                    team_event.opr_auto = team_years[num].opr_auto = oprs[num][-1][1]  # noqa 502
+                    team_event.opr_teleop = team_years[num].opr_teleop = oprs[num][-1][2]  # noqa 502
+                    team_event.opr_1 = team_years[num].opr_1 = oprs[num][-1][3]
+                    team_event.opr_2 = team_years[num].opr_2 = oprs[num][-1][4]
+                    team_event.opr_endgame = team_years[num].opr_endgame = oprs[num][-1][5]  # noqa 502
+                    team_event.opr_fouls = team_years[num].opr_fouls = oprs[num][-1][6]  # noqa 502
+                    team_event.opr_no_fouls = team_years[num].opr_no_fouls = oprs[num][-1][7]  # noqa 502
+                else:
+                    team_event.opr_auto = team_years[num].opr_auto = -1
+                    team_event.opr_teleop = team_years[num].opr_teleop = -1
+                    team_event.opr_1 = team_years[num].opr_1 = -1
+                    team_event.opr_2 = team_years[num].opr_2 = -1
+                    team_event.opr_endgame = team_years[num].opr_endgame = -1
+                    team_event.opr_fouls = team_years[num].opr_fouls = -1
+                    team_event.opr_no_fouls = team_years[num].opr_no_fouls = -1
 
-                team_years[num].opr_auto = -1 if year < 2016 else oprs["auto"][num][-1]  # noqa 502
-                team_years[num].opr_teleop = -1 if year < 2016 else oprs["teleop"][num][-1]  # noqa 502
-                team_years[num].opr_1 = -1 if year < 2016 else oprs["one"][num][-1]  # noqa 502
-                team_years[num].opr_2 = -1 if year < 2016 else oprs["two"][num][-1]  # noqa 502
-                team_years[num].opr_endgame = -1 if year < 2016 else oprs["endgame"][num][-1]  # noqa 502
-                team_years[num].opr_fouls = -1 if year < 2016 else oprs["foul"][num][-1]  # noqa 502
-                team_years[num].opr_no_fouls = -1 if year < 2016 else oprs["no_foul"][num][-1]  # noqa 502
-
-                opr = oprs["all"][num][-1]
+                opr = oprs[num][-1][0]
                 team_event.opr_end = opr
                 team_oprs[num] = opr
                 if num not in team_events:
                     team_events[num] = []
                 team_events[num].append(opr)
 
-            oprs_end = sorted([oprs["all"][t][-1] for t in oprs["all"]], reverse=True)  # noqa 502
+            oprs_end = sorted([oprs[t][-1][0] for t in oprs], reverse=True)
             event.opr_max = oprs_end[0]
             event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
             event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
@@ -184,10 +172,10 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         year_obj.mix_mse = round(mix_mse/count, 4)
 
         # for faster feedback, could be removed
-        SQL_Write.commit()
+        # SQL_Write.commit()
         printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
 
-    SQL_Write.commit()
+    # SQL_Write.commit()
     printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
 
 
