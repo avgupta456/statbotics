@@ -9,19 +9,21 @@ def process_event(event, quals, playoffs, year, sd_score):
     oprs = opr_model.opr_v2(event, quals, playoffs)
 
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
-    for i, m in enumerate(sorted(quals+playoffs)):
+    for i, m in enumerate(sorted(quals)+sorted(playoffs)):
         red, blue = m.getRed(), m.getBlue()
         red_oprs, blue_oprs = [], []
         ind = -1 if m.playoff == 1 else i
 
         for r in red:
-            if r not in oprs or ind > len(oprs[r]):
+            if r in oprs and len(oprs[r]) > 0 and ind <= len(oprs[r]):
+                red_oprs.append(clean(oprs[r][ind][0]))
+            else:
                 red_oprs.append(0)
-            red_oprs.append(clean(oprs[r][ind][0]))
         for b in blue:
-            if r not in oprs or ind > len(oprs[b]):
+            if b in oprs and len(oprs[b]) > 0 and ind <= len(oprs[b]):
+                blue_oprs.append(clean(oprs[b][ind][0]))
+            else:
                 blue_oprs.append(0)
-            blue_oprs.append(clean(oprs[b][ind][0]))
 
         m.setRedOpr(red_oprs)
         m.setBlueOpr(blue_oprs)
