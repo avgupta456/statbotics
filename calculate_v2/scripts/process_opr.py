@@ -2,11 +2,11 @@ import statistics
 
 from scripts.logging import printStats
 from models import opr as opr_model
+from helper.utils import clean
 
 
 def process_event(event, quals, playoffs, year, sd_score):
-    test = opr_model.opr_v2(event, quals, playoffs)
-    oprs = opr_model.opr_v1(event, quals, playoffs)
+    oprs = opr_model.opr_v2(event, quals, playoffs)
 
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(quals+playoffs)):
@@ -15,11 +15,13 @@ def process_event(event, quals, playoffs, year, sd_score):
         ind = -1 if m.playoff == 1 else i
 
         for r in red:
-            opr = 0 if r not in oprs else oprs[r][ind][0]
-            red_oprs.append(opr)
+            if r not in oprs or ind > len(oprs[r]):
+                red_oprs.append(0)
+            red_oprs.append(clean(oprs[r][ind][0]))
         for b in blue:
-            opr = 0 if b not in oprs else oprs[b][ind][0]
-            blue_oprs.append(opr)
+            if r not in oprs or ind > len(oprs[b]):
+                blue_oprs.append(0)
+            blue_oprs.append(clean(oprs[b][ind][0]))
 
         m.setRedOpr(red_oprs)
         m.setBlueOpr(blue_oprs)
@@ -41,7 +43,7 @@ def process_event(event, quals, playoffs, year, sd_score):
         count += 1
 
     stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
-    return test, oprs, stats
+    return oprs, stats
 
 
 def process(start_year, end_year, SQL_Read, SQL_Write):
@@ -116,13 +118,13 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     continue
 
                 if year < 2016:
-                    team_event.opr_auto = team_years[num].opr_auto = oprs[num][-1][1]  # noqa 502
-                    team_event.opr_teleop = team_years[num].opr_teleop = oprs[num][-1][2]  # noqa 502
-                    team_event.opr_1 = team_years[num].opr_1 = oprs[num][-1][3]
-                    team_event.opr_2 = team_years[num].opr_2 = oprs[num][-1][4]
-                    team_event.opr_endgame = team_years[num].opr_endgame = oprs[num][-1][5]  # noqa 502
-                    team_event.opr_fouls = team_years[num].opr_fouls = oprs[num][-1][6]  # noqa 502
-                    team_event.opr_no_fouls = team_years[num].opr_no_fouls = oprs[num][-1][7]  # noqa 502
+                    team_event.opr_auto = team_years[num].opr_auto = clean(oprs[num][-1][1])  # noqa 502
+                    team_event.opr_teleop = team_years[num].opr_teleop = clean(oprs[num][-1][2])  # noqa 502
+                    team_event.opr_1 = team_years[num].opr_1 = clean([num][-1][3])  # noqa 502
+                    team_event.opr_2 = team_years[num].opr_2 = clean(oprs[num][-1][4])  # noqa 502
+                    team_event.opr_endgame = team_years[num].opr_endgame = clean(oprs[num][-1][5])  # noqa 502
+                    team_event.opr_fouls = team_years[num].opr_fouls = clean(oprs[num][-1][6])  # noqa 502
+                    team_event.opr_no_fouls = team_years[num].opr_no_fouls = clean(oprs[num][-1][7])  # noqa 502
                 else:
                     team_event.opr_auto = team_years[num].opr_auto = -1
                     team_event.opr_teleop = team_years[num].opr_teleop = -1
@@ -132,14 +134,14 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.opr_fouls = team_years[num].opr_fouls = -1
                     team_event.opr_no_fouls = team_years[num].opr_no_fouls = -1
 
-                opr = oprs[num][-1][0]
+                opr = clean(oprs[num][-1][0])
                 team_event.opr_end = opr
                 team_oprs[num] = opr
                 if num not in team_events:
                     team_events[num] = []
                 team_events[num].append(opr)
 
-            oprs_end = sorted([oprs[t][-1][0] for t in oprs], reverse=True)
+            oprs_end = sorted([clean(oprs[t][-1][0]) for t in oprs], reverse=True)  # noqa 502
             event.opr_max = oprs_end[0]
             event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
             event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]

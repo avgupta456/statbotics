@@ -39,3 +39,7 @@ def getTeamYearId(team, year):
 
 def getTeamEventId(team, event):
     return int("1"+str(event).zfill(4)+str(team))
+
+
+def clean(num):
+    return round(float(num), 2)
