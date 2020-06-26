@@ -1,32 +1,9 @@
-from sqlalchemy import Table, Column, ForeignKey, Integer, Float, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, Integer, Float, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 
 Base = declarative_base()  # all classes inherit from Base
-
-'''For Many-to-Many relationships'''
-
-team_match_table = Table(
-    'association1',
-    Base.metadata,
-    Column('left_id', Integer, ForeignKey('teams.id')),
-    Column('right_id', Integer, ForeignKey('matches.id'))
-)
-
-teamYear_match_table = Table(
-    'association2',
-    Base.metadata,
-    Column('left_id', Integer, ForeignKey('team_years.id')),
-    Column('right_id', Integer, ForeignKey('matches.id'))
-)
-
-teamEvent_match_table = Table(
-    'association3',
-    Base.metadata,
-    Column('left_id', Integer, ForeignKey('team_events.id')),
-    Column('right_id', Integer, ForeignKey('matches.id'))
-)
 
 
 class Team(Base):
@@ -36,11 +13,7 @@ class Team(Base):
 
     team_years = relationship("TeamYear", back_populates="team")
     team_events = relationship("TeamEvent", back_populates="team")
-    matches = relationship(
-        "Match",
-        secondary=team_match_table,
-        back_populates="teams"
-    )
+    team_matches = relationship("TeamMatch", back_populates="team")
 
     '''GENERAL'''
     name = Column(String(100))
@@ -96,6 +69,7 @@ class Year(Base):
 
     team_years = relationship("TeamYear", back_populates="year")
     team_events = relationship("TeamEvent", back_populates="year")
+    team_matches = relationship("TeamMatch", back_populates="year")
 
     '''ELO'''
     elo_max = Column(Float)
@@ -160,11 +134,7 @@ class TeamYear(Base):
     id = Column(Integer, primary_key=True)
 
     team_events = relationship("TeamEvent", back_populates="team_year")
-    matches = relationship(
-        "Match",
-        secondary=teamYear_match_table,
-        back_populates="team_years"
-    )
+    team_matches = relationship("TeamMatch", back_populates="team_year")
 
     year_id = Column(Integer, ForeignKey('years.id'))
     year = relationship('Year', back_populates="team_years")
@@ -225,6 +195,7 @@ class Event(Base):
 
     matches = relationship("Match", back_populates="event")
     team_events = relationship("TeamEvent", back_populates="event")
+    team_matches = relationship("TeamMatch", back_populates="event")
 
     year_id = Column(Integer, ForeignKey('years.id'))
     year = relationship('Year', back_populates="events")
@@ -304,11 +275,7 @@ class TeamEvent(Base):
     __tablename__ = 'team_events'
     id = Column(Integer, primary_key=True)
 
-    matches = relationship(
-        "Match",
-        secondary=teamEvent_match_table,
-        back_populates="team_events"
-    )
+    team_matches = relationship("TeamMatch", back_populates="team_event")
 
     team_id = Column(Integer, ForeignKey('teams.id'))
     team = relationship('Team', back_populates="team_events")
@@ -386,29 +353,13 @@ class Match(Base):
     __tablename__ = 'matches'
     id = Column(Integer, primary_key=True)
 
+    team_matches = relationship("TeamMatch", back_populates="match")
+
     year_id = Column(Integer, ForeignKey('years.id'))
     year = relationship('Year', back_populates="matches")
 
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship('Event', back_populates="matches")
-
-    teams = relationship(
-        "Team",
-        secondary=team_match_table,
-        back_populates="matches"
-    )
-
-    team_years = relationship(
-        "TeamYear",
-        secondary=teamYear_match_table,
-        back_populates="matches"
-    )
-
-    team_events = relationship(
-        "TeamEvent",
-        secondary=teamEvent_match_table,
-        back_populates="matches"
-    )
 
     '''GENERAL'''
     key = Column(String(20))
@@ -417,17 +368,11 @@ class Match(Base):
     match_number = Column(Integer)
 
     red = Column(String(20))
-    red_elo_pre = Column(String(30))
-    red_elo_post = Column(String(30))
     red_elo_sum = Column(Float)
-    red_opr = Column(String(30))
     red_opr_sum = Column(Float)
 
     blue = Column(String(20))
-    blue_elo_pre = Column(String(30))
-    blue_elo_post = Column(String(30))
     blue_elo_sum = Column(Float)
-    blue_opr = Column(String(30))
     blue_opr_sum = Column(Float)
 
     winner = Column(String(10))
@@ -590,6 +535,55 @@ class Match(Base):
     def setBlueOpr(self, oprs):
         self.blue_opr_sum = sum(oprs)
         self.blue_opr = ','.join(map(str, oprs))
+
+
+class TeamMatch(Base):
+    '''DECLARATION'''
+    __tablename__ = 'team_matches'
+    id = Column(Integer, primary_key=True)
+
+    team_id = Column(Integer, ForeignKey('teams.id'))
+    team = relationship('Team', back_populates="team_matches")
+
+    team_year_id = Column(Integer, ForeignKey('team_years.id'))
+    team_year = relationship('TeamYear', back_populates="team_matches")
+
+    team_event_id = Column(Integer, ForeignKey('team_events.id'))
+    team_event = relationship('TeamEvent', back_populates="team_matches")
+
+    year_id = Column(Integer, ForeignKey('years.id'))
+    year = relationship('Year', back_populates="team_matches")
+
+    event_id = Column(Integer, ForeignKey('events.id'))
+    event = relationship('Event', back_populates="team_matches")
+
+    match_id = Column(Integer, ForeignKey('matches.id'))
+    match = relationship('Match', back_populates="team_matches")
+
+    alliance = Column(String(30))
+
+    '''GENERAL'''
+
+    elo_pre = Column(Float)
+    elo_post = Column(Float)
+    opr_score = Column(Float)
+    opr_auto = Column(Float)
+    opr_teleop = Column(Float)
+    opr_one = Column(Float)
+    opr_two = Column(Float)
+    opr_endgame = Column(Float)
+    opr_no_fouls = Column(Float)
+    opr_fouls = Column(Float)
+
+    '''SUPER FUNCTIONS'''
+    def __lt__(self, other):
+        return self.time < other.time
+
+    def __repr__(self):
+        return "(Match " + str(self.getKey()) + ")"
+
+    def __str__(self):
+        return self.__repr__()
 
 
 def createTables(engine):

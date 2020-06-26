@@ -34,16 +34,13 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
         events = TBA.getEvents(year, cache=cache)
         for event in events:
             event_key = event["key"]
-            event_written = SQL_Write.addEvent(event,
-                                               check=(not clean),
-                                               add=True,
-                                               commit=False)
-
+            _, event_id = SQL_Write.addEvent(event,
+                                             check=(not clean),
+                                             add=False,
+                                             commit=False)
+            event_time = event["time"]
             # if the match is within five days
-            curr_time = int(time.time())
-            if event_written or abs(curr_time - event["time"]) < 432000:
-                event_id = SQL_Read.getEventId_byKey(event_key)
-                event_time = event["time"]
+            if clean or abs(int(time.time()) - event_time) < 432000:
 
                 teamEvents = TBA.getTeamEvents(event_key, cache=cache)
                 for teamEvent in teamEvents:
@@ -54,7 +51,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
                                            check=(not clean),
                                            add=False,
                                            commit=False)
-                SQL_Write.add()
+
                 matches = TBA.getMatches(year,
                                          event_key,
                                          event_time,
@@ -66,11 +63,11 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
                                        check=(not clean),
                                        add=False,
                                        commit=False)
-
-        SQL_Write.add(match_objects=True)
+            # SQL_Write.add()
+        SQL_Write.add()
         printStats(TBA, SQL_Write, SQL_Read)
 
-    SQL_Write.add(match_objects=True)  # match objects
+    SQL_Write.add()
     printStats(TBA, SQL_Write, SQL_Read)
 
 
@@ -80,8 +77,8 @@ def post_process(TBA, SQL_Write, SQL_Read, clean=False):
         print("Removing Old Teams")
         for team in SQL_Read.getTeams():
             '''Removes Teams With No Matches'''
-            matches = team.matches
-            if len(matches) == 0:
+            team_matches = team.team_matches
+            if len(team_matches) == 0:
                 events = team.team_events
                 years = team.team_years
                 for event in events:

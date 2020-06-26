@@ -5,9 +5,7 @@ from classes.classes import (
     Event,
     TeamEvent,
     Match,
-    team_match_table,
-    teamYear_match_table,
-    teamEvent_match_table,
+    TeamMatch,
 )
 
 from helper import utils
@@ -18,11 +16,9 @@ class SQL_Write:
         self.writes = 0
         self.commits = 0
         self.objects = []
-        self.match_objects_1 = []
-        self.match_objects_2 = []
-        self.match_objects_3 = []
 
-        self.match_id = 0
+        self.match_id = SQL_Read.getTotalMatches()
+        self.event_id = SQL_Read.getTotalEvents()
 
         self.session = SQL.getSession()
         self.read = SQL_Read
@@ -32,19 +28,6 @@ class SQL_Write:
             self.session.add_all(self.objects)
             self.objects = []
             self.writes += 1
-            self.commit()
-
-        if self.match_objects_1 != [] and match_objects:
-            self.session.execute(team_match_table.insert().
-                                 values(self.match_objects_1))
-            self.session.execute(teamYear_match_table.insert().
-                                 values(self.match_objects_2))
-            self.session.execute(teamEvent_match_table.insert().
-                                 values(self.match_objects_3))
-            self.match_objects_1 = []
-            self.match_objects_2 = []
-            self.match_objects_3 = []
-            self.writes += 3
             self.commit()
 
     def flush(self):
@@ -122,7 +105,9 @@ class SQL_Write:
             district = dict["district"]
             if district is None:
                 district = "None"
+            self.event_id += 1
             event = Event(
+                id=self.event_id,
                 year_id=dict["year"],
                 key=dict["key"],
                 name=dict["name"],
@@ -138,7 +123,7 @@ class SQL_Write:
                 self.add()
             if commit:
                 self.commit()
-            return True
+            return True, self.event_id
         return False
 
     '''TeamEvent'''
@@ -229,17 +214,44 @@ class SQL_Write:
                 blue_rp_2=dict["blue_score_breakdown"]["rp2"],
             )
             self.objects.append(match)
-            arr1, arr2, arr3 = [], [], []
-            for teams in [dict["red"].split(","), dict["blue"].split(",")]:
-                for team in teams:
+            new_dict = {
+                "year_id": year_id,
+                "event_id": event_id,
+                "match_id": self.match_id
+            }
+            for alliance in ["red", "blue"]:
+                new_dict["alliance"] = alliance
+                for team in dict[alliance].split(","):
                     team_year_id = utils.getTeamYearId(team, year_id)
                     team_event_id = utils.getTeamEventId(team, event_id)
-                    arr1.append((int(team), self.match_id))
-                    arr2.append((team_year_id, self.match_id))
-                    arr3.append((team_event_id, self.match_id))
-            self.match_objects_1.extend(arr1)
-            self.match_objects_2.extend(arr2)
-            self.match_objects_3.extend(arr3)
+                    new_dict["team_id"] = team
+                    new_dict["team_year_id"] = team_year_id
+                    new_dict["team_event_id"] = team_event_id
+                    self.addTeamMatch(new_dict,
+                                      check=check,
+                                      add=add,
+                                      commit=commit)
+            if add:
+                self.add()
+            if commit:
+                self.commit()
+            return True
+        return False
+
+    '''Team Match'''
+
+    def addTeamMatch(self, dict, check=True, add=False, commit=False):
+        if not check or self.read.getTeamMatch(dict["id"]) is None:
+            team_match = TeamMatch(
+                team_id=dict["team_id"],
+                team_year_id=dict["team_year_id"],
+                team_event_id=dict["team_event_id"],
+                year_id=dict["year_id"],
+                event_id=dict["event_id"],
+                match_id=dict["match_id"],
+                alliance=dict["alliance"]
+            )
+            self.objects.append(team_match)
             if add:
                 self.add()
             if commit:
