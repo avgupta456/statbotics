@@ -217,7 +217,8 @@ class SQL_Write:
             new_dict = {
                 "year_id": year_id,
                 "event_id": event_id,
-                "match_id": self.match_id
+                "match_id": self.match_id,
+                "time": dict["time"]
             }
             for alliance in ["red", "blue"]:
                 new_dict["alliance"] = alliance
@@ -249,6 +250,7 @@ class SQL_Write:
                 year_id=dict["year_id"],
                 event_id=dict["event_id"],
                 match_id=dict["match_id"],
+                time=dict["time"],
                 alliance=dict["alliance"]
             )
             self.objects.append(team_match)
