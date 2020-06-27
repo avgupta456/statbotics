@@ -30,30 +30,13 @@ class Team(Base):
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
-        return self.getNumber() < other.getNumber()
+        return self.id < other.id
 
     def __repr__(self):
-        return f'Team ({self.getNumber()})'
+        return f'Team ({self.id})'
 
     def __str__(self):
         return self.__repr__()
-
-    '''GET KEYS'''
-    def getNumber(self):
-        return self.id
-
-    '''GETTERS'''
-    def getName(self):
-        return self.name
-
-    def getDistrict(self):
-        return self.district
-
-    def getState(self):
-        return self.state
-
-    def getCountry(self):
-        return self.country
 
     def isActive(self):
         return self.active == 1
@@ -113,19 +96,13 @@ class Year(Base):
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
-        return self.getYear() < other.getYear()
+        return self.id < other.id
 
     def __repr__(self):
-        return f'Year ({self.getYear()})'
+        return f'Year ({self.id})'
 
     def __str__(self):
         return self.__repr__()
-
-    '''GET KEYS'''
-    def getYear(self):
-        return self.id
-
-    '''GETTERS'''
 
 
 class TeamYear(Base):
@@ -164,28 +141,24 @@ class TeamYear(Base):
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
-        if self.getTeam() == other.getTeam():
-            return self.getYear() < other.getYear()
-        else:
-            return self.getTeam() < other.getTeam()
+        if self.team_id == other.team_id:
+            return self.year_id < other.year_id
+        return self.team_id < other.team_id
 
     def __repr__(self):
-        return f'TeamYear ({self.getTeam()} {self.getYear()})'
+        return f'TeamYear ({self.team_id} {self.year_id})'
 
     def __str__(self):
         return self.__repr__()
 
-    '''GET KEYS'''
-    def getTeam(self):
-        return self.team_id
-
-    def getYear(self):
-        return self.year_id
-
-    def getId(self):
-        return self.id
-
-    '''GETTERS'''
+    def setOPRs(self, dict):
+        self.opr_auto = dict["opr_auto"]
+        self.opr_teleop = dict["opr_teleop"]
+        self.opr_1 = dict["opr_1"]
+        self.opr_2 = dict["opr_2"]
+        self.opr_endgame = dict["opr_endgame"]
+        self.opr_fouls = dict["opr_fouls"]
+        self.opr_no_fouls = dict["opr_no_fouls"]
 
 
 class Event(Base):
@@ -232,36 +205,10 @@ class Event(Base):
         return self.time < other.time
 
     def __repr__(self):
-        return "(Event " + str(self.getKey()) + ")"
+        return "(Event " + str(self.key) + ")"
 
     def __str__(self):
         return self.__repr__()
-
-    '''GET KEYS'''
-    def getYear(self):
-        return self.year_id
-
-    def getId(self):
-        return self.id
-
-    '''GETTERS'''
-    def getKey(self):
-        return self.key
-
-    def getName(self):
-        return self.name
-
-    def getState(self):
-        return self.state
-
-    def getCountry(self):
-        return self.country
-
-    def getDistrict(self):
-        return self.district
-
-    def getTime(self):
-        return self.time
 
     def getTeamEvent(self, team):
         for team_event in self.team_events:
@@ -314,38 +261,26 @@ class TeamEvent(Base):
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
-        if self.getTeam() == other.getTeam():
+        if self.team_id == other.team_id:
             return self.time < other.time
-        else:
-            return self.getTeam() < other.getTeam()
+        return self.team_id < other.team_id
 
     def __repr__(self):
         return "(TeamEvent " + \
-                str(self.getTeam()) + " " + \
-                str(self.getKey()) + ")"
+                str(self.team_id) + " " + \
+                str(self.event.key) + ")"
 
     def __str__(self):
         return self.__repr__()
 
-    '''GET KEYS'''
-    def getTeam(self):
-        return self.team_id
-
-    def getTeamYear(self):
-        return self.team_year_id
-
-    def getId(self):
-        return self.id
-
-    def getYear(self):
-        return self.year_id
-
-    def getEvent(self):
-        return self.event_id
-
-    '''GETTERS'''
-    def getKey(self):
-        return self.event.getKey()
+    def setOPRs(self, dict):
+        self.opr_auto = dict["opr_auto"]
+        self.opr_teleop = dict["opr_teleop"]
+        self.opr_1 = dict["opr_1"]
+        self.opr_2 = dict["opr_2"]
+        self.opr_endgame = dict["opr_endgame"]
+        self.opr_fouls = dict["opr_fouls"]
+        self.opr_no_fouls = dict["opr_no_fouls"]
 
 
 class Match(Base):
@@ -436,33 +371,10 @@ class Match(Base):
         return self.time < other.time
 
     def __repr__(self):
-        return "(Match " + str(self.getKey()) + ")"
+        return "(Match " + str(self.key) + ")"
 
     def __str__(self):
         return self.__repr__()
-
-    '''GET KEYS'''
-    def getYear(self):
-        return self.year_id
-
-    def getEvent(self):
-        return self.event_id
-
-    def getId(self):
-        return self.id
-
-    '''GETTERS'''
-    def getKey(self):
-        return self.key
-
-    def getCompLevel(self):
-        return self.comp_level
-
-    def getSetNumber(self):
-        return self.set_number
-
-    def getMatchNumber(self):
-        return self.match_number
 
     def getRed(self):
         return [int(x) for x in self.red.split(',')]
@@ -473,68 +385,80 @@ class Match(Base):
     def getTeams(self):
         return [self.getRed(), self.getBlue()]
 
-    def getWinner(self):
-        return self.winner
+    def getRedTeamMatches(self):
+        out = []
+        for team_match in self.team_matches:
+            if team_match.alliance == "red":
+                out.append(team_match)
+        return out
 
-    '''GETTERS'''
-    def getRedEloPre(self):
-        return [float(x) for x in self.red_elo_pre.split(',')]
+    def getBlueTeamMatches(self):
+        out = []
+        for team_match in self.team_matches:
+            if team_match.alliance == "blue":
+                out.append(team_match)
+        return out
 
-    def getRedEloPost(self):
-        return [float(x) for x in self.red_elo_post.split(',')]
+    def getTeamMatches(self):
+        red, blue = [], []
+        for team_match in self.team_matches:
+            if team_match.alliance == "red":
+                red.append(team_match)
+            else:
+                blue.append(team_match)
+        return [red, blue]
 
-    def getBlueEloPre(self):
-        return [float(x) for x in self.blue_elo_pre.split(',')]
+    '''ELO/OPR GETTERS'''
+    def getRedElo(self):
+        out = []
+        for team_match in self.team_matches:
+            if team_match.alliance == "red":
+                out.append(team_match.elo)
+        return out
 
-    def getBlueEloPost(self):
-        return [float(x) for x in self.blue_elo_post.split(',')]
+    def getBlueElo(self):
+        out = []
+        for team_match in self.team_matches:
+            if team_match.alliance == "blue":
+                out.append(team_match.elo)
+        return out
 
     def getTeamElo(self, team):
-        red, blue = self.getTeams()
-        for i in range(len(red)):
-            if red[i] == team:
-                return self.getRedEloPost()[i]
-        for i in range(len(blue)):
-            if blue[i] == team:
-                return self.getBlueEloPost()[i]
+        for team_match in self.team_matches:
+            if team_match.team_id == team:
+                return team_match.elo
 
     def getRedOpr(self):
-        return [float(x) for x in self.red_opr.split(',')]
+        out = []
+        for team_match in self.team_matches:
+            if team_match.alliance == "red":
+                out.append(team_match.opr_start)
+        return out
 
     def getBlueOpr(self):
-        return [float(x) for x in self.blue_opr.split(',')]
+        out = []
+        for team_match in self.team_matches:
+            if team_match.alliance == "blue":
+                out.append(team_match.opr_start)
+        return out
 
     def getTeamOpr(self, team):
-        red, blue = self.getTeams()
-        for i in range(len(red)):
-            if red[i] == team:
-                return self.getRedOpr()[i]
-        for i in range(len(blue)):
-            if blue[i] == team:
-                return self.getBlueOpr()[i]
+        for team_match in self.team_matches:
+            if team_match.team_id == team:
+                return team_match.opr_score
 
-    '''SETTERS'''
-    def setRedEloPre(self, elos):
-        self.red_elo_sum = sum(elos)
-        self.red_elo_pre = ','.join(map(str, elos))
+    '''ELO/OPR SETTERS'''
 
-    def setRedEloPost(self, elos):
-        self.red_elo_post = ','.join(map(str, elos))
+    def setTeams(self, red, blue):
+        self.red_teams = ",".join(red)
+        self.blue_teams = ",".join(blue)
 
-    def setBlueEloPre(self, elos):
-        self.blue_elo_sum = sum(elos)
-        self.blue_elo_pre = ','.join(map(str, elos))
-
-    def setBlueEloPost(self, elos):
-        self.blue_elo_post = ','.join(map(str, elos))
-
-    def setRedOpr(self, oprs):
-        self.red_opr_sum = sum(oprs)
-        self.red_opr = ','.join(map(str, oprs))
-
-    def setBlueOpr(self, oprs):
-        self.blue_opr_sum = sum(oprs)
-        self.blue_opr = ','.join(map(str, oprs))
+    def setElos(self, red_elos, blue_elos):
+        for team_match in self.team_matches:
+            if team_match.alliance == "red":
+                team_match.elo = red_elos[team_match.team_id]
+            else:
+                team_match.elo = blue_elos[team_match.team_id]
 
 
 class TeamMatch(Base):
@@ -560,12 +484,12 @@ class TeamMatch(Base):
     match_id = Column(Integer, ForeignKey('matches.id'))
     match = relationship('Match', back_populates="team_matches")
 
+    time = Column(Integer)
     alliance = Column(String(30))
 
     '''GENERAL'''
 
-    elo_pre = Column(Float)
-    elo_post = Column(Float)
+    elo = Column(Float)
     opr_score = Column(Float)
     opr_auto = Column(Float)
     opr_teleop = Column(Float)
@@ -580,10 +504,22 @@ class TeamMatch(Base):
         return self.time < other.time
 
     def __repr__(self):
-        return "(Match " + str(self.getKey()) + ")"
+        return "(Match " + \
+                str(self.team_id) + " " + \
+                str(self.match.key) + ")"
 
     def __str__(self):
         return self.__repr__()
+
+    def setOPRs(self, dict):
+        self.opr_score = dict["opr_score"]
+        self.opr_auto = dict["opr_auto"]
+        self.opr_teleop = dict["opr_teleop"]
+        self.opr_one = dict["opr_1"]
+        self.opr_two = dict["opr_2"]
+        self.opr_endgame = dict["opr_endgame"]
+        self.opr_fouls = dict["opr_fouls"]
+        self.opr_no_fouls = dict["opr_no_fouls"]
 
 
 def createTables(engine):
