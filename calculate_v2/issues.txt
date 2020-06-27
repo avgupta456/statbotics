@@ -1,6 +1,9 @@
 BUGS
 Some pre-champs elos are not loading correctly
 Investigate 2007 opr poor mse
+2020 elos look a little off
+change year elo stats to be based off events, not matches
+some matches missing oprs
 
 TODOS
 Add ILS for RPs 2016+
