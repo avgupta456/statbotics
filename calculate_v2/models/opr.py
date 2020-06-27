@@ -60,7 +60,7 @@ def get_base(event, quals, playoffs, func, event_func):
     mean_score, year = event.year.score_mean, event.year.id
     team_events = {}
     for team_event in event.team_events:
-        team_events[team_event.getTeam()] = team_event
+        team_events[team_event.team_id] = team_event
 
     # case of only playoffs
     if len(quals) == 0:
