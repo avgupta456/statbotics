@@ -16,19 +16,13 @@ def process_event(event, quals, playoffs, year, sd_score):
         for r in red:
             if r in oprs and len(oprs[r]) > 0 and ind <= len(oprs[r]):
                 red_oprs.append(clean(oprs[r][ind][0]))
-            else:
-                red_oprs.append(0)
         for b in blue:
             if b in oprs and len(oprs[b]) > 0 and ind <= len(oprs[b]):
                 blue_oprs.append(clean(oprs[b][ind][0]))
-            else:
-                blue_oprs.append(0)
-
-        m.setRedOpr(red_oprs)
-        m.setBlueOpr(blue_oprs)
 
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
         red_sum, blue_sum = sum(red_oprs), sum(blue_oprs)
+        m.red_opr_sum, m.blue_opr_sum = red_sum, blue_sum
         m.opr_winner = "red" if red_sum > blue_sum else "blue"
         m.opr_win_prob = opr_model.win_prob(red_sum, blue_sum, year, sd_score)
         opr_mse += (win_probs[m.winner] - m.opr_win_prob) ** 2
@@ -50,9 +44,24 @@ def process_event(event, quals, playoffs, year, sd_score):
 def process(start_year, end_year, SQL_Read, SQL_Write):
     teams, means = {}, {}
     for team in SQL_Read.getTeams():
-        teams[team.getNumber()] = team
+        teams[team.id] = team
 
-    team_years_all = {}  # master dict
+    team_years_all = {}  # master dictionary
+
+    if start_year > 2003:
+        team_years_2 = {}
+        teamYears2 = SQL_Read.getTeamYears(year=start_year-2)
+        for teamYear in teamYears2:
+            team_years_2[teamYear.team_id] = teamYear
+        team_years_all[start_year-2] = team_years_2
+
+    if start_year > 2002:
+        team_years_1 = {}
+        teamYears1 = SQL_Read.getTeamYears(year=start_year-1)
+        for teamYear in teamYears1:
+            team_years_1[teamYear.team_id] = teamYear
+        team_years_all[start_year-1] = team_years_1
+
     for year in range(start_year, end_year + 1):
         print(year)
         year_obj = SQL_Read.getYear(year)
@@ -66,7 +75,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         prior_opr_global = mean_score / 3
         means[year] = mean_score
         for teamYear in SQL_Read.getTeamYears(year=year):
-            num = teamYear.getTeam()
+            num = teamYear.team_id
             prior_opr = prior_opr_global
             if year-1 in team_years_all and \
                     num in team_years_all[year-1] and \
@@ -93,7 +102,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         events = sorted(SQL_Read.getEvents(year=year))
         for event in events:
             for team_event in event.team_events:
-                num = team_event.getTeam()
+                num = team_event.team_id
                 if num in teams:
                     team_event.opr_start = team_oprs[num]
                     team_event.opr_auto = team_years[num].opr_auto
@@ -104,8 +113,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.opr_fouls = team_years[num].opr_fouls
                     team_event.opr_no_fouls = team_years[num].opr_no_fouls
 
-            quals = sorted(SQL_Read.getMatches(event=event.getId(), playoff=False))  # noqa 502
-            playoffs = sorted(SQL_Read.getMatches(event=event.getId(), playoff=True))  # noqa 502
+            quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))  # noqa 502
+            playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))  # noqa 502
             oprs, stats = process_event(event, quals, playoffs, year, sd_score)
             opr_acc += stats[0]
             opr_mse += stats[1]
@@ -114,17 +123,41 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             count += stats[4]
 
             for team_event in event.team_events:
-                num = team_event.getTeam()
+                num = team_event.team_id
                 if num not in oprs:
                     continue
 
-                team_event.opr_auto = team_years[num].opr_auto = clean(oprs[num][-1][1])  # noqa 502
-                team_event.opr_teleop = team_years[num].opr_teleop = clean(oprs[num][-1][2])  # noqa 502
-                team_event.opr_1 = team_years[num].opr_1 = clean(oprs[num][-1][3])  # noqa 502
-                team_event.opr_2 = team_years[num].opr_2 = clean(oprs[num][-1][4])  # noqa 502
-                team_event.opr_endgame = team_years[num].opr_endgame = clean(oprs[num][-1][5])  # noqa 502
-                team_event.opr_fouls = team_years[num].opr_fouls = clean(oprs[num][-1][6])  # noqa 502
-                team_event.opr_no_fouls = team_years[num].opr_no_fouls = clean(oprs[num][-1][7])  # noqa 502
+                dict_end = {
+                    "opr_auto": clean(oprs[num][-1][1]),
+                    "opr_teleop": clean(oprs[num][-1][2]),
+                    "opr_1": clean(oprs[num][-1][3]),
+                    "opr_2": clean(oprs[num][-1][4]),
+                    "opr_endgame": clean(oprs[num][-1][5]),
+                    "opr_fouls": clean(oprs[num][-1][6]),
+                    "opr_no_fouls": clean(oprs[num][-1][7]),
+                }
+
+                team_event.setOPRs(dict_end)
+                team_years[num].setOPRs(dict_end)
+
+                team_matches = sorted(team_event.team_matches)
+                dict_end["opr_score"] = clean(oprs[num][-1][0])
+                for i in range(len(team_matches)):
+                    if team_matches[i].match.playoff == 1:
+                        team_matches[i].setOPRs(dict_end)
+                    else:
+                        team_matches[i].setOPRs(
+                            {
+                                "opr_score": clean(oprs[num][i][0]),
+                                "opr_auto": clean(oprs[num][i][1]),
+                                "opr_teleop": clean(oprs[num][i][2]),
+                                "opr_1": clean(oprs[num][i][3]),
+                                "opr_2": clean(oprs[num][i][4]),
+                                "opr_endgame": clean(oprs[num][i][5]),
+                                "opr_fouls": clean(oprs[num][i][6]),
+                                "opr_no_fouls": clean(oprs[num][i][7]),
+                            }
+                        )
 
                 opr = clean(oprs[num][-1][0])
                 team_event.opr_end = opr
@@ -140,6 +173,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             event.opr_mean = round(sum(oprs_end)/len(oprs_end), 2)
             event.opr_sd = round(statistics.pstdev(oprs_end), 2)
 
+            SQL_Write.add()
+
         oprs = []
         for num in team_years:
             # 1771 in 2004 only played in elims shrug
@@ -147,7 +182,11 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 continue
             team_years[num].opr_end = team_events[num][-1]
             oprs.append(max(team_events[num]))
+
         team_years_all[year] = team_years
+        # keeps memory down
+        if year-2 in team_years_all:
+            team_years_all.pop(year-2)
 
         oprs.sort(reverse=True)
         year_obj = SQL_Read.getYear(year=year)
