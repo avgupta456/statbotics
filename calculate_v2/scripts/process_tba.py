@@ -12,7 +12,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
             SQL_Write.addTeam(team, check=False, add=False, commit=False)
         SQL_Write.add()
 
-    all_teams = [t.getNumber() for t in SQL_Read.getTeams()]
+    all_teams = [t.id for t in SQL_Read.getTeams()]
     for year in range(start_year, end_year + 1):
         print("Year " + str(year))
         SQL_Write.addYear({"year": year},
@@ -20,11 +20,11 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
                           add=False,
                           commit=False)
 
-        team_years = [t.getTeam() for t in SQL_Read.getTeamYears(year=year)]
+        team_years = [t.team_id for t in SQL_Read.getTeamYears(year=year)]
         for teamYear in TBA.getTeamYears(year, cache=cache):
             # handles teams with no matches removed in postprocessing
-            team_year = teamYear["team"]
-            if team_year not in team_years and team_year in all_teams:
+            team = teamYear["team"]
+            if team not in team_years and team in all_teams:
                 SQL_Write.addTeamYear(teamYear,
                                       check=False,
                                       add=False,
@@ -89,14 +89,14 @@ def post_process(TBA, SQL_Write, SQL_Read, clean=False):
         SQL_Write.commit()
 
     print("Updating Team Entries")
-    active_teams = [t.getTeam() for t in SQL_Read.getTeamYears(year=2020)]
+    active_teams = [t.team_id for t in SQL_Read.getTeamYears(year=2020)]
     for team in SQL_Read.getTeams():
         '''Checks if active in 2020'''
-        team.active = 1 if team.getNumber() in active_teams else 0
+        team.active = 1 if team.id in active_teams else 0
 
         '''Retrieves district'''
         if team.district is None:
-            team.district = TBA.getTeamDistrict(team.getNumber())
+            team.district = TBA.getTeamDistrict(team.id)
     SQL_Write.commit()
 
 
