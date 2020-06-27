@@ -16,16 +16,16 @@ def existing_rating(team_1yr, team_2yr):
 
 def update_rating(year, sd_score, red, blue, red_score, blue_score, playoff):
     win_margin = (red_score - blue_score)/sd_score
-    pred_win_margin = 4/1000*(sum(red)-sum(blue))
+    pred_win_margin = 4/1000*(sum(red.values())-sum(blue.values()))
     k = 4 if playoff == 1 else 12
 
-    for i in range(len(red)):
-        red[i] = round(red[i] + k*(win_margin-pred_win_margin), 2)
-    for i in range(len(blue)):
-        blue[i] = round(blue[i] - k*(win_margin-pred_win_margin), 2)
+    for t in red:
+        red[t] = round(red[t] + k*(win_margin-pred_win_margin), 2)
+    for t in blue:
+        blue[t] = round(blue[t] - k*(win_margin-pred_win_margin), 2)
 
     return red, blue
 
 
 def win_prob(red, blue):
-    return 1/(10**((sum(blue)-sum(red))/400)+1)
+    return 1/(10**((sum(blue.values())-sum(red.values()))/400)+1)
