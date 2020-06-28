@@ -2,12 +2,14 @@ import statistics
 
 from scripts.logging import printStats
 from models import opr as opr_model
-from helper.utils import clean
+from helper.utils import clean, logistic, logistic_inv
 
 
-def process_event(event, quals, playoffs, year, sd_score):
+def process_event(event, quals, playoffs, year, sd_score,
+                  team_ils_1, team_ils_2):
     oprs = opr_model.opr_v2(event, quals, playoffs)
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
+    rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(quals)+sorted(playoffs)):
         red, blue = m.getRed(), m.getBlue()
         red_oprs, blue_oprs = [], []
@@ -35,10 +37,59 @@ def process_event(event, quals, playoffs, year, sd_score):
         if m.winner == m.mix_winner:
             mix_acc += 1
 
+        red_ils_1s, red_ils_2s, blue_ils_1s, blue_ils_2s = [], [], [], []
+        team_matches = m.team_matches
+        for team_match in team_matches:
+            num = team_match.team_id
+            ils1, ils2 = team_ils_1[num], team_ils_2[num]
+            if team_match.alliance == "red":
+                red_ils_1s.append(ils1)
+                red_ils_2s.append(ils2)
+                team_match.ils_1 = ils1
+                team_match.ils_2 = ils2
+            else:
+                blue_ils_1s.append(ils1)
+                blue_ils_2s.append(ils2)
+                team_match.ils_1 = ils1
+                team_match.ils_2 = ils2
+        m.red_ils_1_sum = red_ils_1_sum = sum(red_ils_1s)
+        m.red_ils_2_sum = red_ils_2_sum = sum(red_ils_2s)
+        m.blue_ils_1_sum = blue_ils_1_sum = sum(blue_ils_1s)
+        m.blue_ils_2_sum = blue_ils_2_sum = sum(blue_ils_2s)
+        m.red_rp_1_prob = red_rp_1_prob = logistic(red_ils_1_sum)
+        m.red_rp_2_prob = red_rp_2_prob = logistic(red_ils_2_sum)
+        m.blue_rp_1_prob = blue_rp_1_prob = logistic(blue_ils_1_sum)
+        m.blue_rp_2_prob = blue_rp_2_prob = logistic(blue_ils_2_sum)
+
+        if m.playoff == 0:
+            red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
+            blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
+            if int(red_rp_1_prob + 0.5) == red_rp_1: rp1_acc += 1  # noqa 702
+            if int(red_rp_2_prob + 0.5) == red_rp_2: rp2_acc += 1  # noqa 702
+            if int(blue_rp_1_prob + 0.5) == blue_rp_1: rp1_acc += 1  # noqa 702
+            if int(blue_rp_2_prob + 0.5) == blue_rp_2: rp2_acc += 1  # noqa 702
+            rp1_mse += (red_rp_1_prob - red_rp_1) ** 2
+            rp2_mse += (red_rp_2_prob - red_rp_2) ** 2
+            rp1_mse += (blue_rp_1_prob - blue_rp_1) ** 2
+            rp2_mse += (blue_rp_2_prob - blue_rp_2) ** 2
+            count_rp += 1
+
+            adjust_red_1 = 0.1 * (red_rp_1 - red_rp_1_prob)
+            adjust_red_2 = 0.1 * (red_rp_2 - red_rp_2_prob)
+            adjust_blue_1 = 0.1 * (blue_rp_1 - blue_rp_1_prob)
+            adjust_blue_2 = 0.1 * (blue_rp_2 - blue_rp_2_prob)
+            for r in red:
+                team_ils_1[r] = max(team_ils_1[r]+adjust_red_1, -1)
+                team_ils_2[r] = max(team_ils_2[r]+adjust_red_2, -1)
+            for b in blue:
+                team_ils_1[b] = max(team_ils_1[b]+adjust_blue_1, -1)
+                team_ils_2[b] = max(team_ils_2[b]+adjust_blue_2, -1)
+            count_rp += 2
         count += 1
 
-    stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
-    return oprs, stats
+    stats = [opr_acc, opr_mse, mix_acc, mix_mse, count,
+             rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
+    return oprs, team_ils_1, team_ils_2, stats
 
 
 def process(start_year, end_year, SQL_Read, SQL_Write):
@@ -61,19 +112,26 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         for teamYear in teamYears1:
             team_years_1[teamYear.team_id] = teamYear
         team_years_all[start_year-1] = team_years_1
+        means[start_year-1] = SQL_Read.getYear(year=start_year-1).score_mean
 
     for year in range(start_year, end_year + 1):
         print(year)
         year_obj = SQL_Read.getYear(year)
         sd_score = year_obj.score_sd
+        TM = 2 if year <= 2004 else 3
 
         team_years, team_oprs = {}, {}
         opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
+        rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
 
         # populate starting elo from previous year
         mean_score = year_obj.score_mean
-        prior_opr_global = mean_score / 3
         means[year] = mean_score
+        prior_opr_global = mean_score / TM
+        ils_1_seed = logistic_inv(year_obj.rp_1_mean / TM)
+        ils_2_seed = logistic_inv(year_obj.rp_2_mean / TM)
+        team_ils_1, team_ils_2 = {}, {}
+        temp = 0
         for teamYear in SQL_Read.getTeamYears(year=year):
             num = teamYear.team_id
             prior_opr = prior_opr_global
@@ -86,7 +144,6 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             teamYear.opr_start = prior_opr
 
             rate = prior_opr/prior_opr_global
-            TM = 2 if year <= 2004 else 3
             teamYear.opr_auto = rate * year_obj.auto_mean/TM
             teamYear.opr_teleop = rate * year_obj.teleop_mean/TM
             teamYear.opr_1 = rate * year_obj.one_mean/TM
@@ -95,8 +152,16 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             teamYear.opr_fouls = year_obj.foul_mean/TM  # no rate
             teamYear.opr_no_fouls = rate * year_obj.no_foul_mean/TM
 
+            boost = (teamYear.elo_start - 1500) * 0.001
+            team_ils_1[num] = ils_1_seed + boost
+            team_ils_2[num] = ils_2_seed + boost
+
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
+
+            temp += 1
+            if temp % 1000 == 0:
+                SQL_Write.add()
 
         team_events = {}
         events = sorted(SQL_Read.getEvents(year=year))
@@ -105,6 +170,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 num = team_event.team_id
                 if num in teams:
                     team_event.opr_start = team_oprs[num]
+                    team_event.opr_end = team_oprs[num]  # overwritten later
                     team_event.opr_auto = team_years[num].opr_auto
                     team_event.opr_teleop = team_years[num].opr_teleop
                     team_event.opr_1 = team_years[num].opr_1
@@ -113,14 +179,22 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.opr_fouls = team_years[num].opr_fouls
                     team_event.opr_no_fouls = team_years[num].opr_no_fouls
 
-            quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))  # noqa 502
+            quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
             playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))  # noqa 502
-            oprs, stats = process_event(event, quals, playoffs, year, sd_score)
+            oprs, team_ils_1, team_ils_2, stats = \
+                process_event(event, quals, playoffs, year, sd_score,
+                              team_ils_1, team_ils_2)
+
             opr_acc += stats[0]
             opr_mse += stats[1]
             mix_acc += stats[2]
             mix_mse += stats[3]
             count += stats[4]
+            rp1_acc += stats[5]
+            rp1_mse += stats[6]
+            rp2_acc += stats[7]
+            rp2_mse += stats[8]
+            count_rp += stats[9]
 
             for team_event in event.team_events:
                 num = team_event.team_id
@@ -181,6 +255,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             if num not in team_events:
                 continue
             team_years[num].opr_end = team_events[num][-1]
+            team_years[num].ils_1 = team_ils_1[num]
+            team_years[num].ils_2 = team_ils_2[num]
             oprs.append(max(team_events[num]))
 
         team_years_all[year] = team_years
@@ -203,6 +279,10 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         year_obj.opr_mse = round(opr_mse/count, 4)
         year_obj.mix_acc = round(mix_acc/count, 4)
         year_obj.mix_mse = round(mix_mse/count, 4)
+        year_obj.rp1_acc = round(rp1_acc/count_rp, 4)
+        year_obj.rp1_mse = round(rp1_mse/count_rp, 4)
+        year_obj.rp2_acc = round(rp2_acc/count_rp, 4)
+        year_obj.rp2_mse = round(rp2_mse/count_rp, 4)
 
         # for faster feedback, could be removed
         SQL_Write.commit()
