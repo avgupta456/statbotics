@@ -4,6 +4,8 @@ import os
 import time
 import datetime
 
+import numpy as np
+
 
 def dump(path, data):
     os.makedirs(path)
@@ -43,3 +45,13 @@ def getTeamEventId(team, event):
 
 def clean(num):
     return round(float(num), 2)
+
+
+# for ils
+def logistic(n):
+    return float(1/(1+np.e**(-4*(n-0.5))))
+
+
+def logistic_inv(n):
+    if n <= 0: return -1  # noqa 702
+    return float(-np.log((1-n)/np.e**2/n)/4)
