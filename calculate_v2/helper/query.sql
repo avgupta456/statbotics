@@ -23,7 +23,7 @@ DELETE FROM team_years WHERE year_id=2020;
 DELETE FROM years WHERE id=2020;
 
 # Migrations
-ALTER TABLE years ADD mix_mse Float;
+ALTER TABLE team_events ADD ils_2_end FLOAT;
 
 DROP TABLE association3;
 

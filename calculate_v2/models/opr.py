@@ -224,4 +224,12 @@ def opr_standalone(SQL_Read, event):
 
 
 def win_prob(red, blue, year, sd_score):
+    if isinstance(red, list): red = sum(red)  # noqa 701
+    if isinstance(red, dict): red = sum(red.values())  # noqa 701
+    if isinstance(blue, list): blue = sum(blue)  # noqa 701
+    if isinstance(blue, dict): blue = sum(blue.values())  # noqa 701
     return 1/(10**(5/8*(blue-red)/sd_score)+1)
+
+
+def rp_prob(teams):
+    return logistic(sum(teams))
