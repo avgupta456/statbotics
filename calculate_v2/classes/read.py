@@ -1,3 +1,5 @@
+from sqlalchemy import desc
+
 from classes.classes import (
     Team,
     Year,
@@ -75,6 +77,11 @@ class SQL_Read:
     def getTotalTeamYears(self):
         self.reads += 1
         return self.session.query(TeamYear).count()
+
+    def getLeaderboard(self, year):
+        self.reads += 1
+        return self.session.query(TeamYear) \
+            .filter_by(year_id=year).order_by(desc(TeamYear.elo_max)).all()
 
     '''Event'''
 

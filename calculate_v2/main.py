@@ -16,17 +16,18 @@ from scripts import (
     search,
 )
 
-start_year = 2002
+start_year = 2016
 end_year = 2020
 clean = False
+cache = True
 
 TBA = read_tba.ReadTBA()
 SQL = sql.SQL(clean=clean, echo=False)
 SQL_Read = read.SQL_Read(SQL)
 SQL_Write = write.SQL_Write(SQL, SQL_Read)
 
-# process_tba.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=clean) # 14 minutes  # noqa 502
-# process_avg.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean=clean) # 7 seconds  # noqa 502
-# process_elo.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean)
+# process_tba.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean, cache) # 14 minutes  # noqa 502
+# process_avg.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # 7 seconds  # noqa 502
+# process_elo.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # ~30 minutes  # noqa 502
 process_opr.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean)
 search.search(SQL_Read)

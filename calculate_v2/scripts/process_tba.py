@@ -63,7 +63,7 @@ def process(start_year, end_year, TBA, SQL_Write, SQL_Read,
                                        check=(not clean),
                                        add=False,
                                        commit=False)
-            # SQL_Write.add()
+            SQL_Write.add()
         SQL_Write.add()
         printStats(TBA, SQL_Write, SQL_Read)
 

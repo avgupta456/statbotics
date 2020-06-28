@@ -25,6 +25,11 @@ SQL = sql.SQL(clean=clean, echo=False)
 SQL_Read = read.SQL_Read(SQL)
 SQL_Write = write.SQL_Write(SQL, SQL_Read)
 
+teamYears = SQL_Read.getLeaderboard(year=2020)
+for teamYear in teamYears:
+    print(teamYear, teamYear.elo_start, teamYear.elo_max)
+
+'''
 year = 2017
 year_obj = SQL_Read.getYear(year)
 sd_score = year_obj.score_sd
@@ -38,3 +43,4 @@ for event in events[:1]:
         print(team, oprs[team][-1][0])
     print(len(oprs[team]))
     print(len(quals))
+'''

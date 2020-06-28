@@ -124,7 +124,7 @@ class SQL_Write:
             if commit:
                 self.commit()
             return True, self.event_id
-        return False
+        return False, self.event_id
 
     '''TeamEvent'''
 

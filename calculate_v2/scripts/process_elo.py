@@ -35,6 +35,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         teamYears = SQL_Read.getTeamYears(year=year)
 
         print("Team Year Setup")
+        count = 0
         for teamYear in teamYears:
             # eventually will need 2021 logic here (continuation season)
             num = teamYear.team_id
@@ -56,10 +57,14 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
             team_elos[num] = start if year == 2002 else start_rating
             teamYear.elo_start = team_elos[num]  # saves new elo
 
+            count += 1
+            if count % 1000 == 0:
+                SQL_Write.add()
+
         print("Matches")
         acc, mse, count = 0, 0, 0  # for statistics
         matches = SQL_Read.getMatches_year(year=year)
-        for match in matches:
+        for match in sorted(matches):
             red, blue = match.getTeams()
             red_elo_pre, blue_elo_pre = {}, {}
             for t in red: red_elo_pre[t] = team_elos[t]  # noqa 702
@@ -79,6 +84,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
             red_elo_post, blue_elo_post = elo.update_rating(
                 year, sd_score, red_elo_pre, blue_elo_pre,
                 match.red_score, match.blue_score, match.playoff)
+            match.setElosPost(red_elo_post, blue_elo_post)
 
             # update dictionaries
             for t in red:
@@ -101,7 +107,6 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         # aggregate stats
         acc = round(acc / len(matches), 4)
         mse = round(mse / len(matches), 4)
-        year_elos = []
 
         SQL_Write.commit()  # optional
 
@@ -117,6 +122,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
                     continue
 
                 elos = [m.elo for m in data]
+                elos.append(data[-1].elo_end)
                 team_event.elo_start = elos[0]
                 team_event.elo_end = elos[-1]
                 team_event.elo_max = max(elos)
@@ -130,6 +136,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
                         ind = min(i+1, len(data)-1)
                         team_event.elo_pre_playoffs = data[ind].elo
                         cont = False
+
             count += 1
             if count % 1000 == 0:
                 SQL_Write.add()
@@ -150,6 +157,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
             event.elo_sd = round(statistics.pstdev(elos), 2)
 
         print("Team Years")
+        year_elos, count = [], 0
         for team in team_matches:
             elos = team_matches[team]
             if elos == []:
@@ -164,12 +172,16 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
                 team_years[team].elo_diff = team_years[team].elo_end \
                     - team_years[team].elo_start
 
-                pre_champs = -1
+                pre_champs = team_years[team].elo_start
                 for team_event in sorted(team_years[team].team_events):
                     # goes from team_event to event
                     if team_event.event.type < 3:
                         pre_champs = team_event.elo_end
                 team_years[team].elo_pre_champs = pre_champs
+
+            count += 1
+            if count % 1000 == 0:
+                SQL_Write.add()
 
         print("Years")
         year_elos.sort(reverse=True)
