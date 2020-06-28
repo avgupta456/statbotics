@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.linalg
 
+from helper.utils import logistic
+
 
 def score(match, alliance):
     if alliance == "red":
@@ -176,12 +178,49 @@ def get_ixOPR(event, quals, playoffs, func=all, event_func=event_all):
     return out
 
 
+def get_ILS(event, quals):
+    teams, out = [], {}
+    for team_event in event.team_events:
+        teams.append(team_event.team_id)
+        out[teams[-1]] = np.zeros(shape=(len(quals)+1, 2))
+        curr = [team_event.ils_1_start, team_event.ils_2_start]
+        out[teams[-1]][0] = np.array(curr)
+
+    for i, m in enumerate(quals):
+        red, blue = m.getTeams()
+        adjust_red_1 = (m.red_rp_1 - logistic(sum([out[r][i][0] for r in red]))) / 10 # noqa 502
+        adjust_red_2 = (m.red_rp_2 - logistic(sum([out[r][i][1] for r in red]))) / 10 # noqa 502
+        adjust_blue_1 = (m.blue_rp_1 - logistic(sum([out[b][i][0] for b in blue]))) / 10 # noqa 502
+        adjust_blue_2 = (m.blue_rp_2 - logistic(sum([out[b][i][1] for b in blue]))) / 10 # noqa 502
+
+        for t in teams:
+            out[t][i+1] = out[t][i]
+            if t in red:
+                out[t][i+1][0] = max(-0.2, out[t][i][0]+adjust_red_1)
+                out[t][i+1][1] = max(-0.2, out[t][i][1]+adjust_red_2)
+            elif t in blue:
+                out[t][i+1][0] = max(-0.2, out[t][i][0]+adjust_blue_1)
+                out[t][i+1][1] = max(-0.2, out[t][i][1]+adjust_blue_2)
+
+    return out
+
+
 def opr_v1(event, quals, playoffs):
     return get_ixOPR(event, quals, playoffs, score, event_score)
 
 
 def opr_v2(event, quals, playoffs):
-    return get_ixOPR(event, quals, playoffs, all, event_all)
+    OPRs = get_ixOPR(event, quals, playoffs, all, event_all)
+    ILS = get_ILS(event, quals)
+    return OPRs, ILS
+
+
+def opr_standalone(SQL_Read, event):
+    quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
+    playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))
+    OPRs = get_ixOPR(event, quals, playoffs, all, event_all)
+    ILS = get_ILS(event, quals)
+    return OPRs, ILS
 
 
 def win_prob(red, blue, year, sd_score):

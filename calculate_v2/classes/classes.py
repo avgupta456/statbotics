@@ -271,6 +271,12 @@ class TeamEvent(Base):
     opr_fouls = Column(Float)
     opr_no_fouls = Column(Float)
 
+    '''ILS'''
+    ils_1_start = Column(Float)
+    ils_2_start = Column(Float)
+    ils_1_end = Column(Float)
+    ils_2_end = Column(Float)
+
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
         if self.team_id == other.team_id:
@@ -286,6 +292,7 @@ class TeamEvent(Base):
         return self.__repr__()
 
     def setOPRs(self, dict):
+        self.opr_end = dict["opr_end"]
         self.opr_auto = dict["opr_auto"]
         self.opr_teleop = dict["opr_teleop"]
         self.opr_1 = dict["opr_1"]
@@ -293,6 +300,8 @@ class TeamEvent(Base):
         self.opr_endgame = dict["opr_endgame"]
         self.opr_fouls = dict["opr_fouls"]
         self.opr_no_fouls = dict["opr_no_fouls"]
+        self.ils_1_end = dict["ils_1_end"]
+        self.ils_2_end = dict["ils_2_end"]
 
 
 class Match(Base):
@@ -552,6 +561,8 @@ class TeamMatch(Base):
         self.opr_endgame = dict["opr_endgame"]
         self.opr_fouls = dict["opr_fouls"]
         self.opr_no_fouls = dict["opr_no_fouls"]
+        self.ils_1 = dict["ils_1_end"]
+        self.ils_2 = dict["ils_2_end"]
 
 
 def createTables(engine):

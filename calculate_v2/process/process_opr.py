@@ -7,7 +7,7 @@ from helper.utils import clean, logistic, logistic_inv
 
 def process_event(event, quals, playoffs, year, sd_score,
                   team_ils_1, team_ils_2):
-    oprs = opr_model.opr_v2(event, quals, playoffs)
+    oprs, ils = opr_model.opr_v2(event, quals, playoffs)
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
     for i, m in enumerate(sorted(quals)+sorted(playoffs)):
@@ -37,30 +37,20 @@ def process_event(event, quals, playoffs, year, sd_score,
         if m.winner == m.mix_winner:
             mix_acc += 1
 
-        red_ils_1s, red_ils_2s, blue_ils_1s, blue_ils_2s = [], [], [], []
-        team_matches = m.team_matches
-        for team_match in team_matches:
-            num = team_match.team_id
-            ils1, ils2 = team_ils_1[num], team_ils_2[num]
-            if team_match.alliance == "red":
-                red_ils_1s.append(ils1)
-                red_ils_2s.append(ils2)
-                team_match.ils_1 = ils1
-                team_match.ils_2 = ils2
-            else:
-                blue_ils_1s.append(ils1)
-                blue_ils_2s.append(ils2)
-                team_match.ils_1 = ils1
-                team_match.ils_2 = ils2
-        m.red_ils_1_sum = red_ils_1_sum = sum(red_ils_1s)
-        m.red_ils_2_sum = red_ils_2_sum = sum(red_ils_2s)
-        m.blue_ils_1_sum = blue_ils_1_sum = sum(blue_ils_1s)
-        m.blue_ils_2_sum = blue_ils_2_sum = sum(blue_ils_2s)
+        count += 1
+
+        '''ILS STATS'''
+
+        m.red_ils_1_sum = red_ils_1_sum = sum([clean(ils[r][ind][0]) for r in red])  # noqa 502
+        m.red_ils_2_sum = red_ils_2_sum = sum([clean(ils[r][ind][1]) for r in red])  # noqa 502
+        m.blue_ils_1_sum = blue_ils_1_sum = sum([clean(ils[b][ind][0]) for b in blue])  # noqa 502
+        m.blue_ils_2_sum = blue_ils_2_sum = sum([clean(ils[b][ind][1]) for b in blue])  # noqa 502
         m.red_rp_1_prob = red_rp_1_prob = logistic(red_ils_1_sum)
         m.red_rp_2_prob = red_rp_2_prob = logistic(red_ils_2_sum)
         m.blue_rp_1_prob = blue_rp_1_prob = logistic(blue_ils_1_sum)
         m.blue_rp_2_prob = blue_rp_2_prob = logistic(blue_ils_2_sum)
 
+        # only predict on quals as elims don't have Ranking Points
         if m.playoff == 0:
             red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
             blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
@@ -68,28 +58,15 @@ def process_event(event, quals, playoffs, year, sd_score,
             if int(red_rp_2_prob + 0.5) == red_rp_2: rp2_acc += 1  # noqa 702
             if int(blue_rp_1_prob + 0.5) == blue_rp_1: rp1_acc += 1  # noqa 702
             if int(blue_rp_2_prob + 0.5) == blue_rp_2: rp2_acc += 1  # noqa 702
-            # only predict on quals as elims don't have Ranking Points
             rp1_mse += (red_rp_1_prob - red_rp_1) ** 2
             rp2_mse += (red_rp_2_prob - red_rp_2) ** 2
             rp1_mse += (blue_rp_1_prob - blue_rp_1) ** 2
             rp2_mse += (blue_rp_2_prob - blue_rp_2) ** 2
-
-            adjust_red_1 = 0.1 * (red_rp_1 - red_rp_1_prob)
-            adjust_red_2 = 0.1 * (red_rp_2 - red_rp_2_prob)
-            adjust_blue_1 = 0.1 * (blue_rp_1 - blue_rp_1_prob)
-            adjust_blue_2 = 0.1 * (blue_rp_2 - blue_rp_2_prob)
-            for r in red:
-                team_ils_1[r] = max(-0.2, team_ils_1[r]+adjust_red_1)
-                team_ils_2[r] = max(-0.2, team_ils_2[r]+adjust_red_2)
-            for b in blue:
-                team_ils_1[b] = max(-0.2, team_ils_1[b]+adjust_blue_1)
-                team_ils_2[b] = max(-0.2, team_ils_2[b]+adjust_blue_2)
             count_rp += 2
-        count += 1
 
     stats = [opr_acc, opr_mse, mix_acc, mix_mse, count,
              rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
-    return oprs, team_ils_1, team_ils_2, stats
+    return oprs, ils, team_ils_1, team_ils_2, stats
 
 
 def process(start_year, end_year, SQL_Read, SQL_Write):
@@ -178,10 +155,12 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.opr_endgame = team_years[num].opr_endgame
                     team_event.opr_fouls = team_years[num].opr_fouls
                     team_event.opr_no_fouls = team_years[num].opr_no_fouls
+                    team_event.ils_1_start = team_ils_1[num]
+                    team_event.ils_2_start = team_ils_2[num]
 
             quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
             playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))  # noqa 502
-            oprs, team_ils_1, team_ils_2, stats = \
+            oprs, ils, team_ils_1, team_ils_2, stats = \
                 process_event(event, quals, playoffs, year, sd_score,
                               team_ils_1, team_ils_2)
 
@@ -201,7 +180,11 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 if num not in oprs:
                     continue
 
+                opr = clean(oprs[num][-1][0])
+                ils_1 = clean(ils[num][-1][0])
+                ils_2 = clean(ils[num][-1][1])
                 dict_end = {
+                    "opr_end": opr,
                     "opr_auto": clean(oprs[num][-1][1]),
                     "opr_teleop": clean(oprs[num][-1][2]),
                     "opr_1": clean(oprs[num][-1][3]),
@@ -209,6 +192,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     "opr_endgame": clean(oprs[num][-1][5]),
                     "opr_fouls": clean(oprs[num][-1][6]),
                     "opr_no_fouls": clean(oprs[num][-1][7]),
+                    "ils_1_end": ils_1,
+                    "ils_2_end": ils_2,
                 }
 
                 team_event.setOPRs(dict_end)
@@ -230,12 +215,14 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                                 "opr_endgame": clean(oprs[num][i][5]),
                                 "opr_fouls": clean(oprs[num][i][6]),
                                 "opr_no_fouls": clean(oprs[num][i][7]),
+                                "ils_1_end": clean(ils[num][i][0]),
+                                "ils_2_end": clean(ils[num][i][1]),
                             }
                         )
 
-                opr = clean(oprs[num][-1][0])
-                team_event.opr_end = opr
                 team_oprs[num] = opr
+                team_ils_1[num] = ils_1
+                team_ils_2[num] = ils_2
                 if num not in team_events:
                     team_events[num] = []
                 team_events[num].append(opr)
