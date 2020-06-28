@@ -1,6 +1,6 @@
 import statistics
 
-from scripts.logging import printStats
+from process.logging import printStats
 
 
 def process(start_year, end_year, SQL_Write, SQL_Read):

@@ -1,19 +1,9 @@
-from classes import (
-    sql,
-    read,
-    write
-)
-
-from tba import (
-    read_tba,
-)
-
-from scripts import (
+from helper import setup
+from process import (
     process_tba,
     process_avg,
     process_elo,
     process_opr,
-    search,
 )
 
 start_year = 2016
@@ -21,11 +11,7 @@ end_year = 2020
 clean = False
 cache = True
 
-TBA = read_tba.ReadTBA()
-SQL = sql.SQL(clean=clean, echo=False)
-SQL_Read = read.SQL_Read(SQL)
-SQL_Write = write.SQL_Write(SQL, SQL_Read)
-
+TBA, SQL, SQL_Read, SQL_Write = setup.setup(clean)
 # process_tba.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean, cache) # 14 minutes  # noqa 502
 # process_avg.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # 7 seconds  # noqa 502
 # process_elo.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # ~30 minutes  # noqa 502

@@ -1,6 +1,6 @@
 import statistics
 
-from scripts.logging import printStats
+from process.logging import printStats
 from models import opr as opr_model
 from helper.utils import clean, logistic, logistic_inv
 
