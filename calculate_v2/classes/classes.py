@@ -83,6 +83,12 @@ class Year(Base):
     mix_acc = Column(Float)
     mix_mse = Column(Float)
 
+    '''ILS'''
+    rp1_acc = Column(Float)
+    rp1_mse = Column(Float)
+    rp2_acc = Column(Float)
+    rp2_mse = Column(Float)
+
     '''CONSTANTS'''
     score_mean = Column(Float)
     score_sd = Column(Float)
@@ -93,6 +99,8 @@ class Year(Base):
     endgame_mean = Column(Float)
     foul_mean = Column(Float)
     no_foul_mean = Column(Float)
+    rp_1_mean = Column(Float)
+    rp_2_mean = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -138,6 +146,10 @@ class TeamYear(Base):
     opr_endgame = Column(Float)
     opr_fouls = Column(Float)
     opr_no_fouls = Column(Float)
+
+    '''ILS'''
+    ils_1 = Column(Float)
+    ils_2 = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
@@ -305,10 +317,14 @@ class Match(Base):
     red = Column(String(20))
     red_elo_sum = Column(Float)
     red_opr_sum = Column(Float)
+    red_ils_1_sum = Column(Float)
+    red_ils_2_sum = Column(Float)
 
     blue = Column(String(20))
     blue_elo_sum = Column(Float)
     blue_opr_sum = Column(Float)
+    blue_ils_1_sum = Column(Float)
+    blue_ils_2_sum = Column(Float)
 
     winner = Column(String(10))
     elo_winner = Column(String(10))
@@ -317,6 +333,10 @@ class Match(Base):
     opr_win_prob = Column(Float)
     mix_winner = Column(String(10))
     mix_win_prob = Column(Float)
+    red_rp_1_prob = Column(Float)
+    red_rp_2_prob = Column(Float)
+    blue_rp_1_prob = Column(Float)
+    blue_rp_2_prob = Column(Float)
 
     playoff = Column(Integer)  # 0 is qual, 1 is playoff
     time = Column(Integer)
@@ -460,6 +480,13 @@ class Match(Base):
             else:
                 team_match.elo = blue_elos[team_match.team_id]
 
+    def setElosPost(self, red_elos, blue_elos):
+        for team_match in self.team_matches:
+            if team_match.alliance == "red":
+                team_match.elo_end = red_elos[team_match.team_id]
+            else:
+                team_match.elo_end = blue_elos[team_match.team_id]
+
 
 class TeamMatch(Base):
     '''DECLARATION'''
@@ -490,6 +517,8 @@ class TeamMatch(Base):
     '''GENERAL'''
 
     elo = Column(Float)
+    elo_end = Column(Float)
+
     opr_score = Column(Float)
     opr_auto = Column(Float)
     opr_teleop = Column(Float)
@@ -498,6 +527,9 @@ class TeamMatch(Base):
     opr_endgame = Column(Float)
     opr_no_fouls = Column(Float)
     opr_fouls = Column(Float)
+
+    ils_1 = Column(Float)
+    ils_2 = Column(Float)
 
     '''SUPER FUNCTIONS'''
     def __lt__(self, other):
