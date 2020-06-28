@@ -68,22 +68,22 @@ def process_event(event, quals, playoffs, year, sd_score,
             if int(red_rp_2_prob + 0.5) == red_rp_2: rp2_acc += 1  # noqa 702
             if int(blue_rp_1_prob + 0.5) == blue_rp_1: rp1_acc += 1  # noqa 702
             if int(blue_rp_2_prob + 0.5) == blue_rp_2: rp2_acc += 1  # noqa 702
+            # only predict on quals as elims don't have Ranking Points
             rp1_mse += (red_rp_1_prob - red_rp_1) ** 2
             rp2_mse += (red_rp_2_prob - red_rp_2) ** 2
             rp1_mse += (blue_rp_1_prob - blue_rp_1) ** 2
             rp2_mse += (blue_rp_2_prob - blue_rp_2) ** 2
-            count_rp += 1
 
             adjust_red_1 = 0.1 * (red_rp_1 - red_rp_1_prob)
             adjust_red_2 = 0.1 * (red_rp_2 - red_rp_2_prob)
             adjust_blue_1 = 0.1 * (blue_rp_1 - blue_rp_1_prob)
             adjust_blue_2 = 0.1 * (blue_rp_2 - blue_rp_2_prob)
             for r in red:
-                team_ils_1[r] = max(team_ils_1[r]+adjust_red_1, -1)
-                team_ils_2[r] = max(team_ils_2[r]+adjust_red_2, -1)
+                team_ils_1[r] = max(-0.2, team_ils_1[r]+adjust_red_1)
+                team_ils_2[r] = max(-0.2, team_ils_2[r]+adjust_red_2)
             for b in blue:
-                team_ils_1[b] = max(team_ils_1[b]+adjust_blue_1, -1)
-                team_ils_2[b] = max(team_ils_2[b]+adjust_blue_2, -1)
+                team_ils_1[b] = max(-0.2, team_ils_1[b]+adjust_blue_1)
+                team_ils_2[b] = max(-0.2, team_ils_2[b]+adjust_blue_2)
             count_rp += 2
         count += 1
 

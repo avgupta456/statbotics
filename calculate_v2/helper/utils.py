@@ -54,4 +54,4 @@ def logistic(n):
 
 def logistic_inv(n):
     if n <= 0: return -1  # noqa 702
-    return float(-np.log((1-n)/np.e**2/n)/4)
+    return max(-1/6, float(-np.log((1-n)/np.e**2/n)/4))
