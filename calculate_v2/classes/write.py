@@ -23,7 +23,7 @@ class SQL_Write:
         self.session = SQL.getSession()
         self.read = SQL_Read
 
-    def add(self, match_objects=False):
+    def add(self):
         if self.objects != []:
             self.session.add_all(self.objects)
             self.objects = []
