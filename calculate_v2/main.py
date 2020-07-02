@@ -7,7 +7,7 @@ from process import (
     process_opr,
 )
 
-start_year = 2016
+start_year = 2002
 end_year = 2020
 clean = False
 cache = True

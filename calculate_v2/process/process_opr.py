@@ -241,7 +241,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             # 1771 in 2004 only played in elims shrug
             if num not in team_events:
                 continue
-            team_years[num].opr_end = team_events[num][-1]
+            team_years[num].opr_end = max(team_events[num])
             team_years[num].ils_1 = team_ils_1[num]
             team_years[num].ils_2 = team_ils_2[num]
             oprs.append(max(team_events[num]))
