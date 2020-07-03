@@ -1,6 +1,8 @@
 import random
 import copy
 
+import matplotlib.pyplot as plt
+
 from helper import setup, utils
 from models import opr as opr_model
 from models import elo as elo_model
@@ -147,6 +149,7 @@ def indexSim(index, iterations, teams, quals, team_matches, preds, rps, ties):
 def sim(year, event_key, iterations):
     event, quals, playoffs, sd_score = getObjects(event_key, year)
     oprs, ils, elos, rps, ties, teams = getDicts(event, quals, playoffs)
+    out = {t: [] for t in teams}
     for i, m in enumerate(quals):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
         team_matches, preds = getPreds(i, quals, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
@@ -154,19 +157,21 @@ def sim(year, event_key, iterations):
             i, iterations, teams, quals, team_matches, preds, rps, ties)
 
         print(i)
-        if i % 10 == 0:
-            for team in teams:
-                a = round(mean_rps[team][-1][0], 2)
-                b = round(mean_ties[team][-1][0], 2)
-                c = round(avg_rps[team][-1][0], 2)
-                d = round(avg_ranks[team], 2)
-                e = round(ranks[team][0], 2)
-                print(team, a, b, c, d, e)
+        for team in teams:
+            a = round(mean_rps[team][-1][0], 2)
+            b = round(mean_ties[team][-1][0], 2)
+            c = round(avg_rps[team][-1][0], 2)
+            d = round(avg_ranks[team], 2)
+            e = ranks[team]
+            out[team].append([a, b, c, d, e])
+            if i % 10 == 0:
+                print(team, a, b, c, d, e[0])
+    return out
 
 
-year, event_key = 2019, 'nccmp'
+year, event_key = 2020, 'ncwak'
 index = 0  # after match 0 aka start of event
-iterations = 1000  # simulations on index
+iterations = 100  # simulations on index
 
 '''
 event, quals, playoffs, sd_score = getObjects(event_key, year)
@@ -180,7 +185,26 @@ mean_rps, mean_ties, avg_rps, avg_ranks, ranks = indexSim(
     index, iterations, teams, quals, team_matches, preds, rps, ties)
 '''
 
-sim(year, event_key, iterations)
+fig, ax = plt.subplots()
+x, y1, y2, y3 = [], [], [], []
+
+out = sim(year, event_key, iterations)
+preds1 = out[5511]
+preds2 = out[5160]
+preds3 = out[6502]
+for i in range(len(preds1)):
+    pred1 = preds1[i]
+    pred2 = preds2[i]
+    pred3 = preds3[i]
+    x.append(i)
+    y1.append(pred1[3])
+    y2.append(pred2[3])
+    y3.append(pred3[3])
+
+ax.plot(x, y1)
+ax.plot(x, y2)
+ax.plot(x, y3)
+plt.show()
 
 '''
 avg_rps = {k: v for k, v in sorted(avg_rps.items(), key=lambda item: -item[1])}
@@ -191,14 +215,4 @@ for team in avg_rps:
     rank = round(avg_rank[team]/iterations, 20)
     print(team, rp, rp2, tie, rank)
 print()
-'''
-
-'''
-for i in range(index+1, len(quals)):
-    print("Predicting Match", i+1)
-    print("Score:", preds[i][0], preds[i][1])
-    print("Red Win Prob:", preds[i][2])
-    print("Red RP Probs:", preds[i][3], preds[i][4])
-    print("Blue RP Probs:", preds[i][5], preds[i][6])
-    print()
 '''
