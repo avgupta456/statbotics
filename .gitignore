@@ -2,7 +2,6 @@
 *.pyc
 
 calculate/constants.py
-calculate_v2/classes/constants.py
 docs/*
 
 calculate/data/processed_matches/*
