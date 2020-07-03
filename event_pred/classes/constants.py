@@ -28,11 +28,10 @@ if MYSQL_USERNAME is None or \
     MYSQL_PORT = getEnvVar(client, "MYSQL_PORT")
     MYSQL_DATABASE = getEnvVar(client, "MYSQL_DATABASE")
 
-# comment out to use the production database
-# CLOUDSQL_DATABASE += "2"
-
+'''
 print(MYSQL_USERNAME)
 print(MYSQL_PASSWORD)
 print(MYSQL_HOST)
 print(MYSQL_PORT)
 print(MYSQL_DATABASE)
+'''
