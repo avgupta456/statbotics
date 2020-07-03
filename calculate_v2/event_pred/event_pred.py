@@ -1,7 +1,5 @@
+import datetime
 import random
-import copy
-
-import matplotlib.pyplot as plt
 
 from helper import setup, utils
 from models import opr as opr_model
@@ -78,26 +76,29 @@ def getPreds(index, quals, oprs_curr, elos_curr, ils_curr, year, sd_score):
 
 
 def meanSim(index, quals, teams, team_matches, preds, rps, ties):
-    rps, ties = copy.deepcopy(rps), copy.deepcopy(ties)
+    rps_out, ties_out = {}, {}
+    for team in teams:
+        rps_out[team] = rps[team][index][0]
+        ties_out[team] = ties[team][index][0]
     for i in range(index, len(quals)):
         red, blue = team_matches[i]
         red_rps = preds[i][2] * 2 + preds[i][3] + preds[i][4]
         blue_rps = (1-preds[i][2]) * 2 + preds[i][5] + preds[i][6]
         for team in teams:
-            rps[team][i+1][0] = rps[team][i][0]
-            ties[team][i+1][0] = ties[team][i][0]
             if team in red:
-                rps[team][i+1][0] += red_rps
-                ties[team][i+1][0] += preds[i][7]
+                rps_out[team] += red_rps
+                ties_out[team] += preds[i][7]
             if team in blue:
-                rps[team][i+1][0] += blue_rps
-                ties[team][i+1][0] += preds[i][8]
-    return rps, ties
+                rps_out[team] += blue_rps
+                ties_out[team] += preds[i][8]
+    return rps_out, ties_out
 
 
-# note ties already prepared
 def singleSim(index, quals, teams, team_matches, preds, rps, mean_ties):
-    rps = copy.deepcopy(rps)
+    rps_out, ranks_out = {}, {}
+    for team in teams:
+        rps_out[team] = rps[team][index][0]
+
     for i in range(index, len(quals)):
         red, blue = team_matches[i]
         red_rps, blue_rps = 0, 0
@@ -107,19 +108,13 @@ def singleSim(index, quals, teams, team_matches, preds, rps, mean_ties):
         if preds[i][4] > random.uniform(0, 1): red_rps += 1  # noqa 702
         if preds[i][5] > random.uniform(0, 1): blue_rps += 1  # noqa 702
         if preds[i][6] > random.uniform(0, 1): blue_rps += 1  # noqa 702
+        for team in red: rps_out[team] += red_rps  # noqa 702
+        for team in blue: rps_out[team] += blue_rps  # noqa 702
 
-        for team in teams:
-            rps[team][i+1][0] = rps[team][i][0]
-            if team in red:
-                rps[team][i+1][0] = rps[team][i][0]+red_rps
-            if team in blue:
-                rps[team][i+1][0] = rps[team][i][0]+blue_rps
-
-    ranks = {}
-    for team in teams: ranks[team] = [rps[team][-1][0], mean_ties[team][-1][0]]  # noqa 702
-    ranks = sorted(ranks, key=lambda k: (ranks[k][0], ranks[k][1]))[::-1]
-    ranks = {ranks[i]: i+1 for i in range(len(ranks))}
-    return rps, ranks
+    for team in teams: ranks_out[team] = [rps_out[team], mean_ties[team]]  # noqa 702
+    ranks_out = sorted(ranks_out, key=lambda k: (ranks_out[k][0], ranks_out[k][1]))[::-1]  # noqa 502
+    ranks_out = {ranks_out[i]: i+1 for i in range(len(ranks_out))}
+    return rps_out, ranks_out
 
 
 def indexSim(index, iterations, teams, quals, team_matches, preds, rps, ties):
@@ -146,73 +141,42 @@ def indexSim(index, iterations, teams, quals, team_matches, preds, rps, ties):
     return mean_rps, mean_ties, avg_rps, avg_ranks, ranks
 
 
-def sim(year, event_key, iterations):
+def quickSim(year, event_key):
     event, quals, playoffs, sd_score = getObjects(event_key, year)
     oprs, ils, elos, rps, ties, teams = getDicts(event, quals, playoffs)
     out = {t: [] for t in teams}
-    for i, m in enumerate(quals):
+    for i in range(len(quals)+1):
+        oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
+        team_matches, preds = getPreds(i, quals, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
+        mean_rps, mean_ties = meanSim(i, quals, teams, team_matches, preds, rps, ties)  # noqa 502
+        for team in teams:
+            out[team].append([mean_rps[team], mean_ties[team]])
+    return out
+
+
+def sim(year, event_key, iterations=100):
+    event, quals, playoffs, sd_score = getObjects(event_key, year)
+    oprs, ils, elos, rps, ties, teams = getDicts(event, quals, playoffs)
+    out = {t: [] for t in teams}
+    for i in range(len(quals)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
         team_matches, preds = getPreds(i, quals, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
         mean_rps, mean_ties, avg_rps, avg_ranks, ranks = indexSim(
             i, iterations, teams, quals, team_matches, preds, rps, ties)
-
-        print(i)
         for team in teams:
-            a = round(mean_rps[team][-1][0], 2)
-            b = round(mean_ties[team][-1][0], 2)
-            c = round(avg_rps[team][-1][0], 2)
-            d = round(avg_ranks[team], 2)
-            e = ranks[team]
-            out[team].append([a, b, c, d, e])
-            if i % 10 == 0:
-                print(team, a, b, c, d, e[0])
+            out[team].append([mean_rps[team], mean_ties[team], avg_rps[team],
+                              avg_ranks[team], ranks[team]])
     return out
 
 
 year, event_key = 2020, 'ncwak'
 index = 0  # after match 0 aka start of event
-iterations = 100  # simulations on index
 
-'''
-event, quals, playoffs, sd_score = getObjects(event_key, year)
-oprs, ils, elos, rps, ties, teams = getDicts(event, quals, playoffs)
-oprs_curr, ils_curr, elos_curr = getCurrStats(index, teams, oprs, ils, elos)
-team_matches, preds = getPreds(index, quals, oprs_curr, elos_curr,
-                               ils_curr, year, sd_score)
-rps, ties = meanSim(index, quals, team_matches, preds, rps, ties)
-rps, ranks = singleSim(index, quals, team_matches, preds, rps, ties)
-mean_rps, mean_ties, avg_rps, avg_ranks, ranks = indexSim(
-    index, iterations, teams, quals, team_matches, preds, rps, ties)
-'''
-
-fig, ax = plt.subplots()
-x, y1, y2, y3 = [], [], [], []
-
-out = sim(year, event_key, iterations)
-preds1 = out[5511]
-preds2 = out[5160]
-preds3 = out[6502]
-for i in range(len(preds1)):
-    pred1 = preds1[i]
-    pred2 = preds2[i]
-    pred3 = preds3[i]
-    x.append(i)
-    y1.append(pred1[3])
-    y2.append(pred2[3])
-    y3.append(pred3[3])
-
-ax.plot(x, y1)
-ax.plot(x, y2)
-ax.plot(x, y3)
-plt.show()
-
-'''
-avg_rps = {k: v for k, v in sorted(avg_rps.items(), key=lambda item: -item[1])}
-for team in avg_rps:
-    rp = round(avg_rps[team]/iterations, 2)
-    rp2 = round(float(test_rps[team][-1][0]), 2)
-    tie = round(avg_tie[team]/iterations, 2)
-    rank = round(avg_rank[team]/iterations, 20)
-    print(team, rp, rp2, tie, rank)
+start = datetime.datetime.now()
+out = sim(year, event_key)
+for team in out.keys():
+    print(team, round(out[team][index][0], 2), round(out[team][index][1], 2))
 print()
-'''
+
+end = datetime.datetime.now()
+print(end-start)

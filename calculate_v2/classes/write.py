@@ -17,11 +17,15 @@ class SQL_Write:
         self.commits = 0
         self.objects = []
 
-        self.match_id = SQL_Read.getTotalMatches()
-        self.event_id = SQL_Read.getTotalEvents()
+        self.match_id = -1
+        self.event_id = -1
 
         self.session = SQL.getSession()
         self.read = SQL_Read
+
+    def setIDs(self):
+        self.match_id = self.read.getTotalMatches()
+        self.event_id = self.read.getTotalEvents()
 
     def add(self):
         if self.objects != []:
@@ -101,6 +105,7 @@ class SQL_Write:
     '''Event'''
 
     def addEvent(self, dict, check=True, add=False, commit=False):
+        if self.event_id < 0: self.setIDs()  # noqa 702
         if not check or self.read.getEvent_byKey(dict["key"]) is None:
             district = dict["district"]
             if district is None:
@@ -151,6 +156,7 @@ class SQL_Write:
     '''Match'''
 
     def addMatch(self, dict, check=True, add=False, commit=False):
+        if self.match_id < 0: self.setIDs()  # noqa 702
         year_id = dict["year"]
         event_id = dict["event"]
         if not check or self.read.getMatch_byKey(dict["key"]) is None:
