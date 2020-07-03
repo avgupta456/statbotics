@@ -30,12 +30,11 @@ def getOPRTiebreakers(oprs, red, blue, year):
         return [red_oprs[1], blue_oprs[1]]
 
 
-def get_tie(event, quals):
-    teams, out = [], {}
-    for team_event in event.team_events:
-        teams.append(team_event.team_id)
-        out[teams[-1]] = np.zeros(shape=(len(quals)+1, 1))
-        out[teams[-1]][0] = 0
+def get_tiebreakers(event, quals, teams):
+    out = {}
+    for team in teams:
+        out[team] = np.zeros(shape=(len(quals)+1, 1))
+        out[team][0] = 0
 
     year = event.year_id
     for i, m in enumerate(quals):

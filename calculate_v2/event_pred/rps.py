@@ -1,12 +1,11 @@
 import numpy as np
 
 
-def get_rps(event, quals):
-    teams, out = [], {}
-    for team_event in event.team_events:
-        teams.append(team_event.team_id)
-        out[teams[-1]] = np.zeros(shape=(len(quals)+1, 1))
-        out[teams[-1]][0] = 0
+def get_rps(event, quals, teams):
+    out = {}
+    for team in teams:
+        out[team] = np.zeros(shape=(len(quals)+1, 1))
+        out[team][0] = 0
 
     for i, m in enumerate(quals):
         red, blue = m.getTeams()
