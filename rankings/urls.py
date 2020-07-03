@@ -108,5 +108,7 @@ urlpatterns = [
     path('api/events/year/<year>', views.EventYear),
     path('api/events/year/<year>/by/<elo>', views.EventYear_byElo),
 
+    path('api/event_pred', views.EventPred),
+
     path('api/', include(router.urls)),
 ]

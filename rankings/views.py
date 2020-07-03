@@ -708,3 +708,16 @@ def EventYear_byElo(request, year, elo):
     events = events.filter(year=year).order_by("-" + elo)
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
+
+
+'''
+EVENT PRED (TEMPORARY)
+'''
+
+from event_pred import event_pred
+
+
+@api_view(['GET'])
+def EventPred(request):
+    print(event_pred.quickSim(2019, "nccmp"))
+    return Response()
