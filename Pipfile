@@ -18,6 +18,9 @@ django-filter = "*"
 google-cloud-datastore = "*"
 flake8 = "*"
 drf-yasg = "*"
+sqlalchemy = "*"
+numpy = "*"
+scipy = "*"
 
 [requires]
 python_version = "3.7"
