@@ -7,20 +7,19 @@ from models import elo as elo_model
 from event_pred import rps as rps_model
 from event_pred import tiebreakers
 
-TBA, SQL, SQL_Read, SQL_Write = setup.setup(False)
+SQL_Read = setup.getSQL_Read()
 print("Finished Setup")
 
 
 def getObjects(event_key, year):
     event = SQL_Read.getEvent_byKey(str(year)+event_key)
     quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
-    playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))
     sd_score = event.year.score_sd
-    return event, quals, playoffs, sd_score
+    return event, quals, sd_score
 
 
-def getDicts(event, quals, playoffs):
-    oprs, ils = opr_model.opr_v2(event, quals, playoffs)
+def getDicts(event, quals):
+    oprs, ils = opr_model.opr_v2(event, quals, [])
     elos = elo_model.get_elos(event, quals)
     teams = oprs.keys()
 
@@ -142,8 +141,8 @@ def indexSim(index, iterations, teams, quals, team_matches, preds, rps, ties):
 
 
 def quickSim(year, event_key):
-    event, quals, playoffs, sd_score = getObjects(event_key, year)
-    oprs, ils, elos, rps, ties, teams = getDicts(event, quals, playoffs)
+    event, quals, sd_score = getObjects(event_key, year)
+    oprs, ils, elos, rps, ties, teams = getDicts(event, quals)
     out = {t: [] for t in teams}
     for i in range(len(quals)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
@@ -155,8 +154,8 @@ def quickSim(year, event_key):
 
 
 def sim(year, event_key, iterations=100):
-    event, quals, playoffs, sd_score = getObjects(event_key, year)
-    oprs, ils, elos, rps, ties, teams = getDicts(event, quals, playoffs)
+    event, quals, sd_score = getObjects(event_key, year)
+    oprs, ils, elos, rps, ties, teams = getDicts(event, quals)
     out = {t: [] for t in teams}
     for i in range(len(quals)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
