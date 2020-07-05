@@ -22,7 +22,7 @@ class SQL:
                                     MYSQL_DATABASE,
                                     echo=echo)
 
-        # sessionmake returns function
+        # sessionmaker returns function
         self.session = sessionmaker(bind=self.engine)()
 
         # resets tables
