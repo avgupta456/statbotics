@@ -144,6 +144,10 @@ def cleanState(state):
         return USA[state]
     if state in Canada:
         return Canada[state]
+    if state in USA.values():
+        return state
+    if state in Canada.values():
+        return state
     return "All"
 
 
