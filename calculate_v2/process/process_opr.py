@@ -119,6 +119,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 prior_opr = prior_opr/means[year-1]*mean_score
                 prior_opr = 0.90 * prior_opr + 0.10 * prior_opr_global
             teamYear.opr_start = prior_opr
+            teamYear.opr_end = prior_opr  # will be overwritten
 
             rate = prior_opr/prior_opr_global
             teamYear.opr_auto = rate * year_obj.auto_mean/TM
@@ -130,8 +131,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             teamYear.opr_no_fouls = rate * year_obj.no_foul_mean/TM
 
             boost = (teamYear.elo_start - 1500) * 0.001
-            team_ils_1[num] = ils_1_seed + boost
-            team_ils_2[num] = ils_2_seed + boost
+            teamYear.ils_1 = team_ils_1[num] = ils_1_seed + boost
+            teamYear.ils_2 = team_ils_2[num] = ils_2_seed + boost
 
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
@@ -266,10 +267,10 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         year_obj.opr_mse = round(opr_mse/count, 4)
         year_obj.mix_acc = round(mix_acc/count, 4)
         year_obj.mix_mse = round(mix_mse/count, 4)
-        year_obj.rp1_acc = round(rp1_acc/count_rp, 4)
-        year_obj.rp1_mse = round(rp1_mse/count_rp, 4)
-        year_obj.rp2_acc = round(rp2_acc/count_rp, 4)
-        year_obj.rp2_mse = round(rp2_mse/count_rp, 4)
+        year_obj.rp1_acc = -1 if year < 2016 else round(rp1_acc/count_rp, 4)
+        year_obj.rp1_mse = -1 if year < 2016 else round(rp1_mse/count_rp, 4)
+        year_obj.rp2_acc = -1 if year < 2016 else round(rp2_acc/count_rp, 4)
+        year_obj.rp2_mse = -1 if year < 2016 else round(rp2_mse/count_rp, 4)
 
         # for faster feedback, could be removed
         SQL_Write.commit()
