@@ -15,6 +15,7 @@ sqlalchemy = "*"
 flake8 = "*"
 pyinstrument = "*"
 scipy = "*"
+google-cloud-datastore = "*"
 
 [requires]
 python_version = "3.7"
