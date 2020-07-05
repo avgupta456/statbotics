@@ -179,6 +179,7 @@ def get_ixOPR(event, quals, playoffs, func=all, event_func=event_all):
 
 
 def get_ILS(event, quals):
+    min_ils = -1/3
     teams, out = [], {}
     for team_event in event.team_events:
         teams.append(team_event.team_id)
@@ -196,11 +197,11 @@ def get_ILS(event, quals):
         for t in teams:
             out[t][i+1] = out[t][i]
             if t in red:
-                out[t][i+1][0] = max(-0.2, out[t][i][0]+adjust_red_1)
-                out[t][i+1][1] = max(-0.2, out[t][i][1]+adjust_red_2)
+                out[t][i+1][0] = max(min_ils, out[t][i][0]+adjust_red_1)
+                out[t][i+1][1] = max(min_ils, out[t][i][1]+adjust_red_2)
             elif t in blue:
-                out[t][i+1][0] = max(-0.2, out[t][i][0]+adjust_blue_1)
-                out[t][i+1][1] = max(-0.2, out[t][i][1]+adjust_blue_2)
+                out[t][i+1][0] = max(min_ils, out[t][i][0]+adjust_blue_1)
+                out[t][i+1][1] = max(min_ils, out[t][i][1]+adjust_blue_2)
 
     return out
 
