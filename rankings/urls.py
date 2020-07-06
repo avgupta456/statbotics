@@ -21,12 +21,13 @@ schema_view = get_schema_view(
 )
 
 router = routers.DefaultRouter()
-router.register(r'_team_matches', views.TeamMatchView, 'team_match')
-router.register(r'_team_events', views.TeamEventView, 'team_event')
-router.register(r'_team_years', views.TeamYearView, 'team_year')
-router.register(r'_teams', views.TeamView, 'team')
-router.register(r'_events', views.EventView, 'event')
 router.register(r'_years', views.YearView, 'year')
+router.register(r'_teams', views.TeamView, 'team')
+router.register(r'_team_years', views.TeamYearView, 'team_year')
+router.register(r'_events', views.EventView, 'event')
+router.register(r'_team_events', views.TeamEventView, 'team_event')
+router.register(r'_matches', views.MatchView, 'match')
+router.register(r'_team_matches', views.TeamMatchView, 'team_match')
 
 # commented out url patterns still need models
 urlpatterns = [

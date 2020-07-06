@@ -3,30 +3,34 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .serializers import (
-    TeamMatchSerializer,
-    TeamEventSerializer,
-    TeamYearSerializer,
-    TeamSerializer,
-    EventSerializer,
     YearSerializer,
-    UserSerializer,
+    TeamSerializer,
+    TeamYearSerializer,
+    EventSerializer,
+    TeamEventSerializer,
+    MatchSerializer,
+    TeamMatchSerializer,
+    UserSerializer
 )
 
 from .filters import (
-    TeamMatchFilterSet,
-    TeamEventFilterSet,
-    TeamYearFilterSet,
-    TeamFilterSet,
-    EventFilterSet,
     YearFilterSet,
+    TeamFilterSet,
+    TeamYearFilterSet,
+    EventFilterSet,
+    TeamEventFilterSet,
+    MatchFilterSet,
+    TeamMatchFilterSet,
 )
+
 from .models import (
-    TeamMatch as TeamMatchModel,
-    TeamEvent as TeamEventModel,
-    TeamYear as TeamYearModel,
-    Team as TeamModel,
-    Event as EventModel,
     Year as YearModel,
+    Team as TeamModel,
+    TeamYear as TeamYearModel,
+    Event as EventModel,
+    TeamEvent as TeamEventModel,
+    Match as MatchModel,
+    TeamMatch as TeamMatchModel,
 )
 
 from django.contrib.auth.models import User
@@ -35,28 +39,12 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 
-class TeamMatchView(viewsets.ModelViewSet):
+class YearView(viewsets.ModelViewSet):
     swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    serializer_class = TeamMatchSerializer
-    queryset = TeamMatchModel.objects.all()
-    filterset_class = TeamMatchFilterSet
-
-
-class TeamEventView(viewsets.ModelViewSet):
-    swagger_schema = None
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    serializer_class = TeamEventSerializer
-    queryset = TeamEventModel.objects.all()
-    filterset_class = TeamEventFilterSet
-
-
-class TeamYearView(viewsets.ModelViewSet):
-    swagger_schema = None
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    serializer_class = TeamYearSerializer
-    queryset = TeamYearModel.objects.all()
-    filterset_class = TeamYearFilterSet
+    serializer_class = YearSerializer
+    queryset = YearModel.objects.all()
+    filterset_class = YearFilterSet
 
 
 class TeamView(viewsets.ModelViewSet):
@@ -67,6 +55,14 @@ class TeamView(viewsets.ModelViewSet):
     filterset_class = TeamFilterSet
 
 
+class TeamYearView(viewsets.ModelViewSet):
+    swagger_schema = None
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = TeamYearSerializer
+    queryset = TeamYearModel.objects.all()
+    filterset_class = TeamYearFilterSet
+
+
 class EventView(viewsets.ModelViewSet):
     swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -75,12 +71,28 @@ class EventView(viewsets.ModelViewSet):
     filterset_class = EventFilterSet
 
 
-class YearView(viewsets.ModelViewSet):
+class TeamEventView(viewsets.ModelViewSet):
     swagger_schema = None
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    serializer_class = YearSerializer
-    queryset = YearModel.objects.all()
-    filterset_class = YearFilterSet
+    serializer_class = TeamEventSerializer
+    queryset = TeamEventModel.objects.all()
+    filterset_class = TeamEventFilterSet
+
+
+class MatchView(viewsets.ModelViewSet):
+    swagger_schema = None
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = MatchSerializer
+    queryset = MatchModel.objects.all()
+    filterset_class = MatchFilterSet
+
+
+class TeamMatchView(viewsets.ModelViewSet):
+    swagger_schema = None
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = TeamMatchSerializer
+    queryset = TeamMatchModel.objects.all()
+    filterset_class = TeamMatchFilterSet
 
 
 class UserView(viewsets.ModelViewSet):
