@@ -482,20 +482,6 @@ class Match(Base):
         self.red_teams = ",".join(red)
         self.blue_teams = ",".join(blue)
 
-    def setElos(self, red_elos, blue_elos):
-        for team_match in self.team_matches:
-            if team_match.alliance == "red":
-                team_match.elo = red_elos[team_match.team_id]
-            else:
-                team_match.elo = blue_elos[team_match.team_id]
-
-    def setElosPost(self, red_elos, blue_elos):
-        for team_match in self.team_matches:
-            if team_match.alliance == "red":
-                team_match.elo_end = red_elos[team_match.team_id]
-            else:
-                team_match.elo_end = blue_elos[team_match.team_id]
-
 
 class TeamMatch(Base):
     '''DECLARATION'''
@@ -526,8 +512,6 @@ class TeamMatch(Base):
     '''GENERAL'''
 
     elo = Column(Float)
-    elo_end = Column(Float)
-
     opr_score = Column(Float)
     opr_auto = Column(Float)
     opr_teleop = Column(Float)
