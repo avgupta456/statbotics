@@ -131,8 +131,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             teamYear.opr_no_fouls = rate * year_obj.no_foul_mean/TM
 
             boost = (teamYear.elo_start - 1500) * 0.001
-            teamYear.ils_1 = team_ils_1[num] = ils_1_seed + boost
-            teamYear.ils_2 = team_ils_2[num] = ils_2_seed + boost
+            teamYear.ils_1 = team_ils_1[num] = max(-1/3, ils_1_seed + boost)
+            teamYear.ils_2 = team_ils_2[num] = max(-1/3, ils_2_seed + boost)
 
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
@@ -158,6 +158,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.opr_no_fouls = team_years[num].opr_no_fouls
                     team_event.ils_1_start = team_ils_1[num]
                     team_event.ils_2_start = team_ils_2[num]
+                    team_event.ils_1_end = team_ils_1[num]  # overwritten later
+                    team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
             quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
             playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))  # noqa 502
