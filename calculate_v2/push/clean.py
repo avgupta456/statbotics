@@ -30,7 +30,7 @@ def getYears(SQL_Read):
 
     years = pd.DataFrame(years,
                          columns=["year", "elo_acc", "elo_mse", "opr_acc",
-                                  "opr_mse", "mix_acc", "mis_mse", "rp1_acc",
+                                  "opr_mse", "mix_acc", "mix_mse", "rp1_acc",
                                   "rp1_mse", "rp2_acc", "rp2_mse"])
 
     years = years.sort_values(by=['year'])
@@ -93,8 +93,8 @@ def getTeamYears(SQL_Read):
             round(team_year.opr_1),
             round(team_year.opr_2),
             round(team_year.opr_endgame),
-            round(team_year.ils_1),
-            round(team_year.ils_2)
+            round(team_year.ils_1, 2),
+            round(team_year.ils_2, 2)
         ])
 
     team_years = pd.DataFrame(team_years,
@@ -253,8 +253,8 @@ def getTeamMatches(SQL_Read):
             team_match.event.key,
             team_match.match.key,
             team_match.alliance,
-            round(team_match.elo, 2),
-            round(team_match.opr_score, 2),
+            round(team_match.elo),
+            round(team_match.opr_score),
             round(team_match.ils_1, 2),
             round(team_match.ils_2, 2),
         ])
@@ -284,13 +284,13 @@ def push():
                            '@127.0.0.1:3307' +
                            '/' + constants.CLOUDSQL_DATABASE)
 
-    years.to_sql('years', engine, if_exists='replace', index=False)
-    teams.to_sql('teams', engine, if_exists='replace', index=False)
-    teamYears.to_sql('team_years', engine, if_exists='replace', index=False)
-    events.to_sql('events', engine, if_exists='replace', index=False)
-    teamEvents.to_sql('team_events', engine, if_exists='replace', index=False)
-    matches.to_sql('matches', engine, if_exists='replace', index=False)
-    teamMatches.to_sql('team_matches', engine, if_exists='replace', index=False)  # noqa 502
+    years.to_sql('rankings_year', engine, if_exists='replace', index=False)
+    teams.to_sql('rankings_team', engine, if_exists='replace', index=False)
+    teamYears.to_sql('rankings_teamyear', engine, if_exists='replace', index=False)  # noqa 502
+    events.to_sql('rankings_event', engine, if_exists='replace', index=False)
+    teamEvents.to_sql('rankings_teamevent', engine, if_exists='replace', index=False)  # noqa 502
+    matches.to_sql('rankings_match', engine, if_exists='replace', index=False)
+    teamMatches.to_sql('rankings_teammatch', engine, if_exists='replace', index=False)  # noqa 502
     end = datetime.datetime.now()
 
     print("Time Elapsed:", end-start)
