@@ -1,10 +1,18 @@
-import datetime
+from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy import create_engine
 import pandas as pd
 
-from push import constants
-from helper import setup
+from process.logging import printStats
+from classes.classes import (
+    Year,
+    Team,
+    TeamYear,
+    Event,
+    TeamEvent,
+    Match,
+    TeamMatch
+)
 
 
 def getYears(SQL_Read):
@@ -268,9 +276,7 @@ def getTeamMatches(SQL_Read):
     return team_matches
 
 
-def push():
-    start = datetime.datetime.now()
-    SQL_Read = setup.getSQL_Read()
+def pushClean(SQL_Read, cloud_engine):
     years = getYears(SQL_Read)
     teams = getTeams(SQL_Read)
     teamYears = getTeamYears(SQL_Read)
@@ -279,18 +285,68 @@ def push():
     matches = getMatches(SQL_Read)
     teamMatches = getTeamMatches(SQL_Read)
 
-    engine = create_engine('mysql+pymysql://' + constants.CLOUDSQL_USER +
-                           ':' + constants.CLOUDSQL_PASSWORD +
-                           '@127.0.0.1:3307' +
-                           '/' + constants.CLOUDSQL_DATABASE)
+    years.to_sql('rankings_year', cloud_engine, if_exists='replace', index=False)  # noqa 502
+    teams.to_sql('rankings_team', cloud_engine, if_exists='replace', index=False)  # noqa 502
+    teamYears.to_sql('rankings_teamyear', cloud_engine, if_exists='replace', index=False)  # noqa 502
+    events.to_sql('rankings_event', cloud_engine, if_exists='replace', index=False)  # noqa 502
+    teamEvents.to_sql('rankings_teamevent', cloud_engine, if_exists='replace', index=False)  # noqa 502
+    matches.to_sql('rankings_match', cloud_engine, if_exists='replace', index=False)  # noqa 502
+    teamMatches.to_sql('rankings_teammatch', cloud_engine, if_exists='replace', index=False)  # noqa 502
 
-    years.to_sql('rankings_year', engine, if_exists='replace', index=False)
-    teams.to_sql('rankings_team', engine, if_exists='replace', index=False)
-    teamYears.to_sql('rankings_teamyear', engine, if_exists='replace', index=False)  # noqa 502
-    events.to_sql('rankings_event', engine, if_exists='replace', index=False)
-    teamEvents.to_sql('rankings_teamevent', engine, if_exists='replace', index=False)  # noqa 502
-    matches.to_sql('rankings_match', engine, if_exists='replace', index=False)
-    teamMatches.to_sql('rankings_teammatch', engine, if_exists='replace', index=False)  # noqa 502
-    end = datetime.datetime.now()
+    printStats()
 
-    print("Time Elapsed:", end-start)
+
+def drop_table(table_name, engine):
+    base = declarative_base()
+    metadata = MetaData(engine, reflect=True)
+    table = metadata.tables.get(table_name)
+    if table is not None:
+        base.metadata.drop_all(engine, [table], checkfirst=True)
+
+
+def pushAll(SQL_Read, cloud_engine, local_session):
+    drop_table('team_matches', cloud_engine)
+    drop_table('matches', cloud_engine)
+    drop_table('team_events', cloud_engine)
+    drop_table('events', cloud_engine)
+    drop_table('team_years', cloud_engine)
+    drop_table('teams', cloud_engine)
+    drop_table('years', cloud_engine)
+
+    print("Years")
+    years = pd.read_sql(local_session.query(Year).statement, local_session.bind)  # noqa 502
+    years.to_sql('years', cloud_engine, index=False)
+
+    print("Matches")
+    matches = pd.read_sql(local_session.query(Match).statement, local_session.bind)  # noqa 502
+    matches.to_sql('matches', cloud_engine, index=False)
+
+    print("Team Events")
+    teamEvents = pd.read_sql(local_session.query(TeamEvent).statement, local_session.bind)  # noqa 502
+    teamEvents.to_sql('team_events', cloud_engine, index=False)  # noqa 502
+
+    print("Events")
+    events = pd.read_sql(local_session.query(Event).statement, local_session.bind)  # noqa 502
+    events.to_sql('events', cloud_engine, index=False)
+
+    print("Team Years")
+    teamYears = pd.read_sql(local_session.query(TeamYear).statement, local_session.bind)  # noqa 502
+    teamYears.to_sql('team_years', cloud_engine, index=False)  # noqa 502
+
+    print("Teams")
+    teams = pd.read_sql(local_session.query(Team).statement, local_session.bind)  # noqa 502
+    teams.to_sql('teams', cloud_engine, index=False)
+
+    print("Team Matches")
+    teamMatches = pd.read_sql(local_session.query(TeamMatch).statement, local_session.bind)  # noqa 502
+    teamMatches.to_sql('team_matches', cloud_engine, index=False)  # noqa 502
+
+    printStats()
+
+
+def main(SQL, SQL_Read):
+    cloud_engine = SQL.getCloudEngine()
+    local_session = SQL.getLocalSession()
+    # pushClean(SQL_Read, cloud_engine)
+    pushAll(SQL_Read, cloud_engine, local_session)
+    printStats()

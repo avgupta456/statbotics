@@ -2,8 +2,6 @@ CREATE DATABASE IF NOT EXISTS statbotics;
 USE statbotics;
 SHOW TABLES;
 
-SELECT * FROM association3;
-
 # get head of tables
 SELECT * FROM teams LIMIT 10000000;
 SELECT * FROM years LIMIT 10000000;
