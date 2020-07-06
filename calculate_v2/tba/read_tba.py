@@ -31,8 +31,8 @@ class ReadTBA:
         self.cache = 0
         self.count = 0
 
-        # some events where no matches were played must be blacklisted
-        self.event_blacklist = ["2005va", "2007ga"]
+        # 2005va, 2007ga no matches, 2004va quals + elims mismatch, 2020wasp only elims  # noqa 501
+        self.event_blacklist = ["2004va", "2005va", "2007ga", "2020waspo"]
 
     def get(self, url, cache=True):
         if cache and os.path.exists("tba/cache/"+url):
