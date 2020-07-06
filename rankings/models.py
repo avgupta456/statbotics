@@ -1,36 +1,31 @@
 from django.db import models
 
 
-class TeamMatch(models.Model):
-    id = models.IntegerField(primary_key=True)
-    year = models.IntegerField()  # ex: 2019
-    event = models.CharField(max_length=10)  # ex: ncwak
-    match = models.CharField(max_length=10)  # ex: sf1m1
-    time = models.IntegerField()  # ex: 15212615
-    team = models.IntegerField()  # ex: 5511
-    elo_start = models.IntegerField()  # ex: 1746
-    elo_end = models.IntegerField()  # ex: 1746
-    elo_diff = models.IntegerField()  # ex: 100
+class Year(models.Model):
+    year = models.IntegerField(primary_key=True)  # ex: 2019
+    elo_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
+    elo_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
+    opr_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
+    opr_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
+    mix_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
+    mix_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
+    rp1_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
+    rp1_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
+    rp2_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
+    rp2_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
 
-    class Meta:
-        unique_together = (("year", "event", "match", "team"))
 
-
-class TeamEvent(models.Model):
-    id = models.IntegerField(primary_key=True)
-    year = models.IntegerField()  # ex: 2019
-    event = models.CharField(max_length=10)  # ex: ncwak
-    time = models.IntegerField()  # ex: 15212615
-    team = models.IntegerField()  # ex: 5511
-    elo_start = models.IntegerField()  # ex: 1746
-    elo_pre_playoffs = models.IntegerField()  # ex: 1746
-    elo_end = models.IntegerField()  # ex: 1746
-    elo_mean = models.IntegerField()  # ex: 1746
-    elo_max = models.IntegerField()  # ex: 1746
-    elo_diff = models.IntegerField()  # ex: 100
-
-    class Meta:
-        unique_together = (("year", "event", "team"))
+class Team(models.Model):
+    team = models.IntegerField(primary_key=True)  # ex: 5511
+    name = models.CharField(max_length=50)  # ex: Cortechs Robotics
+    state = models.CharField(max_length=10)  # ex: CA
+    country = models.CharField(max_length=30)  # ex: Israel
+    district = models.CharField(max_length=10)  # ex: FNC
+    active = models.BooleanField()  # ex: True
+    elo = models.IntegerField()  # ex: 1700
+    elo_recent = models.IntegerField()  # ex: 1600
+    elo_mean = models.IntegerField()  # ex: 1600
+    elo_max = models.IntegerField()  # ex: 1900
 
 
 class TeamYear(models.Model):
@@ -38,8 +33,8 @@ class TeamYear(models.Model):
     year = models.IntegerField()  # ex: 2019
     team = models.IntegerField()  # ex: 5511
     name = models.CharField(max_length=50)  # ex: Cortechs Robotics
-    country = models.CharField(max_length=30)  # ex: Israel
     state = models.CharField(max_length=10)  # ex: California
+    country = models.CharField(max_length=30)  # ex: Israel
     district = models.CharField(max_length=10)  # ex: fnc
     elo_start = models.IntegerField()  # ex: 1746
     elo_pre_champs = models.IntegerField()  # ex: 1746
@@ -47,46 +42,101 @@ class TeamYear(models.Model):
     elo_mean = models.IntegerField()  # ex: 1746
     elo_max = models.IntegerField()  # ex: 1746
     elo_diff = models.IntegerField()  # ex: 100
+    opr = models.IntegerField()  # ex: 50
+    opr_auto = models.IntegerField()  # ex: 50
+    opr_teleop = models.IntegerField()  # ex: 50
+    opr_1 = models.IntegerField()  # ex: 50
+    opr_2 = models.IntegerField()  # ex: 50
+    opr_endgame = models.IntegerField()  # ex: 50
+    ils_1 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 50
+    ils_2 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 50
 
     class Meta:
         unique_together = (("year", "team"))
 
 
-class Team(models.Model):
-    team = models.IntegerField(primary_key=True)  # ex: 5511
-    name = models.CharField(max_length=50)  # ex: Cortechs Robotics
-    country = models.CharField(max_length=30)  # ex: Israel
-    state = models.CharField(max_length=10)  # ex: CA
-    district = models.CharField(max_length=10)  # ex: FNC
-    years_active = models.IntegerField()  # ex: 19
-    active = models.BooleanField()  # ex: True
-    elo = models.IntegerField()  # ex: 1700
-    elo_mean = models.IntegerField()  # ex: 1600
-    elo_recent = models.IntegerField()  # ex: 1600
-    elo_max = models.IntegerField()  # ex: 1900
-    elo_max_year = models.IntegerField()  # ex: 2015
-
-
 class Event(models.Model):
     id = models.IntegerField(primary_key=True)
     year = models.IntegerField()  # ex: 2019
-    event = models.CharField(max_length=10)  # ex: ncwak
-    elo_max = models.IntegerField()  # ex: 1900
+    key = models.CharField(max_length=10)  # ex: ncwak
+    name = models.CharField(max_length=100)  # ex: NC Wake County District...
+    state = models.CharField(max_length=10)  # ex: NC
+    country = models.CharField(max_length=30)  # ex: Israel
+    district = models.CharField(max_length=10)  # ex: FNC
+    type = models.IntegerField()  # ex: 1
+    week = models.IntegerField()  # ex: 2
     elo_top8 = models.IntegerField()  # ex: 1800
     elo_top24 = models.IntegerField()  # ex: 1700
     elo_mean = models.IntegerField()  # ex: 1600
-    elo_sd = models.IntegerField()  # ex: 500
+    opr_top8 = models.IntegerField()  # ex: 50
+    opr_top24 = models.IntegerField()  # ex: 40
+    opr_mean = models.IntegerField()  # ex: 30
 
 
-class Year(models.Model):
-    year = models.IntegerField(primary_key=True)  # ex: 2019
-    elo_max = models.IntegerField()  # ex: 2000
-    elo_1p = models.IntegerField()  # ex: 1950
-    elo_5p = models.IntegerField()  # ex: 1900
-    elo_10p = models.IntegerField()  # ex: 1850
-    elo_25p = models.IntegerField()  # ex: 1800
-    elo_median = models.IntegerField()  # ex: 1550
-    elo_mean = models.IntegerField()  # ex: 1500
-    elo_sd = models.IntegerField()  # ex: 500
-    acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
-    mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
+class TeamEvent(models.Model):
+    id = models.IntegerField(primary_key=True)
+    team = models.IntegerField()  # ex: 5511
+    year = models.IntegerField()  # ex: 2019
+    event = models.CharField(max_length=10)  # ex: ncwak
+    elo_start = models.IntegerField()  # ex: 1746
+    elo_pre_playoffs = models.IntegerField()  # ex: 1746
+    elo_end = models.IntegerField()  # ex: 1746
+    elo_mean = models.IntegerField()  # ex: 1746
+    elo_max = models.IntegerField()  # ex: 1746
+    elo_diff = models.IntegerField()  # ex: 100
+    opr_start = models.IntegerField()  # ex: 50
+    opr_end = models.IntegerField()  # ex: 50
+    opr_auto = models.IntegerField()  # ex: 10
+    opr_teleop = models.IntegerField()  # ex: 20
+    opr_1 = models.IntegerField()  # ex: 15
+    opr_2 = models.IntegerField()  # ex: 20
+    opr_endgame = models.IntegerField()  # ex: 20
+    ils_1_start = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52  # noqa 502
+    ils_2_start = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52  # noqa 502
+    ils_1_end = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52
+    ils_2_end = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52
+
+    class Meta:
+        unique_together = (("year", "event", "team"))
+
+
+class Match(models.Model):
+    id = models.IntegerField(primary_key=True)  # ex: 123
+    year = models.IntegerField()  # ex: 2020
+    event = models.CharField(max_length=10)  # ex: 2020ncwak
+    key = models.CharField(max_length=20)  # ex: 2020ncwak_qm1
+    comp_level = models.CharField(max_length=10)  # ex: f
+    set_number = models.IntegerField()  # ex: 2
+    match_number = models.IntegerField()  # ex: 65
+    playoff = models.IntegerField()  # ex: 1
+    winner = models.CharField(max_length=10)  # ex: blue
+    elo_winner = models.CharField(max_length=10)  # ex: blue
+    elo_win_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    opr_winner = models.CharField(max_length=10)  # ex: blue
+    opr_win_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    mix_winner = models.CharField(max_length=10)  # ex: blue
+    mix_win_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    red_rp_1 = models.IntegerField()  # ex: 1
+    red_rp_1_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    red_rp_2 = models.IntegerField()  # ex: 1
+    red_rp_2_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    blue_rp_1 = models.IntegerField()  # ex: 1
+    blue_rp_1_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    blue_rp_2 = models.IntegerField()  # ex: 1
+    blue_rp_2_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+
+
+class TeamMatch(models.Model):
+    id = models.IntegerField(primary_key=True)
+    team = models.IntegerField()  # ex: 5511
+    year = models.IntegerField()  # ex: 2019
+    event = models.CharField(max_length=10)  # ex: ncwak
+    match = models.CharField(max_length=10)  # ex: sf1m1
+    alliance = models.CharField(max_length=10)  # ex: red
+    elo = models.IntegerField()  # ex: 1746
+    opr = models.IntegerField()  # ex: 40
+    ils_1 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.61
+    ils_2 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.51
+
+    class Meta:
+        unique_together = (("year", "event", "match", "team"))
