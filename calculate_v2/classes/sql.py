@@ -17,6 +17,7 @@ from constants.local_db import (
     MYSQL_DATABASE
 )
 
+
 class SQL:
     def __init__(self, clean=True, echo=False):
 
