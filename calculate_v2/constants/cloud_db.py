@@ -28,7 +28,9 @@ if CLOUDSQL_CONNECTION is None or \
 # comment out to use the production database
 CLOUDSQL_DATABASE += "2"
 
+'''
 print(CLOUDSQL_CONNECTION)
 print(CLOUDSQL_DATABASE)
 print(CLOUDSQL_PASSWORD)
 print(CLOUDSQL_USER)
+'''
