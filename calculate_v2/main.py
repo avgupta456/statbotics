@@ -17,8 +17,8 @@ clean = False
 cache = True
 
 TBA, SQL, SQL_Read, SQL_Write = setup.setup(clean)
-process_tba.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean, cache) # 14 minutes  # noqa 502
-process_avg.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # 7 seconds  # noqa 502
-process_elo.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # ~30 minutes  # noqa 502
-process_opr.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean)
+# process_tba.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean, cache) # 14 minutes  # noqa 502
+# process_avg.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # 7 seconds  # noqa 502
+# process_elo.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean) # ~30 minutes  # noqa 502
+# process_opr.main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean)
 push_clean.push()

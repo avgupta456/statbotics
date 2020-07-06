@@ -17,7 +17,7 @@ def existing_rating(team_1yr, team_2yr):
     return round(rating, 2)
 
 
-def update_rating(year, sd_score, red, blue, red_score, blue_score, playoff):
+def update_rating(sd_score, red, blue, red_score, blue_score, playoff):
     win_margin = (red_score - blue_score)/sd_score
     pred_win_margin = 4/1000*(sum(red.values())-sum(blue.values()))
     k = 4 if playoff == 1 else 12

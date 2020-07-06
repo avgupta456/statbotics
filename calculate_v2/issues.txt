@@ -1,0 +1,1 @@
+Speed up Elo Match Calculations (possibly remove post elo, create dict)

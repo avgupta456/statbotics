@@ -82,7 +82,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
 
             # compute elo changes
             red_elo_post, blue_elo_post = elo.update_rating(
-                year, sd_score, red_elo_pre, blue_elo_pre,
+                sd_score, red_elo_pre, blue_elo_pre,
                 match.red_score, match.blue_score, match.playoff)
             match.setElosPost(red_elo_post, blue_elo_post)
 
