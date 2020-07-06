@@ -14,7 +14,7 @@ from classes.classes import (
 class SQL_Read:
     def __init__(self, SQL):
         self.reads = 0
-        self.session = SQL.getSession()
+        self.session = SQL.getLocalSession()
 
     def getStats(self):
         return self.reads

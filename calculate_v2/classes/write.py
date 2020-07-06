@@ -20,7 +20,7 @@ class SQL_Write:
         self.match_id = -1
         self.event_id = -1
 
-        self.session = SQL.getSession()
+        self.session = SQL.getLocalSession()
         self.read = SQL_Read
 
     def setIDs(self):
