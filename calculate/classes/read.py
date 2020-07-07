@@ -12,9 +12,11 @@ from classes.classes import (
 
 
 class SQL_Read:
-    def __init__(self, SQL):
+    def __init__(self, SQL, cloud=False):
         self.reads = 0
-        self.session = SQL.getLocalSession()
+
+        if cloud: self.session = SQL.getCloudSession()  # noqa 701
+        else: self.session = SQL.getLocalSession()  # noqa 701
 
     def getStats(self):
         return self.reads

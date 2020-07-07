@@ -19,26 +19,25 @@ from constants.local_db import (
 
 
 class SQL:
-    def __init__(self, clean=True, echo=False):
+    def __init__(self, clean=True, echo=False, local=True, cloud=True):
 
-        self.local_engine = create_engine('mysql+pymysql://' +
-                                          MYSQL_USERNAME + ":" +
-                                          MYSQL_PASSWORD + "@" +
-                                          MYSQL_HOST + ":" +
-                                          MYSQL_PORT + "/" +
-                                          MYSQL_DATABASE,
-                                          echo=echo)
+        if local:
+            self.local_engine = create_engine('mysql+pymysql://' +
+                                              MYSQL_USERNAME + ":" +
+                                              MYSQL_PASSWORD + "@" +
+                                              MYSQL_HOST + ":" +
+                                              MYSQL_PORT + "/" +
+                                              MYSQL_DATABASE,
+                                              echo=echo)
+            self.local_session = sessionmaker(bind=self.local_engine)()
 
-        # CLOUDSQL DB
-        self.cloud_engine = create_engine('mysql+pymysql://' +
-                                          CLOUDSQL_USER + ':' +
-                                          CLOUDSQL_PASSWORD +
-                                          '@127.0.0.1:3307/' +
-                                          CLOUDSQL_DATABASE, echo=echo)
-
-        # sessionmaker returns function
-        self.local_session = sessionmaker(bind=self.local_engine)()
-        self.cloud_session = sessionmaker(bind=self.cloud_engine)()
+        if cloud:
+            self.cloud_engine = create_engine('mysql+pymysql://' +
+                                              CLOUDSQL_USER + ':' +
+                                              CLOUDSQL_PASSWORD +
+                                              '@127.0.0.1:3307/' +
+                                              CLOUDSQL_DATABASE, echo=echo)
+            self.cloud_session = sessionmaker(bind=self.cloud_engine)()
 
         # resets tables
         if clean: classes.createTables(self.local_engine)  # noqa 701

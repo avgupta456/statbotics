@@ -12,7 +12,7 @@ from helper import utils
 
 
 class SQL_Write:
-    def __init__(self, SQL, SQL_Read):
+    def __init__(self, SQL, SQL_Read, cloud=False):
         self.writes = 0
         self.commits = 0
         self.objects = []
@@ -20,7 +20,8 @@ class SQL_Write:
         self.match_id = -1
         self.event_id = -1
 
-        self.session = SQL.getLocalSession()
+        if cloud: self.session = SQL.getCloudSession()  # noqa 701
+        else: self.session = SQL.getLocalSession()  # noqa 701
         self.read = SQL_Read
 
     def setIDs(self):
