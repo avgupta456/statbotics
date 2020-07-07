@@ -1,32 +1,29 @@
-import datetime
 import random
 
-from helper import setup, utils
-from models import opr as opr_model
-from models import elo as elo_model
-from event_pred import rps as rps_model
-from event_pred import tiebreakers
-
-SQL_Read = setup.getSQL_Read()
-print("Finished Setup")
+from event_pred.helper import utils
+from event_pred.models import opr as opr_model
+from event_pred.models import elo as elo_model
+from event_pred.models import rps as rps_model
+from event_pred.models import tiebreakers
 
 
-def getObjects(event_key, year):
-    event = SQL_Read.getEvent_byKey(str(year)+event_key)
-    quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
-    sd_score = event.year.score_sd
-    return event, quals, sd_score
+def getDicts(SQL_Read, event_key, year):
+    sd_score, mean_score = SQL_Read.getYearDict(year=year)
+    event, event_id = SQL_Read.getEventDict(str(year)+event_key)
+    teams, team_stats = SQL_Read.getTeamsDict(event_id=event_id)
+    matches = SQL_Read.getMatchesDict(event_id=event_id)
+    team_matches = SQL_Read.getTeamMatchesDict(event_id=event_id)
 
-
-def getDicts(event, quals):
-    oprs, ils = opr_model.opr_v2(event, quals, [])
-    elos = elo_model.get_elos(event, quals)
+    # currently empty elims
+    oprs, ils = opr_model.get_oprs(event, year, matches, [], teams,
+                                   team_stats, team_matches, mean_score)
+    elos = elo_model.get_elos(event, matches, teams, team_stats, team_matches)
     teams = oprs.keys()
 
-    rps = rps_model.get_rps(event, quals, teams)
-    ties = tiebreakers.get_tiebreakers(event, quals, teams)
+    rps = rps_model.get_rps(event, matches, teams)
+    ties = tiebreakers.get_tiebreakers(event, year, matches, teams)
 
-    return oprs, ils, elos, rps, ties, teams
+    return teams, matches, sd_score, oprs, ils, elos, rps, ties
 
 
 def getCurrStats(index, teams, oprs, ils, elos):
@@ -43,7 +40,7 @@ def getPreds(index, quals, oprs_curr, elos_curr, ils_curr, year, sd_score):
     preds = {}  # for each match i after index , win_prob, red rps, blue rps
     for i in range(index, len(quals)):
         m = quals[i]
-        red, blue = m.getTeams()
+        red, blue = m["red"], m["blue"]
         red_score = sum([utils.clean(oprs_curr[t][0]) for t in red])
         blue_score = sum([utils.clean(oprs_curr[t][0]) for t in blue])
         red_elo = sum([utils.clean(elos_curr[t]) for t in red])
@@ -74,12 +71,12 @@ def getPreds(index, quals, oprs_curr, elos_curr, ils_curr, year, sd_score):
     return team_matches, preds
 
 
-def meanSim(index, quals, teams, team_matches, preds, rps, ties):
+def meanSim(index, matches, teams, team_matches, preds, rps, ties):
     rps_out, ties_out = {}, {}
     for team in teams:
         rps_out[team] = rps[team][index][0]
         ties_out[team] = ties[team][index][0]
-    for i in range(index, len(quals)):
+    for i in range(index, len(matches)):
         red, blue = team_matches[i]
         red_rps = preds[i][2] * 2 + preds[i][3] + preds[i][4]
         blue_rps = (1-preds[i][2]) * 2 + preds[i][5] + preds[i][6]
@@ -93,12 +90,12 @@ def meanSim(index, quals, teams, team_matches, preds, rps, ties):
     return rps_out, ties_out
 
 
-def singleSim(index, quals, teams, team_matches, preds, rps, mean_ties):
+def singleSim(index, matches, teams, team_matches, preds, rps, mean_ties):
     rps_out, ranks_out = {}, {}
     for team in teams:
         rps_out[team] = rps[team][index][0]
 
-    for i in range(index, len(quals)):
+    for i in range(index, len(matches)):
         red, blue = team_matches[i]
         red_rps, blue_rps = 0, 0
         if preds[i][2] > random.uniform(0, 1): red_rps += 2  # noqa 702
@@ -116,8 +113,8 @@ def singleSim(index, quals, teams, team_matches, preds, rps, mean_ties):
     return rps_out, ranks_out
 
 
-def indexSim(index, iterations, teams, quals, team_matches, preds, rps, ties):
-    mean_rps, mean_ties = meanSim(index, quals, teams, team_matches, preds, rps, ties)  # noqa 502
+def indexSim(index, iterations, teams, matches, team_matches, preds, rps, ties):  # noqa 502
+    mean_rps, mean_ties = meanSim(index, matches, teams, team_matches, preds, rps, ties)  # noqa 502
 
     T = len(teams)
     avg_rps, ranks = {}, {}
@@ -126,7 +123,7 @@ def indexSim(index, iterations, teams, quals, team_matches, preds, rps, ties):
         ranks[team] = [0 for i in range(T)]
 
     for i in range(iterations):
-        rps_ind, ranks_ind = singleSim(index, quals, teams, team_matches,
+        rps_ind, ranks_ind = singleSim(index, matches, teams, team_matches,
                                        preds, rps, mean_ties)
         for team in teams:
             avg_rps[team] += rps_ind[team]
@@ -140,42 +137,31 @@ def indexSim(index, iterations, teams, quals, team_matches, preds, rps, ties):
     return mean_rps, mean_ties, avg_rps, avg_ranks, ranks
 
 
-def quickSim(year, event_key):
-    event, quals, sd_score = getObjects(event_key, year)
-    oprs, ils, elos, rps, ties, teams = getDicts(event, quals)
+def quickSim(SQL_Read, year, event_key):
+    teams, matches, sd_score, oprs, ils, elos, rps, ties \
+        = getDicts(SQL_Read, event_key, year)
+
     out = {t: [] for t in teams}
-    for i in range(len(quals)+1):
+    for i in range(len(matches)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
-        team_matches, preds = getPreds(i, quals, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
-        mean_rps, mean_ties = meanSim(i, quals, teams, team_matches, preds, rps, ties)  # noqa 502
+        team_matches, preds = getPreds(i, matches, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
+        mean_rps, mean_ties = meanSim(i, matches, teams, team_matches, preds, rps, ties)  # noqa 502
         for team in teams:
             out[team].append([mean_rps[team], mean_ties[team]])
     return out
 
 
-def sim(year, event_key, iterations=100):
-    event, quals, sd_score = getObjects(event_key, year)
-    oprs, ils, elos, rps, ties, teams = getDicts(event, quals)
+def sim(SQL_Read, year, event_key, iterations=100):
+    teams, matches, sd_score, oprs, ils, elos, rps, ties \
+        = getDicts(SQL_Read, event_key, year)
+
     out = {t: [] for t in teams}
-    for i in range(len(quals)+1):
+    for i in range(len(matches)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
-        team_matches, preds = getPreds(i, quals, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
+        team_matches, preds = getPreds(i, matches, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
         mean_rps, mean_ties, avg_rps, avg_ranks, ranks = indexSim(
-            i, iterations, teams, quals, team_matches, preds, rps, ties)
+            i, iterations, teams, matches, team_matches, preds, rps, ties)
         for team in teams:
             out[team].append([mean_rps[team], mean_ties[team], avg_rps[team],
                               avg_ranks[team], ranks[team]])
     return out
-
-
-year, event_key = 2020, 'ncwak'
-index = 0  # after match 0 aka start of event
-
-start = datetime.datetime.now()
-out = sim(year, event_key)
-for team in out.keys():
-    print(team, round(out[team][index][0], 2), round(out[team][index][1], 2))
-print()
-
-end = datetime.datetime.now()
-print(end-start)
