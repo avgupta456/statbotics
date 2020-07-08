@@ -2,27 +2,11 @@ from classes import sql, read, write
 from tba import read_tba
 
 
-def setup_local(clean=False):
+def setup(clean=False, local=True, cloud=False):
     TBA = read_tba.ReadTBA()
-    SQL = sql.SQL(clean=clean, echo=False, local=True, cloud=False)
-    SQL_Read = read.SQL_Read(SQL, cloud=False)
-    SQL_Write = write.SQL_Write(SQL, SQL_Read, cloud=False)
-    return TBA, SQL, SQL_Read, SQL_Write
-
-
-def setup_cloud(clean=False):
-    TBA = read_tba.ReadTBA()
-    SQL = sql.SQL(clean=clean, echo=False, local=False, cloud=True)
-    SQL_Read = read.SQL_Read(SQL, cloud=True)
-    SQL_Write = write.SQL_Write(SQL, SQL_Read, cloud=True)
-    return TBA, SQL, SQL_Read, SQL_Write
-
-
-def setup(clean=False):
-    TBA = read_tba.ReadTBA()
-    SQL = sql.SQL(clean=clean, echo=False, local=True, cloud=True)
-    SQL_Read = read.SQL_Read(SQL, cloud=False)
-    SQL_Write = write.SQL_Write(SQL, SQL_Read, cloud=False)
+    SQL = sql.SQL(clean=clean, echo=False, local=local, cloud=cloud)
+    SQL_Read = read.SQL_Read(SQL)
+    SQL_Write = write.SQL_Write(SQL, SQL_Read)
     return TBA, SQL, SQL_Read, SQL_Write
 
 
