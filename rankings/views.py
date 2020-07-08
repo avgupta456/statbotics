@@ -726,10 +726,14 @@ def EventYear_byElo(request, year, elo):
 EVENT PRED (TEMPORARY)
 '''
 
-from event_pred import event_pred
+import datetime
+from rankings.event_pred import event_pred
 
 
 @api_view(['GET'])
 def EventPred(request):
-    print(event_pred.quickSim(2019, "nccmp"))
-    return Response()
+    start = datetime.datetime.now()
+    predictions = event_pred.quickSim(2019, "nccmp")
+    end = datetime.datetime.now()
+    print(end-start)
+    return Response(predictions)

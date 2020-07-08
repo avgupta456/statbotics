@@ -13,6 +13,8 @@ class Year(models.Model):
     rp1_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
     rp2_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
     rp2_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
+    score_sd = models.DecimalField(max_digits=6, decimal_places=2)  # ex: 14.21
+    score_mean = models.DecimalField(max_digits=6, decimal_places=2)  # ex: 45.12  # noqa 502
 
 
 class Team(models.Model):
@@ -91,6 +93,8 @@ class TeamEvent(models.Model):
     opr_1 = models.IntegerField()  # ex: 15
     opr_2 = models.IntegerField()  # ex: 20
     opr_endgame = models.IntegerField()  # ex: 20
+    opr_fouls = models.IntegerField()  # ex: 2
+    opr_no_fouls = models.IntegerField()  # ex: 48
     ils_1_start = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52  # noqa 502
     ils_2_start = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52  # noqa 502
     ils_1_end = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52
@@ -109,6 +113,10 @@ class Match(models.Model):
     set_number = models.IntegerField()  # ex: 2
     match_number = models.IntegerField()  # ex: 65
     playoff = models.IntegerField()  # ex: 1
+    red = models.IntegerField()
+    blue = models.IntegerField()
+    red_score = models.IntegerField()  # ex: 50
+    blue_score = models.IntegerField()  # ex: 75
     winner = models.CharField(max_length=10)  # ex: blue
     elo_winner = models.CharField(max_length=10)  # ex: blue
     elo_win_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
@@ -124,6 +132,20 @@ class Match(models.Model):
     blue_rp_1_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
     blue_rp_2 = models.IntegerField()  # ex: 1
     blue_rp_2_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    red_auto = models.IntegerField()  # ex: 10
+    blue_auto = models.IntegerField()  # ex: 10
+    red_teleop = models.IntegerField()  # ex: 10
+    blue_teleop = models.IntegerField()  # ex: 10
+    red_1 = models.IntegerField()  # ex: 10
+    blue_1 = models.IntegerField()  # ex: 10
+    red_2 = models.IntegerField()  # ex: 10
+    blue_2 = models.IntegerField()  # ex: 10
+    red_endgame = models.IntegerField()  # ex: 10
+    blue_endgame = models.IntegerField()  # ex: 10
+    red_fouls = models.IntegerField()  # ex: 10
+    blue_fouls = models.IntegerField()  # ex: 10
+    red_no_fouls = models.IntegerField()  # ex: 10
+    blue_no_fouls = models.IntegerField()  # ex: 10
 
 
 class TeamMatch(models.Model):
