@@ -1,10 +1,10 @@
 import datetime
 
-import event_pred.helper.setup as setup
-import event_pred.event_pred as event_pred
+from helper import setup
+from event_pred import event_pred
 
 start = datetime.datetime.now()
-SQL, SQL_Read = setup.setup_cloud(clean=False)
+TBA, SQL, SQL_Read, SQL_Write = setup.setup(clean=False)
 stop1 = datetime.datetime.now()
 print("Load")
 print(stop1-start)

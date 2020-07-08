@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.linalg
 
-from event_pred.helper.utils import logistic
+from helper.utils import logistic
 
 
 def score(match, alliance):

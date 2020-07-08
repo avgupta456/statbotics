@@ -1,6 +1,6 @@
 import random
 
-from event_pred.helper import utils
+from helper import utils
 from event_pred.models import opr as opr_model
 from event_pred.models import elo as elo_model
 from event_pred.models import rps as rps_model
