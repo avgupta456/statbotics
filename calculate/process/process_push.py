@@ -4,6 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 import pandas as pd
 
 from process.logging import printStats
+
+'''
 from classes.classes import (
     Year,
     Team,
@@ -13,6 +15,7 @@ from classes.classes import (
     Match,
     TeamMatch
 )
+'''
 
 
 def getYears(SQL_Read):
@@ -34,12 +37,15 @@ def getYears(SQL_Read):
             round(year.rp1_mse, 4),
             round(year.rp2_acc, 4),
             round(year.rp2_mse, 4),
+            round(year.score_sd, 2),
+            round(year.score_mean, 2)
         ])
 
     years = pd.DataFrame(years,
                          columns=["year", "elo_acc", "elo_mse", "opr_acc",
                                   "opr_mse", "mix_acc", "mix_mse", "rp1_acc",
-                                  "rp1_mse", "rp2_acc", "rp2_mse"])
+                                  "rp1_mse", "rp2_acc", "rp2_mse", "score_sd",
+                                  "score_mean"])
 
     years = years.sort_values(by=['year'])
     return years
@@ -178,6 +184,8 @@ def getTeamEvents(SQL_Read):
             round(team_event.opr_1),
             round(team_event.opr_2),
             round(team_event.opr_endgame),
+            round(team_event.opr_fouls),
+            round(team_event.opr_no_fouls),
             round(team_event.ils_1_start, 2),
             round(team_event.ils_2_start, 2),
             round(team_event.ils_1_end, 2),
@@ -190,7 +198,8 @@ def getTeamEvents(SQL_Read):
                                         "elo_end", "elo_mean", "elo_max",
                                         "elo_diff", "opr_start", "opr_end",
                                         "opr_auto", "opr_teleop", "opr_1",
-                                        "opr_2", "opr_endgame", "ils_1_start",
+                                        "opr_2", "opr_endgame", "opr_fouls",
+                                        "opr_no_fouls", "ils_1_start",
                                         "ils_2_start", "ils_1_end",
                                         "ils_2_end"])
 
@@ -214,6 +223,10 @@ def getMatches(SQL_Read):
             match.set_number,
             match.match_number,
             match.playoff,
+            match.red,
+            match.blue,
+            match.red_score,
+            match.blue_score,
             match.winner,
             match.elo_winner,
             round(match.elo_win_prob, 2),
@@ -229,18 +242,37 @@ def getMatches(SQL_Read):
             round(match.blue_rp_1_prob, 2),
             match.blue_rp_2,
             round(match.blue_rp_2_prob, 2),
+            match.red_auto,
+            match.blue_auto,
+            match.red_teleop,
+            match.blue_teleop,
+            match.red_1,
+            match.blue_1,
+            match.red_2,
+            match.blue_2,
+            match.red_endgame,
+            match.blue_endgame,
+            match.red_fouls,
+            match.blue_fouls,
+            match.red_no_fouls,
+            match.blue_no_fouls,
         ])
 
     matches = pd.DataFrame(matches,
                            columns=["id", "year", "event", "key", "comp_level",
                                     "set_number", "match_number", "playoff",
+                                    "red", "blue", "red_score", "blue_score",
                                     "winner", "elo_winner", "elo_win_prob",
                                     "opr_winner", "opr_win_prob", "mix_winner",
                                     "mix_win_prob", "red_rp_1",
                                     "red_rp_1_prob", "red_rp_2",
                                     "red_rp_2_prob", "blue_rp_1",
                                     "blue_rp_1_prob", "blue_rp_2",
-                                    "blue_rp_2_prob"
+                                    "blue_rp_2_prob", "red_auto", "blue_auto",
+                                    "red_teleop", "blue_teleop", "red_1",
+                                    "blue_1", "red_2", "blue_2", "red_endgame",
+                                    "blue_endgame", "red_fouls", "blue_fouls",
+                                    "red_no_fouls", "blue_no_fouls"
                                     ])
 
     matches = matches.sort_values(by=['year', 'event', 'key'])
@@ -304,6 +336,7 @@ def drop_table(table_name, engine):
         base.metadata.drop_all(engine, [table], checkfirst=True)
 
 
+'''
 def pushAll(SQL_Read, cloud_engine, local_session):
     drop_table('team_matches', cloud_engine)
     drop_table('matches', cloud_engine)
@@ -342,11 +375,12 @@ def pushAll(SQL_Read, cloud_engine, local_session):
     teamMatches.to_sql('team_matches', cloud_engine, index=False)  # noqa 502
 
     printStats()
+'''
 
 
 def main(SQL, SQL_Read):
     cloud_engine = SQL.getCloudEngine()
-    local_session = SQL.getLocalSession()
-    # pushClean(SQL_Read, cloud_engine)
-    pushAll(SQL_Read, cloud_engine, local_session)
+    # local_session = SQL.getLocalSession()
+    pushClean(SQL_Read, cloud_engine)
+    # pushAll(SQL_Read, cloud_engine, local_session)
     printStats()
