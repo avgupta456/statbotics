@@ -21,7 +21,7 @@ def get_elos(event, matches, teams, team_stats, team_matches):
     out = {}
     for team in teams:
         out[team] = np.zeros(shape=(len(matches)+1, 1))
-        out[team][0] = team_stats[team]["elo"]
+        out[team][0] = team_stats[team]["elo_start"]
 
     for i, m in enumerate(matches):
         team_m = team_matches[m["match_id"]]
