@@ -50,6 +50,8 @@ class TeamYear(models.Model):
     opr_1 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
     opr_2 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
     opr_endgame = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
+    opr_fouls = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
+    opr_no_fouls = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
     ils_1 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 50
     ils_2 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 50
 
