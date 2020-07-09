@@ -107,6 +107,8 @@ def getTeamYears(SQL_Read):
             round(team_year.opr_1, 2),
             round(team_year.opr_2, 2),
             round(team_year.opr_endgame, 2),
+            round(team_year.opr_fouls, 2),
+            round(team_year.opr_no_fouls, 2),
             round(team_year.ils_1, 2),
             round(team_year.ils_2, 2)
         ])
@@ -117,8 +119,8 @@ def getTeamYears(SQL_Read):
                                        "elo_pre_champs", "elo_end", "elo_mean",
                                        "elo_max", "elo_diff", "opr",
                                        "opr_auto", "opr_teleop", "opr_1",
-                                       "opr_2", "opr_endgame", "ils_1",
-                                       "ils_2"])
+                                       "opr_2", "opr_endgame", "opr_fouls",
+                                       "opr_no_fouls", "ils_1", "ils_2"])
 
     team_years = team_years.sort_values(by=['year', 'team'])
     return team_years
@@ -310,19 +312,24 @@ def getTeamMatches(SQL_Read):
 
 def pushClean(SQL_Read, cloud_engine):
     years = getYears(SQL_Read)
-    teams = getTeams(SQL_Read)
-    teamYears = getTeamYears(SQL_Read)
-    events = getEvents(SQL_Read)
-    teamEvents = getTeamEvents(SQL_Read)
-    matches = getMatches(SQL_Read)
-    teamMatches = getTeamMatches(SQL_Read)
-
     years.to_sql('rankings_year', cloud_engine, if_exists='replace', index=False)  # noqa 502
+
+    teams = getTeams(SQL_Read)
     teams.to_sql('rankings_team', cloud_engine, if_exists='replace', index=False)  # noqa 502
+
+    teamYears = getTeamYears(SQL_Read)
     teamYears.to_sql('rankings_teamyear', cloud_engine, if_exists='replace', index=False)  # noqa 502
+
+    events = getEvents(SQL_Read)
     events.to_sql('rankings_event', cloud_engine, if_exists='replace', index=False)  # noqa 502
+
+    teamEvents = getTeamEvents(SQL_Read)
     teamEvents.to_sql('rankings_teamevent', cloud_engine, if_exists='replace', index=False)  # noqa 502
+
+    matches = getMatches(SQL_Read)
     matches.to_sql('rankings_match', cloud_engine, if_exists='replace', index=False)  # noqa 502
+
+    teamMatches = getTeamMatches(SQL_Read)
     teamMatches.to_sql('rankings_teammatch', cloud_engine, if_exists='replace', index=False)  # noqa 502
 
     printStats()
