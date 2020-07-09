@@ -1,3 +1,4 @@
+from collections import defaultdict
 import statistics
 
 from process.logging import printStats
@@ -141,7 +142,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             if temp % 1000 == 0:
                 SQL_Write.add()
 
-        team_events = {}
+        team_events = defaultdict(list)
         events = sorted(SQL_Read.getEvents(year=year))
         for event in events:
             for team_event in event.team_events:
@@ -186,7 +187,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 opr = clean(oprs[num][-1][0])
                 ils_1 = clean(ils[num][-1][0])
                 ils_2 = clean(ils[num][-1][1])
-                dict_end = {
+
+                event_dict = {
                     "opr_end": opr,
                     "opr_auto": clean(oprs[num][-1][1]),
                     "opr_teleop": clean(oprs[num][-1][2]),
@@ -199,36 +201,34 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     "ils_2_end": ils_2,
                 }
 
-                team_event.setOPRs(dict_end)
-                team_years[num].setOPRs(dict_end)
-
-                team_matches = sorted(team_event.team_matches)
-                dict_end["opr_score"] = clean(oprs[num][-1][0])
-                for i in range(len(team_matches)):
-                    if team_matches[i].match.playoff == 1:
-                        team_matches[i].setOPRs(dict_end)
-                    else:
-                        team_matches[i].setOPRs(
-                            {
-                                "opr_score": clean(oprs[num][i][0]),
-                                "opr_auto": clean(oprs[num][i][1]),
-                                "opr_teleop": clean(oprs[num][i][2]),
-                                "opr_1": clean(oprs[num][i][3]),
-                                "opr_2": clean(oprs[num][i][4]),
-                                "opr_endgame": clean(oprs[num][i][5]),
-                                "opr_fouls": clean(oprs[num][i][6]),
-                                "opr_no_fouls": clean(oprs[num][i][7]),
-                                "ils_1_end": clean(ils[num][i][0]),
-                                "ils_2_end": clean(ils[num][i][1]),
-                            }
-                        )
+                team_event.opr_end = event_dict["opr_end"]
+                team_event.opr_auto = event_dict["opr_auto"]
+                team_event.opr_teleop = event_dict["opr_teleop"]
+                team_event.opr_1 = event_dict["opr_1"]
+                team_event.opr_2 = event_dict["opr_2"]
+                team_event.opr_endgame = event_dict["opr_endgame"]
+                team_event.opr_fouls = event_dict["opr_fouls"]
+                team_event.opr_no_fouls = event_dict["opr_no_fouls"]
+                team_event.ils_1_end = event_dict["ils_1_end"]
+                team_event.ils_2_end = event_dict["ils_2_end"]
+                team_events[num].append(event_dict)
 
                 team_oprs[num] = opr
                 team_ils_1[num] = ils_1
                 team_ils_2[num] = ils_2
-                if num not in team_events:
-                    team_events[num] = []
-                team_events[num].append(opr)
+
+                for i, m in enumerate(team_event.team_matches):
+                    index = -1 if m.match.playoff else i
+                    m.opr_score = clean(oprs[num][index][0])
+                    m.opr_auto = clean(oprs[num][index][1])
+                    m.opr_teleop = clean(oprs[num][index][2])
+                    m.opr_1 = clean(oprs[num][index][3])
+                    m.opr_2 = clean(oprs[num][index][4])
+                    m.opr_endgame = clean(oprs[num][index][5])
+                    m.opr_fouls = clean(oprs[num][index][6])
+                    m.opr_no_fouls = clean(oprs[num][index][7])
+                    m.ils_1 = clean(ils[num][index][0])
+                    m.ils_2 = clean(ils[num][index][1])
 
             oprs_end = sorted([clean(oprs[t][-1][0]) for t in oprs], reverse=True)  # noqa 502
             event.opr_max = oprs_end[0]
@@ -242,12 +242,19 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         oprs = []
         for num in team_years:
             # 1771 in 2004 only played in elims shrug
-            if num not in team_events:
-                continue
-            team_years[num].opr_end = max(team_events[num])
+            if num not in team_events: continue  # noqa 701
+            best_event = sorted(team_events[num], key=lambda e: e["opr_end"])[-1]  # noqa 502
+            team_years[num].opr_end = best_event["opr_end"]
+            team_years[num].opr_auto = best_event["opr_auto"]
+            team_years[num].opr_teleop = best_event["opr_teleop"]
+            team_years[num].opr_1 = best_event["opr_1"]
+            team_years[num].opr_2 = best_event["opr_2"]
+            team_years[num].opr_endgame = best_event["opr_endgame"]
+            team_years[num].opr_fouls = best_event["opr_fouls"]
+            team_years[num].opr_no_fouls = best_event["opr_no_fouls"]
             team_years[num].ils_1 = team_ils_1[num]
             team_years[num].ils_2 = team_ils_2[num]
-            oprs.append(max(team_events[num]))
+            oprs.append(best_event["opr_end"])
 
         team_years_all[year] = team_years
         # keeps memory down

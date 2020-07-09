@@ -163,15 +163,6 @@ class TeamYear(Base):
     def __str__(self):
         return self.__repr__()
 
-    def setOPRs(self, dict):
-        self.opr_auto = dict["opr_auto"]
-        self.opr_teleop = dict["opr_teleop"]
-        self.opr_1 = dict["opr_1"]
-        self.opr_2 = dict["opr_2"]
-        self.opr_endgame = dict["opr_endgame"]
-        self.opr_fouls = dict["opr_fouls"]
-        self.opr_no_fouls = dict["opr_no_fouls"]
-
 
 class Event(Base):
     '''DECLARATION'''
@@ -290,18 +281,6 @@ class TeamEvent(Base):
 
     def __str__(self):
         return self.__repr__()
-
-    def setOPRs(self, dict):
-        self.opr_end = dict["opr_end"]
-        self.opr_auto = dict["opr_auto"]
-        self.opr_teleop = dict["opr_teleop"]
-        self.opr_1 = dict["opr_1"]
-        self.opr_2 = dict["opr_2"]
-        self.opr_endgame = dict["opr_endgame"]
-        self.opr_fouls = dict["opr_fouls"]
-        self.opr_no_fouls = dict["opr_no_fouls"]
-        self.ils_1_end = dict["ils_1_end"]
-        self.ils_2_end = dict["ils_2_end"]
 
 
 class Match(Base):
@@ -535,18 +514,6 @@ class TeamMatch(Base):
 
     def __str__(self):
         return self.__repr__()
-
-    def setOPRs(self, dict):
-        self.opr_score = dict["opr_score"]
-        self.opr_auto = dict["opr_auto"]
-        self.opr_teleop = dict["opr_teleop"]
-        self.opr_one = dict["opr_1"]
-        self.opr_two = dict["opr_2"]
-        self.opr_endgame = dict["opr_endgame"]
-        self.opr_fouls = dict["opr_fouls"]
-        self.opr_no_fouls = dict["opr_no_fouls"]
-        self.ils_1 = dict["ils_1_end"]
-        self.ils_2 = dict["ils_2_end"]
 
 
 def createTables(engine):

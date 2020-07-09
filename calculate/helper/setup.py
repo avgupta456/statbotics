@@ -2,7 +2,7 @@ from classes import sql, read, write
 from tba import read_tba
 
 
-def setup(clean=False, local=True, cloud=False):
+def setup(clean=False, local=True, cloud=True):
     TBA = read_tba.ReadTBA()
     SQL = sql.SQL(clean=clean, echo=False, local=local, cloud=cloud)
     SQL_Read = read.SQL_Read(SQL)
