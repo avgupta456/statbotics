@@ -3,18 +3,18 @@ from django.db import models
 
 class Year(models.Model):
     year = models.IntegerField(primary_key=True)  # ex: 2019
-    elo_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
-    elo_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
-    opr_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
-    opr_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
-    mix_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
-    mix_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
-    rp1_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
-    rp1_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
-    rp2_acc = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.70
-    rp2_mse = models.DecimalField(max_digits=6, decimal_places=4)  # ex: 0.17
-    score_sd = models.DecimalField(max_digits=6, decimal_places=2)  # ex: 14.21
-    score_mean = models.DecimalField(max_digits=6, decimal_places=2)  # ex: 45.12  # noqa 502
+    elo_acc = models.FloatField()  # ex: 0.70
+    elo_mse = models.FloatField()  # ex: 0.17
+    opr_acc = models.FloatField()  # ex: 0.70
+    opr_mse = models.FloatField()  # ex: 0.17
+    mix_acc = models.FloatField()  # ex: 0.70
+    mix_mse = models.FloatField()  # ex: 0.17
+    rp1_acc = models.FloatField()  # ex: 0.70
+    rp1_mse = models.FloatField()  # ex: 0.17
+    rp2_acc = models.FloatField()  # ex: 0.70
+    rp2_mse = models.FloatField()  # ex: 0.17
+    score_sd = models.FloatField()  # ex: 14.21
+    score_mean = models.FloatField()  # ex: 45.12
 
 
 class Team(models.Model):
@@ -44,16 +44,16 @@ class TeamYear(models.Model):
     elo_mean = models.IntegerField()  # ex: 1746
     elo_max = models.IntegerField()  # ex: 1746
     elo_diff = models.IntegerField()  # ex: 100
-    opr = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_auto = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_teleop = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_1 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_2 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_endgame = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_fouls = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_no_fouls = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    ils_1 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 50
-    ils_2 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 50
+    opr = models.FloatField()  # ex: 12.34
+    opr_auto = models.FloatField()  # ex: 12.34
+    opr_teleop = models.FloatField()  # ex: 12.34
+    opr_1 = models.FloatField()  # ex: 12.34
+    opr_2 = models.FloatField()  # ex: 12.34
+    opr_endgame = models.FloatField()  # ex: 12.34
+    opr_fouls = models.FloatField()  # ex: 12.34
+    opr_no_fouls = models.FloatField()  # ex: 12.34
+    ils_1 = models.FloatField()  # ex: 50
+    ils_2 = models.FloatField()  # ex: 50
 
     class Meta:
         unique_together = (("year", "team"))
@@ -72,9 +72,9 @@ class Event(models.Model):
     elo_top8 = models.IntegerField()  # ex: 1800
     elo_top24 = models.IntegerField()  # ex: 1700
     elo_mean = models.IntegerField()  # ex: 1600
-    opr_top8 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_top24 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_mean = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
+    opr_top8 = models.FloatField()  # ex: 12.34
+    opr_top24 = models.FloatField()  # ex: 12.34
+    opr_mean = models.FloatField()  # ex: 12.34
 
 
 class TeamEvent(models.Model):
@@ -88,19 +88,19 @@ class TeamEvent(models.Model):
     elo_mean = models.IntegerField()  # ex: 1746
     elo_max = models.IntegerField()  # ex: 1746
     elo_diff = models.IntegerField()  # ex: 100
-    opr_start = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_end = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_auto = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_teleop = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_1 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_2 = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    opr_endgame = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_fouls = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    opr_no_fouls = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34  # noqa 502
-    ils_1_start = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52  # noqa 502
-    ils_2_start = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52  # noqa 502
-    ils_1_end = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52
-    ils_2_end = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.52
+    opr_start = models.FloatField()  # ex: 12.34
+    opr_end = models.FloatField()  # ex: 12.34
+    opr_auto = models.FloatField()  # ex: 12.34
+    opr_teleop = models.FloatField()  # ex: 12.34
+    opr_1 = models.FloatField()  # ex: 12.34
+    opr_2 = models.FloatField()  # ex: 12.34
+    opr_endgame = models.FloatField()  # ex: 12.34
+    opr_fouls = models.FloatField()  # ex: 12.34
+    opr_no_fouls = models.FloatField()  # ex: 12.34
+    ils_1_start = models.FloatField()  # ex: 0.52
+    ils_2_start = models.FloatField()  # ex: 0.52
+    ils_1_end = models.FloatField()  # ex: 0.52
+    ils_2_end = models.FloatField()  # ex: 0.52
 
     class Meta:
         unique_together = (("year", "event", "team"))
@@ -121,19 +121,19 @@ class Match(models.Model):
     blue_score = models.IntegerField()  # ex: 75
     winner = models.CharField(max_length=10)  # ex: blue
     elo_winner = models.CharField(max_length=10)  # ex: blue
-    elo_win_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    elo_win_prob = models.FloatField()  # ex: 0.60
     opr_winner = models.CharField(max_length=10)  # ex: blue
-    opr_win_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    opr_win_prob = models.FloatField()  # ex: 0.60
     mix_winner = models.CharField(max_length=10)  # ex: blue
-    mix_win_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    mix_win_prob = models.FloatField()  # ex: 0.60
     red_rp_1 = models.IntegerField()  # ex: 1
-    red_rp_1_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    red_rp_1_prob = models.FloatField()  # ex: 0.60
     red_rp_2 = models.IntegerField()  # ex: 1
-    red_rp_2_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    red_rp_2_prob = models.FloatField()  # ex: 0.60
     blue_rp_1 = models.IntegerField()  # ex: 1
-    blue_rp_1_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    blue_rp_1_prob = models.FloatField()  # ex: 0.60
     blue_rp_2 = models.IntegerField()  # ex: 1
-    blue_rp_2_prob = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.60  # noqa 502
+    blue_rp_2_prob = models.FloatField()  # ex: 0.60
     red_auto = models.IntegerField()  # ex: 10
     blue_auto = models.IntegerField()  # ex: 10
     red_teleop = models.IntegerField()  # ex: 10
@@ -158,9 +158,9 @@ class TeamMatch(models.Model):
     match = models.CharField(max_length=10)  # ex: sf1m1
     alliance = models.CharField(max_length=10)  # ex: red
     elo = models.IntegerField()  # ex: 1746
-    opr = models.DecimalField(max_digits=5, decimal_places=2)  # ex: 12.34
-    ils_1 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.61
-    ils_2 = models.DecimalField(max_digits=3, decimal_places=2)  # ex: 0.51
+    opr = models.FloatField()  # ex: 12.34
+    ils_1 = models.FloatField()  # ex: 0.61
+    ils_2 = models.FloatField()  # ex: 0.51
 
     class Meta:
         unique_together = (("year", "event", "match", "team"))
