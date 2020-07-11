@@ -82,6 +82,11 @@ class TeamEvent(models.Model):
     team = models.IntegerField()  # ex: 5511
     year = models.IntegerField()  # ex: 2019
     event = models.CharField(max_length=10)  # ex: ncwak
+    state = models.CharField(max_length=10)  # ex: NC
+    country = models.CharField(max_length=30)  # ex: Israel
+    district = models.CharField(max_length=10)  # ex: FNC
+    type = models.IntegerField()  # ex: 1
+    week = models.IntegerField()  # ex: 2
     elo_start = models.IntegerField()  # ex: 1746
     elo_pre_playoffs = models.IntegerField()  # ex: 1746
     elo_end = models.IntegerField()  # ex: 1746
