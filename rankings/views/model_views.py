@@ -1,5 +1,6 @@
-from rest_framework import viewsets, permissions
 from django.contrib.auth.models import User
+
+from rest_framework import viewsets, permissions
 
 from rankings.serializers import (
     YearSerializer,
@@ -31,7 +32,6 @@ from rankings.models import (
     Match as MatchModel,
     TeamMatch as TeamMatchModel,
 )
-
 
 
 class YearView(viewsets.ModelViewSet):

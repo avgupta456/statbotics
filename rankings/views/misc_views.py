@@ -1,7 +1,8 @@
+import datetime
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-import datetime
 from rankings.event_pred import event_pred
 
 

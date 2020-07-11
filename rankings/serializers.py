@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
 
 from .models import Year, Team, TeamYear, Event, TeamEvent, Match, TeamMatch
-from django.contrib.auth.models import User
 
 
 class YearSerializer(serializers.ModelSerializer):

@@ -1,3 +1,5 @@
+import django_filters
+
 from .models import (
     Year,
     Team,
@@ -7,8 +9,6 @@ from .models import (
     Match,
     TeamMatch
 )
-
-import django_filters
 
 
 class YearFilterSet(django_filters.FilterSet):

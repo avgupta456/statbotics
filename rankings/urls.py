@@ -1,9 +1,7 @@
 from django.urls import path, include
-from rest_framework import routers
-from rankings import views
-
-# for swagger
 from django.conf.urls import url
+
+from rest_framework import routers
 from rest_framework import permissions
 
 from drf_yasg.views import SwaggerUIRenderer, get_schema_view
