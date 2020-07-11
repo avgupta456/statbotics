@@ -217,7 +217,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 team_ils_1[num] = ils_1
                 team_ils_2[num] = ils_2
 
-                for i, m in enumerate(team_event.team_matches):
+                for i, m in enumerate(sorted(team_event.team_matches)):
                     index = -1 if m.match.playoff else i
                     m.opr_score = clean(oprs[num][index][0])
                     m.opr_auto = clean(oprs[num][index][1])
