@@ -5,18 +5,6 @@ import pandas as pd
 
 from process.logging import printStats
 
-'''
-from classes.classes import (
-    Year,
-    Team,
-    TeamYear,
-    Event,
-    TeamEvent,
-    Match,
-    TeamMatch
-)
-'''
-
 
 def getYears(SQL_Read):
     print("Years")
@@ -143,6 +131,7 @@ def getEvents(SQL_Read):
             event.district,
             event.type,
             event.week,
+            event.time,
             round(event.elo_top8),
             round(event.elo_top24),
             round(event.elo_mean),
@@ -154,7 +143,7 @@ def getEvents(SQL_Read):
     events = pd.DataFrame(events,
                           columns=["id", "year", "key", "name", "state",
                                    "country", "district", "type", "week",
-                                   "elo_top8", "elo_top24", "elo_mean",
+                                   "time", "elo_top8", "elo_top24", "elo_mean",
                                    "opr_top8", "opr_top24", "opr_mean"])
 
     events = events.sort_values(by=['year', 'key'])
@@ -178,6 +167,7 @@ def getTeamEvents(SQL_Read):
             team_event.event.district,
             team_event.event.type,
             team_event.event.week,
+            team_event.event.time,
             round(team_event.elo_start),
             round(team_event.elo_pre_playoffs),
             round(team_event.elo_end),
@@ -202,11 +192,12 @@ def getTeamEvents(SQL_Read):
     team_events = pd.DataFrame(team_events,
                                columns=["id", "team", "year", "event", "state",
                                         "country", "district", "type", "week",
-                                        "elo_start", "elo_pre_playoffs",
-                                        "elo_end", "elo_mean", "elo_max",
-                                        "elo_diff", "opr_start", "opr_end",
-                                        "opr_auto", "opr_teleop", "opr_1",
-                                        "opr_2", "opr_endgame", "opr_fouls",
+                                        "time", "elo_start",
+                                        "elo_pre_playoffs", "elo_end",
+                                        "elo_mean", "elo_max", "elo_diff",
+                                        "opr_start", "opr_end", "opr_auto",
+                                        "opr_teleop", "opr_1", "opr_2",
+                                        "opr_endgame", "opr_fouls",
                                         "opr_no_fouls", "ils_1_start",
                                         "ils_2_start", "ils_1_end",
                                         "ils_2_end"])
@@ -231,6 +222,7 @@ def getMatches(SQL_Read):
             match.set_number,
             match.match_number,
             match.playoff,
+            match.time,
             match.red,
             match.blue,
             match.red_score,
@@ -269,9 +261,10 @@ def getMatches(SQL_Read):
     matches = pd.DataFrame(matches,
                            columns=["id", "year", "event", "key", "comp_level",
                                     "set_number", "match_number", "playoff",
-                                    "red", "blue", "red_score", "blue_score",
-                                    "winner", "elo_winner", "elo_win_prob",
-                                    "opr_winner", "opr_win_prob", "mix_winner",
+                                    "time", "red", "blue", "red_score",
+                                    "blue_score", "winner", "elo_winner",
+                                    "elo_win_prob", "opr_winner",
+                                    "opr_win_prob", "mix_winner",
                                     "mix_win_prob", "red_rp_1",
                                     "red_rp_1_prob", "red_rp_2",
                                     "red_rp_2_prob", "blue_rp_1",
@@ -301,6 +294,7 @@ def getTeamMatches(SQL_Read):
             team_match.event.key,
             team_match.match.key,
             team_match.alliance,
+            team_match.match.time,
             round(team_match.elo),
             round(team_match.opr_score, 2),
             round(team_match.ils_1, 2),
@@ -309,8 +303,8 @@ def getTeamMatches(SQL_Read):
 
     team_matches = pd.DataFrame(team_matches,
                                 columns=["id", "team", "year", "event",
-                                         "match", "alliance", "elo", "opr",
-                                         "ils_1", "ils_2"])
+                                         "match", "alliance",  "time", "elo",
+                                         "opr", "ils_1", "ils_2"])
 
     team_matches = team_matches.sort_values(by=['year', 'team', 'event', 'match'])  # noqa 502
     return team_matches
@@ -349,51 +343,8 @@ def drop_table(table_name, engine):
         base.metadata.drop_all(engine, [table], checkfirst=True)
 
 
-'''
-def pushAll(SQL_Read, cloud_engine, local_session):
-    drop_table('team_matches', cloud_engine)
-    drop_table('matches', cloud_engine)
-    drop_table('team_events', cloud_engine)
-    drop_table('events', cloud_engine)
-    drop_table('team_years', cloud_engine)
-    drop_table('teams', cloud_engine)
-    drop_table('years', cloud_engine)
-
-    print("Years")
-    years = pd.read_sql(local_session.query(Year).statement, local_session.bind)  # noqa 502
-    years.to_sql('years', cloud_engine, index=False)
-
-    print("Matches")
-    matches = pd.read_sql(local_session.query(Match).statement, local_session.bind)  # noqa 502
-    matches.to_sql('matches', cloud_engine, index=False)
-
-    print("Team Events")
-    teamEvents = pd.read_sql(local_session.query(TeamEvent).statement, local_session.bind)  # noqa 502
-    teamEvents.to_sql('team_events', cloud_engine, index=False)  # noqa 502
-
-    print("Events")
-    events = pd.read_sql(local_session.query(Event).statement, local_session.bind)  # noqa 502
-    events.to_sql('events', cloud_engine, index=False)
-
-    print("Team Years")
-    teamYears = pd.read_sql(local_session.query(TeamYear).statement, local_session.bind)  # noqa 502
-    teamYears.to_sql('team_years', cloud_engine, index=False)  # noqa 502
-
-    print("Teams")
-    teams = pd.read_sql(local_session.query(Team).statement, local_session.bind)  # noqa 502
-    teams.to_sql('teams', cloud_engine, index=False)
-
-    print("Team Matches")
-    teamMatches = pd.read_sql(local_session.query(TeamMatch).statement, local_session.bind)  # noqa 502
-    teamMatches.to_sql('team_matches', cloud_engine, index=False)  # noqa 502
-
-    printStats()
-'''
-
-
 def main(SQL, SQL_Read):
     cloud_engine = SQL.getCloudEngine()
     # local_session = SQL.getLocalSession()
     pushClean(SQL_Read, cloud_engine)
-    # pushAll(SQL_Read, cloud_engine, local_session)
     printStats()
