@@ -69,6 +69,7 @@ class Event(models.Model):
     district = models.CharField(max_length=10)  # ex: FNC
     type = models.IntegerField()  # ex: 1
     week = models.IntegerField()  # ex: 2
+    time = models.IntegerField()  # ex: 12451261
     elo_top8 = models.IntegerField()  # ex: 1800
     elo_top24 = models.IntegerField()  # ex: 1700
     elo_mean = models.IntegerField()  # ex: 1600
@@ -87,6 +88,7 @@ class TeamEvent(models.Model):
     district = models.CharField(max_length=10)  # ex: FNC
     type = models.IntegerField()  # ex: 1
     week = models.IntegerField()  # ex: 2
+    time = models.IntegerField()  # ex: 12451261
     elo_start = models.IntegerField()  # ex: 1746
     elo_pre_playoffs = models.IntegerField()  # ex: 1746
     elo_end = models.IntegerField()  # ex: 1746
@@ -120,6 +122,7 @@ class Match(models.Model):
     set_number = models.IntegerField()  # ex: 2
     match_number = models.IntegerField()  # ex: 65
     playoff = models.IntegerField()  # ex: 1
+    time = models.IntegerField()  # ex: 12451261
     red = models.IntegerField()
     blue = models.IntegerField()
     red_score = models.IntegerField()  # ex: 50
@@ -162,6 +165,7 @@ class TeamMatch(models.Model):
     event = models.CharField(max_length=10)  # ex: ncwak
     match = models.CharField(max_length=10)  # ex: sf1m1
     alliance = models.CharField(max_length=10)  # ex: red
+    time = models.IntegerField()  # ex: 12451261
     elo = models.IntegerField()  # ex: 1746
     opr = models.FloatField()  # ex: 12.34
     ils_1 = models.FloatField()  # ex: 0.61

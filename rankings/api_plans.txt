@@ -3,44 +3,6 @@ Should help reduce total API endpoints neededs
 
 Total: 146
 
-TeamMatch (36)
-
-api/team/{num}/matches
-
-api/teams/matches
-api/teams/matches/by/{metric}
-
-api/teams/matches/country/{country} ... 2
-api/teams/matches/country/{country}/state/{state} ... 2
-api/teams/matches/district/{district} ... 2
-
-api/team/{num}/year/{year}/matches
-
-api/teams/year/{year}/matches
-api/teams/year/{year}/matches/by/{metric}
-
-api/teams/year/{year}/matches/country/{country} ... 2
-api/teams/year/{year}/matches/country/{country}/state/{state} ... 2
-api/teams/year/{year}/matches/district/{district} ... 2
-
-api/team/{num}/event/{event}/matches
-
-api/teams/event/{event}/matches
-api/teams/event/{event}/matches/by/{metric}
-
-api/teams/event/{event}/matches/country/{country} ... 2
-api/teams/event/{event}/matches/country/{country}/state/{state} ... 2
-api/teams/event/{event}/matches/district/{district} ... 2
-
-api/team/{num}/match/{match}
-
-api/teams/match/{match}
-api/teams/match/{match}/by/{metric}
-
-api/teams/match/{match}/country/{country} ... 2
-api/teams/match/{match}/country/{country}/state/{state} ... 2
-api/teams/match/{match}/district/{district} ... 2
-
 Year (3)
 
 api/year/{year}
