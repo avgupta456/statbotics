@@ -94,7 +94,17 @@ urlpatterns = [
     path('api/team_events', views.TeamEvents),
     path('api/team_events/by/<metric>', views.TeamEventsByMetric),
 
-    
+    # TeamMatches
+    path('api/team_match/team/<team>/match/<match>', views.TeamMatch),
+    path('api/team_matches', views.TeamMatches),
+    path('api/team_matches/team/<team>', views.TeamMatchesTeam),
+    path('api/team_matches/year/<year>', views.TeamMatchesYear),
+    path('api/team_matches/event/<event>', views.TeamMatchesEvent),
+    path('api/team_matches/match/<match>', views.TeamMatchesMatch),
+    path('api/team_matches/team/<team>/year/<year>', views.TeamMatchesTeamYear),  # noqa 502
+    path('api/team_matches/team/<team>/event/<event>', views.TeamMatchesTeamEvent),  # noqa 502
+
+
     path('api/event_pred', views.EventPred),
 
     path('api/', include(router.urls)),
