@@ -123,8 +123,8 @@ class Match(models.Model):
     match_number = models.IntegerField()  # ex: 65
     playoff = models.IntegerField()  # ex: 1
     time = models.IntegerField()  # ex: 12451261
-    red = models.IntegerField()
-    blue = models.IntegerField()
+    red = models.CharField(max_length=20) # ex: 5511,254,1678
+    blue = models.CharField(max_length=20) # ex: 5511,254,1678
     red_score = models.IntegerField()  # ex: 50
     blue_score = models.IntegerField()  # ex: 75
     winner = models.CharField(max_length=10)  # ex: blue

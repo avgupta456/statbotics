@@ -39,6 +39,8 @@ def _TeamEvents(request, num=None, year=None, event=None,
     teamEvents = teamEvents.all()
     if metric is not None:
         teamEvents = teamEvents.order_by(metric)
+    else:
+        teamEvents = teamEvents.order_by('time')
     serializer = TeamEventSerializer(teamEvents, many=True)
     return Response(serializer.data)
 

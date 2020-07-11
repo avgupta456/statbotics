@@ -134,7 +134,7 @@ urlpatterns = [
     path('api/events/country/<country>/state/<state>', event_views._Events),
     path('api/events/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
     path('api/events/district/<district>', event_views._Events),
-    path('api/events/district/<district>/by/<metric>', views._Events),
+    path('api/events/district/<district>/by/<metric>', event_views._Events),
     path('api/events/year/<year>', event_views.EventsYear),
     path('api/events/year/<year>/by/<metric>', event_views.EventsYearByMetric),
     path('api/events/year/<year>/country/<country>', event_views._Events),
