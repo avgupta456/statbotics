@@ -9,11 +9,16 @@ from rest_framework import permissions
 from drf_yasg.views import SwaggerUIRenderer, get_schema_view
 from drf_yasg import openapi
 
-from rankings.views_folder import (
+from rankings.views import (
+    model_views,
     team_views,
     team_year_views,
     team_event_views,
     team_match_views,
+    year_views,
+    event_views,
+    match_views,
+    misc_views,
 )
 
 
@@ -29,13 +34,13 @@ schema_view = get_schema_view(
 )
 
 router = routers.DefaultRouter()
-router.register(r'_years', views.YearView, 'year')
-router.register(r'_teams', views.TeamView, 'team')
-router.register(r'_team_years', views.TeamYearView, 'team_year')
-router.register(r'_events', views.EventView, 'event')
-router.register(r'_team_events', views.TeamEventView, 'team_event')
-router.register(r'_matches', views.MatchView, 'match')
-router.register(r'_team_matches', views.TeamMatchView, 'team_match')
+router.register(r'_years', model_views.YearView, 'year')
+router.register(r'_teams', model_views.TeamView, 'team')
+router.register(r'_team_years', model_views.TeamYearView, 'team_year')
+router.register(r'_events', model_views.EventView, 'event')
+router.register(r'_team_events', model_views.TeamEventView, 'team_event')
+router.register(r'_matches', model_views.MatchView, 'match')
+router.register(r'_team_matches', model_views.TeamMatchView, 'team_match')
 
 # commented out url patterns still need models
 urlpatterns = [
@@ -115,39 +120,37 @@ urlpatterns = [
     path('api/team_matches/team/<team>/year/<year>', team_match_views.TeamMatchesTeamYear),  # noqa 502
     path('api/team_matches/team/<team>/event/<event>', team_match_views.TeamMatchesTeamEvent),  # noqa 502
 
-    path('api/event_pred', views.EventPred),
+    # Years (3, 3)
+    path('api/year/<year>', year_views.Year),
+    path('api/years', year_views.Years),
+    path('api/years/by/<metric>', year_views.YearsByMetric),
+
+    # Events (17, 5)
+    path('api/event/<event>', event_views.Event),
+    path('api/events', event_views.Events),
+    path('api/events/by/<metric>', event_views.EventsByMetric),
+    path('api/events/country/<country>', event_views._Events),
+    path('api/events/country/<country>/by/<metric>', event_views._Events),
+    path('api/events/country/<country>/state/<state>', event_views._Events),
+    path('api/events/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/district/<district>', event_views._Events),
+    path('api/events/district/<district>/by/<metric>', views._Events),
+    path('api/events/year/<year>', event_views.EventsYear),
+    path('api/events/year/<year>/by/<metric>', event_views.EventsYearByMetric),
+    path('api/events/year/<year>/country/<country>', event_views._Events),
+    path('api/events/year/<year>/country/<country>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/country/<country>/state/<state>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/district/<district>', event_views._Events),
+    path('api/events/year/<year>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
+
+    # Matches (4, 4)
+    path('api/match/<match>', match_views.Match),
+    path('api/matches', match_views.Matches),
+    path('api/matches/year/<year>', match_views.MatchesYear),
+    path('api/matches/event/<event>', match_views.MatchesEvent),
+
+    path('api/event_pred', misc_views.EventPred),
 
     path('api/', include(router.urls)),
 ]
-
-'''
-# Years (3, 3)
-path('api/year/<year>', views.Year),
-path('api/years', views.Years),
-path('api/years/by/<metric>', views.YearsByMetric),
-
-# Events (17, 5)
-path('api/event/<event>', views.Event),
-path('api/events', views.Events),
-path('api/events/by/<metric>', views.EventsByMetric),
-path('api/events/country/<country>', views._Events),
-path('api/events/country/<country>/by/<metric>', views._Events),
-path('api/events/country/<country>/state/<state>', views._Events),
-path('api/events/country/<country>/state/<state>/by/<metric>', views._Events),  # noqa 502
-path('api/events/district/<district>', views._Events),
-path('api/events/district/<district>/by/<metric>', views._Events),
-path('api/events/year/<year>', views.EventsYear),
-path('api/events/year/<year>/by/<metric>', views.EventsYearByMetric),
-path('api/events/year/<year>/country/<country>', views._Events),
-path('api/events/year/<year>/country/<country>/by/<metric>', views._Events),  # noqa 502
-path('api/events/year/<year>/country/<country>/state/<state>', views._Events),  # noqa 502
-path('api/events/year/<year>/country/<country>/state/<state>/by/<metric>', views._Events),  # noqa 502
-path('api/events/year/<year>/district/<district>', views._Events),
-path('api/events/year/<year>/district/<district>/by/<metric>', views._Events),  # noqa 502
-
-# Matches (4, 4)
-path('api/match/<match>', views.Match),
-path('api/matches', views.Matches),
-path('api/matches/year/<year>', views.MatchesYear),
-path('api/matches/event/<event>', views.MatchesEvent),
-'''
