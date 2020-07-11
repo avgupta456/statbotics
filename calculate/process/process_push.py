@@ -173,6 +173,11 @@ def getTeamEvents(SQL_Read):
             team_event.team_id,
             team_event.year_id,
             team_event.event.key,
+            team_event.event.state,
+            team_event.event.country,
+            team_event.event.district,
+            team_event.event.type,
+            team_event.event.week,
             round(team_event.elo_start),
             round(team_event.elo_pre_playoffs),
             round(team_event.elo_end),
@@ -195,7 +200,8 @@ def getTeamEvents(SQL_Read):
         ])
 
     team_events = pd.DataFrame(team_events,
-                               columns=["id", "team", "year", "event",
+                               columns=["id", "team", "year", "event", "state",
+                                        "country", "district", "type", "week",
                                         "elo_start", "elo_pre_playoffs",
                                         "elo_end", "elo_mean", "elo_max",
                                         "elo_diff", "opr_start", "opr_end",
