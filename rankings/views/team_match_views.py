@@ -1,3 +1,5 @@
+from django.core.paginator import Paginator
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -21,7 +23,7 @@ def TeamMatch(request, num, match):
 
 @swagger_auto_schema(method='GET', auto_schema=None)
 @api_view(['GET'])
-def _TeamMatches(request, num=None, year=None, event=None, match=None):
+def _TeamMatches(request, num=None, year=None, event=None, match=None, page=1):
     teamMatches = TeamMatchModel.objects
     if num is not None:
         teamMatches = teamMatches.filter(team=num)
@@ -31,7 +33,7 @@ def _TeamMatches(request, num=None, year=None, event=None, match=None):
         teamMatches = teamMatches.filter(event=event)
     if match is not None:
         teamMatches = teamMatches.filter(match=match)
-    teamMatches = teamMatches.all().order_by("time")
+    teamMatches = Paginator(teamMatches.all().order_by("time"), 5000).page(page)  # noqa 502
     serializer = TeamMatchSerializer(teamMatches, many=True)
     return Response(serializer.data)
 
@@ -86,8 +88,8 @@ def TeamMatchesMatch(request, match):
     operation_description="Statistics for (Team, Match) pairs with specified team, year",  # noqa 502
 )
 @api_view(['GET'])
-def TeamMatchesTeamYear(request, team, year):
-    return _TeamMatches(request._request, num=team, year=year)
+def TeamMatchesTeamYear(request, num, year):
+    return _TeamMatches(request._request, num=num, year=year)
 
 
 @swagger_auto_schema(
@@ -95,5 +97,5 @@ def TeamMatchesTeamYear(request, team, year):
     operation_description="Statistics for (Team, Match) pairs with specified team, event",  # noqa 502
 )
 @api_view(['GET'])
-def TeamMatchesTeamEvent(request, team, event):
-    return _TeamMatches(request._request, num=team, event=event)
+def TeamMatchesTeamEvent(request, num, event):
+    return _TeamMatches(request._request, num=num, event=event)

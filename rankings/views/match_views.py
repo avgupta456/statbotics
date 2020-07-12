@@ -1,3 +1,5 @@
+from django.core.paginator import Paginator
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -14,7 +16,24 @@ from rankings.models import Match as MatchModel
 )
 @api_view(['GET'])
 def Match(request, match):
-    matches = MatchModel.objects.filter(match=match).all()
+    matches = MatchModel.objects.filter(key=match).all()
+    serializer = MatchSerializer(matches, many=True)
+    return Response(serializer.data)
+
+
+@swagger_auto_schema(
+    method='GET', responses={200: openapi.Response("", MatchSerializer)},
+    operation_description="List of all matches (WARNING: VERY SLOW)",
+)
+@api_view(['GET'])
+def _Matches(request, year=None, event=None, page=1):
+    matches = MatchModel.objects
+    if year is not None:
+        matches = matches.filter(year=year)
+    if event is not None:
+        matches = matches.filter(event=event)
+    matches = matches.all().order_by('time')
+    matches = Paginator(matches, 5000).page(page)
     serializer = MatchSerializer(matches, many=True)
     return Response(serializer.data)
 
@@ -25,9 +44,7 @@ def Match(request, match):
 )
 @api_view(['GET'])
 def Matches(request):
-    matches = MatchModel.objects.all().order_by('time')
-    serializer = MatchSerializer(matches, many=True)
-    return Response(serializer.data)
+    return _Matches(request._request)
 
 
 @swagger_auto_schema(
@@ -36,9 +53,7 @@ def Matches(request):
 )
 @api_view(['GET'])
 def MatchesYear(request, year):
-    matches = MatchModel.objects.filter(year=year).all().order_by('time')
-    serializer = MatchSerializer(matches, many=True)
-    return Response(serializer.data)
+    return _Matches(request._request)
 
 
 @swagger_auto_schema(
@@ -47,6 +62,4 @@ def MatchesYear(request, year):
 )
 @api_view(['GET'])
 def MatchesEvent(request, event):
-    matches = MatchModel.objects.filter(event=event).all().order_by('time')
-    serializer = MatchSerializer(matches, many=True)
-    return Response(serializer.data)
+    return _Matches(request._request)

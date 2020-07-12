@@ -46,9 +46,7 @@ urlpatterns = [
         schema_view.with_ui('swagger', cache_timeout=0),
         name='schema-swagger-ui'),
 
-    # Total (85, 41)
-
-    # Teams (17, 5)
+    # Teams
     path('api/team/<num>', team_views.Team),
 
     path('api/teams', team_views.Teams),
@@ -72,7 +70,7 @@ urlpatterns = [
 
 
 
-    # TeamYears (19, 7)
+    # TeamYears
     path('api/team_year/team/<num>/year/<year>', team_year_views.TeamYear),
 
     path('api/team_years/team/<num>', team_year_views.TeamYearsNum),
@@ -103,7 +101,7 @@ urlpatterns = [
 
 
 
-    # TeamEvents (15, 9)
+    # TeamEvents
     path('api/team_event/team/<num>/event/<event>', team_event_views.TeamEvent),  # noqa 502
 
     path('api/team_events/team/<num>', team_event_views.TeamEventsNum),
@@ -137,23 +135,32 @@ urlpatterns = [
 
 
 
-    # TeamMatches (8, 8)
-    path('api/team_match/team/<team>/match/<match>', team_match_views.TeamMatch),  # noqa 502
+    # TeamMatches
+    path('api/team_match/team/<num>/match/<match>', team_match_views.TeamMatch),  # noqa 502
+
     path('api/team_matches', team_match_views.TeamMatches),
-    path('api/team_matches/team/<team>', team_match_views.TeamMatchesTeam),
+    path('api/team_matches/page/<page>', team_match_views._TeamMatches),
+    path('api/team_matches/team/<num>', team_match_views.TeamMatchesTeam),
     path('api/team_matches/year/<year>', team_match_views.TeamMatchesYear),
+    path('api/team_matches/year/<year>/page/<page>', team_match_views._TeamMatches),  # noqa 502
     path('api/team_matches/event/<event>', team_match_views.TeamMatchesEvent),
     path('api/team_matches/match/<match>', team_match_views.TeamMatchesMatch),
-    path('api/team_matches/team/<team>/year/<year>', team_match_views.TeamMatchesTeamYear),  # noqa 502
-    path('api/team_matches/team/<team>/event/<event>', team_match_views.TeamMatchesTeamEvent),  # noqa 502
+    path('api/team_matches/team/<num>/year/<year>', team_match_views.TeamMatchesTeamYear),  # noqa 502
+    path('api/team_matches/team/<num>/event/<event>', team_match_views.TeamMatchesTeamEvent),  # noqa 502
 
-    # Years (3, 3)
+
+
+    # Years
     path('api/year/<year>', year_views.Year),
+
     path('api/years', year_views.Years),
     path('api/years/by/<metric>', year_views.YearsByMetric),
 
-    # Events (17, 5)
+
+
+    # Events
     path('api/event/<event>', event_views.Event),
+
     path('api/events', event_views.Events),
     path('api/events/by/<metric>', event_views.EventsByMetric),
     path('api/events/country/<country>', event_views._Events),
@@ -162,6 +169,7 @@ urlpatterns = [
     path('api/events/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
     path('api/events/district/<district>', event_views._Events),
     path('api/events/district/<district>/by/<metric>', event_views._Events),
+
     path('api/events/year/<year>', event_views.EventsYear),
     path('api/events/year/<year>/by/<metric>', event_views.EventsYearByMetric),
     path('api/events/year/<year>/country/<country>', event_views._Events),
@@ -171,13 +179,24 @@ urlpatterns = [
     path('api/events/year/<year>/district/<district>', event_views._Events),
     path('api/events/year/<year>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
 
-    # Matches (4, 4)
+
+
+    # Matches
     path('api/match/<match>', match_views.Match),
+
     path('api/matches', match_views.Matches),
+    path('api/matches/page/<page>', match_views._Matches),
     path('api/matches/year/<year>', match_views.MatchesYear),
+    path('api/matches/year/<year>/page/<page>', match_views._Matches),
     path('api/matches/event/<event>', match_views.MatchesEvent),
 
+
+
+    # Event Pred (TODO)
     path('api/event_pred', misc_views.EventPred),
 
+
+
+    # Models (7)
     path('api/', include(router.urls)),
 ]

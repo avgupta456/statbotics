@@ -14,7 +14,7 @@ from rankings.models import Event as EventModel
 )
 @api_view(['GET'])
 def Event(request, event):
-    events = EventModel.objects.filter(event=event).all()
+    events = EventModel.objects.filter(key=event).all()
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
 
