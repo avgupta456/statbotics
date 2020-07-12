@@ -26,7 +26,7 @@ if CLOUDSQL_CONNECTION is None or \
     CLOUDSQL_USER = getEnvVar(client, "CLOUDSQL_USER")
 
 # comment out to use the production database
-CLOUDSQL_DATABASE += "2"
+# CLOUDSQL_DATABASE += "2"
 
 '''
 print(CLOUDSQL_CONNECTION)
