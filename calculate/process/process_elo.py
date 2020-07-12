@@ -226,7 +226,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         keys = years.keys()
         vals = years.values()
         recent = []
-        for year in range(2017, end_year):
+        for year in range(2017, end_year+1):
             if year in years:
                 recent.append(years[year])
         r_y, y = len(recent), len(vals)
