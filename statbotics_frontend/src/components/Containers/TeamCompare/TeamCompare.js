@@ -1,45 +1,48 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 
-import { Typography } from '@material-ui/core';
-import { Card } from 'react-bootstrap'
+import { Typography } from "@material-ui/core";
+import { Card } from "react-bootstrap";
 
-import { fetchTeam } from './../../../api'
-import { LineChart, TeamSelect } from './../../'
+import { fetchTeam } from "./../../../api";
+import { LineChart, TeamSelect } from "./../../";
 
-import styles from './TeamCompare.module.css'
+import styles from "./TeamCompare.module.css";
 
 export default function TeamCompare() {
-  const [chosenTeams, setChosenTeams] = React.useState([])
-  const [teamsData, setTeamsData] = React.useState([{id:"", data:[{x:0, y:0}]}])
+  const [chosenTeams, setChosenTeams] = React.useState([]);
+  const [teamsData, setTeamsData] = React.useState([
+    { id: "", data: [{ x: 0, y: 0 }] },
+  ]);
 
   function clean(team, data) {
     return {
       id: team,
-      data: data.map(
-        function(x, i) {
-          return {x: x["year"], y: x["elo_max"]}
-        }
-      )
-    }
+      data: data.map(function (x, i) {
+        return { x: x["year"], y: x["elo_max"] };
+      }),
+    };
   }
 
   useEffect(() => {
     const getTeamsData = async (teams) => {
-      var new_teams = []
-      for(var i=0;i<teams.length;i++) {
+      var new_teams = [];
+      for (var i = 0; i < teams.length; i++) {
         const team = teams[i].value;
         const teamData = await fetchTeam(team, "elo_recent");
-        new_teams.push(clean(team, teamData.results))
+        new_teams.push(clean(team, teamData));
       }
-      setTeamsData(new_teams)
-    }
-    
-    getTeamsData(chosenTeams)
-  }, [chosenTeams])
+      setTeamsData(new_teams);
+    };
+
+    getTeamsData(chosenTeams);
+  }, [chosenTeams]);
 
   function teamsClick(teams) {
-    if(teams===null) {setChosenTeams([])}
-    else {setChosenTeams(teams)}
+    if (teams === null) {
+      setChosenTeams([]);
+    } else {
+      setChosenTeams(teams);
+    }
   }
 
   return (
