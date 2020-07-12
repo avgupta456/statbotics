@@ -50,11 +50,13 @@ urlpatterns = [
 
     # Teams (17, 5)
     path('api/team/<num>', team_views.Team),
+
     path('api/teams', team_views.Teams),
     path('api/teams/', team_views.Teams),
     path('api/teams/by/<metric>', team_views.TeamsByMetric),
     path('api/teams/active', team_views.TeamsActive),
     path('api/teams/active/by/<metric>', team_views.TeamsActiveByMetric),
+
     path('api/teams/country/<country>', team_views._Teams),
     path('api/teams/country/<country>/by/<metric>', team_views._Teams),
     path('api/teams/country/<country>/active', team_views._TeamsActive),
@@ -68,45 +70,72 @@ urlpatterns = [
     path('api/teams/district/<district>/active', team_views._TeamsActive),
     path('api/teams/district/<district>/active/by/<metric>', team_views._TeamsActive),  # noqa 502
 
+
+
     # TeamYears (19, 7)
     path('api/team_year/team/<num>/year/<year>', team_year_views.TeamYear),
+
     path('api/team_years/team/<num>', team_year_views.TeamYearsNum),
     path('api/team_years/team/<num>/by/<metric>', team_year_views.TeamYearsNumByMetric),  # noqa 502
     path('api/team_years/year/<year>', team_year_views.TeamYearsYear),
     path('api/team_years/year/<year>/by/<metric>', team_year_views.TeamYearsYearByMetric),  # noqa 502
+
     path('api/team_years/year/<year>/country/<country>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/year/<year>/country/<country>/by/<metric>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/year/<year>/country/<country>/state/<state>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/year/<year>/country/<country>/state/<state>/by/<metric>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/year/<year>/district/<district>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/year/<year>/district/<district>/by/<metric>', team_year_views._TeamYears),  # noqa 502
-    path('api/team_years', team_year_views.TeamYears),
+
+    path('api/team_years/', team_year_views.TeamYears),
+    path('api/team_years/page/<page>', team_year_views._TeamYears),
     path('api/team_years/by/<metric>', team_year_views.TeamYearsByMetric),
+    path('api/team_years/by/<metric>/page/<page>', team_year_views._TeamYears),
+
     path('api/team_years/country/<country>', team_year_views._TeamYears),
+    path('api/team_years/country/<country>/page/<page>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/country/<country>/by/<metric>', team_year_views._TeamYears),  # noqa 502
+    path('api/team_years/country/<country>/by/<metric>/page/<page>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/country/<country>/state/<state>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/country/<country>/state/<state>/by/<metric>', team_year_views._TeamYears),  # noqa 502
     path('api/team_years/district/<district>', team_year_views._TeamYears),
     path('api/team_years/district/<district>/by/<metric>', team_year_views._TeamYears),  # noqa 502
 
+
+
     # TeamEvents (15, 9)
     path('api/team_event/team/<num>/event/<event>', team_event_views.TeamEvent),  # noqa 502
+
     path('api/team_events/team/<num>', team_event_views.TeamEventsNum),
     path('api/team_events/team/<num>/by/<metric>', team_event_views.TeamEventsNumByMetric),  # noqa 502
+
     path('api/team_events/year/<year>', team_event_views.TeamEventsYear),
+    path('api/team_events/year/<year>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/by/<metric>', team_event_views.TeamEventsYearByMetric),  # noqa 502
+    path('api/team_events/year/<year>/by/<metric>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/country/<country>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/country/<country>/by/<metric>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/district/<district>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+
     path('api/team_events/team/<num>/year/<year>', team_event_views.TeamEventsNumYear),  # noqa 502
     path('api/team_events/team/<num>/year/<year>/by/<metric>', team_event_views.TeamEventsNumYearByMetric),  # noqa 502
+
     path('api/team_events/event/<event>', team_event_views.TeamEventsEvent),
     path('api/team_events/event/<event>/by/<metric>', team_event_views.TeamEventsEventByMetric),  # noqa 502
+
     path('api/team_events', team_event_views.TeamEvents),
-    path('api/team_events/by/<metric>', team_event_views.TeamEventsByMetric),
+    path('api/team_events/page/<page>', team_event_views._TeamEvents),
+    path('api/team_events/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/country/<country>/page/<page>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/district/<district>', team_event_views._TeamEvents),  # noqa 502
+
+
 
     # TeamMatches (8, 8)
     path('api/team_match/team/<team>/match/<match>', team_match_views.TeamMatch),  # noqa 502

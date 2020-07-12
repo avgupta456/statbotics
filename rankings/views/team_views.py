@@ -41,7 +41,7 @@ def _Teams(request, metric=None, country=None, state=None, district=None, active
 @swagger_auto_schema(method='GET', auto_schema=None)
 @api_view(['GET'])
 def _TeamsActive(request, metric=None, country=None, state=None, district=None):  # noqa 502
-    return _Teams(request, metric, country, state, district, active=1)
+    return _Teams(request._request, metric, country, state, district, active=1)
 
 
 @swagger_auto_schema(

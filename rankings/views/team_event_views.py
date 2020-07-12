@@ -1,3 +1,5 @@
+from django.core.paginator import Paginator
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -14,15 +16,15 @@ from rankings.models import TeamEvent as TeamEventModel
 )
 @api_view(['GET'])
 def TeamEvent(request, num, event):
-    teamEvent = TeamEventModel.objects.filter(team=num).filter(event=event).all()  # noqa 502
-    serializer = TeamEventSerializer(teamEvent, many=False)
+    teamEvents = TeamEventModel.objects.filter(team=num).filter(event=event).all()  # noqa 502
+    serializer = TeamEventSerializer(teamEvents, many=True)
     return Response(serializer.data)
 
 
 @swagger_auto_schema(method='GET', auto_schema=None)
 @api_view(['GET'])
-def _TeamEvents(request, num=None, year=None, event=None,
-                country=None, state=None, district=None, metric=None):
+def _TeamEvents(request, num=None, year=None, event=None, country=None,
+                state=None, district=None, metric=None, page=1):
     teamEvents = TeamEventModel.objects
     if num is not None:
         teamEvents = teamEvents.filter(team=num)
@@ -41,6 +43,7 @@ def _TeamEvents(request, num=None, year=None, event=None,
         teamEvents = teamEvents.order_by(metric)
     else:
         teamEvents = teamEvents.order_by('time')
+    teamEvents = Paginator(teamEvents, 5000).page(page)
     serializer = TeamEventSerializer(teamEvents, many=True)
     return Response(serializer.data)
 
@@ -51,20 +54,7 @@ def _TeamEvents(request, num=None, year=None, event=None,
 )
 @api_view(['GET'])
 def TeamEvents(request):
-    return _TeamEvents(request)
-
-
-@swagger_auto_schema(
-    method='GET', responses={200: openapi.Response("", TeamEventSerializer)},
-    operation_description="Elo and OPR for all (Team, Event) pairs, ordered" +
-                          " by metric. Options are '-elo_start'," +
-                          " '-elo_pre_playoffs', '-elo_end', '-elo_mean'," +
-                          " '-elo_max', '-elo_diff', '-opr_start'," +
-                          "  '-opr_end', '-ils_1', '-ils_2'",
-)
-@api_view(['GET'])
-def TeamEventsByMetric(request, metric):
-    return _TeamEvents(request, metric=metric)
+    return _TeamEvents(request._request)
 
 
 @swagger_auto_schema(
@@ -73,7 +63,7 @@ def TeamEventsByMetric(request, metric):
 )
 @api_view(['GET'])
 def TeamEventsNum(request, num):
-    return _TeamEvents(request, num=num)
+    return _TeamEvents(request._request, num=num)
 
 
 @swagger_auto_schema(
@@ -95,7 +85,7 @@ def TeamEventsNumByMetric(request, num, metric):
 )
 @api_view(['GET'])
 def TeamEventsYear(request, year):
-    return _TeamEvents(request, year=year)
+    return _TeamEvents(request._request, year=year)
 
 
 @swagger_auto_schema(
@@ -108,7 +98,7 @@ def TeamEventsYear(request, year):
 )
 @api_view(['GET'])
 def TeamEventsYearByMetric(request, year, metric):
-    return _TeamEvents(request, year=year, metric=metric)
+    return _TeamEvents(request._request, year=year, metric=metric)
 
 
 @swagger_auto_schema(
@@ -117,7 +107,7 @@ def TeamEventsYearByMetric(request, year, metric):
 )
 @api_view(['GET'])
 def TeamEventsNumYear(request, num, year):
-    return _TeamEvents(request, num=num, year=year)
+    return _TeamEvents(request._request, num=num, year=year)
 
 
 @swagger_auto_schema(
@@ -130,7 +120,7 @@ def TeamEventsNumYear(request, num, year):
 )
 @api_view(['GET'])
 def TeamEventsNumYearByMetric(request, num, year, metric):
-    return _TeamEvents(request, num=num, year=year, metric=metric)
+    return _TeamEvents(request._request, num=num, year=year, metric=metric)
 
 
 @swagger_auto_schema(
@@ -139,7 +129,7 @@ def TeamEventsNumYearByMetric(request, num, year, metric):
 )
 @api_view(['GET'])
 def TeamEventsEvent(request, event):
-    return _TeamEvents(request, event=event)
+    return _TeamEvents(request._request, event=event)
 
 
 @swagger_auto_schema(
@@ -152,4 +142,4 @@ def TeamEventsEvent(request, event):
 )
 @api_view(['GET'])
 def TeamEventsEventByMetric(request, event, metric):
-    return _TeamEvents(request, event=event, metric=metric)
+    return _TeamEvents(request._request, event=event, metric=metric)
