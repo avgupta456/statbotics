@@ -97,7 +97,7 @@ export const fetchTeams_byDistrict = async (district, active, method) => {
 
 export const fetchTeamsYear = async (year, method) => {
   try {
-    const teams = await axios.get(`${url}/teams/year/${year}/by/${method}`);
+    const teams = await axios.get(`${url}/team_years/year/${year}/by/${method}`);
     return teams.data;
   } catch (error) {
     return error;
@@ -107,7 +107,7 @@ export const fetchTeamsYear = async (year, method) => {
 export const fetchTeamsYear_byCountry = async (country, year, method) => {
   try {
     const teams = await axios.get(
-      `${url}/teams/country/${country}/year/${year}/by/${method}`
+      `${url}/team_years/year/${year}/country/${country}/by/${method}`
     );
     return teams.data;
   } catch (error) {
@@ -122,7 +122,7 @@ export const fetchTeamsYear_byState = async (country, state, year, method) => {
 
   try {
     const teams = await axios.get(
-      `${url}/teams/country/${country}/state/${state}/year/${year}/by/${method}`
+      `${url}/team_years/year/${year}/country/${country}/state/${state}/by/${method}`
     );
     return teams.data;
   } catch (error) {
@@ -133,7 +133,7 @@ export const fetchTeamsYear_byState = async (country, state, year, method) => {
 export const fetchTeamsYear_byDistrict = async (district, year, method) => {
   try {
     const teams = await axios.get(
-      `${url}/teams/district/${district}/year/${year}/by/${method}`
+      `${url}/team_years/year/${year}/district/${district}/by/${method}`
     );
     return teams.data;
   } catch (error) {
@@ -144,7 +144,7 @@ export const fetchTeamsYear_byDistrict = async (district, year, method) => {
 /*INDIVIDUAL TEAM API CALLS*/
 export const fetchTeam = async (num) => {
   try {
-    const team = await axios.get(`${url}/team/${num}/years`);
+    const team = await axios.get(`${url}/team_years/team/${num}`);
     return team.data;
   } catch (error) {
     return error;
@@ -156,7 +156,7 @@ export const fetchTeamYearElo = async (num, year) => {
     if (num === 0) {
       return 0;
     }
-    const team = await axios.get(`${url}/team/${num}/year/${year}`);
+    const team = await axios.get(`${url}/team_year/team/${num}/year/${year}`);
     return team.data[0].elo_max;
   } catch (error) {
     return 0;

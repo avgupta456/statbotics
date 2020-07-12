@@ -60,12 +60,12 @@ export default function TeamLookup() {
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeams(active, "elo");
+      const new_teams = await fetchTeams(active, "-elo");
       setData(clean(new_teams));
     };
 
     const getTeams_byCountry = async () => {
-      const new_teams = await fetchTeams_byCountry(country, active, "elo");
+      const new_teams = await fetchTeams_byCountry(country, active, "-elo");
       setData(clean(new_teams));
     };
 
@@ -74,13 +74,13 @@ export default function TeamLookup() {
         country,
         stateProv,
         active,
-        "elo"
+        "-elo"
       );
       setData(clean(new_teams));
     };
 
     const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeams_byDistrict(district, active, "elo");
+      const new_teams = await fetchTeams_byDistrict(district, active, "-elo");
       setData(clean(new_teams));
     };
 

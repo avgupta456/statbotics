@@ -61,7 +61,7 @@ export default function TeamLookup() {
 
   useEffect(() => {
     const getTeams = async () => {
-      const new_teams = await fetchTeamsYear(year, "elo_max");
+      const new_teams = await fetchTeamsYear(year, "-elo_max");
       setData(clean(new_teams));
     };
 
@@ -69,7 +69,7 @@ export default function TeamLookup() {
       const new_teams = await fetchTeamsYear_byCountry(
         country,
         year,
-        "elo_max"
+        "-elo_max"
       );
       setData(clean(new_teams));
     };
@@ -79,7 +79,7 @@ export default function TeamLookup() {
         country,
         stateProv,
         year,
-        "elo_max"
+        "-elo_max"
       );
       setData(clean(new_teams));
     };
@@ -88,7 +88,7 @@ export default function TeamLookup() {
       const new_teams = await fetchTeamsYear_byDistrict(
         district,
         year,
-        "elo_max"
+        "-elo_max"
       );
       setData(clean(new_teams));
     };
@@ -197,7 +197,7 @@ export default function TeamLookup() {
     if (state["value"] === "All") {
       setTitle(`Team Lookup - ${country}`);
     } else {
-      setTitle(`Team Lookup - ${state["label"]}`);
+      setTitle(`${year} Team Lookup - ${state["label"]}`);
     }
 
     if (usaOptions.includes(state)) {
