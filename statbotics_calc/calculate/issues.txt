@@ -1,0 +1,1 @@
+Centralize Elo/OPR/ILS constants in constants folder

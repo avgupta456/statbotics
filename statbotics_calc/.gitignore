@@ -1,0 +1,3 @@
+*.pyc
+calculate/tba/cache/*
+api/constants.py
