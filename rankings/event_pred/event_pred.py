@@ -179,13 +179,17 @@ def quickSim(year, event_key):
     teams, matches, sd_score, oprs, ils, elos, rps, ties \
         = getDicts(event_key, year)
 
-    out = {t: [] for t in teams}
+    out = {}
     for i in range(len(matches)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
         team_matches, preds = getPreds(i, matches, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
         mean_rps, mean_ties = __meanSim__(i, matches, teams, team_matches, preds, rps, ties)  # noqa 502
+
+        sub_out = {"mean_rps": {}, "mean_tiebreaker": {}}
         for team in teams:
-            out[team].append([mean_rps[team], mean_ties[team]])
+            sub_out["mean_rps"][team] = mean_rps[team]
+            sub_out["mean_tiebreaker"][team] = mean_ties[team]
+        out[i] = sub_out
     return out
 
 
@@ -193,13 +197,21 @@ def sim(year, event_key, iterations=100):
     teams, matches, sd_score, oprs, ils, elos, rps, ties \
         = getDicts(event_key, year)
 
-    out = {t: [] for t in teams}
+    out = {}
     for i in range(len(matches)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
         team_matches, preds = getPreds(i, matches, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
-        mean_rps, mean_ties, avg_rps, avg_ranks, ranks = indexSim(
+        mean_rps, mean_ties, avg_rps, avg_ranks, ranks = __indexSim__(
             i, iterations, teams, matches, team_matches, preds, rps, ties)
+
+        sub_out = {"mean_rps": {}, "mean_tiebreaker": {},
+                   "sim_rps": {}, "sim_ranks": {},
+                   "sim_rank_probs": {}}
         for team in teams:
-            out[team].append([mean_rps[team], mean_ties[team], avg_rps[team],
-                              avg_ranks[team], ranks[team]])
+            sub_out["mean_rps"][team] = mean_rps[team]
+            sub_out["mean_tiebreaker"][team] = mean_ties[team]
+            sub_out["sim_rps"][team] = avg_rps[team]
+            sub_out["sim_ranks"][team] = avg_ranks[team]
+            sub_out["sim_rank_probs"][team] = ranks[team]
+        out[i] = sub_out
     return out
