@@ -47,7 +47,6 @@ def getPreds(index, quals, oprs_curr, elos_curr, ils_curr, year, sd_score):
     for i in range(index, len(quals)):
         m = quals[i]
         red, blue = m["red"], m["blue"]
-        print(oprs_curr[red[0]][0])
         red_score = sum([clean(oprs_curr[t][0]) for t in red])
         blue_score = sum([clean(oprs_curr[t][0]) for t in blue])
         red_elo = sum([clean(elos_curr[t]) for t in red])
