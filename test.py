@@ -1,6 +1,6 @@
-from statbotics import main
+import statbotics
 
 
-sb = main.Statbotics()
+sb = statbotics.Statbotics()
 
 print(sb.getTeam(5511))
