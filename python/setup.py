@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="statbotics",
-    version="0.0.1",
+    version="0.0.4",
     author="Abhijit Gupta",
     author_email="avgupta456@gmail.com",
     description="Modernizing FRC Data Analytics",
@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/avgupta456/statbotics",
     packages=setuptools.find_packages(),
+    install_requires=['requests', 'cachecontrol'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
