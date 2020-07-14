@@ -9,6 +9,7 @@ verify_ssl = true
 setuptools = "*"
 wheel = "*"
 twine = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
