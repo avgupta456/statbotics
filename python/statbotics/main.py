@@ -11,8 +11,12 @@ class Statbotics():
         self.login(self.getToken())
         self.token = self.getToken()
 
-    def getToken(self):
+    def getToken(self, retries=0):
+        if retries > 2:
+            raise UserWarning("Could not connect to Statbotics.io")
         self.session.get(self.BASE_URL+"/admin/")
+        if 'csrftoken' not in self.session.cookies:
+            return self.getToken(retries + 1)
         return self.session.cookies['csrftoken']
 
     def login(self, token):
@@ -30,7 +34,8 @@ class Statbotics():
         resp = self.session.get(self.BASE_URL+url)
         if resp.status_code == 200:
             return resp.json()
-        raise UserWarning("Invalid Query (large queries do not support metric)")
+        raise UserWarning("Invalid Query " +
+                          "(some large queries do not support metric)")
 
     def _negate(self, string):
         if len(string) == 0:
@@ -108,7 +113,7 @@ class Statbotics():
                 raise ValueError("Invalid metric")
             url += "/by/" + self._negate(metric)
 
-        if page:
+        if page and page != 1:
             url += "/page/" + str(page)
 
         return self._get(url)
@@ -148,19 +153,20 @@ class Statbotics():
         return out[0]
 
     def getTeamEvents(self, team=None, year=None, event=None, country=None,
-                      state=None, district=None, metric=None):
+                      state=None, district=None, metric=None, page=None):
 
         url = "/api/team_events"
 
         validate.checkType(team, "int", "team")
         validate.checkType(event, "str", "event")
         validate.checkType(metric, "str", "metric")
+        validate.checkType(page, "int", "page")
 
         if team and event:
             raise UserWarning("Use getTeamEvent() instead")
         if year and event:
             raise UserWarning("Year input will be ignored")
-        if team and (country or state or district):
+        if (team or event) and (country or state or district):
             raise UserWarning("Conflicting location input")
 
         if team:
@@ -179,28 +185,84 @@ class Statbotics():
                 raise ValueError("Invalid metric")
             url += "/by/" + self._negate(metric)
 
+        if page and page != 1:
+            url += "/page/" + page
+
         return self._get(url)
 
+    def getMatch(self, match):
+        validate.checkType(match, "str", "match")
+        out = self._get("/api/match/"+match)
+        if len(out) == 0:
+            raise ValueError("Invalid match key")
+        return out[0]
 
-sb = Statbotics()
-nc_teams = sb.getTeams(state="north carolina", metric="elo")
-for team in nc_teams[:10]:
-    print(team['team'], team['elo'])
-print()
+    def getMatches(self, year=None, event=None, country=None, state=None,
+                   district=None, page=None):
 
-ca_teams = sb.getTeams(state="CA", metric="elo")
-for team in ca_teams[:30]:
-    print(team['team'], team['elo'])
-print()
+        url = "/api/matches"
 
-print(sb.getYear(2019))
-print(sb.getYears())
+        validate.checkType(year, "int", "year")
+        validate.checkType(event, "str", "event")
+        validate.checkType(page, "int", "page")
 
-print(sb.getTeamYear(team=5511, year=2019))
-print(sb.getTeamYears(state="NC", year=2004))
+        if year and event:
+            raise UserWarning("Year input will be ignored")
+        if event and (country or state or district):
+            raise UserWarning("Conflicting location input")
 
-print(sb.getEvent("2019ncwak"))
-print(sb.getEvents(year=2016, district="fnc", metric='elo_top8'))
+        if year:
+            url += "/year/" + str(year)
 
-print(sb.getTeamEvent(team=5511, event="2020ncwak"))
-print(sb.getTeamEvents(metric="opr_end"))
+        if event:
+            url += "/event/" + event
+
+        url += validate.getLocations(country, state, district)
+
+        if page and page != 1:
+            url += "/page/" + page
+
+        return self._get(url)
+
+    def getTeamMatch(self, team, match):
+        validate.checkType(team, "int", "team")
+        validate.checkType(match, "str", "match")
+        out = self._get("/api/team_match/team/"+str(team)+"/match/"+match)
+        if len(out) == 0:
+            raise ValueError("Invalid (team, match) pair)")
+        return out[0]
+
+    def getTeamMatches(self, team=None, year=None, event=None, match=None,
+                       country=None, state=None, district=None, page=None):
+
+        url = "/api/team_matches"
+
+        validate.checkType(team, "int", "team")
+        validate.checkType(year, "int", "year")
+        validate.checkType(event, "str", "event")
+        validate.checkType(match, "str", "match")
+        validate.checkType(page, "int", "page")
+
+        if (year and event) or (year and match) or (event and match):
+            raise UserWarning("Only specify one of (year, event, match)")
+        if (team or event or match) and (country or state or district):
+            raise UserWarning("Conflicting location input")
+
+        if team:
+            url += "/team/" + str(team)
+
+        if year:
+            url += "/year/" + str(year)
+
+        if event:
+            url += "/event/" + event
+
+        if match:
+            url += "/match/" + match
+
+        url += validate.getLocations(country, state, district)
+
+        if page and page != 1:
+            url += "/page/" + str(page)
+
+        return self._get(url)
