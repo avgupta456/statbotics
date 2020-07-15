@@ -1,3 +1,27 @@
+countries = {
+    "united states of america": "USA",
+    "united states": "USA",
+    "america": "USA",
+    "usa": "USA",
+    "canada": "Canada",
+    "turkey": "Turkey",
+    "israel": "Israel",
+    "china": "China",
+    "mexico": "Mexico",
+    "australia": "Australia",
+    "brazil": "Brazil",
+    "chinese taipei": "Chinese Taipei",
+    "netherlands": "Netherlands",
+    "chile": "Chile",
+    "united kingdom": "United Kingdom",
+    "uk": "United Kingdom",
+    "colombia": "Colombia",
+    "japan": "Japan",
+    "poland": "Poland",
+    "india": "India",
+    "switzerland": "Switzerland"
+}
+
 USA = {
     'alabama': 'AL',
     'alaska': 'AK',
@@ -94,8 +118,13 @@ districts = {
 }
 
 
+def getCountry(country):
+    if country.lower() in countries:
+        return "%20".join(countries[country.lower()].split(" "))
+    raise ValueError("Not a valid country")
+
+
 def getState(state):
-    print(state.lower())
     if state.lower() in USA:
         return USA[state.lower()]
     if state.lower() in Canada:
@@ -111,3 +140,6 @@ def getDistrict(district):
     if district.lower() in districts:
         return districts[district.lower()]
     raise ValueError("Not a valid district")
+
+
+print(getCountry("united Kingdom"))
