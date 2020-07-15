@@ -120,6 +120,14 @@ districts = {
 team_metrics = ["elo", "-elo", "elo_recent", "-elo_recent", "elo_mean",
                 "-elo_mean", "elo_max", "-elo_max"]
 
+team_year_metrics = ["elo_start", "-elo_start", "elo_pre_champs",
+                     "-elo_pre_champs", "elo_end", "-elo_end", "elo_mean",
+                     "-elo_mean", "elo_max", "-elo_max", "elo_diff",
+                     "-elo_diff", "opr", "-opr", "opr_auto", "-opr_auto",
+                     "opr_1", "-opr_1", "opr_2", "-opr_2", "opr_endgame",
+                     "-opr_endgame", "opr_fouls", "-opr_fouls", "opr_no_fouls",
+                     "-opr_no_fouls", "ils_1", "-ils_1", "ils_2", "-ils_2"]
+
 
 def getCountry(country):
     if country.lower() in countries:
@@ -150,5 +158,36 @@ def getDistrict(district):
     raise ValueError("Not a valid district")
 
 
+def getLocations(country, state, district):
+    if country and district:
+        raise ValueError("Cannot specify country and district")
+    if state and district:
+        raise ValueError("Cannot specify state and district")
+
+    url = ""
+
+    if country:
+        country = getCountry(country)
+        url += "/country/" + country
+
+    if state:
+        temp_country, state = getState(country, state)
+        if country and temp_country != country:
+            raise ValueError("State from different country")
+        if not country:
+            url += "/country/" + temp_country
+        url += "/state/" + state
+
+    if district:
+        district = getDistrict(district)
+        url += "/district/" + district
+
+    return url
+
+
 def getTeamMetrics():
     return team_metrics
+
+
+def getTeamYearMetrics():
+    return team_year_metrics

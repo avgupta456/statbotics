@@ -34,45 +34,101 @@ class Statbotics():
             return resp.json()
 
     def getTeam(self, team):
+        if not isinstance(team, int):
+            raise TypeError("'team' must be an integer")
         return self._get("/api/team/"+str(team))
 
     def getTeams(self, country=None, state=None, district=None,
                  active=True, metric=None):
+        if country and not isinstance(country, str):
+            raise TypeError("'country' must be a string")
+        if state and not isinstance(state, str):
+            raise TypeError("'state' must be a string")
+        if district and not isinstance(district, str):
+            raise TypeError("'district' must be a string")
+        if metric and not isinstance(metric, str):
+            raise TypeError("'metric' must be a string")
 
-        url = "/api/teams"
-
-        if country and district:
-            raise ValueError("Cannot specify country and district")
-        if state and district:
-            raise ValueError("Cannot specify state and district")
-        if metric and metric not in validate.getTeamMetrics():
-            raise ValueError("Invalid metric")
-
-        if country:
-            country = validate.getCountry(country)
-            url += "/country/" + country
-
-        if state:
-            temp_country, state = validate.getState(country, state)
-            if country and temp_country != country:
-                raise ValueError("State from different country")
-            if not country:
-                url += "/country/" + temp_country
-            url += "/state/" + state
-
-        if district:
-            district = validate.getDistrict(district)
-            url += "/district/" + district
+        url = "/api/teams" + validate.getLocations(country, state, district)
 
         if active:
             url += "/active"
 
         if metric:
+            if metric not in validate.getTeamMetrics():
+                raise ValueError("Invalid metric")
             if metric[0] == "-":
                 metric = metric[1:]
             else:
                 metric = "-" + metric
-            url += "/by/"+metric
+            url += "/by/" + metric
+
+        return self._get(url)
+
+    def getYear(self, year):
+        if not isinstance(year, int):
+            raise TypeError("'year' must be an integer")
+        if year not in range(2002, 2021):
+            raise ValueError("Enter valid year (2002-Present)")
+        return self._get("/api/year/"+str(year))
+
+    def getYears(self):
+        return self._get("/api/years")
+
+    def getTeamYear(self, team, year):
+        if not isinstance(team, int):
+            raise TypeError("'team' must be an integer")
+        if not isinstance(year, int):
+            raise TypeError("'year' must be an integer")
+        if year not in range(2002, 2021):
+            raise ValueError("Enter valid year (2002-Present)")
+        return self._get("/api/team_year/team/"+str(team)+"/year/"+str(year))
+
+    def getTeamYears(self, team=None, year=None, country=None, state=None,
+                     district=None, metric=None, page=None):
+        url = "/api/team_years"
+
+        if team and year:
+            raise UserWarning("Use getTeamYear() instead")
+        if team and (country or state or district):
+            raise UserWarning("Location zone disregarded")
+
+        if team and not isinstance(team, int):
+            raise TypeError("'team' must be an integer")
+        if year and not isinstance(year, int):
+            raise TypeError("'year' must be an integer")
+        if country and not isinstance(country, str):
+            raise TypeError("'country' must be a string")
+        if state and not isinstance(state, str):
+            raise TypeError("'state' must be a string")
+        if district and not isinstance(district, str):
+            raise TypeError("'district' must be a string")
+        if metric and not isinstance(metric, str):
+            raise TypeError("'metric' must be a string")
+        if page and not isinstance(page, int):
+            raise TypeError("'page' must be an integer")
+
+        if team:
+            url += "/team/" + str(team)
+
+        if year:
+            if year not in range(2002, 2021):
+                raise ValueError("Enter valid year (2002-Present)")
+            url += "/year/" + str(year)
+
+        url += validate.getLocations(country, state, district)
+
+        if metric:
+            if metric not in validate.getTeamYearMetrics():
+                raise ValueError("Invalid metric")
+            if metric[0] == "-":
+                metric = metric[1:]
+            else:
+                metric = "-" + metric
+            url += "/by/" + metric
+
+        if page:
+            url += "/page/" + str(page)
 
         return self._get(url)
 
@@ -88,4 +144,10 @@ ca_teams = sb.getTeams(state="CA", metric="elo")
 for team in ca_teams[:30]:
     print(team['team'], team['elo'])
 print()
+
+print(sb.getYear(2019))
+print(sb.getYears())
+
+print(sb.getTeamYear(team=5511, year=2019))
+print(sb.getTeamYears(state="NC", year=2004))
 '''
