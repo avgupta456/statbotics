@@ -128,6 +128,16 @@ team_year_metrics = ["elo_start", "-elo_start", "elo_pre_champs",
                      "-opr_endgame", "opr_fouls", "-opr_fouls", "opr_no_fouls",
                      "-opr_no_fouls", "ils_1", "-ils_1", "ils_2", "-ils_2"]
 
+event_metrics = ['elo_top8', '-elo_top8', 'elo_top24', '-elo_top24',
+                 'elo_mean', '-elo_mean', 'opr_top8', '-opr_top8',
+                 'opr_top24', '-opr_top24', 'opr_mean', '-opr_mean']
+
+team_event_metrics = ['elo_start', '-elo_start', 'elo_pre_playoffs',
+                      '-elo_pre_playoffs', 'elo_end', '-elo_end', 'elo_mean',
+                      '-elo_mean', 'elo_max', '-elo_max', 'elo_diff',
+                      '-elo_diff', 'opr_start', '-opr_start', 'opr_end',
+                      '-opr_end', 'ils_1', '-ils_1', 'ils_2', '-ils_2']
+
 
 def getCountry(country):
     if country.lower() in countries:
@@ -159,6 +169,10 @@ def getDistrict(district):
 
 
 def getLocations(country, state, district):
+    checkType(country, "str", "country")
+    checkType(state, "str", "state")
+    checkType(district, "str", "district")
+
     if country and district:
         raise ValueError("Cannot specify country and district")
     if state and district:
@@ -185,9 +199,26 @@ def getLocations(country, state, district):
     return url
 
 
+def checkType(val, type, name):
+    if not val:
+        return
+    if type == "int" and not isinstance(val, int):
+        raise TypeError("'"+name+"' must be an integer")
+    if type == "str" and not isinstance(val, str):
+        raise TypeError("'"+name+"' must be a string")
+
+
 def getTeamMetrics():
     return team_metrics
 
 
 def getTeamYearMetrics():
     return team_year_metrics
+
+
+def getEventMetrics():
+    return event_metrics
+
+
+def getTeamEventMetrics():
+    return team_event_metrics
