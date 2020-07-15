@@ -1,6 +1,8 @@
 import requests
 from cachecontrol import CacheControl
 
+import validate
+
 
 class Statbotics():
     def __init__(self):
@@ -33,3 +35,57 @@ class Statbotics():
 
     def getTeam(self, team):
         return self._get("/api/team/"+str(team))
+
+    def getTeams(self, country=None, state=None, district=None,
+                 active=True, metric=None):
+
+        url = "/api/teams"
+
+        if country and district:
+            raise ValueError("Cannot specify country and district")
+        if state and district:
+            raise ValueError("Cannot specify state and district")
+        if metric and metric not in validate.getTeamMetrics():
+            raise ValueError("Invalid metric")
+
+        if country:
+            country = validate.getCountry(country)
+            url += "/country/" + country
+
+        if state:
+            temp_country, state = validate.getState(country, state)
+            if country and temp_country != country:
+                raise ValueError("State from different country")
+            if not country:
+                url += "/country/" + temp_country
+            url += "/state/" + state
+
+        if district:
+            district = validate.getDistrict(district)
+            url += "/district/" + district
+
+        if active:
+            url += "/active"
+
+        if metric:
+            if metric[0] == "-":
+                metric = metric[1:]
+            else:
+                metric = "-" + metric
+            url += "/by/"+metric
+
+        return self._get(url)
+
+
+'''
+sb = Statbotics()
+nc_teams = sb.getTeams(state="north carolina", metric="elo")
+for team in nc_teams[:10]:
+    print(team['team'], team['elo'])
+print()
+
+ca_teams = sb.getTeams(state="CA", metric="elo")
+for team in ca_teams[:30]:
+    print(team['team'], team['elo'])
+print()
+'''
