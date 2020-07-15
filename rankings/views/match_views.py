@@ -53,7 +53,7 @@ def Matches(request):
 )
 @api_view(['GET'])
 def MatchesYear(request, year):
-    return _Matches(request._request)
+    return _Matches(request._request, year=year)
 
 
 @swagger_auto_schema(
@@ -62,4 +62,4 @@ def MatchesYear(request, year):
 )
 @api_view(['GET'])
 def MatchesEvent(request, event):
-    return _Matches(request._request)
+    return _Matches(request._request, event=event)
