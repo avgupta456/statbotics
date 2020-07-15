@@ -1,7 +1,7 @@
 import requests
 from cachecontrol import CacheControl
 
-import validate
+from . import validate
 
 
 class Statbotics():
@@ -197,8 +197,7 @@ class Statbotics():
             raise ValueError("Invalid match key")
         return out[0]
 
-    def getMatches(self, year=None, event=None, country=None, state=None,
-                   district=None, page=None):
+    def getMatches(self, year=None, event=None, page=None):
 
         url = "/api/matches"
 
@@ -208,16 +207,12 @@ class Statbotics():
 
         if year and event:
             raise UserWarning("Year input will be ignored")
-        if event and (country or state or district):
-            raise UserWarning("Conflicting location input")
 
         if year:
             url += "/year/" + str(year)
 
         if event:
             url += "/event/" + event
-
-        url += validate.getLocations(country, state, district)
 
         if page and page != 1:
             url += "/page/" + page
@@ -233,7 +228,7 @@ class Statbotics():
         return out[0]
 
     def getTeamMatches(self, team=None, year=None, event=None, match=None,
-                       country=None, state=None, district=None, page=None):
+                       page=None):
 
         url = "/api/team_matches"
 
@@ -245,8 +240,6 @@ class Statbotics():
 
         if (year and event) or (year and match) or (event and match):
             raise UserWarning("Only specify one of (year, event, match)")
-        if (team or event or match) and (country or state or district):
-            raise UserWarning("Conflicting location input")
 
         if team:
             url += "/team/" + str(team)
@@ -259,8 +252,6 @@ class Statbotics():
 
         if match:
             url += "/match/" + match
-
-        url += validate.getLocations(country, state, district)
 
         if page and page != 1:
             url += "/page/" + str(page)
