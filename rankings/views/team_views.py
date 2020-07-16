@@ -23,16 +23,16 @@ def Team(request, num):
 @api_view(['GET'])
 def _Teams(request, metric=None, country=None, state=None, district=None, active=None):  # noqa 502
     teams = TeamModel.objects
-    if country is not None:
+    if country:
         teams = teams.filter(country=country)
-    if state is not None:
+    if state:
         teams = teams.filter(state=state)
-    if district is not None:
+    if district:
         teams = teams.filter(district=district)
-    if active is not None:
+    if active:
         teams = teams.filter(active=1)
     teams = teams.all()
-    if metric is not None:
+    if metric:
         teams = teams.order_by(metric)
     serializer = TeamSerializer(teams, many=True)
     return Response(serializer.data)

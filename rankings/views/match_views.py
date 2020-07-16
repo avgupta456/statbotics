@@ -26,16 +26,23 @@ def Match(request, match):
     operation_description="List of all matches (WARNING: VERY SLOW)",
 )
 @api_view(['GET'])
-def _Matches(request, year=None, event=None, page=1):
+def _Matches(request, year=None, event=None, playoff=None, page=1):
     matches = MatchModel.objects
     if year is not None:
         matches = matches.filter(year=year)
     if event is not None:
         matches = matches.filter(event=event)
+    if playoff:
+        matches = matches.filter(playoff=playoff)
     matches = matches.all().order_by('time')
     matches = Paginator(matches, 5000).page(page)
     serializer = MatchSerializer(matches, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def _MatchesElim(request, year=None, event=None, page=1):
+    return _Matches(request._request, year, event, True, page)
 
 
 @swagger_auto_schema(

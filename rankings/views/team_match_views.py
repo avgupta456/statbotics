@@ -25,13 +25,13 @@ def TeamMatch(request, num, match):
 @api_view(['GET'])
 def _TeamMatches(request, num=None, year=None, event=None, match=None, page=1):
     teamMatches = TeamMatchModel.objects
-    if num is not None:
+    if num:
         teamMatches = teamMatches.filter(team=num)
-    if year is not None:
+    if year:
         teamMatches = teamMatches.filter(year=year)
-    if event is not None:
+    if event:
         teamMatches = teamMatches.filter(event=event)
-    if match is not None:
+    if match:
         teamMatches = teamMatches.filter(match=match)
     teamMatches = Paginator(teamMatches.all().order_by("time"), 5000).page(page)  # noqa 502
     serializer = TeamMatchSerializer(teamMatches, many=True)

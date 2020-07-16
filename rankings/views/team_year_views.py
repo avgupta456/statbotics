@@ -26,18 +26,18 @@ def TeamYear(request, num, year):
 def _TeamYears(request, num=None, year=None, country=None, state=None,
                district=None, metric=None, page=1):
     teamYears = TeamYearModel.objects
-    if num is not None:
+    if num:
         teamYears = teamYears.filter(team=num)
-    if year is not None:
+    if year:
         teamYears = teamYears.filter(year=year)
-    if country is not None:
+    if country:
         teamYears = teamYears.filter(country=country)
-    if state is not None:
+    if state:
         teamYears = teamYears.filter(state=state)
-    if district is not None:
+    if district:
         teamYears = teamYears.filter(district=district)
     teamYears = teamYears.all()
-    if metric is not None:
+    if metric:
         teamYears = teamYears.order_by(metric)
     teamYears = Paginator(teamYears, 5000).page(page)
     serializer = TeamYearSerializer(teamYears, many=True)

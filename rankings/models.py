@@ -164,6 +164,7 @@ class TeamMatch(models.Model):
     year = models.IntegerField()  # ex: 2019
     event = models.CharField(max_length=10)  # ex: ncwak
     match = models.CharField(max_length=10)  # ex: sf1m1
+    playoff = models.IntegerField()
     alliance = models.CharField(max_length=10)  # ex: red
     time = models.IntegerField()  # ex: 12451261
     elo = models.IntegerField()  # ex: 1746

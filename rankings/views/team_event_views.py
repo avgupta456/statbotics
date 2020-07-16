@@ -24,7 +24,9 @@ def TeamEvent(request, num, event):
 @swagger_auto_schema(method='GET', auto_schema=None)
 @api_view(['GET'])
 def _TeamEvents(request, num=None, year=None, event=None, country=None,
-                state=None, district=None, metric=None, page=1):
+                state=None, district=None, type=None, week=None,
+                metric=None, page=1):
+
     teamEvents = TeamEventModel.objects
     if num is not None:
         teamEvents = teamEvents.filter(team=num)
@@ -38,6 +40,10 @@ def _TeamEvents(request, num=None, year=None, event=None, country=None,
         teamEvents = teamEvents.filter(state=state)
     if district is not None:
         teamEvents = teamEvents.filter(district=district)
+    if type:
+        teamEvents = teamEvents.filter(type=type)
+    if week:
+        teamEvents = teamEvents.filter(week=week)
     teamEvents = teamEvents.all()
     if metric is not None:
         teamEvents = teamEvents.order_by(metric)
