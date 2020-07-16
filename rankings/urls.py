@@ -105,11 +105,23 @@ urlpatterns = [
 
     path('api/team_events/team/<num>', team_event_views.TeamEventsNum),
     path('api/team_events/team/<num>/by/<metric>', team_event_views.TeamEventsNumByMetric),  # noqa 502
+    path('api/team_events/team/<num>/type/<type>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/type/<type>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/type/<type>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/type/<type>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
 
     path('api/team_events/year/<year>', team_event_views.TeamEventsYear),
     path('api/team_events/year/<year>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/by/<metric>', team_event_views.TeamEventsYearByMetric),  # noqa 502
     path('api/team_events/year/<year>/by/<metric>/page/<page>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
 
     path('api/team_events/year/<year>/country/<country>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/country/<country>/page/<page>', team_event_views._TeamEvents),  # noqa 502
@@ -149,6 +161,12 @@ urlpatterns = [
 
     path('api/team_events/team/<num>/year/<year>', team_event_views.TeamEventsNumYear),  # noqa 502
     path('api/team_events/team/<num>/year/<year>/by/<metric>', team_event_views.TeamEventsNumYearByMetric),  # noqa 502
+    path('api/team_events/team/<num>/year/<year>/type/<type>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/year/<year>/type/<type>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/year/<year>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/year/<year>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/year/<year>/type/<type>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/team/<num>/year/<year>/type/<type>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
 
     path('api/team_events/event/<event>', team_event_views.TeamEventsEvent),
     path('api/team_events/event/<event>/by/<metric>', team_event_views.TeamEventsEventByMetric),  # noqa 502
