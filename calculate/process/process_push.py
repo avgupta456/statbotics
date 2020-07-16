@@ -293,6 +293,7 @@ def getTeamMatches(SQL_Read):
             team_match.year_id,
             team_match.event.key,
             team_match.match.key,
+            team_match.match.playoff,
             team_match.alliance,
             team_match.match.time,
             round(team_match.elo),
@@ -303,8 +304,9 @@ def getTeamMatches(SQL_Read):
 
     team_matches = pd.DataFrame(team_matches,
                                 columns=["id", "team", "year", "event",
-                                         "match", "alliance",  "time", "elo",
-                                         "opr", "ils_1", "ils_2"])
+                                         "match", "playoff", "alliance",
+                                         "time", "elo", "opr", "ils_1",
+                                         "ils_2"])
 
     team_matches = team_matches.sort_values(by=['year', 'team', 'event', 'match'])  # noqa 502
     return team_matches
