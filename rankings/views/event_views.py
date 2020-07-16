@@ -21,7 +21,9 @@ def Event(request, event):
 
 @swagger_auto_schema(method='GET', auto_schema=None)
 @api_view(['GET'])
-def _Events(request, year=None, country=None, state=None, district=None, metric=None):  # noqa 502
+def _Events(request, year=None, country=None, state=None, district=None,
+            type=None, week=None, metric=None):
+
     events = EventModel.objects
     if year is not None:
         events = events.filter(year=year)
@@ -31,6 +33,10 @@ def _Events(request, year=None, country=None, state=None, district=None, metric=
         events = events.filter(state=state)
     if district is not None:
         events = events.filter(district=district)
+    if type is not None:
+        events = events.filter(type=type)
+    if week is not None:
+        events = events.filter(week=week)
     events = events.all()
     if metric is not None:
         events = events.order_by(metric)

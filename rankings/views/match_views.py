@@ -28,9 +28,9 @@ def Match(request, match):
 @api_view(['GET'])
 def _Matches(request, year=None, event=None, playoff=None, page=1):
     matches = MatchModel.objects
-    if year is not None:
+    if year:
         matches = matches.filter(year=year)
-    if event is not None:
+    if event:
         matches = matches.filter(event=event)
     if playoff:
         matches = matches.filter(playoff=playoff)

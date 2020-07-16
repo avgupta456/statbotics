@@ -28,24 +28,24 @@ def _TeamEvents(request, num=None, year=None, event=None, country=None,
                 metric=None, page=1):
 
     teamEvents = TeamEventModel.objects
-    if num is not None:
+    if num:
         teamEvents = teamEvents.filter(team=num)
-    if year is not None:
+    if year:
         teamEvents = teamEvents.filter(year=year)
-    if event is not None:
+    if event:
         teamEvents = teamEvents.filter(event=event)
-    if country is not None:
+    if country:
         teamEvents = teamEvents.filter(country=country)
-    if state is not None:
+    if state:
         teamEvents = teamEvents.filter(state=state)
-    if district is not None:
+    if district:
         teamEvents = teamEvents.filter(district=district)
     if type:
         teamEvents = teamEvents.filter(type=type)
     if week:
         teamEvents = teamEvents.filter(week=week)
     teamEvents = teamEvents.all()
-    if metric is not None:
+    if metric:
         teamEvents = teamEvents.order_by(metric)
     else:
         teamEvents = teamEvents.order_by('time')

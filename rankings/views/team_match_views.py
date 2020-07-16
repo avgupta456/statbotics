@@ -23,7 +23,9 @@ def TeamMatch(request, num, match):
 
 @swagger_auto_schema(method='GET', auto_schema=None)
 @api_view(['GET'])
-def _TeamMatches(request, num=None, year=None, event=None, match=None, page=1):
+def _TeamMatches(request, num=None, year=None, event=None, match=None,
+                 playoff=None, page=1):
+
     teamMatches = TeamMatchModel.objects
     if num:
         teamMatches = teamMatches.filter(team=num)
@@ -33,9 +35,16 @@ def _TeamMatches(request, num=None, year=None, event=None, match=None, page=1):
         teamMatches = teamMatches.filter(event=event)
     if match:
         teamMatches = teamMatches.filter(match=match)
+    if playoff:
+        teamMatches = teamMatches.filter(playoff=playoff)
     teamMatches = Paginator(teamMatches.all().order_by("time"), 5000).page(page)  # noqa 502
     serializer = TeamMatchSerializer(teamMatches, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def _TeamMatchesElim(request, num=None, year=None, event=None, match=None, page=1):  # noqa 502
+    return _TeamMatches(request._request, num, year, event, match, True, page)
 
 
 @swagger_auto_schema(
