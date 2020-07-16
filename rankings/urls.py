@@ -110,6 +110,7 @@ urlpatterns = [
     path('api/team_events/year/<year>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/by/<metric>', team_event_views.TeamEventsYearByMetric),  # noqa 502
     path('api/team_events/year/<year>/by/<metric>/page/<page>', team_event_views._TeamEvents),  # noqa 502
+
     path('api/team_events/year/<year>/country/<country>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/country/<country>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
@@ -119,6 +120,33 @@ urlpatterns = [
     path('api/team_events/year/<year>/district/<district>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/year/<year>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
 
+    path('api/team_events/year/<year>/type/<type>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/district/<district>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+
+    path('api/team_events/year/<year>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/district/<district>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/week/<week>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+
+    path('api/team_events/year/<year>/type/<type>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/district/<district>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/year/<year>/type/<type>/week/<week>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+
     path('api/team_events/team/<num>/year/<year>', team_event_views.TeamEventsNumYear),  # noqa 502
     path('api/team_events/team/<num>/year/<year>/by/<metric>', team_event_views.TeamEventsNumYearByMetric),  # noqa 502
 
@@ -127,27 +155,61 @@ urlpatterns = [
 
     path('api/team_events', team_event_views.TeamEvents),
     path('api/team_events/page/<page>', team_event_views._TeamEvents),
-    path('api/team_events/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/country/<country>', team_event_views._TeamEvents),
     path('api/team_events/country/<country>/page/<page>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/district/<district>', team_event_views._TeamEvents),  # noqa 502
     path('api/team_events/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
 
+    path('api/team_events/type/<type>', team_event_views._TeamEvents),
+    path('api/team_events/type/<type>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/district/<district>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+
+    path('api/team_events/week/<week>', team_event_views._TeamEvents),
+    path('api/team_events/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/week/<week>/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/week/<week>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/week/<week>/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/week/<week>/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/week/<week>/district/<district>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/week/<week>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+
+    path('api/team_events/type/<type>/week/<week>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/week/<week>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/week/<week>/country/<country>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/week/<week>/country/<country>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/week/<week>/country/<country>/state/<state>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/week/<week>/district/<district>', team_event_views._TeamEvents),  # noqa 502
+    path('api/team_events/type/<type>/week/<week>/district/<district>/by/<metric>', team_event_views._TeamEvents),  # noqa 502
 
 
     # TeamMatches
     path('api/team_match/team/<num>/match/<match>', team_match_views.TeamMatch),  # noqa 502
 
     path('api/team_matches', team_match_views.TeamMatches),
+    path('api/team_matches/elims', team_match_views._TeamMatchesElim),
     path('api/team_matches/page/<page>', team_match_views._TeamMatches),
+    path('api/team_matches/page/<page>/elims', team_match_views._TeamMatchesElim),  # noqa 502
     path('api/team_matches/team/<num>', team_match_views.TeamMatchesTeam),
+    path('api/team_matches/team/<num>/elims', team_match_views._TeamMatchesElim),  # noqa 502
     path('api/team_matches/year/<year>', team_match_views.TeamMatchesYear),
+    path('api/team_matches/year/<year>/elims', team_match_views._TeamMatchesElim),  # noqa 502
     path('api/team_matches/year/<year>/page/<page>', team_match_views._TeamMatches),  # noqa 502
+    path('api/team_matches/year/<year>/page/<page>', team_match_views._TeamMatchesElim),  # noqa 502
     path('api/team_matches/event/<event>', team_match_views.TeamMatchesEvent),
+    path('api/team_matches/event/<event>/elims', team_match_views._TeamMatchesElim),  # noqa 502
     path('api/team_matches/match/<match>', team_match_views.TeamMatchesMatch),
     path('api/team_matches/team/<num>/year/<year>', team_match_views.TeamMatchesTeamYear),  # noqa 502
+    path('api/team_matches/team/<num>/year/<year>/elims', team_match_views._TeamMatchesElim),  # noqa 502
     path('api/team_matches/team/<num>/event/<event>', team_match_views.TeamMatchesTeamEvent),  # noqa 502
+    path('api/team_matches/team/<num>/event/<event>/elims', team_match_views._TeamMatchesElim),  # noqa 502
 
 
 
@@ -171,6 +233,33 @@ urlpatterns = [
     path('api/events/district/<district>', event_views._Events),
     path('api/events/district/<district>/by/<metric>', event_views._Events),
 
+    path('api/events/type/<type>', event_views._Events),
+    path('api/events/type/<type>/by/<metric>', event_views._Events),
+    path('api/events/type/<type>/country/<country>', event_views._Events),
+    path('api/events/type/<type>/country/<country>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/country/<country>/state/<state>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/district/<district>', event_views._Events),
+    path('api/events/type/<type>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
+
+    path('api/events/week/<week>', event_views._Events),
+    path('api/events/week/<week>/by/<metric>', event_views._Events),
+    path('api/events/week/<week>/country/<country>', event_views._Events),
+    path('api/events/week/<week>/country/<country>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/week/<week>/country/<country>/state/<state>', event_views._Events),  # noqa 502
+    path('api/events/week/<week>/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/week/<week>/district/<district>', event_views._Events),
+    path('api/events/week/<week>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
+
+    path('api/events/type/<type>/week/<week>', event_views._Events),
+    path('api/events/type/<type>/week/<week>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/week/<week>/country/<country>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/week/<week>/country/<country>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/week/<week>/country/<country>/state/<state>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/week/<week>/district/<district>', event_views._Events),  # noqa 502
+    path('api/events/type/<type>/week/<week>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
+
     path('api/events/year/<year>', event_views.EventsYear),
     path('api/events/year/<year>/by/<metric>', event_views.EventsYearByMetric),
     path('api/events/year/<year>/country/<country>', event_views._Events),
@@ -180,6 +269,32 @@ urlpatterns = [
     path('api/events/year/<year>/district/<district>', event_views._Events),
     path('api/events/year/<year>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
 
+    path('api/events/year/<year>/type/<type>', event_views._Events),
+    path('api/events/year/<year>/type/<type>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/country/<country>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/country/<country>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/country/<country>/state/<state>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/district/<district>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
+
+    path('api/events/year/<year>/week/<week>', event_views._Events),
+    path('api/events/year/<year>/week/<week>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/week/<week>/country/<country>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/week/<week>/country/<country>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/week/<week>/country/<country>/state/<state>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/week/<week>/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/week/<week>/district/<district>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/week/<week>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
+
+    path('api/events/year/<year>/type/<type>/week/<week>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/week/<week>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/week/<week>/country/<country>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/week/<week>/country/<country>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/week/<week>/district/<district>', event_views._Events),  # noqa 502
+    path('api/events/year/<year>/type/<type>/week/<week>/district/<district>/by/<metric>', event_views._Events),  # noqa 502
 
 
     # Matches
@@ -187,10 +302,13 @@ urlpatterns = [
 
     path('api/matches', match_views.Matches),
     path('api/matches/page/<page>', match_views._Matches),
+    path('api/matches/elims', match_views._MatchesElim),
+    path('api/matches/elims/page/<page>', match_views._MatchesElim),
     path('api/matches/year/<year>', match_views.MatchesYear),
+    path('api/matches/year/<year>/elims', match_views._MatchesElim),
     path('api/matches/year/<year>/page/<page>', match_views._Matches),
     path('api/matches/event/<event>', match_views.MatchesEvent),
-
+    path('api/matches/event/<event>/elims', match_views._MatchesElim),
 
 
     # Event Simulation
