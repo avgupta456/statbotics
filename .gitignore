@@ -5,3 +5,4 @@ statbotics_backend/.gcloudignore
 *.p
 *.cache
 statbotics_frontend/.firebaserc
+docs/*
