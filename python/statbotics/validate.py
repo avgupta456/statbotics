@@ -199,6 +199,26 @@ def getLocations(country, state, district):
     return url
 
 
+def getType(type):
+    if not type:
+        return
+    if isinstance(type, int):
+        return type
+    if "regional" in type.lower():
+        return 0
+    if type.lower() == "district":
+        return 1
+    if "district champ" in type.lower():
+        return 2
+    if "world" in type.lower():
+        return 3
+    if "einstein" in type.lower():
+        return 4
+
+    raise ValueError("Enter a valid type (0 - regional, 1 - district, " +
+                     + "2 - district champs, 3 - worlds, 4 - einstein)")
+
+
 def checkType(val, type, name):
     if not val:
         return

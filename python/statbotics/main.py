@@ -34,6 +34,7 @@ class Statbotics():
         resp = self.session.get(self.BASE_URL+url)
         if resp.status_code == 200:
             return resp.json()
+        print(url)
         raise UserWarning("Invalid Query " +
                           "(some large queries do not support metric)")
 
@@ -126,15 +127,24 @@ class Statbotics():
         return out[0]
 
     def getEvents(self, year=None, country=None, state=None, district=None,
-                  metric=None):
+                  type=None, week=None, metric=None):
 
         url = "/api/events"
 
         validate.checkType(year, "int", "year")
         validate.checkType(metric, "str", "metric")
+        validate.checkType(week, "int", "week")
+        type = validate.getType(type)
 
         if year:
             url += "/year/" + str(year)
+
+        if type:
+            url += "/type/" + str(type)
+
+        if week:
+            url += "/week/" + str(week)
+
         url += validate.getLocations(country, state, district)
 
         if metric:
@@ -153,7 +163,8 @@ class Statbotics():
         return out[0]
 
     def getTeamEvents(self, team=None, year=None, event=None, country=None,
-                      state=None, district=None, metric=None, page=None):
+                      state=None, district=None, type=None, week=None,
+                      metric=None, page=1):
 
         url = "/api/team_events"
 
@@ -161,11 +172,13 @@ class Statbotics():
         validate.checkType(event, "str", "event")
         validate.checkType(metric, "str", "metric")
         validate.checkType(page, "int", "page")
+        validate.checkType(week, "int", "week")
+        type = validate.getType(type)
 
         if team and event:
             raise UserWarning("Use getTeamEvent() instead")
-        if year and event:
-            raise UserWarning("Year input will be ignored")
+        if event and (year or type or week):
+            raise UserWarning("Overconstrained query")
         if (team or event) and (country or state or district):
             raise UserWarning("Conflicting location input")
 
@@ -177,6 +190,12 @@ class Statbotics():
 
         if event:
             url += "/event/" + event
+
+        if type:
+            url += "/type/" + str(type)
+
+        if week:
+            url += "/week/" + str(week)
 
         url += validate.getLocations(country, state, district)
 
@@ -197,13 +216,14 @@ class Statbotics():
             raise ValueError("Invalid match key")
         return out[0]
 
-    def getMatches(self, year=None, event=None, page=None):
+    def getMatches(self, year=None, event=None, elims=None, page=None):
 
         url = "/api/matches"
 
         validate.checkType(year, "int", "year")
         validate.checkType(event, "str", "event")
         validate.checkType(page, "int", "page")
+        validate.checkType(elims, "bool", "elims")
 
         if year and event:
             raise UserWarning("Year input will be ignored")
@@ -213,6 +233,9 @@ class Statbotics():
 
         if event:
             url += "/event/" + event
+
+        if elims:
+            url += "/elims"
 
         if page and page != 1:
             url += "/page/" + page
@@ -228,7 +251,7 @@ class Statbotics():
         return out[0]
 
     def getTeamMatches(self, team=None, year=None, event=None, match=None,
-                       page=None):
+                       elims=None, page=None):
 
         url = "/api/team_matches"
 
@@ -237,6 +260,7 @@ class Statbotics():
         validate.checkType(event, "str", "event")
         validate.checkType(match, "str", "match")
         validate.checkType(page, "int", "page")
+        validate.checkType(elims, "bool", "elims")
 
         if (year and event) or (year and match) or (event and match):
             raise UserWarning("Only specify one of (year, event, match)")
@@ -252,6 +276,9 @@ class Statbotics():
 
         if match:
             url += "/match/" + match
+
+        if elims:
+            url += "/elims"
 
         if page and page != 1:
             url += "/page/" + str(page)
