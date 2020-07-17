@@ -9,7 +9,7 @@ Base = declarative_base()  # all classes inherit from Base
 class Team(Base):
     '''DECLARATION'''
     __tablename__ = 'teams'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     team_years = relationship("TeamYear", back_populates="team")
     team_events = relationship("TeamEvent", back_populates="team")
@@ -45,7 +45,7 @@ class Team(Base):
 class Year(Base):
     '''DECLARATION'''
     __tablename__ = 'years'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     events = relationship("Event", back_populates="year")
     matches = relationship("Match", back_populates="year")
@@ -116,15 +116,15 @@ class Year(Base):
 class TeamYear(Base):
     '''DECLARATION'''
     __tablename__ = 'team_years'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     team_events = relationship("TeamEvent", back_populates="team_year")
     team_matches = relationship("TeamMatch", back_populates="team_year")
 
-    year_id = Column(Integer, ForeignKey('years.id'))
+    year_id = Column(Integer, ForeignKey('years.id'), index=True)
     year = relationship('Year', back_populates="team_years")
 
-    team_id = Column(Integer, ForeignKey('teams.id'))
+    team_id = Column(Integer, ForeignKey('teams.id'), index=True)
     team = relationship('Team', back_populates="team_years")
 
     '''ELO'''
@@ -167,13 +167,13 @@ class TeamYear(Base):
 class Event(Base):
     '''DECLARATION'''
     __tablename__ = 'events'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     matches = relationship("Match", back_populates="event")
     team_events = relationship("TeamEvent", back_populates="event")
     team_matches = relationship("TeamMatch", back_populates="event")
 
-    year_id = Column(Integer, ForeignKey('years.id'))
+    year_id = Column(Integer, ForeignKey('years.id'), index=True)
     year = relationship('Year', back_populates="events")
 
     '''GENERAL'''
@@ -223,20 +223,20 @@ class Event(Base):
 class TeamEvent(Base):
     '''DECLARATIONS'''
     __tablename__ = 'team_events'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     team_matches = relationship("TeamMatch", back_populates="team_event")
 
-    team_id = Column(Integer, ForeignKey('teams.id'))
+    team_id = Column(Integer, ForeignKey('teams.id'), index=True)
     team = relationship('Team', back_populates="team_events")
 
-    team_year_id = Column(Integer, ForeignKey('team_years.id'))
+    team_year_id = Column(Integer, ForeignKey('team_years.id'), index=True)
     team_year = relationship('TeamYear', back_populates="team_events")
 
-    year_id = Column(Integer, ForeignKey('years.id'))
+    year_id = Column(Integer, ForeignKey('years.id'), index=True)
     year = relationship('Year', back_populates="team_events")
 
-    event_id = Column(Integer, ForeignKey('events.id'))
+    event_id = Column(Integer, ForeignKey('events.id'), index=True)
     event = relationship('Event', back_populates="team_events")
 
     '''GENERAL'''
@@ -286,14 +286,14 @@ class TeamEvent(Base):
 class Match(Base):
     '''DECLARATION'''
     __tablename__ = 'matches'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     team_matches = relationship("TeamMatch", back_populates="match")
 
-    year_id = Column(Integer, ForeignKey('years.id'))
+    year_id = Column(Integer, ForeignKey('years.id'), index=True)
     year = relationship('Year', back_populates="matches")
 
-    event_id = Column(Integer, ForeignKey('events.id'))
+    event_id = Column(Integer, ForeignKey('events.id'), index=True)
     event = relationship('Event', back_populates="matches")
 
     '''GENERAL'''
@@ -465,24 +465,24 @@ class Match(Base):
 class TeamMatch(Base):
     '''DECLARATION'''
     __tablename__ = 'team_matches'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
 
-    team_id = Column(Integer, ForeignKey('teams.id'))
+    team_id = Column(Integer, ForeignKey('teams.id'), index=True)
     team = relationship('Team', back_populates="team_matches")
 
-    team_year_id = Column(Integer, ForeignKey('team_years.id'))
+    team_year_id = Column(Integer, ForeignKey('team_years.id'), index=True)
     team_year = relationship('TeamYear', back_populates="team_matches")
 
-    team_event_id = Column(Integer, ForeignKey('team_events.id'))
+    team_event_id = Column(Integer, ForeignKey('team_events.id'), index=True)
     team_event = relationship('TeamEvent', back_populates="team_matches")
 
-    year_id = Column(Integer, ForeignKey('years.id'))
+    year_id = Column(Integer, ForeignKey('years.id'), index=True)
     year = relationship('Year', back_populates="team_matches")
 
-    event_id = Column(Integer, ForeignKey('events.id'))
+    event_id = Column(Integer, ForeignKey('events.id'), index=True)
     event = relationship('Event', back_populates="team_matches")
 
-    match_id = Column(Integer, ForeignKey('matches.id'))
+    match_id = Column(Integer, ForeignKey('matches.id'), index=True)
     match = relationship('Match', back_populates="team_matches")
 
     time = Column(Integer)
