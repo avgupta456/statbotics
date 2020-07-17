@@ -1,7 +1,7 @@
 import requests
 from cachecontrol import CacheControl
 
-from . import validate
+import validate
 
 
 class Statbotics():
@@ -284,3 +284,29 @@ class Statbotics():
             url += "/page/" + str(page)
 
         return self._get(url)
+
+    def getEventSim(self, event, index=None, full=False, iterations=None):
+        validate.checkType(event, "str", "event")
+        validate.checkType(index, "int", "index")
+        validate.checkType(full, "bool", "full")
+        validate.checkType(iterations, "int", "iterations")
+
+        url = "/api/event_sim/event/" + event
+
+        if index:
+            url += "/index/" + str(index)
+
+        if full:
+            url += "/full"
+            if iterations:
+                url += "/iterations/" + str(iterations)
+        else:
+            url += "/simple"
+
+        return self._get(url)
+
+
+sb = Statbotics()
+for i in range(5):
+    print(sb.getEventSim(event="2020ncwak", index=0)['0'])
+    print(i)
