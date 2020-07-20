@@ -19,7 +19,7 @@ before_install:
   -in travis.json.enc -out travis.json -d
 
 before_script:
-- python manage.py collectstatic
+- python backend/manage.py collectstatic
 
 branches:
   only:
