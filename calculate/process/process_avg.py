@@ -11,9 +11,8 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
             matches.extend(event.matches)
         matches = sorted(matches)
 
-        scores, autos, teleops, ones, twos, endgames, fouls, no_fouls, rp_1s, rp_2s = (
-            [] * 9
-        )
+        scores, autos, teleops, ones, twos = [] * 5  # separated for readability
+        endgames, fouls, no_fouls, rp_1s, rp_2s = [] * 5
 
         for match in matches:
             scores.extend([match.red_score, match.blue_score])

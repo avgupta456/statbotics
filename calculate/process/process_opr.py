@@ -68,18 +68,10 @@ def process_event(event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
             rp2_mse += (blue_rp_2_prob - blue_rp_2) ** 2
             count_rp += 2
 
-    stats = [
-        opr_acc,
-        opr_mse,
-        mix_acc,
-        mix_mse,
-        count,
-        rp1_acc,
-        rp1_mse,
-        rp2_acc,
-        rp2_mse,
-        count_rp,
-    ]
+    opr_stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
+    rp_stats = [rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
+    stats = opr_stats + rp_stats
+
     return oprs, ils, team_ils_1, team_ils_2, stats
 
 

@@ -184,16 +184,7 @@ def get_ILS(event, quals, teams, team_stats, team_matches):
 
 def get_oprs(event, year, quals, playoffs, teams, team_stats, team_matches, mean_score):
     OPRs = get_ixOPR(
-        event,
-        year,
-        quals,
-        playoffs,
-        teams,
-        team_stats,
-        team_matches,
-        mean_score,
-        all,
-        event_all,
+        event, year, quals, playoffs, teams, team_stats, team_matches, mean_score,
     )
     ILS = get_ILS(event, quals, teams, team_stats, team_matches)
     return OPRs, ILS
