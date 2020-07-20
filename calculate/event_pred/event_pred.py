@@ -107,37 +107,33 @@ def singleSim(index, matches, teams, team_matches, preds, rps, mean_ties):
         red, blue = team_matches[i]
         red_rps, blue_rps = 0, 0
         if preds[i][2] > random.uniform(0, 1):
-            red_rps += 2  # noqa 702
+            red_rps += 2
         else:
-            blue_rps += 2  # noqa 702
+            blue_rps += 2
         if preds[i][3] > random.uniform(0, 1):
-            red_rps += 1  # noqa 702
+            red_rps += 1
         if preds[i][4] > random.uniform(0, 1):
-            red_rps += 1  # noqa 702
+            red_rps += 1
         if preds[i][5] > random.uniform(0, 1):
-            blue_rps += 1  # noqa 702
+            blue_rps += 1
         if preds[i][6] > random.uniform(0, 1):
-            blue_rps += 1  # noqa 702
+            blue_rps += 1
         for team in red:
-            rps_out[team] += red_rps  # noqa 702
+            rps_out[team] += red_rps
         for team in blue:
-            rps_out[team] += blue_rps  # noqa 702
+            rps_out[team] += blue_rps
 
     for team in teams:
-        ranks_out[team] = [rps_out[team], mean_ties[team]]  # noqa 702
+        ranks_out[team] = [rps_out[team], mean_ties[team]]
     ranks_out = sorted(ranks_out, key=lambda k: (ranks_out[k][0], ranks_out[k][1]))[
         ::-1
-    ]  # noqa 502
+    ]
     ranks_out = {ranks_out[i]: i + 1 for i in range(len(ranks_out))}
     return rps_out, ranks_out
 
 
-def indexSim(
-    index, iterations, teams, matches, team_matches, preds, rps, ties
-):  # noqa 502
-    mean_rps, mean_ties = meanSim(
-        index, matches, teams, team_matches, preds, rps, ties
-    )  # noqa 502
+def indexSim(index, iterations, teams, matches, team_matches, preds, rps, ties):
+    mean_rps, mean_ties = meanSim(index, matches, teams, team_matches, preds, rps, ties)
 
     T = len(teams)
     avg_rps, ranks = {}, {}
@@ -171,10 +167,8 @@ def quickSim(SQL_Read, year, event_key):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
         team_matches, preds = getPreds(
             i, matches, oprs_c, elos_c, ils_c, year, sd_score
-        )  # noqa 502
-        mean_rps, mean_ties = meanSim(
-            i, matches, teams, team_matches, preds, rps, ties
-        )  # noqa 502
+        )
+        mean_rps, mean_ties = meanSim(i, matches, teams, team_matches, preds, rps, ties)
         for team in teams:
             out[team].append([mean_rps[team], mean_ties[team]])
     return out
@@ -190,7 +184,7 @@ def sim(SQL_Read, year, event_key, iterations=100):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
         team_matches, preds = getPreds(
             i, matches, oprs_c, elos_c, ils_c, year, sd_score
-        )  # noqa 502
+        )
         mean_rps, mean_ties, avg_rps, avg_ranks, ranks = indexSim(
             i, iterations, teams, matches, team_matches, preds, rps, ties
         )

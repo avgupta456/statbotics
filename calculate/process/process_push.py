@@ -11,7 +11,7 @@ def getYears(SQL_Read):
     print(len(year_objs))
     for i, year in enumerate(year_objs):
         if i % 100000 == 0:
-            print(i)  # noqa 701
+            print(i)
         years.append(
             [
                 year.id,
@@ -60,7 +60,7 @@ def getTeams(SQL_Read):
     print(len(team_objs))
     for i, team in enumerate(team_objs):
         if i % 100000 == 0:
-            print(i)  # noqa 701
+            print(i)
         teams.append(
             [
                 team.id,
@@ -103,7 +103,7 @@ def getTeamYears(SQL_Read):
     print(len(team_year_objs))
     for i, team_year in enumerate(team_year_objs):
         if i % 100000 == 0:
-            print(i)  # noqa 701
+            print(i)
         team_years.append(
             [
                 team_year.id,
@@ -172,7 +172,7 @@ def getEvents(SQL_Read):
     print(len(event_objs))
     for i, event in enumerate(event_objs):
         if i % 100000 == 0:
-            print(i)  # noqa 701
+            print(i)
         events.append(
             [
                 event.id,
@@ -227,7 +227,7 @@ def getTeamEvents(SQL_Read):
     print(len(team_event_objs))
     for i, team_event in enumerate(team_event_objs):
         if i % 100000 == 0:
-            print(i)  # noqa 701
+            print(i)
         team_events.append(
             [
                 team_event.id,
@@ -308,7 +308,7 @@ def getMatches(SQL_Read):
     print(len(match_objs))
     for i, match in enumerate(match_objs):
         if i % 100000 == 0:
-            print(i)  # noqa 701
+            print(i)
         matches.append(
             [
                 match.id,
@@ -415,7 +415,7 @@ def getTeamMatches(SQL_Read):
     print(len(team_match_objs))
     for i, team_match in enumerate(team_match_objs):
         if i % 100000 == 0:
-            print(i)  # noqa 701
+            print(i)
         team_matches.append(
             [
                 team_match.id,
@@ -451,47 +451,37 @@ def getTeamMatches(SQL_Read):
         ],
     )
 
-    team_matches = team_matches.sort_values(
-        by=["year", "team", "event", "match"]
-    )  # noqa 502
+    team_matches = team_matches.sort_values(by=["year", "team", "event", "match"])
     return team_matches
 
 
 def pushClean(SQL_Read, cloud_engine):
     years = getYears(SQL_Read)
-    years.to_sql(
-        "rankings_year", cloud_engine, if_exists="replace", index=False
-    )  # noqa 502
+    years.to_sql("rankings_year", cloud_engine, if_exists="replace", index=False)
 
     teams = getTeams(SQL_Read)
-    teams.to_sql(
-        "rankings_team", cloud_engine, if_exists="replace", index=False
-    )  # noqa 502
+    teams.to_sql("rankings_team", cloud_engine, if_exists="replace", index=False)
 
     teamYears = getTeamYears(SQL_Read)
     teamYears.to_sql(
         "rankings_teamyear", cloud_engine, if_exists="replace", index=False
-    )  # noqa 502
+    )
 
     events = getEvents(SQL_Read)
-    events.to_sql(
-        "rankings_event", cloud_engine, if_exists="replace", index=False
-    )  # noqa 502
+    events.to_sql("rankings_event", cloud_engine, if_exists="replace", index=False)
 
     teamEvents = getTeamEvents(SQL_Read)
     teamEvents.to_sql(
         "rankings_teamevent", cloud_engine, if_exists="replace", index=False
-    )  # noqa 502
+    )
 
     matches = getMatches(SQL_Read)
-    matches.to_sql(
-        "rankings_match", cloud_engine, if_exists="replace", index=False
-    )  # noqa 502
+    matches.to_sql("rankings_match", cloud_engine, if_exists="replace", index=False)
 
     teamMatches = getTeamMatches(SQL_Read)
     teamMatches.to_sql(
         "rankings_teammatch", cloud_engine, if_exists="replace", index=False
-    )  # noqa 502
+    )
 
     printStats()
 

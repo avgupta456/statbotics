@@ -151,7 +151,7 @@ def get_OPR(event, quals, playoffs, func=all, event_func=event_all):
         mean_score,
     ) = get_base(event, quals, playoffs, func, event_func)
     if quick_stop:
-        return out  # noqa 702
+        return out
 
     oprs = computeOPR(input, output, year, mean_score)
     for i in range(T):
@@ -160,9 +160,9 @@ def get_OPR(event, quals, playoffs, func=all, event_func=event_all):
     for i in range(M):
         m = match_objs[i]
         for t in arr[i][0]:
-            input[2 * i][t] = 1  # noqa 701
+            input[2 * i][t] = 1
         for t in arr[i][1]:
-            input[2 * i + 1][t] = 1  # noqa 701
+            input[2 * i + 1][t] = 1
         output[2 * i] = np.array(func(m, "red"))
         output[2 * i + 1] = np.array(func(m, "blue"))
         oprs = computeOPR(input, output, year, mean_score)
@@ -186,13 +186,13 @@ def get_xOPR(event, quals, playoffs, func=all, event_func=event_all):
         mean_score,
     ) = get_base(event, quals, playoffs, func, event_func)
     if quick_stop:
-        return out  # noqa 702
+        return out
 
     for i in range(M):
         for t in arr[i][0]:
-            input[2 * i][t] = 1  # noqa 701
+            input[2 * i][t] = 1
         for t in arr[i][1]:
-            input[2 * i + 1][t] = 1  # noqa 701
+            input[2 * i + 1][t] = 1
         red = [event_func(team_events[teams[t]]) for t in arr[i][0]]
         blue = [event_func(team_events[teams[t]]) for t in arr[i][1]]
         output[2 * i] = np.sum(red, axis=0)
@@ -227,13 +227,13 @@ def get_ixOPR(event, quals, playoffs, func=all, event_func=event_all):
         mean_score,
     ) = get_base(event, quals, playoffs, func, event_func)
     if quick_stop:
-        return out  # noqa 702
+        return out
 
     for i in range(M):
         for t in arr[i][0]:
-            input[2 * i][t] = 1  # noqa 701
+            input[2 * i][t] = 1
         for t in arr[i][1]:
-            input[2 * i + 1][t] = 1  # noqa 701
+            input[2 * i + 1][t] = 1
         red = [event_func(team_events[teams[t]]) for t in arr[i][0]]
         blue = [event_func(team_events[teams[t]]) for t in arr[i][1]]
         output[2 * i] = np.sum(red, axis=0)
@@ -272,18 +272,10 @@ def get_ILS(event, quals):
 
     for i, m in enumerate(quals):
         red, blue = m.getTeams()
-        adjust_red_1 = (
-            m.red_rp_1 - logistic(sum([out[r][i][0] for r in red]))
-        ) / 10  # noqa 502
-        adjust_red_2 = (
-            m.red_rp_2 - logistic(sum([out[r][i][1] for r in red]))
-        ) / 10  # noqa 502
-        adjust_blue_1 = (
-            m.blue_rp_1 - logistic(sum([out[b][i][0] for b in blue]))
-        ) / 10  # noqa 502
-        adjust_blue_2 = (
-            m.blue_rp_2 - logistic(sum([out[b][i][1] for b in blue]))
-        ) / 10  # noqa 502
+        adjust_red_1 = (m.red_rp_1 - logistic(sum([out[r][i][0] for r in red]))) / 10
+        adjust_red_2 = (m.red_rp_2 - logistic(sum([out[r][i][1] for r in red]))) / 10
+        adjust_blue_1 = (m.blue_rp_1 - logistic(sum([out[b][i][0] for b in blue]))) / 10
+        adjust_blue_2 = (m.blue_rp_2 - logistic(sum([out[b][i][1] for b in blue]))) / 10
 
         for t in teams:
             out[t][i + 1] = out[t][i]
@@ -317,13 +309,13 @@ def opr_standalone(SQL_Read, event):
 
 def win_prob(red, blue, year, sd_score):
     if isinstance(red, list):
-        red = sum(red)  # noqa 701
+        red = sum(red)
     if isinstance(red, dict):
-        red = sum(red.values())  # noqa 701
+        red = sum(red.values())
     if isinstance(blue, list):
-        blue = sum(blue)  # noqa 701
+        blue = sum(blue)
     if isinstance(blue, dict):
-        blue = sum(blue.values())  # noqa 701
+        blue = sum(blue.values())
     return 1 / (10 ** (5 / 8 * (blue - red) / sd_score) + 1)
 
 

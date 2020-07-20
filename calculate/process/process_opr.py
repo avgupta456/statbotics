@@ -41,18 +41,10 @@ def process_event(event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
 
         """ILS STATS"""
 
-        m.red_ils_1_sum = red_ils_1_sum = sum(
-            [clean(ils[r][ind][0]) for r in red]
-        )  # noqa 502
-        m.red_ils_2_sum = red_ils_2_sum = sum(
-            [clean(ils[r][ind][1]) for r in red]
-        )  # noqa 502
-        m.blue_ils_1_sum = blue_ils_1_sum = sum(
-            [clean(ils[b][ind][0]) for b in blue]
-        )  # noqa 502
-        m.blue_ils_2_sum = blue_ils_2_sum = sum(
-            [clean(ils[b][ind][1]) for b in blue]
-        )  # noqa 502
+        m.red_ils_1_sum = red_ils_1_sum = sum([clean(ils[r][ind][0]) for r in red])
+        m.red_ils_2_sum = red_ils_2_sum = sum([clean(ils[r][ind][1]) for r in red])
+        m.blue_ils_1_sum = blue_ils_1_sum = sum([clean(ils[b][ind][0]) for b in blue])
+        m.blue_ils_2_sum = blue_ils_2_sum = sum([clean(ils[b][ind][1]) for b in blue])
         m.red_rp_1_prob = red_rp_1_prob = logistic(red_ils_1_sum)
         m.red_rp_2_prob = red_rp_2_prob = logistic(red_ils_2_sum)
         m.blue_rp_1_prob = blue_rp_1_prob = logistic(blue_ils_1_sum)
@@ -63,13 +55,13 @@ def process_event(event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
             red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
             blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
             if int(red_rp_1_prob + 0.5) == red_rp_1:
-                rp1_acc += 1  # noqa 702
+                rp1_acc += 1
             if int(red_rp_2_prob + 0.5) == red_rp_2:
-                rp2_acc += 1  # noqa 702
+                rp2_acc += 1
             if int(blue_rp_1_prob + 0.5) == blue_rp_1:
-                rp1_acc += 1  # noqa 702
+                rp1_acc += 1
             if int(blue_rp_2_prob + 0.5) == blue_rp_2:
-                rp2_acc += 1  # noqa 702
+                rp2_acc += 1
             rp1_mse += (red_rp_1_prob - red_rp_1) ** 2
             rp2_mse += (red_rp_2_prob - red_rp_2) ** 2
             rp1_mse += (blue_rp_1_prob - blue_rp_1) ** 2
@@ -186,9 +178,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
             quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
-            playoffs = sorted(
-                SQL_Read.getMatches(event=event.id, playoff=True)
-            )  # noqa 502
+            playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))
             oprs, ils, team_ils_1, team_ils_2, stats = process_event(
                 event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
             )
@@ -255,9 +245,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     m.ils_1 = clean(ils[num][index][0])
                     m.ils_2 = clean(ils[num][index][1])
 
-            oprs_end = sorted(
-                [clean(oprs[t][-1][0]) for t in oprs], reverse=True
-            )  # noqa 502
+            oprs_end = sorted([clean(oprs[t][-1][0]) for t in oprs], reverse=True)
             event.opr_max = oprs_end[0]
             event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
             event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
@@ -270,10 +258,8 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         for num in team_years:
             # 1771 in 2004 only played in elims shrug
             if num not in team_events:
-                continue  # noqa 701
-            best_event = sorted(team_events[num], key=lambda e: e["opr_end"])[
-                -1
-            ]  # noqa 502
+                continue
+            best_event = sorted(team_events[num], key=lambda e: e["opr_end"])[-1]
             team_years[num].opr_end = best_event["opr_end"]
             team_years[num].opr_auto = best_event["opr_auto"]
             team_years[num].opr_teleop = best_event["opr_teleop"]

@@ -44,7 +44,7 @@ class SQL:
 
         # resets tables
         if clean:
-            classes.createTables(self.local_engine)  # noqa 701
+            classes.createTables(self.local_engine)
 
     def getLocalEngine(self):
         return self.local_engine

@@ -43,8 +43,8 @@ def get_tiebreakers(event, year, matches, teams):
         for t in teams:
             out[t][i + 1] = out[t][i]
             if t in red:
-                out[t][i + 1][0] += red_tie  # noqa 702
+                out[t][i + 1][0] += red_tie
             elif t in blue:
-                out[t][i + 1][0] += blue_tie  # noqa 702
+                out[t][i + 1][0] += blue_tie
 
     return out

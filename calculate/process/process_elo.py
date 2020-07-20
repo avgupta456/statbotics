@@ -107,29 +107,21 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
                 team_matches[t].append(red_elo_post[t])
                 team_event_id = utils.getTeamEventId(t, match.event_id)
                 if team_event_id not in team_events:
-                    team_events[team_event_id] = [
-                        [red_elo_pre[t], match.playoff]
-                    ]  # noqa 502
-                team_events[team_event_id].append(
-                    [red_elo_post[t], match.playoff]
-                )  # noqa 502
+                    team_events[team_event_id] = [[red_elo_pre[t], match.playoff]]
+                team_events[team_event_id].append([red_elo_post[t], match.playoff])
             for t in blue:
                 team_elos[t] = blue_elo_post[t]
                 team_matches[t].append(blue_elo_post[t])
                 team_event_id = utils.getTeamEventId(t, match.event_id)
                 if team_event_id not in team_events:
-                    team_events[team_event_id] = [
-                        [blue_elo_pre[t], match.playoff]
-                    ]  # noqa 502
-                team_events[team_event_id].append(
-                    [blue_elo_post[t], match.playoff]
-                )  # noqa 502
+                    team_events[team_event_id] = [[blue_elo_pre[t], match.playoff]]
+                team_events[team_event_id].append([blue_elo_post[t], match.playoff])
 
             # update stats
             win_probs = {"red": 1, "blue": 0, "draw": 0.5}
             mse += (win_probs[match.winner] - match.elo_win_prob) ** 2
             if match.winner == match.elo_winner:
-                acc += 1  # noqa 701
+                acc += 1
 
             count += 1
             if count % 1000 == 0:
@@ -141,9 +133,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
 
         print("Team Matches")
         for team_match in SQL_Read.getTeamMatches(year=year):
-            team_match.elo = team_match_ids[team_match.match_id][
-                team_match.team_id
-            ]  # noqa 502
+            team_match.elo = team_match_ids[team_match.match_id][team_match.team_id]
         SQL_Write.commit()  # optional, reduces memory overhead
 
         print("Team Events")

@@ -5,7 +5,7 @@ from sqlalchemy import desc
 class SQL_Read:
     def __init__(self, SQL):
         self.reads = 0
-        self.session = SQL.getLocalSession()  # noqa 701
+        self.session = SQL.getLocalSession()
 
     def getStats(self):
         return self.reads

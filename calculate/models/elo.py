@@ -32,25 +32,25 @@ def update_rating(sd_score, red, blue, red_score, blue_score, playoff):
 
 def win_prob(red, blue):
     if isinstance(red, list):
-        red = sum(red)  # noqa 701
+        red = sum(red)
     if isinstance(red, dict):
-        red = sum(red.values())  # noqa 701
+        red = sum(red.values())
     if isinstance(blue, list):
-        blue = sum(blue)  # noqa 701
+        blue = sum(blue)
     if isinstance(blue, dict):
-        blue = sum(blue.values())  # noqa 701
+        blue = sum(blue.values())
     return 1 / (10 ** ((blue - red) / 400) + 1)
 
 
 def win_margin(red, blue, sd_score):
     if isinstance(red, list):
-        red = sum(red)  # noqa 701
+        red = sum(red)
     if isinstance(red, dict):
-        red = sum(red.values())  # noqa 701
+        red = sum(red.values())
     if isinstance(blue, list):
-        blue = sum(blue)  # noqa 701
+        blue = sum(blue)
     if isinstance(blue, dict):
-        blue = sum(blue.values())  # noqa 701
+        blue = sum(blue.values())
     return (red - blue) * sd_score / 250
 
 

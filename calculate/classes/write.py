@@ -11,7 +11,7 @@ class SQL_Write:
         self.match_id = -1
         self.event_id = -1
 
-        self.session = SQL.getLocalSession()  # noqa 701
+        self.session = SQL.getLocalSession()
         self.read = SQL_Read
 
     def setIDs(self):
@@ -93,7 +93,7 @@ class SQL_Write:
 
     def addEvent(self, dict, check=True, add=False, commit=False):
         if self.event_id < 0:
-            self.setIDs()  # noqa 702
+            self.setIDs()
         if not check or self.read.getEvent_byKey(dict["key"]) is None:
             district = dict["district"]
             if district is None:
@@ -145,7 +145,7 @@ class SQL_Write:
 
     def addMatch(self, dict, check=True, add=False, commit=False):
         if self.match_id < 0:
-            self.setIDs()  # noqa 702
+            self.setIDs()
         year_id = dict["year"]
         event_id = dict["event"]
         if not check or self.read.getMatch_byKey(dict["key"]) is None:
@@ -186,9 +186,7 @@ class SQL_Write:
                 red_rp_1=dict["red_score_breakdown"]["rp1"],
                 red_rp_2=dict["red_score_breakdown"]["rp2"],
                 blue_auto=dict["blue_score_breakdown"]["auto"],
-                blue_auto_movement=dict["blue_score_breakdown"][
-                    "auto_movement"
-                ],  # noqa: E501
+                blue_auto_movement=dict["blue_score_breakdown"]["auto_movement"],
                 blue_auto_1=dict["blue_score_breakdown"]["auto_1"],
                 blue_auto_2=dict["blue_score_breakdown"]["auto_2"],
                 blue_auto_2_1=dict["blue_score_breakdown"]["auto_2_1"],
