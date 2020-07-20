@@ -57,7 +57,7 @@ def Matches(request):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", MatchSerializer)},
-    operation_description="List of all matches from a given year (WARNING: VERY SLOW)",  # noqa 502
+    operation_description="List of all matches from a given year (WARNING: VERY SLOW)",
 )
 @api_view(["GET"])
 def MatchesYear(request, year):

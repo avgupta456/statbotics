@@ -20,9 +20,7 @@ def Team(request, num):
 
 @swagger_auto_schema(method="GET", auto_schema=None)
 @api_view(["GET"])
-def _Teams(
-    request, metric=None, country=None, state=None, district=None, active=None
-):  # noqa 502
+def _Teams(request, metric=None, country=None, state=None, district=None, active=None):
     teams = TeamModel.objects
     if country:
         teams = teams.filter(country=country)
@@ -41,9 +39,7 @@ def _Teams(
 
 @swagger_auto_schema(method="GET", auto_schema=None)
 @api_view(["GET"])
-def _TeamsActive(
-    request, metric=None, country=None, state=None, district=None
-):  # noqa 502
+def _TeamsActive(request, metric=None, country=None, state=None, district=None):
     return _Teams(request._request, metric, country, state, district, active=1)
 
 
@@ -72,7 +68,7 @@ def TeamsByMetric(request, metric):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamSerializer)},
-    operation_description="Returns a list of active teams and their statistics.",  # noqa 502
+    operation_description="Returns a list of active teams and their statistics.",
 )
 @api_view(["GET"])
 def TeamsActive(request):

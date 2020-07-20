@@ -9,7 +9,7 @@ from rest_framework.response import Response
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", YearSerializer)},
-    operation_description="Basic information and prediction stats for given year",  # noqa 502
+    operation_description="Basic information and prediction stats for given year",
 )
 @api_view(["GET"])
 def Year(request, year):
@@ -21,7 +21,7 @@ def Year(request, year):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", YearSerializer)},
-    operation_description="Basic information and prediction stats for all year 2002-Present",  # noqa 502
+    operation_description="Basic information and prediction stats for all year 2002-Present",
 )
 @api_view(["GET"])
 def Years(request):

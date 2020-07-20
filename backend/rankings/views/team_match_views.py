@@ -14,9 +14,7 @@ from rest_framework.response import Response
 )
 @api_view(["GET"])
 def TeamMatch(request, num, match):
-    teamMatch = (
-        TeamMatchModel.objects.filter(team=num).filter(match=match).all()
-    )  # noqa 502
+    teamMatch = TeamMatchModel.objects.filter(team=num).filter(match=match).all()
     serializer = TeamMatchSerializer(teamMatch, many=True)
     return Response(serializer.data)
 
@@ -38,17 +36,13 @@ def _TeamMatches(
         teamMatches = teamMatches.filter(match=match)
     if playoff:
         teamMatches = teamMatches.filter(playoff=playoff)
-    teamMatches = Paginator(teamMatches.all().order_by("time"), 5000).page(
-        page
-    )  # noqa 502
+    teamMatches = Paginator(teamMatches.all().order_by("time"), 5000).page(page)
     serializer = TeamMatchSerializer(teamMatches, many=True)
     return Response(serializer.data)
 
 
 @api_view(["GET"])
-def _TeamMatchesElim(
-    request, num=None, year=None, event=None, match=None, page=1
-):  # noqa 502
+def _TeamMatchesElim(request, num=None, year=None, event=None, match=None, page=1):
     return _TeamMatches(request._request, num, year, event, match, True, page)
 
 
@@ -65,7 +59,7 @@ def TeamMatches(request):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamMatchSerializer)},
-    operation_description="Statistics for (Team, Match) pairs with specified team",  # noqa 502
+    operation_description="Statistics for (Team, Match) pairs with specified team",
 )
 @api_view(["GET"])
 def TeamMatchesTeam(request, num):
@@ -75,7 +69,7 @@ def TeamMatchesTeam(request, num):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamMatchSerializer)},
-    operation_description="Statistics for (Team, Match) pairs with specified year",  # noqa 502
+    operation_description="Statistics for (Team, Match) pairs with specified year",
 )
 @api_view(["GET"])
 def TeamMatchesYear(request, year):
@@ -85,7 +79,7 @@ def TeamMatchesYear(request, year):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamMatchSerializer)},
-    operation_description="Statistics for (Team, Match) pairs with specified event",  # noqa 502
+    operation_description="Statistics for (Team, Match) pairs with specified event",
 )
 @api_view(["GET"])
 def TeamMatchesEvent(request, event):
@@ -95,7 +89,7 @@ def TeamMatchesEvent(request, event):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamMatchSerializer)},
-    operation_description="Statistics for (Team, Match) pairs with specified match",  # noqa 502
+    operation_description="Statistics for (Team, Match) pairs with specified match",
 )
 @api_view(["GET"])
 def TeamMatchesMatch(request, match):
@@ -105,7 +99,7 @@ def TeamMatchesMatch(request, match):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamMatchSerializer)},
-    operation_description="Statistics for (Team, Match) pairs with specified team, year",  # noqa 502
+    operation_description="Statistics for (Team, Match) pairs with specified team, year",
 )
 @api_view(["GET"])
 def TeamMatchesTeamYear(request, num, year):
@@ -115,7 +109,7 @@ def TeamMatchesTeamYear(request, num, year):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamMatchSerializer)},
-    operation_description="Statistics for (Team, Match) pairs with specified team, event",  # noqa 502
+    operation_description="Statistics for (Team, Match) pairs with specified team, event",
 )
 @api_view(["GET"])
 def TeamMatchesTeamEvent(request, num, event):

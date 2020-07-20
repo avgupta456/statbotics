@@ -10,13 +10,11 @@ from rest_framework.response import Response
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamEventSerializer)},
-    operation_description="Elo and OPR stats for a given team at a given event",  # noqa 502
+    operation_description="Elo and OPR stats for a given team at a given event",
 )
 @api_view(["GET"])
 def TeamEvent(request, num, event):
-    teamEvents = (
-        TeamEventModel.objects.filter(team=num).filter(event=event).all()
-    )  # noqa 502
+    teamEvents = TeamEventModel.objects.filter(team=num).filter(event=event).all()
     serializer = TeamEventSerializer(teamEvents, many=True)
     return Response(serializer.data)
 
@@ -125,7 +123,7 @@ def TeamEventsYearByMetric(request, year, metric):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", TeamEventSerializer)},
-    operation_description="Elo and OPR for all events with specified year, team",  # noqa 502
+    operation_description="Elo and OPR for all events with specified year, team",
 )
 @api_view(["GET"])
 def TeamEventsNumYear(request, num, year):
@@ -136,7 +134,7 @@ def TeamEventsNumYear(request, num, year):
     method="GET",
     responses={200: openapi.Response("", TeamEventSerializer)},
     operation_description="Elo and OPR for all events with specified year, team."
-    + "Ordered by metric. Options are '-elo_start',"  # noqa 502
+    + "Ordered by metric. Options are '-elo_start',"
     + " '-elo_pre_playoffs', '-elo_end', '-elo_mean',"
     + " '-elo_max', '-elo_diff', '-opr_start',"
     + "  '-opr_end', '-ils_1', '-ils_2'",

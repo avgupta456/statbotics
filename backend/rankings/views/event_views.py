@@ -79,7 +79,7 @@ def EventsByMetric(request, metric):
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", EventSerializer)},
-    operation_description="Basic information and stats for all event in a given year",  # noqa 502
+    operation_description="Basic information and stats for all event in a given year",
 )
 @api_view(["GET"])
 def EventsYear(request, year):
@@ -90,7 +90,7 @@ def EventsYear(request, year):
     method="GET",
     responses={200: openapi.Response("", EventSerializer)},
     operation_description="Basic information and stats for all event in a given year,"
-    + " ordered by metric. Options are '-elo_top8',"  # noqa 502
+    + " ordered by metric. Options are '-elo_top8',"
     + " '-elo_top24', '-elo_mean', '-opr_top8',"
     + " '-opr_top24', '-opr_mean'",
 )
