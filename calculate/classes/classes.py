@@ -1,39 +1,40 @@
-from sqlalchemy import Column, ForeignKey, Integer, Float, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
 
 Base = declarative_base()  # all classes inherit from Base
 
 
 class Team(Base):
-    '''DECLARATION'''
-    __tablename__ = 'teams'
+    """DECLARATION"""
+
+    __tablename__ = "teams"
     id = Column(Integer, primary_key=True, index=True)
 
     team_years = relationship("TeamYear", back_populates="team")
     team_events = relationship("TeamEvent", back_populates="team")
     team_matches = relationship("TeamMatch", back_populates="team")
 
-    '''GENERAL'''
+    """GENERAL"""
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
     active = Column(Integer)
 
-    '''ELO'''
+    """ELO"""
     elo = Column(Float)
     elo_recent = Column(Float)
     elo_mean = Column(Float)
     elo_max = Column(Float)
 
-    '''SUPER FUNCTIONS'''
+    """SUPER FUNCTIONS"""
+
     def __lt__(self, other):
         return self.id < other.id
 
     def __repr__(self):
-        return f'Team ({self.id})'
+        return f"Team ({self.id})"
 
     def __str__(self):
         return self.__repr__()
@@ -43,8 +44,9 @@ class Team(Base):
 
 
 class Year(Base):
-    '''DECLARATION'''
-    __tablename__ = 'years'
+    """DECLARATION"""
+
+    __tablename__ = "years"
     id = Column(Integer, primary_key=True, index=True)
 
     events = relationship("Event", back_populates="year")
@@ -54,7 +56,7 @@ class Year(Base):
     team_events = relationship("TeamEvent", back_populates="year")
     team_matches = relationship("TeamMatch", back_populates="year")
 
-    '''ELO'''
+    """ELO"""
     elo_max = Column(Float)
     elo_1p = Column(Float)
     elo_5p = Column(Float)
@@ -66,7 +68,7 @@ class Year(Base):
     elo_acc = Column(Float)
     elo_mse = Column(Float)
 
-    '''OPR'''
+    """OPR"""
     # stats are for team's max opr in given year, NOT EVENT
     opr_max = Column(Float)
     opr_1p = Column(Float)
@@ -79,17 +81,17 @@ class Year(Base):
     opr_acc = Column(Float)
     opr_mse = Column(Float)
 
-    ''''MIX'''
+    """'MIX"""
     mix_acc = Column(Float)
     mix_mse = Column(Float)
 
-    '''ILS'''
+    """ILS"""
     rp1_acc = Column(Float)
     rp1_mse = Column(Float)
     rp2_acc = Column(Float)
     rp2_mse = Column(Float)
 
-    '''CONSTANTS'''
+    """CONSTANTS"""
     score_mean = Column(Float)
     score_sd = Column(Float)
     auto_mean = Column(Float)
@@ -102,32 +104,34 @@ class Year(Base):
     rp_1_mean = Column(Float)
     rp_2_mean = Column(Float)
 
-    '''SUPER FUNCTIONS'''
+    """SUPER FUNCTIONS"""
+
     def __lt__(self, other):
         return self.id < other.id
 
     def __repr__(self):
-        return f'Year ({self.id})'
+        return f"Year ({self.id})"
 
     def __str__(self):
         return self.__repr__()
 
 
 class TeamYear(Base):
-    '''DECLARATION'''
-    __tablename__ = 'team_years'
+    """DECLARATION"""
+
+    __tablename__ = "team_years"
     id = Column(Integer, primary_key=True, index=True)
 
     team_events = relationship("TeamEvent", back_populates="team_year")
     team_matches = relationship("TeamMatch", back_populates="team_year")
 
-    year_id = Column(Integer, ForeignKey('years.id'), index=True)
-    year = relationship('Year', back_populates="team_years")
+    year_id = Column(Integer, ForeignKey("years.id"), index=True)
+    year = relationship("Year", back_populates="team_years")
 
-    team_id = Column(Integer, ForeignKey('teams.id'), index=True)
-    team = relationship('Team', back_populates="team_years")
+    team_id = Column(Integer, ForeignKey("teams.id"), index=True)
+    team = relationship("Team", back_populates="team_years")
 
-    '''ELO'''
+    """ELO"""
     elo_start = Column(Float)
     elo_pre_champs = Column(Float)
     elo_end = Column(Float)
@@ -135,7 +139,7 @@ class TeamYear(Base):
     elo_max = Column(Float)
     elo_diff = Column(Float)
 
-    '''OPR'''
+    """OPR"""
     opr_start = Column(Float)
     opr_end = Column(Float)
 
@@ -147,36 +151,38 @@ class TeamYear(Base):
     opr_fouls = Column(Float)
     opr_no_fouls = Column(Float)
 
-    '''ILS'''
+    """ILS"""
     ils_1 = Column(Float)
     ils_2 = Column(Float)
 
-    '''SUPER FUNCTIONS'''
+    """SUPER FUNCTIONS"""
+
     def __lt__(self, other):
         if self.team_id == other.team_id:
             return self.year_id < other.year_id
         return self.team_id < other.team_id
 
     def __repr__(self):
-        return f'TeamYear ({self.team_id} {self.year_id})'
+        return f"TeamYear ({self.team_id} {self.year_id})"
 
     def __str__(self):
         return self.__repr__()
 
 
 class Event(Base):
-    '''DECLARATION'''
-    __tablename__ = 'events'
+    """DECLARATION"""
+
+    __tablename__ = "events"
     id = Column(Integer, primary_key=True, index=True)
 
     matches = relationship("Match", back_populates="event")
     team_events = relationship("TeamEvent", back_populates="event")
     team_matches = relationship("TeamMatch", back_populates="event")
 
-    year_id = Column(Integer, ForeignKey('years.id'), index=True)
-    year = relationship('Year', back_populates="events")
+    year_id = Column(Integer, ForeignKey("years.id"), index=True)
+    year = relationship("Year", back_populates="events")
 
-    '''GENERAL'''
+    """GENERAL"""
     key = Column(String(20))
     name = Column(String(100))
     time = Column(Integer)
@@ -189,21 +195,22 @@ class Event(Base):
     type = Column(Integer)
     week = Column(Integer)
 
-    '''ELO'''
+    """ELO"""
     elo_max = Column(Float)
     elo_top8 = Column(Float)
     elo_top24 = Column(Float)
     elo_mean = Column(Float)
     elo_sd = Column(Float)
 
-    '''OPR'''
+    """OPR"""
     opr_max = Column(Float)
     opr_top8 = Column(Float)
     opr_top24 = Column(Float)
     opr_mean = Column(Float)
     opr_sd = Column(Float)
 
-    '''SUPER FUNCTIONS'''
+    """SUPER FUNCTIONS"""
+
     def __lt__(self, other):
         return self.time < other.time
 
@@ -221,28 +228,29 @@ class Event(Base):
 
 
 class TeamEvent(Base):
-    '''DECLARATIONS'''
-    __tablename__ = 'team_events'
+    """DECLARATIONS"""
+
+    __tablename__ = "team_events"
     id = Column(Integer, primary_key=True, index=True)
 
     team_matches = relationship("TeamMatch", back_populates="team_event")
 
-    team_id = Column(Integer, ForeignKey('teams.id'), index=True)
-    team = relationship('Team', back_populates="team_events")
+    team_id = Column(Integer, ForeignKey("teams.id"), index=True)
+    team = relationship("Team", back_populates="team_events")
 
-    team_year_id = Column(Integer, ForeignKey('team_years.id'), index=True)
-    team_year = relationship('TeamYear', back_populates="team_events")
+    team_year_id = Column(Integer, ForeignKey("team_years.id"), index=True)
+    team_year = relationship("TeamYear", back_populates="team_events")
 
-    year_id = Column(Integer, ForeignKey('years.id'), index=True)
-    year = relationship('Year', back_populates="team_events")
+    year_id = Column(Integer, ForeignKey("years.id"), index=True)
+    year = relationship("Year", back_populates="team_events")
 
-    event_id = Column(Integer, ForeignKey('events.id'), index=True)
-    event = relationship('Event', back_populates="team_events")
+    event_id = Column(Integer, ForeignKey("events.id"), index=True)
+    event = relationship("Event", back_populates="team_events")
 
-    '''GENERAL'''
+    """GENERAL"""
     time = Column(Integer)
 
-    '''ELO'''
+    """ELO"""
     elo_start = Column(Float)
     elo_pre_playoffs = Column(Float)
     elo_end = Column(Float)
@@ -250,7 +258,7 @@ class TeamEvent(Base):
     elo_max = Column(Float)
     elo_diff = Column(Float)
 
-    '''OPR'''
+    """OPR"""
     opr_start = Column(Float)
     opr_end = Column(Float)
 
@@ -262,41 +270,41 @@ class TeamEvent(Base):
     opr_fouls = Column(Float)
     opr_no_fouls = Column(Float)
 
-    '''ILS'''
+    """ILS"""
     ils_1_start = Column(Float)
     ils_2_start = Column(Float)
     ils_1_end = Column(Float)
     ils_2_end = Column(Float)
 
-    '''SUPER FUNCTIONS'''
+    """SUPER FUNCTIONS"""
+
     def __lt__(self, other):
         if self.team_id == other.team_id:
             return self.time < other.time
         return self.team_id < other.team_id
 
     def __repr__(self):
-        return "(TeamEvent " + \
-                str(self.team_id) + " " + \
-                str(self.event.key) + ")"
+        return "(TeamEvent " + str(self.team_id) + " " + str(self.event.key) + ")"
 
     def __str__(self):
         return self.__repr__()
 
 
 class Match(Base):
-    '''DECLARATION'''
-    __tablename__ = 'matches'
+    """DECLARATION"""
+
+    __tablename__ = "matches"
     id = Column(Integer, primary_key=True, index=True)
 
     team_matches = relationship("TeamMatch", back_populates="match")
 
-    year_id = Column(Integer, ForeignKey('years.id'), index=True)
-    year = relationship('Year', back_populates="matches")
+    year_id = Column(Integer, ForeignKey("years.id"), index=True)
+    year = relationship("Year", back_populates="matches")
 
-    event_id = Column(Integer, ForeignKey('events.id'), index=True)
-    event = relationship('Event', back_populates="matches")
+    event_id = Column(Integer, ForeignKey("events.id"), index=True)
+    event = relationship("Event", back_populates="matches")
 
-    '''GENERAL'''
+    """GENERAL"""
     key = Column(String(20))
     comp_level = Column(String(10))
     set_number = Column(Integer)
@@ -374,7 +382,8 @@ class Match(Base):
     blue_rp_1 = Column(Integer)
     blue_rp_2 = Column(Integer)
 
-    '''SUPER FUNCTIONS'''
+    """SUPER FUNCTIONS"""
+
     def __lt__(self, other):
         return self.time < other.time
 
@@ -385,10 +394,10 @@ class Match(Base):
         return self.__repr__()
 
     def getRed(self):
-        return [int(x) for x in self.red.split(',')]
+        return [int(x) for x in self.red.split(",")]
 
     def getBlue(self):
-        return [int(x) for x in self.blue.split(',')]
+        return [int(x) for x in self.blue.split(",")]
 
     def getTeams(self):
         return [self.getRed(), self.getBlue()]
@@ -416,7 +425,8 @@ class Match(Base):
                 blue.append(team_match)
         return [red, blue]
 
-    '''ELO/OPR GETTERS'''
+    """ELO/OPR GETTERS"""
+
     def getRedElo(self):
         out = []
         for team_match in self.team_matches:
@@ -455,7 +465,7 @@ class Match(Base):
             if team_match.team_id == team:
                 return team_match.opr_score
 
-    '''ELO/OPR SETTERS'''
+    """ELO/OPR SETTERS"""
 
     def setTeams(self, red, blue):
         self.red_teams = ",".join(red)
@@ -463,32 +473,33 @@ class Match(Base):
 
 
 class TeamMatch(Base):
-    '''DECLARATION'''
-    __tablename__ = 'team_matches'
+    """DECLARATION"""
+
+    __tablename__ = "team_matches"
     id = Column(Integer, primary_key=True, index=True)
 
-    team_id = Column(Integer, ForeignKey('teams.id'), index=True)
-    team = relationship('Team', back_populates="team_matches")
+    team_id = Column(Integer, ForeignKey("teams.id"), index=True)
+    team = relationship("Team", back_populates="team_matches")
 
-    team_year_id = Column(Integer, ForeignKey('team_years.id'), index=True)
-    team_year = relationship('TeamYear', back_populates="team_matches")
+    team_year_id = Column(Integer, ForeignKey("team_years.id"), index=True)
+    team_year = relationship("TeamYear", back_populates="team_matches")
 
-    team_event_id = Column(Integer, ForeignKey('team_events.id'), index=True)
-    team_event = relationship('TeamEvent', back_populates="team_matches")
+    team_event_id = Column(Integer, ForeignKey("team_events.id"), index=True)
+    team_event = relationship("TeamEvent", back_populates="team_matches")
 
-    year_id = Column(Integer, ForeignKey('years.id'), index=True)
-    year = relationship('Year', back_populates="team_matches")
+    year_id = Column(Integer, ForeignKey("years.id"), index=True)
+    year = relationship("Year", back_populates="team_matches")
 
-    event_id = Column(Integer, ForeignKey('events.id'), index=True)
-    event = relationship('Event', back_populates="team_matches")
+    event_id = Column(Integer, ForeignKey("events.id"), index=True)
+    event = relationship("Event", back_populates="team_matches")
 
-    match_id = Column(Integer, ForeignKey('matches.id'), index=True)
-    match = relationship('Match', back_populates="team_matches")
+    match_id = Column(Integer, ForeignKey("matches.id"), index=True)
+    match = relationship("Match", back_populates="team_matches")
 
     time = Column(Integer)
     alliance = Column(String(30))
 
-    '''GENERAL'''
+    """GENERAL"""
 
     elo = Column(Float)
     opr_score = Column(Float)
@@ -503,14 +514,13 @@ class TeamMatch(Base):
     ils_1 = Column(Float)
     ils_2 = Column(Float)
 
-    '''SUPER FUNCTIONS'''
+    """SUPER FUNCTIONS"""
+
     def __lt__(self, other):
         return self.time < other.time
 
     def __repr__(self):
-        return "(Match " + \
-                str(self.team_id) + " " + \
-                str(self.match.key) + ")"
+        return "(Match " + str(self.team_id) + " " + str(self.match.key) + ")"
 
     def __str__(self):
         return self.__repr__()

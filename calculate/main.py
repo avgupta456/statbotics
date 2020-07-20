@@ -1,12 +1,5 @@
 from helper import setup
-
-from process import (
-    process_tba,
-    process_avg,
-    process_elo,
-    process_opr,
-    process_push
-)
+from process import process_avg, process_elo, process_opr, process_push, process_tba
 
 start_year = 2002
 end_year = 2020

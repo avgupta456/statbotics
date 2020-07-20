@@ -1,32 +1,26 @@
-import requests
 import os
 
-from tba.clean_data import (
-    cleanState,
-    cleanDistrict,
-    getMatchTime,
-    getBreakdown,
-)
-
-from helper import (
-    utils
-)
+import requests
+from helper import utils
+from tba.clean_data import cleanDistrict, cleanState, getBreakdown, getMatchTime
 
 
-'''
+"""
 Helper class to read the TheBlueAlliance (TBA) API
-'''
+"""
 
 
 class ReadTBA:
     def __init__(self):
-        self.auth_key = \
+        self.auth_key = (
             "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr"
+        )
         self.read_pre = "https://www.thebluealliance.com/api/v3/"
 
         self.session = requests.Session()
-        self.session.headers.update({'X-TBA-Auth-Key': self.auth_key,
-                                     'X-TBA-Auth-Id': ''})
+        self.session.headers.update(
+            {"X-TBA-Auth-Key": self.auth_key, "X-TBA-Auth-Id": ""}
+        )
 
         self.cache = 0
         self.count = 0
@@ -35,13 +29,13 @@ class ReadTBA:
         self.event_blacklist = ["2004va", "2005va", "2007ga", "2020waspo"]
 
     def get(self, url, cache=True):
-        if cache and os.path.exists("tba/cache/"+url):
+        if cache and os.path.exists("tba/cache/" + url):
             self.cache += 1
-            return utils.load_cache("tba/cache/"+url)
+            return utils.load_cache("tba/cache/" + url)
         else:
             self.count += 1
-            data = self.session.get(self.read_pre+url).json()
-            utils.dump_cache("tba/cache/"+url, data)
+            data = self.session.get(self.read_pre + url).json()
+            utils.dump_cache("tba/cache/" + url, data)
             return data
 
     # counts TBA calls
@@ -51,13 +45,13 @@ class ReadTBA:
     def getTeams(self, cache=True):
         out = []
         for i in range(20):
-            data = self.get("teams/"+str(i)+"/simple", cache=cache)
+            data = self.get("teams/" + str(i) + "/simple", cache=cache)
             for data_team in data:
                 new_data = {
                     "number": data_team["team_number"],
                     "name": data_team["nickname"],
                     "state": cleanState(data_team["state_prov"]),
-                    "country": data_team["country"]
+                    "country": data_team["country"],
                 }
                 out.append(new_data)
         return out
@@ -65,8 +59,9 @@ class ReadTBA:
     def getTeamYears(self, year, cache=True):
         out = []
         for i in range(20):
-            data = self.get("teams/"+str(year)+"/"+str(i)+"/simple",
-                            cache=cache)
+            data = self.get(
+                "teams/" + str(year) + "/" + str(i) + "/simple", cache=cache
+            )
             for team in data:
                 new_data = {
                     "year": year,
@@ -77,7 +72,7 @@ class ReadTBA:
 
     def getEvents(self, year, cache=True):
         out = []
-        data = self.get("events/"+str(year), cache=cache)
+        data = self.get("events/" + str(year), cache=cache)
         # print(len(data))
         for event in data:
             key = event["key"]
@@ -89,7 +84,7 @@ class ReadTBA:
             if int(event["event_type"]) > 10:
                 continue
             # filters out events with no matches
-            if len(self.get("event/"+str(key)+"/matches", cache=cache)) == 0:
+            if len(self.get("event/" + str(key) + "/matches", cache=cache)) == 0:
                 continue
 
             if event["district"] is not None:
@@ -107,23 +102,25 @@ class ReadTBA:
             if type >= 3:
                 event["week"] = 8
 
-            out.append({
-                "year": year,
-                "key": key,
-                "name": event["name"],
-                "state": cleanState(event["state_prov"]),
-                "country": event["country"],
-                "district": cleanDistrict(event["district"]),
-                "time": utils.getTime(event["start_date"]),
-                "type": type,
-                "week": event["week"],
-            })
+            out.append(
+                {
+                    "year": year,
+                    "key": key,
+                    "name": event["name"],
+                    "state": cleanState(event["state_prov"]),
+                    "country": event["country"],
+                    "district": cleanDistrict(event["district"]),
+                    "time": utils.getTime(event["start_date"]),
+                    "type": type,
+                    "week": event["week"],
+                }
+            )
         # print(len(out))
         return out
 
     def getTeamEvents(self, event, cache=True):
         out = []
-        data = self.get("event/"+str(event)+"/teams/simple", cache=cache)
+        data = self.get("event/" + str(event) + "/teams/simple", cache=cache)
         for team in data:
             new_data = {
                 "team": team["team_number"],
@@ -133,7 +130,7 @@ class ReadTBA:
 
     def getMatches(self, year, event, event_time, cache=True):
         out = []
-        matches = self.get("event/"+str(event)+"/matches", cache=cache)
+        matches = self.get("event/" + str(event) + "/matches", cache=cache)
         for match in matches:
             red_teams = match["alliances"]["red"]["team_keys"]
             blue_teams = match["alliances"]["blue"]["team_keys"]
@@ -175,7 +172,7 @@ class ReadTBA:
                 "red_score": red_score,
                 "blue_score": blue_score,
                 "red_score_breakdown": red_breakdown,
-                "blue_score_breakdown": blue_breakdown
+                "blue_score_breakdown": blue_breakdown,
             }
             out.append(match_data)
         # print(len(out))

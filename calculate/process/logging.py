@@ -31,5 +31,5 @@ def printStats(TBA=None, SQL_Write=None, SQL_Read=None, print_sql=False):
         print("Total TeamMatches: " + str(SQL_Read.getTotalTeamMatches()))
         print()
 
-    print("Time Elapsed: " + str(datetime.datetime.now()-start))
+    print("Time Elapsed: " + str(datetime.datetime.now() - start))
     print()

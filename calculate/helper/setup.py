@@ -1,4 +1,4 @@
-from classes import sql, read, write
+from classes import read, sql, write
 from tba import read_tba
 
 
