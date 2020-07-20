@@ -56,7 +56,7 @@ class TeamYear(models.Model):
     ils_2 = models.FloatField()  # ex: 50
 
     class Meta:
-        unique_together = (("year", "team"))
+        unique_together = ("year", "team")
 
 
 class Event(models.Model):
@@ -110,7 +110,7 @@ class TeamEvent(models.Model):
     ils_2_end = models.FloatField()  # ex: 0.52
 
     class Meta:
-        unique_together = (("year", "event", "team"))
+        unique_together = ("year", "event", "team")
 
 
 class Match(models.Model):
@@ -173,4 +173,4 @@ class TeamMatch(models.Model):
     ils_2 = models.FloatField()  # ex: 0.51
 
     class Meta:
-        unique_together = (("year", "event", "match", "team"))
+        unique_together = ("year", "event", "match", "team")
