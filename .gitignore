@@ -1,6 +1,3 @@
 *.pyc
 calculate/tba/cache/*
 api/constants.py
-
-Pipfile
-Pipfile.lock
