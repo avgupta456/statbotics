@@ -1,9 +1,7 @@
-docs/*
-static/*
+backend/rankings/migrations/*
+backend/static/*
 
 travis.json
-
-rankings/migrations/*
 
 __pycache__/*
 *.pyc
