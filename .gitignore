@@ -2,8 +2,9 @@ backend/rankings/migrations/*
 backend/static/*
 
 travis.json
+Pipfile
+Pipfile.lock
 
 __pycache__/*
 *.pyc
-
 *.sql
