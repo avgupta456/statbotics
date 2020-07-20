@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "*"
+google-cloud-datastore = "*"
+pymysql = "*"
+django-filter = "*"
+djangorestframework = "*"
+django-cors-headers = "*"
+drf-yasg = "*"
+numpy = "*"
+scipy = "*"
+pre-commit = "*"
+
+[requires]
+python_version = "3.7"
