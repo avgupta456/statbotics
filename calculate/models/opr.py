@@ -99,7 +99,7 @@ def get_base(event, quals, playoffs, func, event_func):
         teams = list(teams)
         for t in teams:
             out[t] = [event_func(team_events[t])]
-        return True, 0, 0, 0, 0, 0, out, 0, 0, 0, 0, 0
+        return out, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
     teams, out = set(), {}
     for m in quals:
@@ -120,13 +120,12 @@ def get_base(event, quals, playoffs, func, event_func):
         arr.append([red, blue])
 
     return (
-        False,
+        out,
         team_events,
         teams,
         arr,
         input,
         output,
-        out,
         T,
         M,
         match_objs,
@@ -137,21 +136,9 @@ def get_base(event, quals, playoffs, func, event_func):
 
 def get_OPR(event, quals, playoffs, func=all, event_func=event_all):
     base = get_base(event, quals, playoffs, func, event_func)
-    (
-        quick_stop,
-        team_events,
-        teams,
-        arr,
-        input,
-        output,
-        out,
-        T,
-        M,
-        match_objs,
-        year,
-        mean,
-    ) = base
-    if quick_stop:
+    (out, team_events, teams, arr, input, output, T, M, m_objs, year, mean,) = base
+
+    if out != {}:
         return out
 
     oprs = computeOPR(input, output, year, mean)
@@ -159,7 +146,7 @@ def get_OPR(event, quals, playoffs, func=all, event_func=event_all):
         out[teams[i]] = [oprs[i]]
 
     for i in range(M):
-        m = match_objs[i]
+        m = m_objs[i]
         for t in arr[i][0]:
             input[2 * i][t] = 1
         for t in arr[i][1]:
@@ -173,21 +160,9 @@ def get_OPR(event, quals, playoffs, func=all, event_func=event_all):
 
 def get_xOPR(event, quals, playoffs, func=all, event_func=event_all):
     base = get_base(event, quals, playoffs, func, event_func)
-    (
-        quick_stop,
-        team_events,
-        teams,
-        arr,
-        input,
-        output,
-        out,
-        T,
-        M,
-        match_objs,
-        year,
-        mean,
-    ) = base
-    if quick_stop:
+    (out, team_events, teams, arr, input, output, T, M, m_objs, year, mean,) = base
+
+    if out != {}:
         return out
 
     for i in range(M):
@@ -205,7 +180,7 @@ def get_xOPR(event, quals, playoffs, func=all, event_func=event_all):
         out[teams[i]] = [oprs[i]]
 
     for i in range(M):
-        m = match_objs[i]
+        m = m_objs[i]
         output[2 * i] = np.array(func(m, "red"))
         output[2 * i + 1] = np.array(func(m, "blue"))
         oprs = computeOPR(input, output, year, mean)
@@ -215,21 +190,9 @@ def get_xOPR(event, quals, playoffs, func=all, event_func=event_all):
 
 def get_ixOPR(event, quals, playoffs, func=all, event_func=event_all):
     base = get_base(event, quals, playoffs, func, event_func)
-    (
-        quick_stop,
-        team_events,
-        teams,
-        arr,
-        input,
-        output,
-        out,
-        T,
-        M,
-        match_objs,
-        year,
-        mean,
-    ) = base
-    if quick_stop:
+    (out, team_events, teams, arr, input, output, T, M, m_objs, year, mean,) = base
+
+    if out != {}:
         return out
 
     for i in range(M):
@@ -249,7 +212,7 @@ def get_ixOPR(event, quals, playoffs, func=all, event_func=event_all):
 
     iterations = 2  # experimentally chosen
     for i in range(M):
-        m = match_objs[i]
+        m = m_objs[i]
         output[2 * i] = np.array(func(m, "red"))
         output[2 * i + 1] = np.array(func(m, "blue"))
         oprs = computeOPR(input, output, year, mean)
