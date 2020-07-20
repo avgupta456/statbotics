@@ -1,4 +1,6 @@
 import requests
+import datetime
+
 from cachecontrol import CacheControl
 
 import validate
@@ -30,13 +32,11 @@ class Statbotics():
             headers=dict(Referer=self.BASE_URL)
         )
 
-    def _get(self, url):
+    def _get(self, url, retry=0):
         resp = self.session.get(self.BASE_URL+url)
-        if resp.status_code == 200:
-            return resp.json()
-        print(url)
-        raise UserWarning("Invalid Query " +
-                          "(some large queries do not support metric)")
+        if resp.status_code == 200: return resp.json()  # noqa 701
+        if retry < 1: self._get(url, retry=retry+1)  # noqa 701
+        raise UserWarning("Invalid query, or traffic too high (try later)")
 
     def _negate(self, string):
         if len(string) == 0:
@@ -252,7 +252,7 @@ class Statbotics():
 
     def getTeamMatches(self, team=None, year=None, event=None, match=None,
                        elims=None, page=None):
-
+        start = datetime.datetime.now()
         url = "/api/team_matches"
 
         validate.checkType(team, "int", "team")
@@ -283,8 +283,12 @@ class Statbotics():
         if page and page != 1:
             url += "/page/" + str(page)
 
-        return self._get(url)
+        out = self._get(url)
+        end = datetime.datetime.now()
+        print(end-start)
+        return out
 
+    '''
     def getEventSim(self, event, index=None, full=False, iterations=None):
         validate.checkType(event, "str", "event")
         validate.checkType(index, "int", "index")
@@ -304,9 +308,10 @@ class Statbotics():
             url += "/simple"
 
         return self._get(url)
+    '''
 
 
 sb = Statbotics()
-for i in range(5):
-    print(sb.getEventSim(event="2020ncwak", index=0)['0'])
+for i in range(100):
+    print(len(sb.getTeamMatches()))
     print(i)
