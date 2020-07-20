@@ -1,9 +1,10 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rankings.models import Team as TeamModel
-from rankings.serializers import TeamSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from rankings.models import Team as TeamModel
+from rankings.serializers import TeamSerializer
 
 
 @swagger_auto_schema(

@@ -1,10 +1,11 @@
 from django.core.paginator import Paginator
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rankings.models import TeamYear as TeamYearModel
-from rankings.serializers import TeamYearSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from rankings.models import TeamYear as TeamYearModel
+from rankings.serializers import TeamYearSerializer
 
 
 @swagger_auto_schema(

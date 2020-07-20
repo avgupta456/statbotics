@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+from rest_framework import permissions, viewsets
+
 from rankings.filters import (
     EventFilterSet,
     MatchFilterSet,
@@ -25,7 +27,6 @@ from rankings.serializers import (
     UserSerializer,
     YearSerializer,
 )
-from rest_framework import permissions, viewsets
 
 
 class YearView(viewsets.ModelViewSet):

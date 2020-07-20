@@ -1,5 +1,5 @@
-backend/rankings/migrations/*
-backend/static/*
+rankings/migrations/*
+static/*
 
 travis.json
 

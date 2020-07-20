@@ -1,9 +1,10 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rankings.models import Year as YearModel
-from rankings.serializers import YearSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from rankings.models import Year as YearModel
+from rankings.serializers import YearSerializer
 
 
 @swagger_auto_schema(

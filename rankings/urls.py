@@ -2,6 +2,8 @@ from django.conf.urls import url
 from django.urls import include, path
 from drf_yasg import openapi
 from drf_yasg.views import SwaggerUIRenderer, get_schema_view
+from rest_framework import permissions, routers
+
 from rankings.views import (
     event_pred_views,
     event_views,
@@ -13,7 +15,6 @@ from rankings.views import (
     team_year_views,
     year_views,
 )
-from rest_framework import permissions, routers
 
 SwaggerUIRenderer.template = "drf-yasg.html"  # monkey-patching is bad :(
 

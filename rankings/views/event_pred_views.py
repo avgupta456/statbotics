@@ -1,8 +1,9 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rankings.event_pred import event_pred
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from rankings.event_pred import event_pred
 
 
 @swagger_auto_schema(

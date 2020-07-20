@@ -16,6 +16,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+
 from rankings import urls as rankings_urls
 
 urlpatterns = [
