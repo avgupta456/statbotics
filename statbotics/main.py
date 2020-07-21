@@ -7,6 +7,10 @@ from . import validate
 
 
 class Statbotics:
+    """
+    Main Object for interfacing with the Statbotics API
+    """
+
     def __init__(self):
         self.BASE_URL = "https://backend.statbotics.io"
         self.session = CacheControl(requests.Session())
@@ -66,6 +70,12 @@ class Statbotics:
         return "-" + string
 
     def getTeam(self, team, fields=["all"]):
+        """
+        Function to retrieve information on an individual team
+        :param team: Team Number, integer
+        :param fields: List of fields to return for the given team. The default is ["all"]
+        :return: a dictionary with the team's number, location (country, state, district), and Elo statistics (Current Elo, Recent Elo, Mean Elo, Max Elo)
+        """
         validate.checkType(team, "int", "team")
         validate.checkType(fields, "list", "fields")
         return self._get("/api/_teams?team=" + str(team), fields)[0]
