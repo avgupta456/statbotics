@@ -88,6 +88,11 @@ class Statbotics:
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
 
+        if limit > 10000:
+            raise ValueError(
+                "Please reduce 'limit', consider breaking into multiple smaller queries"
+            )
+
         url += "limit=" + str(limit) + "&offset=" + str(offset)
         url += validate.getLocations(country, state, district)
 
@@ -144,6 +149,11 @@ class Statbotics:
         validate.checkType(limit, "int", "limit")
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
+
+        if limit > 10000:
+            raise ValueError(
+                "Please reduce 'limit', consider breaking into multiple smaller queries"
+            )
 
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
@@ -206,6 +216,11 @@ class Statbotics:
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
 
+        if limit > 10000:
+            raise ValueError(
+                "Please reduce 'limit', consider breaking into multiple smaller queries"
+            )
+
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if year:
@@ -266,6 +281,11 @@ class Statbotics:
         validate.checkType(limit, "int", "limit")
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
+
+        if limit > 10000:
+            raise ValueError(
+                "Please reduce 'limit', consider breaking into multiple smaller queries"
+            )
 
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
@@ -336,6 +356,11 @@ class Statbotics:
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
 
+        if limit > 10000:
+            raise ValueError(
+                "Please reduce 'limit', consider breaking into multiple smaller queries"
+            )
+
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if not event:
@@ -384,6 +409,11 @@ class Statbotics:
         validate.checkType(limit, "int", "limit")
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
+
+        if limit > 10000:
+            raise ValueError(
+                "Please reduce 'limit', consider breaking into multiple smaller queries"
+            )
 
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
