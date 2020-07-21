@@ -1,5 +1,6 @@
-from google.cloud import datastore
 import os
+
+from google.cloud import datastore
 
 
 def getEnvVar(client, name):
@@ -15,11 +16,13 @@ CLOUDSQL_PASSWORD = os.environ.get("CLOUDSQL_PASSWORD")
 CLOUDSQL_USER = os.environ.get("CLOUDSQL_USER")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-if CLOUDSQL_CONNECTION is None or \
-        CLOUDSQL_DATABASE is None or \
-        CLOUDSQL_PASSWORD is None or \
-        CLOUDSQL_USER is None or \
-        SECRET_KEY is None:
+if (
+    CLOUDSQL_CONNECTION is None
+    or CLOUDSQL_DATABASE is None
+    or CLOUDSQL_PASSWORD is None
+    or CLOUDSQL_USER is None
+    or SECRET_KEY is None
+):
 
     client = datastore.Client()
     CLOUDSQL_CONNECTION = getEnvVar(client, "CLOUDSQL_CONNECTION")

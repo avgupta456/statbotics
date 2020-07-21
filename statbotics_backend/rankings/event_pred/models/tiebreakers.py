@@ -33,7 +33,7 @@ def getOPRTiebreakers(oprs, red, blue, year):
 def get_tiebreakers(year, matches, teams):
     out = {}
     for team in teams:
-        out[team] = np.zeros(shape=(len(matches)+1, 1))
+        out[team] = np.zeros(shape=(len(matches) + 1, 1))
         out[team][0] = 0
 
     for i, m in enumerate(matches):
@@ -41,8 +41,10 @@ def get_tiebreakers(year, matches, teams):
         red_tie, blue_tie = getMatchTiebreakers(m, year)
 
         for t in teams:
-            out[t][i+1] = out[t][i]
-            if t in red: out[t][i+1][0] += red_tie  # noqa 702
-            elif t in blue: out[t][i+1][0] += blue_tie  # noqa 702
+            out[t][i + 1] = out[t][i]
+            if t in red:
+                out[t][i + 1][0] += red_tie  # noqa 702
+            elif t in blue:
+                out[t][i + 1][0] += blue_tie  # noqa 702
 
     return out

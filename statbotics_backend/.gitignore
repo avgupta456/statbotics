@@ -1,11 +1,12 @@
-docs/*
+rankings/migrations/*
 static/*
 
 travis.json
-
-rankings/migrations/*
 
 __pycache__/*
 *.pyc
 
 *.sql
+
+Pipfile
+Pipfile.lock
