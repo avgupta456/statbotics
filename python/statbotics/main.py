@@ -34,8 +34,11 @@ class Statbotics:
         if resp.status_code != 200:
             if retry < 2:
                 return self._get(url, fields, retry=retry + 1)
-            raise UserWarning("Invalid query, or traffic too high (try later)")
+            raise UserWarning("Invalid query: " + url)
         data = resp.json()["results"]
+
+        if len(data) == 0:
+            raise UserWarning("Invalid inputs, no data recieved for " + url)
 
         if fields == ["all"]:
             return data
@@ -61,6 +64,7 @@ class Statbotics:
 
     def getTeam(self, team, fields=["all"]):
         validate.checkType(team, "int", "team")
+        validate.checkType(fields, "list", "fields")
         return self._get("/api/_teams?team=" + str(team), fields)[0]
 
     def getTeams(
@@ -94,24 +98,27 @@ class Statbotics:
 
         return self._get(url, fields)
 
-    def getYear(self, year):
+    def getYear(self, year, fields=["all"]):
         validate.checkType(year, "int", "year")
-        out = self._get("/api/year/" + str(year))
-        if len(out) == 0:
-            raise ValueError("Invalid year")
-        return out[0]
+        validate.checkType(fields, "list", "fields")
+        return self._get("/api/_years?year=" + str(year), fields)[0]
 
-    def getYears(self, metric=None):
+    def getYears(self, metric=None, limit=1000, offset=0, fields=["all"]):
         validate.checkType(metric, "str", "metric")
-        return self._get("/api/years")
+        validate.checkType(limit, "int", "limit")
+        validate.checkType(offset, "int", "offset")
+        validate.checkType(fields, "list", "fields")
+        url = "/api/_years?limit=" + str(limit) + "&offset=" + str(offset)
+        if metric:
+            url += "&o=" + self._negate(metric)
+        return self._get(url, fields)
 
-    def getTeamYear(self, team, year):
+    def getTeamYear(self, team, year, fields=["all"]):
         validate.checkType(team, "int", "team")
         validate.checkType(year, "int", "year")
-        out = self._get("/api/team_year/team/" + str(team) + "/year/" + str(year))
-        if len(out) == 0:
-            raise ValueError("Invalid (team, year) pair")
-        return out[0]
+        validate.checkType(fields, "list", "fields")
+        url = "/api/_team_years?team=" + str(team) + "&year=" + str(year)
+        return self._get(url, fields)[0]
 
     def getTeamYears(
         self,
@@ -121,14 +128,21 @@ class Statbotics:
         state=None,
         district=None,
         metric=None,
-        page=None,
+        limit=1000,
+        offset=0,
+        fields=["all"],
     ):
 
-        url = "/api/team_years"
+        url = "/api/_team_years"
 
         validate.checkType(team, "int", "team")
         validate.checkType(year, "int", "year")
         validate.checkType(metric, "str", "metric")
+        validate.checkType(limit, "int", "limit")
+        validate.checkType(offset, "int", "offset")
+        validate.checkType(fields, "list", "fields")
+
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if (
             not team
@@ -145,29 +159,25 @@ class Statbotics:
             raise UserWarning("Conflicting location input")
 
         if team:
-            url += "/team/" + str(team)
+            url += "&team=" + str(team)
 
         if year:
-            url += "/year/" + str(year)
+            url += "&year=" + str(year)
 
         url += validate.getLocations(country, state, district)
 
         if metric:
             if metric not in validate.getTeamYearMetrics():
                 raise ValueError("Invalid metric")
-            url += "/by/" + self._negate(metric)
+            url += "&o=" + self._negate(metric)
 
-        if page and page != 1:
-            url += "/page/" + str(page)
+        return self._get(url, fields)
 
-        return self._get(url)
-
-    def getEvent(self, event):
+    def getEvent(self, event, fields=["all"]):
         validate.checkType(event, "str", "event")
-        out = self._get("/api/event/" + event)
-        if len(out) == 0:
-            raise ValueError("Invalid event key")
-        return out[0]
+        validate.checkType(fields, "list", "fields")
+        url = "/api/_events?key=" + event
+        return self._get(url, fields)[0]
 
     def getEvents(
         self,
@@ -178,32 +188,40 @@ class Statbotics:
         type=None,
         week=None,
         metric=None,
+        limit=1000,
+        offset=0,
+        fields=["all"],
     ):
 
-        url = "/api/events"
+        url = "/api/_events"
 
         validate.checkType(year, "int", "year")
         validate.checkType(metric, "str", "metric")
-        validate.checkType(week, "int", "week")
         type = validate.getType(type)
+        validate.checkType(week, "int", "week")
+        validate.checkType(limit, "int", "limit")
+        validate.checkType(offset, "int", "offset")
+        validate.checkType(fields, "list", "fields")
+
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if year:
-            url += "/year/" + str(year)
+            url += "&year=" + str(year)
 
         if type:
-            url += "/type/" + str(type)
+            url += "&type=" + str(type)
 
         if week:
-            url += "/week/" + str(week)
+            url += "&week=" + str(week)
 
         url += validate.getLocations(country, state, district)
 
         if metric:
             if metric not in validate.getEventMetrics():
                 raise ValueError("Invalid metric")
-            url += "/by/" + self._negate(metric)
+            url += "&o=" + self._negate(metric)
 
-        return self._get(url)
+        return self._get(url, fields)
 
     def getTeamEvent(self, team, event):
         validate.checkType(team, "int", "team")
@@ -393,8 +411,18 @@ class Statbotics:
 
 
 sb = Statbotics()
+print(sb.getTeam(5511, fields=["team", "elo", "elo_max"]))
 print(
     sb.getTeams(
         country="Canada", metric="elo", limit=10, fields=["team", "elo", "elo_max"]
     )
 )
+print(sb.getYear(2015, fields=["year", "elo_acc", "opr_acc", "mix_acc"]))
+print(sb.getYears(metric="-opr_mse", fields=["year", "opr_mse"]))
+print(sb.getTeamYear(5511, 2020, fields=["team", "year", "elo_pre_champs"]))
+print(
+    sb.getTeamYears(
+        year=2015, metric="elo_pre_champs", limit=20, fields=["team", "elo_pre_champs"]
+    )
+)
+print(sb.getEvent("2020ncwak", fields=["key", "elo_mean", "elo_top8", "elo_top24"]))
