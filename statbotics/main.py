@@ -71,10 +71,10 @@ class Statbotics:
 
     def getTeam(self, team, fields=["all"]):
         """
-        Function to retrieve information on an individual team
-        :param team: Team Number, integer
-        :param fields: List of fields to return for the given team. The default is ["all"]
-        :return: a dictionary with the team's number, location (country, state, district), and Elo statistics (Current Elo, Recent Elo, Mean Elo, Max Elo)
+        Function to retrieve information on an individual team\n
+        :param team: Team Number, integer\n
+        :param fields: List of fields to return for the given team. The default is ["all"]\n
+        :return: a dictionary with the team's number, location (country, state, district), and Elo statistics (Current Elo, Recent Elo, Mean Elo, Max Elo)\n
         """
         validate.checkType(team, "int", "team")
         validate.checkType(fields, "list", "fields")
