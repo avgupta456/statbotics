@@ -318,21 +318,25 @@ class Statbotics:
             data = new_data
         return self._filter(data, fields)
 
-    def getMatch(self, match):
+    def getMatch(self, match, fields=["all"]):
         validate.checkType(match, "str", "match")
-        out = self._get("/api/match/" + match)
-        if len(out) == 0:
-            raise ValueError("Invalid match key")
-        return out[0]
+        validate.checkType(fields, "list", "fields")
+        return self._get("/api/_matches?key=" + match, fields)[0]
 
-    def getMatches(self, year=None, event=None, elims=None, page=None):
+    def getMatches(
+        self, year=None, event=None, elims=None, limit=1000, offset=0, fields=["all"]
+    ):
 
-        url = "/api/matches"
+        url = "/api/_matches"
 
         validate.checkType(year, "int", "year")
         validate.checkType(event, "str", "event")
-        validate.checkType(page, "int", "page")
         validate.checkType(elims, "bool", "elims")
+        validate.checkType(limit, "int", "limit")
+        validate.checkType(offset, "int", "offset")
+        validate.checkType(fields, "list", "fields")
+
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if not event:
             raise UserWarning("Query too large, be more specific (event)")
@@ -341,39 +345,47 @@ class Statbotics:
             raise UserWarning("Year input will be ignored")
 
         if year:
-            url += "/year/" + str(year)
+            url += "&year=" + str(year)
 
         if event:
-            url += "/event/" + event
+            url += "&event=" + event
 
         if elims:
-            url += "/elims"
+            url += "&playoff=1"
 
-        if page and page != 1:
-            url += "/page/" + page
+        url += "&o=time"
+        return self._get(url, fields)
 
-        return self._get(url)
-
-    def getTeamMatch(self, team, match):
+    def getTeamMatch(self, team, match, fields=["all"]):
         validate.checkType(team, "int", "team")
         validate.checkType(match, "str", "match")
-        out = self._get("/api/team_match/team/" + str(team) + "/match/" + match)
-        if len(out) == 0:
-            raise ValueError("Invalid (team, match) pair)")
-        return out[0]
+        validate.checkType(fields, "list", "fields")
+        url = "/api/_team_matches?team=" + str(team) + "&match=" + str(match)
+        return self._get(url, fields)[0]
 
     def getTeamMatches(
-        self, team=None, year=None, event=None, match=None, elims=None, page=None
+        self,
+        team=None,
+        year=None,
+        event=None,
+        match=None,
+        elims=None,
+        limit=1000,
+        offset=0,
+        fields=["all"],
     ):
-        start = datetime.datetime.now()
-        url = "/api/team_matches"
+        url = "/api/_team_matches"
 
         validate.checkType(team, "int", "team")
         validate.checkType(year, "int", "year")
         validate.checkType(event, "str", "event")
         validate.checkType(match, "str", "match")
-        validate.checkType(page, "int", "page")
         validate.checkType(elims, "bool", "elims")
+        validate.checkType(limit, "int", "limit")
+        validate.checkType(offset, "int", "offset")
+        validate.checkType(fields, "list", "fields")
+
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if not team and not event and not match:
             raise UserWarning(
@@ -384,27 +396,23 @@ class Statbotics:
             raise UserWarning("Only specify one of (year, event, match)")
 
         if team:
-            url += "/team/" + str(team)
+            url += "&team=" + str(team)
 
         if year:
-            url += "/year/" + str(year)
+            url += "&year=" + str(year)
 
         if event:
-            url += "/event/" + event
+            url += "&event=" + event
 
         if match:
-            url += "/match/" + match
+            url += "&match=" + match
 
         if elims:
-            url += "/elims"
+            url += "&playoff=1"
 
-        if page and page != 1:
-            url += "/page/" + str(page)
-
-        out = self._get(url)
-        end = datetime.datetime.now()
-        print(end - start)
-        return out
+        url += "&o=time"
+        print(url)
+        return self._get(url, fields)
 
     """
     def getEventSim(self, event, index=None, full=False, iterations=None):
@@ -427,32 +435,3 @@ class Statbotics:
 
         return self._get(url)
     """
-
-
-sb = Statbotics()
-print(sb.getTeam(5511, fields=["team", "elo", "elo_max"]))
-print(
-    sb.getTeams(
-        country="Canada", metric="elo", limit=10, fields=["team", "elo", "elo_max"]
-    )
-)
-print(sb.getYear(2015, fields=["year", "elo_acc", "opr_acc", "mix_acc"]))
-print(sb.getYears(metric="-opr_mse", fields=["year", "opr_mse"]))
-print(sb.getTeamYear(5511, 2020, fields=["team", "year", "elo_pre_champs"]))
-print(
-    sb.getTeamYears(
-        year=2015, metric="elo_pre_champs", limit=20, fields=["team", "elo_pre_champs"]
-    )
-)
-print(sb.getEvent("2020ncwak", fields=["key", "elo_mean", "elo_top8", "elo_top24"]))
-print(
-    len(
-        sb.getEvents(
-            year=2020,
-            metric="elo_mean",
-            type="district",
-            limit=100,
-            fields=["key", "elo_mean", "elo_top8"],
-        )
-    )
-)
