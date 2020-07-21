@@ -73,7 +73,7 @@ class Statbotics:
         """
         Function to retrieve information on an individual team\n
         :param team: Team Number, integer\n
-        :param fields: List of fields to return for the given team. The default is ["all"]\n
+        :param fields: List of fields to return. The default is ["all"]\n
         :return: a dictionary with the team's number, location (country, state, district), and Elo statistics (Current Elo, Recent Elo, Mean Elo, Max Elo)\n
         """
         validate.checkType(team, "int", "team")
@@ -91,6 +91,19 @@ class Statbotics:
         offset=0,
         fields=["all"],
     ):
+        """
+        Function to retrieve information on multiple teams\n
+        :param country: Restrict based on country (select countries included)\n
+        :param state: US States and Canada provinces only. Can infer country.\n
+        :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
+        :param active: Restrict to active teams (played most recent season)\n
+        :param metric: Order output. Default descending, add '-' for ascending. (Ex: "-elo", "team", etc)\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, with each dictionary including the team, location, and Elo statistics\n
+        """
+
         url = "/api/_teams?"
 
         validate.checkType(metric, "str", "metric")

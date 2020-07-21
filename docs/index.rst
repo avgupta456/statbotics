@@ -1,44 +1,52 @@
 Statbotics
 ==========
 
-$project will solve your problem of where to start with documentation,
-by providing a basic explanation of how to do it easily.
+Statbotics.io aims to modernize FRC data analytics through developing and distributing cutting-edge metrics and analysis. This Python API makes historical Elo and OPR statistics just a few Python lines away!
+Currently we support queries on teams, years, events, and matches. Read below for usage and documentation.
 
-Look how easy it is to use:
+Visit https://statbotics.io for more content!
 
-    import project
-    # Get your stuff done
-    project.do_stuff()
+Usage
+-----
 
-Features
---------
+With Python>=3.6 and pip installed, run
 
-- Be awesome
-- Make things faster
+.. code-block:: python
 
-Installation
-------------
+    pip install statbotics
 
-Install $project by running:
+Then in a Python file, create a Statbotics object and get started!
 
-    install project
+.. code-block:: python
 
-    .. autoclass:: statbotics.main.Statbotics
-       :members: getTeam
+  import statbotics
+
+  sb = statbotics.Statbotics()
+  print(sb.getTeam(254))
+
+  >> {'team':254, 'name': 'The Cheesy Poofs', 'state': 'CA', 'country': 'USA', 'district': 'None',
+      'active': True, 'elo': 1860, 'elo_recent': 1972, 'elo_mean': 1898, 'elo_max': 2145}
+
+Read below for more methods!
+
+API Reference
+-------------
+.. autoclass:: statbotics.main.Statbotics
+   :members: getTeam, getTeams, getYear, getTeamYear, getEvent, getTeamEvent, getMatch, getMatch
 
 Contribute
 ----------
 
-- Issue Tracker: github.com/$project/$project/issues
-- Source Code: github.com/$project/$project
+If you are interested in contributing, reach out to Abhijit Gupta (avgupta456@gmail.com)
+Source code is available at github.com/avgupta456/statbotics_api
 
 Support
 -------
 
 If you are having issues, please let us know.
-We have a mailing list located at: project@google-groups.com
+We welcome issues and pull requests at github.com/avgupta456/statbotics_api
 
 License
 -------
 
-The project is licensed under the BSD license.
+The project is licensed under the MIT license.
