@@ -1,6 +1,5 @@
 import statbotics
 
-
 sb = statbotics.Statbotics()
 
 print("Get Team")
@@ -8,7 +7,7 @@ print(sb.getTeam(5511))
 print()
 
 print("Get Teams")
-print(sb.getTeams(district='fnc'))
+print(sb.getTeams(district="fnc"))
 print()
 
 print("Get Year")

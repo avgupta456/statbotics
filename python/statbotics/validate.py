@@ -19,7 +19,7 @@ countries = {
     "japan": "Japan",
     "poland": "Poland",
     "india": "India",
-    "switzerland": "Switzerland"
+    "switzerland": "Switzerland",
 }
 
 USA = {
@@ -78,7 +78,7 @@ USA = {
     "washington": "WA",
     "west virginia": "WV",
     "wisconsin": "WI",
-    "wyoming": "WY"
+    "wyoming": "WY",
 }
 
 Canada = {
@@ -95,7 +95,7 @@ Canada = {
     "british columbia": "BC",
     "yukon": "YT",
     "northwest territories": "NT",
-    "nunavut": "NU"
+    "nunavut": "NU",
 }
 
 districts = {
@@ -107,36 +107,96 @@ districts = {
     "fit": "fit",
     "in": "fin",
     "fin": "fin",
-
     "fim": "fim",
     "ne": "ne",
     "chs": "chs",
     "ont": "ont",
     "pnw": "pnw",
     "pch": "pch",
-    "isr": "isr"
+    "isr": "isr",
 }
 
-team_metrics = ["elo", "-elo", "elo_recent", "-elo_recent", "elo_mean",
-                "-elo_mean", "elo_max", "-elo_max"]
+team_metrics = [
+    "elo",
+    "-elo",
+    "elo_recent",
+    "-elo_recent",
+    "elo_mean",
+    "-elo_mean",
+    "elo_max",
+    "-elo_max",
+]
 
-team_year_metrics = ["elo_start", "-elo_start", "elo_pre_champs",
-                     "-elo_pre_champs", "elo_end", "-elo_end", "elo_mean",
-                     "-elo_mean", "elo_max", "-elo_max", "elo_diff",
-                     "-elo_diff", "opr", "-opr", "opr_auto", "-opr_auto",
-                     "opr_1", "-opr_1", "opr_2", "-opr_2", "opr_endgame",
-                     "-opr_endgame", "opr_fouls", "-opr_fouls", "opr_no_fouls",
-                     "-opr_no_fouls", "ils_1", "-ils_1", "ils_2", "-ils_2"]
+team_year_metrics = [
+    "elo_start",
+    "-elo_start",
+    "elo_pre_champs",
+    "-elo_pre_champs",
+    "elo_end",
+    "-elo_end",
+    "elo_mean",
+    "-elo_mean",
+    "elo_max",
+    "-elo_max",
+    "elo_diff",
+    "-elo_diff",
+    "opr",
+    "-opr",
+    "opr_auto",
+    "-opr_auto",
+    "opr_1",
+    "-opr_1",
+    "opr_2",
+    "-opr_2",
+    "opr_endgame",
+    "-opr_endgame",
+    "opr_fouls",
+    "-opr_fouls",
+    "opr_no_fouls",
+    "-opr_no_fouls",
+    "ils_1",
+    "-ils_1",
+    "ils_2",
+    "-ils_2",
+]
 
-event_metrics = ['elo_top8', '-elo_top8', 'elo_top24', '-elo_top24',
-                 'elo_mean', '-elo_mean', 'opr_top8', '-opr_top8',
-                 'opr_top24', '-opr_top24', 'opr_mean', '-opr_mean']
+event_metrics = [
+    "elo_top8",
+    "-elo_top8",
+    "elo_top24",
+    "-elo_top24",
+    "elo_mean",
+    "-elo_mean",
+    "opr_top8",
+    "-opr_top8",
+    "opr_top24",
+    "-opr_top24",
+    "opr_mean",
+    "-opr_mean",
+]
 
-team_event_metrics = ['elo_start', '-elo_start', 'elo_pre_playoffs',
-                      '-elo_pre_playoffs', 'elo_end', '-elo_end', 'elo_mean',
-                      '-elo_mean', 'elo_max', '-elo_max', 'elo_diff',
-                      '-elo_diff', 'opr_start', '-opr_start', 'opr_end',
-                      '-opr_end', 'ils_1', '-ils_1', 'ils_2', '-ils_2']
+team_event_metrics = [
+    "elo_start",
+    "-elo_start",
+    "elo_pre_playoffs",
+    "-elo_pre_playoffs",
+    "elo_end",
+    "-elo_end",
+    "elo_mean",
+    "-elo_mean",
+    "elo_max",
+    "-elo_max",
+    "elo_diff",
+    "-elo_diff",
+    "opr_start",
+    "-opr_start",
+    "opr_end",
+    "-opr_end",
+    "ils_1",
+    "-ils_1",
+    "ils_2",
+    "-ils_2",
+]
 
 
 def getCountry(country):
@@ -215,17 +275,19 @@ def getType(type):
     if "einstein" in type.lower():
         return 4
 
-    raise ValueError("Enter a valid type (0 - regional, 1 - district, " +
-                     + "2 - district champs, 3 - worlds, 4 - einstein)")
+    raise ValueError(
+        "Enter a valid type (0 - regional, 1 - district, "
+        + +"2 - district champs, 3 - worlds, 4 - einstein)"
+    )
 
 
 def checkType(val, type, name):
     if not val:
         return
     if type == "int" and not isinstance(val, int):
-        raise TypeError("'"+name+"' must be an integer")
+        raise TypeError("'" + name + "' must be an integer")
     if type == "str" and not isinstance(val, str):
-        raise TypeError("'"+name+"' must be a string")
+        raise TypeError("'" + name + "' must be a string")
 
 
 def getTeamMetrics():
