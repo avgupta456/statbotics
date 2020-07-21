@@ -29,17 +29,7 @@ class Statbotics:
             headers=dict(Referer=self.BASE_URL),
         )
 
-    def _get(self, url, fields, retry=0):
-        resp = self.session.get(self.BASE_URL + url)
-        if resp.status_code != 200:
-            if retry < 2:
-                return self._get(url, fields, retry=retry + 1)
-            raise UserWarning("Invalid query: " + url)
-        data = resp.json()["results"]
-
-        if len(data) == 0:
-            raise UserWarning("Invalid inputs, no data recieved for " + url)
-
+    def _filter(self, data, fields):
         if fields == ["all"]:
             return data
 
@@ -54,6 +44,19 @@ class Statbotics:
                 new_entry[field] = entry[field]
             out.append(new_entry)
         return out
+
+    def _get(self, url, fields, retry=0):
+        resp = self.session.get(self.BASE_URL + url)
+        if resp.status_code != 200:
+            if retry < 2:
+                return self._get(url, fields, retry=retry + 1)
+            raise UserWarning("Invalid query: " + url)
+        data = resp.json()["results"]
+
+        if len(data) == 0:
+            raise UserWarning("Invalid inputs, no data recieved for " + url)
+
+        return self._filter(data, fields)
 
     def _negate(self, string):
         if len(string) == 0:
@@ -208,12 +211,6 @@ class Statbotics:
         if year:
             url += "&year=" + str(year)
 
-        if type:
-            url += "&type=" + str(type)
-
-        if week:
-            url += "&week=" + str(week)
-
         url += validate.getLocations(country, state, district)
 
         if metric:
@@ -221,15 +218,27 @@ class Statbotics:
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
-        return self._get(url, fields)
+        data = self._get(url, ["all"])
+        if type is not None:
+            new_data = []
+            for entry in data:
+                if entry["type"] == type:
+                    new_data.append(entry)
+            data = new_data
+        if week is not None:
+            new_data = []
+            for entry in data:
+                if entry["week"] == week:
+                    new_data.append(entry)
+            data = new_data
+        return self._filter(data, fields)
 
-    def getTeamEvent(self, team, event):
+    def getTeamEvent(self, team, event, fields=["all"]):
         validate.checkType(team, "int", "team")
         validate.checkType(event, "str", "event")
-        out = self._get("/api/team_event/team/" + str(team) + "/event/" + event)
-        if len(out) == 0:
-            raise ValueError("Invalid (team, event) pair)")
-        return out[0]
+        validate.checkType(fields, "list", "fields")
+        url = "/api/_team_events?team=" + str(team) + "&event=" + event
+        return self._get(url, fields)[0]
 
     def getTeamEvents(
         self,
@@ -242,17 +251,23 @@ class Statbotics:
         type=None,
         week=None,
         metric=None,
-        page=1,
+        limit=1000,
+        offset=0,
+        fields=["all"],
     ):
 
-        url = "/api/team_events"
+        url = "/api/_team_events"
 
         validate.checkType(team, "int", "team")
         validate.checkType(event, "str", "event")
-        validate.checkType(metric, "str", "metric")
-        validate.checkType(page, "int", "page")
-        validate.checkType(week, "int", "week")
         type = validate.getType(type)
+        validate.checkType(week, "int", "week")
+        validate.checkType(metric, "str", "metric")
+        validate.checkType(limit, "int", "limit")
+        validate.checkType(offset, "int", "offset")
+        validate.checkType(fields, "list", "fields")
+
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if (
             not team
@@ -273,31 +288,35 @@ class Statbotics:
             raise UserWarning("Conflicting location input")
 
         if team:
-            url += "/team/" + str(team)
+            url += "&team=" + str(team)
 
         if year:
-            url += "/year/" + str(year)
+            url += "&year=" + str(year)
 
         if event:
-            url += "/event/" + event
-
-        if type:
-            url += "/type/" + str(type)
-
-        if week:
-            url += "/week/" + str(week)
+            url += "&event=" + event
 
         url += validate.getLocations(country, state, district)
 
         if metric:
             if metric not in validate.getTeamEventMetrics():
                 raise ValueError("Invalid metric")
-            url += "/by/" + self._negate(metric)
+            url += "&o=" + self._negate(metric)
 
-        if page and page != 1:
-            url += "/page/" + page
-
-        return self._get(url)
+        data = self._get(url, ["all"])
+        if type is not None:
+            new_data = []
+            for entry in data:
+                if entry["type"] == type:
+                    new_data.append(entry)
+            data = new_data
+        if week is not None:
+            new_data = []
+            for entry in data:
+                if entry["week"] == week:
+                    new_data.append(entry)
+            data = new_data
+        return self._filter(data, fields)
 
     def getMatch(self, match):
         validate.checkType(match, "str", "match")
@@ -426,3 +445,14 @@ print(
     )
 )
 print(sb.getEvent("2020ncwak", fields=["key", "elo_mean", "elo_top8", "elo_top24"]))
+print(
+    len(
+        sb.getEvents(
+            year=2020,
+            metric="elo_mean",
+            type="district",
+            limit=100,
+            fields=["key", "elo_mean", "elo_top8"],
+        )
+    )
+)
