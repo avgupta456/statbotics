@@ -5,6 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from backend.settings import CACHE_TIME
 from rankings.models import Match as MatchModel
 from rankings.serializers import MatchSerializer
 
@@ -21,7 +22,7 @@ def Match(request, match):
     return Response(serializer.data)
 
 
-@cache_page(60 * 5)
+@cache_page(CACHE_TIME)
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("", MatchSerializer)},

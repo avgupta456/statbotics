@@ -4,6 +4,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from backend.settings import CACHE_TIME
 from rankings.models import Event as EventModel
 from rankings.serializers import EventSerializer
 
@@ -20,7 +21,7 @@ def Event(request, event):
     return Response(serializer.data)
 
 
-@cache_page(60 * 5)
+@cache_page(CACHE_TIME)
 @swagger_auto_schema(method="GET", auto_schema=None)
 @api_view(["GET"])
 def _Events(
