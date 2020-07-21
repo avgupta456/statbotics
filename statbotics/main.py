@@ -76,6 +76,7 @@ class Statbotics:
         :param fields: List of fields to return. The default is ["all"]\n
         :return: a dictionary with the team's number, location (country, state, district), and Elo statistics (Current Elo, Recent Elo, Mean Elo, Max Elo)\n
         """
+
         validate.checkType(team, "int", "team")
         validate.checkType(fields, "list", "fields")
         return self._get("/api/_teams?team=" + str(team), fields)[0]
@@ -101,7 +102,7 @@ class Statbotics:
         :param limit: Limits the output length to speed up queries. Max 10,000\n
         :param offset: Skips the first (offset) items when returning\n
         :param fields: List of fields to return. Default is ["all"]\n
-        :return: A list of dictionaries, with each dictionary including the team, location, and Elo statistics\n
+        :return: A list of dictionaries, each dictionary including the team, location, and Elo statistics\n
         """
 
         url = "/api/_teams?"
@@ -130,11 +131,27 @@ class Statbotics:
         return self._get(url, fields)
 
     def getYear(self, year, fields=["all"]):
+        """
+        Function to retrieve information for a specific year\n
+        :param year: Year, integer\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the year, match prediction statistics, and RP prediction statistics\n
+        """
+
         validate.checkType(year, "int", "year")
         validate.checkType(fields, "list", "fields")
         return self._get("/api/_years?year=" + str(year), fields)[0]
 
     def getYears(self, metric=None, limit=1000, offset=0, fields=["all"]):
+        """
+        Function to retrieve information on multiple years\n
+        :param metric: Order output. Default descending, add '-' for ascending. (Ex: "elo_acc", "-opr_mse", etc)\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the year and match/RP prediction statistics\n
+        """
+
         validate.checkType(metric, "str", "metric")
         validate.checkType(limit, "int", "limit")
         validate.checkType(offset, "int", "offset")
@@ -145,6 +162,14 @@ class Statbotics:
         return self._get(url, fields)
 
     def getTeamYear(self, team, year, fields=["all"]):
+        """
+        Function to retrieve information for a specific team's performance in a specific year\n
+        :param team: Team number, integer\n
+        :param year: Year, integer\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the team, year, and Elo/OPR statistics\n
+        """
+
         validate.checkType(team, "int", "team")
         validate.checkType(year, "int", "year")
         validate.checkType(fields, "list", "fields")
@@ -163,6 +188,18 @@ class Statbotics:
         offset=0,
         fields=["all"],
     ):
+        """
+        Function to retrieve information on multiple (team, year) pairs\n
+        :param team: Restrict based on a specific team number\n
+        :param country: Restrict based on country (select countries included)\n
+        :param state: US States and Canada provinces only. Can infer country.\n
+        :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
+        :param metric: Order output. Default descending, add '-' for ascending. (Ex: "elo_pre_champs", "-opr_auto", etc)\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the team, year, and OPR/Elo statistics\n
+        """
 
         url = "/api/_team_years"
 
@@ -210,6 +247,13 @@ class Statbotics:
         return self._get(url, fields)
 
     def getEvent(self, event, fields=["all"]):
+        """
+        Function to retrieve information for a specific event\n
+        :param event: Event key, string (ex: "2019cur")\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the event and Elo/OPR statistics\n
+        """
+
         validate.checkType(event, "str", "event")
         validate.checkType(fields, "list", "fields")
         url = "/api/_events?key=" + event
@@ -228,6 +272,20 @@ class Statbotics:
         offset=0,
         fields=["all"],
     ):
+        """
+        Function to retrieve information on multiple events\n
+        :param year: Restrict by specific year, integer\n
+        :param country: Restrict based on country (select countries included)\n
+        :param state: US States and Canada provinces only. Can infer country.\n
+        :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
+        :param type: 0=regional, 1=district, 2=district champ, 3=champs, 4=einstein\n
+        :param week: Week of play, generally between 0 and 8\n
+        :param metric: Order output. Default descending, add '-' for ascending. (Ex: "elo_pre_playoffs", "-opr_end", etc)\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the team, event and Elo/OPR statistics\n
+        """
 
         url = "/api/_events"
 
@@ -272,6 +330,14 @@ class Statbotics:
         return self._filter(data, fields)
 
     def getTeamEvent(self, team, event, fields=["all"]):
+        """
+        Function to retrieve information for a specific (team, event) pair\n
+        :param team: Team number, integer\n
+        :param event: Event key, string (ex: "2019cur")\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the event and Elo/OPR statistics\n
+        """
+
         validate.checkType(team, "int", "team")
         validate.checkType(event, "str", "event")
         validate.checkType(fields, "list", "fields")
@@ -293,6 +359,21 @@ class Statbotics:
         offset=0,
         fields=["all"],
     ):
+        """
+        Function to retrieve information on multiple (team, event) pairs\n
+        :param team: Restrict by team number, integer\n
+        :param year: Restrict by specific year, integer\n
+        :param country: Restrict based on country (select countries included)\n
+        :param state: US States and Canada provinces only. Can infer country.\n
+        :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
+        :param type: 0=regional, 1=district, 2=district champ, 3=champs, 4=einstein\n
+        :param week: Week of play, generally between 0 and 8\n
+        :param metric: Order output. Default descending, add '-' for ascending. (Ex: "elo_pre_playoffs", "-opr_end", etc)\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the team, event and Elo/OPR statistics\n
+        """
 
         url = "/api/_team_events"
 
@@ -362,6 +443,13 @@ class Statbotics:
         return self._filter(data, fields)
 
     def getMatch(self, match, fields=["all"]):
+        """
+        Function to retrieve information for a specific match\n
+        :param match: Match key, string (ex: "2019cur_qm1", "2019cmptx_f1m3")\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the match, score breakdowns, and predictions\n
+        """
+
         validate.checkType(match, "str", "match")
         validate.checkType(fields, "list", "fields")
         return self._get("/api/_matches?key=" + match, fields)[0]
@@ -369,6 +457,16 @@ class Statbotics:
     def getMatches(
         self, year=None, event=None, elims=None, limit=1000, offset=0, fields=["all"]
     ):
+        """
+        Function to retrieve information on multiple matches\n
+        :param year: Restrict by specific year, integer\n
+        :param event: Restrict by specific event key, string\n
+        :param elims: Restrict to only elimination matches, default False\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the match, score breakdowns, and predictions\n
+        """
 
         url = "/api/_matches"
 
@@ -405,6 +503,14 @@ class Statbotics:
         return self._get(url, fields)
 
     def getTeamMatch(self, team, match, fields=["all"]):
+        """
+        Function to retrieve information for a specific (team, match) pair\n
+        :param team: Team number, integer\n
+        :param match: Match key, string (ex: "2019cur_qm1", "2019cmptx_f1m3")\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the team, match, alliance, and then elo\n
+        """
+
         validate.checkType(team, "int", "team")
         validate.checkType(match, "str", "match")
         validate.checkType(fields, "list", "fields")
@@ -422,6 +528,18 @@ class Statbotics:
         offset=0,
         fields=["all"],
     ):
+        """
+        Function to retrieve information on multiple (team, match) pairs\n
+        :param team: Restrict by team number, integer\n
+        :param year: Restrict by specific year, integer\n
+        :param event: Restrict by specific event key, string\n
+        :param elims: Restrict to only elimination matches, default False\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the team, match, alliance, and then elo\n
+        """
+
         url = "/api/_team_matches"
 
         validate.checkType(team, "int", "team")

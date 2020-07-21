@@ -32,7 +32,7 @@ Read below for more methods!
 API Reference
 -------------
 .. autoclass:: statbotics.main.Statbotics
-   :members: getTeam, getTeams, getYear, getTeamYear, getEvent, getTeamEvent, getMatch, getMatch
+   :members: getTeam, getTeams, getYear, getYears, getTeamYear, getTeamYears, getEvent, getEvents, getTeamEvent, getTeamEvents, getMatch, getMatches, getTeamMatch, getTeamMatches
 
 Contribute
 ----------
