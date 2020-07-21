@@ -1,8 +1,9 @@
 import datetime
 
 import requests
-import validate
 from cachecontrol import CacheControl
+
+from . import validate
 
 
 class Statbotics:
@@ -31,9 +32,9 @@ class Statbotics:
     def _get(self, url, retry=0):
         resp = self.session.get(self.BASE_URL + url)
         if resp.status_code == 200:
-            return resp.json()  # noqa 701
-        if retry < 1:
-            self._get(url, retry=retry + 1)  # noqa 701
+            return resp.json()
+        if retry < 2:
+            self._get(url, retry=retry + 1)
         raise UserWarning("Invalid query, or traffic too high (try later)")
 
     def _negate(self, string):
@@ -104,7 +105,8 @@ class Statbotics:
         validate.checkType(metric, "str", "metric")
 
         if (
-            not year
+            not team
+            and not year
             and (country == "USA" or not country)
             and not state
             and not district

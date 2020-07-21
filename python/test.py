@@ -2,6 +2,7 @@ import statbotics
 
 sb = statbotics.Statbotics()
 
+"""
 print("Get Team")
 print(sb.getTeam(5511))
 print()
@@ -57,3 +58,11 @@ print()
 print("Get Team Matches")
 print(sb.getTeamMatches(team=5511, event="2019ncwak"))
 print()
+"""
+
+for year in range(2002, 2021):
+    print("Year", year)
+    teams = sb.getTeamYears(year=year, metric="elo_max")[:10]
+    for i, team in enumerate(teams):
+        print("\tRank", i + 1, team["team"])
+    print()

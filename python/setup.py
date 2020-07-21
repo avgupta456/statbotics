@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="statbotics",
-    version="0.1.3",
+    version="0.1.6",
     author="Abhijit Gupta",
     author_email="avgupta456@gmail.com",
     description="Modernizing FRC Data Analytics",
