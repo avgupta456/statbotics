@@ -29,13 +29,28 @@ class Statbotics:
             headers=dict(Referer=self.BASE_URL),
         )
 
-    def _get(self, url, retry=0):
+    def _get(self, url, fields, retry=0):
         resp = self.session.get(self.BASE_URL + url)
-        if resp.status_code == 200:
-            return resp.json()
-        if retry < 2:
-            self._get(url, retry=retry + 1)
-        raise UserWarning("Invalid query, or traffic too high (try later)")
+        if resp.status_code != 200:
+            if retry < 2:
+                return self._get(url, fields, retry=retry + 1)
+            raise UserWarning("Invalid query, or traffic too high (try later)")
+        data = resp.json()["results"]
+
+        if fields == ["all"]:
+            return data
+
+        for field in fields:
+            if field not in data[0]:
+                raise ValueError("Invalid field: " + str(field))
+
+        out = []
+        for entry in data:
+            new_entry = {}
+            for field in fields:
+                new_entry[field] = entry[field]
+            out.append(new_entry)
+        return out
 
     def _negate(self, string):
         if len(string) == 0:
@@ -44,9 +59,9 @@ class Statbotics:
             return string[1:]
         return "-" + string
 
-    def getTeam(self, team):
+    def getTeam(self, team, fields=["all"]):
         validate.checkType(team, "int", "team")
-        return self._get("/api/team/" + str(team))
+        return self._get("/api/_teams?team=" + str(team), fields)[0]
 
     def getTeams(
         self,
@@ -55,18 +70,18 @@ class Statbotics:
         district=None,
         active=True,
         metric=None,
-        count=1000,
+        limit=1000,
         offset=0,
         fields=["all"],
     ):
         url = "/api/_teams?"
 
         validate.checkType(metric, "str", "metric")
-        validate.checkType(count, "int", "count")
+        validate.checkType(limit, "int", "limit")
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
 
-        url += "limit=" + str(count) + "&offset=" + str(offset)
+        url += "limit=" + str(limit) + "&offset=" + str(offset)
         url += validate.getLocations(country, state, district)
 
         if active:
@@ -77,17 +92,7 @@ class Statbotics:
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
-        data = self._get(url)["results"]
-        if fields == ["all"]:
-            return data
-
-        out = []
-        for entry in data:
-            new_entry = {}
-            for field in fields:
-                new_entry[field] = entry[field]
-            out.append(new_entry)
-        return out
+        return self._get(url, fields)
 
     def getYear(self, year):
         validate.checkType(year, "int", "year")
@@ -388,7 +393,8 @@ class Statbotics:
 
 
 sb = Statbotics()
-for i in range(100):
-    teams = sb.getTeams(country="USA", count=100, metric="elo", fields=["team", "elo"],)
-    print(teams)
-    print(i, len(teams))
+print(
+    sb.getTeams(
+        country="Canada", metric="elo", limit=10, fields=["team", "elo", "elo_max"]
+    )
+)
