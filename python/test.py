@@ -62,7 +62,9 @@ print()
 
 for year in range(2002, 2021):
     print("Year", year)
-    teams = sb.getTeamYears(year=year, metric="elo_max")[:10]
+    teams = sb.getTeamYears(
+        year=year, limit=10, metric="elo_max", fields=["team", "elo_max"]
+    )
     for i, team in enumerate(teams):
-        print("\tRank", i + 1, team["team"])
+        print("\tRank", i + 1, team["team"], "\t", team["elo_max"])
     print()

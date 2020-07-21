@@ -3,7 +3,7 @@ import datetime
 import requests
 from cachecontrol import CacheControl
 
-import validate
+from . import validate
 
 
 class Statbotics:
