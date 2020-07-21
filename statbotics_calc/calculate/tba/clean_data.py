@@ -2,62 +2,62 @@ import requests
 from helper import utils
 
 USA = {
-    'Alabama': 'AL',
-    'Alaska': 'AK',
-    'American Samoa': 'AS',
-    'Arizona': 'AZ',
-    'Arkansas': 'AR',
-    'California': 'CA',
-    'Colorado': 'CO',
-    'Connecticut': 'CT',
-    'Delaware': 'DE',
-    'District of Columbia': 'DC',
-    'Florida': 'FL',
-    'Georgia': 'GA',
-    'Guam': 'GU',
-    'Hawaii': 'HI',
-    'Idaho': 'ID',
-    'Illinois': 'IL',
-    'Indiana': 'IN',
-    'Iowa': 'IA',
-    'Kansas': 'KS',
-    'Kentucky': 'KY',
-    'Louisiana': 'LA',
-    'Maine': 'ME',
-    'Maryland': 'MD',
-    'Massachusetts': 'MA',
-    'Michigan': 'MI',
-    'Minnesota': 'MN',
-    'Mississippi': 'MS',
-    'Missouri': 'MO',
-    'Montana': 'MT',
-    'Nebraska': 'NE',
-    'Nevada': 'NV',
-    'New Hampshire': 'NH',
-    'New Jersey': 'NJ',
-    'New Mexico': 'NM',
-    'New York': 'NY',
-    'North Carolina': 'NC',
-    'North Dakota': 'ND',
-    'Northern Mariana Islands': 'MP',
-    'Ohio': 'OH',
-    'Oklahoma': 'OK',
-    'Oregon': 'OR',
-    'Pennsylvania': 'PA',
-    'Puerto Rico': 'PR',
-    'Rhode Island': 'RI',
-    'South Carolina': 'SC',
-    'South Dakota': 'SD',
-    'Tennessee': 'TN',
-    'Texas': 'TX',
-    'Utah': 'UT',
-    'Vermont': 'VT',
-    'Virgin Islands': 'VI',
-    'Virginia': 'VA',
-    'Washington': 'WA',
-    'West Virginia': 'WV',
-    'Wisconsin': 'WI',
-    'Wyoming': 'WY'
+    "Alabama": "AL",
+    "Alaska": "AK",
+    "American Samoa": "AS",
+    "Arizona": "AZ",
+    "Arkansas": "AR",
+    "California": "CA",
+    "Colorado": "CO",
+    "Connecticut": "CT",
+    "Delaware": "DE",
+    "District of Columbia": "DC",
+    "Florida": "FL",
+    "Georgia": "GA",
+    "Guam": "GU",
+    "Hawaii": "HI",
+    "Idaho": "ID",
+    "Illinois": "IL",
+    "Indiana": "IN",
+    "Iowa": "IA",
+    "Kansas": "KS",
+    "Kentucky": "KY",
+    "Louisiana": "LA",
+    "Maine": "ME",
+    "Maryland": "MD",
+    "Massachusetts": "MA",
+    "Michigan": "MI",
+    "Minnesota": "MN",
+    "Mississippi": "MS",
+    "Missouri": "MO",
+    "Montana": "MT",
+    "Nebraska": "NE",
+    "Nevada": "NV",
+    "New Hampshire": "NH",
+    "New Jersey": "NJ",
+    "New Mexico": "NM",
+    "New York": "NY",
+    "North Carolina": "NC",
+    "North Dakota": "ND",
+    "Northern Mariana Islands": "MP",
+    "Ohio": "OH",
+    "Oklahoma": "OK",
+    "Oregon": "OR",
+    "Pennsylvania": "PA",
+    "Puerto Rico": "PR",
+    "Rhode Island": "RI",
+    "South Carolina": "SC",
+    "South Dakota": "SD",
+    "Tennessee": "TN",
+    "Texas": "TX",
+    "Utah": "UT",
+    "Vermont": "VT",
+    "Virgin Islands": "VI",
+    "Virginia": "VA",
+    "Washington": "WA",
+    "West Virginia": "WV",
+    "Wisconsin": "WI",
+    "Wyoming": "WY",
 }
 
 Canada = {
@@ -73,7 +73,7 @@ Canada = {
     "British Columbia": "BC",
     "Yukon": "YT",
     "Northwest Territories": "NT",
-    "Nunavut": "NU"
+    "Nunavut": "NU",
 }
 
 districts = {
@@ -87,34 +87,34 @@ districts = {
 auth_key = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr"
 read_pre = "https://www.thebluealliance.com/api/v3/"
 session = requests.Session()
-session.headers.update({'X-TBA-Auth-Key': auth_key, 'X-TBA-Auth-Id': ''})
+session.headers.update({"X-TBA-Auth-Key": auth_key, "X-TBA-Auth-Id": ""})
 
 
 def get(url):
-    return session.get(read_pre+url).json()
+    return session.get(read_pre + url).json()
 
 
 def getTeamInfo(number):
-    data = get("team/frc"+str(number)+"/simple")
+    data = get("team/frc" + str(number) + "/simple")
     name = data["nickname"]
     state = data["state_prov"]
     country = data["country"]
 
-    years = len(get("team/frc"+str(number)+"/years_participated"))
+    years = len(get("team/frc" + str(number) + "/years_participated"))
 
     try:
-        district = get("team/frc"+str(number)+"/districts")[-1]["abbreviation"]
+        district = get("team/frc" + str(number) + "/districts")[-1]["abbreviation"]
     except Exception:
         district = "None"
 
-    if(state in USA):
+    if state in USA:
         state = USA[state]
-    elif(state in Canada):
+    elif state in Canada:
         state = Canada[state]
-    elif(country != "USA" and country != "Canada"):
+    elif country != "USA" and country != "Canada":
         state = "All"
 
-    if(district in districts):
+    if district in districts:
         district = districts[district]
 
     return [name, country, state, district, years]
@@ -176,12 +176,26 @@ def getMatchTime(match, event_time):
 def getBreakdown(breakdown=None, year=2020):
     if breakdown is None or year < 2016:
         out = {
-            "auto": -1, "auto_movement": -1, "auto_1": -1, "auto_2": -1,
-            "auto_2_1": -1, "auto_2_2": -1, "auto_2_3": -1, "teleop_1": -1,
-            "teleop_2": -1, "teleop_2_1": -1, "teleop_2_2": -1,
-            "teleop_2_3": -1, "1": -1, "2": -1, "teleop": -1,
-            "endgame": -1, "no_fouls": -1, "fouls": -1, "rp1": -1,
-            "rp2": -1
+            "auto": -1,
+            "auto_movement": -1,
+            "auto_1": -1,
+            "auto_2": -1,
+            "auto_2_1": -1,
+            "auto_2_2": -1,
+            "auto_2_3": -1,
+            "teleop_1": -1,
+            "teleop_2": -1,
+            "teleop_2_1": -1,
+            "teleop_2_2": -1,
+            "teleop_2_3": -1,
+            "1": -1,
+            "2": -1,
+            "teleop": -1,
+            "endgame": -1,
+            "no_fouls": -1,
+            "fouls": -1,
+            "rp1": -1,
+            "rp2": -1,
         }
         return out
     if year == 2016:

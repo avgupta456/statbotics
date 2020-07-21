@@ -1,17 +1,16 @@
-from collections import defaultdict
 import statistics
+from collections import defaultdict
 
-from process.logging import printStats
-from models import opr as opr_model
 from helper.utils import clean, logistic, logistic_inv
+from models import opr as opr_model
+from process.logging import printStats
 
 
-def process_event(event, quals, playoffs, year, sd_score,
-                  team_ils_1, team_ils_2):
+def process_event(event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2):
     oprs, ils = opr_model.opr_v2(event, quals, playoffs)
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
-    for i, m in enumerate(sorted(quals)+sorted(playoffs)):
+    for i, m in enumerate(sorted(quals) + sorted(playoffs)):
         red, blue = m.getRed(), m.getBlue()
         red_oprs, blue_oprs = [], []
         ind = -1 if m.playoff == 1 else i
@@ -32,7 +31,7 @@ def process_event(event, quals, playoffs, year, sd_score,
         if m.opr_winner == m.winner:
             opr_acc += 1
 
-        m.mix_win_prob = 0.5 * (m.elo_win_prob+m.opr_win_prob)
+        m.mix_win_prob = 0.5 * (m.elo_win_prob + m.opr_win_prob)
         m.mix_winner = "red" if m.mix_win_prob > 0.5 else "blue"
         mix_mse += (win_probs[m.winner] - m.mix_win_prob) ** 2
         if m.winner == m.mix_winner:
@@ -40,12 +39,12 @@ def process_event(event, quals, playoffs, year, sd_score,
 
         count += 1
 
-        '''ILS STATS'''
+        """ILS STATS"""
 
-        m.red_ils_1_sum = red_ils_1_sum = sum([clean(ils[r][ind][0]) for r in red])  # noqa 502
-        m.red_ils_2_sum = red_ils_2_sum = sum([clean(ils[r][ind][1]) for r in red])  # noqa 502
-        m.blue_ils_1_sum = blue_ils_1_sum = sum([clean(ils[b][ind][0]) for b in blue])  # noqa 502
-        m.blue_ils_2_sum = blue_ils_2_sum = sum([clean(ils[b][ind][1]) for b in blue])  # noqa 502
+        m.red_ils_1_sum = red_ils_1_sum = sum([clean(ils[r][ind][0]) for r in red])
+        m.red_ils_2_sum = red_ils_2_sum = sum([clean(ils[r][ind][1]) for r in red])
+        m.blue_ils_1_sum = blue_ils_1_sum = sum([clean(ils[b][ind][0]) for b in blue])
+        m.blue_ils_2_sum = blue_ils_2_sum = sum([clean(ils[b][ind][1]) for b in blue])
         m.red_rp_1_prob = red_rp_1_prob = logistic(red_ils_1_sum)
         m.red_rp_2_prob = red_rp_2_prob = logistic(red_ils_2_sum)
         m.blue_rp_1_prob = blue_rp_1_prob = logistic(blue_ils_1_sum)
@@ -55,18 +54,24 @@ def process_event(event, quals, playoffs, year, sd_score,
         if m.playoff == 0:
             red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
             blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
-            if int(red_rp_1_prob + 0.5) == red_rp_1: rp1_acc += 1  # noqa 702
-            if int(red_rp_2_prob + 0.5) == red_rp_2: rp2_acc += 1  # noqa 702
-            if int(blue_rp_1_prob + 0.5) == blue_rp_1: rp1_acc += 1  # noqa 702
-            if int(blue_rp_2_prob + 0.5) == blue_rp_2: rp2_acc += 1  # noqa 702
+            if int(red_rp_1_prob + 0.5) == red_rp_1:
+                rp1_acc += 1
+            if int(red_rp_2_prob + 0.5) == red_rp_2:
+                rp2_acc += 1
+            if int(blue_rp_1_prob + 0.5) == blue_rp_1:
+                rp1_acc += 1
+            if int(blue_rp_2_prob + 0.5) == blue_rp_2:
+                rp2_acc += 1
             rp1_mse += (red_rp_1_prob - red_rp_1) ** 2
             rp2_mse += (red_rp_2_prob - red_rp_2) ** 2
             rp1_mse += (blue_rp_1_prob - blue_rp_1) ** 2
             rp2_mse += (blue_rp_2_prob - blue_rp_2) ** 2
             count_rp += 2
 
-    stats = [opr_acc, opr_mse, mix_acc, mix_mse, count,
-             rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
+    opr_stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
+    rp_stats = [rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
+    stats = opr_stats + rp_stats
+
     return oprs, ils, team_ils_1, team_ils_2, stats
 
 
@@ -79,18 +84,18 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
 
     if start_year > 2003:
         team_years_2 = {}
-        teamYears2 = SQL_Read.getTeamYears(year=start_year-2)
+        teamYears2 = SQL_Read.getTeamYears(year=start_year - 2)
         for teamYear in teamYears2:
             team_years_2[teamYear.team_id] = teamYear
-        team_years_all[start_year-2] = team_years_2
+        team_years_all[start_year - 2] = team_years_2
 
     if start_year > 2002:
         team_years_1 = {}
-        teamYears1 = SQL_Read.getTeamYears(year=start_year-1)
+        teamYears1 = SQL_Read.getTeamYears(year=start_year - 1)
         for teamYear in teamYears1:
             team_years_1[teamYear.team_id] = teamYear
-        team_years_all[start_year-1] = team_years_1
-        means[start_year-1] = SQL_Read.getYear(year=start_year-1).score_mean
+        team_years_all[start_year - 1] = team_years_1
+        means[start_year - 1] = SQL_Read.getYear(year=start_year - 1).score_mean
 
     for year in range(start_year, end_year + 1):
         print(year)
@@ -113,27 +118,29 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         for teamYear in SQL_Read.getTeamYears(year=year):
             num = teamYear.team_id
             prior_opr = prior_opr_global
-            if year-1 in team_years_all and \
-                    num in team_years_all[year-1] and \
-                    team_years_all[year-1][num].opr_end is not None:
-                prior_opr = team_years_all[year-1][num].opr_end
-                prior_opr = prior_opr/means[year-1]*mean_score
+            if (
+                year - 1 in team_years_all
+                and num in team_years_all[year - 1]
+                and team_years_all[year - 1][num].opr_end is not None
+            ):
+                prior_opr = team_years_all[year - 1][num].opr_end
+                prior_opr = prior_opr / means[year - 1] * mean_score
                 prior_opr = 0.90 * prior_opr + 0.10 * prior_opr_global
             teamYear.opr_start = prior_opr
             teamYear.opr_end = prior_opr  # will be overwritten
 
-            rate = prior_opr/prior_opr_global
-            teamYear.opr_auto = rate * year_obj.auto_mean/TM
-            teamYear.opr_teleop = rate * year_obj.teleop_mean/TM
-            teamYear.opr_1 = rate * year_obj.one_mean/TM
-            teamYear.opr_2 = rate * year_obj.two_mean/TM
-            teamYear.opr_endgame = rate * year_obj.endgame_mean/TM
-            teamYear.opr_fouls = year_obj.foul_mean/TM  # no rate
-            teamYear.opr_no_fouls = rate * year_obj.no_foul_mean/TM
+            rate = prior_opr / prior_opr_global
+            teamYear.opr_auto = rate * year_obj.auto_mean / TM
+            teamYear.opr_teleop = rate * year_obj.teleop_mean / TM
+            teamYear.opr_1 = rate * year_obj.one_mean / TM
+            teamYear.opr_2 = rate * year_obj.two_mean / TM
+            teamYear.opr_endgame = rate * year_obj.endgame_mean / TM
+            teamYear.opr_fouls = year_obj.foul_mean / TM  # no rate
+            teamYear.opr_no_fouls = rate * year_obj.no_foul_mean / TM
 
             boost = (teamYear.elo_start - 1500) * 0.001
-            teamYear.ils_1 = team_ils_1[num] = max(-1/3, ils_1_seed + boost)
-            teamYear.ils_2 = team_ils_2[num] = max(-1/3, ils_2_seed + boost)
+            teamYear.ils_1 = team_ils_1[num] = max(-1 / 3, ils_1_seed + boost)
+            teamYear.ils_2 = team_ils_2[num] = max(-1 / 3, ils_2_seed + boost)
 
             team_years[num] = teamYear
             team_oprs[num] = prior_opr
@@ -163,10 +170,10 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
             quals = sorted(SQL_Read.getMatches(event=event.id, playoff=False))
-            playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))  # noqa 502
-            oprs, ils, team_ils_1, team_ils_2, stats = \
-                process_event(event, quals, playoffs, year, sd_score,
-                              team_ils_1, team_ils_2)
+            playoffs = sorted(SQL_Read.getMatches(event=event.id, playoff=True))
+            oprs, ils, team_ils_1, team_ils_2, stats = process_event(
+                event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
+            )
 
             opr_acc += stats[0]
             opr_mse += stats[1]
@@ -230,11 +237,11 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                     m.ils_1 = clean(ils[num][index][0])
                     m.ils_2 = clean(ils[num][index][1])
 
-            oprs_end = sorted([clean(oprs[t][-1][0]) for t in oprs], reverse=True)  # noqa 502
+            oprs_end = sorted([clean(oprs[t][-1][0]) for t in oprs], reverse=True)
             event.opr_max = oprs_end[0]
             event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
             event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
-            event.opr_mean = round(sum(oprs_end)/len(oprs_end), 2)
+            event.opr_mean = round(sum(oprs_end) / len(oprs_end), 2)
             event.opr_sd = round(statistics.pstdev(oprs_end), 2)
 
             SQL_Write.add()
@@ -242,8 +249,9 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         oprs = []
         for num in team_years:
             # 1771 in 2004 only played in elims shrug
-            if num not in team_events: continue  # noqa 701
-            best_event = sorted(team_events[num], key=lambda e: e["opr_end"])[-1]  # noqa 502
+            if num not in team_events:
+                continue
+            best_event = sorted(team_events[num], key=lambda e: e["opr_end"])[-1]
             team_years[num].opr_end = best_event["opr_end"]
             team_years[num].opr_auto = best_event["opr_auto"]
             team_years[num].opr_teleop = best_event["opr_teleop"]
@@ -258,28 +266,28 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
 
         team_years_all[year] = team_years
         # keeps memory down
-        if year-2 in team_years_all:
-            team_years_all.pop(year-2)
+        if year - 2 in team_years_all:
+            team_years_all.pop(year - 2)
 
         oprs.sort(reverse=True)
         year_obj = SQL_Read.getYear(year=year)
         year_obj.opr_max = oprs[0]
-        year_obj.opr_1p = oprs[round(0.01*len(oprs))]
-        year_obj.opr_5p = oprs[round(0.05*len(oprs))]
-        year_obj.opr_10p = oprs[round(0.10*len(oprs))]
-        year_obj.opr_25p = oprs[round(0.25*len(oprs))]
-        year_obj.opr_median = oprs[round(0.50*len(oprs))]
-        year_obj.opr_mean = round(sum(oprs)/len(oprs), 2)
+        year_obj.opr_1p = oprs[round(0.01 * len(oprs))]
+        year_obj.opr_5p = oprs[round(0.05 * len(oprs))]
+        year_obj.opr_10p = oprs[round(0.10 * len(oprs))]
+        year_obj.opr_25p = oprs[round(0.25 * len(oprs))]
+        year_obj.opr_median = oprs[round(0.50 * len(oprs))]
+        year_obj.opr_mean = round(sum(oprs) / len(oprs), 2)
         year_obj.opr_sd = round(statistics.pstdev(oprs), 2)
 
-        year_obj.opr_acc = round(opr_acc/count, 4)
-        year_obj.opr_mse = round(opr_mse/count, 4)
-        year_obj.mix_acc = round(mix_acc/count, 4)
-        year_obj.mix_mse = round(mix_mse/count, 4)
-        year_obj.rp1_acc = -1 if year < 2016 else round(rp1_acc/count_rp, 4)
-        year_obj.rp1_mse = -1 if year < 2016 else round(rp1_mse/count_rp, 4)
-        year_obj.rp2_acc = -1 if year < 2016 else round(rp2_acc/count_rp, 4)
-        year_obj.rp2_mse = -1 if year < 2016 else round(rp2_mse/count_rp, 4)
+        year_obj.opr_acc = round(opr_acc / count, 4)
+        year_obj.opr_mse = round(opr_mse / count, 4)
+        year_obj.mix_acc = round(mix_acc / count, 4)
+        year_obj.mix_mse = round(mix_mse / count, 4)
+        year_obj.rp1_acc = -1 if year < 2016 else round(rp1_acc / count_rp, 4)
+        year_obj.rp1_mse = -1 if year < 2016 else round(rp1_mse / count_rp, 4)
+        year_obj.rp2_acc = -1 if year < 2016 else round(rp2_acc / count_rp, 4)
+        year_obj.rp2_mse = -1 if year < 2016 else round(rp2_mse / count_rp, 4)
 
         # for faster feedback, could be removed
         SQL_Write.commit()
@@ -290,7 +298,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
 
 
 def test(start_year, end_year, SQL_Read, SQL_Write):
-    event = SQL_Read.getEvent_byKey('2002ca')
+    event = SQL_Read.getEvent_byKey("2002ca")
     oprs = opr_model.get_OPR(event)
     for team in oprs:
         print(team, oprs[team][-1])

@@ -1,5 +1,6 @@
-from google.cloud import datastore
 import os
+
+from google.cloud import datastore
 
 
 def getEnvVar(client, name):
@@ -14,10 +15,12 @@ CLOUDSQL_DATABASE = os.environ.get("CLOUDSQL_DATABASE")
 CLOUDSQL_PASSWORD = os.environ.get("CLOUDSQL_PASSWORD")
 CLOUDSQL_USER = os.environ.get("CLOUDSQL_USER")
 
-if CLOUDSQL_CONNECTION is None or \
-        CLOUDSQL_DATABASE is None or \
-        CLOUDSQL_PASSWORD is None or \
-        CLOUDSQL_USER is None:
+if (
+    CLOUDSQL_CONNECTION is None
+    or CLOUDSQL_DATABASE is None
+    or CLOUDSQL_PASSWORD is None
+    or CLOUDSQL_USER is None
+):
 
     client = datastore.Client()
     CLOUDSQL_CONNECTION = getEnvVar(client, "CLOUDSQL_CONNECTION")
@@ -28,9 +31,9 @@ if CLOUDSQL_CONNECTION is None or \
 # comment out to use the production database
 # CLOUDSQL_DATABASE += "2"
 
-'''
+"""
 print(CLOUDSQL_CONNECTION)
 print(CLOUDSQL_DATABASE)
 print(CLOUDSQL_PASSWORD)
 print(CLOUDSQL_USER)
-'''
+"""

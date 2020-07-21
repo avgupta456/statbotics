@@ -1,6 +1,5 @@
 from helper import setup
 
-
 start_year = 2002
 end_year = 2020
 clean = False
