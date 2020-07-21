@@ -1,13 +1,12 @@
+from backend.settings import CACHE_TIME
 from django.core.paginator import Paginator
 from django.views.decorators.cache import cache_page
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-
-from backend.settings import CACHE_TIME
 from rankings.models import TeamEvent as TeamEventModel
 from rankings.serializers import TeamEventSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 @swagger_auto_schema(
