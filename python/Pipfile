@@ -12,6 +12,8 @@ twine = "*"
 requests = "*"
 cachecontrol = "*"
 pre-commit = "*"
+sphinx = "*"
+statbotics = "*"
 
 [requires]
 python_version = "3.7"
