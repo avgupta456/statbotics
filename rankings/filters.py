@@ -3,8 +3,74 @@ import django_filters
 from .models import Event, Match, Team, TeamEvent, TeamMatch, TeamYear, Year
 
 
+def get_year(queryset, field_name, value):
+    if value:
+        return queryset.filter(year=value)
+    return queryset
+
+
+def get_team(queryset, field_name, value):
+    if value:
+        return queryset.filter(team=value)
+    return queryset
+
+
+def get_active(queryset, field_name, value):
+    if value:
+        return queryset.filter(active=value)
+    return queryset
+
+
+def get_state(queryset, field_name, value):
+    if value:
+        return queryset.filter(state=value)
+    return queryset
+
+
+def get_country(queryset, field_name, value):
+    if value:
+        return queryset.filter(country=value)
+    return queryset
+
+
+def get_district(queryset, field_name, value):
+    if value:
+        return queryset.filter(district=value)
+    return queryset
+
+
+def get_key(queryset, field_name, value):
+    if value:
+        return queryset.filter(key=value)
+    return queryset
+
+
+def get_type(queryset, field_name, value):
+    if value:
+        return queryset.filter(type=value)
+    return queryset
+
+
+def get_week(queryset, field_name, value):
+    if value:
+        return queryset.filter(week=value)
+    return queryset
+
+
+def get_event(queryset, field_name, value):
+    if value:
+        return queryset.filter(event=value)
+    return queryset
+
+
+def get_playoff(queryset, field_name, value):
+    if value:
+        return queryset.filter(playoff=value)
+    return queryset
+
+
 class YearFilterSet(django_filters.FilterSet):
-    year = django_filters.NumberFilter(method="get_year", field_name="year")
+    year = django_filters.NumberFilter(method=get_year, field_name="year")
 
     o = django_filters.OrderingFilter(
         fields=(
@@ -17,28 +83,17 @@ class YearFilterSet(django_filters.FilterSet):
         ),
     )
 
-    def get_year(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(year=value)  # noqa 701
-        return queryset
-
     class Meta:
         model = Year
         fields = ["year"]
 
 
 class TeamFilterSet(django_filters.FilterSet):
-    team = django_filters.NumberFilter(method="get_team", field_name="team")
-    active = django_filters.NumberFilter(
-        method="get_active", field_name="active"
-    )  # noqa 502
-    state = django_filters.CharFilter(method="get_state", field_name="state")
-    country = django_filters.CharFilter(
-        method="get_country", field_name="country"
-    )  # noqa 502
-    district = django_filters.CharFilter(
-        method="get_district", field_name="district"
-    )  # noqa 502
+    team = django_filters.NumberFilter(method=get_team, field_name="team")
+    active = django_filters.NumberFilter(method=get_active, field_name="active")
+    state = django_filters.CharFilter(method=get_state, field_name="state")
+    country = django_filters.CharFilter(method=get_country, field_name="country")
+    district = django_filters.CharFilter(method=get_district, field_name="district")
 
     o = django_filters.OrderingFilter(
         fields=(
@@ -50,46 +105,17 @@ class TeamFilterSet(django_filters.FilterSet):
         ),
     )
 
-    def get_team(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(team=value)  # noqa 701
-        return queryset
-
-    def get_active(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(active=value)  # noqa 701
-        return queryset
-
-    def get_state(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(state=value)  # noqa 701
-        return queryset
-
-    def get_country(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(country=value)  # noqa 701
-        return queryset
-
-    def get_district(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(district=value)  # noqa 701
-        return queryset
-
     class Meta:
         model = Team
         fields = ["team", "active", "state", "country", "district"]
 
 
 class TeamYearFilterSet(django_filters.FilterSet):
-    year = django_filters.NumberFilter(method="get_year", field_name="year")
-    team = django_filters.NumberFilter(method="get_team", field_name="team")
-    state = django_filters.CharFilter(method="get_state", field_name="state")
-    country = django_filters.CharFilter(
-        method="get_country", field_name="country"
-    )  # noqa 502
-    district = django_filters.CharFilter(
-        method="get_district", field_name="district"
-    )  # noqa 502
+    year = django_filters.NumberFilter(method=get_year, field_name="year")
+    team = django_filters.NumberFilter(method=get_team, field_name="team")
+    state = django_filters.CharFilter(method=get_state, field_name="state")
+    country = django_filters.CharFilter(method=get_country, field_name="country")
+    district = django_filters.CharFilter(method=get_district, field_name="district")
 
     o = django_filters.OrderingFilter(
         fields=(
@@ -103,48 +129,19 @@ class TeamYearFilterSet(django_filters.FilterSet):
         ),
     )
 
-    def get_year(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(year=value)  # noqa 701
-        return queryset
-
-    def get_team(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(team=value)  # noqa 701
-        return queryset
-
-    def get_state(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(state=value)  # noqa 701
-        return queryset
-
-    def get_country(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(country=value)  # noqa 701
-        return queryset
-
-    def get_district(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(district=value)  # noqa 701
-        return queryset
-
     class Meta:
         model = TeamYear
         fields = ["year", "team", "state", "country", "district"]
 
 
 class EventFilterSet(django_filters.FilterSet):
-    event = django_filters.CharFilter(method="get_event", field_name="event")
-    year = django_filters.NumberFilter(method="get_year", field_name="year")
-    state = django_filters.CharFilter(method="get_state", field_name="state")
-    country = django_filters.CharFilter(
-        method="get_country", field_name="country"
-    )  # noqa 502
-    district = django_filters.CharFilter(
-        method="get_district", field_name="district"
-    )  # noqa 502
-    type = django_filters.NumberFilter(method="get_type", field_name="type")
-    week = django_filters.NumberFilter(method="get_week", field_name="week")
+    key = django_filters.CharFilter(method=get_key, field_name="key")
+    year = django_filters.NumberFilter(method=get_year, field_name="year")
+    state = django_filters.CharFilter(method=get_state, field_name="state")
+    country = django_filters.CharFilter(method=get_country, field_name="country")
+    district = django_filters.CharFilter(method=get_district, field_name="district")
+    type = django_filters.NumberFilter(method=get_type, field_name="type")
+    week = django_filters.NumberFilter(method=get_week, field_name="week")
 
     o = django_filters.OrderingFilter(
         fields=(
@@ -155,101 +152,22 @@ class EventFilterSet(django_filters.FilterSet):
         ),
     )
 
-    def get_event(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(event=value)  # noqa 701
-        return queryset
-
-    def get_year(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(year=value)  # noqa 701
-        return queryset
-
-    def get_state(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(state=value)  # noqa 701
-        return queryset
-
-    def get_country(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(country=value)  # noqa 701
-        return queryset
-
-    def get_district(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(district=value)  # noqa 701
-        return queryset
-
-    def get_type(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(type=value)  # noqa 701
-        return queryset
-
-    def get_week(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(week=value)  # noqa 701
-        return queryset
-
     class Meta:
         model = Event
-        fields = ["event", "year", "country", "state", "district", "type", "week"]
+        fields = ["key", "year", "country", "state", "district", "type", "week"]
 
 
 class TeamEventFilterSet(django_filters.FilterSet):
-    year = django_filters.NumberFilter(method="get_year", field_name="year")
-    event = django_filters.CharFilter(method="get_event", field_name="event")
-    team = django_filters.NumberFilter(method="get_team", field_name="team")
-    state = django_filters.CharFilter(method="get_state", field_name="state")
-    country = django_filters.CharFilter(
-        method="get_country", field_name="country"
-    )  # noqa 502
-    district = django_filters.CharFilter(
-        method="get_district", field_name="district"
-    )  # noqa 502
-    type = django_filters.NumberFilter(method="get_type", field_name="type")
-    week = django_filters.NumberFilter(method="get_week", field_name="week")
+    year = django_filters.NumberFilter(method=get_year, field_name="year")
+    event = django_filters.CharFilter(method=get_event, field_name="event")
+    team = django_filters.NumberFilter(method=get_team, field_name="team")
+    state = django_filters.CharFilter(method=get_state, field_name="state")
+    country = django_filters.CharFilter(method=get_country, field_name="country")
+    district = django_filters.CharFilter(method=get_district, field_name="district")
+    type = django_filters.NumberFilter(method=get_type, field_name="type")
+    week = django_filters.NumberFilter(method=get_week, field_name="week")
 
     o = django_filters.OrderingFilter(fields=(("team", "team"), ("year", "year"),),)
-
-    def get_year(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(year=value)  # noqa 701
-        return queryset
-
-    def get_event(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(event=value)  # noqa 701
-        return queryset
-
-    def get_team(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(team=value)  # noqa 701
-        return queryset
-
-    def get_state(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(state=value)  # noqa 701
-        return queryset
-
-    def get_country(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(country=value)  # noqa 701
-        return queryset
-
-    def get_district(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(district=value)  # noqa 701
-        return queryset
-
-    def get_type(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(type=value)  # noqa 701
-        return queryset
-
-    def get_week(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(week=value)  # noqa 701
-        return queryset
 
     class Meta:
         model = TeamEvent
@@ -266,28 +184,11 @@ class TeamEventFilterSet(django_filters.FilterSet):
 
 
 class MatchFilterSet(django_filters.FilterSet):
-    year = django_filters.NumberFilter(method="get_year", field_name="year")
-    event = django_filters.CharFilter(method="get_event", field_name="event")
-    playoff = django_filters.NumberFilter(
-        method="get_playoff", field_name="playoff"
-    )  # noqa 701
+    year = django_filters.NumberFilter(method=get_year, field_name="year")
+    event = django_filters.CharFilter(method=get_event, field_name="event")
+    playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
 
     o = django_filters.OrderingFilter(fields=(("year", "year"),))
-
-    def get_year(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(year=value)  # noqa 701
-        return queryset
-
-    def get_event(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(event=value)  # noqa 701
-        return queryset
-
-    def get_playoff(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(playoff=value)  # noqa 701
-        return queryset
 
     class Meta:
         model = Match
@@ -295,34 +196,12 @@ class MatchFilterSet(django_filters.FilterSet):
 
 
 class TeamMatchFilterSet(django_filters.FilterSet):
-    year = django_filters.NumberFilter(method="get_year", field_name="year")
-    event = django_filters.CharFilter(method="get_event", field_name="event")
-    team = django_filters.NumberFilter(method="get_team", field_name="team")
-    playoff = django_filters.NumberFilter(
-        method="get_playoff", field_name="playoff"
-    )  # noqa 701
+    year = django_filters.NumberFilter(method=get_year, field_name="year")
+    event = django_filters.CharFilter(method=get_event, field_name="event")
+    team = django_filters.NumberFilter(method=get_team, field_name="team")
+    playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
 
     o = django_filters.OrderingFilter(fields=(("team", "team"), ("year", "year"),),)
-
-    def get_year(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(year=value)  # noqa 701
-        return queryset
-
-    def get_event(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(event=value)  # noqa 701
-        return queryset
-
-    def get_team(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(team=value)  # noqa 701
-        return queryset
-
-    def get_playoff(self, queryset, field_name, value):
-        if value:
-            return queryset.filter(playoff=value)  # noqa 701
-        return queryset
 
     class Meta:
         model = TeamMatch
