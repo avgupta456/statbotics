@@ -80,6 +80,10 @@ class YearFilterSet(django_filters.FilterSet):
             ("opr_mse", "opr_mse"),
             ("mix_acc", "mix_acc"),
             ("mix_mse", "mix_mse"),
+            ("rp1_acc", "rp1_acc"),
+            ("rp1_mse", "rp1_mse"),
+            ("rp2_acc", "rp2_acc"),
+            ("rp2_mse", "rp2_mse"),
         ),
     )
 
@@ -102,7 +106,7 @@ class TeamFilterSet(django_filters.FilterSet):
             ("elo_recent", "elo_recent"),
             ("elo_mean", "elo_mean"),
             ("elo_max", "elo_max"),
-        ),
+        )
     )
 
     class Meta:
@@ -119,14 +123,25 @@ class TeamYearFilterSet(django_filters.FilterSet):
 
     o = django_filters.OrderingFilter(
         fields=(
-            ("year", "year"),
             ("team", "team"),
+            ("year", "year"),
             ("elo_start", "elo_start"),
             ("elo_pre_champs", "elo_pre_champs"),
             ("elo_end", "elo_end"),
             ("elo_mean", "elo_mean"),
             ("elo_max", "elo_max"),
-        ),
+            ("elo_diff", "elo_diff"),
+            ("opr", "opr"),
+            ("opr_auto", "opr_auto"),
+            ("opr_teleop", "opr_teleop"),
+            ("opr_1", "opr_1"),
+            ("opr_2", "opr_2"),
+            ("opr_endgame", "opr_endgame"),
+            ("opr_fouls", "opr_fouls"),
+            ("opr_no_fouls", "opr_no_fouls"),
+            ("ils_1", "ils_1"),
+            ("ils_2", "ils_2"),
+        )
     )
 
     class Meta:
@@ -146,10 +161,16 @@ class EventFilterSet(django_filters.FilterSet):
     o = django_filters.OrderingFilter(
         fields=(
             ("year", "year"),
+            ("type", "type"),
+            ("week", "week"),
+            ("time", "time"),
             ("elo_top8", "elo_top8"),
             ("elo_top24", "elo_top24"),
             ("elo_mean", "elo_mean"),
-        ),
+            ("opr_top8", "opr_top8"),
+            ("opr_top24", "opr_top24"),
+            ("opr_mean", "opr_mean"),
+        )
     )
 
     class Meta:
@@ -167,7 +188,34 @@ class TeamEventFilterSet(django_filters.FilterSet):
     type = django_filters.NumberFilter(method=get_type, field_name="type")
     week = django_filters.NumberFilter(method=get_week, field_name="week")
 
-    o = django_filters.OrderingFilter(fields=(("team", "team"), ("year", "year"),),)
+    o = django_filters.OrderingFilter(
+        fields=(
+            ("team", "team"),
+            ("year", "year"),
+            ("type", "type"),
+            ("week", "week"),
+            ("time", "time"),
+            ("elo_start", "elo_start"),
+            ("elo_pre_playoffs", "elo_pre_playoffs"),
+            ("elo_end", "elo_end"),
+            ("elo_mean", "elo_mean"),
+            ("elo_max", "elo_max"),
+            ("elo_diff", "elo_diff"),
+            ("opr_start", "opr_start"),
+            ("opr_end", "opr_end"),
+            ("opr_auto", "opr_auto"),
+            ("opr_teleop", "opr_teleop"),
+            ("opr_1", "opr_1"),
+            ("opr_2", "opr_2"),
+            ("opr_endgame", "opr_endgame"),
+            ("opr_fouls", "opr_fouls"),
+            ("opr_no_fouls", "opr_no_fouls"),
+            ("ils_1_start", "ils_1_start"),
+            ("ils_2_start", "ils_2_start"),
+            ("ils_1_end", "ils_1_end"),
+            ("ils_2_end", "ils_2_end"),
+        )
+    )
 
     class Meta:
         model = TeamEvent
@@ -188,7 +236,7 @@ class MatchFilterSet(django_filters.FilterSet):
     event = django_filters.CharFilter(method=get_event, field_name="event")
     playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
 
-    o = django_filters.OrderingFilter(fields=(("year", "year"),))
+    o = django_filters.OrderingFilter(fields=(("year", "year"), ("time", "time")))
 
     class Meta:
         model = Match
@@ -201,7 +249,9 @@ class TeamMatchFilterSet(django_filters.FilterSet):
     team = django_filters.NumberFilter(method=get_team, field_name="team")
     playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
 
-    o = django_filters.OrderingFilter(fields=(("team", "team"), ("year", "year"),),)
+    o = django_filters.OrderingFilter(
+        fields=(("team", "team"), ("year", "year"), ("time", "time"))
+    )
 
     class Meta:
         model = TeamMatch
