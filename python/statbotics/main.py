@@ -3,7 +3,7 @@ import datetime
 import requests
 from cachecontrol import CacheControl
 
-from . import validate
+import validate
 
 
 class Statbotics:
@@ -49,24 +49,45 @@ class Statbotics:
         return self._get("/api/team/" + str(team))
 
     def getTeams(
-        self, country=None, state=None, district=None, active=True, metric=None
+        self,
+        country=None,
+        state=None,
+        district=None,
+        active=True,
+        metric=None,
+        count=1000,
+        offset=0,
+        fields=["all"],
     ):
-
-        url = "/api/teams"
+        url = "/api/_teams?"
 
         validate.checkType(metric, "str", "metric")
+        validate.checkType(count, "int", "count")
+        validate.checkType(offset, "int", "offset")
+        validate.checkType(fields, "list", "fields")
 
+        url += "limit=" + str(count) + "&offset=" + str(offset)
         url += validate.getLocations(country, state, district)
 
         if active:
-            url += "/active"
+            url += "&active=1"
 
         if metric:
             if metric not in validate.getTeamMetrics():
                 raise ValueError("Invalid metric")
-            url += "/by/" + self._negate(metric)
+            url += "&o=" + self._negate(metric)
 
-        return self._get(url)
+        data = self._get(url)["results"]
+        if fields == ["all"]:
+            return data
+
+        out = []
+        for entry in data:
+            new_entry = {}
+            for field in fields:
+                new_entry[field] = entry[field]
+            out.append(new_entry)
+        return out
 
     def getYear(self, year):
         validate.checkType(year, "int", "year")
@@ -364,3 +385,10 @@ class Statbotics:
 
         return self._get(url)
     """
+
+
+sb = Statbotics()
+for i in range(100):
+    teams = sb.getTeams(country="USA", count=100, metric="elo", fields=["team", "elo"],)
+    print(teams)
+    print(i, len(teams))

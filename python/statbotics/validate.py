@@ -242,19 +242,19 @@ def getLocations(country, state, district):
 
     if country:
         country = getCountry(country)
-        url += "/country/" + country
+        url += "&country=" + country
 
     if state:
         temp_country, state = getState(country, state)
         if country and temp_country != country:
             raise ValueError("State from different country")
         if not country:
-            url += "/country/" + temp_country
-        url += "/state/" + state
+            url += "&country=" + temp_country
+        url += "&state=" + state
 
     if district:
         district = getDistrict(district)
-        url += "/district/" + district
+        url += "&district=" + district
 
     return url
 
@@ -288,6 +288,8 @@ def checkType(val, type, name):
         raise TypeError("'" + name + "' must be an integer")
     if type == "str" and not isinstance(val, str):
         raise TypeError("'" + name + "' must be a string")
+    if type == "list" and not isinstance(val, list):
+        raise TypeError("'" + name + "' must be a list")
 
 
 def getTeamMetrics():
