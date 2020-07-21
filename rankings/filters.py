@@ -69,6 +69,12 @@ def get_playoff(queryset, field_name, value):
     return queryset
 
 
+def get_match(queryset, field_name, value):
+    if value:
+        return queryset.filter(match=value)
+    return queryset
+
+
 class YearFilterSet(django_filters.FilterSet):
     year = django_filters.NumberFilter(method=get_year, field_name="year")
 
@@ -234,18 +240,20 @@ class TeamEventFilterSet(django_filters.FilterSet):
 class MatchFilterSet(django_filters.FilterSet):
     year = django_filters.NumberFilter(method=get_year, field_name="year")
     event = django_filters.CharFilter(method=get_event, field_name="event")
+    key = django_filters.CharFilter(method=get_key, field_name="key")
     playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
 
     o = django_filters.OrderingFilter(fields=(("year", "year"), ("time", "time")))
 
     class Meta:
         model = Match
-        fields = ["year", "event", "playoff"]
+        fields = ["year", "event", "key", "playoff"]
 
 
 class TeamMatchFilterSet(django_filters.FilterSet):
     year = django_filters.NumberFilter(method=get_year, field_name="year")
     event = django_filters.CharFilter(method=get_event, field_name="event")
+    match = django_filters.CharFilter(method=get_match, field_name="match")
     team = django_filters.NumberFilter(method=get_team, field_name="team")
     playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
 
