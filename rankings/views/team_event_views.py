@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.views.decorators.cache import cache_page
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
@@ -20,6 +21,7 @@ def TeamEvent(request, num, event):
     return Response(serializer.data)
 
 
+@cache_page(60 * 5)
 @swagger_auto_schema(method="GET", auto_schema=None)
 @api_view(["GET"])
 def _TeamEvents(

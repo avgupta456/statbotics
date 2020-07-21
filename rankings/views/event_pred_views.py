@@ -1,3 +1,4 @@
+from django.views.decorators.cache import cache_page
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
@@ -6,6 +7,7 @@ from rest_framework.response import Response
 from rankings.event_pred import event_pred
 
 
+@cache_page(60 * 5)
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("")},
@@ -19,6 +21,7 @@ def MeanSim(request, event, index):
     return Response(predictions)
 
 
+@cache_page(60 * 5)
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("")},
@@ -33,6 +36,7 @@ def IndexSim(request, event, index, iterations=100):
     return Response(predictions)
 
 
+@cache_page(60 * 5)
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("")},
@@ -46,6 +50,7 @@ def QuickSim(request, event):
     return Response(predictions)
 
 
+@cache_page(60 * 5)
 @swagger_auto_schema(
     method="GET",
     responses={200: openapi.Response("")},
