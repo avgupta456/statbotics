@@ -311,7 +311,6 @@ class Statbotics:
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
-        print(url)
         return self._get(url, fields)
 
     def getTeamEvent(self, team, event, fields=["all"]):
@@ -549,7 +548,6 @@ class Statbotics:
             url += "&playoff=1"
 
         url += "&o=time"
-        print(url)
         return self._get(url, fields)
 
     """
