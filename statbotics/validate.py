@@ -161,6 +161,8 @@ team_year_metrics = [
 ]
 
 event_metrics = [
+    "time",
+    "-time",
     "elo_top8",
     "-elo_top8",
     "elo_top24",
@@ -176,6 +178,8 @@ event_metrics = [
 ]
 
 team_event_metrics = [
+    "time",
+    "-time",
     "elo_start",
     "-elo_start",
     "elo_pre_playoffs",
