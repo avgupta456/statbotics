@@ -22,12 +22,14 @@ def update_rating(sd_score, red, blue, red_score, blue_score, playoff):
     pred_win_margin = 4 / 1000 * (sum(red.values()) - sum(blue.values()))
     k = 4 if playoff == 1 else 12
 
+    # prevents modification to inputs red and blue
+    new_red, new_blue = {}, {}
     for t in red:
-        red[t] = round(red[t] + k * (win_margin - pred_win_margin), 2)
+        new_red[t] = round(red[t] + k * (win_margin - pred_win_margin), 2)
     for t in blue:
-        blue[t] = round(blue[t] - k * (win_margin - pred_win_margin), 2)
+        new_blue[t] = round(blue[t] - k * (win_margin - pred_win_margin), 2)
 
-    return red, blue
+    return new_red, new_blue
 
 
 def win_prob(red, blue):
