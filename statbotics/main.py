@@ -300,25 +300,19 @@ class Statbotics:
 
         url += validate.getLocations(country, state, district)
 
+        if type is not None:
+            url += "&type=" + str(type)
+
+        if week is not None:
+            url += "&week=" + str(week)
+
         if metric:
             if metric not in validate.getEventMetrics():
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
-        data = self._get(url, ["all"])
-        if type is not None:
-            new_data = []
-            for entry in data:
-                if entry["type"] == type:
-                    new_data.append(entry)
-            data = new_data
-        if week is not None:
-            new_data = []
-            for entry in data:
-                if entry["week"] == week:
-                    new_data.append(entry)
-            data = new_data
-        return self._filter(data, fields)
+        print(url)
+        return self._get(url, fields)
 
     def getTeamEvent(self, team, event, fields=["all"]):
         """
@@ -402,25 +396,18 @@ class Statbotics:
 
         url += validate.getLocations(country, state, district)
 
+        if type is not None:
+            url += "&type=" + str(type)
+
+        if week is not None:
+            url += "&week=" + str(week)
+
         if metric:
             if metric not in validate.getTeamEventMetrics():
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
-        data = self._get(url, ["all"])
-        if type is not None:
-            new_data = []
-            for entry in data:
-                if entry["type"] == type:
-                    new_data.append(entry)
-            data = new_data
-        if week is not None:
-            new_data = []
-            for entry in data:
-                if entry["week"] == week:
-                    new_data.append(entry)
-            data = new_data
-        return self._filter(data, fields)
+        return self._get(url, fields)
 
     def getMatch(self, match, fields=["all"]):
         """

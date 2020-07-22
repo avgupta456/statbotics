@@ -260,7 +260,7 @@ def getLocations(country, state, district):
 
 
 def getType(type):
-    if not type:
+    if type is None:
         return
     if isinstance(type, int):
         return type
