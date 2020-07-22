@@ -217,15 +217,6 @@ class Statbotics:
 
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
-        if (
-            not team
-            and not year
-            and (country == "USA" or not country)
-            and not state
-            and not district
-        ):
-            raise UserWarning("Query too large, be more specific")
-
         if team and year:
             raise UserWarning("Use getTeamYear() instead")
         if team and (country or state or district):
@@ -392,17 +383,6 @@ class Statbotics:
             )
 
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
-
-        if (
-            not team
-            and not event
-            and (country == "USA" or not country)
-            and not state
-            and not district
-            and not (year and type)
-            and not (year and week)
-        ):
-            raise UserWarning("Query too large, be more specific")
 
         if team and event:
             raise UserWarning("Use getTeamEvent() instead")
