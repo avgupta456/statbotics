@@ -10,7 +10,6 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
-    "faker": "^4.1.0",
     "mui-datatables": "^2.14.0",
     "node-sass": "^4.14.1",
     "prop-types": "^15.7.2",
