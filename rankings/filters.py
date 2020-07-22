@@ -16,7 +16,7 @@ def get_team(queryset, field_name, value):
 
 
 def get_active(queryset, field_name, value):
-    if value:
+    if value is not None:
         return queryset.filter(active=value)
     return queryset
 
@@ -46,13 +46,13 @@ def get_key(queryset, field_name, value):
 
 
 def get_type(queryset, field_name, value):
-    if value:
+    if value is not None:
         return queryset.filter(type=value)
     return queryset
 
 
 def get_week(queryset, field_name, value):
-    if value:
+    if value is not None:
         return queryset.filter(week=value)
     return queryset
 
@@ -64,7 +64,7 @@ def get_event(queryset, field_name, value):
 
 
 def get_playoff(queryset, field_name, value):
-    if value:
+    if value is not None:
         return queryset.filter(playoff=value)
     return queryset
 
