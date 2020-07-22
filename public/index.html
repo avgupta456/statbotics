@@ -63,5 +63,30 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+
+    <!-- Add the standard Performance Monitoring library -->
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-performance.js"></script>
+
+    <script>
+      // Replace the following with your app's Firebase project configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyBU3CHsZgFk3NGS3bHI0uYSPyUJFpBA4sQ",
+        authDomain: "statbotics-io-276522.firebaseapp.com",
+        databaseURL: "https://statbotics-io-276522.firebaseio.com",
+        projectId: "statbotics-io-276522",
+        storageBucket: "statbotics-io-276522.appspot.com",
+        messagingSenderId: "282530065525",
+        appId: "1:282530065525:web:47dd8f6cfd479e10ffdc3c"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Initialize Performance Monitoring and get a reference to the service
+      var perf = firebase.performance();
+    </script>
   </body>
 </html>
