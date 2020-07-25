@@ -1,0 +1,3 @@
+[submodule "statbotics_api"]
+	path = statbotics_api
+	url = https://github.com/statbotics/statbotics_api
