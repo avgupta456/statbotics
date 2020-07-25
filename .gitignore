@@ -1,8 +1,1 @@
-
-statbotics_backend/.gcloudignore
-*.yml
-*.yaml
-*.p
-*.cache
-statbotics_frontend/.firebaserc
 docs/*
