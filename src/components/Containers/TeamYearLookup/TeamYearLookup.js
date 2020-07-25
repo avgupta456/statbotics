@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 import { Paper, Typography } from "@material-ui/core";
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 
 import { Button } from "react-bootstrap";
 import Select from "react-select";
@@ -53,14 +51,9 @@ export default function TeamLookup() {
   ];
 
   const [showElo, setShowElo] = useState(true)
-  const [showOPR, setShowOPR] = useState(false)
 
   const handleElo = (event) => {
     setShowElo(!showElo)
-  }
-
-  const handleOPR = (event) => {
-    setShowOPR(!showOPR)
   }
 
   function clean(teams) {
@@ -199,7 +192,6 @@ export default function TeamLookup() {
           onChange={yearClick}
           value={{ value: `${year}`, label: `${year}` }}
         />
-
         <Button
           variant="outline-dark"
           onClick={() => allClick()}
@@ -208,9 +200,9 @@ export default function TeamLookup() {
         />
         <Button
           variant="secondary"
-          onClick={() => allClick()}
+          onClick={() => handleElo()}
           className={styles.dropdown}
-          children={<Typography>Show OPR</Typography>}
+          children={<Typography>{showElo ? "Show OPR" : "Show Elo"}</Typography>}
         />
         <Select
           className={styles.dropdown}
@@ -224,7 +216,6 @@ export default function TeamLookup() {
             label: `${countryDropdown}`,
           }}
         />
-
         <Select
           className={styles.dropdown}
           styles={{
@@ -240,7 +231,6 @@ export default function TeamLookup() {
           onChange={stateClick}
           value={{ value: `${stateDropdown}`, label: `${stateDropdown}` }}
         />
-
         <Select
           className={styles.dropdown}
           styles={{

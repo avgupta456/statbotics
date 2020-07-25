@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { Paper, Typography } from "@material-ui/core";
-import { ButtonGroup, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Select from "react-select";
 
 import { ReactTable } from "./../../../components";
@@ -166,23 +166,21 @@ export default function TeamLookup() {
     <div>
       <Paper elevation={3} className={styles.body}>
         <div>
-          <ButtonGroup className={styles.button_group}>
+          <div className={styles.button_group}>
             <Button
               variant="outline-dark"
               onClick={() => activeClick()}
-              className={styles.button}
+              className={styles.dropdown}
             >
               <Typography>{active ? "Include" : "Remove"} Inactives</Typography>
             </Button>
-
             <Button
               variant="outline-dark"
               onClick={() => allClick()}
-              className={styles.button}
+              className={styles.dropdown}
             >
               <Typography>All Teams</Typography>
             </Button>
-
             <Select
               className={styles.dropdown}
               styles={{
@@ -195,7 +193,6 @@ export default function TeamLookup() {
                 label: `${countryDropdown}`,
               }}
             />
-
             <Select
               className={styles.dropdown}
               styles={{
@@ -211,7 +208,6 @@ export default function TeamLookup() {
               onChange={stateClick}
               value={{ value: `${stateDropdown}`, label: `${stateDropdown}` }}
             />
-
             <Select
               className={styles.dropdown}
               styles={{
@@ -224,7 +220,7 @@ export default function TeamLookup() {
                 label: `${districtDropdown}`,
               }}
             />
-          </ButtonGroup>
+          </div>
           <ReactTable title={title} columns={columns} data={data} />
         </div>
       </Paper>
