@@ -14,7 +14,7 @@ const getMuiTheme = () =>
           padding: "10px 16px",
           textAlign: "center",
           "@media (max-width: 700px)": {
-            padding: "5px 8px",
+            padding: "10px 8px",
           },
         },
       },
@@ -52,28 +52,18 @@ const getMuiTheme = () =>
   });
 
 export default function ReactTable({ title, columns, data }) {
-  const [responsive, setResponsive] = React.useState("scrollMaxHeight");
-
   const theme = getMuiTheme();
   const options = {
     filter: false,
     print: false,
-    responsive: `${responsive}`,
+    responsive: "ScrollFullHeight",
     rowsPerPageOptions: [10, 20, 50],
     selectableRows: "none",
     fixedHeaderOptions: {
       xAxis: false,
       yAxis: true,
     },
-    elevation: 1,
-    onChangeRowsPerPage: (rows) => {
-      console.log("Here");
-      if (rows <= 10) {
-        setResponsive("scrollMaxHeight");
-      } else {
-        setResponsive("ScrollFullHeight");
-      }
-    },
+    elevation: 0,
     textLabels: {
       body: {
         noMatch: "Data on the way, hang tight!",
