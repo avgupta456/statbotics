@@ -73,54 +73,54 @@ export default function TeamLookup() {
     setShowElo(!showElo)
   }
 
-  function clean(teams) {
-    if(showElo) {
-      return teams.map(function (x, i) {
-        return [
-          x["team"],
-          x["team"] + "|" + x["name"],
-          i + 1,
-          x["elo_max"],
-          x["elo_mean"],
-          x["elo_start"],
-          x["elo_pre_champs"],
-          x["elo_end"],
-        ];
-      });
-    }
-    else if (year>=2016) {
-      return teams.map(function (x, i) {
-        return [
-          x["team"],
-          x["team"] + "|" + x["name"],
-          i + 1,
-          parseInt(x["opr_no_fouls"]*10)/10,
-          parseInt(x["opr_auto"]*10)/10,
-          parseInt(x["opr_teleop"]*10)/10,
-          parseInt(x["opr_endgame"]*10)/10,
-          x["ils_1"],
-          x["ils_2"],
-        ];
-      });
-    }
-    else {
-      return teams.map(function (x, i) {
-        return [
-          x["team"],
-          x["team"] + "|" + x["name"],
-          i + 1,
-          parseInt(x["opr"]*10)/10,
-          -1,
-          -1,
-          -1,
-          -1,
-          -1,
-        ];
-      });
-    }
-  }
-
   useEffect(() => {
+    function clean(teams) {
+      if(showElo) {
+        return teams.map(function (x, i) {
+          return [
+            x["team"],
+            x["team"] + "|" + x["name"],
+            i + 1,
+            x["elo_max"],
+            x["elo_mean"],
+            x["elo_start"],
+            x["elo_pre_champs"],
+            x["elo_end"],
+          ];
+        });
+      }
+      else if (year>=2016) {
+        return teams.map(function (x, i) {
+          return [
+            x["team"],
+            x["team"] + "|" + x["name"],
+            i + 1,
+            parseInt(x["opr_no_fouls"]*10)/10,
+            parseInt(x["opr_auto"]*10)/10,
+            parseInt(x["opr_teleop"]*10)/10,
+            parseInt(x["opr_endgame"]*10)/10,
+            x["ils_1"],
+            x["ils_2"],
+          ];
+        });
+      }
+      else {
+        return teams.map(function (x, i) {
+          return [
+            x["team"],
+            x["team"] + "|" + x["name"],
+            i + 1,
+            parseInt(x["opr"]*10)/10,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+          ];
+        });
+      }
+    }
+
     const getTeams = async () => {
       const new_teams = await fetchTeamsYear(year, sortBy);
       setData(clean(new_teams));
@@ -163,7 +163,7 @@ export default function TeamLookup() {
     } else {
       getTeams_byDistrict();
     }
-  }, [format, country, stateProv, district, year, showElo]);
+  }, [format, country, stateProv, district, year, showElo, sortBy]);
 
   const yearClick = (year) => {
     setYear(year["value"]);

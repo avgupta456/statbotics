@@ -162,65 +162,71 @@ export default function TeamLookup() {
     setDistrictDropdown(district["label"]);
   };
 
+  function getTopBar() {
+    return (
+      <div className={styles.button_group}>
+        <Button
+          variant="outline-dark"
+          onClick={() => activeClick()}
+          className={styles.dropdown}
+        >
+          <Typography>{active ? "Include" : "Remove"} Inactives</Typography>
+        </Button>
+        <Button
+          variant="outline-dark"
+          onClick={() => allClick()}
+          className={styles.dropdown}
+        >
+          <Typography>All Teams</Typography>
+        </Button>
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={countryOptions}
+          onChange={countryClick}
+          value={{
+            value: `${countryDropdown}`,
+            label: `${countryDropdown}`,
+          }}
+        />
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={
+            country === "USA"
+              ? usaOptions
+              : country === "Canada"
+              ? canadaOptions
+              : usaOptions
+          }
+          onChange={stateClick}
+          value={{ value: `${stateDropdown}`, label: `${stateDropdown}` }}
+        />
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={districtOptions}
+          onChange={districtClick}
+          value={{
+            value: `${districtDropdown}`,
+            label: `${districtDropdown}`,
+          }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div>
       <Paper elevation={3} className={styles.body}>
         <div>
-          <div className={styles.button_group}>
-            <Button
-              variant="outline-dark"
-              onClick={() => activeClick()}
-              className={styles.dropdown}
-            >
-              <Typography>{active ? "Include" : "Remove"} Inactives</Typography>
-            </Button>
-            <Button
-              variant="outline-dark"
-              onClick={() => allClick()}
-              className={styles.dropdown}
-            >
-              <Typography>All Teams</Typography>
-            </Button>
-            <Select
-              className={styles.dropdown}
-              styles={{
-                menu: (provided) => ({ ...provided, zIndex: 9999 }),
-              }}
-              options={countryOptions}
-              onChange={countryClick}
-              value={{
-                value: `${countryDropdown}`,
-                label: `${countryDropdown}`,
-              }}
-            />
-            <Select
-              className={styles.dropdown}
-              styles={{
-                menu: (provided) => ({ ...provided, zIndex: 9999 }),
-              }}
-              options={
-                country === "USA"
-                  ? usaOptions
-                  : country === "Canada"
-                  ? canadaOptions
-                  : usaOptions
-              }
-              onChange={stateClick}
-              value={{ value: `${stateDropdown}`, label: `${stateDropdown}` }}
-            />
-            <Select
-              className={styles.dropdown}
-              styles={{
-                menu: (provided) => ({ ...provided, zIndex: 9999 }),
-              }}
-              options={districtOptions}
-              onChange={districtClick}
-              value={{
-                value: `${districtDropdown}`,
-                label: `${districtDropdown}`,
-              }}
-            />
-          </div>
+          {getTopBar()}
           <ReactTable title={title} columns={columns} data={data} />
         </div>
       </Paper>
