@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 
 import { Paper, Typography } from "@material-ui/core";
-import { ButtonGroup, Button } from "react-bootstrap";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+
+import { Button } from "react-bootstrap";
 import Select from "react-select";
 
 import { ReactTable } from "./../../../components";
@@ -48,6 +51,17 @@ export default function TeamLookup() {
     ["Pre Champs Elo", false, false, false, ""],
     ["End Elo", false, true, false, ""],
   ];
+
+  const [showElo, setShowElo] = useState(true)
+  const [showOPR, setShowOPR] = useState(false)
+
+  const handleElo = (event) => {
+    setShowElo(!showElo)
+  }
+
+  const handleOPR = (event) => {
+    setShowOPR(!showOPR)
+  }
 
   function clean(teams) {
     return teams.map(function (x, i) {
@@ -173,6 +187,76 @@ export default function TeamLookup() {
     setDistrictDropdown(district["label"]);
   };
 
+  function getTopBar() {
+    return (
+      <div className={styles.button_group}>
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={yearOptions}
+          onChange={yearClick}
+          value={{ value: `${year}`, label: `${year}` }}
+        />
+
+        <Button
+          variant="outline-dark"
+          onClick={() => allClick()}
+          className={styles.dropdown}
+          children={<Typography>All Teams</Typography>}
+        />
+        <Button
+          variant="secondary"
+          onClick={() => allClick()}
+          className={styles.dropdown}
+          children={<Typography>Show OPR</Typography>}
+        />
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={countryOptions}
+          onChange={countryClick}
+          value={{
+            value: `${countryDropdown}`,
+            label: `${countryDropdown}`,
+          }}
+        />
+
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={
+            country === "USA"
+              ? usaOptions
+              : country === "Canada"
+              ? canadaOptions
+              : usaOptions
+          }
+          onChange={stateClick}
+          value={{ value: `${stateDropdown}`, label: `${stateDropdown}` }}
+        />
+
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={districtOptions}
+          onChange={districtClick}
+          value={{
+            value: `${districtDropdown}`,
+            label: `${districtDropdown}`,
+          }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div>
       <Paper
@@ -180,68 +264,7 @@ export default function TeamLookup() {
         className={styles.body}
         children={
           <div>
-            <ButtonGroup className={styles.button_group}>
-              <Select
-                className={styles.dropdown}
-                styles={{
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-                options={yearOptions}
-                onChange={yearClick}
-                value={{ value: `${year}`, label: `${year}` }}
-              />
-
-              <Button
-                variant="outline-dark"
-                onClick={() => allClick()}
-                className={styles.button}
-              >
-                <Typography>All Teams</Typography>
-              </Button>
-
-              <Select
-                className={styles.dropdown}
-                styles={{
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-                options={countryOptions}
-                onChange={countryClick}
-                value={{
-                  value: `${countryDropdown}`,
-                  label: `${countryDropdown}`,
-                }}
-              />
-
-              <Select
-                className={styles.dropdown}
-                styles={{
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-                options={
-                  country === "USA"
-                    ? usaOptions
-                    : country === "Canada"
-                    ? canadaOptions
-                    : usaOptions
-                }
-                onChange={stateClick}
-                value={{ value: `${stateDropdown}`, label: `${stateDropdown}` }}
-              />
-
-              <Select
-                className={styles.dropdown}
-                styles={{
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-                options={districtOptions}
-                onChange={districtClick}
-                value={{
-                  value: `${districtDropdown}`,
-                  label: `${districtDropdown}`,
-                }}
-              />
-            </ButtonGroup>
-
+            {getTopBar()}
             <ReactTable title={title} columns={columns} data={data} />
           </div>
         }

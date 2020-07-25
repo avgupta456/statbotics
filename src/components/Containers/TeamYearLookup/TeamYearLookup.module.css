@@ -5,19 +5,14 @@
 }
 
 .button_group {
-  width: 100%;
-  padding: 10px 0%;
+  width: auto;
+  margin: 5px 5px 0px 5px;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
 }
 
-.button {
-  margin: 0% auto;
-  max-width: 175px;
-}
-
 .dropdown {
-  margin: 0% auto;
-  width: 175px;
+  margin: 10px 3px 0px 3px;
+  width: 160px;
 }
