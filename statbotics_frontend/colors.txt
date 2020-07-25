@@ -1,9 +1,0 @@
-https://material-ui.com/customization/default-theme/
-
-primary-light: #7986cb
-primary-main: #3f51b5
-primary-dark: #303f9f
-
-secondary-light: #ff4081
-secondary-main: #f50057
-secondary-dark: #c51162
