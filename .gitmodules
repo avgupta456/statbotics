@@ -4,3 +4,6 @@
 [submodule "statbotics_backend"]
 	path = statbotics_backend
 	url = https://github.com/statbotics/statbotics_backend
+[submodule "statbotics_calc"]
+	path = statbotics_calc
+	url = https://github.com/statbotics/statbotics_calc
