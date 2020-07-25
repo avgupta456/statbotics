@@ -13,6 +13,13 @@ import {
   fetchTeams_byDistrict,
 } from "./../../../api";
 
+import {
+  countryOptions,
+  usaOptions,
+  canadaOptions,
+  districtOptions,
+} from "./../../../constants"
+
 import styles from "./TeamLookup.module.css";
 
 export default function TeamLookup() {
@@ -91,104 +98,6 @@ export default function TeamLookup() {
       getTeams_byDistrict();
     }
   }, [format, country, stateProv, district, active]);
-
-  const countryOptions = [
-    { value: "USA", label: "USA" },
-    { value: "Canada", label: "Canada" },
-    { value: "Turkey", label: "Turkey" },
-    { value: "Israel", label: "Israel" },
-    { value: "China", label: "China" },
-    { value: "Mexico", label: "Mexico" },
-    { value: "Australia", label: "Australia" },
-    { value: "Brazil", label: "Brazil" },
-    { value: "Chinese Taipei", label: "Chinese Taipei" },
-    { value: "Netherlands", label: "Netherlands" },
-    { value: "Chile", label: "Chile" },
-    { value: "United Kingdom", label: "United Kingdom" },
-    { value: "Colombia", label: "Colombia" },
-    { value: "Japan", label: "Japan" },
-    { value: "Poland", label: "Poland" },
-    { value: "India", label: "India" },
-    { value: "Switzerland", label: "Switzerland" },
-  ];
-
-  const usaOptions = [
-    { value: "All", label: "All" },
-    { value: "AL", label: "Alabama" },
-    { value: "AK", label: "Alaska" },
-    { value: "AZ", label: "Arizona" },
-    { value: "AR", label: "Arkansas" },
-    { value: "CA", label: "California" },
-    { value: "CO", label: "Colorado" },
-    { value: "CT", label: "Connecticut" },
-    { value: "DE", label: "Delaware" },
-    { value: "FL", label: "Florida" },
-    { value: "GA", label: "Georgia" },
-    { value: "HI", label: "Hawaii" },
-    { value: "ID", label: "Idaho" },
-    { value: "IL", label: "Illinois" },
-    { value: "IN", label: "Indiana" },
-    { value: "IA", label: "Iowa" },
-    { value: "KS", label: "Kansas" },
-    { value: "KY", label: "Kentucky" },
-    { value: "LA", label: "Louisiana" },
-    { value: "ME", label: "Maine" },
-    { value: "MD", label: "Maryland" },
-    { value: "MA", label: "Massachusetts" },
-    { value: "MI", label: "Michigan" },
-    { value: "MN", label: "Minnesota" },
-    { value: "MS", label: "Mississippi" },
-    { value: "MO", label: "Missouri" },
-    { value: "MT", label: "Montana" },
-    { value: "NE", label: "Nebraska" },
-    { value: "NV", label: "Nevada" },
-    { value: "NH", label: "New Hampshire" },
-    { value: "NJ", label: "New Jersey" },
-    { value: "NM", label: "New Mexico" },
-    { value: "NY", label: "New York" },
-    { value: "NC", label: "North Carolina" },
-    { value: "ND", label: "North Dakota" },
-    { value: "OH", label: "Ohio" },
-    { value: "OK", label: "Oklahoma" },
-    { value: "OR", label: "Oregon" },
-    { value: "PA", label: "Pennsylvania" },
-    { value: "RI", label: "Rhode Island" },
-    { value: "SC", label: "South Carolina" },
-    { value: "SD", label: "South Dakota" },
-    { value: "TN", label: "Tennessee" },
-    { value: "TX", label: "Texas" },
-    { value: "UT", label: "Utah" },
-    { value: "VT", label: "Vermont" },
-    { value: "VA", label: "Virginia" },
-    { value: "WA", label: "Washington" },
-    { value: "WV", label: "West Virginia" },
-    { value: "WI", label: "Wisconsin" },
-    { value: "WY", label: "Wyoming" },
-  ]
-
-  const canadaOptions = [
-    { value: "All", label: "All" },
-    { value: "AB", label: "Alberta" },
-    { value: "BC", label: "British Columbia" },
-    { value: "MB", label: "Manitoba" },
-    { value: "ON", label: "Ontario" },
-    { value: "QC", label: "Québec" },
-    { value: "SK", label: "Saskatchewan" },
-  ];
-
-  const districtOptions = [
-    { value: "chs", label: "Chesapeake" },
-    { value: "fim", label: "Michigan" },
-    { value: "fin", label: "Indiana" },
-    { value: "fit", label: "Texas" },
-    { value: "fma", label: "Mid-Atlantic" },
-    { value: "fnc", label: "North Carolina" },
-    { value: "isr", label: "Israel" },
-    { value: "ne", label: "New England" },
-    { value: "ont", label: "Ontario" },
-    { value: "pch", label: "Peachtree" },
-    { value: "pnw", label: "Pacific NW" },
-  ];
 
   function activeClick() {
     setActive(!active);
