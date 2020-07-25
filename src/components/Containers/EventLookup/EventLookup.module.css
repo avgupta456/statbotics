@@ -1,0 +1,17 @@
+.body {
+  margin: 1%;
+  padding: 5px;
+}
+
+.button_group {
+  width: auto;
+  margin: 5px 5px 0px 5px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.dropdown {
+  margin: 10px 3px 0px 3px;
+  width: 160px;
+}

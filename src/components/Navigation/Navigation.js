@@ -59,6 +59,13 @@ export default function Navigation() {
           <Nav.Link
             onClick={() => setNavExpanded(false)}
             className={styles.navItem}
+            href="/events"
+          >
+            Events Table
+          </Nav.Link>
+          <Nav.Link
+            onClick={() => setNavExpanded(false)}
+            className={styles.navItem}
             href="/compare"
           >
             Compare Teams
