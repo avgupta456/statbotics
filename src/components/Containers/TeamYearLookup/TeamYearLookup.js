@@ -79,7 +79,7 @@ export default function TeamLookup() {
         return teams.map(function (x, i) {
           return [
             x["team"],
-            x["team"] + "|" + x["name"],
+            "teams/" + x["team"] + "|" + x["name"],
             i + 1,
             x["elo_max"],
             x["elo_mean"],
@@ -93,7 +93,7 @@ export default function TeamLookup() {
         return teams.map(function (x, i) {
           return [
             x["team"],
-            x["team"] + "|" + x["name"],
+            "teams/" + x["team"] + "|" + x["name"],
             i + 1,
             parseInt(x["opr_no_fouls"]*10)/10,
             parseInt(x["opr_auto"]*10)/10,
@@ -108,7 +108,7 @@ export default function TeamLookup() {
         return teams.map(function (x, i) {
           return [
             x["team"],
-            x["team"] + "|" + x["name"],
+            "teams/" + x["team"] + "|" + x["name"],
             i + 1,
             parseInt(x["opr"]*10)/10,
             -1,
