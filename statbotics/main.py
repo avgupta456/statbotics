@@ -550,7 +550,6 @@ class Statbotics:
         url += "&o=time"
         return self._get(url, fields)
 
-    """
     def getEventSim(self, event, index=None, full=False, iterations=None):
         validate.checkType(event, "str", "event")
         validate.checkType(index, "int", "index")
@@ -570,4 +569,3 @@ class Statbotics:
             url += "/simple"
 
         return self._get(url)
-    """
