@@ -55,7 +55,10 @@ class Statbotics:
             if retry < 2:
                 return self._get(url, fields, retry=retry + 1)
             raise UserWarning("Invalid query: " + url)
-        data = resp.json()["results"]
+
+        data = resp.json()
+        if "results" in data:
+            data = data["results"]
 
         if len(data) == 0:
             raise UserWarning("Invalid inputs, no data recieved for " + url)
@@ -564,8 +567,10 @@ class Statbotics:
         if full:
             url += "/full"
             if iterations:
+                if iterations > 100:
+                    raise ValueError("Iterations must be <= 100")
                 url += "/iterations/" + str(iterations)
         else:
             url += "/simple"
 
-        return self._get(url)
+        return self._get(url, fields=["all"])
