@@ -7,10 +7,14 @@ import Select from "react-select";
 import { ReactTable } from "./../../../components";
 
 import {
-  fetchTeams,
-  fetchTeams_byCountry,
-  fetchTeams_byState,
-  fetchTeams_byDistrict,
+  fetchEvents,
+  fetchEvents_byWeek,
+  fetchEvents_byCountry,
+  fetchEvents_byCountryWeek,
+  fetchEvents_byState,
+  fetchEvents_byStateWeek,
+  fetchEvents_byDistrict,
+  fetchEvents_byDistrictWeek,
 } from "./../../../api";
 
 import {
@@ -18,127 +22,173 @@ import {
   usaOptions,
   canadaOptions,
   districtOptions,
+  yearOptions,
+  weekOptions,
 } from "./../../../constants"
 
 import styles from "./EventLookup.module.css";
 
 export default function TeamLookup() {
-  const [active, setActive] = useState(true);
+  const [year, setYear] = useState(2020);
+  const [week, setWeek] = useState("None");
 
   const [country, setCountry] = useState("None");
   const [stateProv, setStateProv] = useState("None");
   const [district, setDistrict] = useState("None");
-  const [format, setFormat] = useState("Teams");
-  const [title, setTitle] = useState("Team Lookup");
+  const [format, setFormat] = useState("Events");
+  const [title, setTitle] = useState("Events Lookup");
   const [data, setData] = useState([]);
 
+  const [weekDropdown, setWeekDropdown] = useState("Select Week");
   const [stateDropdown, setStateDropdown] = useState("Select State");
   const [countryDropdown, setCountryDropdown] = useState("Select Country");
   const [districtDropdown, setDistrictDropdown] = useState("Select District");
 
   //column name, searchable, visible, link, hint
   const columns = [
-    ["Number", true, true, false, ""],
+    ["Key", true, true, false, ""],
     ["Name", true, true, true, "Click names for details"],
-    ["Rank", false, true, false, "By Current Elo"],
-    ["Current Elo", false, true, false, "All Elos are sortable"],
-    ["Recent Elo", false, true, false, ""],
+    ["Week", false, true, false, "Competition Week"],
+    ["Top 8 Elo", false, true, false, "Average of Top 8 Elos"],
+    ["Top 24 Elo", false, true, false, "Average of Top 24 Elos"],
     ["Mean Elo", false, true, false, ""],
-    ["Max Elo", false, true, false, ""],
+    ["Top 8 OPR", false, true, false, "Average of Top 8 OPRs"],
+    ["Top 24 OPR", false, true, false, "Average of Top 24 OPRs"],
+    ["Mean OPR", false, true, false, ""],
   ];
 
-  //Link format is assumed "team number|team name"
-  function clean(teams) {
-    return teams.map(function (x, i) {
-      return [
-        x["team"],
-        x["team"] + "|" + x["name"],
-        i + 1,
-        x["elo"],
-        x["elo_recent"],
-        x["elo_mean"],
-        x["elo_max"],
-      ];
-    });
-  }
-
   useEffect(() => {
-    const getTeams = async () => {
-      const new_teams = await fetchTeams(active, "-elo");
-      setData(clean(new_teams));
-    };
-
-    const getTeams_byCountry = async () => {
-      const new_teams = await fetchTeams_byCountry(country, active, "-elo");
-      setData(clean(new_teams));
-    };
-
-    const getTeams_byState = async () => {
-      const new_teams = await fetchTeams_byState(
-        country,
-        stateProv,
-        active,
-        "-elo"
-      );
-      setData(clean(new_teams));
-    };
-
-    const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeams_byDistrict(district, active, "-elo");
-      setData(clean(new_teams));
-    };
-
-    if (format === "Teams") {
-      getTeams();
-    } else if (format === "Country") {
-      getTeams_byCountry();
-    } else if (format === "State") {
-      getTeams_byState();
-    } else {
-      getTeams_byDistrict();
+    function clean(events) {
+      return events.map(function (x, i) {
+        return [
+          x["key"],
+          "events/" + x["key"] + "|" + x["name"],
+          x["week"],
+          x["elo_top8"],
+          x["elo_top24"],
+          x["elo_mean"],
+          parseInt(x["opr_top8"]*10)/10,
+          parseInt(x["opr_top24"]*10)/10,
+          parseInt(x["opr_mean"]*10)/10,
+        ];
+      });
     }
-  }, [format, country, stateProv, district, active]);
 
-  function activeClick() {
-    setActive(!active);
+    const getEvents = async () => {
+      let new_events;
+      if (week === "None") {
+        new_events = await fetchEvents(year);
+      } else {
+        new_events = await fetchEvents_byWeek(year, week);
+      }
+      setData(clean(new_events));
+    };
+
+    const getEvents_byCountry = async () => {
+      let new_events;
+      if (week === "None") {
+        new_events = await fetchEvents_byCountry(year, country);
+      } else {
+        new_events = await fetchEvents_byCountryWeek(year, country, week);
+      }
+      setData(clean(new_events));
+    };
+
+    const getEvents_byState = async () => {
+      let new_events;
+      if (week === "None") {
+        new_events = await fetchEvents_byState(year, country, stateProv);
+      } else {
+        new_events = await fetchEvents_byStateWeek(year, country, stateProv, week)
+      }
+      setData(clean(new_events));
+    };
+
+    const getEvents_byDistrict = async () => {
+      let new_events;
+      if (week === "None") {
+        new_events = await fetchEvents_byDistrict(year, district);
+      } else {
+        new_events = await fetchEvents_byDistrictWeek(year, district, week)
+      }
+      setData(clean(new_events));
+    };
+
+    if (format === "Events") {
+      getEvents();
+    } else if (format === "Country") {
+      getEvents_byCountry();
+    } else if (format === "State") {
+      getEvents_byState();
+    } else {
+      getEvents_byDistrict();
+    }
+  }, [format, country, stateProv, district, year, week]);
+
+  const yearClick = (year) => {
+    setYear(year["value"]);
+
+    setWeek("None")
+    setWeekDropdown("Select Week");
+
+    setTitle(`${year["value"]} Event Lookup`);
+  };
+
+  const weekClick = (week) => {
+    setWeek(week["value"]);
+    setWeekDropdown(week["label"])
+
+    setTitle(`${year} Event Lookup`)
   }
 
   function allClick() {
-    setFormat("Teams");
-    setTitle("Team Lookup");
+    setFormat("Events");
 
+    setWeek("None");
+    setWeekDropdown("Select Week");
+
+    setCountry("None");
     setCountryDropdown("Select Country");
+
+    setStateProv("None");
     setStateDropdown("Select State");
+
+    setDistrict("None");
     setDistrictDropdown("Select District");
+
+    setTitle(`${year} Event Lookup`);
+
   }
 
   const stateClick = (state) => {
-    setFormat("State");
     if (state["value"] === "All") {
-      setTitle(`Team Lookup - ${country}`);
+      setTitle(`${year} Event Lookup - ${country}`);
+      setFormat("Country");
     } else {
-      setTitle(`Team Lookup - ${state["label"]}`);
+      setTitle(`${year} Event Lookup - ${state["label"]}`);
+      setFormat("State");
     }
 
     if (usaOptions.includes(state)) {
       setCountry("USA");
-    }
-    setStateProv(state["value"]);
-
-    if (usaOptions.includes(state)) {
       setCountryDropdown("USA");
     }
+
+    setStateProv(state["value"]);
     setStateDropdown(state["label"]);
+
+    setDistrict("None");
     setDistrictDropdown("Select District");
   };
 
   const countryClick = (country) => {
     setFormat("Country");
-    setTitle(`Team Lookup - ${country["label"]}`);
+    setTitle(`${year} Event Lookup - ${country["label"]}`);
 
     setCountry(country["value"]);
-
     setCountryDropdown(country["label"]);
+
+    setStateProv("None");
     if (country["label"] === "USA") {
       setStateDropdown("Select State");
     } else if (country["label"] === "Canada") {
@@ -146,39 +196,51 @@ export default function TeamLookup() {
     } else {
       setStateDropdown("All");
     }
+
+    setDistrict("None");
     setDistrictDropdown("Select District");
   };
 
   const districtClick = (district) => {
     setFormat("District");
-    setTitle(`Team Lookup - ${district["label"]}`);
+    setTitle(`${year} Event Lookup - ${district["label"]}`);
 
     setCountry("None");
     setStateProv("None");
     setDistrict(district["value"]);
 
-    setStateDropdown("Select State");
     setCountryDropdown("Select Country");
+    setStateDropdown("Select State");
     setDistrictDropdown(district["label"]);
   };
 
   function getTopBar() {
     return (
       <div className={styles.button_group}>
-        <Button
-          variant="outline-dark"
-          onClick={() => activeClick()}
+        <Select
           className={styles.dropdown}
-        >
-          <Typography>{active ? "Include" : "Remove"} Inactives</Typography>
-        </Button>
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={yearOptions}
+          onChange={yearClick}
+          value={{ value: `${year}`, label: `${year}` }}
+        />
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={weekOptions}
+          onChange={weekClick}
+          value={{ value: `${weekDropdown}`, label: `${weekDropdown}` }}
+        />
         <Button
           variant="outline-dark"
           onClick={() => allClick()}
           className={styles.dropdown}
-        >
-          <Typography>All Teams</Typography>
-        </Button>
+          children={<Typography>All Events</Typography>}
+        />
         <Select
           className={styles.dropdown}
           styles={{
