@@ -5,7 +5,7 @@
 
 .button_group {
   width: auto;
-  margin: 5px 5px 0px 5px;
+  margin: 5px;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
