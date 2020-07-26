@@ -105,30 +105,37 @@ export default function TeamLookup() {
 
   function allClick() {
     setFormat("Teams");
+
+    setCountry("None");
+    setCountryDropdown("Select Country");
+
+    setStateProv("None");
+    setStateDropdown("Select State");
+
+    setDistrict("None");
+    setDistrictDropdown("Select District");
+
     setTitle("Team Lookup");
 
-    setCountryDropdown("Select Country");
-    setStateDropdown("Select State");
-    setDistrictDropdown("Select District");
   }
 
   const stateClick = (state) => {
-    setFormat("State");
     if (state["value"] === "All") {
       setTitle(`Team Lookup - ${country}`);
+      setFormat("Country");
     } else {
       setTitle(`Team Lookup - ${state["label"]}`);
+      setFormat("State");
     }
 
     if (usaOptions.includes(state)) {
       setCountry("USA");
-    }
-    setStateProv(state["value"]);
-
-    if (usaOptions.includes(state)) {
       setCountryDropdown("USA");
     }
+    setStateProv(state["value"]);
     setStateDropdown(state["label"]);
+
+    setDistrict("None");
     setDistrictDropdown("Select District");
   };
 
@@ -137,8 +144,9 @@ export default function TeamLookup() {
     setTitle(`Team Lookup - ${country["label"]}`);
 
     setCountry(country["value"]);
-
     setCountryDropdown(country["label"]);
+
+    setStateProv("None");
     if (country["label"] === "USA") {
       setStateDropdown("Select State");
     } else if (country["label"] === "Canada") {
@@ -146,6 +154,8 @@ export default function TeamLookup() {
     } else {
       setStateDropdown("All");
     }
+
+    setDistrict("None");
     setDistrictDropdown("Select District");
   };
 
@@ -154,11 +164,12 @@ export default function TeamLookup() {
     setTitle(`Team Lookup - ${district["label"]}`);
 
     setCountry("None");
-    setStateProv("None");
-    setDistrict(district["value"]);
-
     setStateDropdown("Select State");
+
+    setStateProv("None");
     setCountryDropdown("Select Country");
+
+    setDistrict(district["value"]);
     setDistrictDropdown(district["label"]);
   };
 
