@@ -1,257 +1,30 @@
-import axios from "axios";
+export const url = "https://backend.statbotics.io/api";
+//export const url = 'http://localhost:8000/api';
 
-const url = "https://backend.statbotics.io/api";
-//const url = 'http://localhost:8000/api';
+export {
+  fetchTeams_Simple,
+  fetchTeams,
+  fetchTeams_byCountry,
+  fetchTeams_byState,
+  fetchTeams_byDistrict,
+  fetchTeam
+} from "./team_api.js";
 
-/*TEAMS API CALLS*/
+export {
+  fetchTeamsYear,
+  fetchTeamsYear_byCountry,
+  fetchTeamsYear_byState,
+  fetchTeamsYear_byDistrict,
+  fetchTeamYearElo
+} from "./team_year_api.js";
 
-export const fetchTeams_Simple = async () => {
-  const key = "Teams_Simple";
-  if (
-    localStorage.getItem(key) !== undefined &&
-    localStorage.getItem(key) !== null
-  ) {
-    const data = JSON.parse(localStorage.getItem(key));
-    if (data.length > 6000) {
-      return data;
-    }
-  }
-
-  try {
-    var teams = await axios.get(`${url}/teams`);
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeams = async (active, method) => {
-  try {
-    var teams;
-    if (active) {
-      teams = await axios.get(`${url}/teams/active/by/${method}`);
-    } else {
-      teams = await axios.get(`${url}/teams/by/${method}`);
-    }
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeams_byCountry = async (country, active, method) => {
-  try {
-    var teams;
-    if (active) {
-      teams = await axios.get(
-        `${url}/teams/country/${country}/active/by/${method}`
-      );
-    } else {
-      teams = await axios.get(`${url}/teams/country/${country}/by/${method}`);
-    }
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeams_byState = async (country, state, active, method) => {
-  if (state === "All") {
-    return fetchTeams_byCountry(country, active, method);
-  }
-
-  try {
-    var teams;
-    if (active) {
-      teams = await axios.get(
-        `${url}/teams/country/${country}/state/${state}/active/by/${method}`
-      );
-    } else {
-      teams = await axios.get(
-        `${url}/teams/country/${country}/state/${state}/by/${method}`
-      );
-    }
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeams_byDistrict = async (district, active, method) => {
-  try {
-    var teams;
-    if (active) {
-      teams = await axios.get(
-        `${url}/teams/district/${district}/active/by/${method}`
-      );
-    } else {
-      teams = await axios.get(`${url}/teams/district/${district}/by/${method}`);
-    }
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-/*TEAMS-YEAR API CALLS*/
-
-export const fetchTeamsYear = async (year, method) => {
-  try {
-    const teams = await axios.get(`${url}/team_years/year/${year}/by/${method}`);
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeamsYear_byCountry = async (country, year, method) => {
-  try {
-    const teams = await axios.get(
-      `${url}/team_years/year/${year}/country/${country}/by/${method}`
-    );
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeamsYear_byState = async (country, state, year, method) => {
-  if (state === "All") {
-    return fetchTeamsYear_byCountry(country, year, method);
-  }
-
-  try {
-    const teams = await axios.get(
-      `${url}/team_years/year/${year}/country/${country}/state/${state}/by/${method}`
-    );
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeamsYear_byDistrict = async (district, year, method) => {
-  try {
-    const teams = await axios.get(
-      `${url}/team_years/year/${year}/district/${district}/by/${method}`
-    );
-    return teams.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-
-/*EVENT API CALLS*/
-
-export const fetchEvents = async(year) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/by/time`
-    );
-    return events.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchEvents_byWeek = async(year, week) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/week/${week}/by/time`
-    );
-    return events.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchEvents_byCountry = async(year, country) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/country/${country}/by/time`
-    );
-    return events.data;
-  } catch(error) {
-    return error;
-  }
-};
-
-export const fetchEvents_byCountryWeek = async(year, country, week) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/week/${week}/country/${country}/by/time`
-    );
-    return events.data;
-  } catch(error) {
-    return error;
-  }
-};
-
-export const fetchEvents_byState = async(year, country, state) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/country/${country}/state/${state}/by/time`
-    );
-    return events.data;
-  } catch(error) {
-    return error;
-  }
-};
-
-export const fetchEvents_byStateWeek = async(year, country, state, week) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/week/${week}/country/${country}/state/${state}/by/time`
-    );
-    return events.data;
-  } catch(error) {
-    return error;
-  }
-};
-
-export const fetchEvents_byDistrict = async(year, district) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/district/${district}/by/time`
-    );
-    return events.data;
-  } catch(error) {
-    return error;
-  }
-};
-
-export const fetchEvents_byDistrictWeek = async(year, district, week) => {
-  try {
-    const events = await axios.get(
-      `${url}/events/year/${year}/week/${week}/district/${district}/by/time`
-    );
-    return events.data;
-  } catch(error) {
-    return error;
-  }
-};
-
-
-/*INDIVIDUAL TEAM API CALLS*/
-
-export const fetchTeam = async (num) => {
-  try {
-    const team = await axios.get(`${url}/team_years/team/${num}`);
-    return team.data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const fetchTeamYearElo = async (num, year) => {
-  try {
-    if (num === 0) {
-      return 0;
-    }
-    const team = await axios.get(`${url}/team_year/team/${num}/year/${year}`);
-    return team.data[0].elo_max;
-  } catch (error) {
-    return 0;
-  }
-};
+export {
+  fetchEvents,
+  fetchEvents_byWeek,
+  fetchEvents_byCountry, 
+  fetchEvents_byCountryWeek,
+  fetchEvents_byState,
+  fetchEvents_byStateWeek,
+  fetchEvents_byDistrict,
+  fetchEvents_byDistrictWeek
+} from "./event_api.js";
