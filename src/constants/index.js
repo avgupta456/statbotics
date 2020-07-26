@@ -70,7 +70,7 @@ export const usaOptions = [
   { value: "WV", label: "West Virginia" },
   { value: "WI", label: "Wisconsin" },
   { value: "WY", label: "Wyoming" },
-]
+];
 
 export const canadaOptions = [
   { value: "All", label: "All" },
@@ -119,13 +119,13 @@ export const yearOptions = [
 ];
 
 export const weekOptions = [
-  { value: 0, label: "Week 0"},
-  { value: 1, label: "Week 1"},
-  { value: 2, label: "Week 2"},
-  { value: 3, label: "Week 3"},
-  { value: 4, label: "Week 4"},
-  { value: 5, label: "Week 5"},
-  { value: 6, label: "Week 6"},
-  { value: 7, label: "Week 7"},
-  { value: 8, label: "Week 8"},
-]
+  { value: 0, label: "Week 0" },
+  { value: 1, label: "Week 1" },
+  { value: 2, label: "Week 2" },
+  { value: 3, label: "Week 3" },
+  { value: 4, label: "Week 4" },
+  { value: 5, label: "Week 5" },
+  { value: 6, label: "Week 6" },
+  { value: 7, label: "Week 7" },
+  { value: 8, label: "Week 8" },
+];

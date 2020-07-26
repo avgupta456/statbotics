@@ -18,7 +18,7 @@ import {
   usaOptions,
   canadaOptions,
   districtOptions,
-} from "./../../../constants"
+} from "./../../../constants";
 
 import styles from "./TeamLookup.module.css";
 
@@ -116,7 +116,6 @@ export default function TeamLookup() {
     setDistrictDropdown("Select District");
 
     setTitle("Team Lookup");
-
   }
 
   const stateClick = (state) => {
@@ -230,7 +229,7 @@ export default function TeamLookup() {
           }}
         />
       </div>
-    )
+    );
   }
 
   return (

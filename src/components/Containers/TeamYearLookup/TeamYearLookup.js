@@ -20,7 +20,7 @@ import {
   canadaOptions,
   districtOptions,
   yearOptions,
-} from "./../../../constants"
+} from "./../../../constants";
 
 import styles from "./TeamYearLookup.module.css";
 
@@ -60,22 +60,22 @@ export default function TeamLookup() {
     ["Endgame OPR", false, true, false, ""],
     ["ILS 1", false, true, false, ""],
     ["ILS 2", false, true, false, ""],
-  ]
+  ];
 
-  const [showElo, setShowElo] = useState(true)
-  const [sortBy, setSortBy] = useState("-elo_max")
+  const [showElo, setShowElo] = useState(true);
+  const [sortBy, setSortBy] = useState("-elo_max");
 
   const handleElo = (event) => {
     // backwards since we invert afterwards
-    if (!showElo) setSortBy("-elo_max")
-    else if (year>=2016) setSortBy("-opr_no_fouls")
-    else setSortBy("-opr")
-    setShowElo(!showElo)
-  }
+    if (!showElo) setSortBy("-elo_max");
+    else if (year >= 2016) setSortBy("-opr_no_fouls");
+    else setSortBy("-opr");
+    setShowElo(!showElo);
+  };
 
   useEffect(() => {
     function clean(teams) {
-      if(showElo) {
+      if (showElo) {
         return teams.map(function (x, i) {
           return [
             x["team"],
@@ -88,29 +88,27 @@ export default function TeamLookup() {
             x["elo_end"],
           ];
         });
-      }
-      else if (year>=2016) {
+      } else if (year >= 2016) {
         return teams.map(function (x, i) {
           return [
             x["team"],
             "teams/" + x["team"] + "|" + x["name"],
             i + 1,
-            parseInt(x["opr_no_fouls"]*10)/10,
-            parseInt(x["opr_auto"]*10)/10,
-            parseInt(x["opr_teleop"]*10)/10,
-            parseInt(x["opr_endgame"]*10)/10,
+            parseInt(x["opr_no_fouls"] * 10) / 10,
+            parseInt(x["opr_auto"] * 10) / 10,
+            parseInt(x["opr_teleop"] * 10) / 10,
+            parseInt(x["opr_endgame"] * 10) / 10,
             x["ils_1"],
             x["ils_2"],
           ];
         });
-      }
-      else {
+      } else {
         return teams.map(function (x, i) {
           return [
             x["team"],
             "teams/" + x["team"] + "|" + x["name"],
             i + 1,
-            parseInt(x["opr"]*10)/10,
+            parseInt(x["opr"] * 10) / 10,
             -1,
             -1,
             -1,
@@ -127,11 +125,7 @@ export default function TeamLookup() {
     };
 
     const getTeams_byCountry = async () => {
-      const new_teams = await fetchTeamsYear_byCountry(
-        country,
-        year,
-        sortBy
-      );
+      const new_teams = await fetchTeamsYear_byCountry(country, year, sortBy);
       setData(clean(new_teams));
     };
 
@@ -146,11 +140,7 @@ export default function TeamLookup() {
     };
 
     const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeamsYear_byDistrict(
-        district,
-        year,
-        sortBy
-      );
+      const new_teams = await fetchTeamsYear_byDistrict(district, year, sortBy);
       setData(clean(new_teams));
     };
 
@@ -183,7 +173,6 @@ export default function TeamLookup() {
     setDistrictDropdown("Select District");
 
     setTitle(`${year} Team Lookup`);
-
   }
 
   const stateClick = (state) => {
@@ -262,7 +251,9 @@ export default function TeamLookup() {
           variant="secondary"
           onClick={() => handleElo()}
           className={styles.dropdown}
-          children={<Typography>{showElo ? "Show OPR" : "Show Elo"}</Typography>}
+          children={
+            <Typography>{showElo ? "Show OPR" : "Show Elo"}</Typography>
+          }
         />
         <Select
           className={styles.dropdown}
@@ -304,7 +295,7 @@ export default function TeamLookup() {
           }}
         />
       </div>
-    )
+    );
   }
 
   return (
@@ -315,7 +306,11 @@ export default function TeamLookup() {
         children={
           <div>
             {getTopBar()}
-            <ReactTable title={title} columns={showElo ? eloColumns: OPRColumns} data={data} />
+            <ReactTable
+              title={title}
+              columns={showElo ? eloColumns : OPRColumns}
+              data={data}
+            />
           </div>
         }
       />

@@ -92,7 +92,6 @@ export const fetchTeams_byDistrict = async (district, active, method) => {
   }
 };
 
-
 /*INDIVIDUAL TEAM API CALLS*/
 
 export const fetchTeam = async (num) => {

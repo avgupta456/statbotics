@@ -24,7 +24,7 @@ import {
   districtOptions,
   yearOptions,
   weekOptions,
-} from "./../../../constants"
+} from "./../../../constants";
 
 import styles from "./EventLookup.module.css";
 
@@ -67,9 +67,9 @@ export default function TeamLookup() {
           x["elo_top8"],
           x["elo_top24"],
           x["elo_mean"],
-          parseInt(x["opr_top8"]*10)/10,
-          parseInt(x["opr_top24"]*10)/10,
-          parseInt(x["opr_mean"]*10)/10,
+          parseInt(x["opr_top8"] * 10) / 10,
+          parseInt(x["opr_top24"] * 10) / 10,
+          parseInt(x["opr_mean"] * 10) / 10,
         ];
       });
     }
@@ -99,7 +99,12 @@ export default function TeamLookup() {
       if (week === "None") {
         new_events = await fetchEvents_byState(year, country, stateProv);
       } else {
-        new_events = await fetchEvents_byStateWeek(year, country, stateProv, week)
+        new_events = await fetchEvents_byStateWeek(
+          year,
+          country,
+          stateProv,
+          week
+        );
       }
       setData(clean(new_events));
     };
@@ -109,7 +114,7 @@ export default function TeamLookup() {
       if (week === "None") {
         new_events = await fetchEvents_byDistrict(year, district);
       } else {
-        new_events = await fetchEvents_byDistrictWeek(year, district, week)
+        new_events = await fetchEvents_byDistrictWeek(year, district, week);
       }
       setData(clean(new_events));
     };
@@ -128,7 +133,7 @@ export default function TeamLookup() {
   const yearClick = (year) => {
     setYear(year["value"]);
 
-    setWeek("None")
+    setWeek("None");
     setWeekDropdown("Select Week");
 
     setTitle(`${year["value"]} Event Lookup`);
@@ -136,10 +141,10 @@ export default function TeamLookup() {
 
   const weekClick = (week) => {
     setWeek(week["value"]);
-    setWeekDropdown(week["label"])
+    setWeekDropdown(week["label"]);
 
-    setTitle(`${year} Event Lookup`)
-  }
+    setTitle(`${year} Event Lookup`);
+  };
 
   function allClick() {
     setFormat("Events");
@@ -157,7 +162,6 @@ export default function TeamLookup() {
     setDistrictDropdown("Select District");
 
     setTitle(`${year} Event Lookup`);
-
   }
 
   const stateClick = (state) => {
@@ -281,7 +285,7 @@ export default function TeamLookup() {
           }}
         />
       </div>
-    )
+    );
   }
 
   return (

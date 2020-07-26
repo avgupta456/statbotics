@@ -6,7 +6,9 @@ import { url } from "./index";
 
 export const fetchTeamsYear = async (year, method) => {
   try {
-    const teams = await axios.get(`${url}/team_years/year/${year}/by/${method}`);
+    const teams = await axios.get(
+      `${url}/team_years/year/${year}/by/${method}`
+    );
     return teams.data;
   } catch (error) {
     return error;

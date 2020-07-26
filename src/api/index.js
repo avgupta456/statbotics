@@ -7,7 +7,7 @@ export {
   fetchTeams_byCountry,
   fetchTeams_byState,
   fetchTeams_byDistrict,
-  fetchTeam
+  fetchTeam,
 } from "./team_api.js";
 
 export {
@@ -15,16 +15,16 @@ export {
   fetchTeamsYear_byCountry,
   fetchTeamsYear_byState,
   fetchTeamsYear_byDistrict,
-  fetchTeamYearElo
+  fetchTeamYearElo,
 } from "./team_year_api.js";
 
 export {
   fetchEvents,
   fetchEvents_byWeek,
-  fetchEvents_byCountry, 
+  fetchEvents_byCountry,
   fetchEvents_byCountryWeek,
   fetchEvents_byState,
   fetchEvents_byStateWeek,
   fetchEvents_byDistrict,
-  fetchEvents_byDistrictWeek
+  fetchEvents_byDistrictWeek,
 } from "./event_api.js";
