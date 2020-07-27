@@ -81,6 +81,7 @@ class Event(models.Model):
 class TeamEvent(models.Model):
     id = models.IntegerField(primary_key=True)
     team = models.IntegerField()  # ex: 5511
+    name = models.CharField(max_length=50)  # ex: Cortechs Robotics
     year = models.IntegerField()  # ex: 2019
     event = models.CharField(max_length=10)  # ex: ncwak
     state = models.CharField(max_length=10)  # ex: NC
