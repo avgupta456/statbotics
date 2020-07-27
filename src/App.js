@@ -36,7 +36,7 @@ const App = () => {
         <Route path="/teams/:team">
           <TeamView />
         </Route>
-        <Route path="/events/:event">
+        <Route path="/events/:key">
           <EventView />
         </Route>
         <Route path="/compare">

@@ -27,4 +27,5 @@ export {
   fetchEvents_byStateWeek,
   fetchEvents_byDistrict,
   fetchEvents_byDistrictWeek,
+  fetchEvent,
 } from "./event_api.js";

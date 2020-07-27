@@ -89,3 +89,12 @@ export const fetchEvents_byDistrictWeek = async (year, district, week) => {
     return error;
   }
 };
+
+export const fetchEvent = async (key) => {
+  try {
+    const event = await axios.get(`${url}/event/${key}`);
+    return event.data[0];
+  } catch (error) {
+    return error;
+  }
+};
