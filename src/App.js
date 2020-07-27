@@ -9,6 +9,7 @@ import {
   TeamYearLookup,
   EventLookup,
   TeamView,
+  EventView,
   TeamCompare,
   Hypothetical,
   Swagger,
@@ -34,6 +35,9 @@ const App = () => {
         </Route>
         <Route path="/teams/:team">
           <TeamView />
+        </Route>
+        <Route path="/events/:event">
+          <EventView />
         </Route>
         <Route path="/compare">
           <TeamCompare />
