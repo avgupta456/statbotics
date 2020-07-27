@@ -92,12 +92,10 @@ export const fetchTeams_byDistrict = async (district, active, method) => {
   }
 };
 
-/*INDIVIDUAL TEAM API CALLS*/
-
-export const fetchTeam = async (num) => {
+export const fetchTeam = async (number) => {
   try {
-    const team = await axios.get(`${url}/team_years/team/${num}`);
-    return team.data;
+    const team = await axios.get(`${url}/team/${number}`);
+    return team.data[0];
   } catch (error) {
     return error;
   }

@@ -52,6 +52,17 @@ export const fetchTeamsYear_byDistrict = async (district, year, method) => {
   }
 };
 
+/*INDIVIDUAL TEAM API CALLS*/
+
+export const fetchTeam_Years = async (num) => {
+  try {
+    const team = await axios.get(`${url}/team_years/team/${num}`);
+    return team.data;
+  } catch (error) {
+    return error;
+  }
+};
+
 /*INDIVIDUAL TEAM YEAR*/
 
 export const fetchTeamYearElo = async (num, year) => {

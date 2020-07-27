@@ -15,6 +15,7 @@ export {
   fetchTeamsYear_byCountry,
   fetchTeamsYear_byState,
   fetchTeamsYear_byDistrict,
+  fetchTeam_Years,
   fetchTeamYearElo,
 } from "./team_year_api.js";
 
@@ -29,3 +30,5 @@ export {
   fetchEvents_byDistrictWeek,
   fetchEvent,
 } from "./event_api.js";
+
+export { fetchTeamEvents } from "./team_event_api.js";
