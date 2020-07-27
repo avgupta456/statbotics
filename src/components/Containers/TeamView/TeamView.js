@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { Paper, Typography } from "@material-ui/core";
 
-import { fetchTeam } from "./../../../api";
+import { fetchTeam_Years } from "./../../../api";
 import { LineChart } from "./../../";
 
 import styles from "./TeamView.module.css";
@@ -27,7 +27,7 @@ export default function TeamView() {
 
   useEffect(() => {
     const getTeam = async (team) => {
-      const new_teams = await fetchTeam(team);
+      const new_teams = await fetchTeam_Years(team);
       setTeamData(clean(team, new_teams));
     };
 
