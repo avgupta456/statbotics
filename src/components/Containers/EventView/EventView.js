@@ -58,24 +58,44 @@ export default function EventView() {
 
   useEffect(() => {
     function clean(rawData, rankings) {
-      return rawData.map(function (x, i) {
-        return [
-          x["team"],
-          "./../teams/" + x["team"] + "|" + x["name"],
-          rankings[x["team"]],
-          x["elo_end"],
-          parseInt(x["opr_no_fouls"] * 10) / 10,
-          parseInt(x["opr_auto"] * 10) / 10,
-          parseInt(x["opr_teleop"] * 10) / 10,
-          parseInt(x["opr_endgame"] * 10) / 10,
-          x["ils_1_end"],
-          x["ils_2_end"],
-        ];
-      });
+      let clean_data;
+      if (year >= 2016) {
+        clean_data = rawData.map(function (x, i) {
+          return [
+            x["team"],
+            "./../teams/" + x["team"] + "|" + x["name"],
+            rankings[x["team"]],
+            x["elo_end"],
+            parseInt(x["opr_no_fouls"] * 10) / 10,
+            parseInt(x["opr_auto"] * 10) / 10,
+            parseInt(x["opr_teleop"] * 10) / 10,
+            parseInt(x["opr_endgame"] * 10) / 10,
+            x["ils_1_end"],
+            x["ils_2_end"],
+          ];
+        });
+      } else {
+        clean_data = rawData.map(function (x, i) {
+          return [
+            x["team"],
+            "./../teams/" + x["team"] + "|" + x["name"],
+            rankings[x["team"]],
+            x["elo_end"],
+            parseInt(x["opr_end"] * 10) / 10,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+          ];
+        });
+      }
+      clean_data.sort((a, b) => a[2] - b[2]);
+      return clean_data;
     }
 
     setData(clean(rawData, rankings));
-  }, [rawData, rankings]);
+  }, [year, rawData, rankings]);
 
   return (
     <Paper className={styles.body}>
