@@ -32,7 +32,6 @@ export default function EventView() {
   useEffect(() => {
     function clean(team_events) {
       return team_events.map(function (x, i) {
-        getTeamName(x["team"]);
         return [
           x["team"],
           "teams/" + x["team"] + "|" + x["name"],
