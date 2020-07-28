@@ -34,6 +34,14 @@ export default function EventView() {
     ["ILS 2", false, true, false, ""],
   ];
 
+  const oldColumns = [
+    ["Number", true, true, false, ""],
+    ["Name", true, true, true, "Click name for details"],
+    ["Rank", false, true, false, "Rank at Event"],
+    ["Elo", false, true, false, "Current Elo"],
+    ["OPR", false, true, false, "Current OPR"],
+  ];
+
   useEffect(() => {
     const getEvent = async (key) => {
       const event = await fetchEvent(key);
@@ -82,11 +90,6 @@ export default function EventView() {
             rankings[x["team"]],
             x["elo_end"],
             parseInt(x["opr_end"] * 10) / 10,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
           ];
         });
       }
@@ -107,7 +110,7 @@ export default function EventView() {
         <Tab eventKey="insights" title="Insights">
           <ReactTable
             title="Current Statistics"
-            columns={columns}
+            columns={year >= 2016 ? columns : oldColumns}
             data={data}
           />
         </Tab>

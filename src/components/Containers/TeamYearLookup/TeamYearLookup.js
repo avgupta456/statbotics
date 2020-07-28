@@ -62,6 +62,13 @@ export default function TeamLookup() {
     ["ILS 2", false, true, false, ""],
   ];
 
+  const OldOPRColumns = [
+    ["Number", true, true, false, ""],
+    ["Name", true, true, true, "Click name for details"],
+    ["Rank", false, true, false, "By OPR"],
+    ["OPR", false, true, false, "Max OPR"],
+  ];
+
   const [showElo, setShowElo] = useState(true);
   const [sortBy, setSortBy] = useState("-elo_max");
 
@@ -105,11 +112,6 @@ export default function TeamLookup() {
             "teams/" + x["team"] + "|" + x["name"],
             i + 1,
             parseInt(x["opr"] * 10) / 10,
-            -1,
-            -1,
-            -1,
-            -1,
-            -1,
           ];
         });
       }
@@ -308,7 +310,9 @@ export default function TeamLookup() {
             {getTopBar()}
             <ReactTable
               title={title}
-              columns={showElo ? eloColumns : OPRColumns}
+              columns={
+                showElo ? eloColumns : year >= 2016 ? OPRColumns : OldOPRColumns
+              }
               data={data}
             />
           </div>
