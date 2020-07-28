@@ -232,6 +232,7 @@ def getTeamEvents(SQL_Read):
             [
                 team_event.id,
                 team_event.team_id,
+                team_event.team.name,
                 team_event.year_id,
                 team_event.event.key,
                 team_event.event.state,
@@ -267,6 +268,7 @@ def getTeamEvents(SQL_Read):
         columns=[
             "id",
             "team",
+            "name",
             "year",
             "event",
             "state",
