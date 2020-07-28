@@ -32,3 +32,5 @@ export {
 } from "./event_api.js";
 
 export { fetchTeamEvents } from "./team_event_api.js";
+
+export { fetchRankings } from "./tba_api.js";
