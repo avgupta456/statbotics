@@ -34,7 +34,7 @@ export default function EventView() {
       return team_events.map(function (x, i) {
         return [
           x["team"],
-          "teams/" + x["team"] + "|" + x["name"],
+          "./../teams/" + x["team"] + "|" + x["name"],
           x["elo_end"],
           parseInt(x["opr_no_fouls"] * 10) / 10,
           parseInt(x["opr_auto"] * 10) / 10,
@@ -52,7 +52,7 @@ export default function EventView() {
     };
 
     const getTeamEvents = async (key) => {
-      const team_events = await fetchTeamEvents(key);
+      const team_events = await fetchTeamEvents(key, "-elo_end");
       setTeamEvents(clean(team_events));
     };
 
