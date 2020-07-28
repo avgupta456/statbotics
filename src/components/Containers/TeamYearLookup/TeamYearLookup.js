@@ -66,10 +66,6 @@ export default function TeamLookup() {
   const [sortBy, setSortBy] = useState("-elo_max");
 
   const handleElo = (event) => {
-    // backwards since we invert afterwards
-    if (!showElo) setSortBy("-elo_max");
-    else if (year >= 2016) setSortBy("-opr_no_fouls");
-    else setSortBy("-opr");
     setShowElo(!showElo);
   };
 
@@ -143,6 +139,10 @@ export default function TeamLookup() {
       const new_teams = await fetchTeamsYear_byDistrict(district, year, sortBy);
       setData(clean(new_teams));
     };
+
+    if (showElo) setSortBy("-elo_max");
+    else if (year >= 2016) setSortBy("-opr_no_fouls");
+    else setSortBy("-opr");
 
     if (format === "Teams") {
       getTeams();
