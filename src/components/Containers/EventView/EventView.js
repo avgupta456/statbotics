@@ -6,7 +6,7 @@ import { Tabs, Tab } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
 
-import { fetchEvent, fetchTeamEvents } from "./../../../api";
+import { fetchEvent, fetchTeamEvents, fetchRankings } from "./../../../api";
 
 import styles from "./EventView.module.css";
 
@@ -14,12 +14,17 @@ export default function EventView() {
   let { key } = useParams();
 
   const [event, setEvent] = useState("");
-  const [teamEvents, setTeamEvents] = useState([]);
+  const [year, setYear] = useState("");
+
+  const [rankings, setRankings] = useState([]);
+  const [rawData, setRawData] = useState([]);
+  const [data, setData] = useState([]);
 
   //column name, searchable, visible, link, hint
   const columns = [
     ["Number", true, true, false, ""],
     ["Name", true, true, true, "Click name for details"],
+    ["Rank", false, true, false, "Rank at Event"],
     ["Elo", false, true, false, "Current Elo"],
     ["OPR", false, true, false, "Current OPR"],
     ["Auto OPR", false, true, false, ""],
@@ -30,11 +35,34 @@ export default function EventView() {
   ];
 
   useEffect(() => {
-    function clean(team_events) {
-      return team_events.map(function (x, i) {
+    const getEvent = async (key) => {
+      const event = await fetchEvent(key);
+      setEvent(event["name"]);
+      setYear(event["year"]);
+    };
+
+    const getTeamEvents = async (key) => {
+      const team_events = await fetchTeamEvents(key, "-elo_end");
+      setRawData(team_events);
+    };
+
+    const getRankings = async (key) => {
+      const rankings = await fetchRankings(key);
+      setRankings(rankings);
+    };
+
+    getEvent(key);
+    getTeamEvents(key);
+    getRankings(key);
+  }, [key]);
+
+  useEffect(() => {
+    function clean(rawData, rankings) {
+      return rawData.map(function (x, i) {
         return [
           x["team"],
           "./../teams/" + x["team"] + "|" + x["name"],
+          rankings[x["team"]],
           x["elo_end"],
           parseInt(x["opr_no_fouls"] * 10) / 10,
           parseInt(x["opr_auto"] * 10) / 10,
@@ -46,31 +74,21 @@ export default function EventView() {
       });
     }
 
-    const getEvent = async (key) => {
-      const event = await fetchEvent(key);
-      setEvent(event["name"]);
-    };
-
-    const getTeamEvents = async (key) => {
-      const team_events = await fetchTeamEvents(key, "-elo_end");
-      setTeamEvents(clean(team_events));
-    };
-
-    getEvent(key);
-    getTeamEvents(key);
-  }, [key]);
+    setData(clean(rawData, rankings));
+  }, [rawData, rankings]);
 
   return (
     <Paper className={styles.body}>
-      <h2>{event}</h2>
+      <h2>
+        {year} {event}
+      </h2>
       <br />
       <Tabs defaultActiveKey="insights" id="tab">
         <Tab eventKey="insights" title="Insights">
-          <Typography>Insights</Typography>
           <ReactTable
             title="Current Statistics"
             columns={columns}
-            data={teamEvents}
+            data={data}
           />
         </Tab>
         <Tab eventKey="simulation" title="Simulation">
