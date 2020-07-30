@@ -6,7 +6,12 @@ import { Tabs, Tab } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
 
-import { fetchEvent, fetchTeamEvents, fetchRankings } from "./../../../api";
+import {
+  fetchEvent,
+  fetchTeamEvents,
+  fetchRankings,
+  fetchMatches_Event,
+} from "./../../../api";
 
 import styles from "./EventView.module.css";
 
@@ -17,8 +22,11 @@ export default function EventView() {
   const [year, setYear] = useState("");
 
   const [rankings, setRankings] = useState([]);
-  const [rawData, setRawData] = useState([]);
-  const [data, setData] = useState([]);
+  const [rawStats, setRawStats] = useState([]);
+  const [stats, setStats] = useState([]);
+
+  const [rawMatches, setRawMatches] = useState([]);
+  const [matches, setMatches] = useState([]);
 
   //column name, searchable, visible, link, hint
   const columns = [
@@ -51,7 +59,7 @@ export default function EventView() {
 
     const getTeamEvents = async (key) => {
       const team_events = await fetchTeamEvents(key, "-elo_end");
-      setRawData(team_events);
+      setRawStats(team_events);
     };
 
     const getRankings = async (key) => {
@@ -59,16 +67,22 @@ export default function EventView() {
       setRankings(rankings);
     };
 
+    const getMatches = async (key) => {
+      const matches = await fetchMatches_Event(key);
+      setRawMatches(matches);
+    };
+
     getEvent(key);
     getTeamEvents(key);
     getRankings(key);
+    getMatches(key);
   }, [key]);
 
   useEffect(() => {
-    function clean(rawData, rankings) {
-      let clean_data;
+    function clean(rawStats, rankings) {
+      let cleanStats;
       if (year >= 2016) {
-        clean_data = rawData.map(function (x, i) {
+        cleanStats = rawStats.map(function (x, i) {
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
@@ -83,7 +97,7 @@ export default function EventView() {
           ];
         });
       } else {
-        clean_data = rawData.map(function (x, i) {
+        cleanStats = rawStats.map(function (x, i) {
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
@@ -93,12 +107,81 @@ export default function EventView() {
           ];
         });
       }
-      clean_data.sort((a, b) => a[2] - b[2]);
-      return clean_data;
+      cleanStats.sort((a, b) => a[2] - b[2]);
+      return cleanStats;
     }
 
-    setData(clean(rawData, rankings));
-  }, [year, rawData, rankings]);
+    setStats(clean(rawStats, rankings));
+  }, [year, rawStats, rankings]);
+
+  useEffect(() => {
+    function clean(rawMatches, year) {
+      let cleanMatches;
+      if (year >= 2016) {
+        console.log("HERE");
+        cleanMatches = rawMatches.map(function (x, i) {
+          return {
+            match: x["key"].split("_")[1],
+            blue: x["blue"],
+            red: x["red"],
+            blue_score: x["blue_score"],
+            red_score: x["red_score"],
+            winner: x["winner"],
+            winner_pred: x["mix_winner"],
+            win_prob:
+              x["mix_winner"] === "red"
+                ? x["mix_win_prob"]
+                : 1 - x["mix_win_prob"],
+            winner_correct: x["winner"] === x["mix_winner"],
+            blue_rp_1: x["blue_rp_1"],
+            blue_rp_1_prob: x["blue_rp_1_prob"],
+            blue_rp_1_correct:
+              x["blue_rp_1"] === 1
+                ? x["blue_rp_1_prob"] >= 0.5
+                : x["blue_rp_1_prob"] < 0.5,
+            blue_rp_2: x["blue_rp_2"],
+            blue_rp_2_prob: x["blue_rp_2_prob"],
+            blue_rp_2_correct:
+              x["blue_rp_2"] === 1
+                ? x["blue_rp_2_prob"] >= 0.5
+                : x["blue_rp_2_prob"] < 0.5,
+            red_rp_1: x["red_rp_1"],
+            red_rp_1_prob: x["red_rp_1_prob"],
+            red_rp_1_correct:
+              x["red_rp_1"] === 1
+                ? x["red_rp_1_prob"] >= 0.5
+                : x["red_rp_1_prob"] < 0.5,
+            red_rp_2: x["red_rp_2"],
+            red_rp_2_prob: x["red_rp_2_prob"],
+            red_rp_2_correct:
+              x["red_rp_2"] === 1
+                ? x["red_rp_2_prob"] >= 0.5
+                : x["red_rp_2_prob"] < 0.5,
+          };
+        });
+      } else {
+        cleanMatches = rawMatches.map(function (x, i) {
+          return {
+            match: x["key"].split("_")[1],
+            blue: x["blue"],
+            red: x["red"],
+            blue_score: x["blue_score"],
+            red_score: x["red_score"],
+            winner: x["winner"],
+            pred_winner: x["mix_winner"],
+            win_prob:
+              x["mix_winner"] === "red"
+                ? x["mix_win_prob"]
+                : 1 - x["mix_win_prob"],
+            correct: x["winner"] === x["mix_winner"],
+          };
+        });
+      }
+      return cleanMatches;
+    }
+
+    setMatches(clean(rawMatches, year));
+  }, [year, rawMatches]);
 
   return (
     <Paper className={styles.body}>
@@ -111,13 +194,13 @@ export default function EventView() {
           <ReactTable
             title="Current Statistics"
             columns={year >= 2016 ? columns : oldColumns}
-            data={data}
+            data={stats}
           />
         </Tab>
         <Tab eventKey="simulation" title="Simulation">
           <Typography>Simulation</Typography>
         </Tab>
-        <Tab eventKey="Test" title="Test">
+        <Tab eventKey="Matches" title="Matches">
           <Typography>Test</Typography>
         </Tab>
       </Tabs>
