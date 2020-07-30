@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { Paper, Typography } from "@material-ui/core";
-import { Tabs, Tab } from "react-bootstrap";
+import { Tabs, Tab, Container, Row, Col } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
 
@@ -122,8 +122,8 @@ export default function EventView() {
         cleanMatches = rawMatches.map(function (x, i) {
           return {
             match: x["key"].split("_")[1],
-            blue: x["blue"],
-            red: x["red"],
+            blue: x["blue"].split(","),
+            red: x["red"].split(","),
             blue_score: x["blue_score"],
             red_score: x["red_score"],
             winner: x["winner"],
@@ -163,8 +163,8 @@ export default function EventView() {
         cleanMatches = rawMatches.map(function (x, i) {
           return {
             match: x["key"].split("_")[1],
-            blue: x["blue"],
-            red: x["red"],
+            blue: x["blue"].split(","),
+            red: x["red"].split(","),
             blue_score: x["blue_score"],
             red_score: x["red_score"],
             winner: x["winner"],
@@ -183,6 +183,64 @@ export default function EventView() {
     setMatches(clean(rawMatches, year));
   }, [year, rawMatches]);
 
+  function getMatchDisplays(matches) {
+    return matches.map(function (x, i) {
+      return (
+        <Container key={i}>
+          <br />
+          <Row>
+            <Col className={styles.outline}>{x["match"]}</Col>
+            <Col className={styles.outline}>
+              <Row className={styles.red}>
+                <Col>
+                  <a className={styles.link} href={`./../teams/${x["red"][0]}`}>
+                    {x["red"][0]}
+                  </a>
+                </Col>
+                <Col>
+                  <a className={styles.link} href={`./../teams/${x["red"][1]}`}>
+                    {x["red"][1]}
+                  </a>
+                </Col>
+                <Col>
+                  <a className={styles.link} href={`./../teams/${x["red"][2]}`}>
+                    {x["red"][2]}
+                  </a>
+                </Col>
+              </Row>
+              <Row className={styles.blue}>
+                <Col>
+                  <a
+                    className={styles.link}
+                    href={`./../teams/${x["blue"][0]}`}
+                  >
+                    {x["blue"][0]}
+                  </a>
+                </Col>
+                <Col>
+                  <a
+                    className={styles.link}
+                    href={`./../teams/${x["blue"][1]}`}
+                  >
+                    {x["blue"][1]}
+                  </a>
+                </Col>
+                <Col>
+                  <a
+                    className={styles.link}
+                    href={`./../teams/${x["blue"][2]}`}
+                  >
+                    {x["blue"][2]}
+                  </a>
+                </Col>
+              </Row>
+            </Col>
+            <Col className={styles.outline}>2 of 2</Col>
+          </Row>
+        </Container>
+      );
+    });
+  }
   return (
     <Paper className={styles.body}>
       <h2>
@@ -201,7 +259,7 @@ export default function EventView() {
           <Typography>Simulation</Typography>
         </Tab>
         <Tab eventKey="Matches" title="Matches">
-          <Typography>Test</Typography>
+          {getMatchDisplays(matches)}
         </Tab>
       </Tabs>
     </Paper>

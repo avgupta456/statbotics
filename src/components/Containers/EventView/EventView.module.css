@@ -2,3 +2,19 @@
   margin: 2%;
   padding: 15px;
 }
+
+.outline {
+  border: 1px solid red;
+}
+
+.red {
+  background-color: #ddddff;
+}
+
+.blue {
+  background-color: #ffdddd;
+}
+
+.link {
+  color: #3d5ec4;
+}
