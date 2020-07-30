@@ -193,19 +193,25 @@ export default function EventView() {
             <Col className={styles.outline}>
               <Row className={styles.red}>
                 <Col>
-                  <a className={styles.link} href={`./../teams/${x["red"][0]}`}>
-                    {x["red"][0]}
-                  </a>
+                  <a
+                    className={styles.link}
+                    href={`./../teams/${x["red"][0]}`}
+                    children={x["red"][0]}
+                  />
                 </Col>
                 <Col>
-                  <a className={styles.link} href={`./../teams/${x["red"][1]}`}>
-                    {x["red"][1]}
-                  </a>
+                  <a
+                    className={styles.link}
+                    href={`./../teams/${x["red"][1]}`}
+                    children={x["red"][1]}
+                  />
                 </Col>
                 <Col>
-                  <a className={styles.link} href={`./../teams/${x["red"][2]}`}>
-                    {x["red"][2]}
-                  </a>
+                  <a
+                    className={styles.link}
+                    href={`./../teams/${x["red"][2]}`}
+                    children={x["red"][2]}
+                  />
                 </Col>
               </Row>
               <Row className={styles.blue}>
@@ -213,25 +219,22 @@ export default function EventView() {
                   <a
                     className={styles.link}
                     href={`./../teams/${x["blue"][0]}`}
-                  >
-                    {x["blue"][0]}
-                  </a>
+                    children={x["blue"][0]}
+                  />
                 </Col>
                 <Col>
                   <a
                     className={styles.link}
                     href={`./../teams/${x["blue"][1]}`}
-                  >
-                    {x["blue"][1]}
-                  </a>
+                    children={x["blue"][1]}
+                  />
                 </Col>
                 <Col>
                   <a
                     className={styles.link}
                     href={`./../teams/${x["blue"][2]}`}
-                  >
-                    {x["blue"][2]}
-                  </a>
+                    children={x["blue"][2]}
+                  />
                 </Col>
               </Row>
             </Col>
