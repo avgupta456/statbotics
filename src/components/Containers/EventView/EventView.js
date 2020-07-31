@@ -122,6 +122,7 @@ export default function EventView() {
         cleanMatches = rawMatches.map(function (x, i) {
           return {
             match: x["key"].split("_")[1],
+            playoff: x["playoff"],
             blue: x["blue"].split(","),
             red: x["red"].split(","),
             blue_score: x["blue_score"],
@@ -163,6 +164,7 @@ export default function EventView() {
         cleanMatches = rawMatches.map(function (x, i) {
           return {
             match: x["key"].split("_")[1],
+            playoff: x["playoff"],
             blue: x["blue"].split(","),
             red: x["red"].split(","),
             blue_score: x["blue_score"],
@@ -274,10 +276,16 @@ export default function EventView() {
                 {year >= 2016 ? (
                   <Col
                     className={
-                      x["red_rp_1_correct"] ? styles.correct : styles.incorrect
+                      x["playoff"]
+                        ? styles.none
+                        : x["red_rp_1_correct"]
+                        ? styles.correct
+                        : styles.incorrect
                     }
                   >
-                    {parseInt(x["red_rp_1_prob"] * 100) + "%"}
+                    {x["playoff"]
+                      ? "-"
+                      : parseInt(x["red_rp_1_prob"] * 100) + "%"}
                   </Col>
                 ) : (
                   ""
@@ -285,10 +293,16 @@ export default function EventView() {
                 {year >= 2016 ? (
                   <Col
                     className={
-                      x["red_rp_2_correct"] ? styles.correct : styles.incorrect
+                      x["playoff"]
+                        ? styles.none
+                        : x["red_rp_2_correct"]
+                        ? styles.correct
+                        : styles.incorrect
                     }
                   >
-                    {parseInt(x["red_rp_2_prob"] * 100) + "%"}
+                    {x["playoff"]
+                      ? "-"
+                      : parseInt(x["red_rp_2_prob"] * 100) + "%"}
                   </Col>
                 ) : (
                   ""
@@ -305,10 +319,16 @@ export default function EventView() {
                 {year >= 2016 ? (
                   <Col
                     className={
-                      x["blue_rp_1_correct"] ? styles.correct : styles.incorrect
+                      x["playoff"]
+                        ? styles.none
+                        : x["blue_rp_1_correct"]
+                        ? styles.correct
+                        : styles.incorrect
                     }
                   >
-                    {parseInt(x["blue_rp_1_prob"] * 100) + "%"}
+                    {x["playoff"]
+                      ? "-"
+                      : parseInt(x["blue_rp_1_prob"] * 100) + "%"}
                   </Col>
                 ) : (
                   ""
@@ -316,10 +336,16 @@ export default function EventView() {
                 {year >= 2016 ? (
                   <Col
                     className={
-                      x["blue_rp_2_correct"] ? styles.correct : styles.incorrect
+                      x["playoff"]
+                        ? styles.none
+                        : x["blue_rp_2_correct"]
+                        ? styles.correct
+                        : styles.incorrect
                     }
                   >
-                    {parseInt(x["blue_rp_2_prob"] * 100) + "%"}
+                    {x["playoff"]
+                      ? "-"
+                      : parseInt(x["blue_rp_2_prob"] * 100) + "%"}
                   </Col>
                 ) : (
                   ""
