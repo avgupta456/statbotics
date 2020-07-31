@@ -199,59 +199,74 @@ export default function EventView() {
   function getMatchDisplays(matches) {
     return matches.map(function (x, i) {
       return (
-        <Container key={i}>
+        <Container className={styles.container} key={i}>
           <br />
           <Row>
-            <Col className={styles.outline}>{getName(x["match"])}</Col>
-            <Col className={styles.outline}>
+            <Col xs="auto" className={styles.outline}>
+              <b>{getName(x["match"])}</b>
+            </Col>
+            <Col xs="auto" className={styles.outline}>
               <Row className={styles.red}>
+                {x["red"].map(function (y, i) {
+                  return (
+                    <Col key={i}>
+                      <a
+                        className={styles.link}
+                        href={`./../teams/${x["red"][i]}`}
+                        children={
+                          x["winner"] === "red" ? (
+                            <b>{x["red"][i]}</b>
+                          ) : (
+                            x["red"][i]
+                          )
+                        }
+                      />
+                    </Col>
+                  );
+                })}
                 <Col>
-                  <a
-                    className={styles.link}
-                    href={`./../teams/${x["red"][0]}`}
-                    children={x["red"][0]}
-                  />
-                </Col>
-                <Col>
-                  <a
-                    className={styles.link}
-                    href={`./../teams/${x["red"][1]}`}
-                    children={x["red"][1]}
-                  />
-                </Col>
-                <Col>
-                  <a
-                    className={styles.link}
-                    href={`./../teams/${x["red"][2]}`}
-                    children={x["red"][2]}
-                  />
+                  {x["winner"] === "red" ? (
+                    <b>{x["red_score"]}</b>
+                  ) : (
+                    x["red_score"]
+                  )}
+                  {x["red_rp_1"] === 1 ? <sup>●</sup> : ""}
+                  {x["red_rp_2"] === 1 ? <sup>●</sup> : ""}
                 </Col>
               </Row>
               <Row className={styles.blue}>
+                {x["blue"].map(function (y, i) {
+                  return (
+                    <Col key={i}>
+                      <a
+                        className={styles.link}
+                        href={`./../teams/${x["blue"][i]}`}
+                        children={
+                          x["winner"] === "blue" ? (
+                            <b>{x["blue"][i]}</b>
+                          ) : (
+                            x["blue"][i]
+                          )
+                        }
+                      />
+                    </Col>
+                  );
+                })}
                 <Col>
-                  <a
-                    className={styles.link}
-                    href={`./../teams/${x["blue"][0]}`}
-                    children={x["blue"][0]}
-                  />
-                </Col>
-                <Col>
-                  <a
-                    className={styles.link}
-                    href={`./../teams/${x["blue"][1]}`}
-                    children={x["blue"][1]}
-                  />
-                </Col>
-                <Col>
-                  <a
-                    className={styles.link}
-                    href={`./../teams/${x["blue"][2]}`}
-                    children={x["blue"][2]}
-                  />
+                  {x["winner"] === "blue" ? (
+                    <b>{x["blue_score"]}</b>
+                  ) : (
+                    x["blue_score"]
+                  )}
+                  {x["blue_rp_1"] === 1 ? <sup>●</sup> : ""}
+                  {x["blue_rp_2"] === 1 ? <sup>●</sup> : ""}
                 </Col>
               </Row>
             </Col>
-            <Col className={styles.outline}>2 of 2</Col>
+            <Col xs="auto" className={styles.outline}>
+              <Row>{x["winner_pred"] === "red" ? "Red" : "Blue"}</Row>
+              <Row>{parseInt(x["win_prob"] * 100) + "%"}</Row>
+            </Col>
           </Row>
         </Container>
       );

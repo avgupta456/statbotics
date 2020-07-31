@@ -3,16 +3,22 @@
   padding: 15px;
 }
 
+.container {
+  text-align: center;
+}
+
 .outline {
   border: 1px solid red;
+  margin: auto;
+  text-align: center;
 }
 
 .red {
-  background-color: #ddddff;
+  background-color: #ffdddd;
 }
 
 .blue {
-  background-color: #ffdddd;
+  background-color: #ddddff;
 }
 
 .link {
