@@ -197,15 +197,14 @@ export default function EventView() {
   }
 
   function getMatchDisplays(matches) {
-    return matches.map(function (x, i) {
+    const match_display = matches.map(function (x, i) {
       return (
         <Container className={styles.container} key={i}>
-          <br />
           <Row>
-            <Col xs="auto" className={styles.outline}>
+            <Col xs="2" className={styles.outline}>
               <b>{getName(x["match"])}</b>
             </Col>
-            <Col xs="auto" className={styles.outline}>
+            <Col xs="6" className={styles.outline}>
               <Row className={styles.red}>
                 {x["red"].map(function (y, i) {
                   return (
@@ -263,7 +262,7 @@ export default function EventView() {
                 </Col>
               </Row>
             </Col>
-            <Col xs="auto" className={styles.outline}>
+            <Col xs="4" className={styles.outline}>
               <Row>{x["winner_pred"] === "red" ? "Red" : "Blue"}</Row>
               <Row>{parseInt(x["win_prob"] * 100) + "%"}</Row>
             </Col>
@@ -271,6 +270,34 @@ export default function EventView() {
         </Container>
       );
     });
+
+    return (
+      <div>
+        <Container className={styles.container} key={-1}>
+          <Row>
+            <Col xs="2" className={styles.outline}>
+              Match Number
+            </Col>
+            <Col xs="6" className={styles.outline}>
+              <Row>
+                <Col>Team 1</Col>
+                <Col>Team 2</Col>
+                <Col>Team 3</Col>
+                <Col>Score</Col>
+              </Row>
+            </Col>
+            <Col xs="4" className={styles.outline}>
+              <Row>
+                <Col>Winner Pred</Col>
+                <Col>RP 1 Pred</Col>
+                <Col>RP 2 Pred</Col>
+              </Row>
+            </Col>
+          </Row>
+        </Container>
+        {match_display}
+      </div>
+    );
   }
 
   return (
@@ -291,6 +318,11 @@ export default function EventView() {
           <Typography>Simulation</Typography>
         </Tab>
         <Tab eventKey="Matches" title="Matches">
+          <br />
+          <h4>Match Predictions</h4>
+          Remember, match predictions are just for fun, you control your own
+          destiny!
+          <hr />
           {getMatchDisplays(matches)}
         </Tab>
       </Tabs>
