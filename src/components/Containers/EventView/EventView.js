@@ -183,13 +183,26 @@ export default function EventView() {
     setMatches(clean(rawMatches, year));
   }, [year, rawMatches]);
 
+  function getName(key) {
+    if (key.slice(0, 2) === "qm") {
+      return "Quals " + key.slice(2);
+    } else if (key.slice(0, 2) === "qf") {
+      return "Quarters " + key[2] + " Match " + key[4];
+    } else if (key.slice(0, 2) === "sf") {
+      return "Semis " + key[2] + " Match " + key[4];
+    } else if (key[0] === "f") {
+      return "Finals " + key[1] + " Match " + key[3];
+    }
+    return key;
+  }
+
   function getMatchDisplays(matches) {
     return matches.map(function (x, i) {
       return (
         <Container key={i}>
           <br />
           <Row>
-            <Col className={styles.outline}>{x["match"]}</Col>
+            <Col className={styles.outline}>{getName(x["match"])}</Col>
             <Col className={styles.outline}>
               <Row className={styles.red}>
                 <Col>
@@ -244,6 +257,7 @@ export default function EventView() {
       );
     });
   }
+
   return (
     <Paper className={styles.body}>
       <h2>
