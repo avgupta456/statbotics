@@ -24,3 +24,11 @@
 .link {
   color: #3d5ec4;
 }
+
+.correct {
+  background-color: #90ee90;
+}
+
+.incorrect {
+  background-color: #cd5c5c;
+}

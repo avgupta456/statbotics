@@ -168,12 +168,12 @@ export default function EventView() {
             blue_score: x["blue_score"],
             red_score: x["red_score"],
             winner: x["winner"],
-            pred_winner: x["mix_winner"],
+            winner_pred: x["mix_winner"],
             win_prob:
               x["mix_winner"] === "red"
                 ? x["mix_win_prob"]
                 : 1 - x["mix_win_prob"],
-            correct: x["winner"] === x["mix_winner"],
+            winner_correct: x["winner"] === x["mix_winner"],
           };
         });
       }
@@ -263,8 +263,68 @@ export default function EventView() {
               </Row>
             </Col>
             <Col xs="4" className={styles.outline}>
-              <Row>{x["winner_pred"] === "red" ? "Red" : "Blue"}</Row>
-              <Row>{parseInt(x["win_prob"] * 100) + "%"}</Row>
+              <Row>
+                <Col
+                  className={
+                    x["winner_correct"] ? styles.correct : styles.incorrect
+                  }
+                >
+                  {x["winner_pred"] === "red" ? "Red" : "Blue"}
+                </Col>
+                {year >= 2016 ? (
+                  <Col
+                    className={
+                      x["red_rp_1_correct"] ? styles.correct : styles.incorrect
+                    }
+                  >
+                    {parseInt(x["red_rp_1_prob"] * 100) + "%"}
+                  </Col>
+                ) : (
+                  ""
+                )}
+                {year >= 2016 ? (
+                  <Col
+                    className={
+                      x["red_rp_2_correct"] ? styles.correct : styles.incorrect
+                    }
+                  >
+                    {parseInt(x["red_rp_2_prob"] * 100) + "%"}
+                  </Col>
+                ) : (
+                  ""
+                )}
+              </Row>
+              <Row>
+                <Col
+                  className={
+                    x["winner_correct"] ? styles.correct : styles.incorrect
+                  }
+                >
+                  {parseInt(x["win_prob"] * 100) + "%"}
+                </Col>
+                {year >= 2016 ? (
+                  <Col
+                    className={
+                      x["blue_rp_1_correct"] ? styles.correct : styles.incorrect
+                    }
+                  >
+                    {parseInt(x["blue_rp_1_prob"] * 100) + "%"}
+                  </Col>
+                ) : (
+                  ""
+                )}
+                {year >= 2016 ? (
+                  <Col
+                    className={
+                      x["blue_rp_2_correct"] ? styles.correct : styles.incorrect
+                    }
+                  >
+                    {parseInt(x["blue_rp_2_prob"] * 100) + "%"}
+                  </Col>
+                ) : (
+                  ""
+                )}
+              </Row>
             </Col>
           </Row>
         </Container>
@@ -289,8 +349,8 @@ export default function EventView() {
             <Col xs="4" className={styles.outline}>
               <Row>
                 <Col>Winner Pred</Col>
-                <Col>RP 1 Pred</Col>
-                <Col>RP 2 Pred</Col>
+                {year >= 2016 ? <Col>RP 1 Pred</Col> : ""}
+                {year >= 2016 ? <Col>RP 2 Pred</Col> : ""}
               </Row>
             </Col>
           </Row>
