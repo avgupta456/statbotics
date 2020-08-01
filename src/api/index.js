@@ -36,3 +36,5 @@ export { fetchTeamEvents } from "./team_event_api.js";
 export { fetchMatches_Event } from "./match_api.js";
 
 export { fetchRankings } from "./tba_api.js";
+
+export { fetchSimFull } from "./event_sim_api.js";
