@@ -20,6 +20,7 @@ export default function EventView() {
 
   const [event, setEvent] = useState("");
   const [year, setYear] = useState("");
+  const [acc, setAcc] = useState(0);
 
   const [rankings, setRankings] = useState([]);
   const [rawStats, setRawStats] = useState([]);
@@ -55,6 +56,7 @@ export default function EventView() {
       const event = await fetchEvent(key);
       setEvent(event["name"]);
       setYear(event["year"]);
+      setAcc(event["mix_acc"]);
     };
 
     const getTeamEvents = async (key) => {
@@ -408,6 +410,8 @@ export default function EventView() {
           <h4>Match Predictions</h4>
           Remember, match predictions are just for fun, you control your own
           destiny!
+          <br />
+          <b>Accuracy: {parseInt(acc * 1000) / 10}%</b>
           <hr />
           <div className={styles.matches}>{getMatchDisplays(matches)}</div>
         </Tab>
