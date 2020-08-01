@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { Paper, Typography } from "@material-ui/core";
+import { Paper, Typography, Slider } from "@material-ui/core";
 import { Tabs, Tab, Container, Row, Col, Button } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
@@ -32,6 +32,8 @@ export default function EventView() {
   const [rawMatches, setRawMatches] = useState([]);
   const [matches, setMatches] = useState([]);
 
+  const [quals, setQuals] = useState(50);
+  const [index, setIndex] = useState(0);
   const [simState, setSimState] = useState("None");
   const [rawSim, setRawSim] = useState([]);
 
@@ -127,8 +129,12 @@ export default function EventView() {
   useEffect(() => {
     function clean(rawMatches, year) {
       let cleanMatches;
+      let quals = 0;
       if (year >= 2016) {
         cleanMatches = rawMatches.map(function (x, i) {
+          if (x["playoff"] === 0) {
+            quals += 1;
+          }
           return {
             match: x["key"].split("_")[1],
             playoff: x["playoff"],
@@ -171,6 +177,9 @@ export default function EventView() {
         });
       } else {
         cleanMatches = rawMatches.map(function (x, i) {
+          if (x["playoff"] === 0) {
+            quals += 1;
+          }
           return {
             match: x["key"].split("_")[1],
             playoff: x["playoff"],
@@ -188,6 +197,7 @@ export default function EventView() {
           };
         });
       }
+      setQuals(quals);
       return cleanMatches;
     }
 
@@ -207,6 +217,10 @@ export default function EventView() {
     }
     console.log(rawSim);
   }, [key, simState, rawSim]);
+
+  const handleSliderChange = (event, newIndex) => {
+    setIndex(newIndex);
+  };
 
   const simClick = () => {
     setSimState("Await");
@@ -437,6 +451,16 @@ export default function EventView() {
           >
             <Typography>Load Simulation</Typography>
           </Button>
+          <Slider
+            defaultValue={0}
+            onChangeCommitted={handleSliderChange}
+            valueLabelDisplay="auto"
+            marks
+            step={1}
+            min={0}
+            max={quals}
+          />
+          {index}
         </Tab>
         <Tab eventKey="Matches" title="Matches">
           <br />
