@@ -1,3 +1,4 @@
+from collections import defaultdict
 import statistics
 
 from helper import utils
@@ -70,8 +71,10 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
 
         print("Matches")
         acc, mse, count = 0, 0, 0  # for statistics
+        event_stats = defaultdict(lambda: [0, 0, 0])  # acc, mse, count
         matches = SQL_Read.getMatches_year(year=year)
         for match in sorted(matches):
+            event_id = match.event_id
             red, blue = match.getTeams()
             red_elo_pre, blue_elo_pre = {}, {}
             team_match_ids[match.id] = {}
@@ -119,11 +122,16 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
 
             # update stats
             win_probs = {"red": 1, "blue": 0, "draw": 0.5}
-            mse += (win_probs[match.winner] - match.elo_win_prob) ** 2
+            error = (win_probs[match.winner] - match.elo_win_prob) ** 2
+            event_stats[event_id][1] += error  # mse
+            mse += error
+
             if match.winner == match.elo_winner:
+                event_stats[event_id][0] += 1  # acc
                 acc += 1
 
             count += 1
+            event_stats[event_id][2] += 1  # count
             if count % 1000 == 0:
                 SQL_Write.add()
 
@@ -169,6 +177,7 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         print("Events")
         # all event elo stats based on pre-playoff elos
         for event in SQL_Read.getEvents_year(year=year):
+            event_id = event.id
             elos = []
             for team_event in event.team_events:
                 elos.append(team_event.elo_pre_playoffs)
@@ -178,6 +187,9 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
             event.elo_top24 = -1 if len(elos) < 24 else elos[23]
             event.elo_mean = round(sum(elos) / len(elos), 2)
             event.elo_sd = round(statistics.pstdev(elos), 2)
+            acc, mse, count = event_stats[event_id]
+            event.elo_acc = round(acc / count, 4)
+            event.elo_mse = round(mse / count, 4)
 
         print("Team Years")
         year_elos, count = [], 0
