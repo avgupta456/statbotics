@@ -76,6 +76,16 @@ class Event(models.Model):
     opr_top8 = models.FloatField()  # ex: 12.34
     opr_top24 = models.FloatField()  # ex: 12.34
     opr_mean = models.FloatField()  # ex: 12.34
+    elo_acc = models.FloatField()  # ex: 0.7010
+    elo_mse = models.FloatField()  # ex: 0.1234
+    opr_acc = models.FloatField()  # ex: 0.7010
+    opr_mse = models.FloatField()  # ex: 0.1234
+    mix_acc = models.FloatField()  # ex: 0.7010
+    mix_mse = models.FloatField()  # ex: 0.1234
+    rp1_acc = models.FloatField()  # ex: 0.7010
+    rp1_mse = models.FloatField()  # ex: 0.1234
+    rp2_acc = models.FloatField()  # ex: 0.7010
+    rp2_mse = models.FloatField()  # ex: 0.1234
 
 
 class TeamEvent(models.Model):

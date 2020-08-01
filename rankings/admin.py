@@ -77,6 +77,16 @@ class EventAdmin(admin.ModelAdmin):
         "opr_top8",
         "opr_top24",
         "opr_mean",
+        "elo_acc",
+        "elo_mse",
+        "opr_acc",
+        "opr_mse",
+        "mix_acc",
+        "mix_mse",
+        "rp1_acc",
+        "rp1_mse",
+        "rp2_acc",
+        "rp2_mse",
     )
 
 

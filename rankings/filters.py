@@ -176,6 +176,16 @@ class EventFilterSet(django_filters.FilterSet):
             ("opr_top8", "opr_top8"),
             ("opr_top24", "opr_top24"),
             ("opr_mean", "opr_mean"),
+            ("elo_acc", "elo_acc"),
+            ("elo_mse", "elo_mse"),
+            ("opr_acc", "opr_acc"),
+            ("opr_mse", "opr_mse"),
+            ("mix_acc", "mix_acc"),
+            ("mix_mse", "mix_mse"),
+            ("rp1_acc", "rp1_acc"),
+            ("rp1_mse", "rp1_mse"),
+            ("rp2_acc", "rp2_acc"),
+            ("rp2_mse", "rp2_mse"),
         )
     )
 
