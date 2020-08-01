@@ -21,6 +21,8 @@ export default function EventView() {
 
   const [event, setEvent] = useState("");
   const [year, setYear] = useState("");
+  const [teams, setTeams] = useState([]);
+
   const [acc, setAcc] = useState(0);
   const [rp1Acc, setRp1Acc] = useState(0);
   const [rp2Acc, setRp2Acc] = useState(0);
@@ -36,6 +38,7 @@ export default function EventView() {
   const [index, setIndex] = useState(0);
   const [simState, setSimState] = useState("None");
   const [rawSim, setRawSim] = useState([]);
+  const [cleanSim, setCleanSim] = useState([]);
 
   //column name, searchable, visible, link, hint
   const columns = [
@@ -51,12 +54,25 @@ export default function EventView() {
     ["ILS 2", false, true, false, ""],
   ];
 
+  //column name, searchable, visible, link, hint
   const oldColumns = [
     ["Number", true, true, false, ""],
     ["Name", true, true, true, "Click name for details"],
     ["Rank", false, true, false, "Rank at Event"],
     ["Elo", false, true, false, "Current Elo"],
     ["OPR", false, true, false, "Current OPR"],
+  ];
+
+  //column name, searchable, visible, link, hint
+  const simColumns = [
+    ["Predicted Rank", false, true, false, ""],
+    ["Number", true, true, false, ""],
+    ["Name", true, true, true, "Click name for details"],
+    ["Mean Rank", false, true, false, ""],
+    ["Highest Rank", false, true, false, ""],
+    ["5% Rank", false, true, false, ""],
+    ["95% Rank", false, true, false, ""],
+    ["Lowest Rank", false, true, false, ""],
   ];
 
   useEffect(() => {
@@ -93,8 +109,10 @@ export default function EventView() {
   useEffect(() => {
     function clean(rawStats, rankings) {
       let cleanStats;
+      let teams = [];
       if (year >= 2016) {
         cleanStats = rawStats.map(function (x, i) {
+          teams.push({ team: x["team"], name: x["name"] });
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
@@ -110,6 +128,7 @@ export default function EventView() {
         });
       } else {
         cleanStats = rawStats.map(function (x, i) {
+          teams.push([x["team"], x["name"]]);
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
@@ -119,6 +138,7 @@ export default function EventView() {
           ];
         });
       }
+      setTeams(teams);
       cleanStats.sort((a, b) => a[2] - b[2]);
       return cleanStats;
     }
@@ -210,20 +230,37 @@ export default function EventView() {
       setRawSim(sim);
     };
 
-    if (simState === "None") {
-    } else if (simState === "Await") {
-      setSimState("PreProcess");
+    if (simState === "Await") {
       getSim(key);
+      setSimState("Done");
     }
-    console.log(rawSim);
-  }, [key, simState, rawSim]);
-
-  const handleSliderChange = (event, newIndex) => {
-    setIndex(newIndex);
-  };
+  }, [key, simState]);
 
   const simClick = () => {
     setSimState("Await");
+  };
+
+  useEffect(() => {
+    let clean = teams.map(function (x, i) {
+      let mean_rank = "";
+      try {
+        mean_rank = rawSim[index]["sim_ranks"][x["team"]];
+      } catch (e) {}
+      return [
+        x["team"],
+        "./../teams/" + x["team"] + "|" + x["name"],
+        mean_rank,
+      ];
+    });
+    clean.sort((a, b) => a[2] - b[2]);
+    clean = clean.map(function (x, i) {
+      return [i + 1, x[0], x[1], x[2]];
+    });
+    setCleanSim(clean);
+  }, [rawSim, teams, index]);
+
+  const handleSliderChange = (event, newIndex) => {
+    setIndex(newIndex);
   };
 
   function getName(key) {
@@ -460,7 +497,11 @@ export default function EventView() {
             min={0}
             max={quals}
           />
-          {index}
+          <ReactTable
+            title="Current Statistics"
+            columns={simColumns}
+            data={cleanSim}
+          />
         </Tab>
         <Tab eventKey="Matches" title="Matches">
           <br />
