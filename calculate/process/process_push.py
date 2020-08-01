@@ -191,6 +191,16 @@ def getEvents(SQL_Read):
                 round(event.opr_top8, 2),
                 round(event.opr_top24, 2),
                 round(event.opr_mean, 2),
+                event.elo_acc,
+                event.elo_mse,
+                event.opr_acc,
+                event.opr_mse,
+                event.mix_acc,
+                event.mix_mse,
+                event.rp1_acc,
+                event.rp1_mse,
+                event.rp2_acc,
+                event.rp2_mse,
             ]
         )
 
@@ -213,6 +223,16 @@ def getEvents(SQL_Read):
             "opr_top8",
             "opr_top24",
             "opr_mean",
+            "elo_acc",
+            "elo_mse",
+            "opr_acc",
+            "opr_mse",
+            "mix_acc",
+            "mix_mse",
+            "rp1_acc",
+            "rp1_mse",
+            "rp2_acc",
+            "rp2_mse",
         ],
     )
 
