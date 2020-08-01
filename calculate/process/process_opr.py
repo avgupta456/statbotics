@@ -10,6 +10,7 @@ def process_event(event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
     oprs, ils = opr_model.opr_v2(event, quals, playoffs)
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
+
     for i, m in enumerate(sorted(quals) + sorted(playoffs)):
         red, blue = m.getRed(), m.getBlue()
         red_oprs, blue_oprs = [], []
@@ -40,18 +41,21 @@ def process_event(event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
         count += 1
 
         """ILS STATS"""
+        if year >= 2016 and m.playoff == 0:
+            # only predict on quals as elims don't have Ranking Points
+            m.red_ils_1_sum = red_ils_1_sum = sum([clean(ils[r][ind][0]) for r in red])
+            m.red_ils_2_sum = red_ils_2_sum = sum([clean(ils[r][ind][1]) for r in red])
+            m.blue_ils_1_sum = blue_ils_1_sum = sum(
+                [clean(ils[b][ind][0]) for b in blue]
+            )
+            m.blue_ils_2_sum = blue_ils_2_sum = sum(
+                [clean(ils[b][ind][1]) for b in blue]
+            )
+            m.red_rp_1_prob = red_rp_1_prob = logistic(red_ils_1_sum)
+            m.red_rp_2_prob = red_rp_2_prob = logistic(red_ils_2_sum)
+            m.blue_rp_1_prob = blue_rp_1_prob = logistic(blue_ils_1_sum)
+            m.blue_rp_2_prob = blue_rp_2_prob = logistic(blue_ils_2_sum)
 
-        m.red_ils_1_sum = red_ils_1_sum = sum([clean(ils[r][ind][0]) for r in red])
-        m.red_ils_2_sum = red_ils_2_sum = sum([clean(ils[r][ind][1]) for r in red])
-        m.blue_ils_1_sum = blue_ils_1_sum = sum([clean(ils[b][ind][0]) for b in blue])
-        m.blue_ils_2_sum = blue_ils_2_sum = sum([clean(ils[b][ind][1]) for b in blue])
-        m.red_rp_1_prob = red_rp_1_prob = logistic(red_ils_1_sum)
-        m.red_rp_2_prob = red_rp_2_prob = logistic(red_ils_2_sum)
-        m.blue_rp_1_prob = blue_rp_1_prob = logistic(blue_ils_1_sum)
-        m.blue_rp_2_prob = blue_rp_2_prob = logistic(blue_ils_2_sum)
-
-        # only predict on quals as elims don't have Ranking Points
-        if m.playoff == 0:
             red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
             blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
             if int(red_rp_1_prob + 0.5) == red_rp_1:
@@ -70,6 +74,18 @@ def process_event(event, quals, playoffs, year, sd_score, team_ils_1, team_ils_2
 
     opr_stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
     rp_stats = [rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
+
+    event.opr_acc = round(opr_acc / count, 4)
+    event.opr_mse = round(opr_mse / count, 4)
+    event.mix_acc = round(mix_acc / count, 4)
+    event.mix_mse = round(mix_mse / count, 4)
+
+    if count_rp > 0:
+        event.rp1_acc = round(rp1_acc / count_rp, 4)
+        event.rp1_mse = round(rp1_mse / count_rp, 4)
+        event.rp2_acc = round(rp2_acc / count_rp, 4)
+        event.rp2_mse = round(rp2_mse / count_rp, 4)
+
     stats = opr_stats + rp_stats
 
     return oprs, ils, team_ils_1, team_ils_2, stats
