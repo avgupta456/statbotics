@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { Paper, Typography, Slider } from "@material-ui/core";
-import { Tabs, Tab, Container, Row, Col, Button } from "react-bootstrap";
+import { Tabs, Tab, Button } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
+import { default as getMatchDisplays } from "./MatchDisplay";
 
 import {
   fetchEvent,
@@ -152,7 +153,7 @@ export default function EventView() {
       let quals = 0;
       if (year >= 2016) {
         cleanMatches = rawMatches.map(function (x, i) {
-          if (x["playoff"] === 0) {
+          if (x["key"].split("_")[1].slice(0, 2) === "qm") {
             quals += 1;
           }
           return {
@@ -197,7 +198,7 @@ export default function EventView() {
         });
       } else {
         cleanMatches = rawMatches.map(function (x, i) {
-          if (x["playoff"] === 0) {
+          if (x["key"].split("_")[1].slice(0, 2) === "qm") {
             quals += 1;
           }
           return {
@@ -263,221 +264,11 @@ export default function EventView() {
     setIndex(newIndex);
   };
 
-  function getName(key) {
-    if (key.slice(0, 2) === "qm") {
-      return "Quals " + key.slice(2);
-    } else if (key.slice(0, 2) === "qf") {
-      return "Quarters " + key[2] + " Match " + key[4];
-    } else if (key.slice(0, 2) === "sf") {
-      return "Semis " + key[2] + " Match " + key[4];
-    } else if (key[0] === "f") {
-      return "Finals " + key[1] + " Match " + key[3];
-    }
-    return key;
-  }
-
-  function getMatchDisplays(matches) {
-    const match_display = matches.map(function (x, i) {
+  function simTab() {
+    if (quals === 0) {
+      return <Tab eventKey="simulation" title="Simulation" disabled></Tab>;
+    } else {
       return (
-        <Container className={styles.container} key={i}>
-          <Row>
-            <Col xs="2" className={styles.outline}>
-              <b>{getName(x["match"])}</b>
-            </Col>
-            <Col xs="6" className={styles.outline}>
-              <Row className={styles.red}>
-                {x["red"].map(function (y, i) {
-                  return (
-                    <Col key={i}>
-                      <a
-                        className={styles.link}
-                        href={`./../teams/${x["red"][i]}`}
-                        children={
-                          x["winner"] === "red" ? (
-                            <b>{x["red"][i]}</b>
-                          ) : (
-                            x["red"][i]
-                          )
-                        }
-                      />
-                    </Col>
-                  );
-                })}
-                <Col>
-                  {x["winner"] === "red" ? (
-                    <b>{x["red_score"]}</b>
-                  ) : (
-                    x["red_score"]
-                  )}
-                  {x["red_rp_1"] === 1 ? <sup>●</sup> : ""}
-                  {x["red_rp_2"] === 1 ? <sup>●</sup> : ""}
-                </Col>
-              </Row>
-              <Row className={styles.blue}>
-                {x["blue"].map(function (y, i) {
-                  return (
-                    <Col key={i}>
-                      <a
-                        className={styles.link}
-                        href={`./../teams/${x["blue"][i]}`}
-                        children={
-                          x["winner"] === "blue" ? (
-                            <b>{x["blue"][i]}</b>
-                          ) : (
-                            x["blue"][i]
-                          )
-                        }
-                      />
-                    </Col>
-                  );
-                })}
-                <Col>
-                  {x["winner"] === "blue" ? (
-                    <b>{x["blue_score"]}</b>
-                  ) : (
-                    x["blue_score"]
-                  )}
-                  {x["blue_rp_1"] === 1 ? <sup>●</sup> : ""}
-                  {x["blue_rp_2"] === 1 ? <sup>●</sup> : ""}
-                </Col>
-              </Row>
-            </Col>
-            <Col xs="4" className={styles.outline}>
-              <Row>
-                <Col
-                  className={
-                    x["winner_correct"] ? styles.correct : styles.incorrect
-                  }
-                >
-                  {x["winner_pred"] === "red" ? "Red" : "Blue"}
-                </Col>
-                {year >= 2016 ? (
-                  <Col
-                    className={
-                      x["playoff"]
-                        ? styles.none
-                        : x["red_rp_1_correct"]
-                        ? styles.correct
-                        : styles.incorrect
-                    }
-                  >
-                    {x["playoff"]
-                      ? "-"
-                      : parseInt(x["red_rp_1_prob"] * 100) + "%"}
-                  </Col>
-                ) : (
-                  ""
-                )}
-                {year >= 2016 ? (
-                  <Col
-                    className={
-                      x["playoff"]
-                        ? styles.none
-                        : x["red_rp_2_correct"]
-                        ? styles.correct
-                        : styles.incorrect
-                    }
-                  >
-                    {x["playoff"]
-                      ? "-"
-                      : parseInt(x["red_rp_2_prob"] * 100) + "%"}
-                  </Col>
-                ) : (
-                  ""
-                )}
-              </Row>
-              <Row>
-                <Col
-                  className={
-                    x["winner_correct"] ? styles.correct : styles.incorrect
-                  }
-                >
-                  {parseInt(x["win_prob"] * 100) + "%"}
-                </Col>
-                {year >= 2016 ? (
-                  <Col
-                    className={
-                      x["playoff"]
-                        ? styles.none
-                        : x["blue_rp_1_correct"]
-                        ? styles.correct
-                        : styles.incorrect
-                    }
-                  >
-                    {x["playoff"]
-                      ? "-"
-                      : parseInt(x["blue_rp_1_prob"] * 100) + "%"}
-                  </Col>
-                ) : (
-                  ""
-                )}
-                {year >= 2016 ? (
-                  <Col
-                    className={
-                      x["playoff"]
-                        ? styles.none
-                        : x["blue_rp_2_correct"]
-                        ? styles.correct
-                        : styles.incorrect
-                    }
-                  >
-                    {x["playoff"]
-                      ? "-"
-                      : parseInt(x["blue_rp_2_prob"] * 100) + "%"}
-                  </Col>
-                ) : (
-                  ""
-                )}
-              </Row>
-            </Col>
-          </Row>
-        </Container>
-      );
-    });
-
-    return (
-      <div>
-        <Container className={styles.container} key={-1}>
-          <Row>
-            <Col xs="2" className={styles.outline}>
-              Match Number
-            </Col>
-            <Col xs="6" className={styles.outline}>
-              <Row>
-                <Col>Team 1</Col>
-                <Col>Team 2</Col>
-                <Col>Team 3</Col>
-                <Col>Score</Col>
-              </Row>
-            </Col>
-            <Col xs="4" className={styles.outline}>
-              <Row>
-                <Col>Winner Pred</Col>
-                {year >= 2016 ? <Col>RP 1 Pred</Col> : ""}
-                {year >= 2016 ? <Col>RP 2 Pred</Col> : ""}
-              </Row>
-            </Col>
-          </Row>
-        </Container>
-        {match_display}
-      </div>
-    );
-  }
-
-  return (
-    <Paper className={styles.body}>
-      <h2>
-        {year} {event}
-      </h2>
-      <br />
-      <Tabs defaultActiveKey="insights" id="tab">
-        <Tab eventKey="insights" title="Insights">
-          <ReactTable
-            title="Current Statistics"
-            columns={year >= 2016 ? columns : oldColumns}
-            data={stats}
-          />
-        </Tab>
         <Tab eventKey="simulation" title="Simulation">
           <br />
           <h4>Simulation</h4>
@@ -498,11 +289,30 @@ export default function EventView() {
             max={quals}
           />
           <ReactTable
-            title="Current Statistics"
+            title="Ranking Simulation"
             columns={simColumns}
             data={cleanSim}
           />
         </Tab>
+      );
+    }
+  }
+
+  return (
+    <Paper className={styles.body}>
+      <h2>
+        {year} {event}
+      </h2>
+      <br />
+      <Tabs defaultActiveKey="insights" id="tab">
+        <Tab eventKey="insights" title="Insights">
+          <ReactTable
+            title="Current Statistics"
+            columns={year >= 2016 ? columns : oldColumns}
+            data={stats}
+          />
+        </Tab>
+        {simTab()}
         <Tab eventKey="Matches" title="Matches">
           <br />
           <h4>Match Predictions</h4>
@@ -522,7 +332,9 @@ export default function EventView() {
             </div>
           )}
           <hr />
-          <div className={styles.matches}>{getMatchDisplays(matches)}</div>
+          <div className={styles.matches}>
+            {getMatchDisplays(year, matches)}
+          </div>
         </Tab>
       </Tabs>
     </Paper>
