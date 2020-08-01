@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { Paper, Typography } from "@material-ui/core";
-import { Tabs, Tab, Container, Row, Col } from "react-bootstrap";
+import { Tabs, Tab, Container, Row, Col, Button } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
 
@@ -11,6 +11,7 @@ import {
   fetchTeamEvents,
   fetchRankings,
   fetchMatches_Event,
+  fetchSimFull,
 } from "./../../../api";
 
 import styles from "./EventView.module.css";
@@ -21,6 +22,8 @@ export default function EventView() {
   const [event, setEvent] = useState("");
   const [year, setYear] = useState("");
   const [acc, setAcc] = useState(0);
+  const [rp1Acc, setRp1Acc] = useState(0);
+  const [rp2Acc, setRp2Acc] = useState(0);
 
   const [rankings, setRankings] = useState([]);
   const [rawStats, setRawStats] = useState([]);
@@ -28,6 +31,9 @@ export default function EventView() {
 
   const [rawMatches, setRawMatches] = useState([]);
   const [matches, setMatches] = useState([]);
+
+  const [simState, setSimState] = useState("None");
+  const [rawSim, setRawSim] = useState([]);
 
   //column name, searchable, visible, link, hint
   const columns = [
@@ -57,6 +63,8 @@ export default function EventView() {
       setEvent(event["name"]);
       setYear(event["year"]);
       setAcc(event["mix_acc"]);
+      setRp1Acc(event["rp1_acc"]);
+      setRp2Acc(event["rp2_acc"]);
     };
 
     const getTeamEvents = async (key) => {
@@ -120,7 +128,6 @@ export default function EventView() {
     function clean(rawMatches, year) {
       let cleanMatches;
       if (year >= 2016) {
-        console.log("HERE");
         cleanMatches = rawMatches.map(function (x, i) {
           return {
             match: x["key"].split("_")[1],
@@ -186,6 +193,24 @@ export default function EventView() {
 
     setMatches(clean(rawMatches, year));
   }, [year, rawMatches]);
+
+  useEffect(() => {
+    const getSim = async (key) => {
+      const sim = await fetchSimFull(key);
+      setRawSim(sim);
+    };
+
+    if (simState === "None") {
+    } else if (simState === "Await") {
+      setSimState("PreProcess");
+      getSim(key);
+    }
+    console.log(rawSim);
+  }, [key, simState, rawSim]);
+
+  const simClick = () => {
+    setSimState("Await");
+  };
 
   function getName(key) {
     if (key.slice(0, 2) === "qm") {
@@ -403,15 +428,34 @@ export default function EventView() {
           />
         </Tab>
         <Tab eventKey="simulation" title="Simulation">
-          <Typography>Simulation</Typography>
+          <br />
+          <h4>Simulation</h4>
+          <Button
+            variant="outline-dark"
+            onClick={() => simClick()}
+            className={styles.button}
+          >
+            <Typography>Load Simulation</Typography>
+          </Button>
         </Tab>
         <Tab eventKey="Matches" title="Matches">
           <br />
           <h4>Match Predictions</h4>
           Remember, match predictions are just for fun, you control your own
           destiny!
-          <br />
-          <b>Accuracy: {parseInt(acc * 1000) / 10}%</b>
+          {year >= 2016 ? (
+            <div>
+              <b>Accuracy: {parseInt(acc * 1000) / 10}%</b>
+              <br />
+              <b>RP1 Accuracy: {parseInt(rp1Acc * 1000) / 10}%</b>
+              <br />
+              <b>RP2 Accuracy: {parseInt(rp2Acc * 1000) / 10}%</b>
+            </div>
+          ) : (
+            <div>
+              <b>Accuracy: {parseInt(acc * 1000) / 10}%</b>
+            </div>
+          )}
           <hr />
           <div className={styles.matches}>{getMatchDisplays(matches)}</div>
         </Tab>
