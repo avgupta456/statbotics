@@ -12,6 +12,7 @@ def getMatchTiebreakers(m, year):
         return [m["red_2"], m["blue_2"]]
     elif year == 2020:
         return [m["red_auto"], m["blue_auto"]]
+    return [m["red_score"], m["blue_score"]]
 
 
 # oprs - score, auto, teleop, 1, 2, endgame, fouls, no_fouls
@@ -28,6 +29,7 @@ def getOPRTiebreakers(oprs, red, blue, year):
         return [red_oprs[4], blue_oprs[4]]
     if year == 2020:
         return [red_oprs[1], blue_oprs[1]]
+    return [red_oprs[0], blue_oprs[0]]
 
 
 def get_tiebreakers(event, year, matches, teams):
