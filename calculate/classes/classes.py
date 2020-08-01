@@ -209,6 +209,21 @@ class Event(Base):
     opr_mean = Column(Float)
     opr_sd = Column(Float)
 
+    """STATS"""
+    elo_acc = Column(Float)
+    elo_mse = Column(Float)
+
+    opr_acc = Column(Float)
+    opr_mse = Column(Float)
+
+    mix_acc = Column(Float)
+    mix_mse = Column(Float)
+
+    rp1_acc = Column(Float)
+    rp1_mse = Column(Float)
+    rp2_acc = Column(Float)
+    rp2_mse = Column(Float)
+
     """SUPER FUNCTIONS"""
 
     def __lt__(self, other):
