@@ -409,7 +409,7 @@ export default function EventView() {
           Remember, match predictions are just for fun, you control your own
           destiny!
           <hr />
-          {getMatchDisplays(matches)}
+          <div className={styles.matches}>{getMatchDisplays(matches)}</div>
         </Tab>
       </Tabs>
     </Paper>

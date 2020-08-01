@@ -3,8 +3,13 @@
   padding: 15px;
 }
 
+.matches {
+  overflow-x: scroll;
+}
+
 .container {
   text-align: center;
+  min-width: 700px;
   border-bottom: 1px solid gray;
 }
 
@@ -29,9 +34,9 @@
 }
 
 .correct {
-  background-color: #90ee90;
+  background-color: #00aa5b90;
 }
 
 .incorrect {
-  background-color: #cd5c5c;
+  background-color: #ec1d2590;
 }
