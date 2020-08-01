@@ -13,7 +13,6 @@ export default function TeamView() {
   let { team } = useParams();
 
   function clean(team, data) {
-    console.log(data);
     return {
       id: team,
       data: data.map(function (x, i) {
