@@ -34,39 +34,43 @@ def getTeamsDict(event_key):
 
 
 def getMatchesDict(event_key):
-    data = Match.objects.values(
-        "key",
-        "winner",
-        "elo_win_prob",
-        "opr_win_prob",
-        "mix_win_prob",
-        "red_rp_1_prob",
-        "red_rp_2_prob",
-        "blue_rp_1_prob",
-        "blue_rp_2_prob",
-        "red_score",
-        "blue_score",
-        "red_rp_1",
-        "red_rp_2",
-        "blue_rp_1",
-        "blue_rp_2",
-        "red_1",
-        "blue_1",
-        "red_2",
-        "blue_2",
-        "red_auto",
-        "blue_auto",
-        "red_teleop",
-        "blue_teleop",
-        "red_endgame",
-        "blue_endgame",
-        "red_fouls",
-        "blue_fouls",
-        "red_no_fouls",
-        "blue_no_fouls",
-        "red",
-        "blue",
-    ).filter(event=event_key, playoff=0)
+    data = (
+        Match.objects.values(
+            "key",
+            "winner",
+            "elo_win_prob",
+            "opr_win_prob",
+            "mix_win_prob",
+            "red_rp_1_prob",
+            "red_rp_2_prob",
+            "blue_rp_1_prob",
+            "blue_rp_2_prob",
+            "red_score",
+            "blue_score",
+            "red_rp_1",
+            "red_rp_2",
+            "blue_rp_1",
+            "blue_rp_2",
+            "red_1",
+            "blue_1",
+            "red_2",
+            "blue_2",
+            "red_auto",
+            "blue_auto",
+            "red_teleop",
+            "blue_teleop",
+            "red_endgame",
+            "blue_endgame",
+            "red_fouls",
+            "blue_fouls",
+            "red_no_fouls",
+            "blue_no_fouls",
+            "red",
+            "blue",
+        )
+        .filter(event=event_key, playoff=0)
+        .order_by("time")
+    )
 
     out = []
     for entry in data:
@@ -77,9 +81,7 @@ def getMatchesDict(event_key):
 
 
 def getTeamMatchesDict(event_key):
-    data = TeamMatch.objects.values("team", "match", "elo").filter(
-        event=event_key
-    )  # noqa 502
+    data = TeamMatch.objects.values("team", "match", "elo").filter(event=event_key)
 
     out = {}
     for entry in data:
