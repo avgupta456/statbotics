@@ -306,8 +306,11 @@ export default function EventView() {
           Using the Elo, OPR, and ILS statistics from a snapshot in time, we can
           simulate the remainder of the event. For each seed index, 100
           simulations are run and analyzed. The first tiebreaker is included
-          from 2016 onwards. The simulation happens live, and may take a few
-          seconds to load. Be patient :)
+          from 2016 onwards.{" "}
+          <b>
+            The simulation happens live, and may take a few seconds to load. Be
+            patient :)
+          </b>
           <hr />
           Simulate from:
           {index === 0 ? " Schedule Release" : ` Qualification Match ${index}`}
