@@ -69,10 +69,10 @@ export default function EventView() {
     ["Number", true, true, false, ""],
     ["Name", true, true, true, "Click name for details"],
     ["Mean Rank", false, true, false, ""],
-    ["Highest Rank", false, true, false, ""],
     ["5% Rank", false, true, false, ""],
+    ["Median Rank", false, true, false, ""],
     ["95% Rank", false, true, false, ""],
-    ["Lowest Rank", false, true, false, ""],
+    ["Mean RPs", false, true, false, ""],
   ];
 
   useEffect(() => {
@@ -235,19 +235,42 @@ export default function EventView() {
 
   useEffect(() => {
     let clean = teams.map(function (x, i) {
-      let mean_rank = "";
+      let rank_mean = "";
+      let rank_5 = "";
+      let rank_median = "";
+      let rank_95 = "";
+      let rps_mean = "";
       try {
-        mean_rank = rawSim[index]["sim_ranks"][x["team"]];
+        rank_mean = rawSim[index]["sim_ranks"][x["team"]];
+        rps_mean = rawSim[index]["mean_rps"][x["team"]];
+        let cum_sum = 0;
+        for (let j = 0; j < teams.length; j++) {
+          let prob = rawSim[index]["sim_rank_probs"][x["team"]][j];
+          cum_sum += prob;
+          if (rank_5 === "" && cum_sum >= 0.05) {
+            rank_5 = j + 1;
+          }
+          if (rank_median === "" && cum_sum >= 0.5) {
+            rank_median = j + 1;
+          }
+          if (rank_95 === "" && cum_sum >= 0.95) {
+            rank_95 = j + 1;
+          }
+        }
       } catch (e) {}
       return [
         x["team"],
         "./../teams/" + x["team"] + "|" + x["name"],
-        mean_rank,
+        rank_mean,
+        rank_5,
+        rank_median,
+        rank_95,
+        rps_mean,
       ];
     });
     clean.sort((a, b) => a[2] - b[2]);
     clean = clean.map(function (x, i) {
-      return [i + 1, x[0], x[1], x[2]];
+      return [i + 1, x[0], x[1], x[2], x[3], x[4], x[5], x[6]];
     });
     setCleanSim(clean);
   }, [rawSim, teams, index]);
