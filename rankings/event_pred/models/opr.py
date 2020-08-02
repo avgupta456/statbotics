@@ -164,12 +164,8 @@ def get_ILS(quals, teams, team_stats, team_matches):
 
     for i, m in enumerate(quals):
         red, blue = m["red"], m["blue"]
-        adjust_red_1 = (
-            m["red_rp_1"] - logistic(sum([out[r][i][0] for r in red]))
-        ) / 10
-        adjust_red_2 = (
-            m["red_rp_2"] - logistic(sum([out[r][i][1] for r in red]))
-        ) / 10
+        adjust_red_1 = (m["red_rp_1"] - logistic(sum([out[r][i][0] for r in red]))) / 10
+        adjust_red_2 = (m["red_rp_2"] - logistic(sum([out[r][i][1] for r in red]))) / 10
         adjust_blue_1 = (
             m["blue_rp_1"] - logistic(sum([out[b][i][0] for b in blue]))
         ) / 10
@@ -189,9 +185,7 @@ def get_ILS(quals, teams, team_stats, team_matches):
     return out
 
 
-def get_oprs(
-    year, quals, playoffs, teams, team_stats, team_matches, mean_score
-):
+def get_oprs(year, quals, playoffs, teams, team_stats, team_matches, mean_score):
     OPRs = get_ixOPR(
         year,
         quals,

@@ -106,15 +106,11 @@ def __meanSim__(index, matches, teams, team_matches, preds, rps, ties):
 
 
 def meanSim(year, event_key, i):
-    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(
-        event_key, year
-    )
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)
     for t in teams:  # gets specific stats based on current index
         oprs[t], ils[t], elos[t] = oprs[t][i], ils[t][i], elos[t][i]
     team_matches, preds = getPreds(i, matches, oprs, elos, ils, year, sd_score)
-    rps_out, ties_out = __meanSim__(
-        i, matches, teams, team_matches, preds, rps, ties
-    )
+    rps_out, ties_out = __meanSim__(i, matches, teams, team_matches, preds, rps, ties)
 
     return {"mean_rps": rps_out, "mean_tiebreakers": ties_out}
 
@@ -153,9 +149,7 @@ def singleSim(index, matches, teams, team_matches, preds, rps, mean_ties):
     return rps_out, ranks_out
 
 
-def __indexSim__(
-    index, iterations, teams, matches, team_matches, preds, rps, ties
-):
+def __indexSim__(index, iterations, teams, matches, team_matches, preds, rps, ties):
     mean_rps, mean_ties = __meanSim__(
         index, matches, teams, team_matches, preds, rps, ties
     )
@@ -178,16 +172,12 @@ def __indexSim__(
     for team in teams:
         avg_rps[team] /= iterations
         ranks[team] = [round(freq / iterations, 2) for freq in ranks[team]]
-        avg_ranks[team] = round(
-            1 + sum([i * ranks[team][i] for i in range(T)]), 2
-        )
+        avg_ranks[team] = round(1 + sum([i * ranks[team][i] for i in range(T)]), 2)
     return mean_rps, mean_ties, avg_rps, avg_ranks, ranks
 
 
 def indexSim(year, event_key, i, iterations):
-    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(
-        event_key, year
-    )
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)
     for t in teams:  # gets specific stats based on current index
         oprs[t], ils[t], elos[t] = oprs[t][i], ils[t][i], elos[t][i]
     team_matches, preds = getPreds(i, matches, oprs, elos, ils, year, sd_score)
