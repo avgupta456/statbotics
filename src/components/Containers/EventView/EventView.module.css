@@ -1,3 +1,10 @@
+.center {
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .body {
   margin: 2%;
   padding: 15px;
