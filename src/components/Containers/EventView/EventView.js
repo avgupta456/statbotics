@@ -117,7 +117,7 @@ export default function EventView() {
     };
 
     const getSim = async (key) => {
-      const sim = await fetchSimFull(key);
+      const sim = await fetchSimFull(key, 0);
       setRawSim(sim);
     };
 
@@ -150,7 +150,7 @@ export default function EventView() {
         });
       } else {
         cleanStats = rawStats.map(function (x, i) {
-          temp_teams.push([x["team"], x["name"]]);
+          temp_teams.push({ team: x["team"], name: x["name"] });
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
@@ -303,6 +303,12 @@ export default function EventView() {
         <Tab eventKey="simulation" title="Simulation">
           <br />
           <h4>Simulation</h4>
+          Using the Elo, OPR, and ILS statistics from a snapshot in time, we can
+          simulate the remainder of the event. For each seed index, 100
+          simulations are run and analyzed. The first tiebreaker is included
+          from 2016 onwards. The simulation happens live, and may take a few
+          seconds to load. Be patient :)
+          <hr />
           Simulate from:
           {index === 0 ? " Schedule Release" : ` Qualification Match ${index}`}
           <div className={styles.slider}>
