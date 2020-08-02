@@ -56,7 +56,7 @@ class TeamYear(models.Model):
     ils_2 = models.FloatField()  # ex: 50
 
     class Meta:
-        unique_together = (("year", "team"))
+        unique_together = ("year", "team")
 
 
 class Event(models.Model):
@@ -76,11 +76,22 @@ class Event(models.Model):
     opr_top8 = models.FloatField()  # ex: 12.34
     opr_top24 = models.FloatField()  # ex: 12.34
     opr_mean = models.FloatField()  # ex: 12.34
+    elo_acc = models.FloatField()  # ex: 0.7010
+    elo_mse = models.FloatField()  # ex: 0.1234
+    opr_acc = models.FloatField()  # ex: 0.7010
+    opr_mse = models.FloatField()  # ex: 0.1234
+    mix_acc = models.FloatField()  # ex: 0.7010
+    mix_mse = models.FloatField()  # ex: 0.1234
+    rp1_acc = models.FloatField()  # ex: 0.7010
+    rp1_mse = models.FloatField()  # ex: 0.1234
+    rp2_acc = models.FloatField()  # ex: 0.7010
+    rp2_mse = models.FloatField()  # ex: 0.1234
 
 
 class TeamEvent(models.Model):
     id = models.IntegerField(primary_key=True)
     team = models.IntegerField()  # ex: 5511
+    name = models.CharField(max_length=50)  # ex: Cortechs Robotics
     year = models.IntegerField()  # ex: 2019
     event = models.CharField(max_length=10)  # ex: ncwak
     state = models.CharField(max_length=10)  # ex: NC
@@ -110,7 +121,7 @@ class TeamEvent(models.Model):
     ils_2_end = models.FloatField()  # ex: 0.52
 
     class Meta:
-        unique_together = (("year", "event", "team"))
+        unique_together = ("year", "event", "team")
 
 
 class Match(models.Model):
@@ -173,4 +184,4 @@ class TeamMatch(models.Model):
     ils_2 = models.FloatField()  # ex: 0.51
 
     class Meta:
-        unique_together = (("year", "event", "match", "team"))
+        unique_together = ("year", "event", "match", "team")

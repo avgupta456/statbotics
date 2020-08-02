@@ -1,37 +1,34 @@
+from backend.settings import CACHE_TIME
 from django.contrib.auth.models import User
-
-from rest_framework import viewsets, permissions
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from rankings.filters import (
+    EventFilterSet,
+    MatchFilterSet,
+    TeamEventFilterSet,
+    TeamFilterSet,
+    TeamMatchFilterSet,
+    TeamYearFilterSet,
+    YearFilterSet,
+)
+from rankings.models import Event as EventModel
+from rankings.models import Match as MatchModel
+from rankings.models import Team as TeamModel
+from rankings.models import TeamEvent as TeamEventModel
+from rankings.models import TeamMatch as TeamMatchModel
+from rankings.models import TeamYear as TeamYearModel
+from rankings.models import Year as YearModel
 from rankings.serializers import (
-    YearSerializer,
+    EventSerializer,
+    MatchSerializer,
+    TeamEventSerializer,
+    TeamMatchSerializer,
     TeamSerializer,
     TeamYearSerializer,
-    EventSerializer,
-    TeamEventSerializer,
-    MatchSerializer,
-    TeamMatchSerializer,
-    UserSerializer
+    UserSerializer,
+    YearSerializer,
 )
-
-from rankings.filters import (
-    YearFilterSet,
-    TeamFilterSet,
-    TeamYearFilterSet,
-    EventFilterSet,
-    TeamEventFilterSet,
-    MatchFilterSet,
-    TeamMatchFilterSet,
-)
-
-from rankings.models import (
-    Year as YearModel,
-    Team as TeamModel,
-    TeamYear as TeamYearModel,
-    Event as EventModel,
-    TeamEvent as TeamEventModel,
-    Match as MatchModel,
-    TeamMatch as TeamMatchModel,
-)
+from rest_framework import permissions, viewsets
 
 
 class YearView(viewsets.ModelViewSet):
@@ -41,6 +38,10 @@ class YearView(viewsets.ModelViewSet):
     queryset = YearModel.objects.all()
     filterset_class = YearFilterSet
 
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
 
 class TeamView(viewsets.ModelViewSet):
     swagger_schema = None
@@ -48,6 +49,10 @@ class TeamView(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     queryset = TeamModel.objects.all()
     filterset_class = TeamFilterSet
+
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class TeamYearView(viewsets.ModelViewSet):
@@ -57,6 +62,10 @@ class TeamYearView(viewsets.ModelViewSet):
     queryset = TeamYearModel.objects.all()
     filterset_class = TeamYearFilterSet
 
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
 
 class EventView(viewsets.ModelViewSet):
     swagger_schema = None
@@ -64,6 +73,10 @@ class EventView(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = EventModel.objects.all()
     filterset_class = EventFilterSet
+
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class TeamEventView(viewsets.ModelViewSet):
@@ -73,6 +86,10 @@ class TeamEventView(viewsets.ModelViewSet):
     queryset = TeamEventModel.objects.all()
     filterset_class = TeamEventFilterSet
 
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
 
 class MatchView(viewsets.ModelViewSet):
     swagger_schema = None
@@ -80,6 +97,10 @@ class MatchView(viewsets.ModelViewSet):
     serializer_class = MatchSerializer
     queryset = MatchModel.objects.all()
     filterset_class = MatchFilterSet
+
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class TeamMatchView(viewsets.ModelViewSet):
@@ -89,8 +110,16 @@ class TeamMatchView(viewsets.ModelViewSet):
     queryset = TeamMatchModel.objects.all()
     filterset_class = TeamMatchFilterSet
 
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
 
 class UserView(viewsets.ModelViewSet):
     swagger_schema = None
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+    @method_decorator(cache_page(CACHE_TIME))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)

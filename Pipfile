@@ -6,21 +6,16 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-asgiref = "==3.2.7"
-django-cors-headers = "==3.2.1"
-djangorestframework = "==3.11.0"
-pytz = "==2020.1"
-sqlparse = "==0.3.1"
-Django = "==3.0.7"
-PyMySQL = "==0.9.3"
-pytest-django = "*"
-django-filter = "*"
+django = "*"
 google-cloud-datastore = "*"
-flake8 = "*"
+pymysql = "*"
+django-filter = "*"
+djangorestframework = "*"
+django-cors-headers = "*"
 drf-yasg = "*"
-sqlalchemy = "*"
 numpy = "*"
 scipy = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.7"

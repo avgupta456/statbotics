@@ -12,6 +12,7 @@ def getMatchTiebreakers(m, year):
         return [m["red_2"], m["blue_2"]]
     elif year == 2020:
         return [m["red_auto"], m["blue_auto"]]
+    return [m["red_score"], m["blue_score"]]
 
 
 # oprs - score, auto, teleop, 1, 2, endgame, fouls, no_fouls
@@ -28,12 +29,13 @@ def getOPRTiebreakers(oprs, red, blue, year):
         return [red_oprs[4], blue_oprs[4]]
     if year == 2020:
         return [red_oprs[1], blue_oprs[1]]
+    return [red_oprs[0], blue_oprs[0]]
 
 
 def get_tiebreakers(year, matches, teams):
     out = {}
     for team in teams:
-        out[team] = np.zeros(shape=(len(matches)+1, 1))
+        out[team] = np.zeros(shape=(len(matches) + 1, 1))
         out[team][0] = 0
 
     for i, m in enumerate(matches):
@@ -41,16 +43,10 @@ def get_tiebreakers(year, matches, teams):
         red_tie, blue_tie = getMatchTiebreakers(m, year)
 
         for t in teams:
-<<<<<<< Updated upstream
-            out[t][i+1] = out[t][i]
-            if t in red: out[t][i+1][0] += red_tie  # noqa 702
-            elif t in blue: out[t][i+1][0] += blue_tie  # noqa 702
-=======
             out[t][i + 1] = out[t][i]
             if t in red:
                 out[t][i + 1][0] += red_tie
             elif t in blue:
                 out[t][i + 1][0] += blue_tie
->>>>>>> Stashed changes
 
     return out
