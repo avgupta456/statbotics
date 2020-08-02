@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { Paper, Typography, Slider } from "@material-ui/core";
-import { Tabs, Tab, Button } from "react-bootstrap";
+import { Paper, Slider } from "@material-ui/core";
+import { Tabs, Tab } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
 import { default as getMatchDisplays } from "./MatchDisplay";
@@ -37,7 +37,6 @@ export default function EventView() {
 
   const [quals, setQuals] = useState(50);
   const [index, setIndex] = useState(0);
-  const [simState, setSimState] = useState("None");
   const [rawSim, setRawSim] = useState([]);
   const [cleanSim, setCleanSim] = useState([]);
 
@@ -101,19 +100,25 @@ export default function EventView() {
       setRawMatches(matches);
     };
 
+    const getSim = async (key) => {
+      const sim = await fetchSimFull(key);
+      setRawSim(sim);
+    };
+
     getEvent(key);
     getTeamEvents(key);
     getRankings(key);
     getMatches(key);
+    getSim(key);
   }, [key]);
 
   useEffect(() => {
     function clean(rawStats, rankings) {
       let cleanStats;
-      let teams = [];
+      let temp_teams = [];
       if (year >= 2016) {
         cleanStats = rawStats.map(function (x, i) {
-          teams.push({ team: x["team"], name: x["name"] });
+          temp_teams.push({ team: x["team"], name: x["name"] });
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
@@ -129,7 +134,7 @@ export default function EventView() {
         });
       } else {
         cleanStats = rawStats.map(function (x, i) {
-          teams.push([x["team"], x["name"]]);
+          temp_teams.push([x["team"], x["name"]]);
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
@@ -139,7 +144,7 @@ export default function EventView() {
           ];
         });
       }
-      setTeams(teams);
+      setTeams(temp_teams);
       cleanStats.sort((a, b) => a[2] - b[2]);
       return cleanStats;
     }
@@ -149,6 +154,9 @@ export default function EventView() {
 
   useEffect(() => {
     function clean(rawMatches, year) {
+      if (!rawMatches) {
+        return [];
+      }
       let cleanMatches;
       let quals = 0;
       if (year >= 2016) {
@@ -226,22 +234,6 @@ export default function EventView() {
   }, [year, rawMatches]);
 
   useEffect(() => {
-    const getSim = async (key) => {
-      const sim = await fetchSimFull(key);
-      setRawSim(sim);
-    };
-
-    if (simState === "Await") {
-      getSim(key);
-      setSimState("Done");
-    }
-  }, [key, simState]);
-
-  const simClick = () => {
-    setSimState("Await");
-  };
-
-  useEffect(() => {
     let clean = teams.map(function (x, i) {
       let mean_rank = "";
       try {
@@ -272,22 +264,19 @@ export default function EventView() {
         <Tab eventKey="simulation" title="Simulation">
           <br />
           <h4>Simulation</h4>
-          <Button
-            variant="outline-dark"
-            onClick={() => simClick()}
-            className={styles.button}
-          >
-            <Typography>Load Simulation</Typography>
-          </Button>
-          <Slider
-            defaultValue={0}
-            onChangeCommitted={handleSliderChange}
-            valueLabelDisplay="auto"
-            marks
-            step={1}
-            min={0}
-            max={quals}
-          />
+          Simulate from:
+          {index === 0 ? " Schedule Release" : ` Qualification Match ${index}`}
+          <div className={styles.slider}>
+            <Slider
+              defaultValue={0}
+              onChangeCommitted={handleSliderChange}
+              valueLabelDisplay="auto"
+              marks
+              step={1}
+              min={0}
+              max={quals}
+            />
+          </div>
           <ReactTable
             title="Ranking Simulation"
             columns={simColumns}
