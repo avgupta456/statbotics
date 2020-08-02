@@ -81,7 +81,11 @@ def getMatchesDict(event_key):
 
 
 def getTeamMatchesDict(event_key):
-    data = TeamMatch.objects.values("team", "match", "elo").filter(event=event_key)
+    data = (
+        TeamMatch.objects.values("team", "match", "elo")
+        .filter(event=event_key, playoff=0)
+        .order_by("time")
+    )
 
     out = {}
     for entry in data:
