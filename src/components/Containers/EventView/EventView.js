@@ -6,6 +6,7 @@ import { Tabs, Tab } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
 import { default as getMatchDisplays } from "./MatchDisplay";
+import { default as BarChart } from "./Bar";
 
 import RingLoader from "react-spinners/RingLoader";
 
@@ -43,6 +44,8 @@ export default function EventView() {
   const [index, setIndex] = useState(0);
   const [rawSim, setRawSim] = useState([]);
   const [cleanSim, setCleanSim] = useState([]);
+
+  const [oprs, setOPRs] = useState([]);
 
   //column name, searchable, visible, link, hint
   const columns = [
@@ -299,6 +302,22 @@ export default function EventView() {
     setIndex(newIndex);
   };
 
+  useEffect(() => {
+    let temp_stats = stats;
+    temp_stats.sort((a, b) => b[4] - a[4]);
+    temp_stats = temp_stats.slice(0, 15);
+    const oprs = temp_stats.map(function (x, i) {
+      return {
+        team: x[0],
+        "Auto OPR": x[5],
+        "Teleop OPR": x[6],
+        "Endgame OPR": x[7],
+      };
+    });
+    console.log(oprs);
+    setOPRs(oprs);
+  }, [stats]);
+
   function simTab() {
     if (quals === 0) {
       return <Tab eventKey="simulation" title="Simulation" disabled></Tab>;
@@ -384,6 +403,13 @@ export default function EventView() {
           <div className={styles.matches}>
             {getMatchDisplays(year, matches)}
           </div>
+        </Tab>
+        <Tab eventKey="Figures" title="Figures">
+          <br />
+          <h4>Figures!</h4>
+          <hr />
+          <h5>Top 15 OPRs</h5>
+          <BarChart data={oprs} />
         </Tab>
       </Tabs>
     </Paper>

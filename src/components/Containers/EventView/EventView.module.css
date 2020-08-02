@@ -52,3 +52,9 @@
   margin: auto;
   padding: 0% 3%;
 }
+
+.gray {
+  background-color: #e9ecef;
+  padding: 10px;
+  height: 500px;
+}
