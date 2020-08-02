@@ -7,6 +7,8 @@ import { Tabs, Tab } from "react-bootstrap";
 import { ReactTable } from "./../../../components";
 import { default as getMatchDisplays } from "./MatchDisplay";
 
+import RingLoader from "react-spinners/RingLoader";
+
 import {
   fetchEvent,
   fetchTeamEvents,
@@ -19,6 +21,8 @@ import styles from "./EventView.module.css";
 
 export default function EventView() {
   let { key } = useParams();
+
+  const [done, setDone] = useState(false);
 
   const [event, setEvent] = useState("");
   const [year, setYear] = useState("");
@@ -74,6 +78,18 @@ export default function EventView() {
     ["95% Rank", false, true, false, ""],
     ["Mean RPs", false, true, false, ""],
   ];
+
+  useEffect(() => {
+    if (
+      year > 2000 &&
+      event.length > 0 &&
+      rawStats.length > 0 &&
+      rankings.length !== 0 &&
+      matches.length > 0
+    ) {
+      setDone(true);
+    }
+  }, [year, event, rawStats, rankings, matches]);
 
   useEffect(() => {
     const getEvent = async (key) => {
@@ -308,6 +324,14 @@ export default function EventView() {
         </Tab>
       );
     }
+  }
+
+  if (done === false) {
+    return (
+      <div className={styles.center}>
+        <RingLoader size={150} color={"#123abc"} loading={true} />
+      </div>
+    );
   }
 
   return (
