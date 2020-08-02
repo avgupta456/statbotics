@@ -16,3 +16,20 @@ export const fetchSimFull = async (key, retries) => {
     }
   }
 };
+
+export const fetchSimIndex = async (key, index, retries) => {
+  try {
+    const sim = await axios.get(
+      `${url}/event_sim/event/${key}/index/${index}/full`
+    );
+    return sim.data;
+  } catch (error) {
+    console.log(error);
+    console.log(retries);
+    if (retries > 1) {
+      return [];
+    } else {
+      return fetchSimIndex(key, index, retries + 1);
+    }
+  }
+};

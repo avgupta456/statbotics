@@ -14,7 +14,7 @@ import {
   fetchTeamEvents,
   fetchRankings,
   fetchMatches_Event,
-  fetchSimFull,
+  fetchSimIndex,
 } from "./../../../api";
 
 import styles from "./EventView.module.css";
@@ -116,17 +116,21 @@ export default function EventView() {
       setRawMatches(matches);
     };
 
-    const getSim = async (key) => {
-      const sim = await fetchSimFull(key, 0);
-      setRawSim(sim);
-    };
-
     getEvent(key);
     getTeamEvents(key);
     getRankings(key);
     getMatches(key);
-    getSim(key);
   }, [key]);
+
+  useEffect(() => {
+    const getSim = async (key, index) => {
+      const sim = await fetchSimIndex(key, index, 0);
+      setRawSim(sim);
+    };
+
+    setRawSim([]);
+    getSim(key, index);
+  }, [key, index]);
 
   useEffect(() => {
     function clean(rawStats, rankings) {
@@ -257,20 +261,20 @@ export default function EventView() {
       let rank_95 = "";
       let rps_mean = "";
       try {
-        rank_mean = rawSim[index]["sim_ranks"][x["team"]];
-        rps_mean = rawSim[index]["mean_rps"][x["team"]];
+        rank_mean = rawSim["sim_ranks"][x["team"]];
+        rps_mean = rawSim["mean_rps"][x["team"]];
         let cum_sum = 0;
-        for (let j = 0; j < teams.length; j++) {
-          let prob = rawSim[index]["sim_rank_probs"][x["team"]][j];
+        for (let j = 1; j <= teams.length; j++) {
+          let prob = rawSim["sim_rank_probs"][x["team"]][j];
           cum_sum += prob;
           if (rank_5 === "" && cum_sum >= 0.05) {
-            rank_5 = j + 1;
+            rank_5 = j;
           }
           if (rank_median === "" && cum_sum >= 0.5) {
-            rank_median = j + 1;
+            rank_median = j;
           }
           if (rank_95 === "" && cum_sum >= 0.95) {
-            rank_95 = j + 1;
+            rank_95 = j;
           }
         }
       } catch (e) {}

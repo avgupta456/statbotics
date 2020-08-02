@@ -1,5 +1,5 @@
-export const url = "https://backend.statbotics.io/api";
-//export const url = 'http://localhost:8000/api';
+//export const url = "https://backend.statbotics.io/api";
+export const url = "http://localhost:8000/api";
 
 export {
   fetchTeams_Simple,
@@ -37,4 +37,4 @@ export { fetchMatches_Event } from "./match_api.js";
 
 export { fetchRankings } from "./tba_api.js";
 
-export { fetchSimFull } from "./event_sim_api.js";
+export { fetchSimFull, fetchSimIndex } from "./event_sim_api.js";
