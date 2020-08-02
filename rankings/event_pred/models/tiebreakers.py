@@ -41,8 +41,16 @@ def get_tiebreakers(year, matches, teams):
         red_tie, blue_tie = getMatchTiebreakers(m, year)
 
         for t in teams:
+<<<<<<< Updated upstream
             out[t][i+1] = out[t][i]
             if t in red: out[t][i+1][0] += red_tie  # noqa 702
             elif t in blue: out[t][i+1][0] += blue_tie  # noqa 702
+=======
+            out[t][i + 1] = out[t][i]
+            if t in red:
+                out[t][i + 1][0] += red_tie
+            elif t in blue:
+                out[t][i + 1][0] += blue_tie
+>>>>>>> Stashed changes
 
     return out

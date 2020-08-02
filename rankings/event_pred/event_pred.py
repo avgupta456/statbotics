@@ -100,11 +100,23 @@ def __meanSim__(index, matches, teams, team_matches, preds, rps, ties):
 
 
 def meanSim(year, event_key, i):
+<<<<<<< Updated upstream
     teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)  # noqa 502
     for t in teams:  # gets specific stats based on current index
         oprs[t], ils[t], elos[t] = oprs[t][i], ils[t][i], elos[t][i]
     team_matches, preds = getPreds(i, matches, oprs, elos, ils, year, sd_score)
     rps_out, ties_out = __meanSim__(i, matches, teams, team_matches, preds, rps, ties)  # noqa 502
+=======
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(
+        event_key, year
+    )
+    for t in teams:  # gets specific stats based on current index
+        oprs[t], ils[t], elos[t] = oprs[t][i], ils[t][i], elos[t][i]
+    team_matches, preds = getPreds(i, matches, oprs, elos, ils, year, sd_score)
+    rps_out, ties_out = __meanSim__(
+        i, matches, teams, team_matches, preds, rps, ties
+    )
+>>>>>>> Stashed changes
     return {"mean_rps": rps_out, "mean_tiebreakers": ties_out}
 
 
@@ -116,6 +128,7 @@ def singleSim(index, matches, teams, team_matches, preds, rps, mean_ties):
     for i in range(index, len(matches)):
         red, blue = team_matches[i]
         red_rps, blue_rps = 0, 0
+<<<<<<< Updated upstream
         if preds[i][2] > random.uniform(0, 1): red_rps += 2  # noqa 702
         else: blue_rps += 2  # noqa 702
         if preds[i][3] > random.uniform(0, 1): red_rps += 1  # noqa 702
@@ -133,6 +146,40 @@ def singleSim(index, matches, teams, team_matches, preds, rps, mean_ties):
 
 def __indexSim__(index, iterations, teams, matches, team_matches, preds, rps, ties):  # noqa 502
     mean_rps, mean_ties = __meanSim__(index, matches, teams, team_matches, preds, rps, ties)  # noqa 502
+=======
+        if preds[i][2] > random.uniform(0, 1):
+            red_rps += 2
+        else:
+            blue_rps += 2
+        if preds[i][3] > random.uniform(0, 1):
+            red_rps += 1
+        if preds[i][4] > random.uniform(0, 1):
+            red_rps += 1
+        if preds[i][5] > random.uniform(0, 1):
+            blue_rps += 1
+        if preds[i][6] > random.uniform(0, 1):
+            blue_rps += 1
+        for team in red:
+            rps_out[team] += red_rps
+        for team in blue:
+            rps_out[team] += blue_rps
+
+    for team in teams:
+        ranks_out[team] = [rps_out[team], mean_ties[team]]
+    ranks_out = sorted(ranks_out, key=lambda k: (ranks_out[k][0], ranks_out[k][1]))[
+        ::-1
+    ]
+    ranks_out = {ranks_out[i]: i + 1 for i in range(len(ranks_out))}
+    return rps_out, ranks_out
+
+
+def __indexSim__(
+    index, iterations, teams, matches, team_matches, preds, rps, ties
+):
+    mean_rps, mean_ties = __meanSim__(
+        index, matches, teams, team_matches, preds, rps, ties
+    )
+>>>>>>> Stashed changes
 
     T = len(teams)
     avg_rps, ranks = {}, {}
@@ -150,13 +197,26 @@ def __indexSim__(index, iterations, teams, matches, team_matches, preds, rps, ti
     avg_ranks = {}
     for team in teams:
         avg_rps[team] /= iterations
+<<<<<<< Updated upstream
         ranks[team] = [round(freq/iterations, 2) for freq in ranks[team]]
         avg_ranks[team] = round(1 + sum([i * ranks[team][i] for i in range(T)]), 2)  # noqa 502
+=======
+        ranks[team] = [round(freq / iterations, 2) for freq in ranks[team]]
+        avg_ranks[team] = round(
+            1 + sum([i * ranks[team][i] for i in range(T)]), 2
+        )
+>>>>>>> Stashed changes
     return mean_rps, mean_ties, avg_rps, avg_ranks, ranks
 
 
 def indexSim(year, event_key, i, iterations):
+<<<<<<< Updated upstream
     teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)  # noqa 502
+=======
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(
+        event_key, year
+    )
+>>>>>>> Stashed changes
     for t in teams:  # gets specific stats based on current index
         oprs[t], ils[t], elos[t] = oprs[t][i], ils[t][i], elos[t][i]
     team_matches, preds = getPreds(i, matches, oprs, elos, ils, year, sd_score)
@@ -182,8 +242,17 @@ def quickSim(year, event_key):
     out = {}
     for i in range(len(matches)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
+<<<<<<< Updated upstream
         team_matches, preds = getPreds(i, matches, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
         mean_rps, mean_ties = __meanSim__(i, matches, teams, team_matches, preds, rps, ties)  # noqa 502
+=======
+        team_matches, preds = getPreds(
+            i, matches, oprs_c, elos_c, ils_c, year, sd_score
+        )
+        mean_rps, mean_ties = __meanSim__(
+            i, matches, teams, team_matches, preds, rps, ties
+        )
+>>>>>>> Stashed changes
 
         sub_out = {"mean_rps": {}, "mean_tiebreaker": {}}
         for team in teams:
@@ -200,7 +269,13 @@ def sim(year, event_key, iterations=100):
     out = {}
     for i in range(len(matches)+1):
         oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
+<<<<<<< Updated upstream
         team_matches, preds = getPreds(i, matches, oprs_c, elos_c, ils_c, year, sd_score)  # noqa 502
+=======
+        team_matches, preds = getPreds(
+            i, matches, oprs_c, elos_c, ils_c, year, sd_score
+        )
+>>>>>>> Stashed changes
         mean_rps, mean_ties, avg_rps, avg_ranks, ranks = __indexSim__(
             i, iterations, teams, matches, team_matches, preds, rps, ties)
 

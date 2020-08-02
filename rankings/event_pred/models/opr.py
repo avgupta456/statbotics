@@ -83,8 +83,15 @@ def get_ixOPR(year, quals, playoffs, teams, team_stats, team_matches,
         arr.append([red, blue])
 
     for i in range(M):
+<<<<<<< Updated upstream
         for t in arr[i][0]: input[2*i][t] = 1  # noqa 701
         for t in arr[i][1]: input[2*i+1][t] = 1  # noqa 701
+=======
+        for t in arr[i][0]:
+            input[2 * i][t] = 1
+        for t in arr[i][1]:
+            input[2 * i + 1][t] = 1
+>>>>>>> Stashed changes
         red = [event_func(team_stats[teams[t]]) for t in arr[i][0]]
         blue = [event_func(team_stats[teams[t]]) for t in arr[i][1]]
         output[2*i] = np.sum(red, axis=0)
@@ -117,6 +124,7 @@ def get_ILS(quals, teams, team_stats, team_matches):
 
     out = {}
     for team in teams:
+<<<<<<< Updated upstream
         out[team] = np.zeros(shape=(len(quals)+1, 2))
         out[team][0] = [team_stats[team]["ils_1_start"], team_stats[team]["ils_2_start"]]  # noqa 502
 
@@ -126,6 +134,28 @@ def get_ILS(quals, teams, team_stats, team_matches):
         adjust_red_2 = (m["red_rp_2"] - logistic(sum([out[r][i][1] for r in red]))) / 10  # noqa 502
         adjust_blue_1 = (m["blue_rp_1"] - logistic(sum([out[b][i][0] for b in blue]))) / 10  # noqa 502
         adjust_blue_2 = (m["blue_rp_2"] - logistic(sum([out[b][i][1] for b in blue]))) / 10  # noqa 502
+=======
+        out[team] = np.zeros(shape=(len(quals) + 1, 2))
+        out[team][0] = [
+            team_stats[team]["ils_1_start"],
+            team_stats[team]["ils_2_start"],
+        ]
+
+    for i, m in enumerate(quals):
+        red, blue = m["red"], m["blue"]
+        adjust_red_1 = (
+            m["red_rp_1"] - logistic(sum([out[r][i][0] for r in red]))
+        ) / 10
+        adjust_red_2 = (
+            m["red_rp_2"] - logistic(sum([out[r][i][1] for r in red]))
+        ) / 10
+        adjust_blue_1 = (
+            m["blue_rp_1"] - logistic(sum([out[b][i][0] for b in blue]))
+        ) / 10
+        adjust_blue_2 = (
+            m["blue_rp_2"] - logistic(sum([out[b][i][1] for b in blue]))
+        ) / 10
+>>>>>>> Stashed changes
 
         for t in teams:
             out[t][i+1] = out[t][i]
@@ -139,19 +169,48 @@ def get_ILS(quals, teams, team_stats, team_matches):
     return out
 
 
+<<<<<<< Updated upstream
 def get_oprs(year, quals, playoffs, teams, team_stats, team_matches, mean_score):  # noqa 502
     OPRs = get_ixOPR(year, quals, playoffs, teams, team_stats,
                      team_matches, mean_score, all, event_all)
+=======
+def get_oprs(
+    year, quals, playoffs, teams, team_stats, team_matches, mean_score
+):
+    OPRs = get_ixOPR(
+        year,
+        quals,
+        playoffs,
+        teams,
+        team_stats,
+        team_matches,
+        mean_score,
+        all,
+        event_all,
+    )
+>>>>>>> Stashed changes
     ILS = get_ILS(quals, teams, team_stats, team_matches)
     return OPRs, ILS
 
 
 def win_prob(red, blue, year, sd_score):
+<<<<<<< Updated upstream
     if isinstance(red, list): red = sum(red)  # noqa 701
     if isinstance(red, dict): red = sum(red.values())  # noqa 701
     if isinstance(blue, list): blue = sum(blue)  # noqa 701
     if isinstance(blue, dict): blue = sum(blue.values())  # noqa 701
     return 1/(10**(5/8*(blue-red)/sd_score)+1)
+=======
+    if isinstance(red, list):
+        red = sum(red)
+    if isinstance(red, dict):
+        red = sum(red.values())
+    if isinstance(blue, list):
+        blue = sum(blue)
+    if isinstance(blue, dict):
+        blue = sum(blue.values())
+    return 1 / (10 ** (5 / 8 * (blue - red) / sd_score) + 1)
+>>>>>>> Stashed changes
 
 
 def rp_prob(teams):
