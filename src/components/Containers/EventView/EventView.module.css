@@ -61,6 +61,11 @@
   margin: auto;
 }
 
+.mobileTab {
+  width: 100%;
+  text-align: center;
+}
+
 @media (max-width: 750px) {
   .gray {
     background-color: #e9ecef;

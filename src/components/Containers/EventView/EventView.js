@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Paper, Slider, Typography } from "@material-ui/core";
 import { Tabs, Tab, Col, Row, Button } from "react-bootstrap";
 
-import { ReactTable } from "./../../../components";
+import { ReactTable, useWindowDimensions } from "./../../../components";
 import { default as getMatchDisplays } from "./MatchDisplay";
 import { BarElo, BarOPR, Scatter } from "./Figures";
 
@@ -22,6 +22,8 @@ import styles from "./EventView.module.css";
 
 export default function EventView() {
   let { key } = useParams();
+
+  const { height, width } = useWindowDimensions();
 
   const [done, setDone] = useState(false);
 
@@ -376,7 +378,11 @@ export default function EventView() {
       return <Tab eventKey="simulation" title="Simulation" disabled></Tab>;
     } else {
       return (
-        <Tab eventKey="simulation" title="Simulation">
+        <Tab
+          eventKey="simulation"
+          title="Simulation"
+          tabClassName={width > 600 ? "" : styles.mobileTab}
+        >
           <br />
           <h4>Simulation</h4>
           Using the Elo, OPR, and ILS statistics from a snapshot in time, we can
@@ -464,7 +470,11 @@ export default function EventView() {
       </h2>
       <br />
       <Tabs defaultActiveKey="insights" id="tab">
-        <Tab eventKey="insights" title="Insights">
+        <Tab
+          eventKey="insights"
+          title="Insights"
+          tabClassName={width > 600 ? "" : styles.mobileTab}
+        >
           <ReactTable
             title="Current Statistics"
             columns={year >= 2016 ? columns : oldColumns}
@@ -472,7 +482,11 @@ export default function EventView() {
           />
         </Tab>
         {simTab()}
-        <Tab eventKey="Matches" title="Matches">
+        <Tab
+          eventKey="Matches"
+          title="Matches"
+          tabClassName={width > 600 ? "" : styles.mobileTab}
+        >
           <br />
           <h4>Match Predictions</h4>
           Remember, match predictions are just for fun, you control your own
@@ -495,7 +509,11 @@ export default function EventView() {
             {getMatchDisplays(year, matches)}
           </div>
         </Tab>
-        <Tab eventKey="Figures" title="Figures">
+        <Tab
+          eventKey="Figures"
+          title="Figures"
+          tabClassName={width > 600 ? "" : styles.mobileTab}
+        >
           <br />
           <Row>
             <Col xs="auto" className={styles.slider}>
