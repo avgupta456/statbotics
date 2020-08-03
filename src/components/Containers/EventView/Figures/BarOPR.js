@@ -2,11 +2,11 @@ import React from "react";
 
 import { ResponsiveBar } from "@nivo/bar";
 
-import styles from "./EventView.module.css";
+import styles from "./../EventView.module.css";
 
 class BarChart extends React.Component {
   render() {
-    var data = this.props.data;
+    const data = this.props.data;
 
     return (
       <div className={styles.gray}>
@@ -18,6 +18,11 @@ class BarChart extends React.Component {
           padding={0.3}
           groupMode="stacked"
           colors={{ scheme: "set1" }}
+          tooltip={({ id, value, color }) => (
+            <strong style={{ color }}>
+              {id}: {value}
+            </strong>
+          )}
           defs={[
             {
               id: "dots",
