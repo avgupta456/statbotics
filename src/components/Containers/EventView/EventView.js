@@ -127,6 +127,12 @@ export default function EventView() {
       setRawMatches(matches);
     };
 
+    setDone(false);
+    setEvent("");
+    setRawStats([]);
+    setRankings([]);
+    setRawMatches([]);
+
     getEvent(key);
     getTeamEvents(key);
     getRankings(key);
@@ -281,7 +287,7 @@ export default function EventView() {
     setElimMatches(elims[0]);
     setElimsAcc(elims[1]);
 
-    setQuals(quals.length);
+    setQuals(quals[0].length);
     setNumMatches(quals.length + elims.length);
   }, [year, rawMatches]);
 
@@ -493,6 +499,7 @@ export default function EventView() {
         <a
           href={`https://www.thebluealliance.com/event/${key}`}
           target="_blank"
+          rel="noopener noreferrer"
         >
           (TBA)
         </a>
