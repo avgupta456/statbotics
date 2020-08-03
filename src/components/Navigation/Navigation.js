@@ -13,7 +13,7 @@ export default function Navigation() {
   const history = useHistory();
 
   const routeChange = (team) => {
-    history.push(`/teams/${team.value}`);
+    history.push(`${team.value}`);
     setNavExpanded(false);
   };
 
