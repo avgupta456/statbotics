@@ -41,6 +41,20 @@ class ScatterPlot extends React.Component {
           margin={{ top: 60, right: 40, bottom: 70, left: 90 }}
           xScale={{ type: "linear", min: "auto", max: "auto" }}
           yScale={{ type: "linear", min: "auto", max: "auto" }}
+          tooltip={({ node }) => (
+            <div
+              style={{
+                backgroundColor: "rgb(255, 255, 255)",
+                padding: "8px",
+                borderRadius: "3px",
+              }}
+            >
+              <strong style={{ color: "rgb(55,126,184)" }}>
+                {parseInt(node["id"])}: (Rank: {node["data"]["x"]}, {axis}:{" "}
+                {node["data"]["y"]})
+              </strong>
+            </div>
+          )}
           colors="rgb(55,126,184)"
           blendMode="multiply"
           axisTop={null}

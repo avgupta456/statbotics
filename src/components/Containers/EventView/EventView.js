@@ -434,14 +434,14 @@ export default function EventView() {
       return (
         <div>
           <h5>OPR vs Rank</h5>
-          <Scatter data={scatterOPRs} axis={"OPR Score"} />
+          <Scatter data={scatterOPRs} axis={"OPR"} />
         </div>
       );
     } else {
       return (
         <div>
           <h5>Elo vs Rank</h5>
-          <Scatter data={scatterElos} axis={"Elo Rating"} />
+          <Scatter data={scatterElos} axis={"Elo"} />
         </div>
       );
     }

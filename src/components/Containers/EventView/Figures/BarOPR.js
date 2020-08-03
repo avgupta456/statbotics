@@ -18,9 +18,9 @@ class BarChart extends React.Component {
           padding={0.3}
           groupMode="stacked"
           colors={{ scheme: "set1" }}
-          tooltip={({ id, value, color }) => (
+          tooltip={({ id, data, value, color }) => (
             <strong style={{ color }}>
-              {id}: {value}
+              {data["team"]} ({id}): {value}
             </strong>
           )}
           defs={[
