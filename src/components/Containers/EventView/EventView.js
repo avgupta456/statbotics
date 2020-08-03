@@ -31,7 +31,6 @@ export default function EventView() {
   const [year, setYear] = useState("");
   const [teams, setTeams] = useState([]);
 
-  const [acc, setAcc] = useState(0);
   const [rp1Acc, setRp1Acc] = useState(0);
   const [rp2Acc, setRp2Acc] = useState(0);
 
@@ -40,7 +39,11 @@ export default function EventView() {
   const [stats, setStats] = useState([]);
 
   const [rawMatches, setRawMatches] = useState([]);
-  const [matches, setMatches] = useState([]);
+  const [qualMatches, setQualMatches] = useState([]);
+  const [qualsAcc, setQualsAcc] = useState([]);
+  const [elimMatches, setElimMatches] = useState([]);
+  const [elimsAcc, setElimsAcc] = useState([]);
+  const [numMatches, setNumMatches] = useState([]);
 
   const [quals, setQuals] = useState(50);
   const [index, setIndex] = useState(0);
@@ -94,18 +97,17 @@ export default function EventView() {
       event.length > 0 &&
       rawStats.length > 0 &&
       rankings.length !== 0 &&
-      matches.length > 0
+      numMatches > 0
     ) {
       setDone(true);
     }
-  }, [year, event, rawStats, rankings, matches]);
+  }, [year, event, rawStats, rankings, numMatches]);
 
   useEffect(() => {
     const getEvent = async (key) => {
       const event = await fetchEvent(key);
       setEvent(event["name"]);
       setYear(event["year"]);
-      setAcc(event["mix_acc"]);
       setRp1Acc(event["rp1_acc"]);
       setRp2Acc(event["rp2_acc"]);
     };
@@ -182,16 +184,28 @@ export default function EventView() {
   }, [year, rawStats, rankings]);
 
   useEffect(() => {
-    function clean(rawMatches, year) {
+    function clean(rawMatches, year, playoffs) {
       if (!rawMatches) {
         return [];
       }
+
       let cleanMatches;
-      let quals = 0;
+
+      let tempMatches = [];
+      for (let i = 0; i < rawMatches.length; i++) {
+        let prefix = rawMatches[i]["key"].split("_")[1].slice(0, 2);
+        if ((prefix === "qm" && !playoffs) || (prefix !== "qm" && playoffs)) {
+          tempMatches.push(rawMatches[i]);
+        }
+      }
+
+      let correct = 0;
+      let total = 0;
       if (year >= 2016) {
-        cleanMatches = rawMatches.map(function (x, i) {
-          if (x["key"].split("_")[1].slice(0, 2) === "qm") {
-            quals += 1;
+        cleanMatches = tempMatches.map(function (x, i) {
+          total += 1;
+          if (x["winner"] === x["mix_winner"]) {
+            correct += 1;
           }
           return {
             match: x["key"].split("_")[1],
@@ -234,9 +248,10 @@ export default function EventView() {
           };
         });
       } else {
-        cleanMatches = rawMatches.map(function (x, i) {
-          if (x["key"].split("_")[1].slice(0, 2) === "qm") {
-            quals += 1;
+        cleanMatches = tempMatches.map(function (x, i) {
+          total += 1;
+          if (x["winner"] === x["mix_winner"]) {
+            correct += 1;
           }
           return {
             match: x["key"].split("_")[1],
@@ -255,11 +270,19 @@ export default function EventView() {
           };
         });
       }
-      setQuals(quals);
-      return cleanMatches;
+      return [cleanMatches, correct / total];
     }
 
-    setMatches(clean(rawMatches, year));
+    const quals = clean(rawMatches, year, false);
+    setQualMatches(quals[0]);
+    setQualsAcc(quals[1]);
+
+    const elims = clean(rawMatches, year, true);
+    setElimMatches(elims[0]);
+    setElimsAcc(elims[1]);
+
+    setQuals(quals.length);
+    setNumMatches(quals.length + elims.length);
   }, [year, rawMatches]);
 
   useEffect(() => {
@@ -466,7 +489,13 @@ export default function EventView() {
   return (
     <Paper className={styles.body}>
       <h2>
-        {year} {event}
+        {year} {event}{" "}
+        <a
+          href={`https://www.thebluealliance.com/event/${key}`}
+          target="_blank"
+        >
+          (TBA)
+        </a>
       </h2>
       <br />
       <Tabs defaultActiveKey="insights" id="tab">
@@ -475,40 +504,15 @@ export default function EventView() {
           title="Insights"
           tabClassName={width > 600 ? "" : styles.mobileTab}
         >
+          <br />
+          <h4>Team Statistics</h4>
           <ReactTable
-            title="Current Statistics"
+            title="Team Statistics"
             columns={year >= 2016 ? columns : oldColumns}
             data={stats}
           />
         </Tab>
-        {simTab()}
-        <Tab
-          eventKey="Matches"
-          title="Matches"
-          tabClassName={width > 600 ? "" : styles.mobileTab}
-        >
-          <br />
-          <h4>Match Predictions</h4>
-          Remember, match predictions are just for fun, you control your own
-          destiny!
-          {year >= 2016 ? (
-            <div>
-              <b>Accuracy: {parseInt(acc * 1000) / 10}%</b>
-              <br />
-              <b>RP1 Accuracy: {parseInt(rp1Acc * 1000) / 10}%</b>
-              <br />
-              <b>RP2 Accuracy: {parseInt(rp2Acc * 1000) / 10}%</b>
-            </div>
-          ) : (
-            <div>
-              <b>Accuracy: {parseInt(acc * 1000) / 10}%</b>
-            </div>
-          )}
-          <hr />
-          <div className={styles.matches}>
-            {getMatchDisplays(year, matches)}
-          </div>
-        </Tab>
+
         <Tab
           eventKey="Figures"
           title="Figures"
@@ -536,6 +540,54 @@ export default function EventView() {
           <hr />
           {getScatterChart()}
         </Tab>
+
+        <Tab
+          eventKey="Quals"
+          title="Qual Matches"
+          tabClassName={width > 600 ? "" : styles.mobileTab}
+        >
+          <br />
+          <h4>Match Predictions</h4>
+          Remember, match predictions are just for fun, you control your own
+          destiny!
+          {year >= 2016 ? (
+            <div>
+              <p>
+                <b>Accuracy: {parseInt(qualsAcc * 1000) / 10}%</b>
+                &nbsp;| RP1 Accuracy: {parseInt(rp1Acc * 1000) / 10}% &nbsp;|
+                RP2 Accuracy: {parseInt(rp2Acc * 1000) / 10}%
+              </p>
+            </div>
+          ) : (
+            <div>
+              <b>Accuracy: {parseInt(qualsAcc * 1000) / 10}%</b>
+            </div>
+          )}
+          <hr />
+          <div className={styles.matches}>
+            {getMatchDisplays(year, qualMatches)}
+          </div>
+        </Tab>
+
+        <Tab
+          eventKey="Elims"
+          title="Elim Matches"
+          tabClassName={width > 600 ? "" : styles.mobileTab}
+        >
+          <br />
+          <h4>Match Predictions</h4>
+          Remember, match predictions are just for fun, you control your own
+          destiny!
+          <div>
+            <b>Accuracy: {parseInt(elimsAcc * 1000) / 10}%</b>
+          </div>
+          <hr />
+          <div className={styles.matches}>
+            {getMatchDisplays(year, elimMatches)}
+          </div>
+        </Tab>
+
+        {simTab()}
       </Tabs>
     </Paper>
   );

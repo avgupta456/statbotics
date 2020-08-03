@@ -13,7 +13,7 @@ const BestFitLine = ({ data, xScale, yScale }) => {
     return [x.data[0]["x"], x.data[0]["y"]];
   });
 
-  const results = regression.polynomial(points, { order: 2 });
+  const results = regression.logarithmic(points);
 
   const lineGenerator = line()
     .x((x) => xScale(x.data[0]["x"]))
