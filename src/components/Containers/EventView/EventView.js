@@ -308,7 +308,7 @@ export default function EventView() {
 
   useEffect(() => {
     const getBarOPRs = (stats) => {
-      let temp_stats = stats;
+      let temp_stats = stats.slice();
       temp_stats.sort((a, b) => b[4] - a[4]);
       temp_stats = temp_stats.slice(0, 15);
       const oprs = temp_stats.map(function (x, i) {
@@ -323,7 +323,7 @@ export default function EventView() {
     };
 
     const getBarElos = (stats) => {
-      let temp_stats = stats;
+      let temp_stats = stats.slice();
       temp_stats.sort((a, b) => b[3] - a[3]);
       temp_stats = temp_stats.slice(0, 15);
       const elos = temp_stats.map(function (x, i) {
