@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { Paper, Slider } from "@material-ui/core";
-import { Tabs, Tab } from "react-bootstrap";
+import { Paper, Slider, Typography } from "@material-ui/core";
+import { Tabs, Tab, Col, Row, Button } from "react-bootstrap";
 
 import { ReactTable } from "./../../../components";
 import { default as getMatchDisplays } from "./MatchDisplay";
-import { default as BarChart } from "./Bar";
-import { default as ScatterPlot } from "./Scatter";
+import { BarElo, BarOPR, Scatter } from "./Figures";
 
 import RingLoader from "react-spinners/RingLoader";
 
@@ -46,7 +45,10 @@ export default function EventView() {
   const [rawSim, setRawSim] = useState([]);
   const [cleanSim, setCleanSim] = useState([]);
 
+  const [figState, setFigState] = useState("OPR");
   const [barOPRs, setBarOPRs] = useState([]);
+  const [barElos, setBarElos] = useState([]);
+  const [scatterOPRs, setScatterOPRs] = useState([]);
   const [scatterElos, setScatterElos] = useState([]);
 
   //column name, searchable, visible, link, hint
@@ -320,6 +322,29 @@ export default function EventView() {
       setBarOPRs(oprs);
     };
 
+    const getBarElos = (stats) => {
+      let temp_stats = stats;
+      temp_stats.sort((a, b) => b[3] - a[3]);
+      temp_stats = temp_stats.slice(0, 15);
+      const elos = temp_stats.map(function (x, i) {
+        return {
+          team: x[0].toString(),
+          Elo: x[3],
+        };
+      });
+      setBarElos(elos);
+    };
+
+    const getScatterOPRs = (stats) => {
+      const pairs = stats.map(function (x, i) {
+        return {
+          id: x[0].toString(),
+          data: [{ x: x[2], y: x[4] }],
+        };
+      });
+      setScatterOPRs(pairs);
+    };
+
     const getScatterElos = (stats) => {
       const pairs = stats.map(function (x, i) {
         return {
@@ -327,15 +352,24 @@ export default function EventView() {
           data: [{ x: x[2], y: x[3] }],
         };
       });
-      console.log(pairs);
       setScatterElos(pairs);
     };
 
     if (stats.length > 0) {
       getBarOPRs(stats);
+      getBarElos(stats);
+      getScatterOPRs(stats);
       getScatterElos(stats);
     }
   }, [stats]);
+
+  function FigClick() {
+    if (figState === "OPR") {
+      setFigState("Elo");
+    } else {
+      setFigState("OPR");
+    }
+  }
 
   function simTab() {
     if (quals === 0) {
@@ -376,6 +410,44 @@ export default function EventView() {
       );
     }
   }
+
+  function getBarChart() {
+    if (figState === "OPR") {
+      return (
+        <div>
+          <h5>Top 15 OPRs</h5>
+          <BarOPR data={barOPRs} />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h5>Top 15 Elos</h5>
+          <BarElo data={barElos} />
+        </div>
+      );
+    }
+  }
+
+  function getScatterChart() {
+    if (figState === "OPR") {
+      return (
+        <div>
+          <h5>OPR vs Rank</h5>
+          <Scatter data={scatterOPRs} axis={"OPR Score"} />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h5>Elo vs Rank</h5>
+          <Scatter data={scatterElos} axis={"Elo Rating"} />
+        </div>
+      );
+    }
+  }
+
+  //Function Render Below
 
   if (done === false) {
     return (
@@ -425,16 +497,26 @@ export default function EventView() {
         </Tab>
         <Tab eventKey="Figures" title="Figures">
           <br />
-          <h4>Figures!</h4>
+          <Row>
+            <Col xs="auto" className={styles.slider}>
+              <h4>Figures!</h4>
+            </Col>
+            <Col>
+              <Button
+                variant="outline-dark"
+                onClick={() => FigClick()}
+                className={styles.button}
+              >
+                <Typography>
+                  {figState === "OPR" ? "Show Elo" : "Show OPR"}
+                </Typography>
+              </Button>
+            </Col>
+          </Row>
           <hr />
-          <h5>Top 15 OPRs</h5>
-          <BarChart
-            data={barOPRs}
-            keys={["Auto OPR", "Teleop OPR", "Endgame OPR"]}
-          />
+          {getBarChart()}
           <hr />
-          <h5>Elo vs Rank</h5>
-          <ScatterPlot data={scatterElos} />
+          {getScatterChart()}
         </Tab>
       </Tabs>
     </Paper>
