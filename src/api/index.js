@@ -20,6 +20,7 @@ export {
 } from "./team_year_api.js";
 
 export {
+  fetchEvents_Simple,
   fetchEvents,
   fetchEvents_byWeek,
   fetchEvents_byCountry,

@@ -5,7 +5,7 @@ import { url } from "./index";
 /*TEAMS API CALLS*/
 
 export const fetchTeams_Simple = async () => {
-  const key = "Teams_Simple";
+  const key = "Search_Teams";
   if (
     localStorage.getItem(key) !== undefined &&
     localStorage.getItem(key) !== null

@@ -4,6 +4,26 @@ import { url } from "./index";
 
 /*EVENT API CALLS*/
 
+export const fetchEvents_Simple = async () => {
+  const key = "Search_Events";
+  if (
+    localStorage.getItem(key) !== undefined &&
+    localStorage.getItem(key) !== null
+  ) {
+    const data = JSON.parse(localStorage.getItem(key));
+    if (data.length > 1000) {
+      return data;
+    }
+  }
+
+  try {
+    var events = await axios.get(`${url}/events`);
+    return events.data;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const fetchEvents = async (year) => {
   try {
     const events = await axios.get(`${url}/events/year/${year}/by/time`);
