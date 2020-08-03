@@ -7,6 +7,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import { ReactTable } from "./../../../components";
 import { default as getMatchDisplays } from "./MatchDisplay";
 import { default as BarChart } from "./Bar";
+import { default as ScatterPlot } from "./Scatter";
 
 import RingLoader from "react-spinners/RingLoader";
 
@@ -45,7 +46,8 @@ export default function EventView() {
   const [rawSim, setRawSim] = useState([]);
   const [cleanSim, setCleanSim] = useState([]);
 
-  const [oprs, setOPRs] = useState([]);
+  const [barOPRs, setBarOPRs] = useState([]);
+  const [scatterElos, setScatterElos] = useState([]);
 
   //column name, searchable, visible, link, hint
   const columns = [
@@ -303,19 +305,36 @@ export default function EventView() {
   };
 
   useEffect(() => {
-    let temp_stats = stats;
-    temp_stats.sort((a, b) => b[4] - a[4]);
-    temp_stats = temp_stats.slice(0, 15);
-    const oprs = temp_stats.map(function (x, i) {
-      return {
-        team: x[0],
-        "Auto OPR": x[5],
-        "Teleop OPR": x[6],
-        "Endgame OPR": x[7],
-      };
-    });
-    console.log(oprs);
-    setOPRs(oprs);
+    const getBarOPRs = (stats) => {
+      let temp_stats = stats;
+      temp_stats.sort((a, b) => b[4] - a[4]);
+      temp_stats = temp_stats.slice(0, 15);
+      const oprs = temp_stats.map(function (x, i) {
+        return {
+          team: x[0].toString(),
+          "Auto OPR": x[5],
+          "Teleop OPR": x[6],
+          "Endgame OPR": x[7],
+        };
+      });
+      setBarOPRs(oprs);
+    };
+
+    const getScatterElos = (stats) => {
+      const pairs = stats.map(function (x, i) {
+        return {
+          id: x[0].toString(),
+          data: [{ x: x[2], y: x[3] }],
+        };
+      });
+      console.log(pairs);
+      setScatterElos(pairs);
+    };
+
+    if (stats.length > 0) {
+      getBarOPRs(stats);
+      getScatterElos(stats);
+    }
   }, [stats]);
 
   function simTab() {
@@ -409,7 +428,13 @@ export default function EventView() {
           <h4>Figures!</h4>
           <hr />
           <h5>Top 15 OPRs</h5>
-          <BarChart data={oprs} />
+          <BarChart
+            data={barOPRs}
+            keys={["Auto OPR", "Teleop OPR", "Endgame OPR"]}
+          />
+          <hr />
+          <h5>Elo vs Rank</h5>
+          <ScatterPlot data={scatterElos} />
         </Tab>
       </Tabs>
     </Paper>
