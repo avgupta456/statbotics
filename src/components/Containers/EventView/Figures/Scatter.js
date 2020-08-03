@@ -5,17 +5,15 @@ import regression from "regression";
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 import { line } from "d3-shape";
 
-import styles from "./EventView.module.css";
+import styles from "./../EventView.module.css";
 
 const BestFitLine = ({ data, xScale, yScale }) => {
   data.sort((a, b) => a.data[0]["x"] - b.data[0]["x"]);
-  console.log(data);
   const points = data.map(function (x, i) {
     return [x.data[0]["x"], x.data[0]["y"]];
   });
 
   const results = regression.polynomial(points, { order: 2 });
-  console.log(results.predict(1));
 
   const lineGenerator = line()
     .x((x) => xScale(x.data[0]["x"]))
@@ -33,13 +31,14 @@ const BestFitLine = ({ data, xScale, yScale }) => {
 
 class ScatterPlot extends React.Component {
   render() {
-    var data = this.props.data;
+    const data = this.props.data;
+    const axis = this.props.axis;
 
     return (
       <div className={styles.gray}>
         <ResponsiveScatterPlot
           data={data}
-          margin={{ top: 60, right: 140, bottom: 70, left: 90 }}
+          margin={{ top: 60, right: 40, bottom: 70, left: 90 }}
           xScale={{ type: "linear", min: "auto", max: "auto" }}
           yScale={{ type: "linear", min: "auto", max: "auto" }}
           colors="rgb(55,126,184)"
@@ -60,7 +59,7 @@ class ScatterPlot extends React.Component {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: "Elo Rating",
+            legend: `${axis}`,
             legendPosition: "middle",
             legendOffset: -60,
           }}
