@@ -52,3 +52,24 @@
   margin: auto;
   padding: 0% 3%;
 }
+
+.gray {
+  background-color: #e9ecef;
+  padding: 10px;
+  height: 500px;
+  width: 85%;
+  margin: auto;
+}
+
+@media (max-width: 750px) {
+  .gray {
+    background-color: #e9ecef;
+    padding: 10px;
+    height: 500px;
+  }
+}
+
+.dropdown {
+  margin: 10px 3px 0px 3px;
+  width: 160px;
+}
