@@ -7,6 +7,7 @@
     "@material-ui/icons": "^4.9.1",
     "@nivo/bar": "^0.62.0",
     "@nivo/line": "^0.61.1",
+    "@nivo/scatterplot": "^0.62.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -24,6 +25,7 @@
     "react-spinners": "^0.9.0",
     "react-typist": "^2.0.5",
     "react-windowed-select": "^2.0.2",
+    "regression": "^2.0.1",
     "styled-components": "^5.1.0",
     "swagger-ui": "^3.26.0"
   },

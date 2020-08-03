@@ -1,10 +1,37 @@
 import React from "react";
 
+import regression from "regression";
+
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
+import { line } from "d3-shape";
 
 import styles from "./EventView.module.css";
 
-class ScatterPlot extends React.component {
+const BestFitLine = ({ data, xScale, yScale }) => {
+  data.sort((a, b) => a.data[0]["x"] - b.data[0]["x"]);
+  console.log(data);
+  const points = data.map(function (x, i) {
+    return [x.data[0]["x"], x.data[0]["y"]];
+  });
+
+  const results = regression.polynomial(points, { order: 2 });
+  console.log(results.predict(1));
+
+  const lineGenerator = line()
+    .x((x) => xScale(x.data[0]["x"]))
+    .y((x) => yScale(results.predict(x.data[0]["x"])[1]));
+
+  return (
+    <path
+      d={lineGenerator(data)}
+      fill="none"
+      stroke={"rgb(76, 175, 74)"}
+      style={{ pointerEvents: "none" }}
+    />
+  );
+};
+
+class ScatterPlot extends React.Component {
   render() {
     var data = this.props.data;
 
@@ -14,14 +41,8 @@ class ScatterPlot extends React.component {
           data={data}
           margin={{ top: 60, right: 140, bottom: 70, left: 90 }}
           xScale={{ type: "linear", min: "auto", max: "auto" }}
-          xFormat={function (e) {
-            return e + " kg";
-          }}
-          yScale={{ type: "linear", min: 0, max: "auto" }}
-          yFormat={function (e) {
-            return e + " cm";
-          }}
-          colors={{ scheme: "set1" }}
+          yScale={{ type: "linear", min: "auto", max: "auto" }}
+          colors="rgb(55,126,184)"
           blendMode="multiply"
           axisTop={null}
           axisRight={null}
@@ -30,7 +51,7 @@ class ScatterPlot extends React.component {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: "weight",
+            legend: "Actual Rank",
             legendPosition: "middle",
             legendOffset: 46,
           }}
@@ -39,13 +60,26 @@ class ScatterPlot extends React.component {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: "size",
+            legend: "Elo Rating",
             legendPosition: "middle",
             legendOffset: -60,
           }}
+          useMesh={false}
           legends={[]}
+          layers={[
+            "grid",
+            "axes",
+            BestFitLine,
+            "nodes",
+            "markers",
+            "mesh",
+            "legends",
+            "annotations",
+          ]}
         />
       </div>
     );
   }
 }
+
+export default ScatterPlot;
