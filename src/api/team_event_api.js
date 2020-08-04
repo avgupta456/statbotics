@@ -23,3 +23,14 @@ export const fetchTeamEvents_Team = async (team) => {
     return error;
   }
 };
+
+export const fetchTeamEvents_TeamYear = async (team, year) => {
+  try {
+    const events = await axios.get(
+      `${url}/team_events/team/${team}/year/${year}/by/time`
+    );
+    return events.data;
+  } catch (error) {
+    return error;
+  }
+};
