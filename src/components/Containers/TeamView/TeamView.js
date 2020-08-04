@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { Paper, Typography } from "@material-ui/core";
+import Select from "react-select";
 
-import { fetchTeam_Years, fetchTeamEvents_Team } from "./../../../api";
+import { fetchTeam_Years, fetchTeamEvents_TeamYear } from "./../../../api";
 import { ReactTable, LineChart } from "./../../";
 
 import styles from "./TeamView.module.css";
+
+import { yearOptions } from "./../../../constants";
 
 export default function TeamView() {
   const [eventData, setEventData] = useState([]);
@@ -19,10 +22,12 @@ export default function TeamView() {
   let { team } = useParams();
   const [name, setName] = useState([]);
 
+  const [year, setYear] = useState(2020);
+
   //column name, searchable, visible, link, hint
   const eventColumns = [
     ["Key", false, true, false, ""],
-    ["Name", false, true, false, ""],
+    ["Name", false, true, true, ""],
     ["Year", false, true, false, ""],
     ["Week", false, true, false, ""],
     ["Record", false, true, false, ""],
@@ -110,13 +115,17 @@ export default function TeamView() {
   function cleanEvent(data) {
     const temp_data = data.reverse();
     return temp_data.map(function (x, i) {
-      let opr = x["opr"];
+      let opr = x["opr_end"];
       if (x["year"] >= 2016) {
         opr = x["opr_no_fouls"];
       }
+      let event_name = x["event_name"];
+      if (event_name.length > 30) {
+        event_name = event_name.slice(0, 27) + "...";
+      }
       return [
         x["event"],
-        "events/" + x["event"] + "|" + x["event_name"],
+        "./../events/" + x["event"] + "|" + event_name,
         x["year"],
         x["week"],
         x["wins"] + "-" + x["losses"] + "-" + x["ties"],
@@ -132,39 +141,63 @@ export default function TeamView() {
       const team_years = await fetchTeam_Years(team);
       setChartData(cleanChart(team, team_years));
       setYearData(cleanYear(team_years));
-    };
-
-    const getTeamEvents = async (team) => {
-      const team_events = await fetchTeamEvents_Team(team);
-      setEventData(cleanEvent(team_events));
+      setYear(team_years[0]["year"]);
     };
 
     getTeamYears(team);
-    getTeamEvents(team);
   }, [team]);
+
+  useEffect(() => {
+    const getTeamEvents = async (team, year) => {
+      const team_events = await fetchTeamEvents_TeamYear(team, year);
+      setEventData(cleanEvent(team_events));
+    };
+
+    getTeamEvents(team, year);
+  }, [team, year]);
+
+  const yearClick = (year) => {
+    setYear(year["value"]);
+  };
+
+  function getTitle() {
+    return (
+      <div className={styles.title}>
+        <div className={styles.title_text}>
+          <Typography variant="h6">{team}:&nbsp;</Typography>
+        </div>
+        <Select
+          className={styles.dropdown}
+          styles={{
+            menu: (provided) => ({ ...provided, zIndex: 9999 }),
+          }}
+          options={yearOptions}
+          onChange={yearClick}
+          value={{ value: `${year}`, label: `${year}` }}
+        />
+        <div className={styles.title_text}>
+          <Typography variant="h6">&nbsp;Events</Typography>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Paper elevation={3} className={styles.body}>
       <Typography variant="h4">
         Team {team} - {name}
       </Typography>
-      <ReactTable
-        title={"Team " + team + ": Recent Events"}
-        columns={eventColumns}
-        data={eventData}
-      />
-      <br />
+      <ReactTable title={getTitle()} columns={eventColumns} data={eventData} />
       <hr />
       <br />
       <ReactTable
-        title={"Team " + team + ": Recent Years"}
+        title=<Typography variant="h6">{team}: Recent Years</Typography>
         columns={yearColumns}
         data={yearData}
       />
-      <br />
       <hr />
       <br />
-      <Typography variant="h6">Team {team} - Elo through Time</Typography>
+      <Typography variant="h6">{team} - Elo through Time</Typography>
       <LineChart data={[chartData]} />
     </Paper>
   );
