@@ -129,3 +129,11 @@ export const weekOptions = [
   { value: 7, label: "Week 7" },
   { value: 8, label: "Week 8" },
 ];
+
+export const ilsMapping = {
+  2016: ["Breach RP", "Capture RP"],
+  2017: ["Rotors RP", "Pressure RP"],
+  2018: ["Auto RP", "Climb RP"],
+  2019: ["Rocket RP", "HAB RP"],
+  2020: ["Shield RP", "Hang RP"],
+};

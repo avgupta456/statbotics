@@ -82,7 +82,7 @@ export default function Navigation() {
             className={styles.navItem}
             href="/docs"
           >
-            Docs
+            API Docs
           </Nav.Link>
         </Nav>
         <NavDropdown.Divider />

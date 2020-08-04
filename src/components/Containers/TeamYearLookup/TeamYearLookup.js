@@ -20,12 +20,15 @@ import {
   canadaOptions,
   districtOptions,
   yearOptions,
+  ilsMapping,
 } from "./../../../constants";
 
 import styles from "./TeamYearLookup.module.css";
 
 export default function TeamLookup() {
   const [year, setYear] = useState(2020);
+  const [ILS1, setILS1] = useState("");
+  const [ILS2, setILS2] = useState("");
 
   const [country, setCountry] = useState("None");
   const [stateProv, setStateProv] = useState("None");
@@ -58,8 +61,8 @@ export default function TeamLookup() {
     ["Auto OPR", false, true, false, ""],
     ["Teleop OPR", false, true, false, ""],
     ["Endgame OPR", false, true, false, ""],
-    ["ILS 1", false, true, false, ""],
-    ["ILS 2", false, true, false, ""],
+    [ILS1, false, true, false, "ILS score (higher is better)"],
+    [ILS2, false, true, false, "ILS score (higher is better)"],
   ];
 
   const OldOPRColumns = [
@@ -145,6 +148,11 @@ export default function TeamLookup() {
     if (showElo) setSortBy("-elo_max");
     else if (year >= 2016) setSortBy("-opr_no_fouls");
     else setSortBy("-opr");
+
+    if (year >= 2016) {
+      setILS1(ilsMapping[year][0]);
+      setILS2(ilsMapping[year][1]);
+    }
 
     if (format === "Teams") {
       getTeams();

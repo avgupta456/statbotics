@@ -17,6 +17,8 @@ import {
   fetchSimIndex,
 } from "./../../../api";
 
+import { ilsMapping } from "./../../../constants";
+
 import styles from "./EventView.module.css";
 
 export default function EventView() {
@@ -28,6 +30,8 @@ export default function EventView() {
 
   const [event, setEvent] = useState("");
   const [year, setYear] = useState("");
+  const [ILS1, setILS1] = useState("");
+  const [ILS2, setILS2] = useState("");
   const [teams, setTeams] = useState([]);
 
   const [rp1Acc, setRp1Acc] = useState(0);
@@ -64,8 +68,8 @@ export default function EventView() {
     ["Auto OPR", false, true, false, ""],
     ["Teleop OPR", false, true, false, ""],
     ["Endgame OPR", false, true, false, ""],
-    ["ILS 1", false, true, false, ""],
-    ["ILS 2", false, true, false, ""],
+    [ILS1, false, true, false, "ILS score (higher is better)"],
+    [ILS2, false, true, false, "ILS score (higher is better)"],
   ];
 
   //column name, searchable, visible, link, hint
@@ -108,6 +112,10 @@ export default function EventView() {
       const event = await fetchEvent(key);
       setEvent(event["name"]);
       setYear(event["year"]);
+      if (event["year"] >= 2016) {
+        setILS1(ilsMapping[event["year"]][0]);
+        setILS2(ilsMapping[event["year"]][1]);
+      }
       setRp1Acc(event["rp1_acc"]);
       setRp2Acc(event["rp2_acc"]);
     };
