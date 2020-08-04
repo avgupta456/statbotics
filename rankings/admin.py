@@ -31,6 +31,10 @@ class TeamAdmin(admin.ModelAdmin):
         "elo_recent",
         "elo_mean",
         "elo_max",
+        "wins",
+        "losses",
+        "ties",
+        "count",
     )
 
 
@@ -57,6 +61,14 @@ class TeamYearAdmin(admin.ModelAdmin):
         "opr_endgame",
         "ils_1",
         "ils_2",
+        "wins",
+        "losses",
+        "ties",
+        "count",
+        "elo_rank",
+        "elo_percentile",
+        "opr_rank",
+        "opr_percentile",
     )
 
 
