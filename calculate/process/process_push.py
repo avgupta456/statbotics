@@ -73,6 +73,11 @@ def getTeams(SQL_Read):
                 round(team.elo_recent),
                 round(team.elo_mean),
                 round(team.elo_max),
+                team.wins,
+                team.losses,
+                team.ties,
+                team.count,
+                team.winrate,
             ]
         )
 
@@ -89,6 +94,11 @@ def getTeams(SQL_Read):
             "elo_recent",
             "elo_mean",
             "elo_max",
+            "wins",
+            "losses",
+            "ties",
+            "count",
+            "winrate",
         ],
     )
 
@@ -129,6 +139,15 @@ def getTeamYears(SQL_Read):
                 round(team_year.opr_no_fouls, 2),
                 round(team_year.ils_1, 2),
                 round(team_year.ils_2, 2),
+                team_year.wins,
+                team_year.losses,
+                team_year.ties,
+                team_year.count,
+                team_year.winrate,
+                team_year.elo_rank,
+                team_year.elo_percentile,
+                team_year.opr_rank,
+                team_year.opr_percentile,
             ]
         )
 
@@ -158,6 +177,15 @@ def getTeamYears(SQL_Read):
             "opr_no_fouls",
             "ils_1",
             "ils_2",
+            "wins",
+            "losses",
+            "ties",
+            "count",
+            "winrate",
+            "elo_rank",
+            "elo_percentile",
+            "opr_rank",
+            "opr_percentile",
         ],
     )
 
@@ -348,19 +376,19 @@ def getMatches(SQL_Read):
                 match.blue_score,
                 match.winner,
                 match.elo_winner,
-                round(match.elo_win_prob, 2),
+                match.elo_win_prob,
                 match.opr_winner,
-                round(match.opr_win_prob, 2),
+                match.opr_win_prob,
                 match.mix_winner,
-                round(match.mix_win_prob, 2),
+                match.mix_win_prob,
                 match.red_rp_1,
-                round(match.red_rp_1_prob, 2),
+                match.red_rp_1_prob,
                 match.red_rp_2,
-                round(match.red_rp_2_prob, 2),
+                match.red_rp_2_prob,
                 match.blue_rp_1,
-                round(match.blue_rp_1_prob, 2),
+                match.blue_rp_1_prob,
                 match.blue_rp_2,
-                round(match.blue_rp_2_prob, 2),
+                match.blue_rp_2_prob,
                 match.red_auto,
                 match.blue_auto,
                 match.red_teleop,
@@ -448,10 +476,10 @@ def getTeamMatches(SQL_Read):
                 team_match.match.playoff,
                 team_match.alliance,
                 team_match.match.time,
-                round(team_match.elo),
-                round(team_match.opr_score, 2),
-                round(team_match.ils_1, 2),
-                round(team_match.ils_2, 2),
+                team_match.elo,
+                team_match.opr_score,
+                team_match.ils_1,
+                team_match.ils_2,
             ]
         )
 
