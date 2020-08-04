@@ -91,6 +91,9 @@ export default function EventView() {
     ["Mean RPs", false, true, false, ""],
   ];
 
+  console.log(height); //to prevent unused var warning
+  console.log(width); //to prevent unused var warning
+
   useEffect(() => {
     if (
       year > 2000 &&
