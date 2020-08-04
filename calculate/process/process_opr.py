@@ -131,6 +131,7 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         ils_2_seed = logistic_inv(year_obj.rp_2_mean / TM)
         team_ils_1, team_ils_2 = {}, {}
         temp = 0
+
         for teamYear in SQL_Read.getTeamYears(year=year):
             num = teamYear.team_id
             prior_opr = prior_opr_global
@@ -266,26 +267,34 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
         for num in team_years:
             # 1771 in 2004 only played in elims shrug
             if num not in team_events:
-                continue
+                team_years.pop(num)
+
+            obj = team_years[num]
             best_event = sorted(team_events[num], key=lambda e: e["opr_end"])[-1]
-            team_years[num].opr_end = best_event["opr_end"]
-            team_years[num].opr_auto = best_event["opr_auto"]
-            team_years[num].opr_teleop = best_event["opr_teleop"]
-            team_years[num].opr_1 = best_event["opr_1"]
-            team_years[num].opr_2 = best_event["opr_2"]
-            team_years[num].opr_endgame = best_event["opr_endgame"]
-            team_years[num].opr_fouls = best_event["opr_fouls"]
-            team_years[num].opr_no_fouls = best_event["opr_no_fouls"]
-            team_years[num].ils_1 = team_ils_1[num]
-            team_years[num].ils_2 = team_ils_2[num]
+            obj.opr_end = best_event["opr_end"]
+            obj.opr_auto = best_event["opr_auto"]
+            obj.opr_teleop = best_event["opr_teleop"]
+            obj.opr_1 = best_event["opr_1"]
+            obj.opr_2 = best_event["opr_2"]
+            obj.opr_endgame = best_event["opr_endgame"]
+            obj.opr_fouls = best_event["opr_fouls"]
+            obj.opr_no_fouls = best_event["opr_no_fouls"]
+            obj.ils_1 = team_ils_1[num]
+            obj.ils_2 = team_ils_2[num]
             oprs.append(best_event["opr_end"])
+
+        oprs.sort(reverse=True)
+        team_year_count = len(oprs)
+        for num in team_years:
+            obj = team_years[num]
+            obj.opr_rank = rank = oprs.index(obj.opr_end) + 1
+            obj.opr_percentile = round(rank / team_year_count, 4)
 
         team_years_all[year] = team_years
         # keeps memory down
         if year - 2 in team_years_all:
             team_years_all.pop(year - 2)
 
-        oprs.sort(reverse=True)
         year_obj = SQL_Read.getYear(year=year)
         year_obj.opr_max = oprs[0]
         year_obj.opr_1p = oprs[round(0.01 * len(oprs))]
