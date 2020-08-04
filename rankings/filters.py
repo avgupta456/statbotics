@@ -112,6 +112,10 @@ class TeamFilterSet(django_filters.FilterSet):
             ("elo_recent", "elo_recent"),
             ("elo_mean", "elo_mean"),
             ("elo_max", "elo_max"),
+            ("wins", "wins"),
+            ("losses", "losses"),
+            ("ties", "ties"),
+            ("winrate", "winrate"),
         )
     )
 
@@ -147,6 +151,14 @@ class TeamYearFilterSet(django_filters.FilterSet):
             ("opr_no_fouls", "opr_no_fouls"),
             ("ils_1", "ils_1"),
             ("ils_2", "ils_2"),
+            ("wins", "wins"),
+            ("losses", "losses"),
+            ("ties", "ties"),
+            ("winrate", "winrate"),
+            ("elo_rank", "elo_rank"),
+            ("elo_percentile", "elo_percentile"),
+            ("opr_rank", "opr_rank"),
+            ("opr_percentile", "opr_percentile"),
         )
     )
 
