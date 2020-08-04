@@ -283,6 +283,7 @@ def getTeamEvents(SQL_Read):
                 team_event.team.name,
                 team_event.year_id,
                 team_event.event.key,
+                team_event.event.name,
                 team_event.event.state,
                 team_event.event.country,
                 team_event.event.district,
@@ -308,6 +309,12 @@ def getTeamEvents(SQL_Read):
                 round(team_event.ils_2_start, 2),
                 round(team_event.ils_1_end, 2),
                 round(team_event.ils_2_end, 2),
+                team_event.wins,
+                team_event.losses,
+                team_event.ties,
+                team_event.count,
+                team_event.winrate,
+                team_event.rank,
             ]
         )
 
@@ -319,6 +326,7 @@ def getTeamEvents(SQL_Read):
             "name",
             "year",
             "event",
+            "event_name",
             "state",
             "country",
             "district",
@@ -344,6 +352,12 @@ def getTeamEvents(SQL_Read):
             "ils_2_start",
             "ils_1_end",
             "ils_2_end",
+            "wins",
+            "losses",
+            "ties",
+            "count",
+            "winrate",
+            "rank",
         ],
     )
 
