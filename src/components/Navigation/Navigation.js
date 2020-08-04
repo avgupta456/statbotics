@@ -91,6 +91,7 @@ export default function Navigation() {
             className={styles.search}
             onChange={routeChange}
             isMulti={false}
+            includeEvents={true}
           />
         </Nav>
       </Navbar.Collapse>

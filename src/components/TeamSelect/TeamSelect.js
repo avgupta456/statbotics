@@ -3,9 +3,15 @@ import React, { useEffect } from "react";
 import WindowedSelect from "react-windowed-select";
 import { fetchTeams_Simple, fetchEvents_Simple } from "./../../api";
 
-export default function TeamSelect({ className, onChange, isMulti }) {
+export default function TeamSelect({
+  className,
+  onChange,
+  isMulti,
+  includeEvents,
+}) {
   const [teams, setTeams] = React.useState([]);
   const [events, setEvents] = React.useState([]);
+  const [text, setText] = React.useState("Search Teams");
   const max_length = 30;
 
   function cleanTeams(teams) {
@@ -50,17 +56,18 @@ export default function TeamSelect({ className, onChange, isMulti }) {
     if (teams.length === 0) {
       getTeams();
     }
-    if (events.length === 0) {
+    if (events.length === 0 && includeEvents) {
       getEvents();
     }
-    console.log(teams);
-    console.log(events);
-    console.log(teams.concat(events));
-  }, [teams, events]);
+
+    if (includeEvents) {
+      setText("Search Teams and Events");
+    }
+  }, [teams, events, includeEvents]);
 
   return (
     <WindowedSelect
-      placeholder={"Search Teams and Events"}
+      placeholder={text}
       className={className}
       isMulti={isMulti}
       onChange={onChange}

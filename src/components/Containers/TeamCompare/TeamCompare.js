@@ -51,6 +51,7 @@ export default function TeamCompare() {
         className={styles.dropdown}
         onChange={teamsClick}
         isMulti={true}
+        includeEvents={false}
       />
       <div className={styles.height}></div>
       <Typography variant="h6">Team Comparison - Elo through Time</Typography>
