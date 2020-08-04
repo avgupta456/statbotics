@@ -13,7 +13,6 @@ import RingLoader from "react-spinners/RingLoader";
 import {
   fetchEvent,
   fetchTeamEvents,
-  fetchRankings,
   fetchMatches_Event,
   fetchSimIndex,
 } from "./../../../api";
@@ -34,7 +33,6 @@ export default function EventView() {
   const [rp1Acc, setRp1Acc] = useState(0);
   const [rp2Acc, setRp2Acc] = useState(0);
 
-  const [rankings, setRankings] = useState([]);
   const [rawStats, setRawStats] = useState([]);
   const [stats, setStats] = useState([]);
 
@@ -99,12 +97,11 @@ export default function EventView() {
       year > 2000 &&
       event.length > 0 &&
       rawStats.length > 0 &&
-      rankings.length !== 0 &&
       numMatches > 0
     ) {
       setDone(true);
     }
-  }, [year, event, rawStats, rankings, numMatches]);
+  }, [year, event, rawStats, numMatches]);
 
   useEffect(() => {
     const getEvent = async (key) => {
@@ -120,11 +117,6 @@ export default function EventView() {
       setRawStats(team_events);
     };
 
-    const getRankings = async (key) => {
-      const rankings = await fetchRankings(key);
-      setRankings(rankings);
-    };
-
     const getMatches = async (key) => {
       const matches = await fetchMatches_Event(key);
       setRawMatches(matches);
@@ -133,12 +125,10 @@ export default function EventView() {
     setDone(false);
     setEvent("");
     setRawStats([]);
-    setRankings([]);
     setRawMatches([]);
 
     getEvent(key);
     getTeamEvents(key);
-    getRankings(key);
     getMatches(key);
   }, [key]);
 
@@ -153,7 +143,7 @@ export default function EventView() {
   }, [key, index]);
 
   useEffect(() => {
-    function clean(rawStats, rankings) {
+    function clean(rawStats) {
       let cleanStats;
       let temp_teams = [];
       if (year >= 2016) {
@@ -162,7 +152,7 @@ export default function EventView() {
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
-            rankings[x["team"]],
+            [x["rank"]],
             x["elo_end"],
             parseInt(x["opr_no_fouls"] * 10) / 10,
             parseInt(x["opr_auto"] * 10) / 10,
@@ -178,7 +168,7 @@ export default function EventView() {
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
-            rankings[x["team"]],
+            [x["rank"]],
             x["elo_end"],
             parseInt(x["opr_end"] * 10) / 10,
           ];
@@ -189,8 +179,8 @@ export default function EventView() {
       return cleanStats;
     }
 
-    setStats(clean(rawStats, rankings));
-  }, [year, rawStats, rankings]);
+    setStats(clean(rawStats));
+  }, [year, rawStats]);
 
   useEffect(() => {
     function clean(rawMatches, year, playoffs) {
