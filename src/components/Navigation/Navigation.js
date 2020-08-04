@@ -47,21 +47,21 @@ export default function Navigation() {
             className={styles.navItem}
             href="/teams"
           >
-            Teams Table
+            Teams
           </Nav.Link>
           <Nav.Link
             onClick={() => setNavExpanded(false)}
             className={styles.navItem}
             href="/years"
           >
-            Years Table
+            Years
           </Nav.Link>
           <Nav.Link
             onClick={() => setNavExpanded(false)}
             className={styles.navItem}
             href="/events"
           >
-            Events Table
+            Events
           </Nav.Link>
           <Nav.Link
             onClick={() => setNavExpanded(false)}
