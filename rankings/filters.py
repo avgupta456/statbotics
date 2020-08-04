@@ -242,6 +242,12 @@ class TeamEventFilterSet(django_filters.FilterSet):
             ("ils_2_start", "ils_2_start"),
             ("ils_1_end", "ils_1_end"),
             ("ils_2_end", "ils_2_end"),
+            ("wins", "wins"),
+            ("losses", "losses"),
+            ("ties", "ties"),
+            ("count", "count"),
+            ("winrate", "winrate"),
+            ("rank", "rank"),
         )
     )
 

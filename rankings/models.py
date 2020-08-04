@@ -108,6 +108,7 @@ class TeamEvent(models.Model):
     name = models.CharField(max_length=50)  # ex: Cortechs Robotics
     year = models.IntegerField()  # ex: 2019
     event = models.CharField(max_length=10)  # ex: ncwak
+    event_name = models.CharField(max_length=100)  # ex: NC Wake County District
     state = models.CharField(max_length=10)  # ex: NC
     country = models.CharField(max_length=30)  # ex: Israel
     district = models.CharField(max_length=10)  # ex: FNC
@@ -133,6 +134,12 @@ class TeamEvent(models.Model):
     ils_2_start = models.FloatField()  # ex: 0.52
     ils_1_end = models.FloatField()  # ex: 0.52
     ils_2_end = models.FloatField()  # ex: 0.52
+    wins = models.IntegerField()  # ex: 8
+    losses = models.IntegerField()  # ex: 4
+    ties = models.IntegerField()  # ex: 0
+    count = models.IntegerField()  # ex: 12
+    winrate = models.FloatField()  # ex: 0.67
+    rank = models.IntegerField()  # ex: 5
 
     class Meta:
         unique_together = ("year", "event", "team")

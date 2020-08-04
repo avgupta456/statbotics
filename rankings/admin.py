@@ -125,6 +125,12 @@ class TeamEventAdmin(admin.ModelAdmin):
         "ils_2_start",
         "ils_1_end",
         "ils_2_end",
+        "wins",
+        "losses",
+        "ties",
+        "count",
+        "winrate",
+        "rank",
     )
 
 
