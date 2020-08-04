@@ -310,6 +310,14 @@ class TeamEvent(Base):
     ils_1_end = Column(Float)
     ils_2_end = Column(Float)
 
+    """STATS"""
+    wins = Column(Integer)
+    losses = Column(Integer)
+    ties = Column(Integer)
+    count = Column(Integer)
+    winrate = Column(Float)
+    rank = Column(Integer)
+
     """SUPER FUNCTIONS"""
 
     def __lt__(self, other):
