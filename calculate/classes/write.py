@@ -132,6 +132,7 @@ class SQL_Write:
                 year_id=dict["year"],
                 event_id=event_id,
                 time=dict["time"],
+                rank=dict["rank"],
             )
             self.objects.append(teamEvent)
             if add:

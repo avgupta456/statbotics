@@ -119,14 +119,28 @@ class ReadTBA:
         return out
 
     def getTeamEvents(self, event, cache=True):
-        out = []
+        out = {}
         data = self.get("event/" + str(event) + "/teams/simple", cache=cache)
         for team in data:
+            team_num = team["team_number"]
             new_data = {
-                "team": team["team_number"],
+                "team": team_num,
+                "rank": -1,
             }
-            out.append(new_data)
-        return out
+            out[team_num] = new_data
+
+        # queries TBA for rankings, some older events are not populated
+        try:
+            rankings = self.get("event/" + str(event) + "/rankings", cache=cache)[
+                "rankings"
+            ]
+            for ranking in rankings:
+                team_num = int(ranking["team_key"][3:])
+                out[team_num]["rank"] = ranking["rank"]
+        except Exception:
+            pass
+
+        return out.values()
 
     def getMatches(self, year, event, event_time, cache=True):
         out = []
