@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { Paper, Typography } from "@material-ui/core";
 
-import { fetchTeam_Years } from "./../../../api";
+import { fetchTeam_Years, fetchTeamEvents_Team } from "./../../../api";
 import { ReactTable, LineChart } from "./../../";
 
 import styles from "./TeamView.module.css";
@@ -15,7 +15,21 @@ export default function TeamView() {
     id: "",
     data: [{ x: 0, y: 0 }],
   });
+
   let { team } = useParams();
+  const [name, setName] = useState([]);
+
+  //column name, searchable, visible, link, hint
+  const eventColumns = [
+    ["Key", false, true, false, ""],
+    ["Name", false, true, false, ""],
+    ["Year", false, true, false, ""],
+    ["Week", false, true, false, ""],
+    ["Record", false, true, false, ""],
+    ["Rank", false, true, false, ""],
+    ["Elo", false, true, false, ""],
+    ["OPR", false, true, false, ""],
+  ];
 
   //column name, searchable, visible, link, hint
   const yearColumns = [
@@ -51,9 +65,11 @@ export default function TeamView() {
     };
   }
 
-  function cleanYear(team, data) {
+  function cleanYear(data) {
     const temp_data = data.reverse();
     return temp_data.map(function (x, i) {
+      setName(x["name"]);
+
       let opr = parseInt(x["opr"] * 10) / 10;
       let opr_auto = -1;
       let opr_teleop = -1;
@@ -91,18 +107,55 @@ export default function TeamView() {
     });
   }
 
+  function cleanEvent(data) {
+    const temp_data = data.reverse();
+    return temp_data.map(function (x, i) {
+      let opr = x["opr"];
+      if (x["year"] >= 2016) {
+        opr = x["opr_no_fouls"];
+      }
+      return [
+        x["event"],
+        "events/" + x["event"] + "|" + x["event_name"],
+        x["year"],
+        x["week"],
+        x["wins"] + "-" + x["losses"] + "-" + x["ties"],
+        x["rank"],
+        x["elo_max"],
+        opr,
+      ];
+    });
+  }
+
   useEffect(() => {
-    const getTeam = async (team) => {
+    const getTeamYears = async (team) => {
       const team_years = await fetchTeam_Years(team);
       setChartData(cleanChart(team, team_years));
-      setYearData(cleanYear(team, team_years));
+      setYearData(cleanYear(team_years));
     };
 
-    getTeam(team);
+    const getTeamEvents = async (team) => {
+      const team_events = await fetchTeamEvents_Team(team);
+      setEventData(cleanEvent(team_events));
+    };
+
+    getTeamYears(team);
+    getTeamEvents(team);
   }, [team]);
 
   return (
     <Paper elevation={3} className={styles.body}>
+      <Typography variant="h4">
+        Team {team} - {name}
+      </Typography>
+      <ReactTable
+        title={"Team " + team + ": Recent Events"}
+        columns={eventColumns}
+        data={eventData}
+      />
+      <br />
+      <hr />
+      <br />
       <ReactTable
         title={"Team " + team + ": Recent Years"}
         columns={yearColumns}
