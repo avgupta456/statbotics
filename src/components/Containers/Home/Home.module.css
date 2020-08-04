@@ -33,9 +33,3 @@
   flex-flow: row wrap;
   justify-content: center;
 }
-
-.button {
-  margin-top: 4%;
-  margin-right: 4%;
-  width: 150px;
-}

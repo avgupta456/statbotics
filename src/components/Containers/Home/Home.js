@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Card, Button } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { Typography } from "@material-ui/core";
 
 import { Header } from "./../..";
