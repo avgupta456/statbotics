@@ -32,7 +32,7 @@ export {
   fetchEvent,
 } from "./event_api.js";
 
-export { fetchTeamEvents } from "./team_event_api.js";
+export { fetchTeamEvents, fetchTeamEvents_Team } from "./team_event_api.js";
 
 export { fetchMatches_Event } from "./match_api.js";
 
