@@ -28,6 +28,11 @@ class Team(models.Model):
     elo_recent = models.IntegerField()  # ex: 1600
     elo_mean = models.IntegerField()  # ex: 1600
     elo_max = models.IntegerField()  # ex: 1900
+    wins = models.IntegerField()  # ex: 100
+    losses = models.IntegerField()  # ex: 90
+    ties = models.IntegerField()  # ex: 10
+    count = models.IntegerField()  # ex: 200
+    winrate = models.FloatField()  # ex: 0.52
 
 
 class TeamYear(models.Model):
@@ -54,6 +59,15 @@ class TeamYear(models.Model):
     opr_no_fouls = models.FloatField()  # ex: 12.34
     ils_1 = models.FloatField()  # ex: 50
     ils_2 = models.FloatField()  # ex: 50
+    wins = models.IntegerField()  # ex: 10
+    losses = models.IntegerField()  # ex: 9
+    ties = models.IntegerField()  # ex: 1
+    count = models.IntegerField()  # ex: 20
+    winrate = models.FloatField()  # ex: 0.52
+    elo_rank = models.IntegerField()  # ex: 1000
+    elo_percentile = models.FloatField()  # ex: 0.512
+    opr_rank = models.IntegerField()  # ex: 1000
+    opr_percentile = models.FloatField()  # ex: 0.512
 
     class Meta:
         unique_together = ("year", "team")
