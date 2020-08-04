@@ -13,34 +13,51 @@ export default function Home() {
       <Card className={styles.card}>
         <Typography>
           Welcome to Statbotics.io! Our mission is to develop and distribute FRC
-          data analysis. Currently, we are focused on Elo Ratings, building upon
-          Caleb Sykes' previous work. We're in the early stages, and hope to add
-          content related to OPR, event prediction, and Zebra MotionWorks soon.
-          Stay tuned!
-        </Typography>
-        <div className={styles.height}></div>
-        <Typography>
-          Elo is a measure of a team's on-field strength, calculated using win
-          margins from over 100,000 matches dating back to 2002. A Elo of 1500
-          is roughly average, and an Elo of 1800+ is in the top 1% worldwide.
-          Check the menu above or buttons below for tables and charts displaying
-          Elo trends. Remember, this is just one method to rank teams, and
-          shouldn't be taken too seriously ;)
+          data analysis. Currently, we have calculated Elo Ratings, (component)
+          OPRs, RP strengths, and win-loss records. These statistics are
+          available through interactive tables, a REST API, and a Python
+          library. Using these metrics, we have developed match predictions and
+          a complete event simulator. We hope to continue adding new features,
+          such as Zebra MotionWorks analysis and more predictive modeling. Use
+          the tabs above to explore all the features. Enjoy!
         </Typography>
         <div className={styles.button_group}>
-          <Button variant="primary" className={styles.button} href="/teams">
-            Team Tables
-          </Button>
-          <Button variant="primary" className={styles.button} href="/years">
-            Year Tables
-          </Button>
-          <Button variant="primary" className={styles.button} href="/compare">
-            Compare Teams
-          </Button>
-          <Button variant="primary" className={styles.button} href="/predict">
-            Predict Match
-          </Button>
+          <Card className={styles.sub_card}>
+            <Typography variant="h5">Elo</Typography>
+            <hr />
+            Elo is a measure of a team's on-field strength, calculated using win
+            margins from over 100,000 matches dating back to 2002. An Elo of
+            1500 is roughly average, while an Elo of 1800+ is in the top 1%
+            worldwide. At Statbotics, browse Elo ratings for teams, seasons, and
+            events.
+          </Card>
+          <Card className={styles.sub_card}>
+            <Typography variant="h5">OPR</Typography>
+            <hr />
+            OPR uses linear algebra to estimate a team's contribution to an
+            alliance. Statbotics.io makes OPR and component OPR (Auto, Teleop,
+            Endgame) data easily accessible for teams and events. For recent
+            years, Ranking Point strengths are available as well.
+          </Card>
+          <Card className={styles.sub_card}>
+            <Typography variant="h5">Insights</Typography>
+            <hr />
+            Combining Elo and OPR data from all prior matches, Statbotics.io
+            allows users to quickly pull up and compare stats across teams. Find
+            which teams performed the best this year, or the sleeper picks at
+            your event.
+          </Card>
+          <Card className={styles.sub_card}>
+            <Typography variant="h5">Predictions</Typography>
+            <hr />
+            Taking insights one step further, Statbotics.io leverages Elo and
+            OPR statistics for accurate match prediction and event simulation.
+            These tools can help your team make strategic decisions and win
+            matches.
+          </Card>
         </div>
+        <hr />
+        For more information about the metrics and methodology, read here!
       </Card>
     </div>
   );
