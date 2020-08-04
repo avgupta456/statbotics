@@ -28,6 +28,13 @@ class Team(Base):
     elo_mean = Column(Float)
     elo_max = Column(Float)
 
+    """STATS"""
+    wins = Column(Integer)
+    losses = Column(Integer)
+    ties = Column(Integer)
+    count = Column(Integer)
+    winrate = Column(Float)
+
     """SUPER FUNCTIONS"""
 
     def __lt__(self, other):
@@ -154,6 +161,18 @@ class TeamYear(Base):
     """ILS"""
     ils_1 = Column(Float)
     ils_2 = Column(Float)
+
+    """STATS"""
+    wins = Column(Integer)
+    losses = Column(Integer)
+    ties = Column(Integer)
+    count = Column(Integer)
+    winrate = Column(Float)
+
+    elo_rank = Column(Integer)
+    elo_percentile = Column(Float)
+    opr_rank = Column(Integer)
+    opr_percentile = Column(Float)
 
     """SUPER FUNCTIONS"""
 
