@@ -88,6 +88,7 @@ export default function TeamLookup() {
       setData(clean(new_teams));
     };
 
+    setData([]);
     if (format === "Teams") {
       getTeams();
     } else if (format === "Country") {

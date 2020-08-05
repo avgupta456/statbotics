@@ -119,6 +119,7 @@ export default function TeamLookup() {
       setData(clean(new_events));
     };
 
+    setData([]);
     if (format === "Events") {
       getEvents();
     } else if (format === "Country") {

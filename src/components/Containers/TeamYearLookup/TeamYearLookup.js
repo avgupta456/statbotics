@@ -154,6 +154,7 @@ export default function TeamLookup() {
       setILS2(ilsMapping[year][1]);
     }
 
+    setData([]);
     if (format === "Teams") {
       getTeams();
     } else if (format === "Country") {
