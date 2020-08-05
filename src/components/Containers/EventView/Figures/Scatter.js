@@ -13,7 +13,12 @@ const BestFitLine = ({ data, xScale, yScale }) => {
     return [x.data[0]["x"], x.data[0]["y"]];
   });
 
-  const results = regression.logarithmic(points);
+  let results1 = regression.logarithmic(points);
+  let results2 = regression.linear(points);
+  let results = results1;
+  if (Math.abs(results2["r2"]) > Math.abs(results1["r2"])) {
+    results = results2;
+  }
 
   const lineGenerator = line()
     .x((x) => xScale(x.data[0]["x"]))

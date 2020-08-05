@@ -165,7 +165,7 @@ export default function EventView() {
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
-            [x["rank"]],
+            x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_no_fouls"] * 10) / 10,
             parseInt(x["opr_auto"] * 10) / 10,
@@ -181,7 +181,7 @@ export default function EventView() {
           return [
             x["team"],
             "./../teams/" + x["team"] + "|" + x["name"],
-            [x["rank"]],
+            x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_end"] * 10) / 10,
           ];
@@ -419,7 +419,7 @@ export default function EventView() {
   }
 
   function simTab() {
-    if (quals === 0) {
+    if (quals === 0 || year === 2015 || year === 2010) {
       return <Tab eventKey="simulation" title="Simulation" disabled></Tab>;
     } else {
       return (

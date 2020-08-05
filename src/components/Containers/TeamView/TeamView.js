@@ -131,7 +131,7 @@ export default function TeamView() {
         x["year"],
         x["week"],
         x["wins"] + "-" + x["losses"] + "-" + x["ties"],
-        x["rank"],
+        x["rank"] > 0 ? x["rank"] : "",
         x["elo_max"],
         opr,
       ];
