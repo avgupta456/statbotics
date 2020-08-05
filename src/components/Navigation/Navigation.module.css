@@ -2,6 +2,15 @@
   margin-right: 12px;
 }
 
+.dropdown {
+  margin-left: 12px;
+  color: black !important;
+}
+
+.dropdown-menu {
+  background-color: yellow;
+}
+
 .search {
   width: 220px;
   margin-right: 20px;
@@ -9,7 +18,7 @@
   z-index: 9999;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 767px) {
   .search {
     width: 80%;
     margin: 10px 10% 0 10%;

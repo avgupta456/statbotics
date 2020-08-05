@@ -18,7 +18,7 @@ export default function Navigation() {
   };
 
   return (
-    <Navbar expanded={navExpanded} expand="xl" bg="dark" variant="dark">
+    <Navbar expanded={navExpanded} expand="md" bg="dark" variant="dark">
       <Navbar.Brand href="/">
         <img
           alt="Logo"
@@ -63,27 +63,29 @@ export default function Navigation() {
           >
             Events
           </Nav.Link>
-          <Nav.Link
-            onClick={() => setNavExpanded(false)}
-            className={styles.navItem}
-            href="/compare"
-          >
-            Compare Teams
-          </Nav.Link>
-          <Nav.Link
-            onClick={() => setNavExpanded(false)}
-            className={styles.navItem}
-            href="/predict"
-          >
-            Predict Match
-          </Nav.Link>
-          <Nav.Link
-            onClick={() => setNavExpanded(false)}
-            className={styles.navItem}
-            href="/docs"
-          >
-            API Docs
-          </Nav.Link>
+          <NavDropdown title="Misc">
+            <Nav.Link
+              onClick={() => setNavExpanded(false)}
+              className={styles.dropdown}
+              href="/compare"
+            >
+              Compare Teams
+            </Nav.Link>
+            <Nav.Link
+              onClick={() => setNavExpanded(false)}
+              className={styles.dropdown}
+              href="/predict"
+            >
+              Predict Match
+            </Nav.Link>
+            <Nav.Link
+              onClick={() => setNavExpanded(false)}
+              className={styles.dropdown}
+              href="/docs"
+            >
+              API Docs
+            </Nav.Link>
+          </NavDropdown>
         </Nav>
         <NavDropdown.Divider />
         <Nav>
