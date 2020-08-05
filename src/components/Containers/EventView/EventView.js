@@ -343,14 +343,24 @@ export default function EventView() {
       let temp_stats = stats.slice();
       temp_stats.sort((a, b) => b[4] - a[4]);
       temp_stats = temp_stats.slice(0, 15);
-      const oprs = temp_stats.map(function (x, i) {
-        return {
-          team: x[0].toString(),
-          "Auto OPR": x[5],
-          "Teleop OPR": x[6],
-          "Endgame OPR": x[7],
-        };
-      });
+      let oprs = [];
+      if (year >= 2016) {
+        oprs = temp_stats.map(function (x, i) {
+          return {
+            team: x[0].toString(),
+            "Auto OPR": x[5],
+            "Teleop OPR": x[6],
+            "Endgame OPR": x[7],
+          };
+        });
+      } else {
+        oprs = temp_stats.map(function (x, i) {
+          return {
+            team: x[0].toString(),
+            OPR: x[4],
+          };
+        });
+      }
       setBarOPRs(oprs);
     };
 
@@ -368,20 +378,20 @@ export default function EventView() {
     };
 
     const getScatterOPRs = (stats) => {
-      const pairs = stats.map(function (x, i) {
+      const pairs = stats.map(function (a, i) {
         return {
-          id: x[0].toString(),
-          data: [{ x: x[2], y: x[4] }],
+          id: a[0].toString(),
+          data: [{ x: a[2][0], y: a[4] }],
         };
       });
       setScatterOPRs(pairs);
     };
 
     const getScatterElos = (stats) => {
-      const pairs = stats.map(function (x, i) {
+      const pairs = stats.map(function (a, i) {
         return {
-          id: x[0].toString(),
-          data: [{ x: x[2], y: x[3] }],
+          id: a[0].toString(),
+          data: [{ x: a[2][0], y: a[3] }],
         };
       });
       setScatterElos(pairs);
@@ -393,7 +403,7 @@ export default function EventView() {
       getScatterOPRs(stats);
       getScatterElos(stats);
     }
-  }, [stats]);
+  }, [stats, year]);
 
   function FigClick() {
     if (figState === "OPR") {
@@ -449,10 +459,12 @@ export default function EventView() {
 
   function getBarChart() {
     if (figState === "OPR") {
+      const keys =
+        year >= 2016 ? ["Auto OPR", "Teleop OPR", "Endgame OPR"] : ["OPR"];
       return (
         <div>
           <h5>Top 15 OPRs</h5>
-          <BarOPR data={barOPRs} />
+          <BarOPR data={barOPRs} keys={keys} />
         </div>
       );
     } else {
@@ -466,6 +478,7 @@ export default function EventView() {
   }
 
   function getScatterChart() {
+    console.log(scatterOPRs);
     if (figState === "OPR") {
       return (
         <div>

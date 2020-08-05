@@ -7,12 +7,13 @@ import styles from "./../EventView.module.css";
 class BarChart extends React.Component {
   render() {
     const data = this.props.data;
+    const keys = this.props.keys;
 
     return (
       <div className={styles.gray}>
         <ResponsiveBar
           data={data}
-          keys={["Auto OPR", "Teleop OPR", "Endgame OPR"]}
+          keys={keys}
           indexBy="team"
           margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
           padding={0.3}

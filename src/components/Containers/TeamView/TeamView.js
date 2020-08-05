@@ -197,8 +197,10 @@ export default function TeamView() {
       />
       <hr />
       <br />
-      <Typography variant="h6">{team} - Elo through Time</Typography>
-      <LineChart data={[chartData]} />
+      <div className={styles.chart}>
+        <Typography variant="h6">{team}: Elo through Time</Typography>
+        <LineChart data={[chartData]} />
+      </div>
     </Paper>
   );
 }
