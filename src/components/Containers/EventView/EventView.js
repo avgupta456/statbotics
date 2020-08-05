@@ -386,7 +386,7 @@ export default function EventView() {
       const pairs = stats.map(function (a, i) {
         return {
           id: a[0].toString(),
-          data: [{ x: a[2][0], y: a[4] }],
+          data: [{ x: a[2], y: a[4] }],
         };
       });
       setScatterOPRs(pairs);
@@ -396,7 +396,7 @@ export default function EventView() {
       const pairs = stats.map(function (a, i) {
         return {
           id: a[0].toString(),
-          data: [{ x: a[2][0], y: a[3] }],
+          data: [{ x: a[2], y: a[3] }],
         };
       });
       setScatterElos(pairs);
@@ -483,7 +483,6 @@ export default function EventView() {
   }
 
   function getScatterChart() {
-    console.log(scatterOPRs);
     if (figState === "OPR") {
       return (
         <div>
