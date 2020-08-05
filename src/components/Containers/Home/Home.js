@@ -57,7 +57,17 @@ export default function Home() {
           </Card>
         </div>
         <hr />
-        For more information about the metrics and methodology, read here!
+        <p>
+          For more information about the metrics and methodology, read{" "}
+          <a
+            href="https://github.com/statbotics/statbotics/blob/master/Methods.md"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            here
+          </a>
+          !
+        </p>
       </Card>
     </div>
   );
