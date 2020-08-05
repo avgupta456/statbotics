@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import { Navigation } from "./components";
 
 import {
@@ -13,6 +13,7 @@ import {
   TeamCompare,
   Hypothetical,
   Swagger,
+  NotFound,
 } from "./components/Containers";
 import styles from "./App.module.css";
 
@@ -39,15 +40,19 @@ const App = () => {
         <Route path="/events/:key">
           <EventView />
         </Route>
-        <Route path="/compare">
+        <Route exact path="/compare">
           <TeamCompare />
         </Route>
-        <Route path="/predict">
+        <Route exact path="/predict">
           <Hypothetical />
         </Route>
-        <Route path="/docs">
+        <Route exact path="/docs">
           <Swagger />
         </Route>
+        <Route exact path="/404">
+          <NotFound />
+        </Route>
+        <Redirect from="/*" to="/404" />
       </Switch>
     </div>
   );
