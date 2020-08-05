@@ -213,9 +213,9 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
             event.elo_top24 = -1 if len(elos) < 24 else elos[23]
             event.elo_mean = round(sum(elos) / len(elos), 2)
             event.elo_sd = round(statistics.pstdev(elos), 2)
-            acc, mse, count = event_stats[event_id]
-            event.elo_acc = round(acc / count, 4)
-            event.elo_mse = round(mse / count, 4)
+            event_acc, event_mse, event_count = event_stats[event_id]
+            event.elo_acc = round(event_acc / event_count, 4)
+            event.elo_mse = round(event_mse / event_count, 4)
 
         print("Team Years")
         year_elos, count = [], 0

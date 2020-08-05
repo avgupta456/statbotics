@@ -5,13 +5,13 @@ SHOW TABLES;
 # get head of tables
 SELECT * FROM teams LIMIT 10000000;
 SELECT * FROM years LIMIT 10000000;
-SELECT * FROM team_years WHERE year_id=2019 LIMIT 10000000;
-SELECT * FROM events WHERE year_id=2020 LIMIT 10000000;
-SELECT * FROM team_events WHERE year_id=2020 LIMIT 10000000;
+SELECT * FROM team_years LIMIT 10000000;
+SELECT * FROM events LIMIT 10000000;
+SELECT * FROM team_events WHERE team_id=254 LIMIT 10000000;
 SELECT * FROM matches LIMIT 10000000;
 SELECT * FROM team_matches LIMIT 100000000;
 
-SELECT COUNT(*) FROM matches;
+SELECT COUNT(*) FROM team_events;
 SELECT COUNT(*) FROM team_matches;
 SELECT SUM(elo_mse)/COUNT(elo_mse), SUM(opr_mse)/COUNT(opr_mse), SUM(mix_mse)/COUNT(mix_mse) FROM years WHERE id >= 2010;
 SELECT SUM(elo_acc)/COUNT(elo_acc), SUM(opr_acc)/COUNT(opr_mse), SUM(mix_acc)/COUNT(mix_acc) FROM years WHERE id >= 2010;
@@ -21,7 +21,7 @@ DELETE FROM team_years WHERE year_id=2020;
 DELETE FROM years WHERE id=2020;
 
 # Migrations
-ALTER TABLE team_events ADD ils_2_end FLOAT;
+ALTER TABLE team_events add event_name varchar(100);
 
 DROP TABLE association3;
 
