@@ -11,6 +11,7 @@ export const fetchTeamEvents = async (key, method) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -20,6 +21,7 @@ export const fetchTeamEvents_Team = async (team) => {
     const events = await axios.get(`${url}/team_events/team/${team}/by/time`);
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -31,6 +33,7 @@ export const fetchTeamEvents_TeamYear = async (team, year) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };

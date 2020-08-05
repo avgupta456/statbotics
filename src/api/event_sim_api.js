@@ -12,6 +12,7 @@ export const fetchSimFull = async (key, retries) => {
     if (retries > 1) {
       return [];
     } else {
+      console.log(error);
       return fetchSimFull(key, retries + 1);
     }
   }
@@ -29,6 +30,7 @@ export const fetchSimIndex = async (key, index, retries) => {
     if (retries > 1) {
       return [];
     } else {
+      console.log(error);
       return fetchSimIndex(key, index, retries + 1);
     }
   }

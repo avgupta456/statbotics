@@ -20,6 +20,7 @@ export const fetchEvents_Simple = async () => {
     var events = await axios.get(`${url}/events`);
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -29,6 +30,7 @@ export const fetchEvents = async (year) => {
     const events = await axios.get(`${url}/events/year/${year}/by/time`);
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -40,6 +42,7 @@ export const fetchEvents_byWeek = async (year, week) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -51,6 +54,7 @@ export const fetchEvents_byCountry = async (year, country) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -62,6 +66,7 @@ export const fetchEvents_byCountryWeek = async (year, country, week) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -73,6 +78,7 @@ export const fetchEvents_byState = async (year, country, state) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -84,6 +90,7 @@ export const fetchEvents_byStateWeek = async (year, country, state, week) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -95,6 +102,7 @@ export const fetchEvents_byDistrict = async (year, district) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -106,6 +114,7 @@ export const fetchEvents_byDistrictWeek = async (year, district, week) => {
     );
     return events.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -115,6 +124,7 @@ export const fetchEvent = async (key) => {
     const event = await axios.get(`${url}/event/${key}`);
     return event.data[0];
   } catch (error) {
+    console.log(error);
     return error;
   }
 };

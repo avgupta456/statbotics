@@ -9,6 +9,7 @@ export const fetchMatches_Event = async (key) => {
     const matches = await axios.get(`${url}/matches/event/${key}`);
     return matches.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };

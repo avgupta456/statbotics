@@ -17,6 +17,7 @@ export const fetchRankings = async (key) => {
     }
     return rankings;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };

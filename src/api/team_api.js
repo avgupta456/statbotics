@@ -20,6 +20,7 @@ export const fetchTeams_Simple = async () => {
     var teams = await axios.get(`${url}/teams`);
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -34,6 +35,7 @@ export const fetchTeams = async (active, method) => {
     }
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -50,6 +52,7 @@ export const fetchTeams_byCountry = async (country, active, method) => {
     }
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -72,6 +75,7 @@ export const fetchTeams_byState = async (country, state, active, method) => {
     }
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -88,6 +92,7 @@ export const fetchTeams_byDistrict = async (district, active, method) => {
     }
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -97,6 +102,7 @@ export const fetchTeam = async (number) => {
     const team = await axios.get(`${url}/team/${number}`);
     return team.data[0];
   } catch (error) {
+    console.log(error);
     return error;
   }
 };

@@ -11,6 +11,7 @@ export const fetchTeamsYear = async (year, method) => {
     );
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -22,6 +23,7 @@ export const fetchTeamsYear_byCountry = async (country, year, method) => {
     );
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -37,6 +39,7 @@ export const fetchTeamsYear_byState = async (country, state, year, method) => {
     );
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -48,6 +51,7 @@ export const fetchTeamsYear_byDistrict = async (district, year, method) => {
     );
     return teams.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -59,6 +63,7 @@ export const fetchTeam_Years = async (num) => {
     const team = await axios.get(`${url}/team_years/team/${num}`);
     return team.data;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -73,6 +78,7 @@ export const fetchTeamYearElo = async (num, year) => {
     const team = await axios.get(`${url}/team_year/team/${num}/year/${year}`);
     return team.data[0].elo_max;
   } catch (error) {
+    console.log(error);
     return 0;
   }
 };
