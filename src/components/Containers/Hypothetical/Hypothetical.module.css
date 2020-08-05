@@ -1,14 +1,13 @@
 .main {
-  width: 90%;
+  width: 80%;
   margin: 25px auto;
   padding: 2% 5%;
 }
 
 @media (max-width: 750px) {
   .main {
-    width: 100%;
-    margin: 0;
-    margin-top: 10px;
+    width: 96%;
+    margin: 2%;
   }
 }
 

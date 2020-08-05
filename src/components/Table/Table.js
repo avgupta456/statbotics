@@ -18,6 +18,11 @@ const getMuiTheme = () =>
           },
         },
       },
+      MUIDataTable: {
+        paper: {
+          minHeight: "375px",
+        },
+      },
       MUIDataTableHeadCell: {
         fixedHeaderCommon: {
           backgroundColor: "#3f51b5",

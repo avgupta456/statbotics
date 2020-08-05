@@ -1,6 +1,6 @@
 .body {
-  margin: 2%;
-  padding: 35px;
+  margin: 3%;
+  padding: 15px;
 }
 
 .dropdown {
@@ -14,4 +14,9 @@
 
 .title_text {
   padding-top: 5px;
+}
+
+.chart {
+  padding: 20px;
+  padding-top: 0px;
 }
