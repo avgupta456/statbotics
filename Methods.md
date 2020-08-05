@@ -117,3 +117,25 @@ Regarding the actual seed value, I follow Caleb Sykes methodology in using the m
 ILS stands for Iterative Logistic Strength, and aims to measure a team's contribution to ranking points (2016-Present) similar to how OPR measures contributions towards score. However, ILS follows an approach more like Elo in computing its values. I have imitated Caleb Sykes' algorithm verbatim, read about it here: https://blog.thebluealliance.com/2019/08/04/making-better-rp-predictions/
 
 All constants for the Elo, OPR, and ILS models can be found in the Python code - statbotics_calc/models/*
+
+## Insights and Predictions
+
+### Insights 
+
+For each TeamEvent, we calculate the starting Elo, pre-playoffs Elo, ending Elo, max Elo, mean Elo, and Elo difference through the event. We do the same for OPR, as well as the Component OPRs for eight major categories. For a TeamYear with multiple TeamEvents, we take the starting Elo/OPR, pre-champs Elo/OPR, ending Elo/OPR, and max Elo/OPR. Additionally, ILS is computed throughout the year. For each Team, which consistes of multiple TeamYears, we take the Current Elo/OPR, max Elo, mean Elo, and recent Elo (2017-Present). All this information is displayed on Statbotics.io, and through the Python API.
+
+Read the API documentation for a complete picture of which variables are already computed: https://statbotics.io/docs
+
+### Predictions
+
+Match predictions are made by averaging the predicted win probabilities from the Elo and OPR models. Then ILS is used to predict ranking points for 2016-Present. Our methodology has a 70% accuracy on recent matches, and on average minimizes the mean squared error compared to other predictive models.
+
+We also simulate entire events by Monte Carlo simulation using the match predictions explained above. A fixed number of simulations (on the website, 100) are run, and the results are compiled to determine predicted rankings. For 2016-Present, the first tiebreaker is also monitored, for 2002-2015, match score is used as a placeholder tiebreaker. Match simulations are available through the website and API.
+
+## Distribution
+
+Website: https://statbotics.io
+
+HTTP API: https://statbotics.io/docs
+
+Python Library: https://statbotics.readthedocs.io/en/latest/
