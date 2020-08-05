@@ -270,7 +270,10 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
                 team_years.pop(num)
 
             obj = team_years[num]
-            best_event = sorted(team_events[num], key=lambda e: e["opr_end"])[-1]
+            best_event = sorted(
+                team_events[num],
+                key=lambda e: e["opr_end" if year < 2016 else "opr_no_fouls"],
+            )[-1]
             obj.opr_end = best_event["opr_end"]
             obj.opr_auto = best_event["opr_auto"]
             obj.opr_teleop = best_event["opr_teleop"]
@@ -281,13 +284,16 @@ def process(start_year, end_year, SQL_Read, SQL_Write):
             obj.opr_no_fouls = best_event["opr_no_fouls"]
             obj.ils_1 = team_ils_1[num]
             obj.ils_2 = team_ils_2[num]
-            oprs.append(best_event["opr_end"])
+
+            oprs.append(best_event["opr_end" if year < 2016 else "opr_no_fouls"])
 
         oprs.sort(reverse=True)
         team_year_count = len(oprs)
         for num in team_years:
             obj = team_years[num]
-            obj.opr_rank = rank = oprs.index(obj.opr_end) + 1
+            obj.opr_rank = rank = (
+                oprs.index(obj.opr_end if year < 2016 else obj.opr_no_fouls) + 1
+            )
             obj.opr_percentile = round(rank / team_year_count, 4)
 
         team_years_all[year] = team_years
