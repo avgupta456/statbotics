@@ -151,7 +151,7 @@ export default function TeamView() {
     };
 
     getTeamYears(team);
-  }, [team]);
+  }, [team, history]);
 
   useEffect(() => {
     const getTeamEvents = async (team, year) => {

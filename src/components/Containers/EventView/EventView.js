@@ -143,7 +143,7 @@ export default function EventView() {
     getEvent(key);
     getTeamEvents(key);
     getMatches(key);
-  }, [key]);
+  }, [key, history]);
 
   useEffect(() => {
     const getSim = async (key, index) => {
