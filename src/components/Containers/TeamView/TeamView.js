@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 import { Paper, Typography } from "@material-ui/core";
 import Select from "react-select";
@@ -12,6 +12,8 @@ import styles from "./TeamView.module.css";
 import { yearOptions } from "./../../../constants";
 
 export default function TeamView() {
+  const history = useHistory();
+
   const [eventData, setEventData] = useState([]);
   const [yearData, setYearData] = useState([]);
   const [chartData, setChartData] = useState({
@@ -139,6 +141,10 @@ export default function TeamView() {
   useEffect(() => {
     const getTeamYears = async (team) => {
       const team_years = await fetchTeam_Years(team);
+      if (team_years.length === 0) {
+        history.push(`/404`);
+        return;
+      }
       setChartData(cleanChart(team, team_years));
       setYearData(cleanYear(team_years));
       setYear(team_years[0]["year"]);

@@ -7,3 +7,4 @@ export { default as EventView } from "./EventView/EventView";
 export { default as TeamCompare } from "./TeamCompare/TeamCompare";
 export { default as Hypothetical } from "./Hypothetical/Hypothetical";
 export { default as Swagger } from "./Swagger/Swagger";
+export { default as NotFound } from "./NotFound/NotFound";

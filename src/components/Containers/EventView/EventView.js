@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 import { Paper, Slider, Typography } from "@material-ui/core";
 import { Tabs, Tab, Col, Row, Button } from "react-bootstrap";
@@ -23,6 +23,7 @@ import styles from "./EventView.module.css";
 
 export default function EventView() {
   let { key } = useParams();
+  const history = useHistory();
 
   const { height, width } = useWindowDimensions();
 
@@ -110,6 +111,10 @@ export default function EventView() {
   useEffect(() => {
     const getEvent = async (key) => {
       const event = await fetchEvent(key);
+      if (event === undefined) {
+        history.push(`/404`);
+        return;
+      }
       setEvent(event["name"]);
       setYear(event["year"]);
       if (event["year"] >= 2016) {
