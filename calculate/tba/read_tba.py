@@ -101,6 +101,8 @@ class ReadTBA:
             # assigns worlds to week 8
             if type >= 3:
                 event["week"] = 8
+            else:
+                event["week"] += 1  # bug in TBA API
 
             out.append(
                 {
