@@ -24,7 +24,7 @@ const getMuiTheme = () =>
         },
       },
       MUIDataTableHeadCell: {
-        fixedHeaderCommon: {
+        fixedHeader: {
           backgroundColor: "#3f51b5",
         },
 
@@ -84,6 +84,7 @@ export default function ReactTable({ title, columns, data }) {
     hint,
   ]) {
     var dict = {
+      name: `${name}`,
       label: `${name}`,
       options: {
         sort: true,
