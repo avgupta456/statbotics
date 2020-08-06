@@ -119,7 +119,6 @@ export const yearOptions = [
 ];
 
 export const weekOptions = [
-  { value: 0, label: "Week 0" },
   { value: 1, label: "Week 1" },
   { value: 2, label: "Week 2" },
   { value: 3, label: "Week 3" },
