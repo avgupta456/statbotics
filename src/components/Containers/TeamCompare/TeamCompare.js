@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Typography } from "@material-ui/core";
 import { Card } from "react-bootstrap";
 
-import { fetchTeam } from "./../../../api";
+import { fetchTeam_Years } from "./../../../api";
 import { LineChart, TeamSelect } from "./../../";
 
 import styles from "./TeamCompare.module.css";
@@ -27,8 +27,8 @@ export default function TeamCompare() {
     const getTeamsData = async (teams) => {
       var new_teams = [];
       for (var i = 0; i < teams.length; i++) {
-        const team = teams[i].value;
-        const teamData = await fetchTeam(team, "elo_recent");
+        const team = teams[i].value.substring(7);
+        const teamData = await fetchTeam_Years(team);
         new_teams.push(clean(team, teamData));
       }
       setTeamsData(new_teams);
