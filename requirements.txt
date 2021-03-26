@@ -11,16 +11,16 @@ distlib==0.3.1
 django-cors-headers==3.4.0
 django-filter==2.3.0
 django==3.1.6
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 drf-yasg==1.17.1
 filelock==3.0.12
-google-api-core[grpc]==1.26.1
+google-api-core[grpc]==1.26.2
 google-auth==1.28.0
 google-cloud-core==1.6.0
 google-cloud-datastore==1.13.2
 googleapis-common-protos==1.53.0
 grpcio==1.36.1
-identify==2.1.4
+identify==2.2.1
 idna==2.10
 importlib-metadata==3.7.3 ; python_version < '3.8'
 inflection==0.5.1
