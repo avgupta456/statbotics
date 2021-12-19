@@ -1,0 +1,12 @@
+rankings/migrations/*
+static/*
+
+travis.json
+
+__pycache__/*
+*.pyc
+
+*.sql
+
+Pipfile
+Pipfile.lock
