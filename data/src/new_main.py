@@ -9,9 +9,11 @@ from db.read.team_event import get_num_team_events as get_num_team_events_db
 from db.read.team_match import get_num_team_matches
 from db.read.team_year import get_num_team_years as get_num_team_years_db
 from db.read.year import get_num_years as get_num_years_db
-from new_process.process_avg import main as process_avg
+
+# from new_process.process_avg import main as process_avg
 from new_process.process_elo import main as process_elo
-from new_process.process_tba import main as process_tba
+
+# from new_process.process_tba import main as process_tba
 
 
 def print_table_stats() -> None:
@@ -24,17 +26,19 @@ def print_table_stats() -> None:
     print("Num Team Matches:", get_num_team_matches())
 
 
+def main(start_year: int, end_year: int) -> None:
+    print("PROCESS TBA")
+    # process_tba(start_year, end_year, cache=True)
+    # process_avg(start_year, end_year)
+    print("PROCESS ELO")
+    process_elo(start_year, end_year)
+    print()
+    print_table_stats()
+
+    print("Done!")
+
+
 start_year = 2002
 end_year = 2020
 
-print("PROCESS TBA")
-process_tba(start_year, end_year, cache=True)
-print()
-process_avg(start_year, end_year)
-print()
-print("PROCESS ELO")
-process_elo(start_year, end_year)
-print()
-print_table_stats()
-
-print("Done!")
+main(start_year, end_year)

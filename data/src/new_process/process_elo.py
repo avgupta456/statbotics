@@ -3,18 +3,16 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Tuple, Union
 
+from db.functions.update_team_matches_elo import update_team_matches_elo
 from db.models.team_event import TeamEvent
 from db.models.team_year import TeamYear
 from db.read.event import get_events as get_events_db
 from db.read.match import get_matches as get_matches_db
 from db.read.team import get_teams as get_teams_db
 from db.read.team_event import get_team_events as get_team_events_db
-
-from db.read.team_match import get_team_matches as get_team_matches_db
 from db.read.team_year import get_team_years as get_team_years_db
 from db.read.year import get_years as get_years_db
 from db.write.main import (
-    update_team_matches as update_team_matches_db,
     update_events as update_events_db,
     update_matches as update_matches_db,
     update_team_events as update_team_events_db,
@@ -33,10 +31,6 @@ from models.elo import (
 
 
 def process(start_year: int, end_year: int) -> None:
-    teams = {}  # dict mapping team number to team obj
-    for team in get_teams_db():
-        teams[team.id] = team
-
     # constants from elo model
     global_start_elo = start_rating()
     reversion = mean_reversion()
@@ -48,15 +42,18 @@ def process(start_year: int, end_year: int) -> None:
         for team_year in get_team_years_db(start_year - 2):
             team_years_2[team_year.team_id] = team_year
         team_years_all[start_year - 2] = team_years_2
+        del team_years_2
 
     if start_year > 2002:
         team_years_1 = {}
         for team_year in get_team_years_db(start_year - 1):
             team_years_1[team_year.team_id] = team_year
         team_years_all[start_year - 1] = team_years_1
+        del team_years_1
 
     for year in range(start_year, end_year + 1):
-        start = datetime.now()
+        overall_start = datetime.now()
+        start = overall_start
 
         team_years: Dict[int, TeamYear] = {}
         team_events: Dict[int, List[Tuple[float, bool]]] = {}
@@ -98,9 +95,13 @@ def process(start_year: int, end_year: int) -> None:
             team_elos[num] = global_start_elo if year == 2002 else start_elo
             team_year.elo_start = team_elos[num]
 
+        if year - 2 in team_years_all:
+            team_years_all.pop(year - 2)
+
         # MATCHES
         acc, mse, count = 0, 0, 0
         event_stats: Dict[int, List[Union[float, int]]] = defaultdict(lambda: [0, 0, 0])
+
         matches = get_matches_db(year)
         for match in sorted(matches):
             event_id = match.event_id
@@ -172,16 +173,19 @@ def process(start_year: int, end_year: int) -> None:
             event_stats[event_id][2] += 1  # count
             count += 1
 
-        update_matches_db(matches, False)
+        acc = round(acc / count, 4)
+        mse = round(mse / count, 4)
 
-        acc = round(acc / len(matches), 4)
-        mse = round(mse / len(matches), 4)
+        update_matches_db(matches, False)
+        del matches
+
+        print("Matches", datetime.now() - start)
+        start = datetime.now()
 
         # TEAM MATCHES
-        all_team_matches = get_team_matches_db(year=year)
-        for team_match in all_team_matches:
-            team_match.elo = team_match_ids[team_match.match_id][team_match.team_id]
-        update_team_matches_db(all_team_matches, False)
+        update_team_matches_elo(year, team_match_ids)
+        print("Team Matches", datetime.now() - start)
+        start = datetime.now()
 
         # TEAM EVENTS
         event_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
@@ -214,7 +218,13 @@ def process(start_year: int, end_year: int) -> None:
             team_event.count = count
             team_event.winrate = winrate
 
+        del team_events
+        del team_event_stats
         update_team_events_db(all_team_events, False)
+        del all_team_events
+
+        print("Team Events", datetime.now() - start)
+        start = datetime.now()
 
         # EVENTS
         event_types: Dict[int, int] = defaultdict(int)
@@ -238,6 +248,10 @@ def process(start_year: int, end_year: int) -> None:
             event.elo_mse = round(event_mse / event_count, 4)
 
         update_events_db(all_events, False)
+        del all_events
+
+        print("Events", datetime.now() - start)
+        start = datetime.now()
 
         # TEAM YEARS
         year_elos: List[float] = []
@@ -281,7 +295,14 @@ def process(start_year: int, end_year: int) -> None:
             obj.elo_rank = rank = year_elos.index(obj.elo_max) + 1
             obj.elo_percentile = round(rank / team_year_count, 4)
 
+        del team_matches
+        del team_elos
+        del team_year_stats
         update_team_years_db(team_years_list, False)
+        del team_years_list
+
+        print("Team Years", datetime.now() - start)
+        start = datetime.now()
 
         # YEARS
         year_elos.sort(reverse=True)
@@ -298,13 +319,14 @@ def process(start_year: int, end_year: int) -> None:
         year_obj.elo_mse = mse
 
         team_years_all[year] = team_years
-        if year - 2 in team_years_all:
-            team_years_all.pop(year - 2)
+        del team_years
 
         update_years_db([year_obj], False)
 
+        print("Years", datetime.now() - start)
+
         end = datetime.now()
-        print(str(year) + ":", end - start)
+        print(str(year) + ":", end - overall_start)
 
     # TEAMS
     team_team_years: Dict[int, List[TeamYear]] = defaultdict(list)
