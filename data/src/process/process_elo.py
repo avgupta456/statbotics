@@ -1,5 +1,5 @@
-from collections import defaultdict
 import statistics
+from collections import defaultdict
 
 from helper import utils
 from models import elo

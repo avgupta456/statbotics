@@ -1,7 +1,8 @@
 import pandas as pd
-from process.logging import printStats
 from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
+
+from process.logging import printStats
 
 
 def getYears(SQL_Read):

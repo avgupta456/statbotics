@@ -1,5 +1,7 @@
-import requests
-from helper import utils
+from typing import Any, Dict, List, Optional
+
+from helper.utils import load
+from tba.config import get_tba
 
 USA = {
     "Alabama": "AL",
@@ -84,26 +86,16 @@ districts = {
 }
 
 
-auth_key = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr"
-read_pre = "https://www.thebluealliance.com/api/v3/"
-session = requests.Session()
-session.headers.update({"X-TBA-Auth-Key": auth_key, "X-TBA-Auth-Id": ""})
-
-
-def get(url):
-    return session.get(read_pre + url).json()
-
-
-def getTeamInfo(number):
-    data = get("team/frc" + str(number) + "/simple")
+def get_team_info(number: int) -> List[Any]:
+    data = get_tba("team/frc" + str(number) + "/simple")
     name = data["nickname"]
     state = data["state_prov"]
     country = data["country"]
 
-    years = len(get("team/frc" + str(number) + "/years_participated"))
+    years = len(get_tba("team/frc" + str(number) + "/years_participated"))
 
     try:
-        district = get("team/frc" + str(number) + "/districts")[-1]["abbreviation"]
+        district = get_tba("team/frc" + str(number) + "/districts")[-1]["abbreviation"]
     except Exception:
         district = "None"
 
@@ -120,26 +112,7 @@ def getTeamInfo(number):
     return [name, country, state, district, years]
 
 
-def saveAllTeamsInfo():
-    out = utils.loadAllTeamsInfo()
-    count = 0
-
-    for team in utils.loadAllTeams():
-        count += 1
-
-        if count % 100 == 0:
-            print(count)
-            utils.saveAllTeamsInfo(out)
-
-        if team in out:
-            pass
-        else:
-            out[team] = getTeamInfo(team)
-
-    utils.saveAllTeamsInfo(out)
-
-
-def cleanState(state):
+def clean_state(state: str) -> str:
     if state in USA:
         return USA[state]
     if state in Canada:
@@ -151,13 +124,20 @@ def cleanState(state):
     return "All"
 
 
-def cleanDistrict(district):
+def clean_district(district: str) -> str:
     if district in districts:
         return districts[district]
     return district
 
 
-def getMatchTime(match, event_time):
+teams_info: Any = load("teams_info.p")
+
+
+def get_team_district(team: int):
+    return teams_info[team][3]
+
+
+def get_match_time(match: Dict[str, Any], event_time: int) -> int:
     if match["actual_time"] is not None:
         return match["actual_time"]
 
@@ -173,7 +153,9 @@ def getMatchTime(match, event_time):
     return match_time
 
 
-def getBreakdown(breakdown=None, year=2020):
+def get_breakdown(
+    year: int, breakdown: Optional[Dict[str, Any]] = None
+) -> Dict[str, int]:
     if breakdown is None or year < 2016:
         out = {
             "auto": -1,
@@ -318,3 +300,4 @@ def getBreakdown(breakdown=None, year=2020):
         out["rp1"] = 1 if breakdown["shieldEnergizedRankingPoint"] else 0
         out["rp2"] = 1 if breakdown["shieldOperationalRankingPoint"] else 0
         return out
+    return {}

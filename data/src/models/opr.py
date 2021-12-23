@@ -1,9 +1,12 @@
+from typing import Dict, List, Union
+
 import numpy as np
-import scipy.linalg
+import scipy.linalg  # type: ignore
+
 from helper.utils import logistic
 
 
-def score(match, alliance):
+def score(match, alliance: str) -> List[int]:
     if alliance == "red":
         return [match.red_score]
     return [match.blue_score]
@@ -136,7 +139,19 @@ def get_base(event, quals, playoffs, func, event_func):
 
 def get_OPR(event, quals, playoffs, func=all, event_func=event_all):
     base = get_base(event, quals, playoffs, func, event_func)
-    (out, team_events, teams, arr, input, output, T, M, m_objs, year, mean,) = base
+    (
+        out,
+        team_events,
+        teams,
+        arr,
+        input,
+        output,
+        T,
+        M,
+        m_objs,
+        year,
+        mean,
+    ) = base
 
     if out != {}:
         return out
@@ -160,7 +175,19 @@ def get_OPR(event, quals, playoffs, func=all, event_func=event_all):
 
 def get_xOPR(event, quals, playoffs, func=all, event_func=event_all):
     base = get_base(event, quals, playoffs, func, event_func)
-    (out, team_events, teams, arr, input, output, T, M, m_objs, year, mean,) = base
+    (
+        out,
+        team_events,
+        teams,
+        arr,
+        input,
+        output,
+        T,
+        M,
+        m_objs,
+        year,
+        mean,
+    ) = base
 
     if out != {}:
         return out
@@ -190,7 +217,19 @@ def get_xOPR(event, quals, playoffs, func=all, event_func=event_all):
 
 def get_ixOPR(event, quals, playoffs, func=all, event_func=event_all):
     base = get_base(event, quals, playoffs, func, event_func)
-    (out, team_events, teams, arr, input, output, T, M, m_objs, year, mean,) = base
+    (
+        out,
+        team_events,
+        teams,
+        arr,
+        input,
+        output,
+        T,
+        M,
+        m_objs,
+        year,
+        mean,
+    ) = base
 
     if out != {}:
         return out
@@ -273,17 +312,22 @@ def opr_standalone(SQL_Read, event):
     return OPRs, ILS
 
 
-def win_prob(red, blue, year, sd_score):
+def win_prob(
+    red: Union[List[float], Dict[int, float]],
+    blue: Union[List[float], Dict[int, float]],
+    sd_score: float,
+) -> float:
+    red_sum, blue_sum = 0, 0
     if isinstance(red, list):
-        red = sum(red)
+        red_sum = sum(red)
     if isinstance(red, dict):
-        red = sum(red.values())
+        red_sum = sum(red.values())
     if isinstance(blue, list):
-        blue = sum(blue)
+        blue_sum = sum(blue)
     if isinstance(blue, dict):
-        blue = sum(blue.values())
-    return 1 / (10 ** (5 / 8 * (blue - red) / sd_score) + 1)
+        blue_sum = sum(blue.values())
+    return 1 / (10 ** (5 / 8 * (blue_sum - red_sum) / sd_score) + 1)
 
 
-def rp_prob(teams):
+def rp_prob(teams: List[float]) -> float:
     return logistic(sum(teams))
