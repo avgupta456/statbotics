@@ -1,9 +1,15 @@
 import os
+import time
+from datetime import datetime
 from typing import Any, Dict, List
 
-from helper.utils import dump_cache, get_timestamp_from_str, load_cache
+from helper.utils import dump_cache, load_cache
 from tba.clean_data import clean_district, clean_state, get_breakdown, get_match_time
 from tba.config import event_blacklist, get_tba as _get_tba
+
+
+def get_timestamp_from_str(date: str):
+    return int(time.mktime(datetime.strptime(date, "%Y-%m-%d").timetuple()))
 
 
 def get_tba(url: str, cache: bool = True) -> Any:
@@ -74,7 +80,7 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
         # assigns worlds to week 8
         if type >= 3:
             event["week"] = 8
-        else:
+        elif year != 2016:
             event["week"] += 1  # bug in TBA API
 
         out.append(

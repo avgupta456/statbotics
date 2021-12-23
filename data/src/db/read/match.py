@@ -1,15 +1,22 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from db.main import Session
+from db.models.event import EventORM
 from db.models.match import Match, MatchORM
 
 
-def get_matches() -> List[Match]:
+def get_matches(year: Optional[int] = None, week: Optional[int] = None) -> List[Match]:
     def callback(session: SessionType):
-        data = session.query(MatchORM).all()  # type: ignore
+        data = session.query(MatchORM)  # type: ignore
+        if year != None:
+            data = data.filter(MatchORM.year_id == year)  # type: ignore
+        if week != None:
+            data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
+        data: List[MatchORM] = data.all()  # type: ignore
+
         return [Match.from_dict(x.__dict__) for x in data]
 
     return run_transaction(Session, callback)  # type: ignore

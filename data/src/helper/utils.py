@@ -1,12 +1,8 @@
-import datetime
 import os
 import pickle
-import time
 from typing import Any
 
 import numpy as np
-
-e = np.e
 
 
 def dump(path: str, data: Any):
@@ -31,18 +27,23 @@ def load_cache(file: str):
         return pickle.load(f)
 
 
-def get_timestamp_from_str(date: str):
-    timestamp = int(
-        time.mktime(datetime.datetime.strptime(date, "%Y-%m-%d").timetuple())
-    )
-    return timestamp
+def get_team_year_id(team: int, year: int):
+    return int(str(year) + str(team))
 
 
-def round_float(num: float, places: int = 2):
-    return round(float(num), places)
+def get_team_event_id(team: int, event: int):
+    return int("1" + str(event).zfill(4) + str(team))
+
+
+def get_team_match_id(team: int, match: int):
+    return int("1" + str(match).zfill(6) + str(team))
 
 
 # for ils
+
+e = np.e
+
+
 def logistic(n: float):
     return float(1 / (1 + e ** (-4 * (n - 0.5))))
 

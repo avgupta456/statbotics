@@ -1,6 +1,4 @@
-from typing import Dict, List, Tuple, Union
-
-import numpy as np
+from typing import Dict, Tuple
 
 
 # rating for 2002
@@ -42,51 +40,9 @@ def update_rating(
     return new_red, new_blue
 
 
-def win_prob(
-    red: Union[List[float], Dict[int, float]],
-    blue: Union[List[float], Dict[int, float]],
-) -> float:
-    red_sum, blue_sum = 0, 0
-    if isinstance(red, list):
-        red_sum = sum(red)
-    if isinstance(red, dict):
-        red_sum = sum(red.values())
-    if isinstance(blue, list):
-        blue_sum = sum(blue)
-    if isinstance(blue, dict):
-        blue_sum = sum(blue.values())
+def win_prob(red_sum: float, blue_sum: float) -> float:
     return 1 / (10 ** ((blue_sum - red_sum) / 400) + 1)
 
 
-def win_margin(
-    red: Union[List[float], Dict[int, float]],
-    blue: Union[List[float], Dict[int, float]],
-    sd_score: float,
-) -> float:
-    red_sum, blue_sum = 0, 0
-    if isinstance(red, list):
-        red_sum = sum(red)
-    if isinstance(red, dict):
-        red_sum = sum(red.values())
-    if isinstance(blue, list):
-        blue_sum = sum(blue)
-    if isinstance(blue, dict):
-        blue_sum = sum(blue.values())
+def win_margin(red_sum: float, blue_sum: float, sd_score: float) -> float:
     return (red_sum - blue_sum) * sd_score / 250
-
-
-def get_elos(event, quals):
-    teams, out = [], {}
-    for team_event in event.team_events:
-        teams.append(team_event.team_id)
-        out[teams[-1]] = np.zeros(shape=(len(quals) + 1, 1))
-        curr = [team_event.elo_start]
-        out[teams[-1]][0] = np.array(curr)
-
-    for i, m in enumerate(quals):
-        red, blue = m.getTeams()
-        for t in teams:
-            out[t][i + 1] = out[t][i]
-        for team_match in m.team_matches:
-            out[team_match.team_id][i + 1] = team_match.elo
-    return out

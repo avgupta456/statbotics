@@ -9,21 +9,10 @@ from db.models.team_year import TeamYear
 from db.models.year import Year
 from db.read.event import get_num_events
 from db.read.match import get_num_matches
+from helper.utils import get_team_event_id, get_team_match_id, get_team_year_id
 
 event_id = -1
 match_id = -1
-
-
-def get_team_year_id(team: int, year: int):
-    return int(str(year) + str(team))
-
-
-def get_team_event_id(team: int, event: int):
-    return int("1" + str(event).zfill(4) + str(team))
-
-
-def get_team_match_id(team: int, match: int):
-    return int("1" + str(match).zfill(6) + str(team))
 
 
 def create_team_obj(data: Dict[str, Any]) -> Team:
@@ -75,14 +64,8 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["red_auto_movement"] = data["red_score_breakdown"]["auto_movement"]
     data["red_auto_1"] = data["red_score_breakdown"]["auto_1"]
     data["red_auto_2"] = data["red_score_breakdown"]["auto_2"]
-    data["red_auto_2_1"] = data["red_score_breakdown"]["auto_2_1"]
-    data["red_auto_2_2"] = data["red_score_breakdown"]["auto_2_2"]
-    data["red_auto_2_3"] = data["red_score_breakdown"]["auto_2_3"]
     data["red_teleop_1"] = data["red_score_breakdown"]["teleop_1"]
     data["red_teleop_2"] = data["red_score_breakdown"]["teleop_2"]
-    data["red_teleop_2_1"] = data["red_score_breakdown"]["teleop_2_1"]
-    data["red_teleop_2_2"] = data["red_score_breakdown"]["teleop_2_2"]
-    data["red_teleop_2_3"] = data["red_score_breakdown"]["teleop_2_3"]
     data["red_1"] = data["red_score_breakdown"]["1"]
     data["red_2"] = data["red_score_breakdown"]["2"]
     data["red_teleop"] = data["red_score_breakdown"]["teleop"]
@@ -95,14 +78,8 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["blue_auto_movement"] = data["blue_score_breakdown"]["auto_movement"]
     data["blue_auto_1"] = data["blue_score_breakdown"]["auto_1"]
     data["blue_auto_2"] = data["blue_score_breakdown"]["auto_2"]
-    data["blue_auto_2_1"] = data["blue_score_breakdown"]["auto_2_1"]
-    data["blue_auto_2_2"] = data["blue_score_breakdown"]["auto_2_2"]
-    data["blue_auto_2_3"] = data["blue_score_breakdown"]["auto_2_3"]
     data["blue_teleop_1"] = data["blue_score_breakdown"]["teleop_1"]
     data["blue_teleop_2"] = data["blue_score_breakdown"]["teleop_2"]
-    data["blue_teleop_2_1"] = data["blue_score_breakdown"]["teleop_2_1"]
-    data["blue_teleop_2_2"] = data["blue_score_breakdown"]["teleop_2_2"]
-    data["blue_teleop_2_3"] = data["blue_score_breakdown"]["teleop_2_3"]
     data["blue_1"] = data["blue_score_breakdown"]["1"]
     data["blue_2"] = data["blue_score_breakdown"]["2"]
     data["blue_teleop"] = data["blue_score_breakdown"]["teleop"]

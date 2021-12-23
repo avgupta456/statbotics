@@ -17,16 +17,8 @@ from db.models.team import Team
 from db.models.team_event import TeamEvent
 from db.models.team_match import TeamMatch
 from db.models.team_year import TeamYear
-from db.read.event import get_num_events as get_num_events_db
-from db.read.match import get_num_matches as get_num_matches_db
-from db.read.team import get_num_teams as get_num_teams_db, get_teams as get_teams_db
-from db.read.team_event import get_num_team_events as get_num_team_events_db
-from db.read.team_match import get_num_team_matches
-from db.read.team_year import (
-    get_num_team_years as get_num_team_years_db,
-    get_team_years as get_team_years_db,
-)
-from db.read.year import get_num_years as get_num_years_db
+from db.read.team import get_teams as get_teams_db
+from db.read.team_year import get_team_years as get_team_years_db
 from db.write.main import (
     update_events as update_events_db,
     update_matches as update_matches_db,
@@ -53,22 +45,11 @@ def load_teams(cache: bool = True) -> None:
     update_teams_db(team_objs, True)
 
 
-def print_table_stats() -> None:
-    print("Num Teams:", get_num_teams_db())
-    print("Num Years:", get_num_years_db())
-    print("Num Team Years:", get_num_team_years_db())
-    print("Num Events:", get_num_events_db())
-    print("Num Team Events:", get_num_team_events_db())
-    print("Num Matches:", get_num_matches_db())
-    print("Num Team Matches:", get_num_team_matches())
-
-
 def process(start_year: int, end_year: int, cache: bool = True) -> None:
     clean_db()
     load_teams(cache=cache)
     all_team_nums = [t.id for t in get_teams_db()]
     for year in range(start_year, end_year + 1):
-        print("Year:", str(year))
         start = datetime.now()
         year_obj = create_year_obj({"id": year})
         update_years_db([year_obj], True)
@@ -112,13 +93,12 @@ def process(start_year: int, end_year: int, cache: bool = True) -> None:
         update_team_matches_db(team_match_objs, True)
 
         end = datetime.now()
-        print("Time:", end - start)
-        print()
+        print(str(year) + ":", end - start)
 
 
 # removes REALLY old teams and adds district labels
 def post_process():
-    print("Removing Old Teams")
+    print("Post Processing")
     remove_teams_with_no_matches()
 
     active_teams = set([t.team_id for t in get_team_years_db(year=2020)])
@@ -134,4 +114,3 @@ def post_process():
 def main(start_year: int, end_year: int, cache: bool = True) -> None:
     process(start_year, end_year, cache)
     post_process()
-    print_table_stats()
