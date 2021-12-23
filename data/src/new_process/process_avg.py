@@ -1,18 +1,28 @@
 import statistics
+from typing import List
 
-from process.logging import printStats
+from db.models.year import Year
+from db.read.match import get_matches as get_matches_db
+from db.read.year import get_years as get_years_db
+from db.write.main import update_years as update_years_db
 
 
-def process(start_year, end_year, SQL_Write, SQL_Read):
+def process(start_year: int, end_year: int) -> None:
+    year_objs: List[Year] = []
     for year in range(start_year, end_year + 1):
-        year_obj = SQL_Read.getYear(year)
-        matches = []
-        for event in SQL_Read.getEvents(year=year, week=1):
-            matches.extend(event.matches)
-        matches = sorted(matches)
+        year_obj = get_years_db(year)[0]
+        matches = sorted(get_matches_db(year=year, week=1))
 
-        scores, autos, teleops, ones, twos = [], [], [], [], []
-        endgames, fouls, no_fouls, rp_1s, rp_2s = [], [], [], [], []
+        scores: List[int] = []
+        autos: List[int] = []
+        teleops: List[int] = []
+        ones: List[int] = []
+        twos: List[int] = []
+        endgames: List[int] = []
+        fouls: List[int] = []
+        no_fouls: List[int] = []
+        rp_1s: List[int] = []
+        rp_2s: List[int] = []
 
         for match in matches:
             scores.extend([match.red_score, match.blue_score])
@@ -35,17 +45,12 @@ def process(start_year, end_year, SQL_Write, SQL_Read):
         year_obj.endgame_mean = round(sum(endgames) / len(endgames), 2)
         year_obj.foul_mean = round(sum(fouls) / len(fouls), 2)
         year_obj.no_foul_mean = round(sum(no_fouls) / len(no_fouls), 2)
-        year_obj.rp_1_mean = round(sum(rp_1s) / len(rp_1s), 4)
-        year_obj.rp_2_mean = round(sum(rp_2s) / len(rp_2s), 4)
-        print(year, len(matches))
-        SQL_Write.commit()
+        year_obj.rp_1_mean = round(sum(rp_1s) / len(rp_1s), 2)
+        year_obj.rp_2_mean = round(sum(rp_2s) / len(rp_2s), 2)
+        year_objs.append(year_obj)
+
+    update_years_db(year_objs, False)
 
 
-def test(start_year, end_year, SQL_Write, SQL_Read):
-    return
-
-
-def main(start_year, end_year, TBA, SQL_Write, SQL_Read, clean):
-    process(start_year, end_year, SQL_Write, SQL_Read)
-    test(start_year, end_year, SQL_Write, SQL_Read)
-    printStats(SQL_Write=SQL_Write, SQL_Read=SQL_Read)
+def main(start_year: int, end_year: int):
+    process(start_year, end_year)

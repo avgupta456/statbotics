@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
@@ -7,9 +7,12 @@ from db.main import Session
 from db.models.event import Event, EventORM
 
 
-def get_events() -> List[Event]:
+def get_events(year: Optional[int] = None) -> List[Event]:
     def callback(session: SessionType):
-        data = session.query(EventORM).all()  # type: ignore
+        data = session.query(EventORM)  # type: ignore
+        if year != None:
+            data = data.filter(EventORM.year_id == year)  # type: ignore
+        data: List[EventORM] = data.all()  # type: ignore
         return [Event.from_dict(x.__dict__) for x in data]
 
     return run_transaction(Session, callback)  # type: ignore

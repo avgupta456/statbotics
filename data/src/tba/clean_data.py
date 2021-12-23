@@ -162,14 +162,8 @@ def get_breakdown(
             "auto_movement": -1,
             "auto_1": -1,
             "auto_2": -1,
-            "auto_2_1": -1,
-            "auto_2_2": -1,
-            "auto_2_3": -1,
             "teleop_1": -1,
             "teleop_2": -1,
-            "teleop_2_1": -1,
-            "teleop_2_2": -1,
-            "teleop_2_3": -1,
             "1": -1,
             "2": -1,
             "teleop": -1,
@@ -186,14 +180,8 @@ def get_breakdown(
             "auto_movement": breakdown["autoReachPoints"],
             "auto_1": breakdown["autoCrossingPoints"],
             "auto_2": breakdown["autoBoulderPoints"],
-            "auto_2_1": breakdown["autoBouldersLow"] * 5,
-            "auto_2_2": breakdown["autoBouldersHigh"] * 10,
-            "auto_2_3": 0,
             "teleop_1": breakdown["teleopCrossingPoints"],
             "teleop_2": breakdown["teleopBoulderPoints"],
-            "teleop_2_1": breakdown["teleopBouldersLow"] * 2,
-            "teleop_2_2": breakdown["teleopBouldersHigh"] * 5,
-            "teleop_2_3": 0,
         }
         out["1"] = out["auto_1"] + out["teleop_1"]
         out["2"] = out["auto_2"] + out["teleop_2"]
@@ -210,14 +198,8 @@ def get_breakdown(
             "auto_movement": breakdown["autoMobilityPoints"],
             "auto_1": breakdown["autoRotorPoints"],
             "auto_2": breakdown["autoFuelPoints"],
-            "auto_2_1": breakdown["autoFuelLow"],
-            "auto_2_2": breakdown["autoFuelHigh"],
-            "auto_2_3": 0,
             "teleop_1": breakdown["teleopRotorPoints"],
             "teleop_2": breakdown["teleopFuelPoints"],
-            "teleop_2_1": breakdown["teleopFuelLow"],
-            "teleop_2_2": breakdown["teleopFuelHigh"],
-            "teleop_2_3": 0,
         }
         out["1"] = out["auto_1"] + out["teleop_1"]
         out["2"] = out["auto_2"] + out["teleop_2"]
@@ -234,14 +216,8 @@ def get_breakdown(
             "auto_movement": breakdown["autoRunPoints"],
             "auto_1": 0,
             "auto_2": breakdown["autoOwnershipPoints"],
-            "auto_2_1": breakdown["autoSwitchOwnershipSec"] * 2,
-            "auto_2_2": breakdown["autoScaleOwnershipSec"] * 2,
-            "auto_2_3": 0,
             "teleop_1": breakdown["vaultPoints"],
             "teleop_2": breakdown["teleopOwnershipPoints"],
-            "teleop_2_1": breakdown["teleopSwitchOwnershipSec"],
-            "teleop_2_2": breakdown["teleopScaleOwnershipSec"],
-            "teleop_2_3": 0,
         }
         out["1"] = out["auto_1"] + out["teleop_1"]
         out["2"] = out["auto_2"] + out["teleop_2"]
@@ -258,14 +234,8 @@ def get_breakdown(
             "auto_movement": breakdown["sandStormBonusPoints"],
             "auto_1": 0,
             "auto_2": 0,
-            "auto_2_1": 0,
-            "auto_2_2": 0,
-            "auto_2_3": 0,
             "teleop_1": breakdown["hatchPanelPoints"],
             "teleop_2": breakdown["cargoPoints"],
-            "teleop_2_1": 0,
-            "teleop_2_2": 0,
-            "teleop_2_3": 0,
         }
         out["1"] = out["auto_1"] + out["teleop_1"]
         out["2"] = out["auto_2"] + out["teleop_2"]
@@ -282,14 +252,8 @@ def get_breakdown(
             "auto_movement": breakdown["autoInitLinePoints"],
             "auto_1": 0,
             "auto_2": breakdown["autoCellPoints"],
-            "auto_2_1": breakdown["autoCellsBottom"] * 2,
-            "auto_2_2": breakdown["autoCellsOuter"] * 4,
-            "auto_2_3": breakdown["autoCellsInner"] * 6,
             "teleop_1": breakdown["controlPanelPoints"],
             "teleop_2": breakdown["teleopCellPoints"],
-            "teleop_2_1": breakdown["teleopCellsBottom"],
-            "teleop_2_2": breakdown["teleopCellsOuter"] * 2,
-            "teleop_2_3": breakdown["teleopCellsInner"] * 3,
         }
         out["1"] = out["auto_1"] + out["teleop_1"]
         out["2"] = out["auto_2"] + out["teleop_2"]
