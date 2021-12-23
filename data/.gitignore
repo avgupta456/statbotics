@@ -1,5 +1,7 @@
 *.pyc
-calculate/tba/cache/*
-api/constants.py
 
+.env
 .venv
+.vscode
+node_modules
+cache
