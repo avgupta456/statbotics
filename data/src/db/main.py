@@ -14,7 +14,7 @@ local = True
 
 if local:
     engine = create_engine(
-        "cockroachdb://root@localhost:26257/statbotics?sslmode=disable"
+        "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
     )
 else:
     engine = create_engine(

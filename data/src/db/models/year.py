@@ -56,8 +56,8 @@ class YearORM(Base, ModelORM):
     one_mean = Column(Float)
     two_mean = Column(Float)
     endgame_mean = Column(Float)
-    foul_mean = Column(Float)
-    no_foul_mean = Column(Float)
+    fouls_mean = Column(Float)
+    no_fouls_mean = Column(Float)
     rp_1_mean = Column(Float)
     rp_2_mean = Column(Float)
 
@@ -102,8 +102,8 @@ class Year(Model):
     one_mean: float = -1
     two_mean: float = -1
     endgame_mean: float = -1
-    foul_mean: float = -1
-    no_foul_mean: float = -1
+    fouls_mean: float = -1
+    no_fouls_mean: float = -1
     rp_1_mean: float = -1
     rp_2_mean: float = -1
 
