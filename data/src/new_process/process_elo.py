@@ -20,7 +20,7 @@ from db.write.main import (
     update_teams as update_teams_db,
     update_years as update_years_db,
 )
-from helper.utils import get_team_event_id
+from helper.utils import get_team_event_id, get_team_match_id
 from models.elo import (
     existing_rating,
     mean_reversion,
@@ -59,7 +59,7 @@ def process(start_year: int, end_year: int) -> None:
         team_events: Dict[int, List[Tuple[float, bool]]] = {}
         team_matches: Dict[int, List[float]] = {}
         team_elos: Dict[int, float] = {}  # most recent elo
-        team_match_ids: Dict[int, Dict[int, float]] = {}
+        team_match_ids: Dict[int, float] = {}
 
         # win, loss, tie, count
         team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
@@ -108,13 +108,12 @@ def process(start_year: int, end_year: int) -> None:
             red, blue = match.get_teams()
             red_elo_pre: Dict[int, float] = {}
             blue_elo_pre: Dict[int, float] = {}
-            team_match_ids[match.id] = {}
             for team in red:
                 red_elo_pre[team] = team_elos[team]
-                team_match_ids[match.id][team] = team_elos[team]
+                team_match_ids[get_team_match_id(team, match.id)] = team_elos[team]
             for team in blue:
                 blue_elo_pre[team] = team_elos[team]
-                team_match_ids[match.id][team] = team_elos[team]
+                team_match_ids[get_team_match_id(team, match.id)] = team_elos[team]
 
             match.red_elo_sum = sum(red_elo_pre.values())
             match.blue_elo_sum = sum(blue_elo_pre.values())
@@ -184,6 +183,16 @@ def process(start_year: int, end_year: int) -> None:
 
         # TEAM MATCHES
         update_team_matches_elo(year, team_match_ids)
+
+        """
+        all_team_matches = get_team_matches_db(year=year)
+        for team_match in all_team_matches:
+            team_match.elo = team_match_ids[team_match.id]
+        del team_match_ids
+        update_team_matches_db(all_team_matches, False)
+        del all_team_matches
+        """
+
         print("Team Matches", datetime.now() - start)
         start = datetime.now()
 

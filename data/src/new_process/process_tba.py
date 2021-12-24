@@ -87,10 +87,15 @@ def process(start_year: int, end_year: int, cache: bool = True) -> None:
                 team_match_objs.extend(curr_team_match_objs)
 
         update_team_years_db(team_year_objs, True)
+        del team_year_objs
         update_events_db(event_objs, True)
+        del event_objs
         update_team_events_db(team_event_objs, True)
+        del team_event_objs
         update_matches_db(match_objs, True)
+        del match_objs
         update_team_matches_db(team_match_objs, True)
+        del team_match_objs
 
         end = datetime.now()
         print(str(year) + ":", end - start)
