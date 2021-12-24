@@ -56,7 +56,7 @@ def update_template(
                 insert = postgresql.insert(orm_type.__table__).values(data[i : i + CUTOFF])  # type: ignore
                 update_cols = {col.name: col for col in insert.excluded if col.name != "id"}  # type: ignore
                 update = insert.on_conflict_do_update(index_elements=["id"], set_=update_cols)  # type: ignore
-                session.execute(update)  # type: ignore
+                session.execute(update.execution_options(synchronize_session=False))  # type: ignore
 
         def callback(session: SessionType):
             new_items = [x.__dict__ for x in items]  # type: ignore

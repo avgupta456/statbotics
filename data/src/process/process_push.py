@@ -1,8 +1,4 @@
 import pandas as pd
-from sqlalchemy import MetaData
-from sqlalchemy.ext.declarative import declarative_base
-
-from process.logging import printStats
 
 
 def getYears(SQL_Read):
@@ -549,14 +545,6 @@ def pushClean(SQL_Read, cloud_engine):
     )
 
     printStats()
-
-
-def drop_table(table_name, engine):
-    base = declarative_base()
-    metadata = MetaData(engine, reflect=True)
-    table = metadata.tables.get(table_name)
-    if table is not None:
-        base.metadata.drop_all(engine, [table], checkfirst=True)
 
 
 def main(SQL, SQL_Read):

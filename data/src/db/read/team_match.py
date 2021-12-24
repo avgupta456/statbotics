@@ -7,11 +7,15 @@ from db.main import Session
 from db.models.team_match import TeamMatch, TeamMatchORM
 
 
-def get_team_matches(year: Optional[int] = None) -> List[TeamMatch]:
+def get_team_matches(
+    year: Optional[int] = None, event: Optional[int] = None
+) -> List[TeamMatch]:
     def callback(session: SessionType):
         data = session.query(TeamMatchORM)  # type: ignore
         if year is not None:
             data = data.filter(TeamMatchORM.year_id == year)  # type: ignore
+        if event is not None:
+            data = data.filter(TeamMatchORM.event_id == event)  # type: ignore
         data: List[TeamMatchORM] = data.all()  # type: ignore
         return [TeamMatch.from_dict(x.__dict__) for x in data]
 

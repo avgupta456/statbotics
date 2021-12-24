@@ -1,3 +1,4 @@
+from typing import List
 from db.models.event import Event, EventORM
 from db.models.match import Match, MatchORM
 from db.models.team import Team, TeamORM
@@ -7,10 +8,30 @@ from db.models.team_year import TeamYear, TeamYearORM
 from db.models.year import Year, YearORM
 from db.write.template import update_template
 
-update_events = update_template(EventORM, Event)
-update_matches = update_template(MatchORM, Match)
-update_teams = update_template(TeamORM, Team)
-update_years = update_template(YearORM, Year)
-update_team_events = update_template(TeamEventORM, TeamEvent)
-update_team_matches = update_template(TeamMatchORM, TeamMatch)
-update_team_years = update_template(TeamYearORM, TeamYear)
+
+def update_events(items: List[Event], only_insert: bool = False) -> None:
+    return update_template(EventORM, Event)(items, only_insert)
+
+
+def update_matches(items: List[Match], only_insert: bool = False) -> None:
+    return update_template(MatchORM, Match)(items, only_insert)
+
+
+def update_teams(items: List[Team], only_insert: bool = False) -> None:
+    return update_template(TeamORM, Team)(items, only_insert)
+
+
+def update_years(items: List[Year], only_insert: bool = False) -> None:
+    return update_template(YearORM, Year)(items, only_insert)
+
+
+def update_team_events(items: List[TeamEvent], only_insert: bool = False) -> None:
+    return update_template(TeamEventORM, TeamEvent)(items, only_insert)
+
+
+def update_team_matches(items: List[TeamMatch], only_insert: bool = False) -> None:
+    return update_template(TeamMatchORM, TeamMatch)(items, only_insert)
+
+
+def update_team_years(items: List[TeamYear], only_insert: bool = False) -> None:
+    return update_template(TeamYearORM, TeamYear)(items, only_insert)
