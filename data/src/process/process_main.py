@@ -51,6 +51,14 @@ def write_objs(
     matches: List[Match],
     team_matches: List[TeamMatch],
 ) -> None:
+    # removes records with no events/matches
+    team_years = [t for t in team_years if t.elo_end > 0]
+    team_ids = [t.team_id for t in team_years]
+    team_events = [t for t in team_events if t.team_id in team_ids]
+    event_ids = set([t.event_id for t in team_events])
+    events = [e for e in events if e.id in event_ids]
+
+    # writes to db
     update_years_db([year], True)
     update_team_years_db(team_years, True)
     update_events_db(events, True)

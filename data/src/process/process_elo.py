@@ -13,9 +13,8 @@ from db.read.team_year import get_team_years as get_team_years_db
 from db.write.main import update_teams as update_teams_db
 from helper.utils import get_team_event_id, get_team_match_id
 from models.elo import (
+    START_RATING,
     existing_rating,
-    mean_reversion,
-    start_rating,
     update_rating as elo_update_rating,
     win_prob as elo_win_prob,
 )
@@ -39,9 +38,6 @@ def process_year(
     List[Match],
     List[TeamMatch],
 ]:
-    global_start_elo = start_rating()
-    reversion = mean_reversion()
-
     team_years_dict: Dict[int, TeamYear] = {}
     team_events_dict: Dict[int, List[Tuple[float, bool]]] = {}
     team_matches_dict: Dict[int, List[float]] = {}
@@ -61,13 +57,13 @@ def process_year(
         team_matches_dict[num] = []
 
         team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
-        elo_2yr = team_year_2.elo_max if team_year_2 is not None else reversion
+        elo_2yr = team_year_2.elo_max if team_year_2 is not None else -1
 
         team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
-        elo_1yr = team_year_1.elo_max if team_year_1 is not None else reversion
+        elo_1yr = team_year_1.elo_max if team_year_1 is not None else -1
 
         start_elo = existing_rating(elo_1yr, elo_2yr)
-        team_elos[num] = global_start_elo if year_num == 2002 else start_elo
+        team_elos[num] = START_RATING if year_num == 2002 else start_elo
         team_year.elo_start = team_elos[num]
 
     # MATCHES

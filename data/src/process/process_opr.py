@@ -16,17 +16,17 @@ from models import opr as opr_model
 def process_event(
     event: Event,
     team_events: List[TeamEvent],
-    quals: List[Match],
-    playoffs: List[Match],
+    matches: List[Match],
     year: int,
     mean_score: float,
     sd_score: float,
 ) -> Tuple[Any, Any, List[Union[int, float]]]:
-    oprs, ils = opr_model.opr_v2(event, team_events, quals, playoffs, mean_score)
+    matches = sorted(matches)
+    oprs, ils = opr_model.opr_v2(event, team_events, matches, mean_score)
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
 
-    for i, m in enumerate(sorted(quals) + sorted(playoffs)):
+    for i, m in enumerate(matches):
         red, blue = m.get_teams()
         red_oprs: List[float] = []
         blue_oprs: List[float] = []
@@ -159,7 +159,7 @@ def process_year(
         prior_opr = prior_opr_global
 
         team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
-        if team_year_1 is not None:
+        if team_year_1 is not None and team_year_1.opr_end > 0:
             prior_opr = team_year_1.opr_end
             prior_opr = prior_opr / means[year_num - 1] * mean_score
             prior_opr = round(0.90 * prior_opr + 0.10 * prior_opr_global, 2)
@@ -187,12 +187,6 @@ def process_year(
     for team_event in team_events:
         event_team_events[team_event.event_id].append(team_event)
 
-    t_team_match_dict = Dict[int, Dict[int, List[TeamMatch]]]
-    team_matches_dict: t_team_match_dict = defaultdict(lambda: defaultdict(list))
-    for team_match in team_matches:
-        event_id, team_id = team_match.event_id, team_match.team_id
-        team_matches_dict[event_id][team_id].append(team_match)
-
     matches_dict: Dict[int, List[Match]] = defaultdict(list)
     for match in matches:
         matches_dict[match.event_id].append(match)
@@ -215,13 +209,10 @@ def process_year(
             team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
         event_matches = matches_dict[event.id]
-        quals = sorted([m for m in event_matches if m.playoff == 0])
-        playoffs = sorted([m for m in event_matches if m.playoff == 1])
         oprs, ils, stats = process_event(
             event,
             event_team_events[event.id],
-            quals,
-            playoffs,
+            event_matches,
             year_num,
             mean_score,
             sd_score,
@@ -275,6 +266,14 @@ def process_year(
             team_oprs_dict[num] = opr
             team_ils_1[num] = ils_1
             team_ils_2[num] = ils_2
+
+            t_team_match_dict = Dict[int, Dict[int, List[TeamMatch]]]
+            team_matches_dict: t_team_match_dict = defaultdict(
+                lambda: defaultdict(list)
+            )
+            for team_match in team_matches:
+                event_id, team_id = team_match.event_id, team_match.team_id
+                team_matches_dict[event_id][team_id].append(team_match)
 
             team_matches_temp = sorted(team_matches_dict[event.id][num])
             max_i = max(len(team_matches_temp), len(oprs[num])) - 1

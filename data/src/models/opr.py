@@ -141,7 +141,7 @@ def get_base(
 
     arr: List[List[List[int]]] = []
     for i in range(M):
-        red, blue = match_objs[i].get_red(), match_objs[i].get_red()
+        red, blue = match_objs[i].get_red(), match_objs[i].get_blue()
         red = [teams.index(t) for t in red]
         blue = [teams.index(t) for t in blue]
         arr.append([red, blue])
@@ -340,24 +340,20 @@ def get_ILS(team_events: List[TeamEvent], quals: List[Match]):
 
 
 def opr_v1(
-    event: Event,
-    team_events: List[TeamEvent],
-    quals: List[Match],
-    playoffs: List[Match],
-    score_mean: float,
+    event: Event, team_events: List[TeamEvent], matches: List[Match], score_mean: float
 ):
+    quals = sorted([m for m in matches if m.playoff == 0])
+    playoffs = sorted([m for m in matches if m.playoff == 1])
     return get_ixOPR(
         event, team_events, quals, playoffs, score_mean, score, event_score
     )
 
 
 def opr_v2(
-    event: Event,
-    team_events: List[TeamEvent],
-    quals: List[Match],
-    playoffs: List[Match],
-    score_mean: float,
+    event: Event, team_events: List[TeamEvent], matches: List[Match], score_mean: float
 ):
+    quals = sorted([m for m in matches if m.playoff == 0])
+    playoffs = sorted([m for m in matches if m.playoff == 1])
     OPRs = get_ixOPR(event, team_events, quals, playoffs, score_mean, all, event_all)
     ILS = get_ILS(team_events, quals)
     return OPRs, ILS
