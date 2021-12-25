@@ -1,4 +1,4 @@
-from dataclasses import dataclass, fields
+import attr
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
@@ -12,8 +12,8 @@ class MatchORM(Base, ModelORM):
 
     __tablename__ = "matches"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"))
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
+    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
+    event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
 
     """GENERAL"""
     key = Column(String(20))
@@ -82,7 +82,7 @@ class MatchORM(Base, ModelORM):
     blue_rp_2 = Column(Integer)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class Match(Model):
     id: int
     year_id: int
@@ -94,77 +94,74 @@ class Match(Model):
     match_number: int
 
     red: Optional[str] = None
-    red_elo_sum: float = -1
-    red_opr_sum: float = -1
-    red_ils_1_sum: float = -1
-    red_ils_2_sum: float = -1
+    red_elo_sum: Optional[float] = None
+    red_opr_sum: Optional[float] = None
+    red_ils_1_sum: Optional[float] = None
+    red_ils_2_sum: Optional[float] = None
 
     blue: Optional[str] = None
-    blue_elo_sum: float = -1
-    blue_opr_sum: float = -1
-    blue_ils_1_sum: float = -1
-    blue_ils_2_sum: float = -1
+    blue_elo_sum: Optional[float] = None
+    blue_opr_sum: Optional[float] = None
+    blue_ils_1_sum: Optional[float] = None
+    blue_ils_2_sum: Optional[float] = None
 
     winner: Optional[str] = None
     elo_winner: Optional[str] = None
-    elo_win_prob: float = -1
+    elo_win_prob: Optional[float] = None
     opr_winner: Optional[str] = None
-    opr_win_prob: float = -1
+    opr_win_prob: Optional[float] = None
     mix_winner: Optional[str] = None
-    mix_win_prob: float = -1
-    red_rp_1_prob: float = -1
-    red_rp_2_prob: float = -1
-    blue_rp_1_prob: float = -1
-    blue_rp_2_prob: float = -1
+    mix_win_prob: Optional[float] = None
+    red_rp_1_prob: Optional[float] = None
+    red_rp_2_prob: Optional[float] = None
+    blue_rp_1_prob: Optional[float] = None
+    blue_rp_2_prob: Optional[float] = None
 
-    playoff: int = -1
-    time: int = -1
+    playoff: Optional[int] = None
+    time: Optional[int] = None
 
-    red_score: int = -1
-    blue_score: int = -1
+    red_score: Optional[int] = None
+    blue_score: Optional[int] = None
 
-    red_auto: int = -1
-    red_auto_movement: int = -1
-    red_auto_1: int = -1
-    red_auto_2: int = -1
-    red_teleop_1: int = -1
-    red_teleop_2: int = -1
-    red_1: int = -1
-    red_2: int = -1
-    red_teleop: int = -1
-    red_endgame: int = -1
-    red_no_fouls: int = -1
-    red_fouls: int = -1
-    red_rp_1: int = -1
-    red_rp_2: int = -1
+    red_auto: Optional[int] = None
+    red_auto_movement: Optional[int] = None
+    red_auto_1: Optional[int] = None
+    red_auto_2: Optional[int] = None
+    red_teleop_1: Optional[int] = None
+    red_teleop_2: Optional[int] = None
+    red_1: Optional[int] = None
+    red_2: Optional[int] = None
+    red_teleop: Optional[int] = None
+    red_endgame: Optional[int] = None
+    red_no_fouls: Optional[int] = None
+    red_fouls: Optional[int] = None
+    red_rp_1: Optional[int] = None
+    red_rp_2: Optional[int] = None
 
-    blue_auto: int = -1
-    blue_auto_movement: int = -1
-    blue_auto_1: int = -1
-    blue_auto_2: int = -1
-    blue_teleop_1: int = -1
-    blue_teleop_2: int = -1
-    blue_1: int = -1
-    blue_2: int = -1
-    blue_teleop: int = -1
-    blue_endgame: int = -1
-    blue_no_fouls: int = -1
-    blue_fouls: int = -1
-    blue_rp_1: int = -1
-    blue_rp_2: int = -1
+    blue_auto: Optional[int] = None
+    blue_auto_movement: Optional[int] = None
+    blue_auto_1: Optional[int] = None
+    blue_auto_2: Optional[int] = None
+    blue_teleop_1: Optional[int] = None
+    blue_teleop_2: Optional[int] = None
+    blue_1: Optional[int] = None
+    blue_2: Optional[int] = None
+    blue_teleop: Optional[int] = None
+    blue_endgame: Optional[int] = None
+    blue_no_fouls: Optional[int] = None
+    blue_fouls: Optional[int] = None
+    blue_rp_1: Optional[int] = None
+    blue_rp_2: Optional[int] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Match":
-        class_fields = {f.name for f in fields(cls)}
-        return Match(**{k: v for k, v in dict.items() if k in class_fields})
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        return Match(**dict)
 
     """SUPER FUNCTIONS"""
 
-    def __lt__(self, other: "Match") -> bool:
-        return self.time < other.time
-
-    def __repr__(self) -> str:
-        return "(Match " + str(self.key) + ")"
+    def sort(self) -> int:
+        return self.time or 0
 
     def get_red(self) -> List[int]:
         if self.red is None:

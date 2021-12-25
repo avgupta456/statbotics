@@ -1,5 +1,5 @@
-from dataclasses import dataclass, fields
-from typing import Any, Dict
+import attr
+from typing import Any, Dict, Optional
 
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
@@ -12,16 +12,15 @@ class TeamMatchORM(Base, ModelORM):
 
     __tablename__ = "team_matches"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    team_id: Column[int] = Column(Integer, ForeignKey("teams.id"))
+    team_id: Column[int] = Column(Integer, ForeignKey("teams.id"), index=True)
     team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"))
-    team_event_id: Column[int] = Column(
-        Integer, ForeignKey("team_events.id"), index=True
-    )
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"))
+    team_event_id: Column[int] = Column(Integer, ForeignKey("team_events.id"))
+    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
     event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
-    match_id: Column[int] = Column(Integer, ForeignKey("matches.id"), index=True)
+    match_id: Column[int] = Column(Integer, ForeignKey("matches.id"))
 
     time = Column(Integer)
+    playoff = Column(Integer)
     alliance = Column(String(10))
 
     """GENERAL"""
@@ -40,7 +39,7 @@ class TeamMatchORM(Base, ModelORM):
     ils_2 = Column(Float)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class TeamMatch(Model):
     id: int
     team_id: int
@@ -51,30 +50,28 @@ class TeamMatch(Model):
     match_id: int
 
     time: int
+    playoff: int
     alliance: str
 
-    elo: float = -1
-    opr_score: float = -1
-    opr_auto: float = -1
-    opr_teleop: float = -1
-    opr_one: float = -1
-    opr_two: float = -1
-    opr_endgame: float = -1
-    opr_no_fouls: float = -1
-    opr_fouls: float = -1
+    elo: Optional[float] = None
+    opr_score: Optional[float] = None
+    opr_auto: Optional[float] = None
+    opr_teleop: Optional[float] = None
+    opr_one: Optional[float] = None
+    opr_two: Optional[float] = None
+    opr_endgame: Optional[float] = None
+    opr_no_fouls: Optional[float] = None
+    opr_fouls: Optional[float] = None
 
-    ils_1: float = -1
-    ils_2: float = -1
+    ils_1: Optional[float] = None
+    ils_2: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamMatch":
-        class_fields = {f.name for f in fields(cls)}
-        return TeamMatch(**{k: v for k, v in dict.items() if k in class_fields})
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        return TeamMatch(**dict)
 
     """SUPER FUNCTIONS"""
 
-    def __lt__(self, other: "TeamMatch") -> bool:
-        return self.time < other.time
-
-    def __repr__(self) -> str:
-        return "(Team Match " + str(self.team_id) + " " + str(self.match_id) + ")"
+    def sort(self) -> int:
+        return self.time

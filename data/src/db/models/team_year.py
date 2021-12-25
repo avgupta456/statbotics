@@ -1,5 +1,5 @@
-from dataclasses import dataclass, fields
-from typing import Any, Dict
+import attr
+from typing import Any, Dict, Optional, Tuple
 
 from sqlalchemy import Column, Float, ForeignKey, Integer
 
@@ -12,7 +12,7 @@ class TeamYearORM(Base, ModelORM):
 
     __tablename__ = "team_years"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"))
+    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
     team_id: Column[int] = Column(Integer, ForeignKey("teams.id"), index=True)
 
     """ELO"""
@@ -52,53 +52,48 @@ class TeamYearORM(Base, ModelORM):
     opr_percentile = Column(Float)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class TeamYear(Model):
     id: int
     year_id: int
     team_id: int
 
-    elo_start: float = -1
-    elo_pre_champs: float = -1
-    elo_end: float = -1
-    elo_mean: float = -1
-    elo_max: float = -1
-    elo_diff: float = -1
+    elo_start: Optional[float] = None
+    elo_pre_champs: Optional[float] = None
+    elo_end: Optional[float] = None
+    elo_mean: Optional[float] = None
+    elo_max: Optional[float] = None
+    elo_diff: Optional[float] = None
 
-    opr_start: float = -1
-    opr_end: float = -1
-    opr_auto: float = -1
-    opr_teleop: float = -1
-    opr_1: float = -1
-    opr_2: float = -1
-    opr_endgame: float = -1
-    opr_fouls: float = -1
-    opr_no_fouls: float = -1
-    ils_1: float = -1
-    ils_2: float = -1
+    opr_start: Optional[float] = None
+    opr_end: Optional[float] = None
+    opr_auto: Optional[float] = None
+    opr_teleop: Optional[float] = None
+    opr_1: Optional[float] = None
+    opr_2: Optional[float] = None
+    opr_endgame: Optional[float] = None
+    opr_fouls: Optional[float] = None
+    opr_no_fouls: Optional[float] = None
+    ils_1: Optional[float] = None
+    ils_2: Optional[float] = None
 
-    wins: int = 0
-    losses: int = 0
-    ties: int = 0
-    count: int = 0
-    winrate: float = 0
+    wins: Optional[int] = None
+    losses: Optional[int] = None
+    ties: Optional[int] = None
+    count: Optional[int] = None
+    winrate: Optional[float] = None
 
-    elo_rank: int = -1
-    elo_percentile: float = -1
-    opr_rank: int = -1
-    opr_percentile: float = -1
+    elo_rank: Optional[int] = None
+    elo_percentile: Optional[float] = None
+    opr_rank: Optional[int] = None
+    opr_percentile: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamYear":
-        class_fields = {f.name for f in fields(cls)}
-        return TeamYear(**{k: v for k, v in dict.items() if k in class_fields})
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        return TeamYear(**dict)
 
     """SUPER FUNCTIONS"""
 
-    def __lt__(self, other: "TeamYear") -> bool:
-        if self.team_id == other.team_id:
-            return self.year_id < other.year_id
-        return self.team_id < other.team_id
-
-    def __repr__(self) -> str:
-        return f"TeamYear ({self.team_id} {self.year_id})"
+    def sort(self) -> Tuple[int, int]:
+        return self.team_id, self.year_id

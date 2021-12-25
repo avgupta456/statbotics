@@ -9,7 +9,9 @@ from db.models.match import Match, MatchORM
 
 
 def get_matches(
-    year: Optional[int] = None, week: Optional[int] = None, event: Optional[int] = None
+    year: Optional[int] = None,
+    week: Optional[int] = None,
+    event_id: Optional[int] = None,
 ) -> List[Match]:
     def callback(session: SessionType):
         data = session.query(MatchORM)  # type: ignore
@@ -17,8 +19,8 @@ def get_matches(
             data = data.filter(MatchORM.year_id == year)  # type: ignore
         if week != None:
             data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
-        if event != None:
-            data = data.filter(MatchORM.event_id == event)  # type: ignore
+        if event_id != None:
+            data = data.filter(MatchORM.event_id == event_id)  # type: ignore
         data: List[MatchORM] = data.all()  # type: ignore
 
         return [Match.from_dict(x.__dict__) for x in data]

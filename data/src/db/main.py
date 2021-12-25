@@ -9,12 +9,11 @@ CRDB_USER = os.getenv("CRDB_USER", "")
 CRDB_PWD = os.getenv("CRDB_PWD", "")
 CRDB_HOST = os.getenv("CRDB_HOST", "")
 CRDB_CLUSTER = os.getenv("CRDB_CLUSTER", "")
+LOCAL_DB = os.getenv("LOCAL_DB", "True") == "True"
 
-local = True
-
-if local:
+if LOCAL_DB:
     engine = create_engine(
-        "cockroachdb://root@localhost:26257/statbotics?sslmode=disable"
+        "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
     )
 else:
     engine = create_engine(

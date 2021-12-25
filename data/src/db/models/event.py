@@ -1,5 +1,5 @@
-from dataclasses import dataclass, fields
-from typing import Any, Dict
+import attr
+from typing import Any, Dict, Optional
 
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
@@ -57,7 +57,7 @@ class EventORM(Base, ModelORM):
     rp2_mse = Column(Float)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class Event(Model):
     id: int
     year_id: int
@@ -71,39 +71,31 @@ class Event(Model):
     type: int
     week: int
 
-    elo_max: float = -1
-    elo_top8: float = -1
-    elo_top24: float = -1
-    elo_mean: float = -1
-    elo_sd: float = -1
+    elo_max: Optional[float] = None
+    elo_top8: Optional[float] = None
+    elo_top24: Optional[float] = None
+    elo_mean: Optional[float] = None
+    elo_sd: Optional[float] = None
 
-    opr_max: float = -1
-    opr_top8: float = -1
-    opr_top24: float = -1
-    opr_mean: float = -1
-    opr_sd: float = -1
+    opr_max: Optional[float] = None
+    opr_top8: Optional[float] = None
+    opr_top24: Optional[float] = None
+    opr_mean: Optional[float] = None
+    opr_sd: Optional[float] = None
 
-    elo_acc: float = -1
-    elo_mse: float = -1
-    opr_acc: float = -1
-    opr_mse: float = -1
-    mix_acc: float = -1
-    mix_mse: float = -1
+    elo_acc: Optional[float] = None
+    elo_mse: Optional[float] = None
+    opr_acc: Optional[float] = None
+    opr_mse: Optional[float] = None
+    mix_acc: Optional[float] = None
+    mix_mse: Optional[float] = None
 
-    rp1_acc: float = -1
-    rp1_mse: float = -1
-    rp2_acc: float = -1
-    rp2_mse: float = -1
+    rp1_acc: Optional[float] = None
+    rp1_mse: Optional[float] = None
+    rp2_acc: Optional[float] = None
+    rp2_mse: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Event":
-        class_fields = {f.name for f in fields(cls)}
-        return Event(**{k: v for k, v in dict.items() if k in class_fields})
-
-    """SUPER FUNCTIONS"""
-
-    def __lt__(self, other: "Event") -> bool:
-        return self.time < other.time
-
-    def __repr__(self) -> str:
-        return "(Event " + str(self.key) + ")"
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        return Event(**dict)
