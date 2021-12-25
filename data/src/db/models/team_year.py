@@ -2,6 +2,7 @@ import attr
 from typing import Any, Dict, Optional, Tuple
 
 from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy.sql.sqltypes import String
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -12,8 +13,15 @@ class TeamYearORM(Base, ModelORM):
 
     __tablename__ = "team_years"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
-    team_id: Column[int] = Column(Integer, ForeignKey("teams.id"), index=True)
+    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
+    team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
+
+    """API COMPLETENESS"""
+    name = Column(String(100))
+    state = Column(String(10))
+    country = Column(String(30))
+    district = Column(String(10))
+    opr = Column(Float)
 
     """ELO"""
     elo_start = Column(Float)
@@ -55,8 +63,14 @@ class TeamYearORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class TeamYear(Model):
     id: int
-    year_id: int
-    team_id: int
+    year: int
+    team: int
+
+    name: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    district: Optional[str] = None
+    opr: Optional[float] = None
 
     elo_start: Optional[float] = None
     elo_pre_champs: Optional[float] = None
@@ -96,4 +110,4 @@ class TeamYear(Model):
     """SUPER FUNCTIONS"""
 
     def sort(self) -> Tuple[int, int]:
-        return self.team_id, self.year_id
+        return self.team, self.year

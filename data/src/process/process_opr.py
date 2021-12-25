@@ -156,7 +156,7 @@ def process_year(
     team_ils_2: Dict[int, float] = {}
 
     for team_year_obj in team_years:
-        num = team_year_obj.team_id
+        num = team_year_obj.team
         prior_opr = prior_opr_global
 
         team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
@@ -199,12 +199,12 @@ def process_year(
     t_team_match_dict = Dict[int, Dict[int, List[TeamMatch]]]
     team_matches_dict: t_team_match_dict = defaultdict(lambda: defaultdict(list))
     for team_match in team_matches:
-        event_id, team_id = team_match.event_id, team_match.team_id
+        event_id, team_id = team_match.event_id, team_match.team
         team_matches_dict[event_id][team_id].append(team_match)
 
     for event in events:
         for team_event in event_team_events[event.id]:
-            num = team_event.team_id
+            num = team_event.team
             team_event.opr_start = team_oprs_dict[num]
             team_event.opr_end = team_oprs_dict[num]  # overwritten later
             if year_num >= 2016:
@@ -242,7 +242,7 @@ def process_year(
         count_rp += stats[9]
 
         for team_event in event_team_events[event.id]:
-            num = team_event.team_id
+            num = team_event.team
             if num not in oprs:
                 continue
 
@@ -285,7 +285,7 @@ def process_year(
             )
             for i, m in enumerate(team_matches_temp):
                 index = min(i, len(oprs[num]) - 1)
-                m.opr_score = round(oprs[num][index][0], 2)
+                m.opr = round(oprs[num][index][0], 2)
                 if year_num >= 2016:
                     m.opr_auto = round(oprs[num][index][1], 2)
                     m.opr_teleop = round(oprs[num][index][2], 2)

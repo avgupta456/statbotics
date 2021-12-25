@@ -11,7 +11,7 @@ class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
+    team: Column[int] = Column(Integer, primary_key=True, index=True)
 
     """GENERAL"""
     name = Column(String(100))
@@ -36,7 +36,7 @@ class TeamORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class Team(Model):
-    id: int
+    team: int
     name: str
     state: Optional[str] = None
     country: Optional[str] = None

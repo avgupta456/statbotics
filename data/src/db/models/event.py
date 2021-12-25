@@ -12,7 +12,7 @@ class EventORM(Base, ModelORM):
 
     __tablename__ = "events"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
+    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
 
     """GENERAL"""
     key = Column(String(20))
@@ -60,7 +60,7 @@ class EventORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class Event(Model):
     id: int
-    year_id: int
+    year: int
 
     key: str
     name: str
