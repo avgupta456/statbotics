@@ -12,48 +12,48 @@ from helper.utils import logistic
 
 def score(match: Match, alliance: str) -> List[int]:
     if alliance == "red":
-        return [match.red_score]
-    return [match.blue_score]
+        return [match.red_score or 0]
+    return [match.blue_score or 0]
 
 
 def event_score(event: TeamEvent) -> List[float]:
-    return [event.opr_start]
+    return [event.opr_start or 0]
 
 
 def all(match: Match, alliance: str) -> List[float]:
     if alliance == "red":
         return [
-            match.red_score,
-            match.red_auto,
-            match.red_teleop,
-            match.red_1,
-            match.red_2,
-            match.red_endgame,
-            match.blue_fouls,
-            match.red_no_fouls,
+            match.red_score or 0,
+            match.red_auto or 0,
+            match.red_teleop or 0,
+            match.red_1 or 0,
+            match.red_2 or 0,
+            match.red_endgame or 0,
+            match.blue_fouls or 0,
+            match.red_no_fouls or 0,
         ]
     return [
-        match.blue_score,
-        match.blue_auto,
-        match.blue_teleop,
-        match.blue_1,
-        match.blue_2,
-        match.blue_endgame,
-        match.red_fouls,
-        match.blue_no_fouls,
+        match.blue_score or 0,
+        match.blue_auto or 0,
+        match.blue_teleop or 0,
+        match.blue_1 or 0,
+        match.blue_2 or 0,
+        match.blue_endgame or 0,
+        match.red_fouls or 0,
+        match.blue_no_fouls or 0,
     ]
 
 
 def event_all(event: TeamEvent) -> List[float]:
     return [
-        event.opr_start,
-        event.opr_auto,
-        event.opr_teleop,
-        event.opr_1,
-        event.opr_2,
-        event.opr_endgame,
-        event.opr_fouls,
-        event.opr_no_fouls,
+        event.opr_start or 0,
+        event.opr_auto or 0,
+        event.opr_teleop or 0,
+        event.opr_1 or 0,
+        event.opr_2 or 0,
+        event.opr_endgame or 0,
+        event.opr_fouls or 0,
+        event.opr_no_fouls or 0,
     ]
 
 
@@ -322,10 +322,18 @@ def get_ILS(team_events: List[TeamEvent], quals: List[Match]):
 
     for i, m in enumerate(quals):
         red, blue = m.get_teams()
-        adjust_red_1 = (m.red_rp_1 - logistic(sum([out[r][i][0] for r in red]))) / 10
-        adjust_red_2 = (m.red_rp_2 - logistic(sum([out[r][i][1] for r in red]))) / 10
-        adjust_blue_1 = (m.blue_rp_1 - logistic(sum([out[b][i][0] for b in blue]))) / 10
-        adjust_blue_2 = (m.blue_rp_2 - logistic(sum([out[b][i][1] for b in blue]))) / 10
+        adjust_red_1 = (
+            (m.red_rp_1 or 0) - (logistic(sum([out[r][i][0] for r in red])) or 0)
+        ) / 10
+        adjust_red_2 = (
+            (m.red_rp_2 or 0) - (logistic(sum([out[r][i][1] for r in red])) or 0)
+        ) / 10
+        adjust_blue_1 = (
+            (m.blue_rp_1 or 0) - (logistic(sum([out[b][i][0] for b in blue])) or 0)
+        ) / 10
+        adjust_blue_2 = (
+            (m.blue_rp_2 or 0) - (logistic(sum([out[b][i][1] for b in blue])) or 0)
+        ) / 10
 
         for t in teams:
             out[t][i + 1] = out[t][i]
@@ -342,8 +350,8 @@ def get_ILS(team_events: List[TeamEvent], quals: List[Match]):
 def opr_v1(
     event: Event, team_events: List[TeamEvent], matches: List[Match], score_mean: float
 ):
-    quals = sorted([m for m in matches if m.playoff == 0])
-    playoffs = sorted([m for m in matches if m.playoff == 1])
+    quals = sorted([m for m in matches if m.playoff == 0], key=lambda m: m.sort())
+    playoffs = sorted([m for m in matches if m.playoff == 1], key=lambda m: m.sort())
     return get_ixOPR(
         event, team_events, quals, playoffs, score_mean, score, event_score
     )
@@ -352,8 +360,8 @@ def opr_v1(
 def opr_v2(
     event: Event, team_events: List[TeamEvent], matches: List[Match], score_mean: float
 ):
-    quals = sorted([m for m in matches if m.playoff == 0])
-    playoffs = sorted([m for m in matches if m.playoff == 1])
+    quals = sorted([m for m in matches if m.playoff == 0], key=lambda m: m.sort())
+    playoffs = sorted([m for m in matches if m.playoff == 1], key=lambda m: m.sort())
     OPRs = get_ixOPR(event, team_events, quals, playoffs, score_mean, all, event_all)
     ILS = get_ILS(team_events, quals)
     return OPRs, ILS

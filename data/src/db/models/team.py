@@ -1,4 +1,4 @@
-from dataclasses import dataclass, fields
+import attr
 from typing import Any, Dict, Optional
 
 from sqlalchemy import Column, Float, Integer, String
@@ -34,36 +34,25 @@ class TeamORM(Base, ModelORM):
     winrate = Column(Float)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class Team(Model):
     id: int
     name: str
     state: Optional[str] = None
     country: Optional[str] = None
     district: Optional[str] = None
-    active: int = 1
-    elo: float = -1
-    elo_recent: float = -1
-    elo_mean: float = -1
-    elo_max: float = -1
-    wins: int = 0
-    losses: int = 0
-    ties: int = 0
-    count: int = 0
-    winrate: float = 0
+    active: Optional[int] = None
+    elo: Optional[float] = None
+    elo_recent: Optional[float] = None
+    elo_mean: Optional[float] = None
+    elo_max: Optional[float] = None
+    wins: Optional[int] = None
+    losses: Optional[int] = None
+    ties: Optional[int] = None
+    count: Optional[int] = None
+    winrate: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Team":
-        class_fields = {f.name for f in fields(cls)}
-        return Team(**{k: v for k, v in dict.items() if k in class_fields})
-
-    """SUPER FUNCTIONS"""
-
-    def __lt__(self, other: "TeamORM"):
-        return self.id < other.id
-
-    def __repr__(self) -> str:
-        return f"Team ({self.id})"
-
-    def isActive(self) -> bool:
-        return self.active == 1
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        return Team(**dict)

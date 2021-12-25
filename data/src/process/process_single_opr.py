@@ -17,8 +17,8 @@ def process_single(year_num: int, event_id: int):
         team_events,
         matches,
         year_num,
-        year_obj.score_mean,
-        year_obj.score_sd,
+        year_obj.score_mean or 0,
+        year_obj.score_sd or 0,
     )
 
     print(stats)

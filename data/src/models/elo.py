@@ -1,13 +1,13 @@
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 
 
 START_RATING = 1500
 MEAN_REVERSION = 1450
 
 
-def existing_rating(team_1yr: float, team_2yr: float) -> float:
-    team_1yr = team_1yr if team_1yr > 0 else MEAN_REVERSION
-    team_2yr = team_2yr if team_2yr > 0 else MEAN_REVERSION
+def existing_rating(team_1yr: Optional[float], team_2yr: Optional[float]) -> float:
+    team_1yr = team_1yr or MEAN_REVERSION
+    team_2yr = team_2yr or MEAN_REVERSION
     rating = 0.70 * team_1yr + 0.30 * team_2yr  # previous seasons elo
     rating = 0.80 * rating + 0.20 * MEAN_REVERSION  # to avoid drift
     return round(rating, 2)

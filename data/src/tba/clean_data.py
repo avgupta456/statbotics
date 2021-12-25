@@ -155,23 +155,24 @@ def get_match_time(match: Dict[str, Any], event_time: int) -> int:
 
 def get_breakdown(
     year: int, breakdown: Optional[Dict[str, Any]] = None
-) -> Dict[str, int]:
+) -> Dict[str, Optional[int]]:
+    out: Dict[str, Optional[int]] = {}
     if breakdown is None or year < 2016:
         out = {
-            "auto": -1,
-            "auto_movement": -1,
-            "auto_1": -1,
-            "auto_2": -1,
-            "teleop_1": -1,
-            "teleop_2": -1,
-            "1": -1,
-            "2": -1,
-            "teleop": -1,
-            "endgame": -1,
-            "no_fouls": -1,
-            "fouls": -1,
-            "rp1": -1,
-            "rp2": -1,
+            "auto": None,
+            "auto_movement": None,
+            "auto_1": None,
+            "auto_2": None,
+            "teleop_1": None,
+            "teleop_2": None,
+            "1": None,
+            "2": None,
+            "teleop": None,
+            "endgame": None,
+            "no_fouls": None,
+            "fouls": None,
+            "rp1": None,
+            "rp2": None,
         }
         return out
     if year == 2016:
@@ -183,14 +184,14 @@ def get_breakdown(
             "teleop_1": breakdown["teleopCrossingPoints"],
             "teleop_2": breakdown["teleopBoulderPoints"],
         }
-        out["1"] = out["auto_1"] + out["teleop_1"]
-        out["2"] = out["auto_2"] + out["teleop_2"]
-        out["teleop"] = out["teleop_1"] + out["teleop_2"]
+        out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
+        out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
+        out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
         out["endgame"] = breakdown["teleopChallengePoints"]
-        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
+        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
         out["fouls"] = breakdown["foulPoints"]
-        out["rp1"] = breakdown["teleopDefensesBreached"]
-        out["rp2"] = breakdown["teleopTowerCaptured"]
+        out["rp1"] = 1 if breakdown["teleopDefensesBreached"] else 0
+        out["rp2"] = 1 if breakdown["teleopTowerCaptured"] else 0
         return out
     if year == 2017:
         out = {
@@ -201,11 +202,11 @@ def get_breakdown(
             "teleop_1": breakdown["teleopRotorPoints"],
             "teleop_2": breakdown["teleopFuelPoints"],
         }
-        out["1"] = out["auto_1"] + out["teleop_1"]
-        out["2"] = out["auto_2"] + out["teleop_2"]
-        out["teleop"] = out["teleop_1"] + out["teleop_2"]
+        out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
+        out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
+        out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
         out["endgame"] = breakdown["teleopTakeoffPoints"]
-        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
+        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
         out["fouls"] = breakdown["foulPoints"]
         out["rp1"] = 1 if breakdown["rotorRankingPointAchieved"] else 0
         out["rp2"] = 1 if breakdown["kPaRankingPointAchieved"] else 0
@@ -219,11 +220,11 @@ def get_breakdown(
             "teleop_1": breakdown["vaultPoints"],
             "teleop_2": breakdown["teleopOwnershipPoints"],
         }
-        out["1"] = out["auto_1"] + out["teleop_1"]
-        out["2"] = out["auto_2"] + out["teleop_2"]
-        out["teleop"] = out["teleop_1"] + out["teleop_2"]
+        out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
+        out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
+        out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
         out["endgame"] = breakdown["endgamePoints"]
-        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
+        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
         out["fouls"] = breakdown["foulPoints"]
         out["rp1"] = 1 if breakdown["autoQuestRankingPoint"] else 0
         out["rp2"] = 1 if breakdown["faceTheBossRankingPoint"] else 0
@@ -237,11 +238,11 @@ def get_breakdown(
             "teleop_1": breakdown["hatchPanelPoints"],
             "teleop_2": breakdown["cargoPoints"],
         }
-        out["1"] = out["auto_1"] + out["teleop_1"]
-        out["2"] = out["auto_2"] + out["teleop_2"]
-        out["teleop"] = out["teleop_1"] + out["teleop_2"]
+        out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
+        out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
+        out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
         out["endgame"] = breakdown["habClimbPoints"]
-        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
+        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
         out["fouls"] = breakdown["foulPoints"]
         out["rp1"] = 1 if breakdown["completeRocketRankingPoint"] else 0
         out["rp2"] = 1 if breakdown["habDockingRankingPoint"] else 0
@@ -255,11 +256,11 @@ def get_breakdown(
             "teleop_1": breakdown["controlPanelPoints"],
             "teleop_2": breakdown["teleopCellPoints"],
         }
-        out["1"] = out["auto_1"] + out["teleop_1"]
-        out["2"] = out["auto_2"] + out["teleop_2"]
-        out["teleop"] = out["teleop_1"] + out["teleop_2"]
+        out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
+        out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
+        out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
         out["endgame"] = breakdown["endgamePoints"]
-        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
+        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
         out["fouls"] = breakdown["foulPoints"]
         out["rp1"] = 1 if breakdown["shieldEnergizedRankingPoint"] else 0
         out["rp2"] = 1 if breakdown["shieldOperationalRankingPoint"] else 0

@@ -52,7 +52,7 @@ def write_objs(
     team_matches: List[TeamMatch],
 ) -> None:
     # removes records with no events/matches
-    team_years = [t for t in team_years if t.elo_end > 0]
+    team_years = [t for t in team_years if t.elo_end is not None]
     team_ids = [t.team_id for t in team_years]
     team_events = [t for t in team_events if t.team_id in team_ids]
     event_ids = set([t.event_id for t in team_events])

@@ -48,7 +48,7 @@ def process_year(
     team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     team_event_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
 
-    sd_score = year.score_sd
+    sd_score = year.score_sd or 0
 
     # INITIALIZE
     for team_year in team_years:
@@ -57,10 +57,10 @@ def process_year(
         team_matches_dict[num] = []
 
         team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
-        elo_2yr = team_year_2.elo_max if team_year_2 is not None else -1
+        elo_2yr = team_year_2.elo_max if team_year_2 is not None else None
 
         team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
-        elo_1yr = team_year_1.elo_max if team_year_1 is not None else -1
+        elo_1yr = team_year_1.elo_max if team_year_1 is not None else None
 
         start_elo = existing_rating(elo_1yr, elo_2yr)
         team_elos[num] = START_RATING if year_num == 2002 else start_elo
@@ -70,7 +70,7 @@ def process_year(
     acc, mse, count = 0, 0, 0
     event_stats: Dict[int, List[Union[float, int]]] = defaultdict(lambda: [0, 0, 0])
 
-    for match in sorted(matches):
+    for match in sorted(matches, key=lambda m: (m.playoff, m.sort())):
         event_id = match.event_id
         red, blue = match.get_teams()
         red_elo_pre: Dict[int, float] = {}
@@ -92,8 +92,8 @@ def process_year(
             sd_score,
             red_elo_pre,
             blue_elo_pre,
-            match.red_score,
-            match.blue_score,
+            match.red_score or 0,
+            match.blue_score or 0,
             match.playoff == 1,
         )
 
@@ -113,7 +113,7 @@ def process_year(
             team_year_stats[t][3] += 1
             team_year_stats[t][red_mapping[winner]] += 1
             team_event_stats[team_event_id][3] += 1
-            team_event_stats[t][red_mapping[winner]] += 1
+            team_event_stats[team_event_id][red_mapping[winner]] += 1
 
         for t in blue:
             team_elos[t] = blue_elo_post[t]
@@ -129,7 +129,7 @@ def process_year(
             team_year_stats[t][3] += 1
             team_year_stats[t][blue_mapping[winner]] += 1
             team_event_stats[team_event_id][3] += 1
-            team_event_stats[t][blue_mapping[winner]] += 1
+            team_event_stats[team_event_id][blue_mapping[winner]] += 1
 
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
         error = (win_probs[winner] - match.elo_win_prob) ** 2
@@ -149,7 +149,6 @@ def process_year(
     # TEAM MATCHES
     for team_match in team_matches:
         team_match.elo = team_match_ids[team_match.id]
-    del team_match_ids
 
     # TEAM EVENTS
     event_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
@@ -166,8 +165,8 @@ def process_year(
         team_event.elo_start = elos[0]
         team_event.elo_end = elos[-1]
         team_event.elo_max = max(elos)
-        team_event.elo_mean = sum(elos) / len(elos)
-        team_event.elo_diff = elos[-1] - elos[0]
+        team_event.elo_mean = round(sum(elos) / len(elos), 2)
+        team_event.elo_diff = round(elos[-1] - elos[0], 2)
         qual_elos = [obj[0] for obj in team_events_dict[id] if not obj[1]]
         team_event.elo_pre_playoffs = elos[0] if len(qual_elos) == 0 else qual_elos[-1]
 
@@ -179,9 +178,6 @@ def process_year(
         team_event.count = count
         team_event.winrate = winrate
 
-    del team_events_dict
-    del team_event_stats
-
     # EVENTS
     event_types: Dict[int, int] = defaultdict(int)
     for event in events:
@@ -190,12 +186,12 @@ def process_year(
 
         elos: List[float] = []
         for team_event in event_team_events[event_id]:
-            elos.append(team_event.elo_pre_playoffs)
+            elos.append(team_event.elo_pre_playoffs or 0)
         elos.sort(reverse=True)
 
         event.elo_max = elos[0]
-        event.elo_top8 = -1 if len(elos) < 8 else elos[7]
-        event.elo_top24 = -1 if len(elos) < 24 else elos[23]
+        event.elo_top8 = None if len(elos) < 8 else elos[7]
+        event.elo_top24 = None if len(elos) < 24 else elos[23]
         event.elo_mean = round(sum(elos) / len(elos), 2)
         event.elo_sd = round(statistics.pstdev(elos), 2)
         event_acc, event_mse, event_count = event_stats[event_id]
@@ -225,10 +221,10 @@ def process_year(
         obj.elo_max = max(elos[min(len(elos) - 1, 8) :])
         obj.elo_mean = round(sum(elos) / len(elos), 2)
         obj.elo_end = team_elos[team]
-        obj.elo_diff = obj.elo_end - obj.elo_start
+        obj.elo_diff = round(obj.elo_end - (obj.elo_start or 0), 2)
 
         pre_champs = obj.elo_start
-        for team_event in sorted(team_team_events[team]):
+        for team_event in sorted(team_team_events[team], key=lambda t: t.sort()):
             if event_types[team_event.event_id] < 3:
                 pre_champs = team_event.elo_end
         obj.elo_pre_champs = pre_champs
@@ -244,10 +240,6 @@ def process_year(
         obj.elo_rank = rank = year_elos.index(obj.elo_max) + 1
         obj.elo_percentile = round(rank / team_year_count, 4)
 
-    del team_matches_dict
-    del team_elos
-    del team_year_stats
-
     # YEARS
     year_elos.sort(reverse=True)
     year.elo_max = year_elos[0]
@@ -262,7 +254,6 @@ def process_year(
     year.elo_mse = mse
 
     team_years_all[year_num] = team_years_dict
-    del team_years_dict
 
     return (
         team_years_all,
@@ -286,11 +277,11 @@ def post_process(end_year: int):
         years: Dict[int, float] = {}
         wins, losses, ties, count = 0, 0, 0, 0
         for team_year in team_team_years[team.id]:
-            years[team_year.year_id] = team_year.elo_max
-            wins += team_year.wins
-            losses += team_year.losses
-            ties += team_year.ties
-            count += team_year.count
+            years[team_year.year_id] = team_year.elo_max or 0
+            wins += team_year.wins or 0
+            losses += team_year.losses or 0
+            ties += team_year.ties or 0
+            count += team_year.count or 0
         keys = years.keys()
         values = years.values()
         recent: List[float] = []
@@ -298,7 +289,7 @@ def post_process(end_year: int):
             if year in years:
                 recent.append(years[year])
         r_y, y = len(recent), len(keys)
-        team.elo = -1 if not team.active or y == 0 else years[max(keys)]
+        team.elo = None if not team.active or y == 0 else years[max(keys)]
 
         # temp solution applying mean reversion if no 2020 matches
         if team.active and y > 0 and max(keys) == 2019:
@@ -306,9 +297,9 @@ def post_process(end_year: int):
             yr_2 = 1450 if 2018 not in years else years[2018]
             team.elo = 0.56 * yr_1 + 0.24 * yr_2 + 0.20 * 1450
 
-        team.elo_recent = -1 if r_y == 0 else round(sum(recent) / r_y, 2)
-        team.elo_mean = -1 if y == 0 else round(sum(values) / y, 2)
-        team.elo_max = -1 if y == 0 else max(values)
+        team.elo_recent = None if r_y == 0 else round(sum(recent) / r_y, 2)
+        team.elo_mean = None if y == 0 else round(sum(values) / y, 2)
+        team.elo_max = None if y == 0 else max(values)
 
         winrate = round((wins + ties / 2) / max(1, count), 4)
         team.wins = wins

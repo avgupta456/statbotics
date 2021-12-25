@@ -16,6 +16,7 @@ PyMySQL = "^1.0.2"
 sqlalchemy-cockroachdb = "^1.4.3"
 python-dotenv = "^0.19.2"
 psycopg2 = "^2.9.2"
+attrs = "^21.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
@@ -23,6 +24,7 @@ flake8 = "^4.0.1"
 isort = "^5.10.1"
 pre-commit = "^2.16.0"
 pyinstrument = "^4.1.1"
+psutil = "^5.8.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

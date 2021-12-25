@@ -21,7 +21,7 @@ def process_event(
     mean_score: float,
     sd_score: float,
 ) -> Tuple[Any, Any, List[Union[int, float]]]:
-    matches = sorted(matches)
+    matches = sorted(matches, key=lambda m: (m.playoff, m.sort()))
     oprs, ils = opr_model.opr_v2(event, team_events, matches, mean_score)
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
@@ -51,7 +51,7 @@ def process_event(
         if m.opr_winner == winner:
             opr_acc += 1
 
-        m.mix_win_prob = 0.5 * (m.elo_win_prob + m.opr_win_prob)
+        m.mix_win_prob = 0.5 * ((m.elo_win_prob or 0) + m.opr_win_prob)
         m.mix_winner = "red" if m.mix_win_prob > 0.5 else "blue"
 
         mix_mse += (win_probs[winner] - m.mix_win_prob) ** 2
@@ -91,10 +91,10 @@ def process_event(
             if int(blue_rp_2_prob + 0.5) == blue_rp_2:
                 rp2_acc += 1
 
-            rp1_mse += (red_rp_1_prob - red_rp_1) ** 2
-            rp2_mse += (red_rp_2_prob - red_rp_2) ** 2
-            rp1_mse += (blue_rp_1_prob - blue_rp_1) ** 2
-            rp2_mse += (blue_rp_2_prob - blue_rp_2) ** 2
+            rp1_mse += (red_rp_1_prob - (red_rp_1 or 0)) ** 2
+            rp2_mse += (red_rp_2_prob - (red_rp_2 or 0)) ** 2
+            rp1_mse += (blue_rp_1_prob - (blue_rp_1 or 0)) ** 2
+            rp2_mse += (blue_rp_2_prob - (blue_rp_2 or 0)) ** 2
 
             count_rp += 2
 
@@ -137,8 +137,8 @@ def process_year(
     List[Match],
     List[TeamMatch],
 ]:
-    sd_score = year.score_sd
-    mean_score = year.score_mean
+    sd_score = year.score_sd or 0
+    mean_score = year.score_mean or 0
     TM = 2 if year_num <= 2004 else 3
 
     team_years_dict: Dict[int, TeamYear] = {}
@@ -150,34 +150,39 @@ def process_year(
     # populate starting OPR from previous year
     means[year_num] = mean_score
     prior_opr_global = mean_score / TM
-    ils_1_seed = logistic_inv(year.rp_1_mean / TM)
-    ils_2_seed = logistic_inv(year.rp_2_mean / TM)
-    team_ils_1, team_ils_2 = {}, {}
+    ils_1_seed = logistic_inv((year.rp_1_mean or 0) / TM)
+    ils_2_seed = logistic_inv((year.rp_2_mean or 0) / TM)
+    team_ils_1: Dict[int, float] = {}
+    team_ils_2: Dict[int, float] = {}
 
     for team_year_obj in team_years:
         num = team_year_obj.team_id
         prior_opr = prior_opr_global
 
         team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
-        if team_year_1 is not None and team_year_1.opr_end > 0:
+        if team_year_1 is not None and team_year_1.opr_end is not None:
             prior_opr = team_year_1.opr_end
             prior_opr = prior_opr / means[year_num - 1] * mean_score
             prior_opr = round(0.90 * prior_opr + 0.10 * prior_opr_global, 2)
         team_year_obj.opr_start = prior_opr
         team_year_obj.opr_end = prior_opr  # will be overwritten
 
-        rate = prior_opr / prior_opr_global
-        team_year_obj.opr_auto = rate * year.auto_mean / TM
-        team_year_obj.opr_teleop = rate * year.teleop_mean / TM
-        team_year_obj.opr_1 = rate * year.rp_1_mean / TM
-        team_year_obj.opr_2 = rate * year.rp_2_mean / TM
-        team_year_obj.opr_endgame = rate * year.endgame_mean / TM
-        team_year_obj.opr_fouls = rate * year.fouls_mean / TM
-        team_year_obj.opr_no_fouls = rate * year.no_fouls_mean / TM
+        if year_num >= 2016:
+            rate = prior_opr / prior_opr_global
+            team_year_obj.opr_auto = rate * (year.auto_mean or 0) / TM
+            team_year_obj.opr_teleop = rate * (year.teleop_mean or 0) / TM
+            team_year_obj.opr_1 = rate * (year.rp_1_mean or 0) / TM
+            team_year_obj.opr_2 = rate * (year.rp_2_mean or 0) / TM
+            team_year_obj.opr_endgame = rate * (year.endgame_mean or 0) / TM
+            team_year_obj.opr_fouls = rate * (year.fouls_mean or 0) / TM
+            team_year_obj.opr_no_fouls = rate * (year.no_fouls_mean or 0) / TM
 
-        boost = (team_year_obj.elo_start - 1500) * 0.001
-        team_year_obj.ils_1 = team_ils_1[num] = max(-1 / 3, ils_1_seed + boost)
-        team_year_obj.ils_2 = team_ils_2[num] = max(-1 / 3, ils_2_seed + boost)
+        boost = ((team_year_obj.elo_start or 0) - 1500) * 0.001
+        team_ils_1[num] = max(-1 / 3, ils_1_seed + boost)
+        team_ils_2[num] = max(-1 / 3, ils_2_seed + boost)
+        if year_num >= 2016:
+            team_year_obj.ils_1 = round(team_ils_1[num], 2)
+            team_year_obj.ils_2 = round(team_ils_2[num], 2)
 
         team_years_dict[num] = team_year_obj
         team_oprs_dict[num] = prior_opr
@@ -191,22 +196,29 @@ def process_year(
     for match in matches:
         matches_dict[match.event_id].append(match)
 
+    t_team_match_dict = Dict[int, Dict[int, List[TeamMatch]]]
+    team_matches_dict: t_team_match_dict = defaultdict(lambda: defaultdict(list))
+    for team_match in team_matches:
+        event_id, team_id = team_match.event_id, team_match.team_id
+        team_matches_dict[event_id][team_id].append(team_match)
+
     for event in events:
         for team_event in event_team_events[event.id]:
             num = team_event.team_id
             team_event.opr_start = team_oprs_dict[num]
             team_event.opr_end = team_oprs_dict[num]  # overwritten later
-            team_event.opr_auto = team_years_dict[num].opr_auto
-            team_event.opr_teleop = team_years_dict[num].opr_teleop
-            team_event.opr_1 = team_years_dict[num].opr_1
-            team_event.opr_2 = team_years_dict[num].opr_2
-            team_event.opr_endgame = team_years_dict[num].opr_endgame
-            team_event.opr_fouls = team_years_dict[num].opr_fouls
-            team_event.opr_no_fouls = team_years_dict[num].opr_no_fouls
-            team_event.ils_1_start = team_ils_1[num]
-            team_event.ils_2_start = team_ils_2[num]
-            team_event.ils_1_end = team_ils_1[num]  # overwritten later
-            team_event.ils_2_end = team_ils_2[num]  # overwritten later
+            if year_num >= 2016:
+                team_event.opr_auto = team_years_dict[num].opr_auto
+                team_event.opr_teleop = team_years_dict[num].opr_teleop
+                team_event.opr_1 = team_years_dict[num].opr_1
+                team_event.opr_2 = team_years_dict[num].opr_2
+                team_event.opr_endgame = team_years_dict[num].opr_endgame
+                team_event.opr_fouls = team_years_dict[num].opr_fouls
+                team_event.opr_no_fouls = team_years_dict[num].opr_no_fouls
+                team_event.ils_1_start = team_ils_1[num]
+                team_event.ils_2_start = team_ils_2[num]
+                team_event.ils_1_end = team_ils_1[num]  # overwritten later
+                team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
         event_matches = matches_dict[event.id]
         oprs, ils, stats = process_event(
@@ -252,48 +264,43 @@ def process_year(
             }
 
             team_event.opr_end = event_dict["opr_end"]
-            team_event.opr_auto = event_dict["opr_auto"]
-            team_event.opr_teleop = event_dict["opr_teleop"]
-            team_event.opr_1 = event_dict["opr_1"]
-            team_event.opr_2 = event_dict["opr_2"]
-            team_event.opr_endgame = event_dict["opr_endgame"]
-            team_event.opr_fouls = event_dict["opr_fouls"]
-            team_event.opr_no_fouls = event_dict["opr_no_fouls"]
-            team_event.ils_1_end = event_dict["ils_1_end"]
-            team_event.ils_2_end = event_dict["ils_2_end"]
+            if year_num >= 2016:
+                team_event.opr_auto = event_dict["opr_auto"]
+                team_event.opr_teleop = event_dict["opr_teleop"]
+                team_event.opr_1 = event_dict["opr_1"]
+                team_event.opr_2 = event_dict["opr_2"]
+                team_event.opr_endgame = event_dict["opr_endgame"]
+                team_event.opr_fouls = event_dict["opr_fouls"]
+                team_event.opr_no_fouls = event_dict["opr_no_fouls"]
+                team_event.ils_1_end = event_dict["ils_1_end"]
+                team_event.ils_2_end = event_dict["ils_2_end"]
             team_team_events[num].append(event_dict)
 
             team_oprs_dict[num] = opr
             team_ils_1[num] = ils_1
             team_ils_2[num] = ils_2
 
-            t_team_match_dict = Dict[int, Dict[int, List[TeamMatch]]]
-            team_matches_dict: t_team_match_dict = defaultdict(
-                lambda: defaultdict(list)
+            team_matches_temp = sorted(
+                team_matches_dict[event.id][num], key=lambda m: (m.playoff, m.sort())
             )
-            for team_match in team_matches:
-                event_id, team_id = team_match.event_id, team_match.team_id
-                team_matches_dict[event_id][team_id].append(team_match)
-
-            team_matches_temp = sorted(team_matches_dict[event.id][num])
-            max_i = max(len(team_matches_temp), len(oprs[num])) - 1
             for i, m in enumerate(team_matches_temp):
-                index = min(i, max_i)
+                index = min(i, len(oprs[num]) - 1)
                 m.opr_score = round(oprs[num][index][0], 2)
-                m.opr_auto = round(oprs[num][index][1], 2)
-                m.opr_teleop = round(oprs[num][index][2], 2)
-                m.opr_one = round(oprs[num][index][3], 2)
-                m.opr_two = round(oprs[num][index][4], 2)
-                m.opr_endgame = round(oprs[num][index][5], 2)
-                m.opr_fouls = round(oprs[num][index][6], 2)
-                m.opr_no_fouls = round(oprs[num][index][7], 2)
-                m.ils_1 = round(ils[num][index][0], 2)
-                m.ils_2 = round(ils[num][index][1], 2)
+                if year_num >= 2016:
+                    m.opr_auto = round(oprs[num][index][1], 2)
+                    m.opr_teleop = round(oprs[num][index][2], 2)
+                    m.opr_one = round(oprs[num][index][3], 2)
+                    m.opr_two = round(oprs[num][index][4], 2)
+                    m.opr_endgame = round(oprs[num][index][5], 2)
+                    m.opr_fouls = round(oprs[num][index][6], 2)
+                    m.opr_no_fouls = round(oprs[num][index][7], 2)
+                    m.ils_1 = round(ils[num][index][0], 2)
+                    m.ils_2 = round(ils[num][index][1], 2)
 
         oprs_end = sorted([round(oprs[t][-1][0], 2) for t in oprs], reverse=True)
         event.opr_max = oprs_end[0]
-        event.opr_top8 = -1 if len(oprs_end) < 8 else oprs_end[7]
-        event.opr_top24 = -1 if len(oprs_end) < 24 else oprs_end[23]
+        event.opr_top8 = None if len(oprs_end) < 8 else oprs_end[7]
+        event.opr_top24 = None if len(oprs_end) < 24 else oprs_end[23]
         event.opr_mean = round(sum(oprs_end) / len(oprs_end), 2)
         event.opr_sd = round(statistics.pstdev(oprs_end), 2)
 
@@ -311,15 +318,16 @@ def process_year(
         )[-1]
 
         obj.opr_end = best_event["opr_end"]
-        obj.opr_auto = best_event["opr_auto"]
-        obj.opr_teleop = best_event["opr_teleop"]
-        obj.opr_1 = best_event["opr_1"]
-        obj.opr_2 = best_event["opr_2"]
-        obj.opr_endgame = best_event["opr_endgame"]
-        obj.opr_fouls = best_event["opr_fouls"]
-        obj.opr_no_fouls = best_event["opr_no_fouls"]
-        obj.ils_1 = team_ils_1[num]
-        obj.ils_2 = team_ils_2[num]
+        if year_num >= 2016:
+            obj.opr_auto = best_event["opr_auto"]
+            obj.opr_teleop = best_event["opr_teleop"]
+            obj.opr_1 = best_event["opr_1"]
+            obj.opr_2 = best_event["opr_2"]
+            obj.opr_endgame = best_event["opr_endgame"]
+            obj.opr_fouls = best_event["opr_fouls"]
+            obj.opr_no_fouls = best_event["opr_no_fouls"]
+            obj.ils_1 = team_ils_1[num]
+            obj.ils_2 = team_ils_2[num]
 
         best_oprs.append(best_event[opr_str])
 
@@ -330,9 +338,8 @@ def process_year(
             continue
 
         obj = team_years_dict[num]
-        obj.opr_rank = rank = (
-            best_oprs.index(obj.opr_end if year_num < 2016 else obj.opr_no_fouls) + 1
-        )
+        value = (obj.opr_end if year_num < 2016 else obj.opr_no_fouls) or 0
+        obj.opr_rank = rank = best_oprs.index(value) + 1
         obj.opr_percentile = round(rank / team_year_count, 4)
 
     team_years_all[year_num] = team_years_dict
@@ -350,10 +357,10 @@ def process_year(
     year.opr_mse = round(opr_mse / count, 4)
     year.mix_acc = round(mix_acc / count, 4)
     year.mix_mse = round(mix_mse / count, 4)
-    year.rp1_acc = -1 if year_num < 2016 else round(rp1_acc / count_rp, 4)
-    year.rp1_mse = -1 if year_num < 2016 else round(rp1_mse / count_rp, 4)
-    year.rp2_acc = -1 if year_num < 2016 else round(rp2_acc / count_rp, 4)
-    year.rp2_mse = -1 if year_num < 2016 else round(rp2_mse / count_rp, 4)
+    year.rp1_acc = None if year_num < 2016 else round(rp1_acc / count_rp, 4)
+    year.rp1_mse = None if year_num < 2016 else round(rp1_mse / count_rp, 4)
+    year.rp2_acc = None if year_num < 2016 else round(rp2_acc / count_rp, 4)
+    year.rp2_mse = None if year_num < 2016 else round(rp2_mse / count_rp, 4)
 
     return (
         team_years_all,

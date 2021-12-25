@@ -72,8 +72,8 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["red_endgame"] = data["red_score_breakdown"]["endgame"]
     data["red_no_fouls"] = data["red_score_breakdown"]["no_fouls"]
     data["red_fouls"] = data["red_score_breakdown"]["fouls"]
-    data["red_rp_1"] = 1 if data["red_score_breakdown"]["rp1"] else 0
-    data["red_rp_2"] = 1 if data["red_score_breakdown"]["rp2"] else 0
+    data["red_rp_1"] = data["red_score_breakdown"]["rp1"]
+    data["red_rp_2"] = data["red_score_breakdown"]["rp2"]
     data["blue_auto"] = data["blue_score_breakdown"]["auto"]
     data["blue_auto_movement"] = data["blue_score_breakdown"]["auto_movement"]
     data["blue_auto_1"] = data["blue_score_breakdown"]["auto_1"]
@@ -86,8 +86,8 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["blue_endgame"] = data["blue_score_breakdown"]["endgame"]
     data["blue_no_fouls"] = data["blue_score_breakdown"]["no_fouls"]
     data["blue_fouls"] = data["blue_score_breakdown"]["fouls"]
-    data["blue_rp_1"] = 1 if data["blue_score_breakdown"]["rp1"] else 0
-    data["blue_rp_2"] = 1 if data["blue_score_breakdown"]["rp2"] else 0
+    data["blue_rp_1"] = data["blue_score_breakdown"]["rp1"]
+    data["blue_rp_2"] = data["blue_score_breakdown"]["rp2"]
     match = Match.from_dict(data)
 
     team_matches: List[TeamMatch] = []
@@ -96,12 +96,13 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
         "event_id": data["event_id"],
         "match_id": match_id,
         "time": data["time"],
+        "playoff": data["playoff"],
     }
 
     for alliance in ["red", "blue"]:
         new_data["alliance"] = alliance
         for team in data[alliance].split(","):
-            new_data["team_id"] = team
+            new_data["team_id"] = int(team)
             new_data["team_year_id"] = get_team_year_id(team, data["year_id"])
             new_data["team_event_id"] = get_team_event_id(team, data["event_id"])
             team_matches.append(create_team_match_obj(new_data))

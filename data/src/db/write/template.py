@@ -1,5 +1,7 @@
 from typing import Any, Callable, Dict, List, Type
 
+import attr
+
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
@@ -59,7 +61,7 @@ def update_template(
                 session.execute(update.execution_options(synchronize_session=False))  # type: ignore
 
         def callback(session: SessionType):
-            new_items = [x.__dict__ for x in items]  # type: ignore
+            new_items = [attr.asdict(x) for x in items]
 
             if insert_only:
                 return _insert(session, new_items)  # type: ignore

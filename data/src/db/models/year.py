@@ -1,5 +1,5 @@
-from dataclasses import dataclass, fields
-from typing import Any, Dict
+import attr
+from typing import Any, Dict, Optional
 
 from sqlalchemy import Column, Float, Integer
 
@@ -62,60 +62,52 @@ class YearORM(Base, ModelORM):
     rp_2_mean = Column(Float)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class Year(Model):
     id: int
-    elo_max: float = -1
-    elo_1p: float = -1
-    elo_5p: float = -1
-    elo_10p: float = -1
-    elo_25p: float = -1
-    elo_median: float = -1
-    elo_mean: float = -1
-    elo_sd: float = -1
-    elo_acc: float = -1
-    elo_mse: float = -1
+    elo_max: Optional[float] = None
+    elo_1p: Optional[float] = None
+    elo_5p: Optional[float] = None
+    elo_10p: Optional[float] = None
+    elo_25p: Optional[float] = None
+    elo_median: Optional[float] = None
+    elo_mean: Optional[float] = None
+    elo_sd: Optional[float] = None
+    elo_acc: Optional[float] = None
+    elo_mse: Optional[float] = None
 
-    opr_max: float = -1
-    opr_1p: float = -1
-    opr_5p: float = -1
-    opr_10p: float = -1
-    opr_25p: float = -1
-    opr_median: float = -1
-    opr_mean: float = -1
-    opr_sd: float = -1
-    opr_acc: float = -1
-    opr_mse: float = -1
+    opr_max: Optional[float] = None
+    opr_1p: Optional[float] = None
+    opr_5p: Optional[float] = None
+    opr_10p: Optional[float] = None
+    opr_25p: Optional[float] = None
+    opr_median: Optional[float] = None
+    opr_mean: Optional[float] = None
+    opr_sd: Optional[float] = None
+    opr_acc: Optional[float] = None
+    opr_mse: Optional[float] = None
 
-    mix_acc: float = -1
-    mix_mse: float = -1
+    mix_acc: Optional[float] = None
+    mix_mse: Optional[float] = None
 
-    rp1_acc: float = -1
-    rp1_mse: float = -1
-    rp2_acc: float = -1
-    rp2_mse: float = -1
+    rp1_acc: Optional[float] = None
+    rp1_mse: Optional[float] = None
+    rp2_acc: Optional[float] = None
+    rp2_mse: Optional[float] = None
 
-    score_mean: float = -1
-    score_sd: float = -1
-    auto_mean: float = -1
-    teleop_mean: float = -1
-    one_mean: float = -1
-    two_mean: float = -1
-    endgame_mean: float = -1
-    fouls_mean: float = -1
-    no_fouls_mean: float = -1
-    rp_1_mean: float = -1
-    rp_2_mean: float = -1
+    score_mean: Optional[float] = None
+    score_sd: Optional[float] = None
+    auto_mean: Optional[float] = None
+    teleop_mean: Optional[float] = None
+    one_mean: Optional[float] = None
+    two_mean: Optional[float] = None
+    endgame_mean: Optional[float] = None
+    fouls_mean: Optional[float] = None
+    no_fouls_mean: Optional[float] = None
+    rp_1_mean: Optional[float] = None
+    rp_2_mean: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Year":
-        class_fields = {f.name for f in fields(cls)}
-        return Year(**{k: v for k, v in dict.items() if k in class_fields})
-
-    """SUPER FUNCTIONS"""
-
-    def __lt__(self, other: "Year") -> bool:
-        return self.id < other.id
-
-    def __repr__(self) -> str:
-        return f"Year ({self.id})"
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        return Year(**dict)

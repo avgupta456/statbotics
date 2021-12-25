@@ -1,5 +1,5 @@
-from dataclasses import dataclass, fields
-from typing import Any, Dict
+import attr
+from typing import Any, Dict, Optional, Tuple
 
 from sqlalchemy import Column, Float, ForeignKey, Integer
 
@@ -14,8 +14,8 @@ class TeamEventORM(Base, ModelORM):
     id: Column[int] = Column(Integer, primary_key=True, index=True)
     team_id: Column[int] = Column(Integer, ForeignKey("teams.id"), index=True)
     team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"))
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"))
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
+    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
+    event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
 
     """GENERAL"""
     time = Column(Integer)
@@ -55,7 +55,7 @@ class TeamEventORM(Base, ModelORM):
     rank = Column(Integer)
 
 
-@dataclass
+@attr.s(auto_attribs=True, slots=True)
 class TeamEvent(Model):
     id: int
     team_id: int
@@ -64,46 +64,41 @@ class TeamEvent(Model):
     event_id: int
 
     time: int
-    elo_start: float = -1
-    elo_pre_playoffs: float = -1
-    elo_end: float = -1
-    elo_mean: float = -1
-    elo_max: float = -1
-    elo_diff: float = -1
+    elo_start: Optional[float] = None
+    elo_pre_playoffs: Optional[float] = None
+    elo_end: Optional[float] = None
+    elo_mean: Optional[float] = None
+    elo_max: Optional[float] = None
+    elo_diff: Optional[float] = None
 
-    opr_start: float = -1
-    opr_end: float = -1
-    opr_auto: float = -1
-    opr_teleop: float = -1
-    opr_1: float = -1
-    opr_2: float = -1
-    opr_endgame: float = -1
-    opr_fouls: float = -1
-    opr_no_fouls: float = -1
+    opr_start: Optional[float] = None
+    opr_end: Optional[float] = None
+    opr_auto: Optional[float] = None
+    opr_teleop: Optional[float] = None
+    opr_1: Optional[float] = None
+    opr_2: Optional[float] = None
+    opr_endgame: Optional[float] = None
+    opr_fouls: Optional[float] = None
+    opr_no_fouls: Optional[float] = None
 
-    ils_1_start: float = -1
-    ils_2_start: float = -1
-    ils_1_end: float = -1
-    ils_2_end: float = -1
+    ils_1_start: Optional[float] = None
+    ils_2_start: Optional[float] = None
+    ils_1_end: Optional[float] = None
+    ils_2_end: Optional[float] = None
 
-    wins: int = 0
-    losses: int = 0
-    ties: int = 0
-    count: int = 0
-    winrate: float = 0
-    rank: int = -1
+    wins: Optional[int] = None
+    losses: Optional[int] = None
+    ties: Optional[int] = None
+    count: Optional[int] = None
+    winrate: Optional[float] = None
+    rank: Optional[int] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamEvent":
-        class_fields = {f.name for f in fields(cls)}
-        return TeamEvent(**{k: v for k, v in dict.items() if k in class_fields})
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        return TeamEvent(**dict)
 
     """SUPER FUNCTIONS"""
 
-    def __lt__(self, other: "TeamEvent") -> bool:
-        if self.team_id == other.team_id:
-            return self.time < other.time
-        return self.team_id < other.team_id
-
-    def __repr__(self) -> str:
-        return "(TeamEvent " + str(self.team_id) + " " + str(self.event_id) + ")"
+    def sort(self) -> Tuple[int, int]:
+        return self.team_id, self.time
