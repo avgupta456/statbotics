@@ -52,7 +52,7 @@ def process_year(
 
     # INITIALIZE
     for team_year in team_years:
-        num = team_year.team_id
+        num = team_year.team
         team_years_dict[num] = team_year
         team_matches_dict[num] = []
 
@@ -159,7 +159,7 @@ def process_year(
             continue
 
         event_team_events[team_event.event_id].append(team_event)
-        team_team_events[team_event.team_id].append(team_event)
+        team_team_events[team_event.team].append(team_event)
 
         elos = [obj[0] for obj in team_events_dict[id]]
         team_event.elo_start = elos[0]
@@ -270,14 +270,14 @@ def post_process(end_year: int):
     team_team_years: Dict[int, List[TeamYear]] = defaultdict(list)
     all_team_years = get_team_years_db()
     for team_year in all_team_years:
-        team_team_years[team_year.team_id].append(team_year)
+        team_team_years[team_year.team].append(team_year)
 
     all_teams = get_teams_db()
     for team in all_teams:
         years: Dict[int, float] = {}
         wins, losses, ties, count = 0, 0, 0, 0
-        for team_year in team_team_years[team.id]:
-            years[team_year.year_id] = team_year.elo_max or 0
+        for team_year in team_team_years[team.team]:
+            years[team_year.year] = team_year.elo_max or 0
             wins += team_year.wins or 0
             losses += team_year.losses or 0
             ties += team_year.ties or 0

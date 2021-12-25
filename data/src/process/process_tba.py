@@ -32,6 +32,9 @@ from tba.read_tba import (
 def load_teams(cache: bool = True) -> List[Team]:
     teams = get_teams_tba(cache=cache)
     team_objs = [create_team_obj(team) for team in teams]
+    for team in team_objs:
+        if team.district is None:
+            team.district = get_team_district_tba(team.team)
     return team_objs
 
 
@@ -40,7 +43,7 @@ def process_year(
 ) -> Tuple[
     Year, List[TeamYear], List[Event], List[TeamEvent], List[Match], List[TeamMatch]
 ]:
-    year_obj = create_year_obj({"id": year_num})
+    year_obj = create_year_obj({"year": year_num})
 
     team_year_objs: List[TeamYear] = []
     event_objs: List[Event] = []
@@ -69,7 +72,7 @@ def process_year(
 
         for match in get_matches_tba(year_num, event_key, event_time, cache=cache):
             match["year"] = year_num
-            match["event"] = event_id
+            match["event_id"] = event_id
             match_obj, curr_team_match_objs = create_match_obj(match)
             match_objs.append(match_obj)
             team_match_objs.extend(curr_team_match_objs)
@@ -87,11 +90,8 @@ def process_year(
 def post_process():
     remove_teams_with_no_matches()
 
-    active_teams = set([t.team_id for t in get_team_years_db(year=2020)])
-    teams: List[Team] = []
-    for team in get_teams_db():
-        team.active = 1 if team.id in active_teams else 0
-        if team.district is None:
-            team.district = get_team_district_tba(team.id)
-        teams.append(team)
+    active_teams = set([t.team for t in get_team_years_db(year=2020)])
+    teams = get_teams_db()
+    for team in teams:
+        team.active = 1 if team.team in active_teams else 0
     update_teams_db(teams, False)

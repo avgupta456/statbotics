@@ -12,21 +12,24 @@ class TeamMatchORM(Base, ModelORM):
 
     __tablename__ = "team_matches"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    team_id: Column[int] = Column(Integer, ForeignKey("teams.id"), index=True)
+    team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
     team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"))
     team_event_id: Column[int] = Column(Integer, ForeignKey("team_events.id"))
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
+    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
     event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
     match_id: Column[int] = Column(Integer, ForeignKey("matches.id"))
 
+    """GENERAL"""
     time = Column(Integer)
     playoff = Column(Integer)
     alliance = Column(String(10))
 
-    """GENERAL"""
+    """API COMPLETENESS"""
+    event = Column(String(20))
+    match = Column(String(20))
 
     elo = Column(Float)
-    opr_score = Column(Float)
+    opr = Column(Float)
     opr_auto = Column(Float)
     opr_teleop = Column(Float)
     opr_one = Column(Float)
@@ -42,10 +45,10 @@ class TeamMatchORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class TeamMatch(Model):
     id: int
-    team_id: int
+    team: int
     team_year_id: int
     team_event_id: int
-    year_id: int
+    year: int
     event_id: int
     match_id: int
 
@@ -53,8 +56,11 @@ class TeamMatch(Model):
     playoff: int
     alliance: str
 
+    event: Optional[str] = None
+    match: Optional[str] = None
+
     elo: Optional[float] = None
-    opr_score: Optional[float] = None
+    opr: Optional[float] = None
     opr_auto: Optional[float] = None
     opr_teleop: Optional[float] = None
     opr_one: Optional[float] = None

@@ -2,6 +2,7 @@ import attr
 from typing import Any, Dict, Optional, Tuple
 
 from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy.sql.sqltypes import String
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -12,13 +13,23 @@ class TeamEventORM(Base, ModelORM):
 
     __tablename__ = "team_events"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    team_id: Column[int] = Column(Integer, ForeignKey("teams.id"), index=True)
+    team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
     team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"))
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
+    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
     event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
 
     """GENERAL"""
     time = Column(Integer)
+
+    """API COMPLETENESS"""
+    name = Column(String(100))
+    event = Column(String(20))
+    event_name = Column(String(100))
+    state = Column(String(10))
+    country = Column(String(30))
+    district = Column(String(10))
+    type = Column(Integer)
+    week = Column(Integer)
 
     """ELO"""
     elo_start = Column(Float)
@@ -58,12 +69,22 @@ class TeamEventORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class TeamEvent(Model):
     id: int
-    team_id: int
+    team: int
     team_year_id: int
-    year_id: int
+    year: int
     event_id: int
 
     time: int
+
+    name: Optional[str] = None
+    event: Optional[str] = None
+    event_name: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    district: Optional[str] = None
+    type: Optional[int] = None
+    week: Optional[int] = None
+
     elo_start: Optional[float] = None
     elo_pre_playoffs: Optional[float] = None
     elo_end: Optional[float] = None
@@ -101,4 +122,4 @@ class TeamEvent(Model):
     """SUPER FUNCTIONS"""
 
     def sort(self) -> Tuple[int, int]:
-        return self.team_id, self.time
+        return self.team, self.time

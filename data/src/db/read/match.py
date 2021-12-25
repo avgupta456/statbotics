@@ -15,11 +15,11 @@ def get_matches(
 ) -> List[Match]:
     def callback(session: SessionType):
         data = session.query(MatchORM)  # type: ignore
-        if year != None:
-            data = data.filter(MatchORM.year_id == year)  # type: ignore
-        if week != None:
+        if year is not None:
+            data = data.filter(MatchORM.year == year)  # type: ignore
+        if week is not None:
             data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
-        if event_id != None:
+        if event_id is not None:
             data = data.filter(MatchORM.event_id == event_id)  # type: ignore
         data: List[MatchORM] = data.all()  # type: ignore
 

@@ -13,7 +13,7 @@ def get_team_matches(
     def callback(session: SessionType):
         data = session.query(TeamMatchORM)  # type: ignore
         if year is not None:
-            data = data.filter(TeamMatchORM.year_id == year)  # type: ignore
+            data = data.filter(TeamMatchORM.year == year)  # type: ignore
         if event is not None:
             data = data.filter(TeamMatchORM.event_id == event)  # type: ignore
         data: List[TeamMatchORM] = data.all()  # type: ignore

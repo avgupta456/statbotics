@@ -12,14 +12,14 @@ def remove_teams_with_no_matches() -> None:
     def callback(session: SessionType):
         teams = [
             x[0]
-            for x in session.query(TeamMatchORM.team_id)  # type: ignore
-            .group_by(TeamMatchORM.team_id)
+            for x in session.query(TeamMatchORM.team)  # type: ignore
+            .group_by(TeamMatchORM.team)
             .all()
         ]
 
         """Filter teams, teamYears, teamEvents with no matches"""
-        session.query(TeamEventORM).filter(TeamEventORM.team_id.notin_(teams)).delete()  # type: ignore
-        session.query(TeamYearORM).filter(TeamYearORM.team_id.notin_(teams)).delete()  # type: ignore
-        session.query(TeamORM).filter(TeamORM.id.notin_(teams)).delete()  # type: ignore
+        session.query(TeamEventORM).filter(TeamEventORM.team.notin_(teams)).delete()  # type: ignore
+        session.query(TeamYearORM).filter(TeamYearORM.team.notin_(teams)).delete()  # type: ignore
+        session.query(TeamORM).filter(TeamORM.team.notin_(teams)).delete()  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore

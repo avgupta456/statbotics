@@ -110,10 +110,10 @@ def get_base(
     List[Match],
     int,
 ]:
-    year = event.year_id
+    year = event.year
     team_events_dict: Dict[int, TeamEvent] = {}
     for team_event in team_events:
-        team_events_dict[team_event.team_id] = team_event
+        team_events_dict[team_event.team] = team_event
 
     # case of only playoffs
     if len(quals) == 0:
@@ -315,7 +315,7 @@ def get_ILS(team_events: List[TeamEvent], quals: List[Match]):
     teams: List[int] = []
     out: Any = {}
     for team_event in team_events:
-        teams.append(team_event.team_id)
+        teams.append(team_event.team)
         out[teams[-1]] = np.zeros(shape=(len(quals) + 1, 2))  # type: ignore
         curr = [team_event.ils_1_start, team_event.ils_2_start]
         out[teams[-1]][0] = np.array(curr)  # type: ignore
