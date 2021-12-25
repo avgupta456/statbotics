@@ -1,0 +1,21 @@
+{
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.diagnosticMode": "workspace",
+    "python.pythonPath": ".venv\\Scripts\\python.exe",
+
+    "files.exclude": {
+        "**/.git": true,
+        "**/__pycache__": true,
+        "**/.venv": true,
+        "**/.pytest_cache": true,
+        "**/.coverage": true,
+        "**/build": true,
+        "**/node_modules": true,
+    },
+
+    "editor.formatOnSave": true,
+}
