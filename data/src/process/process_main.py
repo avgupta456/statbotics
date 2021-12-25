@@ -43,6 +43,51 @@ def write_teams(teams: List[Team]) -> None:
     update_teams_db(teams, True)
 
 
+def post_process_objs(
+    teams: List[Team],
+    _year: Year,
+    team_years: List[TeamYear],
+    events: List[Event],
+    team_events: List[TeamEvent],
+    matches: List[Match],
+    team_matches: List[TeamMatch],
+) -> Tuple[
+    Year,
+    List[TeamYear],
+    List[Event],
+    List[TeamEvent],
+    List[Match],
+    List[TeamMatch],
+]:
+    teams_dict = {t.team: t for t in teams}
+    for team_year in team_years:
+        temp_team = teams_dict[team_year.team]
+        team_year.name = temp_team.name
+        team_year.state = temp_team.state
+        team_year.country = temp_team.country
+        team_year.district = temp_team.district
+        team_year.opr = team_year.opr_end
+
+    events_dict = {e.id: e for e in events}
+    for team_event in team_events:
+        temp_event = events_dict[team_event.event_id]
+        team_event.name = teams_dict[team_event.team].name
+        team_event.event = temp_event.key
+        team_event.event_name = temp_event.name
+        team_event.state = temp_event.state
+        team_event.country = temp_event.country
+        team_event.district = temp_event.district
+        team_event.type = temp_event.type
+        team_event.week = temp_event.week
+
+    matches_dict = {m.id: m for m in matches}
+    for team_match in team_matches:
+        team_match.event = events_dict[team_match.event_id].key
+        team_match.match = matches_dict[team_match.match_id].key
+
+    return _year, team_years, events, team_events, matches, team_matches
+
+
 def write_objs(
     year: Year,
     team_years: List[TeamYear],
@@ -53,8 +98,8 @@ def write_objs(
 ) -> None:
     # removes records with no events/matches
     team_years = [t for t in team_years if t.elo_end is not None]
-    team_ids = [t.team_id for t in team_years]
-    team_events = [t for t in team_events if t.team_id in team_ids]
+    team_ids = [t.team for t in team_years]
+    team_events = [t for t in team_events if t.team in team_ids]
     event_ids = set([t.event_id for t in team_events])
     events = [e for e in events if e.id in event_ids]
 
@@ -95,7 +140,7 @@ def process_main(start_year: int, end_year: int):
     print()
 
     print("Processing")
-    all_team_nums = [t.id for t in teams]
+    all_team_nums = [t.team for t in teams]
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # master dictionary
     means: Dict[int, float] = {}  # for OPR seed ratings
     for year_num in range(start_year, end_year + 1):
@@ -129,6 +174,10 @@ def process_main(start_year: int, end_year: int):
         means = out[1]
         objs = out[2:]
         print(year_num, "\tOPR\t", datetime.now() - start)
+        start = datetime.now()
+
+        objs = post_process_objs(teams, *objs)
+        print(year_num, "\tPost\t", datetime.now() - start)
         start = datetime.now()
 
         write_objs(*objs)

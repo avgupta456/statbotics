@@ -16,7 +16,7 @@ match_id = -1
 
 
 def create_team_obj(data: Dict[str, Any]) -> Team:
-    data["id"] = data["number"]
+    data["team"] = data["number"]
     return Team.from_dict(data)
 
 
@@ -27,7 +27,7 @@ def create_year_obj(data: Dict[str, Any]) -> Year:
 def create_team_year_obj(data: Dict[str, Any]) -> TeamYear:
     team, year = data["team"], data["year"]
     id = get_team_year_id(team, year)
-    return TeamYear.from_dict({"id": id, "year_id": year, "team_id": team, **data})
+    return TeamYear.from_dict({"id": id, "year": year, "team": team, **data})
 
 
 def create_event_obj(data: Dict[str, Any]) -> Event:
@@ -38,14 +38,11 @@ def create_event_obj(data: Dict[str, Any]) -> Event:
 
     data["id"] = event_id
     data["district"] = data["district"] or "None"
-    data["year_id"] = data["year"]
     return Event.from_dict(data)
 
 
 def create_team_event_obj(data: Dict[str, Any]) -> TeamEvent:
     data["id"] = get_team_event_id(data["team"], data["event_id"])
-    data["team_id"] = data["team"]
-    data["year_id"] = data["year"]
     data["team_year_id"] = get_team_year_id(data["team"], data["year"])
     return TeamEvent.from_dict(data)
 
@@ -57,8 +54,6 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     match_id += 1
 
     data["id"] = match_id
-    data["year_id"] = data["year"]
-    data["event_id"] = data["event"]
     data["playoff"] = 0 if data["comp_level"] == "qm" else 1
     data["red_auto"] = data["red_score_breakdown"]["auto"]
     data["red_auto_movement"] = data["red_score_breakdown"]["auto_movement"]
@@ -92,7 +87,7 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
 
     team_matches: List[TeamMatch] = []
     new_data = {
-        "year_id": data["year_id"],
+        "year": data["year"],
         "event_id": data["event_id"],
         "match_id": match_id,
         "time": data["time"],
@@ -102,8 +97,8 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     for alliance in ["red", "blue"]:
         new_data["alliance"] = alliance
         for team in data[alliance].split(","):
-            new_data["team_id"] = int(team)
-            new_data["team_year_id"] = get_team_year_id(team, data["year_id"])
+            new_data["team"] = int(team)
+            new_data["team_year_id"] = get_team_year_id(team, data["year"])
             new_data["team_event_id"] = get_team_event_id(team, data["event_id"])
             team_matches.append(create_team_match_obj(new_data))
 
@@ -111,5 +106,5 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
 
 
 def create_team_match_obj(data: Dict[str, Any]) -> TeamMatch:
-    data["id"] = get_team_match_id(data["team_id"], data["match_id"])
+    data["id"] = get_team_match_id(data["team"], data["match_id"])
     return TeamMatch.from_dict(data)

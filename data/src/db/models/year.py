@@ -11,7 +11,7 @@ class YearORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "years"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
+    year: Column[int] = Column(Integer, primary_key=True, index=True)
 
     """ELO"""
     elo_max = Column(Float)
@@ -64,7 +64,7 @@ class YearORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class Year(Model):
-    id: int
+    year: int
     elo_max: Optional[float] = None
     elo_1p: Optional[float] = None
     elo_5p: Optional[float] = None

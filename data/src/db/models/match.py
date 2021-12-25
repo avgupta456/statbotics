@@ -12,10 +12,11 @@ class MatchORM(Base, ModelORM):
 
     __tablename__ = "matches"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year_id: Column[int] = Column(Integer, ForeignKey("years.id"), index=True)
+    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
     event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
 
     """GENERAL"""
+    event = Column(String(20))
     key = Column(String(20))
     comp_level = Column(String(10))
     set_number = Column(Integer)
@@ -85,13 +86,15 @@ class MatchORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class Match(Model):
     id: int
-    year_id: int
+    year: int
     event_id: int
 
     key: str
     comp_level: str
     set_number: int
     match_number: int
+
+    event: Optional[str] = None
 
     red: Optional[str] = None
     red_elo_sum: Optional[float] = None

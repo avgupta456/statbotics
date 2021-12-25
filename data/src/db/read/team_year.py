@@ -10,8 +10,8 @@ from db.models.team_year import TeamYear, TeamYearORM
 def get_team_years(year: Optional[int] = None) -> List[TeamYear]:
     def callback(session: SessionType):
         data = session.query(TeamYearORM)  # type: ignore
-        if year != None:
-            data = data.filter(TeamYearORM.year_id == year)  # type: ignore
+        if year is not None:
+            data = data.filter(TeamYearORM.year == year)  # type: ignore
         data: List[TeamYearORM] = data.all()  # type: ignore
         return [TeamYear.from_dict(x.__dict__) for x in data]
 
