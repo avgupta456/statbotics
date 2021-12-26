@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
 import WindowedSelect from "react-windowed-select";
+import { setWithExpiry } from "../../api/local_storage";
 import { fetchTeams_Simple, fetchEvents_Simple } from "./../../api";
 
 export default function TeamSelect({
@@ -42,14 +43,14 @@ export default function TeamSelect({
     const getTeams = async () => {
       const newTeams = await fetchTeams_Simple();
       const key = "Search_Teams";
-      localStorage.setItem(key, JSON.stringify(newTeams));
+      setWithExpiry(key, newTeams, 60 * 60 * 24);
       setTeams(cleanTeams(newTeams));
     };
 
     const getEvents = async () => {
       const newEvents = await fetchEvents_Simple();
       const key = "Search_Events";
-      localStorage.setItem(key, JSON.stringify(newEvents));
+      setWithExpiry(key, newEvents, 60 * 60 * 24);
       setEvents(cleanEvents(newEvents));
     };
 

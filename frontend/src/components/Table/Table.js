@@ -107,12 +107,14 @@ export default function ReactTable({ title, columns, data }) {
     return dict;
   });
 
+  const newData = data.map((row) => row.map((value) => value || -1));
+
   return (
     <MuiThemeProvider theme={theme}>
       <div className={styles.table}>
         <MUIDataTable
           title={title}
-          data={data}
+          data={newData}
           columns={new_columns}
           options={options}
         />

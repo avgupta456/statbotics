@@ -25,6 +25,7 @@ export default function EventView() {
   let { key } = useParams();
   const history = useHistory();
 
+  // eslint-disable-next-line no-unused-vars
   const { height, width } = useWindowDimensions();
 
   const [done, setDone] = useState(false);
@@ -93,9 +94,6 @@ export default function EventView() {
     ["95% Rank", false, true, false, ""],
     ["Mean RPs", false, true, false, ""],
   ];
-
-  console.log(height); //to prevent unused var warning
-  console.log(width); //to prevent unused var warning
 
   useEffect(() => {
     if (

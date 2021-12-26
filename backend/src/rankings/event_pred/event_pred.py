@@ -200,7 +200,7 @@ def _index_sim(
 
     T = len(teams)
     avg_rps: Dict[int, float] = {}
-    ranks: Dict[int, List[int]] = {}
+    ranks: Dict[int, List[float]] = {}
     for team in teams:
         avg_rps[team] = 0
         ranks[team] = [0 for _ in range(T)]
@@ -216,8 +216,8 @@ def _index_sim(
     avg_ranks: Dict[int, float] = {}
     for team in teams:
         avg_rps[team] /= iterations
-        team_ranks = [round(freq / iterations, 2) for freq in ranks[team]]
-        avg_ranks[team] = round(1 + sum([i * team_ranks[i] for i in range(T)]), 2)
+        ranks[team] = [round(freq / iterations, 2) for freq in ranks[team]]
+        avg_ranks[team] = round(1 + sum([i * ranks[team][i] for i in range(T)]), 2)
     return mean_rps, mean_ties, avg_rps, avg_ranks, ranks
 
 
