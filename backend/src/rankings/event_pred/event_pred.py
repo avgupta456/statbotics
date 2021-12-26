@@ -1,4 +1,5 @@
 import random
+from typing import Any, Dict, List, Tuple
 
 from rankings.event_pred import read
 from rankings.event_pred.models import (
@@ -9,16 +10,12 @@ from rankings.event_pred.models import (
 )
 
 
-def clean(num):
-    return round(float(num), 2)
-
-
-def getDicts(event_key, year):
+def get_dicts(event_key: str, year: int):
     key = str(year) + event_key
-    sd_score, mean_score = read.getYearDict(year=year)
-    teams, team_stats = read.getTeamsDict(key)
-    matches = read.getMatchesDict(key)
-    team_matches = read.getTeamMatchesDict(key)
+    sd_score, mean_score = read.get_year_dict(year=year)
+    teams, team_stats = read.get_teams_dict(key)
+    matches = read.get_matches_dict(key)
+    team_matches = read.get_team_matches_dict(key)
 
     # currently empty elims
     oprs, ils = opr_model.get_oprs(
@@ -33,8 +30,16 @@ def getDicts(event_key, year):
     return teams, matches, sd_score, oprs, ils, elos, rps, ties
 
 
-def getCurrStats(index, teams, oprs, ils, elos):
-    oprs_curr, ils_curr, elos_curr = {}, {}, {}
+def get_curr_stats(
+    index: int,
+    teams: List[int],
+    oprs: Dict[int, List[Any]],
+    ils: Dict[int, List[Any]],
+    elos: Dict[int, List[Any]],
+) -> Tuple[Dict[int, Any], Dict[int, Any], Dict[int, Any]]:
+    oprs_curr: Dict[int, Any] = {}
+    ils_curr: Dict[int, Any] = {}
+    elos_curr: Dict[int, Any] = {}
     for team in teams:
         oprs_curr[team] = oprs[team][index]
         ils_curr[team] = ils[team][index]
@@ -42,16 +47,28 @@ def getCurrStats(index, teams, oprs, ils, elos):
     return oprs_curr, ils_curr, elos_curr
 
 
-def getPreds(index, quals, oprs_curr, elos_curr, ils_curr, year, sd_score):
-    team_matches = {}  # for each match i after index, red and blue teams
-    preds = {}  # for each match i after index , win_prob, red rps, blue rps
+def get_preds(
+    index: int,
+    quals: List[Dict[str, Any]],
+    oprs_curr: Dict[int, Any],
+    elos_curr: Dict[int, Any],
+    ils_curr: Dict[int, Any],
+    year: int,
+    sd_score: float,
+):
+    team_matches: Dict[
+        int, Any
+    ] = {}  # for each match i after index, red and blue teams
+    preds: Dict[
+        int, List[float]
+    ] = {}  # for each match i after index , win_prob, red rps, blue rps
     for i in range(index, len(quals)):
         m = quals[i]
         red, blue = m["red"], m["blue"]
-        red_score = sum([clean(oprs_curr[t][0]) for t in red])
-        blue_score = sum([clean(oprs_curr[t][0]) for t in blue])
-        red_elo = sum([clean(elos_curr[t]) for t in red])
-        blue_elo = sum([clean(elos_curr[t]) for t in blue])
+        red_score = sum([oprs_curr[t][0] for t in red])
+        blue_score = sum([oprs_curr[t][0] for t in blue])
+        red_elo = sum([elos_curr[t] for t in red])
+        blue_elo = sum([elos_curr[t] for t in blue])
 
         elo_prob = elo_model.win_prob(red_elo, blue_elo)
         elo_margin = elo_model.win_margin(red_elo, blue_elo, sd_score)
@@ -66,14 +83,14 @@ def getPreds(index, quals, oprs_curr, elos_curr, ils_curr, year, sd_score):
         blue_rp_1 = opr_model.rp_prob([ils_curr[t][0] for t in blue])
         blue_rp_2 = opr_model.rp_prob([ils_curr[t][1] for t in blue])
 
-        ties_pred = tiebreakers.getOPRTiebreakers(oprs_curr, red, blue, year)
+        ties_pred = tiebreakers.get_opr_tiebreakers(oprs_curr, red, blue, year)
         red_tie, blue_tie = ties_pred
 
         team_matches[i] = [red, blue]
         preds[i] = [
-            round(red_score),
-            round(blue_score),
-            round(win_prob, 2),
+            round(float(red_score)),
+            round(float(blue_score)),
+            round(float(win_prob), 2),
             round(red_rp_1, 2),
             round(red_rp_2, 2),
             round(blue_rp_1, 2),
@@ -85,8 +102,17 @@ def getPreds(index, quals, oprs_curr, elos_curr, ils_curr, year, sd_score):
     return team_matches, preds
 
 
-def __meanSim__(index, matches, teams, team_matches, preds, rps, ties):
-    rps_out, ties_out = {}, {}
+def _mean_sim(
+    index: int,
+    matches: List[Dict[str, Any]],
+    teams: List[int],
+    team_matches: Dict[int, Any],
+    preds: Dict[int, List[float]],
+    rps: Dict[int, Any],
+    ties: Dict[int, Any],
+):
+    rps_out: Dict[int, float] = {}
+    ties_out: Dict[int, float] = {}
     for team in teams:
         rps_out[team] = rps[team][index][0]
         ties_out[team] = ties[team][index][0]
@@ -107,18 +133,26 @@ def __meanSim__(index, matches, teams, team_matches, preds, rps, ties):
     return rps_out, ties_out
 
 
-def meanSim(year, event_key, i):
-    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)
+def mean_sim(year: int, event_key: str, i: int):
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = get_dicts(event_key, year)
     for t in teams:  # gets specific stats based on current index
         oprs[t], ils[t], elos[t] = oprs[t][i], ils[t][i], elos[t][i]
-    team_matches, preds = getPreds(i, matches, oprs, elos, ils, year, sd_score)
-    rps_out, ties_out = __meanSim__(i, matches, teams, team_matches, preds, rps, ties)
+    team_matches, preds = get_preds(i, matches, oprs, elos, ils, year, sd_score)
+    rps_out, ties_out = _mean_sim(i, matches, teams, team_matches, preds, rps, ties)
 
     return {"mean_rps": rps_out, "mean_tiebreakers": ties_out}
 
 
-def singleSim(index, matches, teams, team_matches, preds, rps, mean_ties):
-    rps_out, ranks_out = {}, {}
+def single_sim(
+    index: int,
+    matches: List[Dict[str, Any]],
+    teams: List[int],
+    team_matches: Dict[int, Any],
+    preds: Dict[int, List[float]],
+    rps: Dict[int, Any],
+    mean_ties: Dict[int, Any],
+):
+    rps_out: Dict[int, float] = {}
     for team in teams:
         rps_out[team] = rps[team][index][0]
 
@@ -142,48 +176,57 @@ def singleSim(index, matches, teams, team_matches, preds, rps, mean_ties):
         for team in blue:
             rps_out[team] += blue_rps
 
+    rps_dict: Dict[int, Tuple[float, float]] = {}
     for team in teams:
-        ranks_out[team] = [rps_out[team], mean_ties[team]]
-    ranks_out = sorted(ranks_out, key=lambda k: (ranks_out[k][0], ranks_out[k][1]))[
-        ::-1
-    ]
-    ranks_out = {ranks_out[i]: i + 1 for i in range(len(ranks_out))}
+        rps_dict[team] = (rps_out[team], mean_ties[team])
+    rps_list = sorted(rps_dict, key=lambda k: rps_dict[k], reverse=True)
+    ranks_out = {rps_list[i]: i + 1 for i in range(len(rps_list))}
     return rps_out, ranks_out
 
 
-def __indexSim__(index, iterations, teams, matches, team_matches, preds, rps, ties):
-    mean_rps, mean_ties = __meanSim__(
+def _index_sim(
+    index: int,
+    iterations: int,
+    teams: List[int],
+    matches: List[Dict[str, Any]],
+    team_matches: Dict[int, Any],
+    preds: Dict[int, List[float]],
+    rps: Dict[int, Any],
+    ties: Dict[int, Any],
+):
+    mean_rps, mean_ties = _mean_sim(
         index, matches, teams, team_matches, preds, rps, ties
     )
 
     T = len(teams)
-    avg_rps, ranks = {}, {}
+    avg_rps: Dict[int, float] = {}
+    ranks: Dict[int, List[int]] = {}
     for team in teams:
         avg_rps[team] = 0
-        ranks[team] = [0 for i in range(T)]
+        ranks[team] = [0 for _ in range(T)]
 
-    for i in range(iterations):
-        rps_ind, ranks_ind = singleSim(
+    for _ in range(iterations):
+        rps_ind, ranks_ind = single_sim(
             index, matches, teams, team_matches, preds, rps, mean_ties
         )
         for team in teams:
             avg_rps[team] += rps_ind[team]
             ranks[team][ranks_ind[team] - 1] += 1
 
-    avg_ranks = {}
+    avg_ranks: Dict[int, float] = {}
     for team in teams:
         avg_rps[team] /= iterations
-        ranks[team] = [round(freq / iterations, 2) for freq in ranks[team]]
-        avg_ranks[team] = round(1 + sum([i * ranks[team][i] for i in range(T)]), 2)
+        team_ranks = [round(freq / iterations, 2) for freq in ranks[team]]
+        avg_ranks[team] = round(1 + sum([i * team_ranks[i] for i in range(T)]), 2)
     return mean_rps, mean_ties, avg_rps, avg_ranks, ranks
 
 
-def indexSim(year, event_key, i, iterations):
-    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)
+def index_sim(year: int, event_key: str, i: int, iterations: int):
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = get_dicts(event_key, year)
     for t in teams:  # gets specific stats based on current index
         oprs[t], ils[t], elos[t] = oprs[t][i], ils[t][i], elos[t][i]
-    team_matches, preds = getPreds(i, matches, oprs, elos, ils, year, sd_score)
-    mean_rps, mean_ties, avg_rps, avg_ranks, ranks = __indexSim__(
+    team_matches, preds = get_preds(i, matches, oprs, elos, ils, year, sd_score)
+    mean_rps, mean_ties, avg_rps, avg_ranks, ranks = _index_sim(
         i, iterations, teams, matches, team_matches, preds, rps, ties
     )
 
@@ -202,19 +245,19 @@ def indexSim(year, event_key, i, iterations):
     }
 
 
-def quickSim(year, event_key):
-    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)
+def quick_sim(year: int, event_key: str):
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = get_dicts(event_key, year)
 
-    out = {}
+    out: Dict[int, Dict[str, Dict[int, Any]]] = {}
     for i in range(len(matches) + 1):
-        oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
-        team_matches, preds = getPreds(
+        oprs_c, ils_c, elos_c = get_curr_stats(i, teams, oprs, ils, elos)
+        team_matches, preds = get_preds(
             i, matches, oprs_c, elos_c, ils_c, year, sd_score
         )
-        mean_rps, mean_ties = __meanSim__(
+        mean_rps, mean_ties = _mean_sim(
             i, matches, teams, team_matches, preds, rps, ties
         )
-        sub_out = {"mean_rps": {}, "mean_tiebreaker": {}}
+        sub_out: Dict[str, Dict[int, Any]] = {"mean_rps": {}, "mean_tiebreaker": {}}
         for team in teams:
             sub_out["mean_rps"][team] = mean_rps[team]
             sub_out["mean_tiebreaker"][team] = mean_ties[team]
@@ -222,20 +265,20 @@ def quickSim(year, event_key):
     return out
 
 
-def sim(year, event_key, iterations=100):
-    teams, matches, sd_score, oprs, ils, elos, rps, ties = getDicts(event_key, year)
+def sim(year: int, event_key: str, iterations: int = 100):
+    teams, matches, sd_score, oprs, ils, elos, rps, ties = get_dicts(event_key, year)
 
-    out = {}
+    out: Dict[int, Dict[str, Dict[int, Any]]] = {}
     for i in range(len(matches) + 1):
-        oprs_c, ils_c, elos_c = getCurrStats(i, teams, oprs, ils, elos)
-        team_matches, preds = getPreds(
+        oprs_c, ils_c, elos_c = get_curr_stats(i, teams, oprs, ils, elos)
+        team_matches, preds = get_preds(
             i, matches, oprs_c, elos_c, ils_c, year, sd_score
         )
-        mean_rps, mean_ties, avg_rps, avg_ranks, ranks = __indexSim__(
+        mean_rps, mean_ties, avg_rps, avg_ranks, ranks = _index_sim(
             i, iterations, teams, matches, team_matches, preds, rps, ties
         )
 
-        sub_out = {
+        sub_out: Dict[str, Dict[int, Any]] = {
             "mean_rps": {},
             "mean_tiebreaker": {},
             "sim_rps": {},

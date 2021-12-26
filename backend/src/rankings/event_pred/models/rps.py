@@ -1,10 +1,11 @@
+from typing import Any, Dict, List
 import numpy as np
 
 
-def get_rps(matches, teams):
-    out = {}
+def get_rps(matches: List[Dict[str, Any]], teams: List[int]) -> Dict[int, Any]:
+    out: Dict[int, Any] = {}
     for team in teams:
-        out[team] = np.zeros(shape=(len(matches) + 1, 1))
+        out[team] = np.zeros(shape=(len(matches) + 1, 1))  # type: ignore
         out[team][0] = 0
 
     for i, m in enumerate(matches):

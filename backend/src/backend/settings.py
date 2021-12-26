@@ -145,4 +145,4 @@ SWAGGER_SETTINGS = {
 }
 
 # Cache up to one day
-CACHE_TIME = 0  # 60 * 60 * 24
+CACHE_TIME = 60 * 60 * 24

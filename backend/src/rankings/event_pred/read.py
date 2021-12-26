@@ -1,14 +1,20 @@
+from typing import Any, Dict, List, Tuple, Union
+
 from rankings.models import Match, TeamEvent, TeamMatch, Year
 
 
-def getYearDict(year):
-    data = Year.objects.values("score_sd", "score_mean").get(year=year)
+def get_year_dict(year: int) -> Tuple[float, float]:
+    data: Dict[str, float] = Year.objects.values("score_sd", "score_mean").get(  # type: ignore
+        year=year
+    )
     return data["score_sd"], data["score_mean"]
 
 
-def getTeamsDict(event_key):
-    data = (
-        TeamEvent.objects.values(
+def get_teams_dict(
+    event_key: str,
+) -> Tuple[List[int], Dict[int, Dict[str, Union[int, float]]]]:
+    data: List[Dict[str, Union[int, float]]] = (
+        TeamEvent.objects.values(  # type: ignore
             "team",
             "elo_start",
             "opr_start",
@@ -26,16 +32,18 @@ def getTeamsDict(event_key):
         .all()
     )
 
-    out, stats = [], {}
+    out: List[int] = []
+    stats: Dict[int, Dict[str, Union[int, float]]] = {}
     for entry in data:
-        out.append(entry["team"])
-        stats[entry["team"]] = entry
+        team: int = int(entry["team"])
+        out.append(team)
+        stats[team] = entry
     return out, stats
 
 
-def getMatchesDict(event_key):
-    data = (
-        Match.objects.values(
+def get_matches_dict(event_key: str) -> List[Dict[str, Any]]:
+    data: List[Dict[str, Any]] = (
+        Match.objects.values(  # type: ignore
             "key",
             "winner",
             "elo_win_prob",
@@ -72,7 +80,7 @@ def getMatchesDict(event_key):
         .order_by("time")
     )
 
-    out = []
+    out: List[Dict[str, Any]] = []
     for entry in data:
         out.append(entry)
         out[-1]["red"] = [int(x) for x in out[-1]["red"].split(",")]
@@ -80,14 +88,14 @@ def getMatchesDict(event_key):
     return out
 
 
-def getTeamMatchesDict(event_key):
-    data = (
-        TeamMatch.objects.values("team", "match", "elo")
+def get_team_matches_dict(event_key: str) -> Dict[str, Dict[int, float]]:
+    data: List[Dict[str, Any]] = (
+        TeamMatch.objects.values("team", "match", "elo")  # type: ignore
         .filter(event=event_key, playoff=0)
         .order_by("time")
     )
 
-    out = {}
+    out: Dict[str, Dict[int, float]] = {}
     for entry in data:
         if entry["match"] not in out:
             out[entry["match"]] = {}

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-os.environ["LOCAL_DB"] = "False"
+os.environ["LOCAL_DB"] = "True"
 
 
 def main():

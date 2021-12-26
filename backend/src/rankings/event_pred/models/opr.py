@@ -1,22 +1,26 @@
+from typing import Any, Callable, Dict, List, Union
 import numpy as np
-import scipy.linalg
+import scipy.linalg  # type: ignore
 
 
-def logistic(n):
-    return float(1 / (1 + np.e ** (-4 * (n - 0.5))))
+e = np.e
 
 
-def score(match, alliance):
+def logistic(n: float):
+    return float(1 / (1 + e ** (-4 * (n - 0.5))))
+
+
+def score(match: Dict[str, Any], alliance: str) -> float:
     if alliance == "red":
-        return [match["red_score"]]
-    return [match["blue_score"]]
+        return [match["red_score"]]  # type: ignore
+    return [match["blue_score"]]  # type: ignore
 
 
-def event_score(event):
-    return [event["opr_start"]]
+def event_score(event: Dict[str, Any]) -> float:
+    return [event["opr_start"]]  # type: ignore
 
 
-def all(match, alliance):
+def all(match: Dict[str, Any], alliance: str) -> List[float]:
     if alliance == "red":
         return [
             match["red_score"],
@@ -40,7 +44,7 @@ def all(match, alliance):
     ]
 
 
-def event_all(event):
+def event_all(event: Dict[str, Any]) -> List[float]:
     return [
         event["opr_start"],
         event["opr_auto"],
@@ -53,11 +57,11 @@ def event_all(event):
     ]
 
 
-def computeOPR(input, output, year, mean_score):
+def compute_OPR(input: Any, output: Any, year: int, mean_score: float) -> Any:
     try:
         A = np.matmul(input.T, input)
         Y = np.matmul(input.T, output)
-        out = scipy.linalg.lstsq(
+        out = scipy.linalg.lstsq(  # type: ignore
             A,
             Y,
             overwrite_a=True,
@@ -67,51 +71,52 @@ def computeOPR(input, output, year, mean_score):
         )[0]
     except scipy.linalg.LinAlgError or scipy.linalg.ValueError:
         # if singular (not enough matches, etc)
-        out = computeAverages(input, output, year)
+        out = compute_averages(input, output, year)
     # if highly unstable, handles foul oprs
-    if np.min(out) < -mean_score / (2 if year <= 2004 else 3):
-        out = computeAverages(input, output, year)
-    return out
+    if np.min(out) < -mean_score / (2 if year <= 2004 else 3):  # type: ignore
+        out = compute_averages(input, output, year)
+    return out  # type: ignore
 
 
-def computeAverages(input, output, year):
+# returns 2d np array
+def compute_averages(input: Any, output: Any, year: int) -> Any:
     T, Y = input.shape[1], output.shape[1]  # teams in event
     TM = 2 if year <= 2004 else 3  # teams per alliance
-    out = np.zeros(shape=(T, Y))
+    out = np.zeros(shape=(T, Y))  # type: ignore
     for i in range(T):
-        locs = np.where(input[i][:] == 1)
-        if len(locs[0]) == 0:
-            out[i] = np.array([0 * Y])
+        locs = np.where(input[i][:] == 1)  # type: ignore
+        if len(locs[0]) == 0:  # type: ignore
+            out[i] = np.array([0 * Y])  # type: ignore
         else:
-            out[i] = np.mean(output[locs], axis=0) / TM
-    return out
+            out[i] = np.mean(output[locs], axis=0) / TM  # type: ignore
+    return out  # type: ignore
 
 
 def get_ixOPR(
-    year,
-    quals,
-    playoffs,
-    teams,
-    team_stats,
-    team_matches,
-    mean_score,
-    func=all,
-    event_func=event_all,
-):
+    year: int,
+    quals: List[Dict[str, Any]],
+    playoffs: List[Dict[str, Any]],
+    teams: List[int],
+    team_stats: Dict[int, Dict[str, Union[int, float]]],
+    team_matches: Dict[str, Dict[int, Any]],
+    mean_score: float,
+    func: Callable[..., Any] = all,
+    event_func: Callable[..., Any] = event_all,
+) -> Any:
 
     # case of only playoffs
     if len(quals) == 0:
-        out = {}
+        out: Dict[int, List[Any]] = {}
         for t in teams:
             out[t] = [event_func(team_stats[t])]
         return out
 
     out = {}
     M, T, Y = len(quals), len(teams), len(event_func(team_stats[teams[0]]))
-    input = np.zeros(shape=(2 * M, T), dtype="float")
-    output = np.zeros(shape=(2 * M, Y), dtype="float")
+    input = np.zeros(shape=(2 * M, T), dtype="float")  # type: ignore
+    output = np.zeros(shape=(2 * M, Y), dtype="float")  # type: ignore
 
-    arr = []
+    arr: List[List[List[int]]] = []
     for i in range(M):
         red, blue = quals[i]["red"], quals[i]["blue"]
         red = [teams.index(t) for t in red]
@@ -126,10 +131,10 @@ def get_ixOPR(
 
         red = [event_func(team_stats[teams[t]]) for t in arr[i][0]]
         blue = [event_func(team_stats[teams[t]]) for t in arr[i][1]]
-        output[2 * i] = np.sum(red, axis=0)
-        output[2 * i + 1] = np.sum(blue, axis=0)
+        output[2 * i] = np.sum(red, axis=0)  # type: ignore
+        output[2 * i + 1] = np.sum(blue, axis=0)  # type: ignore
 
-    oprs = computeOPR(input, output, year, mean_score)
+    oprs = compute_OPR(input, output, year, mean_score)
 
     for i in range(T):
         out[teams[i]] = [oprs[i]]
@@ -137,26 +142,31 @@ def get_ixOPR(
     iterations = 2  # experimentally chosen
     for i in range(M):
         m = quals[i]
-        output[2 * i] = np.array(func(m, "red"))
-        output[2 * i + 1] = np.array(func(m, "blue"))
-        oprs = computeOPR(input, output, year, mean_score)
+        output[2 * i] = np.array(func(m, "red"))  # type: ignore
+        output[2 * i + 1] = np.array(func(m, "blue"))  # type: ignore
+        oprs = compute_OPR(input, output, year, mean_score)
         for j in range(iterations - 1):
-            temp = output.copy()
+            temp: Any = output.copy()
             for k in range(i, M):
-                temp[2 * k] = np.sum([oprs[i] for i in arr[k][0]], axis=0)
-                temp[2 * k + 1] = np.sum([oprs[i] for i in arr[k][1]], axis=0)
-            oprs = computeOPR(input, temp, year, mean_score)
+                temp[2 * k] = np.sum([oprs[i] for i in arr[k][0]], axis=0)  # type: ignore
+                temp[2 * k + 1] = np.sum([oprs[i] for i in arr[k][1]], axis=0)  # type: ignore
+            oprs = compute_OPR(input, temp, year, mean_score)
         for j in range(T):
             out[teams[j]].append(oprs[j])
     return out
 
 
-def get_ILS(quals, teams, team_stats, team_matches):
+def get_ILS(
+    quals: List[Dict[str, Any]],
+    teams: List[int],
+    team_stats: Dict[int, Dict[str, Union[int, float]]],
+    team_matches: Dict[str, Dict[int, Any]],
+):
     min_ils = -1 / 3
 
-    out = {}
+    out: Dict[int, Any] = {}
     for team in teams:
-        out[team] = np.zeros(shape=(len(quals) + 1, 2))
+        out[team] = np.zeros(shape=(len(quals) + 1, 2))  # type: ignore
         out[team][0] = [
             team_stats[team]["ils_1_start"],
             team_stats[team]["ils_2_start"],
@@ -185,7 +195,15 @@ def get_ILS(quals, teams, team_stats, team_matches):
     return out
 
 
-def get_oprs(year, quals, playoffs, teams, team_stats, team_matches, mean_score):
+def get_oprs(
+    year: int,
+    quals: List[Dict[str, Any]],
+    playoffs: List[Dict[str, Any]],
+    teams: List[int],
+    team_stats: Dict[int, Dict[str, Union[int, float]]],
+    team_matches: Dict[str, Dict[int, Any]],
+    mean_score: float,
+):
     OPRs = get_ixOPR(
         year,
         quals,
@@ -201,17 +219,9 @@ def get_oprs(year, quals, playoffs, teams, team_stats, team_matches, mean_score)
     return OPRs, ILS
 
 
-def win_prob(red, blue, year, sd_score):
-    if isinstance(red, list):
-        red = sum(red)
-    if isinstance(red, dict):
-        red = sum(red.values())
-    if isinstance(blue, list):
-        blue = sum(blue)
-    if isinstance(blue, dict):
-        blue = sum(blue.values())
-    return 1 / (10 ** (5 / 8 * (blue - red) / sd_score) + 1)
+def win_prob(red_sum: float, blue_sum: float, year: int, sd_score: float):
+    return 1 / (10 ** (5 / 8 * (blue_sum - red_sum) / sd_score) + 1)
 
 
-def rp_prob(teams):
+def rp_prob(teams: List[float]) -> float:
     return logistic(sum(teams))
