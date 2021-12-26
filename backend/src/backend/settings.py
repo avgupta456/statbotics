@@ -144,5 +144,5 @@ SWAGGER_SETTINGS = {
     "DEFAULT_MODEL_RENDERING": "example",
 }
 
-# Cache up to one day
-CACHE_TIME = 60 * 60 * 24
+# Cache up to 15 minutes
+CACHE_TIME = 15 * 60

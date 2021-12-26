@@ -16,9 +16,6 @@ from db.models.team_event import TeamEvent
 from db.models.team_match import TeamMatch
 from db.models.team_year import TeamYear
 from db.models.year import Year
-from db.read.team import get_teams as get_teams_db
-from db.read.team_year import get_team_years as get_team_years_db
-from db.write.main import update_teams as update_teams_db
 from tba.clean_data import get_team_district as get_team_district_tba
 from tba.read_tba import (
     get_events as get_events_tba,
@@ -89,9 +86,3 @@ def process_year(
 
 def post_process():
     remove_teams_with_no_matches()
-
-    active_teams = set([t.team for t in get_team_years_db(year=2020)])
-    teams = get_teams_db()
-    for team in teams:
-        team.active = 1 if team.team in active_teams else 0
-    update_teams_db(teams, False)

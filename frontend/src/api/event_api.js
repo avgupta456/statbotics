@@ -1,19 +1,15 @@
 import axios from "axios";
 
 import { url } from "./index";
+import { getWithExpiry } from "./local_storage";
 
 /*EVENT API CALLS*/
 
 export const fetchEvents_Simple = async () => {
   const key = "Search_Events";
-  if (
-    localStorage.getItem(key) !== undefined &&
-    localStorage.getItem(key) !== null
-  ) {
-    const data = JSON.parse(localStorage.getItem(key));
-    if (data.length > 1000) {
-      return data;
-    }
+  const data = getWithExpiry(key);
+  if (data && data.length > 1000) {
+    return data;
   }
 
   try {

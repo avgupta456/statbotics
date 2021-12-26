@@ -1,19 +1,15 @@
 import axios from "axios";
 
 import { url } from "./index";
+import { getWithExpiry } from "./local_storage";
 
 /*TEAMS API CALLS*/
 
 export const fetchTeams_Simple = async () => {
   const key = "Search_Teams";
-  if (
-    localStorage.getItem(key) !== undefined &&
-    localStorage.getItem(key) !== null
-  ) {
-    const data = JSON.parse(localStorage.getItem(key));
-    if (data.length > 6000) {
-      return data;
-    }
+  const data = getWithExpiry(key);
+  if (data && data.length > 6000) {
+    return data;
   }
 
   try {
