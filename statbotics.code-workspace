@@ -4,6 +4,9 @@
             "path": "data"
         },
         {
+            "path": "backend"
+        },
+        {
             "name": "root",
             "path": "."
         }
