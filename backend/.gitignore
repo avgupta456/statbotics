@@ -1,0 +1,8 @@
+src/rankings/migrations/*
+static/*
+
+__pycache__/*
+*.pyc
+
+.env
+*.sql
