@@ -57,7 +57,7 @@ def event_all(event: TeamEvent) -> List[float]:
     ]
 
 
-def computeOPR(input: Any, output: Any, year: int, mean_score: float) -> Any:
+def compute_OPR(input: Any, output: Any, year: int, mean_score: float) -> Any:
     try:
         A = np.matmul(input.T, input)
         Y = np.matmul(input.T, output)
@@ -71,15 +71,15 @@ def computeOPR(input: Any, output: Any, year: int, mean_score: float) -> Any:
         )[0]
     except scipy.linalg.LinAlgError or scipy.linalg.ValueError:
         # if singular (not enough matches, etc)
-        out = computeAverages(input, output, year)
+        out = compute_averages(input, output, year)
     # if highly unstable, handles foul oprs
     if np.min(out) < -mean_score / (2 if year <= 2004 else 3):  # type: ignore
-        out = computeAverages(input, output, year)
+        out = compute_averages(input, output, year)
     return out  # type: ignore
 
 
 # returns 2d np array
-def computeAverages(input: Any, output: Any, year: int) -> Any:
+def compute_averages(input: Any, output: Any, year: int) -> Any:
     T, Y = input.shape[1], output.shape[1]  # teams in event
     TM = 2 if year <= 2004 else 3  # teams per alliance
     out = np.zeros(shape=(T, Y))  # type: ignore
@@ -186,7 +186,7 @@ def get_OPR(
     if out != {}:
         return out
 
-    oprs = computeOPR(input, output, year, score_mean)
+    oprs = compute_OPR(input, output, year, score_mean)
     for i in range(T):
         out[teams[i]] = [oprs[i]]
 
@@ -198,7 +198,7 @@ def get_OPR(
             input[2 * i + 1][t] = 1
         output[2 * i] = np.array(func(m, "red"))  # type: ignore
         output[2 * i + 1] = np.array(func(m, "blue"))  # type: ignore
-        oprs = computeOPR(input, output, year, score_mean)
+        oprs = compute_OPR(input, output, year, score_mean)
         [out[teams[j]].append(oprs[j]) for j in range(T)]
     return out
 
@@ -239,7 +239,7 @@ def get_xOPR(
         output[2 * i] = np.sum(red, axis=0)  # type: ignore
         output[2 * i + 1] = np.sum(blue, axis=0)  # type: ignore
 
-    oprs = computeOPR(input, output, year, score_mean)
+    oprs = compute_OPR(input, output, year, score_mean)
     for i in range(T):
         out[teams[i]] = [oprs[i]]
 
@@ -247,7 +247,7 @@ def get_xOPR(
         m = m_objs[i]
         output[2 * i] = np.array(func(m, "red"))  # type: ignore
         output[2 * i + 1] = np.array(func(m, "blue"))  # type: ignore
-        oprs = computeOPR(input, output, year, score_mean)
+        oprs = compute_OPR(input, output, year, score_mean)
         [out[teams[j]].append(oprs[j]) for j in range(T)]
     return out
 
@@ -288,7 +288,7 @@ def get_ixOPR(
         output[2 * i] = np.sum(red, axis=0)  # type: ignore
         output[2 * i + 1] = np.sum(blue, axis=0)  # type: ignore
 
-    oprs = computeOPR(input, output, year, score_mean)
+    oprs = compute_OPR(input, output, year, score_mean)
 
     for i in range(T):
         out[teams[i]] = [oprs[i]]
@@ -298,13 +298,13 @@ def get_ixOPR(
         m = m_objs[i]
         output[2 * i] = np.array(func(m, "red"))  # type: ignore
         output[2 * i + 1] = np.array(func(m, "blue"))  # type: ignore
-        oprs = computeOPR(input, output, year, score_mean)
+        oprs = compute_OPR(input, output, year, score_mean)
         for j in range(iterations - 1):
             temp = output.copy()
             for k in range(i, M):
                 temp[2 * k] = np.sum([oprs[i] for i in arr[k][0]], axis=0)  # type: ignore
                 temp[2 * k + 1] = np.sum([oprs[i] for i in arr[k][1]], axis=0)  # type: ignore
-            oprs = computeOPR(input, temp, year, score_mean)
+            oprs = compute_OPR(input, temp, year, score_mean)
         for j in range(T):
             out[teams[j]].append(oprs[j])
     return out
