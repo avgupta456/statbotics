@@ -20,7 +20,7 @@ from rankings.event_pred import event_pred
 @api_view(["GET"])
 def MeanSim(request, event, index):
     year, event = int(event[:4]), event[4:]
-    predictions = event_pred.meanSim(year, event, int(index))
+    predictions = event_pred.mean_sim(year, event, int(index))
     return Response(predictions)
 
 
@@ -35,7 +35,7 @@ def MeanSim(request, event, index):
 @api_view(["GET"])
 def IndexSim(request, event, index, iterations=100):
     year, event = int(event[:4]), event[4:]
-    predictions = event_pred.indexSim(year, event, int(index), int(iterations))
+    predictions = event_pred.index_sim(year, event, int(index), int(iterations))
     return Response(predictions)
 
 
@@ -49,7 +49,7 @@ def IndexSim(request, event, index, iterations=100):
 @api_view(["GET"])
 def QuickSim(request, event):
     year, event = int(event[:4]), event[4:]
-    predictions = event_pred.quickSim(year, event)
+    predictions = event_pred.quick_sim(year, event)
     return Response(predictions)
 
 

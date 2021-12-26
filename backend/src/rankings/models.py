@@ -28,7 +28,7 @@ class Team(models.Model):
     state = models.CharField(max_length=10)  # ex: CA
     country = models.CharField(max_length=30)  # ex: Israel
     district = models.CharField(max_length=10)  # ex: FNC
-    active = models.BooleanField()  # ex: True
+    active = models.IntegerField()  # ex: True
     elo = models.IntegerField()  # ex: 1700
     elo_recent = models.IntegerField()  # ex: 1600
     elo_mean = models.IntegerField()  # ex: 1600
