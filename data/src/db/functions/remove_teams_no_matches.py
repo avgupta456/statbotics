@@ -17,9 +17,30 @@ def remove_teams_with_no_matches() -> None:
             .all()
         ]
 
-        """Filter teams, teamYears, teamEvents with no matches"""
+        """Filter teams, teamYears, teamEvents with no matches ever"""
         session.query(TeamEventORM).filter(TeamEventORM.team.notin_(teams)).delete()  # type: ignore
         session.query(TeamYearORM).filter(TeamYearORM.team.notin_(teams)).delete()  # type: ignore
         session.query(TeamORM).filter(TeamORM.team.notin_(teams)).delete()  # type: ignore
+
+        team_years = [
+            x[0]
+            for x in session.query(TeamMatchORM.team_year_id)  # type: ignore
+            .group_by(TeamMatchORM.team_year_id)
+            .all()
+        ]
+
+        """Filter teams, teamYears, teamEvents with no matches given year"""
+        session.query(TeamEventORM).filter(TeamEventORM.team_year_id.notin_(team_years)).delete()  # type: ignore
+        session.query(TeamYearORM).filter(TeamYearORM.id.notin_(team_years)).delete()  # type: ignore
+
+        team_events = [
+            x[0]
+            for x in session.query(TeamMatchORM.team_event_id)  # type: ignore
+            .group_by(TeamMatchORM.team_event_id)
+            .all()
+        ]
+
+        """Filter teams, teamYears, teamEvents with no matches given event"""
+        session.query(TeamEventORM).filter(TeamEventORM.id.notin_(team_events)).delete()  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
