@@ -1,12 +1,10 @@
-Statbotics API
-==============
+# Statbotics API
 
 Statbotics.io aims to modernize FRC data analytics through developing and distributing cutting-edge metrics and analysis. This Python API makes historical Elo and OPR statistics just a few Python lines away! Currently we support queries on teams, years, events, and matches. Read below for usage and documentation.
 
 Visit https://statbotics.io for more content!
 
-Usage
------
+## Usage
 
 With Python>=3.6 and pip installed, run
 
@@ -28,22 +26,18 @@ print(sb.getTeam(254))
 
 Read below for more methods!
 
-API Reference
--------------
+## API Reference
 
 Visit https://statbotics.readthedocs.io/en/latest/
 
-Contribute
-----------
+## Contribute
 
 If you are interested in contributing, reach out to Abhijit Gupta (avgupta456@gmail.com)
 
-Support
--------
+## Support
 
 If you are having issues, please let us know. We welcome issues and pull requests.
 
-License
--------
+## License
 
 The project is licensed under the MIT license.
