@@ -1,4 +1,4 @@
-import { BACKEND_URL } from "../constants.js";
+import { BACKEND_URL } from "../constants";
 
 export const url = BACKEND_URL;
 
