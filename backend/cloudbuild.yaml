@@ -7,6 +7,21 @@ steps:
     entrypoint: npm
     args: ["run", "create-env"]
     dir: "backend"
+  - id: setup-venv
+    name: python:3.8-slim
+    entrypoint: sh
+    args:
+      - -c
+      - "(python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt)"
+    dir: "backend"
+  - id: collectstatic
+    name: python:3.8-slim
+    entrypoint: sh
+    args:
+      - -c
+      - "python manage.py collectstatic --noinput"
+    dir: "backend"
+    waitFor: ["-"]
     env:
       - "SECRET_KEY=${_SECRET_KEY}"
       - "CRDB_USER=abhijit"
