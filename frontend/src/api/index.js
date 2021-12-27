@@ -1,5 +1,6 @@
-// export const url = "https://backend.statbotics.io/api";
-export const url = "http://localhost:8000/api";
+import { BACKEND_URL } from "../constants.js";
+
+export const url = BACKEND_URL;
 
 export {
   fetchTeams_Simple,
