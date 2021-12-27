@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-os.environ["LOCAL_DB"] = "True"
+os.environ["LOCAL_DB"] = "False"
 
 from process.process_main import process_main  # noqa: E402
 

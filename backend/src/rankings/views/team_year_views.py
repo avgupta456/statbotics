@@ -7,9 +7,9 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from backend.settings import CACHE_TIME
-from rankings.models import TeamYear as TeamYearModel
-from rankings.serializers import TeamYearSerializer
+from src.backend.settings import CACHE_TIME
+from src.rankings.models import TeamYear as TeamYearModel
+from src.rankings.serializers import TeamYearSerializer
 
 
 @swagger_auto_schema(
