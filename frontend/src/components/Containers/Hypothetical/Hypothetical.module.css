@@ -1,0 +1,58 @@
+.main {
+  width: 80%;
+  margin: 25px auto;
+  padding: 2% 5%;
+}
+
+@media (max-width: 750px) {
+  .main {
+    width: 96%;
+    margin: 2%;
+  }
+}
+
+.height {
+  height: 20px;
+}
+
+.button_group {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: auto;
+  padding: 0 5%;
+  justify-content: center;
+  border-radius: 5px;
+}
+
+@media (max-width: 500px) {
+  .row {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+  }
+}
+
+.red {
+  background: rgba(255, 221, 221);
+}
+
+.blue {
+  background: rgba(221, 221, 255);
+}
+
+.progress {
+  width: 60%;
+  margin: auto;
+  background-color: rgba(1, 123, 255);
+}
+
+.center {
+  text-align: center;
+}

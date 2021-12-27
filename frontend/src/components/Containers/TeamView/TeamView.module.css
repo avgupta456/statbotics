@@ -1,0 +1,22 @@
+.body {
+  margin: 3%;
+  padding: 15px;
+}
+
+.dropdown {
+  margin: 0px 3px;
+  width: 100px;
+}
+
+.title {
+  display: flex;
+}
+
+.title_text {
+  padding-top: 5px;
+}
+
+.chart {
+  padding: 20px;
+  padding-top: 0px;
+}

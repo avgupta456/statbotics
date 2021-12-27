@@ -1,0 +1,7 @@
+.nav {
+  z-index: 999 !important;
+}
+
+.body {
+  z-index: 2;
+}

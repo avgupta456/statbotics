@@ -83,7 +83,7 @@ Between years, the predictive power of Elo is improved by applying mean reversio
 
 ```
 elo_last_year, elo_this_year
-elo_next_year = 0.2 * 1500 + 0.8 * (0.7 * elo_last_year + 0.3 * elo_this_year) 
+elo_next_year = 0.2 * 1500 + 0.8 * (0.7 * elo_last_year + 0.3 * elo_this_year)
               = 300 + 0.56 * elo_last_year + 0.24 * elo_this_year
 ```
 
@@ -100,7 +100,7 @@ And that's all! Some modifications are currently in the work to help prevent out
 
 ### OPR and ILS
 
-OPR stands for Offensive Power Rating, and uses linear algebra to estimate a team's actual contribution to an alliance. OPR is a fairly well understood metric in FRC, so I will be linking some resources that can do a much better job explaining than me. 
+OPR stands for Offensive Power Rating, and uses linear algebra to estimate a team's actual contribution to an alliance. OPR is a fairly well understood metric in FRC, so I will be linking some resources that can do a much better job explaining than me.
 
 I believe Karthik from 1114 developed OPR as early as 2004: https://www.youtube.com/watch?v=l8syuYnXfJg&feature=youtu.be&t=6m49s
 
@@ -116,11 +116,11 @@ Regarding the actual seed value, I follow Caleb Sykes methodology in using the m
 
 ILS stands for Iterative Logistic Strength, and aims to measure a team's contribution to ranking points (2016-Present) similar to how OPR measures contributions towards score. However, ILS follows an approach more like Elo in computing its values. I have imitated Caleb Sykes' algorithm verbatim, read about it here: https://blog.thebluealliance.com/2019/08/04/making-better-rp-predictions/
 
-All constants for the Elo, OPR, and ILS models can be found in the Python code - statbotics_calc/models/*
+All constants for the Elo, OPR, and ILS models can be found in the Python code - statbotics_calc/models/\*
 
 ## Insights and Predictions
 
-### Insights 
+### Insights
 
 For each TeamEvent, we calculate the starting Elo, pre-playoffs Elo, ending Elo, max Elo, mean Elo, and Elo difference through the event. We do the same for OPR, as well as the Component OPRs for eight major categories. For a TeamYear with multiple TeamEvents, we take the starting Elo/OPR, pre-champs Elo/OPR, ending Elo/OPR, and max Elo/OPR. Additionally, ILS is computed throughout the year. For each Team, which consistes of multiple TeamYears, we take the Current Elo/OPR, max Elo, mean Elo, and recent Elo (2017-Present). All this information is displayed on Statbotics.io, and through the Python API.
 
