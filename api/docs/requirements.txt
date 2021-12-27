@@ -37,7 +37,7 @@ pyre-extensions==0.0.18
 pytest==5.4.3
 pytz==2020.1
 pywin32-ctypes==0.2.0
-PyYAML==5.3.1
+PyYAML==5.4
 readme-renderer==26.0
 requests==2.24.0
 requests-toolbelt==0.9.1
