@@ -1,4 +1,8 @@
-from src.backend.wsgi import application
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from src.backend.wsgi import application  # noqa: E402
 
 # App Engine by default looks for a main.py file at the root of the app
 # directory with a WSGI-compatible object called app.
