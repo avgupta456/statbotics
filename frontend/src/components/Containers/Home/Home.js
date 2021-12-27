@@ -60,7 +60,7 @@ export default function Home() {
         <p>
           For more information about the metrics and methodology, read{" "}
           <a
-            href="https://github.com/statbotics/statbotics/blob/master/Methods.md"
+            href="https://github.com/statbotics/statbotics/blob/master/docs/Methods.md"
             target="_blank"
             rel="noopener noreferrer"
           >
