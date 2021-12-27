@@ -25,7 +25,7 @@ steps:
     entrypoint: sh
     args:
       - -c
-      - "python manage.py collectstatic --noinput"
+      - "(. .venv/bin/activate && python manage.py collectstatic --noinput)"
     dir: "backend"
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy", "--appyaml", "./app.yaml"]
