@@ -6,9 +6,9 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from backend.settings import CACHE_TIME
-from rankings.models import Event as EventModel
-from rankings.serializers import EventSerializer
+from src.backend.settings import CACHE_TIME
+from src.rankings.models import Event as EventModel
+from src.rankings.serializers import EventSerializer
 
 
 @swagger_auto_schema(

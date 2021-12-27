@@ -14,7 +14,7 @@ import os
 
 import dj_database_url  # type: ignore
 
-from backend.constants import DATABASE_URL, DJANGO_SECRET_KEY
+from src.backend.constants import DATABASE_URL, DJANGO_SECRET_KEY
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "drf_yasg",
-    "rankings",
+    "src.rankings",
 ]
 
 MIDDLEWARE = [
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "backend.urls"
+ROOT_URLCONF = "src.backend.urls"
 
 TEMPLATES = [  # type: ignore
     {
@@ -77,7 +77,7 @@ TEMPLATES = [  # type: ignore
     },
 ]
 
-WSGI_APPLICATION = "backend.wsgi.application"
+WSGI_APPLICATION = "src.backend.wsgi.application"
 
 
 # Database

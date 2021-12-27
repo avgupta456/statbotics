@@ -13,7 +13,7 @@ class MatchORM(Base, ModelORM):
     __tablename__ = "matches"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
     year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
+    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
 
     """GENERAL"""
     event = Column(String(20))
