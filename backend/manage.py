@@ -5,8 +5,6 @@ import sys
 
 from dotenv import load_dotenv
 
-os.environ["LOCAL_DB"] = "False"
-
 load_dotenv()
 
 
