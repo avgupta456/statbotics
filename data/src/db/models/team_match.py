@@ -13,11 +13,13 @@ class TeamMatchORM(Base, ModelORM):
     __tablename__ = "team_matches"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
     team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
-    team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"))
-    team_event_id: Column[int] = Column(Integer, ForeignKey("team_events.id"))
+    team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"), index=True)
+    team_event_id: Column[int] = Column(
+        Integer, ForeignKey("team_events.id"), index=True
+    )
     year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
-    match_id: Column[int] = Column(Integer, ForeignKey("matches.id"))
+    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
+    match_id: Column[int] = Column(Integer, ForeignKey("matches.id"), index=True)
 
     """GENERAL"""
     time = Column(Integer)

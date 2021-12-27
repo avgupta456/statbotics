@@ -5,8 +5,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import permissions, viewsets
 
-from backend.settings import CACHE_TIME
-from rankings.filters import (
+from src.backend.settings import CACHE_TIME
+from src.rankings.filters import (
     EventFilterSet,
     MatchFilterSet,
     TeamEventFilterSet,
@@ -15,7 +15,7 @@ from rankings.filters import (
     TeamYearFilterSet,
     YearFilterSet,
 )
-from rankings.models import (
+from src.rankings.models import (
     Event as EventModel,
     Match as MatchModel,
     Team as TeamModel,
@@ -24,7 +24,7 @@ from rankings.models import (
     TeamYear as TeamYearModel,
     Year as YearModel,
 )
-from rankings.serializers import (
+from src.rankings.serializers import (
     EventSerializer,
     MatchSerializer,
     TeamEventSerializer,
