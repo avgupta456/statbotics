@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Tuple, Union
 
-from src.rankings.models import Match, TeamEvent, TeamMatch, Year
+from rankings.models import Match, TeamEvent, TeamMatch, Year
 
 
 def get_year_dict(year: int) -> Tuple[float, float]:

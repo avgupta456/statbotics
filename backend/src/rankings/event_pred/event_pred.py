@@ -1,8 +1,8 @@
 import random
 from typing import Any, Dict, List, Tuple
 
-from src.rankings.event_pred import read
-from src.rankings.event_pred.models import (
+from rankings.event_pred import read
+from rankings.event_pred.models import (
     elo as elo_model,
     opr as opr_model,
     rps as rps_model,

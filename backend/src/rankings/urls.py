@@ -6,7 +6,7 @@ from drf_yasg import openapi
 from drf_yasg.views import SwaggerUIRenderer, get_schema_view
 from rest_framework import permissions, routers
 
-from src.rankings.views import (
+from rankings.views import (
     event_pred_views,
     event_views,
     match_views,
