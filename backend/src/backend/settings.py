@@ -126,13 +126,7 @@ USE_TZ = True
 STATIC_ROOT = "static"
 STATIC_URL = "/static/"
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",
-    "https://statbotics-io-276522.web.app",
-    "https://statbotics-io-276522.firebaseapp.com",
-    "https://statbotics.io",
-    "https://www.statbotics.io",
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
