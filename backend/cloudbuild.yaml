@@ -13,6 +13,20 @@ steps:
       - "CRDB_PWD=${_CRDB_PWD}"
       - "CRDB_HOST=free-tier.gcp-us-central1.cockroachlabs.cloud:26257"
       - "CRDB_CLUSTER=statbotics-5256"
+  - id: setup-venv
+    name: python:3.8-slim
+    entrypoint: sh
+    args:
+      - -c
+      - "(python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt)"
+    dir: "backend"
+  - id: collectstatic
+    name: python:3.8-slim
+    entrypoint: sh
+    args:
+      - -c
+      - "(. .venv/bin/activate && python manage.py collectstatic --noinput)"
+    dir: "backend"
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy", "--appyaml", "./app.yaml"]
     dir: "backend"
