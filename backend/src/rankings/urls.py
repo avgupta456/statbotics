@@ -61,21 +61,19 @@ urlpatterns.extend(
         path("v1/teams/country/<country>/active", team_views._TeamsActive),
         path("v1/teams/country/<country>/active/by/<metric>", team_views._TeamsActive),
         path("v1/teams/country/<country>/state/<state>", team_views._Teams),
+        path("v1/teams/country/<country>/state/<state>/by/<metric>", team_views._Teams),
         path(
-            "api/teams/country/<country>/state/<state>/by/<metric>", team_views._Teams
+            "v1/teams/country/<country>/state/<state>/active", team_views._TeamsActive
         ),
         path(
-            "api/teams/country/<country>/state/<state>/active", team_views._TeamsActive
-        ),
-        path(
-            "api/teams/country/<country>/state/<state>/active/by/<metric>",
+            "v1/teams/country/<country>/state/<state>/active/by/<metric>",
             team_views._TeamsActive,
         ),
         path("v1/teams/district/<district>", team_views._Teams),
         path("v1/teams/district/<district>/by/<metric>", team_views._Teams),
         path("v1/teams/district/<district>/active", team_views._TeamsActive),
         path(
-            "api/teams/district/<district>/active/by/<metric>", team_views._TeamsActive
+            "v1/teams/district/<district>/active/by/<metric>", team_views._TeamsActive
         ),
     ]
 )
@@ -86,34 +84,32 @@ urlpatterns.extend(
         path("v1/team_year/team/<num>/year/<year>", team_year_views.TeamYear),
         path("v1/team_years/team/<num>", team_year_views.TeamYearsNum),
         path(
-            "api/team_years/team/<num>/by/<metric>",
+            "v1/team_years/team/<num>/by/<metric>",
             team_year_views.TeamYearsNumByMetric,
         ),
         path("v1/team_years/year/<year>", team_year_views.TeamYearsYear),
         path(
-            "api/team_years/year/<year>/by/<metric>",
+            "v1/team_years/year/<year>/by/<metric>",
             team_year_views.TeamYearsYearByMetric,
         ),
+        path("v1/team_years/year/<year>/country/<country>", team_year_views._TeamYears),
         path(
-            "api/team_years/year/<year>/country/<country>", team_year_views._TeamYears
-        ),
-        path(
-            "api/team_years/year/<year>/country/<country>/by/<metric>",
+            "v1/team_years/year/<year>/country/<country>/by/<metric>",
             team_year_views._TeamYears,
         ),
         path(
-            "api/team_years/year/<year>/country/<country>/state/<state>",
+            "v1/team_years/year/<year>/country/<country>/state/<state>",
             team_year_views._TeamYears,
         ),
         path(
-            "api/team_years/year/<year>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_years/year/<year>/country/<country>/state/<state>/by/<metric>",
             team_year_views._TeamYears,
         ),
         path(
-            "api/team_years/year/<year>/district/<district>", team_year_views._TeamYears
+            "v1/team_years/year/<year>/district/<district>", team_year_views._TeamYears
         ),
         path(
-            "api/team_years/year/<year>/district/<district>/by/<metric>",
+            "v1/team_years/year/<year>/district/<district>/by/<metric>",
             team_year_views._TeamYears,
         ),
         path("v1/team_years/", team_year_views.TeamYears),
@@ -121,26 +117,22 @@ urlpatterns.extend(
         path("v1/team_years/by/<metric>", team_year_views.TeamYearsByMetric),
         path("v1/team_years/by/<metric>/page/<page>", team_year_views._TeamYears),
         path("v1/team_years/country/<country>", team_year_views._TeamYears),
+        path("v1/team_years/country/<country>/page/<page>", team_year_views._TeamYears),
+        path("v1/team_years/country/<country>/by/<metric>", team_year_views._TeamYears),
         path(
-            "api/team_years/country/<country>/page/<page>", team_year_views._TeamYears
-        ),
-        path(
-            "api/team_years/country/<country>/by/<metric>", team_year_views._TeamYears
-        ),
-        path(
-            "api/team_years/country/<country>/by/<metric>/page/<page>",
+            "v1/team_years/country/<country>/by/<metric>/page/<page>",
             team_year_views._TeamYears,
         ),
         path(
-            "api/team_years/country/<country>/state/<state>", team_year_views._TeamYears
+            "v1/team_years/country/<country>/state/<state>", team_year_views._TeamYears
         ),
         path(
-            "api/team_years/country/<country>/state/<state>/by/<metric>",
+            "v1/team_years/country/<country>/state/<state>/by/<metric>",
             team_year_views._TeamYears,
         ),
         path("v1/team_years/district/<district>", team_year_views._TeamYears),
         path(
-            "api/team_years/district/<district>/by/<metric>", team_year_views._TeamYears
+            "v1/team_years/district/<district>/by/<metric>", team_year_views._TeamYears
         ),
     ]
 )
@@ -151,312 +143,312 @@ urlpatterns.extend(
         path("v1/team_event/team/<num>/event/<event>", team_event_views.TeamEvent),
         path("v1/team_events/team/<num>", team_event_views.TeamEventsNum),
         path(
-            "api/team_events/team/<num>/by/<metric>",
+            "v1/team_events/team/<num>/by/<metric>",
             team_event_views.TeamEventsNumByMetric,
         ),
         path("v1/team_events/team/<num>/type/<type>", team_event_views._TeamEvents),
         path(
-            "api/team_events/team/<num>/type/<type>/by/<metric>",
+            "v1/team_events/team/<num>/type/<type>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/team/<num>/week/<week>", team_event_views._TeamEvents),
         path(
-            "api/team_events/team/<num>/week/<week>/by/<metric>",
+            "v1/team_events/team/<num>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/type/<type>/week/<week>",
+            "v1/team_events/team/<num>/type/<type>/week/<week>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/type/<type>/week/<week>/by/<metric>",
+            "v1/team_events/team/<num>/type/<type>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/year/<year>", team_event_views.TeamEventsYear),
         path("v1/team_events/year/<year>/page/<page>", team_event_views._TeamEvents),
         path(
-            "api/team_events/year/<year>/by/<metric>",
+            "v1/team_events/year/<year>/by/<metric>",
             team_event_views.TeamEventsYearByMetric,
         ),
         path(
-            "api/team_events/year/<year>/by/<metric>/page/<page>",
+            "v1/team_events/year/<year>/by/<metric>/page/<page>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/year/<year>/type/<type>", team_event_views._TeamEvents),
         path(
-            "api/team_events/year/<year>/type/<type>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/year/<year>/week/<week>", team_event_views._TeamEvents),
         path(
-            "api/team_events/year/<year>/week/<week>/by/<metric>",
+            "v1/team_events/year/<year>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/country/<country>",
+            "v1/team_events/year/<year>/country/<country>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/country/<country>/page/<page>",
+            "v1/team_events/year/<year>/country/<country>/page/<page>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/country/<country>/by/<metric>",
+            "v1/team_events/year/<year>/country/<country>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/country/<country>/by/<metric>/page/<page>",
+            "v1/team_events/year/<year>/country/<country>/by/<metric>/page/<page>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/country/<country>/state/<state>",
+            "v1/team_events/year/<year>/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/year/<year>/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/district/<district>",
+            "v1/team_events/year/<year>/district/<district>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/district/<district>/by/<metric>",
+            "v1/team_events/year/<year>/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/year/<year>/type/<type>", team_event_views._TeamEvents),
         path(
-            "api/team_events/year/<year>/type/<type>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/country/<country>",
+            "v1/team_events/year/<year>/type/<type>/country/<country>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/country/<country>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/country/<country>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/country/<country>/state/<state>",
+            "v1/team_events/year/<year>/type/<type>/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/district/<district>",
+            "v1/team_events/year/<year>/type/<type>/district/<district>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/district/<district>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/year/<year>/week/<week>", team_event_views._TeamEvents),
         path(
-            "api/team_events/year/<year>/week/<week>/by/<metric>",
+            "v1/team_events/year/<year>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/week/<week>/country/<country>",
+            "v1/team_events/year/<year>/week/<week>/country/<country>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/week/<week>/country/<country>/by/<metric>",
+            "v1/team_events/year/<year>/week/<week>/country/<country>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/week/<week>/country/<country>/state/<state>",
+            "v1/team_events/year/<year>/week/<week>/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/year/<year>/week/<week>/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/week/<week>/district/<district>",
+            "v1/team_events/year/<year>/week/<week>/district/<district>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/week/<week>/district/<district>/by/<metric>",
+            "v1/team_events/year/<year>/week/<week>/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/country/<country>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/country/<country>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/country/<country>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/country/<country>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/district/<district>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/district/<district>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/year/<year>/type/<type>/week/<week>/district/<district>/by/<metric>",
+            "v1/team_events/year/<year>/type/<type>/week/<week>/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/year/<year>", team_event_views.TeamEventsNumYear
+            "v1/team_events/team/<num>/year/<year>", team_event_views.TeamEventsNumYear
         ),
         path(
-            "api/team_events/team/<num>/year/<year>/by/<metric>",
+            "v1/team_events/team/<num>/year/<year>/by/<metric>",
             team_event_views.TeamEventsNumYearByMetric,
         ),
         path(
-            "api/team_events/team/<num>/year/<year>/type/<type>",
+            "v1/team_events/team/<num>/year/<year>/type/<type>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/year/<year>/type/<type>/by/<metric>",
+            "v1/team_events/team/<num>/year/<year>/type/<type>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/year/<year>/week/<week>",
+            "v1/team_events/team/<num>/year/<year>/week/<week>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/year/<year>/week/<week>/by/<metric>",
+            "v1/team_events/team/<num>/year/<year>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/year/<year>/type/<type>/week/<week>",
+            "v1/team_events/team/<num>/year/<year>/type/<type>/week/<week>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/team/<num>/year/<year>/type/<type>/week/<week>/by/<metric>",
+            "v1/team_events/team/<num>/year/<year>/type/<type>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/event/<event>", team_event_views.TeamEventsEvent),
         path(
-            "api/team_events/event/<event>/by/<metric>",
+            "v1/team_events/event/<event>/by/<metric>",
             team_event_views.TeamEventsEventByMetric,
         ),
         path("v1/team_events", team_event_views.TeamEvents),
         path("v1/team_events/page/<page>", team_event_views._TeamEvents),
         path("v1/team_events/country/<country>", team_event_views._TeamEvents),
         path(
-            "api/team_events/country/<country>/page/<page>",
+            "v1/team_events/country/<country>/page/<page>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/country/<country>/state/<state>",
+            "v1/team_events/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/district/<district>", team_event_views._TeamEvents),
         path(
-            "api/team_events/district/<district>/by/<metric>",
+            "v1/team_events/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/type/<type>", team_event_views._TeamEvents),
         path("v1/team_events/type/<type>/by/<metric>", team_event_views._TeamEvents),
         path(
-            "api/team_events/type/<type>/country/<country>",
+            "v1/team_events/type/<type>/country/<country>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/country/<country>/by/<metric>",
+            "v1/team_events/type/<type>/country/<country>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/country/<country>/state/<state>",
+            "v1/team_events/type/<type>/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/type/<type>/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/district/<district>",
+            "v1/team_events/type/<type>/district/<district>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/district/<district>/by/<metric>",
+            "v1/team_events/type/<type>/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/week/<week>", team_event_views._TeamEvents),
         path("v1/team_events/week/<week>/by/<metric>", team_event_views._TeamEvents),
         path(
-            "api/team_events/week/<week>/country/<country>",
+            "v1/team_events/week/<week>/country/<country>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/week/<week>/country/<country>/by/<metric>",
+            "v1/team_events/week/<week>/country/<country>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/week/<week>/country/<country>/state/<state>",
+            "v1/team_events/week/<week>/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/week/<week>/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/week/<week>/district/<district>",
+            "v1/team_events/week/<week>/district/<district>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/week/<week>/district/<district>/by/<metric>",
+            "v1/team_events/week/<week>/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path("v1/team_events/type/<type>/week/<week>", team_event_views._TeamEvents),
         path(
-            "api/team_events/type/<type>/week/<week>/by/<metric>",
+            "v1/team_events/type/<type>/week/<week>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/week/<week>/country/<country>",
+            "v1/team_events/type/<type>/week/<week>/country/<country>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/week/<week>/country/<country>/by/<metric>",
+            "v1/team_events/type/<type>/week/<week>/country/<country>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/week/<week>/country/<country>/state/<state>",
+            "v1/team_events/type/<type>/week/<week>/country/<country>/state/<state>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/team_events/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/week/<week>/district/<district>",
+            "v1/team_events/type/<type>/week/<week>/district/<district>",
             team_event_views._TeamEvents,
         ),
         path(
-            "api/team_events/type/<type>/week/<week>/district/<district>/by/<metric>",
+            "v1/team_events/type/<type>/week/<week>/district/<district>/by/<metric>",
             team_event_views._TeamEvents,
         ),
     ]
@@ -476,26 +468,26 @@ urlpatterns.extend(
         path("v1/team_matches/year/<year>/elims", team_match_views._TeamMatchesElim),
         path("v1/team_matches/year/<year>/page/<page>", team_match_views._TeamMatches),
         path(
-            "api/team_matches/year/<year>/page/<page>",
+            "v1/team_matches/year/<year>/page/<page>",
             team_match_views._TeamMatchesElim,
         ),
         path("v1/team_matches/event/<event>", team_match_views.TeamMatchesEvent),
         path("v1/team_matches/event/<event>/elims", team_match_views._TeamMatchesElim),
         path("v1/team_matches/match/<match>", team_match_views.TeamMatchesMatch),
         path(
-            "api/team_matches/team/<num>/year/<year>",
+            "v1/team_matches/team/<num>/year/<year>",
             team_match_views.TeamMatchesTeamYear,
         ),
         path(
-            "api/team_matches/team/<num>/year/<year>/elims",
+            "v1/team_matches/team/<num>/year/<year>/elims",
             team_match_views._TeamMatchesElim,
         ),
         path(
-            "api/team_matches/team/<num>/event/<event>",
+            "v1/team_matches/team/<num>/event/<event>",
             team_match_views.TeamMatchesTeamEvent,
         ),
         path(
-            "api/team_matches/team/<num>/event/<event>/elims",
+            "v1/team_matches/team/<num>/event/<event>/elims",
             team_match_views._TeamMatchesElim,
         ),
     ]
@@ -520,7 +512,7 @@ urlpatterns.extend(
         path("v1/events/country/<country>/by/<metric>", event_views._Events),
         path("v1/events/country/<country>/state/<state>", event_views._Events),
         path(
-            "api/events/country/<country>/state/<state>/by/<metric>",
+            "v1/events/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/district/<district>", event_views._Events),
@@ -529,161 +521,161 @@ urlpatterns.extend(
         path("v1/events/type/<type>/by/<metric>", event_views._Events),
         path("v1/events/type/<type>/country/<country>", event_views._Events),
         path(
-            "api/events/type/<type>/country/<country>/by/<metric>", event_views._Events
+            "v1/events/type/<type>/country/<country>/by/<metric>", event_views._Events
         ),
         path(
-            "api/events/type/<type>/country/<country>/state/<state>",
+            "v1/events/type/<type>/country/<country>/state/<state>",
             event_views._Events,
         ),
         path(
-            "api/events/type/<type>/country/<country>/state/<state>/by/<metric>",
+            "v1/events/type/<type>/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/type/<type>/district/<district>", event_views._Events),
         path(
-            "api/events/type/<type>/district/<district>/by/<metric>",
+            "v1/events/type/<type>/district/<district>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/week/<week>", event_views._Events),
         path("v1/events/week/<week>/by/<metric>", event_views._Events),
         path("v1/events/week/<week>/country/<country>", event_views._Events),
         path(
-            "api/events/week/<week>/country/<country>/by/<metric>", event_views._Events
+            "v1/events/week/<week>/country/<country>/by/<metric>", event_views._Events
         ),
         path(
-            "api/events/week/<week>/country/<country>/state/<state>",
+            "v1/events/week/<week>/country/<country>/state/<state>",
             event_views._Events,
         ),
         path(
-            "api/events/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/events/week/<week>/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/week/<week>/district/<district>", event_views._Events),
         path(
-            "api/events/week/<week>/district/<district>/by/<metric>",
+            "v1/events/week/<week>/district/<district>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/type/<type>/week/<week>", event_views._Events),
         path("v1/events/type/<type>/week/<week>/by/<metric>", event_views._Events),
         path(
-            "api/events/type/<type>/week/<week>/country/<country>", event_views._Events
+            "v1/events/type/<type>/week/<week>/country/<country>", event_views._Events
         ),
         path(
-            "api/events/type/<type>/week/<week>/country/<country>/by/<metric>",
+            "v1/events/type/<type>/week/<week>/country/<country>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/type/<type>/week/<week>/country/<country>/state/<state>",
+            "v1/events/type/<type>/week/<week>/country/<country>/state/<state>",
             event_views._Events,
         ),
         path(
-            "api/events/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/events/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/type/<type>/week/<week>/district/<district>",
+            "v1/events/type/<type>/week/<week>/district/<district>",
             event_views._Events,
         ),
         path(
-            "api/events/type/<type>/week/<week>/district/<district>/by/<metric>",
+            "v1/events/type/<type>/week/<week>/district/<district>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/year/<year>", event_views.EventsYear),
         path("v1/events/year/<year>/by/<metric>", event_views.EventsYearByMetric),
         path("v1/events/year/<year>/country/<country>", event_views._Events),
         path(
-            "api/events/year/<year>/country/<country>/by/<metric>", event_views._Events
+            "v1/events/year/<year>/country/<country>/by/<metric>", event_views._Events
         ),
         path(
-            "api/events/year/<year>/country/<country>/state/<state>",
+            "v1/events/year/<year>/country/<country>/state/<state>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/country/<country>/state/<state>/by/<metric>",
+            "v1/events/year/<year>/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/year/<year>/district/<district>", event_views._Events),
         path(
-            "api/events/year/<year>/district/<district>/by/<metric>",
+            "v1/events/year/<year>/district/<district>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/year/<year>/type/<type>", event_views._Events),
         path("v1/events/year/<year>/type/<type>/by/<metric>", event_views._Events),
         path(
-            "api/events/year/<year>/type/<type>/country/<country>", event_views._Events
+            "v1/events/year/<year>/type/<type>/country/<country>", event_views._Events
         ),
         path(
-            "api/events/year/<year>/type/<type>/country/<country>/by/<metric>",
+            "v1/events/year/<year>/type/<type>/country/<country>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/country/<country>/state/<state>",
+            "v1/events/year/<year>/type/<type>/country/<country>/state/<state>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/country/<country>/state/<state>/by/<metric>",
+            "v1/events/year/<year>/type/<type>/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/district/<district>",
+            "v1/events/year/<year>/type/<type>/district/<district>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/district/<district>/by/<metric>",
+            "v1/events/year/<year>/type/<type>/district/<district>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/year/<year>/week/<week>", event_views._Events),
         path("v1/events/year/<year>/week/<week>/by/<metric>", event_views._Events),
         path(
-            "api/events/year/<year>/week/<week>/country/<country>", event_views._Events
+            "v1/events/year/<year>/week/<week>/country/<country>", event_views._Events
         ),
         path(
-            "api/events/year/<year>/week/<week>/country/<country>/by/<metric>",
+            "v1/events/year/<year>/week/<week>/country/<country>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/week/<week>/country/<country>/state/<state>",
+            "v1/events/year/<year>/week/<week>/country/<country>/state/<state>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/events/year/<year>/week/<week>/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/week/<week>/district/<district>",
+            "v1/events/year/<year>/week/<week>/district/<district>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/week/<week>/district/<district>/by/<metric>",
+            "v1/events/year/<year>/week/<week>/district/<district>/by/<metric>",
             event_views._Events,
         ),
         path("v1/events/year/<year>/type/<type>/week/<week>", event_views._Events),
         path(
-            "api/events/year/<year>/type/<type>/week/<week>/by/<metric>",
+            "v1/events/year/<year>/type/<type>/week/<week>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/week/<week>/country/<country>",
+            "v1/events/year/<year>/type/<type>/week/<week>/country/<country>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/week/<week>/country/<country>/by/<metric>",
+            "v1/events/year/<year>/type/<type>/week/<week>/country/<country>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>",
+            "v1/events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
+            "v1/events/year/<year>/type/<type>/week/<week>/country/<country>/state/<state>/by/<metric>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/week/<week>/district/<district>",
+            "v1/events/year/<year>/type/<type>/week/<week>/district/<district>",
             event_views._Events,
         ),
         path(
-            "api/events/year/<year>/type/<type>/week/<week>/district/<district>/by/<metric>",
+            "v1/events/year/<year>/type/<type>/week/<week>/district/<district>/by/<metric>",
             event_views._Events,
         ),
     ]
@@ -711,17 +703,17 @@ urlpatterns.extend(
         path("v1/event_sim/event/<event>/simple", event_pred_views.QuickSim),
         path("v1/event_sim/event/<event>/full", event_pred_views.Sim),
         path(
-            "api/event_sim/event/<event>/full/iterations/<iterations>",
+            "v1/event_sim/event/<event>/full/iterations/<iterations>",
             event_pred_views.Sim,
         ),
         path(
-            "api/event_sim/event/<event>/index/<index>/simple", event_pred_views.MeanSim
+            "v1/event_sim/event/<event>/index/<index>/simple", event_pred_views.MeanSim
         ),
         path(
-            "api/event_sim/event/<event>/index/<index>/full", event_pred_views.IndexSim
+            "v1/event_sim/event/<event>/index/<index>/full", event_pred_views.IndexSim
         ),
         path(
-            "api/event_sim/event/<event>/index/<index>/full/iterations/<iterations>",
+            "v1/event_sim/event/<event>/index/<index>/full/iterations/<iterations>",
             event_pred_views.IndexSim,
         ),
     ]

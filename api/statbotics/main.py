@@ -12,7 +12,7 @@ class Statbotics:
     """
 
     def __init__(self):
-        self.BASE_URL = "https://backend.statbotics.io"
+        self.BASE_URL = "https://api.statbotics.io"
         self.session = CacheControl(requests.Session())
         self.login(self.getToken())
         self.token = self.getToken()
