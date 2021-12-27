@@ -5,7 +5,7 @@ CRDB_PWD = os.getenv("CRDB_PWD", "")
 CRDB_HOST = os.getenv("CRDB_HOST", "")
 CRDB_CLUSTER = os.getenv("CRDB_CLUSTER", "")
 
-local_db = os.getenv("LOCAL_DB", "True")
+local_db = os.getenv("LOCAL_DB", "")
 if type(local_db) == str:
     local_db = local_db.lower() == "true"
 LOCAL_DB: bool = local_db  # type: ignore

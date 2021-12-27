@@ -9,7 +9,6 @@ steps:
     dir: "backend"
     env:
       - "SECRET_KEY=${_SECRET_KEY}"
-      - "LOCAL_DB=false"
       - "CRDB_USER=abhijit"
       - "CRDB_PWD=${_CRDB_PWD}"
       - "CRDB_HOST=free-tier.gcp-us-central1.cockroachlabs.cloud:26257"
