@@ -6,6 +6,7 @@
     "main": "poetry run python src/main.py",
     "set-reqs": "poetry lock && poetry export -f requirements.txt --output requirements.txt --without-hashes",
     "test": "poetry run coverage run --source=src -m unittest -v && poetry run coverage report",
-    "isort": "poetry run isort . --src-path=./src --multi-line=3 --trailing-comma --line-length=88 --combine-as --ensure-newline-before-comments"
+    "isort": "poetry run isort . --src-path=./src --multi-line=3 --trailing-comma --line-length=88 --combine-as --ensure-newline-before-comments",
+    "create-env": "printenv > .env"
   }
 }
