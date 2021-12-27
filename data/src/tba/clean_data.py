@@ -130,7 +130,7 @@ def clean_district(district: str) -> str:
     return district
 
 
-teams_info: Dict[int, Any] = load("teams_info.p")
+teams_info: Dict[int, Any] = load("src/teams_info.p")
 
 
 def get_team_district(team: int):
