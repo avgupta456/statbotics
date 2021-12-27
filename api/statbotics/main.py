@@ -82,7 +82,7 @@ class Statbotics:
 
         validate.checkType(team, "int", "team")
         validate.checkType(fields, "list", "fields")
-        return self._get("/api/_teams?team=" + str(team), fields)[0]
+        return self._get("/v1/_teams?team=" + str(team), fields)[0]
 
     def getTeams(
         self,
@@ -108,7 +108,7 @@ class Statbotics:
         :return: A list of dictionaries, each dictionary including the team, location, and Elo statistics\n
         """
 
-        url = "/api/_teams?"
+        url = "/v1/_teams?"
 
         validate.checkType(metric, "str", "metric")
         validate.checkType(limit, "int", "limit")
@@ -143,7 +143,7 @@ class Statbotics:
 
         validate.checkType(year, "int", "year")
         validate.checkType(fields, "list", "fields")
-        return self._get("/api/_years?year=" + str(year), fields)[0]
+        return self._get("/v1/_years?year=" + str(year), fields)[0]
 
     def getYears(self, metric=None, limit=1000, offset=0, fields=["all"]):
         """
@@ -159,7 +159,7 @@ class Statbotics:
         validate.checkType(limit, "int", "limit")
         validate.checkType(offset, "int", "offset")
         validate.checkType(fields, "list", "fields")
-        url = "/api/_years?limit=" + str(limit) + "&offset=" + str(offset)
+        url = "/v1/_years?limit=" + str(limit) + "&offset=" + str(offset)
         if metric:
             url += "&o=" + self._negate(metric)
         return self._get(url, fields)
@@ -176,7 +176,7 @@ class Statbotics:
         validate.checkType(team, "int", "team")
         validate.checkType(year, "int", "year")
         validate.checkType(fields, "list", "fields")
-        url = "/api/_team_years?team=" + str(team) + "&year=" + str(year)
+        url = "/v1/_team_years?team=" + str(team) + "&year=" + str(year)
         return self._get(url, fields)[0]
 
     def getTeamYears(
@@ -204,7 +204,7 @@ class Statbotics:
         :return: A list of dictionaries, each dictionary including the team, year, and OPR/Elo statistics\n
         """
 
-        url = "/api/_team_years"
+        url = "/v1/_team_years"
 
         validate.checkType(team, "int", "team")
         validate.checkType(year, "int", "year")
@@ -250,7 +250,7 @@ class Statbotics:
 
         validate.checkType(event, "str", "event")
         validate.checkType(fields, "list", "fields")
-        url = "/api/_events?key=" + event
+        url = "/v1/_events?key=" + event
         return self._get(url, fields)[0]
 
     def getEvents(
@@ -281,7 +281,7 @@ class Statbotics:
         :return: A list of dictionaries, each dictionary including the team, event and Elo/OPR statistics\n
         """
 
-        url = "/api/_events"
+        url = "/v1/_events"
 
         validate.checkType(year, "int", "year")
         validate.checkType(metric, "str", "metric")
@@ -328,7 +328,7 @@ class Statbotics:
         validate.checkType(team, "int", "team")
         validate.checkType(event, "str", "event")
         validate.checkType(fields, "list", "fields")
-        url = "/api/_team_events?team=" + str(team) + "&event=" + event
+        url = "/v1/_team_events?team=" + str(team) + "&event=" + event
         return self._get(url, fields)[0]
 
     def getTeamEvents(
@@ -362,7 +362,7 @@ class Statbotics:
         :return: A list of dictionaries, each dictionary including the team, event and Elo/OPR statistics\n
         """
 
-        url = "/api/_team_events"
+        url = "/v1/_team_events"
 
         validate.checkType(team, "int", "team")
         validate.checkType(event, "str", "event")
@@ -421,7 +421,7 @@ class Statbotics:
 
         validate.checkType(match, "str", "match")
         validate.checkType(fields, "list", "fields")
-        return self._get("/api/_matches?key=" + match, fields)[0]
+        return self._get("/v1/_matches?key=" + match, fields)[0]
 
     def getMatches(
         self, year=None, event=None, elims=None, limit=1000, offset=0, fields=["all"]
@@ -437,7 +437,7 @@ class Statbotics:
         :return: A list of dictionaries, each dictionary including the match, score breakdowns, and predictions\n
         """
 
-        url = "/api/_matches"
+        url = "/v1/_matches"
 
         validate.checkType(year, "int", "year")
         validate.checkType(event, "str", "event")
@@ -483,7 +483,7 @@ class Statbotics:
         validate.checkType(team, "int", "team")
         validate.checkType(match, "str", "match")
         validate.checkType(fields, "list", "fields")
-        url = "/api/_team_matches?team=" + str(team) + "&match=" + str(match)
+        url = "/v1/_team_matches?team=" + str(team) + "&match=" + str(match)
         return self._get(url, fields)[0]
 
     def getTeamMatches(
@@ -509,7 +509,7 @@ class Statbotics:
         :return: A list of dictionaries, each dictionary including the team, match, alliance, and then elo\n
         """
 
-        url = "/api/_team_matches"
+        url = "/v1/_team_matches"
 
         validate.checkType(team, "int", "team")
         validate.checkType(year, "int", "year")
@@ -559,7 +559,7 @@ class Statbotics:
         validate.checkType(full, "bool", "full")
         validate.checkType(iterations, "int", "iterations")
 
-        url = "/api/event_sim/event/" + event
+        url = "/v1/event_sim/event/" + event
 
         if index:
             url += "/index/" + str(index)
