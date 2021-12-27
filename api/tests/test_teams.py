@@ -39,7 +39,7 @@ class TestTeams(unittest.TestCase):
 
     def test_get_team_fields_invalid(self):
         with self.assertRaises(ValueError):
-            self.sb.getTeam(254, fields=["wins"])
+            self.sb.getTeam(254, fields=["win"])  # should be 'wins'
         with self.assertRaises(ValueError):
             self.sb.getTeam(254, fields=["team", "ELO"])
 
