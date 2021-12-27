@@ -5,8 +5,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from rankings.models import Year as YearModel
-from rankings.serializers import YearSerializer
+from src.rankings.models import Year as YearModel
+from src.rankings.serializers import YearSerializer
 
 
 @swagger_auto_schema(

@@ -14,9 +14,9 @@ class TeamEventORM(Base, ModelORM):
     __tablename__ = "team_events"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
     team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
-    team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"))
+    team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"), index=True)
     year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"))
+    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
 
     """GENERAL"""
     time = Column(Integer)

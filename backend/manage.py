@@ -5,11 +5,13 @@ import sys
 
 from dotenv import load_dotenv
 
+os.environ["LOCAL_DB"] = "False"
+
 load_dotenv()
 
 
 def main():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "src.backend.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

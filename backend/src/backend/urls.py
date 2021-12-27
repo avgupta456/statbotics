@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path
 from django.urls.resolvers import URLResolver
 
-from rankings import urls as rankings_urls
+from src.rankings import urls as rankings_urls
 
 urlpatterns: List[URLResolver] = [
     path("admin/", admin.site.urls),
