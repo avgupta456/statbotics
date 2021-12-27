@@ -7,8 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-os.environ["LOCAL_DB"] = "False"
-
 
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")

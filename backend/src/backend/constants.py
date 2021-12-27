@@ -4,9 +4,23 @@ CRDB_USER = os.getenv("CRDB_USER", "")
 CRDB_PWD = os.getenv("CRDB_PWD", "")
 CRDB_HOST = os.getenv("CRDB_HOST", "")
 CRDB_CLUSTER = os.getenv("CRDB_CLUSTER", "")
-LOCAL_DB = os.getenv("LOCAL_DB", "True") == "True"
+
+local_db = os.getenv("LOCAL_DB", "True")
+if type(local_db) == str:
+    local_db = local_db.lower() == "true"
+LOCAL_DB: bool = local_db  # type: ignore
+
+docker = os.getenv("DOCKER", "")
+if type(docker) == str:
+    docker = docker.lower() == "true"
+DOCKER: bool = docker  # type: ignore
 
 url = "postgresql://root@localhost:26257/statbotics2?sslmode=disable"
+
+if DOCKER:
+    # assuming LOCAL_DB, overwritten otherwise
+    url = url.replace("localhost", "cockroachdb")
+
 if not LOCAL_DB:
     url = (
         "postgresql://"
@@ -21,6 +35,4 @@ if not LOCAL_DB:
 
 DATABASE_URL = url
 
-print(DATABASE_URL)
-
-DJANGO_SECRET_KEY = os.getenv("SECRET_KEY", "")
+DJANGO_SECRET_KEY = os.getenv("SECRET_KEY", "EMPTY")

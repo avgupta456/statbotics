@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  cockroachdb:
+    container_name: cockroachdb
+    image: cockroachdb/cockroach
+    ports:
+      - 26257:26257
+      - 8080:8080
+    command: start-single-node --insecure --advertise-addr=[::1]
+    volumes:
+      - "C:/Users/Abhijit/cockroach-data:/cockroach/cockroach-data"
+
+  backend:
+    container_name: backend
+    build:
+      context: "./backend"
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/backend
+    environment:
+      - LOCAL_DB=True
+      - DOCKER=True
+    depends_on:
+      - cockroachdb
+
+  frontend:
+    container_name: frontend
+    build:
+      context: "./frontend"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/frontend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+    stdin_open: true

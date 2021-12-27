@@ -289,8 +289,8 @@ def post_process(end_year: int):
             if year in keys:
                 recent.append(years[year])
         r_y, y = len(recent), len(keys)
-        team.active = 1 if max(keys) >= 2019 else 0
-        team.elo = None if not team.active or y == 0 else years[max(keys)]
+        team.active = 1 if y > 0 and max(keys) >= 2019 else 0
+        team.elo = years[max(keys)] if team.active else None
 
         # temp solution applying mean reversion if no 2020 matches
         if team.active and y > 0 and max(keys) == 2019:
