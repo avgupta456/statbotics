@@ -46,15 +46,16 @@ def process_event(
 
         winner = m.winner or "red"  # in practice, never None
         m.opr_winner = "red" if red_sum > blue_sum else "blue"
-        m.opr_win_prob = opr_model.win_prob(red_sum, blue_sum, sd_score)
-        opr_mse += (win_probs[winner] - m.opr_win_prob) ** 2
+        win_prob = opr_model.win_prob(red_sum, blue_sum, sd_score)
+        m.opr_win_prob = round(win_prob, 4)
+        opr_mse += (win_probs[winner] - win_prob) ** 2
         if m.opr_winner == winner:
             opr_acc += 1
 
-        m.mix_win_prob = 0.5 * ((m.elo_win_prob or 0) + m.opr_win_prob)
-        m.mix_winner = "red" if m.mix_win_prob > 0.5 else "blue"
-
-        mix_mse += (win_probs[winner] - m.mix_win_prob) ** 2
+        win_prob = 0.5 * ((m.elo_win_prob or 0) + m.opr_win_prob)
+        m.mix_winner = "red" if win_prob > 0.5 else "blue"
+        m.mix_win_prob = round(win_prob, 4)
+        mix_mse += (win_probs[winner] - win_prob) ** 2
         if m.mix_winner == winner:
             mix_acc += 1
 
@@ -74,10 +75,10 @@ def process_event(
                 sum([ils[b][ind][1] for b in blue]), 2
             )
 
-            m.red_rp_1_prob = red_rp_1_prob = logistic(red_ils_1_sum)
-            m.red_rp_2_prob = red_rp_2_prob = logistic(red_ils_2_sum)
-            m.blue_rp_1_prob = blue_rp_1_prob = logistic(blue_ils_1_sum)
-            m.blue_rp_2_prob = blue_rp_2_prob = logistic(blue_ils_2_sum)
+            m.red_rp_1_prob = red_rp_1_prob = round(logistic(red_ils_1_sum), 4)
+            m.red_rp_2_prob = red_rp_2_prob = round(logistic(red_ils_2_sum), 4)
+            m.blue_rp_1_prob = blue_rp_1_prob = round(logistic(blue_ils_1_sum), 4)
+            m.blue_rp_2_prob = blue_rp_2_prob = round(logistic(blue_ils_2_sum), 4)
 
             red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
             blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
@@ -205,6 +206,9 @@ def process_year(
     for event in events:
         for team_event in event_team_events[event.id]:
             num = team_event.team
+            if num not in team_oprs_dict or num not in team_years_dict:
+                continue
+
             team_event.opr_start = team_oprs_dict[num]
             team_event.opr_end = team_oprs_dict[num]  # overwritten later
             if year_num >= 2016:

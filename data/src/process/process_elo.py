@@ -70,7 +70,7 @@ def process_year(
     acc, mse, count = 0, 0, 0
     event_stats: Dict[int, List[Union[float, int]]] = defaultdict(lambda: [0, 0, 0])
 
-    for match in sorted(matches, key=lambda m: (m.playoff, m.sort())):
+    for match in sorted(matches, key=lambda m: (m.event_id, m.playoff, m.sort())):
         event_id = match.event_id
         red, blue = match.get_teams()
         red_elo_pre: Dict[int, float] = {}
@@ -82,10 +82,10 @@ def process_year(
             blue_elo_pre[team] = team_elos[team]
             team_match_ids[get_team_match_id(team, match.id)] = team_elos[team]
 
-        match.red_elo_sum = sum(red_elo_pre.values())
-        match.blue_elo_sum = sum(blue_elo_pre.values())
+        match.red_elo_sum = round(sum(red_elo_pre.values()))
+        match.blue_elo_sum = round(sum(blue_elo_pre.values()))
         win_prob = elo_win_prob(match.red_elo_sum, match.blue_elo_sum)
-        match.elo_win_prob = win_prob
+        match.elo_win_prob = round(win_prob, 4)
         match.elo_winner = "red" if win_prob > 0.5 else "blue"
 
         red_elo_post, blue_elo_post = elo_update_rating(
@@ -148,7 +148,7 @@ def process_year(
 
     # TEAM MATCHES
     for team_match in team_matches:
-        team_match.elo = team_match_ids[team_match.id]
+        team_match.elo = round(team_match_ids[team_match.id])
 
     # TEAM EVENTS
     event_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
@@ -162,13 +162,14 @@ def process_year(
         team_team_events[team_event.team].append(team_event)
 
         elos = [obj[0] for obj in team_events_dict[id]]
-        team_event.elo_start = elos[0]
-        team_event.elo_end = elos[-1]
-        team_event.elo_max = max(elos)
-        team_event.elo_mean = round(sum(elos) / len(elos), 2)
-        team_event.elo_diff = round(elos[-1] - elos[0], 2)
+        team_event.elo_start = round(elos[0])
+        team_event.elo_end = round(elos[-1])
+        team_event.elo_max = round(max(elos))
+        team_event.elo_mean = round(sum(elos) / len(elos))
+        team_event.elo_diff = round(elos[-1] - elos[0])
         qual_elos = [obj[0] for obj in team_events_dict[id] if not obj[1]]
-        team_event.elo_pre_playoffs = elos[0] if len(qual_elos) == 0 else qual_elos[-1]
+        elo_pre_playoffs = elos[0] if len(qual_elos) == 0 else qual_elos[-1]
+        team_event.elo_pre_playoffs = round(elo_pre_playoffs)
 
         wins, losses, ties, count = team_event_stats[id]
         winrate = round((wins + ties / 2) / max(1, count), 4)
@@ -189,10 +190,10 @@ def process_year(
             elos.append(team_event.elo_pre_playoffs or 0)
         elos.sort(reverse=True)
 
-        event.elo_max = elos[0]
-        event.elo_top8 = None if len(elos) < 8 else elos[7]
-        event.elo_top24 = None if len(elos) < 24 else elos[23]
-        event.elo_mean = round(sum(elos) / len(elos), 2)
+        event.elo_max = round(elos[0])
+        event.elo_top8 = None if len(elos) < 8 else round(elos[7])
+        event.elo_top24 = None if len(elos) < 24 else round(elos[23])
+        event.elo_mean = round(sum(elos) / len(elos))
         event.elo_sd = round(statistics.pstdev(elos), 2)
         event_acc, event_mse, event_count = event_stats[event_id]
         event.elo_acc = round(event_acc / event_count, 4)
@@ -242,13 +243,13 @@ def process_year(
 
     # YEARS
     year_elos.sort(reverse=True)
-    year.elo_max = year_elos[0]
-    year.elo_1p = year_elos[round(0.01 * len(year_elos))]
-    year.elo_5p = year_elos[round(0.05 * len(year_elos))]
-    year.elo_10p = year_elos[round(0.10 * len(year_elos))]
-    year.elo_25p = year_elos[round(0.25 * len(year_elos))]
-    year.elo_median = year_elos[round(0.50 * len(year_elos))]
-    year.elo_mean = round(sum(year_elos) / len(year_elos), 2)
+    year.elo_max = round(year_elos[0])
+    year.elo_1p = round(year_elos[round(0.01 * len(year_elos))])
+    year.elo_5p = round(year_elos[round(0.05 * len(year_elos))])
+    year.elo_10p = round(year_elos[round(0.10 * len(year_elos))])
+    year.elo_25p = round(year_elos[round(0.25 * len(year_elos))])
+    year.elo_median = round(year_elos[round(0.50 * len(year_elos))])
+    year.elo_mean = round(sum(year_elos) / len(year_elos))
     year.elo_sd = round(statistics.pstdev(year_elos), 2)
     year.elo_acc = acc
     year.elo_mse = mse
@@ -290,17 +291,17 @@ def post_process(end_year: int):
                 recent.append(years[year])
         r_y, y = len(recent), len(keys)
         team.active = 1 if y > 0 and max(keys) >= 2019 else 0
-        team.elo = years[max(keys)] if team.active else None
+        team.elo = round(years[max(keys)]) if team.active else None
 
         # temp solution applying mean reversion if no 2020 matches
         if team.active and y > 0 and max(keys) == 2019:
             yr_1 = 1450 if 2019 not in years else years[2019]
             yr_2 = 1450 if 2018 not in years else years[2018]
-            team.elo = 0.56 * yr_1 + 0.24 * yr_2 + 0.20 * 1450
+            team.elo = round(0.56 * yr_1 + 0.24 * yr_2 + 0.20 * 1450)
 
-        team.elo_recent = None if r_y == 0 else round(sum(recent) / r_y, 2)
-        team.elo_mean = None if y == 0 else round(sum(values) / y, 2)
-        team.elo_max = None if y == 0 else max(values)
+        team.elo_recent = None if r_y == 0 else round(sum(recent) / r_y)
+        team.elo_mean = None if y == 0 else round(sum(values) / y)
+        team.elo_max = None if y == 0 else round(max(values))
 
         winrate = round((wins + ties / 2) / max(1, count), 4)
         team.wins = wins

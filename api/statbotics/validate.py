@@ -203,13 +203,13 @@ team_event_metrics = [
 ]
 
 
-def getCountry(country):
+def get_country(country):
     if country.lower() in countries:
         return "%20".join(countries[country.lower()].split(" "))
     raise ValueError("Not a valid country")
 
 
-def getState(country, state):
+def get_state(country, state):
     if country not in [None, "USA", "Canada"]:
         raise ValueError("Can only specify state for USA, Canada")
 
@@ -226,16 +226,16 @@ def getState(country, state):
     raise ValueError("Not a valid state")
 
 
-def getDistrict(district):
+def get_district(district):
     if district.lower() in districts:
         return districts[district.lower()]
     raise ValueError("Not a valid district")
 
 
-def getLocations(country, state, district):
-    checkType(country, "str", "country")
-    checkType(state, "str", "state")
-    checkType(district, "str", "district")
+def get_locations(country, state, district):
+    check_type(country, "str", "country")
+    check_type(state, "str", "state")
+    check_type(district, "str", "district")
 
     if country and district:
         raise ValueError("Cannot specify country and district")
@@ -245,11 +245,11 @@ def getLocations(country, state, district):
     url = ""
 
     if country:
-        country = getCountry(country)
+        country = get_country(country)
         url += "&country=" + country
 
     if state:
-        temp_country, state = getState(country, state)
+        temp_country, state = get_state(country, state)
         if country and temp_country != country:
             raise ValueError("State from different country")
         if not country:
@@ -257,13 +257,13 @@ def getLocations(country, state, district):
         url += "&state=" + state
 
     if district:
-        district = getDistrict(district)
+        district = get_district(district)
         url += "&district=" + district
 
     return url
 
 
-def getType(type):
+def get_type(type):
     if type is None:
         return
     if isinstance(type, int):
@@ -285,7 +285,7 @@ def getType(type):
     )
 
 
-def checkType(val, type, name):
+def check_type(val, type, name):
     if not val:
         return
     if type == "int" and not isinstance(val, int):
@@ -296,17 +296,17 @@ def checkType(val, type, name):
         raise TypeError("'" + name + "' must be a list")
 
 
-def getTeamMetrics():
+def get_team_metrics():
     return team_metrics
 
 
-def getTeamYearMetrics():
+def get_team_year_metrics():
     return team_year_metrics
 
 
-def getEventMetrics():
+def get_event_metrics():
     return event_metrics
 
 
-def getTeamEventMetrics():
+def get_team_event_metrics():
     return team_event_metrics

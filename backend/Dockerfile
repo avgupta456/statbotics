@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir --upgrade -r /backend/requirements.txt
 
 COPY ./ /backend
 
-CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
