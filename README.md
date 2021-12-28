@@ -38,7 +38,7 @@ Then in a Python file, create a Statbotics object and get started!
 import statbotics
 
 sb = statbotics.Statbotics()
-print(sb.getTeam(254))
+print(sb.get_team(254))
 
 >> {'team':254, 'name': 'The Cheesy Poofs', 'state': 'CA', 'country': 'USA', 'district': 'None',
     'active': True, 'elo': 1860, 'elo_recent': 1972, 'elo_mean': 1898, 'elo_max': 2145}
@@ -47,7 +47,9 @@ print(sb.getTeam(254))
 Read the docs: https://statbotics.readthedocs.io/en/latest/
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Reach out to avgupta456@gmail.com for guidance.
 
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)

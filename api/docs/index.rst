@@ -22,7 +22,7 @@ Then in a Python file, create a Statbotics object and get started!
   import statbotics
 
   sb = statbotics.Statbotics()
-  print(sb.getTeam(254))
+  print(sb.get_team(254))
 
   >> {'team':254, 'name': 'The Cheesy Poofs', 'state': 'CA', 'country': 'USA', 'district': 'None',
       'active': True, 'elo': 1860, 'elo_recent': 1972, 'elo_mean': 1898, 'elo_max': 2145}
@@ -32,7 +32,7 @@ Read below for more methods!
 API Reference
 -------------
 .. autoclass:: statbotics.main.Statbotics
-   :members: getTeam, getTeams, getYear, getYears, getTeamYear, getTeamYears, getEvent, getEvents, getTeamEvent, getTeamEvents, getMatch, getMatches, getTeamMatch, getTeamMatches
+   :members: get_team, get_teams, get_year, get_years, get_team_year, get_team_years, get_event, get_events, get_team_event, get_team_events, get_match, get_matches, get_team_match, get_team_matches
 
 Contribute
 ----------
