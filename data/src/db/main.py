@@ -13,7 +13,7 @@ LOCAL_DB = os.getenv("LOCAL_DB", "True") == "True"
 
 if LOCAL_DB:
     engine = create_engine(
-        "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
+        "cockroachdb://root@localhost:26257/statbotics?sslmode=disable"
     )
 else:
     engine = create_engine(

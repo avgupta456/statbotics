@@ -9,11 +9,23 @@ from db.models.team_event import TeamEvent
 from db.models.team_match import TeamMatch
 from db.models.team_year import TeamYear
 from db.models.year import Year
-from db.read.event import get_num_events as get_num_events_db
-from db.read.match import get_num_matches as get_num_matches_db
+from db.read.event import (
+    get_num_events as get_num_events_db,
+    get_events as get_events_db,
+)
+from db.read.match import (
+    get_num_matches as get_num_matches_db,
+    get_matches as get_matches_db,
+)
 from db.read.team import get_num_teams as get_num_teams_db, get_teams as get_teams_db
-from db.read.team_event import get_num_team_events as get_num_team_events_db
-from db.read.team_match import get_num_team_matches
+from db.read.team_event import (
+    get_num_team_events as get_num_team_events_db,
+    get_team_events as get_team_events_db,
+)
+from db.read.team_match import (
+    get_num_team_matches,
+    get_team_matches as get_team_matches_db,
+)
 from db.read.team_year import (
     get_num_team_years as get_num_team_years_db,
     get_team_years as get_team_years_db,
@@ -41,9 +53,14 @@ from process.process_elo import (
 )
 from process.process_opr import process_year as process_year_opr
 
-
-def write_teams(teams: List[Team]) -> None:
-    update_teams_db(teams, True)
+objs_type = Tuple[
+    Year,
+    List[TeamYear],
+    List[Event],
+    List[TeamEvent],
+    List[Match],
+    List[TeamMatch],
+]
 
 
 def post_process_objs(
@@ -64,6 +81,9 @@ def post_process_objs(
 ]:
     teams_dict = {t.team: t for t in teams}
     for team_year in team_years:
+        if team_year.team not in teams_dict:
+            continue
+
         temp_team = teams_dict[team_year.team]
         team_year.name = temp_team.name
         team_year.state = temp_team.state
@@ -74,6 +94,9 @@ def post_process_objs(
     events_dict = {e.id: e for e in events}
     for team_event in team_events:
         if team_event.event_id not in events_dict:
+            continue
+
+        if team_event.team not in teams_dict:
             continue
 
         temp_event = events_dict[team_event.event_id]
@@ -107,6 +130,7 @@ def write_objs(
     team_events: List[TeamEvent],
     matches: List[Match],
     team_matches: List[TeamMatch],
+    clean: bool,
 ) -> None:
     # removes records with no events/matches
     team_years = [t for t in team_years if t.elo_end is not None]
@@ -116,12 +140,22 @@ def write_objs(
     events = [e for e in events if e.id in event_ids]
 
     # writes to db
-    update_years_db([year], True)
-    update_team_years_db(team_years, True)
-    update_events_db(events, True)
-    update_team_events_db(team_events, True)
-    update_matches_db(matches, True)
-    update_team_matches_db(team_matches, True)
+    update_years_db([year], clean)
+    update_team_years_db(team_years, clean)
+    update_events_db(events, clean)
+    update_team_events_db(team_events, clean)
+    update_matches_db(matches, clean)
+    update_team_matches_db(team_matches, clean)
+
+
+def get_year_objs(year: int) -> objs_type:
+    _year = Year(year=year)
+    team_years = get_team_years_db(year)
+    events = get_events_db(year)
+    team_events = get_team_events_db(year)
+    matches = get_matches_db(year)
+    team_matches = get_team_matches_db(year)
+    return _year, team_years, events, team_events, matches, team_matches
 
 
 def print_table_stats() -> None:
@@ -147,7 +181,7 @@ def process_main(start_year: int, end_year: int, clean: bool = True):
         teams = load_teams()
         print("Load\t", datetime.now() - start)
         start = datetime.now()
-        write_teams(teams)
+        update_teams_db(teams, True)
         print("Write\t", datetime.now() - start)
         print("Total\t", datetime.now() - overall_start)
         print()
@@ -172,15 +206,10 @@ def process_main(start_year: int, end_year: int, clean: bool = True):
     for year_num in range(start_year, end_year + 1):
         overall_start = datetime.now()
         start = overall_start
-        objs_type = Tuple[
-            Year,
-            List[TeamYear],
-            List[Event],
-            List[TeamEvent],
-            List[Match],
-            List[TeamMatch],
-        ]
-        objs: objs_type = process_year_tba(year_num, all_team_nums)
+        if clean:
+            objs: objs_type = process_year_tba(year_num, all_team_nums)
+        else:
+            objs: objs_type = get_year_objs(year_num)
         print(year_num, "\tTBA\t", datetime.now() - start)
         start = datetime.now()
 
@@ -206,7 +235,7 @@ def process_main(start_year: int, end_year: int, clean: bool = True):
         print(year_num, "\tPost\t", datetime.now() - start)
         start = datetime.now()
 
-        write_objs(*objs)
+        write_objs(*objs, clean)
         print(year_num, "\tWrite\t", datetime.now() - start)
         start = datetime.now()
 

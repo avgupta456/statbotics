@@ -70,7 +70,8 @@ def process_year(
     acc, mse, count = 0, 0, 0
     event_stats: Dict[int, List[Union[float, int]]] = defaultdict(lambda: [0, 0, 0])
 
-    for match in sorted(matches, key=lambda m: (m.event_id, m.playoff, m.sort())):
+    sorted_matches = sorted(matches, key=lambda m: m.sort())
+    for match in sorted_matches:
         event_id = match.event_id
         red, blue = match.get_teams()
         red_elo_pre: Dict[int, float] = {}
