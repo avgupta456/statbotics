@@ -1,20 +1,6 @@
 # [Statbotics.io](https://statbotics.io)
 
 [![Downloads](https://pepy.tech/badge/statbotics)](https://pepy.tech/project/statbotics)
-[![Frontend Build Status](https://travis-ci.com/avgupta456/statbotics_frontend.svg?branch=master)](https://travis-ci.com/avgupta456/statbotics_frontend)
-
-
-Statbotics aims to create and distribute modern data analytics for the FIRST Robotics Competition. Due to the multiple distinct components to this project, the code is stored in multiple repositories, and this repository serves as overarching documentation. Details for specific subsections can be accessed via the links below.
-
-Python Calculations: https://github.com/avgupta456/statbotics_calc
-
-Django Backend: https://github.com/avgupta456/statbotics_backend
-
-React Frontend: https://github.com/avgupta456/statbotics_frontend
-
-Python API: https://github.com/avgupta456/statbotics_api
-
-In the future, additional documentation, examples, and resources will be stored in this repository.
 
 ## Overview
 
