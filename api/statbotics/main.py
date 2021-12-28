@@ -221,7 +221,7 @@ class Statbotics:
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if team and year:
-            raise UserWarning("Use getTeamYear() instead")
+            raise UserWarning("Use get_team_year() instead")
         if team and (country or state or district):
             raise UserWarning("Conflicting location input")
 
@@ -381,7 +381,7 @@ class Statbotics:
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
         if team and event:
-            raise UserWarning("Use getTeamEvent() instead")
+            raise UserWarning("Use get_team_event() instead")
         if event and (year or type or week):
             raise UserWarning("Overconstrained query")
         if (team or event) and (country or state or district):
