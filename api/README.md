@@ -18,7 +18,7 @@ Then in a Python file, create a Statbotics object and get started!
 import statbotics
 
 sb = statbotics.Statbotics()
-print(sb.getTeam(254))
+print(sb.get_team(254))
 
 >> {'team':254, 'name': 'The Cheesy Poofs', 'state': 'CA', 'country': 'USA', 'district': 'None',
     'active': True, 'elo': 1860, 'elo_recent': 1972, 'elo_mean': 1898, 'elo_max': 2145}
