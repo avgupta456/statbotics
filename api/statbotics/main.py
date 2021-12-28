@@ -14,10 +14,10 @@ class Statbotics:
     def __init__(self):
         self.BASE_URL = "https://api.statbotics.io"
         self.session = CacheControl(requests.Session())
-        self.login(self.getToken())
-        self.token = self.getToken()
+        self.login(self.get_token())
+        self.token = self.get_token()
 
-    def getToken(self, retries=0):
+    def get_token(self, retries=0):
         if retries > 2:
             raise UserWarning("Could not connect to Statbotics.io")
         self.session.get(self.BASE_URL + "/admin/")
@@ -72,7 +72,7 @@ class Statbotics:
             return string[1:]
         return "-" + string
 
-    def getTeam(self, team, fields=["all"]):
+    def get_team(self, team, fields=["all"]):
         """
         Function to retrieve information on an individual team\n
         :param team: Team Number, integer\n
@@ -80,11 +80,11 @@ class Statbotics:
         :return: a dictionary with the team's number, location (country, state, district), and Elo statistics (Current Elo, Recent Elo, Mean Elo, Max Elo)\n
         """
 
-        validate.checkType(team, "int", "team")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(team, "int", "team")
+        validate.check_type(fields, "list", "fields")
         return self._get("/v1/_teams?team=" + str(team), fields)[0]
 
-    def getTeams(
+    def get_teams(
         self,
         country=None,
         state=None,
@@ -110,10 +110,10 @@ class Statbotics:
 
         url = "/v1/_teams?"
 
-        validate.checkType(metric, "str", "metric")
-        validate.checkType(limit, "int", "limit")
-        validate.checkType(offset, "int", "offset")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(metric, "str", "metric")
+        validate.check_type(limit, "int", "limit")
+        validate.check_type(offset, "int", "offset")
+        validate.check_type(fields, "list", "fields")
 
         if limit > 10000:
             raise ValueError(
@@ -121,19 +121,19 @@ class Statbotics:
             )
 
         url += "limit=" + str(limit) + "&offset=" + str(offset)
-        url += validate.getLocations(country, state, district)
+        url += validate.get_locations(country, state, district)
 
         if active:
             url += "&active=1"
 
         if metric:
-            if metric not in validate.getTeamMetrics():
+            if metric not in validate.get_team_metrics():
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
         return self._get(url, fields)
 
-    def getYear(self, year, fields=["all"]):
+    def get_year(self, year, fields=["all"]):
         """
         Function to retrieve information for a specific year\n
         :param year: Year, integer\n
@@ -141,11 +141,11 @@ class Statbotics:
         :return: a dictionary with the year, match prediction statistics, and RP prediction statistics\n
         """
 
-        validate.checkType(year, "int", "year")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(year, "int", "year")
+        validate.check_type(fields, "list", "fields")
         return self._get("/v1/_years?year=" + str(year), fields)[0]
 
-    def getYears(self, metric=None, limit=1000, offset=0, fields=["all"]):
+    def get_years(self, metric=None, limit=1000, offset=0, fields=["all"]):
         """
         Function to retrieve information on multiple years\n
         :param metric: Order output. Default descending, add '-' for ascending. (Ex: "elo_acc", "-opr_mse", etc)\n
@@ -155,16 +155,16 @@ class Statbotics:
         :return: A list of dictionaries, each dictionary including the year and match/RP prediction statistics\n
         """
 
-        validate.checkType(metric, "str", "metric")
-        validate.checkType(limit, "int", "limit")
-        validate.checkType(offset, "int", "offset")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(metric, "str", "metric")
+        validate.check_type(limit, "int", "limit")
+        validate.check_type(offset, "int", "offset")
+        validate.check_type(fields, "list", "fields")
         url = "/v1/_years?limit=" + str(limit) + "&offset=" + str(offset)
         if metric:
             url += "&o=" + self._negate(metric)
         return self._get(url, fields)
 
-    def getTeamYear(self, team, year, fields=["all"]):
+    def get_team_year(self, team, year, fields=["all"]):
         """
         Function to retrieve information for a specific team's performance in a specific year\n
         :param team: Team number, integer\n
@@ -173,13 +173,13 @@ class Statbotics:
         :return: a dictionary with the team, year, and Elo/OPR statistics\n
         """
 
-        validate.checkType(team, "int", "team")
-        validate.checkType(year, "int", "year")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(team, "int", "team")
+        validate.check_type(year, "int", "year")
+        validate.check_type(fields, "list", "fields")
         url = "/v1/_team_years?team=" + str(team) + "&year=" + str(year)
         return self._get(url, fields)[0]
 
-    def getTeamYears(
+    def get_team_years(
         self,
         team=None,
         year=None,
@@ -206,12 +206,12 @@ class Statbotics:
 
         url = "/v1/_team_years"
 
-        validate.checkType(team, "int", "team")
-        validate.checkType(year, "int", "year")
-        validate.checkType(metric, "str", "metric")
-        validate.checkType(limit, "int", "limit")
-        validate.checkType(offset, "int", "offset")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(team, "int", "team")
+        validate.check_type(year, "int", "year")
+        validate.check_type(metric, "str", "metric")
+        validate.check_type(limit, "int", "limit")
+        validate.check_type(offset, "int", "offset")
+        validate.check_type(fields, "list", "fields")
 
         if limit > 10000:
             raise ValueError(
@@ -231,16 +231,16 @@ class Statbotics:
         if year:
             url += "&year=" + str(year)
 
-        url += validate.getLocations(country, state, district)
+        url += validate.get_locations(country, state, district)
 
         if metric:
-            if metric not in validate.getTeamYearMetrics():
+            if metric not in validate.get_team_year_metrics():
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
         return self._get(url, fields)
 
-    def getEvent(self, event, fields=["all"]):
+    def get_event(self, event, fields=["all"]):
         """
         Function to retrieve information for a specific event\n
         :param event: Event key, string (ex: "2019cur")\n
@@ -248,12 +248,12 @@ class Statbotics:
         :return: a dictionary with the event and Elo/OPR statistics\n
         """
 
-        validate.checkType(event, "str", "event")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(event, "str", "event")
+        validate.check_type(fields, "list", "fields")
         url = "/v1/_events?key=" + event
         return self._get(url, fields)[0]
 
-    def getEvents(
+    def get_events(
         self,
         year=None,
         country=None,
@@ -283,13 +283,13 @@ class Statbotics:
 
         url = "/v1/_events"
 
-        validate.checkType(year, "int", "year")
-        validate.checkType(metric, "str", "metric")
-        type = validate.getType(type)
-        validate.checkType(week, "int", "week")
-        validate.checkType(limit, "int", "limit")
-        validate.checkType(offset, "int", "offset")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(year, "int", "year")
+        validate.check_type(metric, "str", "metric")
+        type = validate.get_type(type)
+        validate.check_type(week, "int", "week")
+        validate.check_type(limit, "int", "limit")
+        validate.check_type(offset, "int", "offset")
+        validate.check_type(fields, "list", "fields")
 
         if limit > 10000:
             raise ValueError(
@@ -301,7 +301,7 @@ class Statbotics:
         if year:
             url += "&year=" + str(year)
 
-        url += validate.getLocations(country, state, district)
+        url += validate.get_locations(country, state, district)
 
         if type is not None:
             url += "&type=" + str(type)
@@ -310,13 +310,13 @@ class Statbotics:
             url += "&week=" + str(week)
 
         if metric:
-            if metric not in validate.getEventMetrics():
+            if metric not in validate.get_event_metrics():
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
         return self._get(url, fields)
 
-    def getTeamEvent(self, team, event, fields=["all"]):
+    def get_team_event(self, team, event, fields=["all"]):
         """
         Function to retrieve information for a specific (team, event) pair\n
         :param team: Team number, integer\n
@@ -325,13 +325,13 @@ class Statbotics:
         :return: a dictionary with the event and Elo/OPR statistics\n
         """
 
-        validate.checkType(team, "int", "team")
-        validate.checkType(event, "str", "event")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(team, "int", "team")
+        validate.check_type(event, "str", "event")
+        validate.check_type(fields, "list", "fields")
         url = "/v1/_team_events?team=" + str(team) + "&event=" + event
         return self._get(url, fields)[0]
 
-    def getTeamEvents(
+    def get_team_events(
         self,
         team=None,
         year=None,
@@ -364,14 +364,14 @@ class Statbotics:
 
         url = "/v1/_team_events"
 
-        validate.checkType(team, "int", "team")
-        validate.checkType(event, "str", "event")
-        type = validate.getType(type)
-        validate.checkType(week, "int", "week")
-        validate.checkType(metric, "str", "metric")
-        validate.checkType(limit, "int", "limit")
-        validate.checkType(offset, "int", "offset")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(team, "int", "team")
+        validate.check_type(event, "str", "event")
+        type = validate.get_type(type)
+        validate.check_type(week, "int", "week")
+        validate.check_type(metric, "str", "metric")
+        validate.check_type(limit, "int", "limit")
+        validate.check_type(offset, "int", "offset")
+        validate.check_type(fields, "list", "fields")
 
         if limit > 10000:
             raise ValueError(
@@ -396,7 +396,7 @@ class Statbotics:
         if event:
             url += "&event=" + event
 
-        url += validate.getLocations(country, state, district)
+        url += validate.get_locations(country, state, district)
 
         if type is not None:
             url += "&type=" + str(type)
@@ -405,13 +405,13 @@ class Statbotics:
             url += "&week=" + str(week)
 
         if metric:
-            if metric not in validate.getTeamEventMetrics():
+            if metric not in validate.get_team_event_metrics():
                 raise ValueError("Invalid metric")
             url += "&o=" + self._negate(metric)
 
         return self._get(url, fields)
 
-    def getMatch(self, match, fields=["all"]):
+    def get_match(self, match, fields=["all"]):
         """
         Function to retrieve information for a specific match\n
         :param match: Match key, string (ex: "2019cur_qm1", "2019cmptx_f1m3")\n
@@ -419,11 +419,11 @@ class Statbotics:
         :return: a dictionary with the match, score breakdowns, and predictions\n
         """
 
-        validate.checkType(match, "str", "match")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(match, "str", "match")
+        validate.check_type(fields, "list", "fields")
         return self._get("/v1/_matches?key=" + match, fields)[0]
 
-    def getMatches(
+    def get_matches(
         self, year=None, event=None, elims=None, limit=1000, offset=0, fields=["all"]
     ):
         """
@@ -439,12 +439,12 @@ class Statbotics:
 
         url = "/v1/_matches"
 
-        validate.checkType(year, "int", "year")
-        validate.checkType(event, "str", "event")
-        validate.checkType(elims, "bool", "elims")
-        validate.checkType(limit, "int", "limit")
-        validate.checkType(offset, "int", "offset")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(year, "int", "year")
+        validate.check_type(event, "str", "event")
+        validate.check_type(elims, "bool", "elims")
+        validate.check_type(limit, "int", "limit")
+        validate.check_type(offset, "int", "offset")
+        validate.check_type(fields, "list", "fields")
 
         if limit > 10000:
             raise ValueError(
@@ -471,7 +471,7 @@ class Statbotics:
         url += "&o=time"
         return self._get(url, fields)
 
-    def getTeamMatch(self, team, match, fields=["all"]):
+    def get_team_match(self, team, match, fields=["all"]):
         """
         Function to retrieve information for a specific (team, match) pair\n
         :param team: Team number, integer\n
@@ -480,13 +480,13 @@ class Statbotics:
         :return: a dictionary with the team, match, alliance, and then elo\n
         """
 
-        validate.checkType(team, "int", "team")
-        validate.checkType(match, "str", "match")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(team, "int", "team")
+        validate.check_type(match, "str", "match")
+        validate.check_type(fields, "list", "fields")
         url = "/v1/_team_matches?team=" + str(team) + "&match=" + str(match)
         return self._get(url, fields)[0]
 
-    def getTeamMatches(
+    def get_team_matches(
         self,
         team=None,
         year=None,
@@ -511,14 +511,14 @@ class Statbotics:
 
         url = "/v1/_team_matches"
 
-        validate.checkType(team, "int", "team")
-        validate.checkType(year, "int", "year")
-        validate.checkType(event, "str", "event")
-        validate.checkType(match, "str", "match")
-        validate.checkType(elims, "bool", "elims")
-        validate.checkType(limit, "int", "limit")
-        validate.checkType(offset, "int", "offset")
-        validate.checkType(fields, "list", "fields")
+        validate.check_type(team, "int", "team")
+        validate.check_type(year, "int", "year")
+        validate.check_type(event, "str", "event")
+        validate.check_type(match, "str", "match")
+        validate.check_type(elims, "bool", "elims")
+        validate.check_type(limit, "int", "limit")
+        validate.check_type(offset, "int", "offset")
+        validate.check_type(fields, "list", "fields")
 
         if limit > 10000:
             raise ValueError(
@@ -553,11 +553,11 @@ class Statbotics:
         url += "&o=time"
         return self._get(url, fields)
 
-    def getEventSim(self, event, index=None, full=False, iterations=None):
-        validate.checkType(event, "str", "event")
-        validate.checkType(index, "int", "index")
-        validate.checkType(full, "bool", "full")
-        validate.checkType(iterations, "int", "iterations")
+    def get_event_sim(self, event, index=None, full=False, iterations=None):
+        validate.check_type(event, "str", "event")
+        validate.check_type(index, "int", "index")
+        validate.check_type(full, "bool", "full")
+        validate.check_type(iterations, "int", "iterations")
 
         url = "/v1/event_sim/event/" + event
 

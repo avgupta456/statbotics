@@ -15,7 +15,7 @@ if type(docker) == str:
     docker = docker.lower() == "true"
 DOCKER: bool = docker  # type: ignore
 
-url = "postgresql://root@localhost:26257/statbotics2?sslmode=disable"
+url = "postgresql://root@localhost:26257/statbotics?sslmode=disable"
 
 if DOCKER:
     # assuming LOCAL_DB, overwritten otherwise
