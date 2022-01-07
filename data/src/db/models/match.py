@@ -22,6 +22,9 @@ class MatchORM(Base, ModelORM):
     set_number = Column(Integer)
     match_number = Column(Integer)
 
+    # Choices are 'Upcoming', 'Completed'
+    status = Column(String(10))
+
     red = Column(String(20))
     red_elo_sum = Column(Float)
     red_opr_sum = Column(Float)
@@ -93,6 +96,7 @@ class Match(Model):
     comp_level: str
     set_number: int
     match_number: int
+    status: str
 
     event: Optional[str] = None
 

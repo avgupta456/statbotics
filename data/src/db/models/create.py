@@ -90,6 +90,7 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
         "year": data["year"],
         "event_id": data["event_id"],
         "match_id": match_id,
+        "status": data["status"],
         "time": data["time"],
         "playoff": data["playoff"],
     }

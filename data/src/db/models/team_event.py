@@ -31,6 +31,9 @@ class TeamEventORM(Base, ModelORM):
     type = Column(Integer)
     week = Column(Integer)
 
+    # Choices are 'Upcoming', 'Ongoing', 'Completed'
+    status = Column(String(10))
+
     """ELO"""
     elo_start = Column(Float)
     elo_pre_playoffs = Column(Float)
@@ -84,6 +87,7 @@ class TeamEvent(Model):
     district: Optional[str] = None
     type: Optional[int] = None
     week: Optional[int] = None
+    status: Optional[str] = None
 
     elo_start: Optional[float] = None
     elo_pre_playoffs: Optional[float] = None

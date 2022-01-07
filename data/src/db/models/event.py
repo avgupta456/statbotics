@@ -27,6 +27,9 @@ class EventORM(Base, ModelORM):
     type = Column(Integer)
     week = Column(Integer)
 
+    # Choices are 'Upcoming', 'Ongoing', 'Completed'
+    status = Column(String(10))
+
     """ELO"""
     elo_max = Column(Float)
     elo_top8 = Column(Float)
@@ -70,6 +73,7 @@ class Event(Model):
     district: str
     type: int
     week: int
+    status: str
 
     elo_max: Optional[float] = None
     elo_top8: Optional[float] = None
