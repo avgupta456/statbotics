@@ -43,6 +43,10 @@ def update_template(
                 return _insert(session, new_items)  # type: ignore
             return _update(session, primary_key, new_items)  # type: ignore
 
+        # short circuit if no items
+        if len(items) == 0:
+            return
+
         run_transaction(Session, callback)
 
     return upsert

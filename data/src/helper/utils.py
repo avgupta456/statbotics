@@ -6,7 +6,8 @@ import numpy as np
 
 
 def dump(path: str, data: Any):
-    os.makedirs(path)
+    if not os.path.exists(path):
+        os.makedirs(path)
     with open(path, "wb") as f:
         pickle.dump(data, f)
 
@@ -17,7 +18,8 @@ def load(file: str):
 
 
 def dump_cache(path: str, data: Any):
-    os.makedirs(path)
+    if not os.path.exists(path):
+        os.makedirs(path)
     with open(path + "/data.p", "wb") as f:
         pickle.dump(data, f)
 

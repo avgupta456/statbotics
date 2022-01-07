@@ -62,10 +62,6 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
         if int(event["event_type"]) > 10:
             continue
 
-        # filters out events with no matches
-        if len(get_tba("event/" + str(key) + "/matches", cache=cache)) == 0:
-            continue
-
         if event["district"] is not None:
             event["district"] = event["district"]["abbreviation"]
 
@@ -80,8 +76,14 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
         # assigns worlds to week 8
         if type >= 3:
             event["week"] = 8
-        elif year != 2016:
-            event["week"] += 1  # bug in TBA API
+
+        # filter out incomplete events
+        if "week" not in event or event["week"] is None:
+            continue
+
+        # bug in TBA API
+        if type < 3 and year != 2016:
+            event["week"] += 1
 
         out.append(
             {
@@ -162,6 +164,7 @@ def get_matches(
             "comp_level": match["comp_level"],
             "set_number": match["set_number"],
             "match_number": match["match_number"],
+            "status": "Completed" if min(red_score, blue_score) >= 0 else "Upcoming",
             "red": ",".join([t[3:] for t in red_teams]),
             "blue": ",".join([t[3:] for t in blue_teams]),
             "winner": winner,

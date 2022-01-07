@@ -7,6 +7,9 @@ from db.models.event import Event
 
 
 def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
+    if len(events) == 0 or len(matches) == 0:
+        return year
+
     week_one_events = set([e.id for e in events if e.week == 1])
     week_one_matches = [m for m in matches if m.event_id in week_one_events]
 
@@ -45,15 +48,15 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
     year.rp_1_mean = round(sum(rp_1s) / len(rp_1s), 2)
     year.rp_2_mean = round(sum(rp_2s) / len(rp_2s), 2)
 
-    year.score_mean = None if year.score_mean == 0 else year.score_mean
-    year.auto_mean = None if year.auto_mean == 0 else year.auto_mean
-    year.teleop_mean = None if year.teleop_mean == 0 else year.teleop_mean
-    year.one_mean = None if year.one_mean == 0 else year.one_mean
-    year.two_mean = None if year.two_mean == 0 else year.two_mean
-    year.endgame_mean = None if year.endgame_mean == 0 else year.endgame_mean
-    year.fouls_mean = None if year.fouls_mean == 0 else year.fouls_mean
-    year.no_fouls_mean = None if year.no_fouls_mean == 0 else year.no_fouls_mean
-    year.rp_1_mean = None if year.rp_1_mean == 0 else year.rp_1_mean
-    year.rp_2_mean = None if year.rp_2_mean == 0 else year.rp_2_mean
+    if year.year < 2016:
+        year.auto_mean = None
+        year.teleop_mean = None
+        year.one_mean = None
+        year.two_mean = None
+        year.endgame_mean = None
+        year.fouls_mean = None
+        year.no_fouls_mean = None
+        year.rp_1_mean = None
+        year.rp_2_mean = None
 
     return year

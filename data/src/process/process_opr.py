@@ -138,8 +138,8 @@ def process_year(
     List[Match],
     List[TeamMatch],
 ]:
-    sd_score = year.score_sd or 0
-    mean_score = year.score_mean or 0
+    sd_score = year.score_sd or 1
+    mean_score = year.score_mean or 1
     TM = 2 if year_num <= 2004 else 3
 
     team_years_dict: Dict[int, TeamYear] = {}
@@ -160,11 +160,19 @@ def process_year(
         num = team_year_obj.team
         prior_opr = prior_opr_global
 
-        team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
-        if team_year_1 is not None and team_year_1.opr_end is not None:
-            prior_opr = team_year_1.opr_end
-            prior_opr = prior_opr / means[year_num - 1] * mean_score
-            prior_opr = round(0.90 * prior_opr + 0.10 * prior_opr_global, 2)
+        if year_num in [2022, 2023]:
+            # For 2022 and 2023, use past year team competed (up to 2019)
+            for past_year in range(2019, year_num):
+                past_team_year = team_years_all.get(past_year, {}).get(num, None)
+                if past_team_year is not None and past_team_year.opr_end is not None:
+                    prior_opr = past_team_year.opr_end / means[past_year] * mean_score
+        else:
+            # Otherwise use the most recent years (regardless of team activity)
+            team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
+            if team_year_1 is not None and team_year_1.opr_end is not None:
+                prior_opr = team_year_1.opr_end / means[year_num - 1] * mean_score
+
+        prior_opr = round(0.80 * prior_opr + 0.20 * prior_opr_global, 2)
         team_year_obj.opr_start = prior_opr
         team_year_obj.opr_end = prior_opr  # will be overwritten
 
@@ -204,6 +212,9 @@ def process_year(
         team_matches_dict[event_id][team_id].append(team_match)
 
     for event in events:
+        if event.status == "Upcoming":
+            continue
+
         for team_event in event_team_events[event.id]:
             num = team_event.team
             if num not in team_oprs_dict or num not in team_years_dict:
@@ -219,8 +230,8 @@ def process_year(
                 team_event.opr_endgame = team_years_dict[num].opr_endgame
                 team_event.opr_fouls = team_years_dict[num].opr_fouls
                 team_event.opr_no_fouls = team_years_dict[num].opr_no_fouls
-                team_event.ils_1_start = team_ils_1[num]
-                team_event.ils_2_start = team_ils_2[num]
+                team_event.ils_1_start = round(team_ils_1[num], 2)
+                team_event.ils_2_start = round(team_ils_2[num], 2)
                 team_event.ils_1_end = team_ils_1[num]  # overwritten later
                 team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
@@ -348,23 +359,24 @@ def process_year(
 
     team_years_all[year_num] = team_years_dict
 
-    year.opr_max = best_oprs[0]
-    year.opr_1p = best_oprs[round(0.01 * team_year_count)]
-    year.opr_5p = best_oprs[round(0.05 * team_year_count)]
-    year.opr_10p = best_oprs[round(0.10 * team_year_count)]
-    year.opr_25p = best_oprs[round(0.25 * team_year_count)]
-    year.opr_median = best_oprs[round(0.50 * team_year_count)]
-    year.opr_mean = round(sum(best_oprs) / team_year_count, 2)
-    year.opr_sd = round(statistics.pstdev(best_oprs), 2)
+    if len(best_oprs) > 0:
+        year.opr_max = best_oprs[0]
+        year.opr_1p = best_oprs[round(0.01 * team_year_count)]
+        year.opr_5p = best_oprs[round(0.05 * team_year_count)]
+        year.opr_10p = best_oprs[round(0.10 * team_year_count)]
+        year.opr_25p = best_oprs[round(0.25 * team_year_count)]
+        year.opr_median = best_oprs[round(0.50 * team_year_count)]
+        year.opr_mean = round(sum(best_oprs) / team_year_count, 2)
+        year.opr_sd = round(statistics.pstdev(best_oprs), 2)
 
-    year.opr_acc = round(opr_acc / count, 4)
-    year.opr_mse = round(opr_mse / count, 4)
-    year.mix_acc = round(mix_acc / count, 4)
-    year.mix_mse = round(mix_mse / count, 4)
-    year.rp1_acc = None if year_num < 2016 else round(rp1_acc / count_rp, 4)
-    year.rp1_mse = None if year_num < 2016 else round(rp1_mse / count_rp, 4)
-    year.rp2_acc = None if year_num < 2016 else round(rp2_acc / count_rp, 4)
-    year.rp2_mse = None if year_num < 2016 else round(rp2_mse / count_rp, 4)
+    year.opr_acc = None if count == 0 else round(opr_acc / count, 4)
+    year.opr_mse = None if count == 0 else round(opr_mse / count, 4)
+    year.mix_acc = None if count == 0 else round(mix_acc / count, 4)
+    year.mix_mse = None if count == 0 else round(mix_mse / count, 4)
+    year.rp1_acc = None if count_rp == 0 or year_num < 2016 else round(rp1_acc / count_rp, 4)
+    year.rp1_mse = None if count_rp == 0 or year_num < 2016 else round(rp1_mse / count_rp, 4)
+    year.rp2_acc = None if count_rp == 0 or year_num < 2016 else round(rp2_acc / count_rp, 4)
+    year.rp2_mse = None if count_rp == 0 or year_num < 2016 else round(rp2_mse / count_rp, 4)
 
     return (
         team_years_all,

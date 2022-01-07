@@ -26,6 +26,9 @@ class TeamMatchORM(Base, ModelORM):
     playoff = Column(Integer)
     alliance = Column(String(10))
 
+    # Choices are 'Upcoming', 'Completed'
+    status = Column(String(10))
+
     """API COMPLETENESS"""
     event = Column(String(20))
     match = Column(String(20))
@@ -57,6 +60,7 @@ class TeamMatch(Model):
     time: int
     playoff: int
     alliance: str
+    status: str
 
     event: Optional[str] = None
     match: Optional[str] = None

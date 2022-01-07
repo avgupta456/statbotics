@@ -130,10 +130,11 @@ def write_objs(
     team_events: List[TeamEvent],
     matches: List[Match],
     team_matches: List[TeamMatch],
+    end_year: int,
     clean: bool,
 ) -> None:
     # removes records with no events/matches
-    team_years = [t for t in team_years if t.elo_end is not None]
+    team_years = [t for t in team_years if t.elo_end is not None or t.year == end_year]
     team_ids = [t.team for t in team_years]
     team_events = [t for t in team_events if t.team in team_ids]
     event_ids = set([t.event_id for t in team_events])
@@ -178,7 +179,7 @@ def process_main(start_year: int, end_year: int, clean: bool = True):
         clean_db()
         print("Clean\t", datetime.now() - start)
         start = datetime.now()
-        teams = load_teams()
+        teams = load_teams(cache=False)
         print("Load\t", datetime.now() - start)
         start = datetime.now()
         update_teams_db(teams, True)
@@ -207,7 +208,7 @@ def process_main(start_year: int, end_year: int, clean: bool = True):
         overall_start = datetime.now()
         start = overall_start
         if clean:
-            objs: objs_type = process_year_tba(year_num, all_team_nums)
+            objs: objs_type = process_year_tba(year_num, end_year, all_team_nums, cache=(year_num < end_year))
         else:
             objs: objs_type = get_year_objs(year_num)
         print(year_num, "\tTBA\t", datetime.now() - start)
@@ -235,7 +236,7 @@ def process_main(start_year: int, end_year: int, clean: bool = True):
         print(year_num, "\tPost\t", datetime.now() - start)
         start = datetime.now()
 
-        write_objs(*objs, clean)
+        write_objs(*objs, end_year, clean)
         print(year_num, "\tWrite\t", datetime.now() - start)
         start = datetime.now()
 
