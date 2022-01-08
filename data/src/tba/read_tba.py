@@ -6,6 +6,13 @@ from typing import Any, Dict, List
 from helper.utils import dump_cache, load_cache
 from tba.clean_data import clean_district, clean_state, get_breakdown, get_match_time
 from tba.config import event_blacklist, get_tba as _get_tba
+from tba.fake_matches import (
+    elims_complete,
+    elims_in_progress,
+    quals_complete,
+    quals_in_progress,
+    schedule_release,
+)
 
 
 def get_timestamp_from_str(date: str):
@@ -123,10 +130,26 @@ def get_team_events(event: str, cache: bool = True) -> List[Dict[str, Any]]:
 
 
 def get_matches(
-    year: int, event: str, event_time: int, cache: bool = True
+    year: int,
+    event: str,
+    event_time: int,
+    cache: bool = True,
+    teams: List[int] = [],  # solely for fake_matches
+    fake_matches: int = 0,  # solely for fake_matches
 ) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []
-    matches = get_tba("event/" + str(event) + "/matches", cache=cache)
+    if fake_matches == 1:
+        matches = schedule_release(event, teams)
+    elif fake_matches == 2:
+        matches = quals_in_progress(event, teams, last_qual=30)
+    elif fake_matches == 3:
+        matches = quals_complete(event, teams)
+    elif fake_matches == 4:
+        matches = elims_in_progress(event, teams, last_elim=10)
+    elif fake_matches == 5:
+        matches = elims_complete(event, teams)
+    else:
+        matches = get_tba("event/" + str(event) + "/matches", cache=cache)
     for match in matches:
         red_teams = match["alliances"]["red"]["team_keys"]
         blue_teams = match["alliances"]["blue"]["team_keys"]

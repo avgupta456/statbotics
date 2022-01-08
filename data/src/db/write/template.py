@@ -38,7 +38,6 @@ def update_template(
         def callback(session: SessionType):
             new_items = [attr.asdict(x) for x in items]
 
-            primary_key = ["id"]
             if orm_type == TeamORM:
                 primary_key = ["team"]
             elif orm_type == YearORM:
@@ -53,6 +52,8 @@ def update_template(
                 primary_key = ["key"]
             elif orm_type == TeamMatchORM:
                 primary_key = ["team", "match"]
+            else:
+                raise Exception("Unknown orm_type")
 
             if insert_only:
                 return _insert(session, new_items)  # type: ignore

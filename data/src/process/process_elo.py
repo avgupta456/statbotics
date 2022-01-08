@@ -48,7 +48,7 @@ def process_year(
     team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
 
-    sd_score = year.score_sd or 0
+    sd_score = year.score_sd or 1
 
     # INITIALIZE
     for team_year in team_years:

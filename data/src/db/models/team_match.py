@@ -49,7 +49,6 @@ class TeamMatchORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class TeamMatch(Model):
-    id: int
     team: int
     year: int
     event: str

@@ -13,4 +13,4 @@ start_year = 2022
 end_year = 2022
 clean = False
 
-process_main(start_year, end_year, clean)
+process_main(start_year, end_year, clean, True)

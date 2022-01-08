@@ -141,7 +141,7 @@ def get_team_district(team: int) -> Optional[str]:
 
 
 def get_match_time(match: Dict[str, Any], event_time: int) -> int:
-    if match["actual_time"] is not None:
+    if match.get("actual_time", None) is not None:
         return match["actual_time"]
 
     match_time = event_time  # start value
@@ -267,5 +267,26 @@ def get_breakdown(
         out["fouls"] = breakdown["foulPoints"]
         out["rp1"] = 1 if breakdown["shieldEnergizedRankingPoint"] else 0
         out["rp2"] = 1 if breakdown["shieldOperationalRankingPoint"] else 0
+        return out
+    if year == 2021:
+        return {}
+    if year == 2022:
+        # TEMPORARY, replace once TBA API is published
+        out = {
+            "auto": breakdown["autoPoints"],
+            "auto_movement": 0,
+            "auto_1": breakdown["autoPoints"],
+            "auto_2": 0,
+            "teleop_1": breakdown["teleop1Points"],
+            "teleop_2": 0,
+        }
+        out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
+        out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
+        out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
+        out["endgame"] = breakdown["endgamePoints"]
+        out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
+        out["fouls"] = 0
+        out["rp1"] = 0
+        out["rp2"] = 0
         return out
     return {}

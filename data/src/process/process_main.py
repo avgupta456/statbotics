@@ -86,7 +86,9 @@ def print_table_stats() -> None:
     print("Num Team Matches:", get_num_team_matches_db())
 
 
-def process_main(start_year: int, end_year: int, clean: bool = True):
+def process_main(
+    start_year: int, end_year: int, clean: bool = True, fake_matches: bool = False
+):
     main_start = datetime.now()
 
     if clean:
@@ -122,7 +124,13 @@ def process_main(start_year: int, end_year: int, clean: bool = True):
     for year_num in range(start_year, end_year + 1):
         overall_start = datetime.now()
         start = overall_start
-        objs: objs_type = process_year_tba(year_num, end_year, teams, cache=(year_num <= end_year))
+        objs: objs_type = process_year_tba(
+            year_num,
+            end_year,
+            teams,
+            cache=(year_num <= end_year),
+            fake_matches=fake_matches,
+        )
         print(year_num, "\tTBA\t", datetime.now() - start)
         start = datetime.now()
 

@@ -36,7 +36,11 @@ def load_teams(cache: bool = True) -> List[Team]:
 
 
 def process_year(
-    year_num: int, end_year: int, teams: List[Team], cache: bool = True
+    year_num: int,
+    end_year: int,
+    teams: List[Team],
+    cache: bool = True,
+    fake_matches: bool = False,
 ) -> Tuple[
     Year, List[TeamYear], List[Event], List[TeamEvent], List[Match], List[TeamMatch]
 ]:
@@ -63,7 +67,17 @@ def process_year(
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
 
-        matches = get_matches_tba(year_num, event_key, event_time, cache=cache)
+        team_events = get_team_events_tba(event_key, cache=cache)
+        team_nums = [team_event["team"] for team_event in team_events]
+        fake_matches_num = event_obj.week if fake_matches and len(team_nums) > 24 else 0
+        matches = get_matches_tba(
+            year_num,
+            event_key,
+            event_time,
+            cache=cache,
+            teams=team_nums,
+            fake_matches=fake_matches_num,
+        )
         num_matches = len(matches)
         num_upcoming_matches = 0
         for match in matches:
@@ -72,7 +86,11 @@ def process_year(
 
         event_status = "Completed"
         if year_num == end_year:
-            event_status = "Upcoming" if num_matches == 0 else ("Ongoing" if num_upcoming_matches > 0 else "Completed")
+            event_status = (
+                "Upcoming"
+                if num_matches == 0
+                else ("Ongoing" if num_upcoming_matches > 0 else "Completed")
+            )
 
         if event_status == "Completed" and num_matches == 0:
             continue
@@ -83,7 +101,7 @@ def process_year(
             match_objs.append(match_obj)
             team_match_objs.extend(curr_team_match_objs)
 
-        for team_event in get_team_events_tba(event_key, cache=cache):
+        for team_event in team_events:
             team_event["year"] = year_num
             team_event["event"] = event_key
             team_event["event_name"] = event_obj.name
