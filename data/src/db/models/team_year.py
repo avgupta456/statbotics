@@ -1,7 +1,8 @@
-import attr
 from typing import Any, Dict, Optional, Tuple
 
-from sqlalchemy import Column, Float, ForeignKey, Integer
+import attr
+from sqlalchemy import Column, Float, Integer
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.sql.sqltypes import String
 
 from db.main import Base
@@ -12,16 +13,20 @@ class TeamYearORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "team_years"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
+    id = Column(Integer)  # placeholder for backend API
+    year = Column(Integer, index=True)
+    team = Column(Integer, index=True)
+
+    # force unique (team, year)
+    PrimaryKeyConstraint(team, year)
+    ForeignKeyConstraint(["year"], ["years.year"])
+    ForeignKeyConstraint(["team"], ["teams.team"])
 
     """API COMPLETENESS"""
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
-    opr = Column(Float)
 
     """ELO"""
     elo_start = Column(Float)
@@ -32,6 +37,7 @@ class TeamYearORM(Base, ModelORM):
     elo_diff = Column(Float)
 
     """OPR"""
+    opr = Column(Float)
     opr_start = Column(Float)
     opr_end = Column(Float)
 

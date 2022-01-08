@@ -1,7 +1,8 @@
-import attr
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+import attr
+from sqlalchemy import Boolean, Column, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -11,16 +12,21 @@ class MatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "matches"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
+    key = Column(String(20), index=True)
+    year = Column(Integer, index=True)
+    event = Column(String(20), index=True)
+
+    PrimaryKeyConstraint(key)
+    ForeignKeyConstraint(["year"], ["years.year"])
+    ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    event = Column(String(20))
-    key = Column(String(20))
     comp_level = Column(String(10))
     set_number = Column(Integer)
     match_number = Column(Integer)
+
+    # Choices are 'Upcoming', 'Completed'
+    status = Column(String(10))
 
     red = Column(String(20))
     red_elo_sum = Column(Float)
@@ -46,7 +52,7 @@ class MatchORM(Base, ModelORM):
     blue_rp_1_prob = Column(Float)
     blue_rp_2_prob = Column(Float)
 
-    playoff = Column(Integer)  # 0 is qual, 1 is playoff
+    playoff = Column(Boolean)
     time = Column(Integer)
 
     red_score = Column(Integer)
@@ -85,16 +91,14 @@ class MatchORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class Match(Model):
-    id: int
-    year: int
-    event_id: int
-
     key: str
+    year: int
+    event: str
+
     comp_level: str
     set_number: int
     match_number: int
-
-    event: Optional[str] = None
+    status: str
 
     red: Optional[str] = None
     red_elo_sum: Optional[float] = None
@@ -120,7 +124,7 @@ class Match(Model):
     blue_rp_1_prob: Optional[float] = None
     blue_rp_2_prob: Optional[float] = None
 
-    playoff: Optional[int] = None
+    playoff: bool = False
     time: Optional[int] = None
 
     red_score: Optional[int] = None

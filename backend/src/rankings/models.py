@@ -28,7 +28,7 @@ class Team(models.Model):
     state = models.CharField(max_length=10)  # ex: CA
     country = models.CharField(max_length=30)  # ex: Israel
     district = models.CharField(max_length=10)  # ex: FNC
-    active = models.IntegerField()  # ex: True
+    active = models.BooleanField()  # ex: True
     elo = models.IntegerField()  # ex: 1700
     elo_recent = models.IntegerField()  # ex: 1600
     elo_mean = models.IntegerField()  # ex: 1600
@@ -44,7 +44,7 @@ class Team(models.Model):
 
 
 class TeamYear(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True)  # ex: 1
     year = models.IntegerField()  # ex: 2019
     team = models.IntegerField()  # ex: 5511
     name = models.CharField(max_length=50)  # ex: Cortechs Robotics
@@ -83,16 +83,16 @@ class TeamYear(models.Model):
 
 
 class Event(models.Model):
-    id = models.IntegerField(primary_key=True)
+    key = models.CharField(primary_key=True, max_length=10)  # ex: 2019ncwak
     year = models.IntegerField()  # ex: 2019
-    key = models.CharField(max_length=10)  # ex: ncwak
     name = models.CharField(max_length=100)  # ex: NC Wake County District...
+    time = models.IntegerField()  # ex: 12451261
     state = models.CharField(max_length=10)  # ex: NC
     country = models.CharField(max_length=30)  # ex: Israel
     district = models.CharField(max_length=10)  # ex: FNC
     type = models.IntegerField()  # ex: 1
     week = models.IntegerField()  # ex: 2
-    time = models.IntegerField()  # ex: 12451261
+    status = models.CharField(max_length=10)  # ex: Upcoming
     elo_top8 = models.IntegerField()  # ex: 1800
     elo_top24 = models.IntegerField()  # ex: 1700
     elo_mean = models.IntegerField()  # ex: 1600
@@ -115,18 +115,19 @@ class Event(models.Model):
 
 
 class TeamEvent(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True)  # ex: 1
     team = models.IntegerField()  # ex: 5511
-    name = models.CharField(max_length=50)  # ex: Cortechs Robotics
     year = models.IntegerField()  # ex: 2019
-    event = models.CharField(max_length=10)  # ex: ncwak
+    event = models.CharField(max_length=10)  # ex: 2019ncwak
+    time = models.IntegerField()  # ex: 12451261
+    team_name = models.CharField(max_length=50)  # ex: Cortechs Robotics
     event_name = models.CharField(max_length=100)  # ex: NC Wake County District
     state = models.CharField(max_length=10)  # ex: NC
     country = models.CharField(max_length=30)  # ex: Israel
     district = models.CharField(max_length=10)  # ex: FNC
     type = models.IntegerField()  # ex: 1
     week = models.IntegerField()  # ex: 2
-    time = models.IntegerField()  # ex: 12451261
+    status = models.CharField(max_length=10)  # ex: Upcoming
     elo_start = models.IntegerField()  # ex: 1746
     elo_pre_playoffs = models.IntegerField()  # ex: 1746
     elo_end = models.IntegerField()  # ex: 1746
@@ -159,15 +160,15 @@ class TeamEvent(models.Model):
 
 
 class Match(models.Model):
-    id = models.IntegerField(primary_key=True)  # ex: 123
+    key = models.CharField(primary_key=True, max_length=20)  # ex: 2020ncwak_qm1
     year = models.IntegerField()  # ex: 2020
     event = models.CharField(max_length=10)  # ex: 2020ncwak
-    key = models.CharField(max_length=20)  # ex: 2020ncwak_qm1
     comp_level = models.CharField(max_length=10)  # ex: f
     set_number = models.IntegerField()  # ex: 2
     match_number = models.IntegerField()  # ex: 65
-    playoff = models.IntegerField()  # ex: 1
+    playoff = models.BooleanField()  # ex: True
     time = models.IntegerField()  # ex: 12451261
+    status = models.CharField(max_length=10)  # ex: Completed
     red = models.CharField(max_length=20)  # ex: 5511,254,1678
     blue = models.CharField(max_length=20)  # ex: 5511,254,1678
     red_score = models.IntegerField()  # ex: 50
@@ -207,14 +208,15 @@ class Match(models.Model):
 
 
 class TeamMatch(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True)  # ex: 1
     team = models.IntegerField()  # ex: 5511
     year = models.IntegerField()  # ex: 2019
     event = models.CharField(max_length=10)  # ex: ncwak
     match = models.CharField(max_length=10)  # ex: sf1m1
-    playoff = models.IntegerField()
+    playoff = models.BooleanField()  # ex: True
     alliance = models.CharField(max_length=10)  # ex: red
     time = models.IntegerField()  # ex: 12451261
+    status = models.CharField(max_length=10)  # ex: Completed
     elo = models.IntegerField()  # ex: 1746
     opr = models.FloatField()  # ex: 12.34
     ils_1 = models.FloatField()  # ex: 0.61

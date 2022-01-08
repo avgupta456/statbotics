@@ -139,8 +139,9 @@ def get_ixOPR(
     for i in range(T):
         out[teams[i]] = [oprs[i]]
 
+    completed_M = len([m for m in quals if m["status"] == "Completed"])
     iterations = 2  # experimentally chosen
-    for i in range(M):
+    for i in range(completed_M):
         m = quals[i]
         output[2 * i] = np.array(func(m, "red"))  # type: ignore
         output[2 * i + 1] = np.array(func(m, "blue"))  # type: ignore
@@ -172,7 +173,8 @@ def get_ILS(
             team_stats[team]["ils_2_start"],
         ]
 
-    for i, m in enumerate(quals):
+    completed_quals = [m for m in quals if m["status"] == "Completed"]
+    for i, m in enumerate(completed_quals):
         red, blue = m["red"], m["blue"]
         adjust_red_1 = (m["red_rp_1"] - logistic(sum([out[r][i][0] for r in red]))) / 10
         adjust_red_2 = (m["red_rp_2"] - logistic(sum([out[r][i][1] for r in red]))) / 10

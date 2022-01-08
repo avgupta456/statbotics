@@ -1,7 +1,8 @@
-import attr
 from typing import Any, Dict, Optional
 
-from sqlalchemy import Column, Float, Integer, String
+import attr
+from sqlalchemy import Boolean, Column, Float, Integer, String
+from sqlalchemy.sql.schema import PrimaryKeyConstraint
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -11,14 +12,16 @@ class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team: Column[int] = Column(Integer, primary_key=True, index=True)
+    team = Column(Integer, index=True)
+
+    PrimaryKeyConstraint(team)
 
     """GENERAL"""
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
-    active = Column(Integer)
+    active = Column(Boolean)
 
     """ELO"""
     elo = Column(Float)
@@ -41,7 +44,7 @@ class Team(Model):
     state: Optional[str] = None
     country: Optional[str] = None
     district: Optional[str] = None
-    active: Optional[int] = None
+    active: Optional[bool] = None
     elo: Optional[float] = None
     elo_recent: Optional[float] = None
     elo_mean: Optional[float] = None

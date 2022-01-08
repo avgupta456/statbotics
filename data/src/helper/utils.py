@@ -6,7 +6,8 @@ import numpy as np
 
 
 def dump(path: str, data: Any):
-    os.makedirs(path)
+    if not os.path.exists(path):
+        os.makedirs(path)
     with open(path, "wb") as f:
         pickle.dump(data, f)
 
@@ -17,7 +18,8 @@ def load(file: str):
 
 
 def dump_cache(path: str, data: Any):
-    os.makedirs(path)
+    if not os.path.exists(path):
+        os.makedirs(path)
     with open(path + "/data.p", "wb") as f:
         pickle.dump(data, f)
 
@@ -31,15 +33,15 @@ def get_team_year_id(team: int, year: int):
     return int(str(year) + str(team))
 
 
-def get_team_event_id(team: int, event: int):
-    return int("1" + str(event).zfill(4) + str(team))
+def get_team_event_key(team: int, event: str) -> str:
+    return str(team) + "-" + event
 
 
-def get_team_match_id(team: int, match: int):
-    return int("1" + str(match).zfill(6) + str(team))
+def get_team_match_key(team: int, match: str) -> str:
+    return str(team) + "-" + match
 
 
-# for ils
+# for ILS
 
 e = np.e
 

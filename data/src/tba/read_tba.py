@@ -6,6 +6,13 @@ from typing import Any, Dict, List
 from helper.utils import dump_cache, load_cache
 from tba.clean_data import clean_district, clean_state, get_breakdown, get_match_time
 from tba.config import event_blacklist, get_tba as _get_tba
+from tba.fake_matches import (
+    elims_complete,
+    elims_in_progress,
+    quals_complete,
+    quals_in_progress,
+    schedule_release,
+)
 
 
 def get_timestamp_from_str(date: str):
@@ -29,7 +36,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
         data = get_tba("teams/" + str(i) + "/simple", cache=cache)
         for data_team in data:
             new_data = {
-                "number": data_team["team_number"],
+                "team": data_team["team_number"],
                 "name": data_team["nickname"],
                 "state": clean_state(data_team["state_prov"]),
                 "country": data_team["country"],
@@ -62,10 +69,6 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
         if int(event["event_type"]) > 10:
             continue
 
-        # filters out events with no matches
-        if len(get_tba("event/" + str(key) + "/matches", cache=cache)) == 0:
-            continue
-
         if event["district"] is not None:
             event["district"] = event["district"]["abbreviation"]
 
@@ -80,8 +83,14 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
         # assigns worlds to week 8
         if type >= 3:
             event["week"] = 8
-        elif year != 2016:
-            event["week"] += 1  # bug in TBA API
+
+        # filter out incomplete events
+        if "week" not in event or event["week"] is None:
+            continue
+
+        # bug in TBA API
+        if type < 3 and year != 2016:
+            event["week"] += 1
 
         out.append(
             {
@@ -121,10 +130,26 @@ def get_team_events(event: str, cache: bool = True) -> List[Dict[str, Any]]:
 
 
 def get_matches(
-    year: int, event: str, event_time: int, cache: bool = True
+    year: int,
+    event: str,
+    event_time: int,
+    cache: bool = True,
+    teams: List[int] = [],  # solely for fake_matches
+    fake_matches: int = 0,  # solely for fake_matches
 ) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []
-    matches = get_tba("event/" + str(event) + "/matches", cache=cache)
+    if fake_matches == 1:
+        matches = schedule_release(event, teams)
+    elif fake_matches == 2:
+        matches = quals_in_progress(event, teams, last_qual=30)
+    elif fake_matches == 3:
+        matches = quals_complete(event, teams)
+    elif fake_matches == 4:
+        matches = elims_in_progress(event, teams, last_elim=10)
+    elif fake_matches == 5:
+        matches = elims_complete(event, teams)
+    else:
+        matches = get_tba("event/" + str(event) + "/matches", cache=cache)
     for match in matches:
         red_teams = match["alliances"]["red"]["team_keys"]
         blue_teams = match["alliances"]["blue"]["team_keys"]
@@ -162,6 +187,7 @@ def get_matches(
             "comp_level": match["comp_level"],
             "set_number": match["set_number"],
             "match_number": match["match_number"],
+            "status": "Completed" if min(red_score, blue_score) >= 0 else "Upcoming",
             "red": ",".join([t[3:] for t in red_teams]),
             "blue": ",".join([t[3:] for t in blue_teams]),
             "winner": winner,

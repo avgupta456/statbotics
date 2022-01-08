@@ -45,6 +45,7 @@ def get_matches_dict(event_key: str) -> List[Dict[str, Any]]:
     data: List[Dict[str, Any]] = (
         Match.objects.values(  # type: ignore
             "key",
+            "status",
             "winner",
             "elo_win_prob",
             "opr_win_prob",
@@ -76,7 +77,7 @@ def get_matches_dict(event_key: str) -> List[Dict[str, Any]]:
             "red",
             "blue",
         )
-        .filter(event=event_key, playoff=0)
+        .filter(event=event_key, playoff=False)
         .order_by("time")
     )
 
@@ -91,7 +92,7 @@ def get_matches_dict(event_key: str) -> List[Dict[str, Any]]:
 def get_team_matches_dict(event_key: str) -> Dict[str, Dict[int, float]]:
     data: List[Dict[str, Any]] = (
         TeamMatch.objects.values("team", "match", "elo")  # type: ignore
-        .filter(event=event_key, playoff=0)
+        .filter(event=event_key, playoff=False)
         .order_by("time")
     )
 

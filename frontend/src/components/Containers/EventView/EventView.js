@@ -159,10 +159,10 @@ export default function EventView() {
       let temp_teams = [];
       if (year >= 2016) {
         cleanStats = rawStats.map(function (x, i) {
-          temp_teams.push({ team: x["team"], name: x["name"] });
+          temp_teams.push({ team: x["team"], name: x["team_name"] });
           return [
             x["team"],
-            "./../teams/" + x["team"] + "|" + x["name"],
+            "./../teams/" + x["team"] + "|" + x["team_name"],
             x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_no_fouls"] * 10) / 10,
@@ -175,10 +175,10 @@ export default function EventView() {
         });
       } else {
         cleanStats = rawStats.map(function (x, i) {
-          temp_teams.push({ team: x["team"], name: x["name"] });
+          temp_teams.push({ team: x["team"], name: x["team_name"] });
           return [
             x["team"],
-            "./../teams/" + x["team"] + "|" + x["name"],
+            "./../teams/" + x["team"] + "|" + x["team_name"],
             x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_end"] * 10) / 10,

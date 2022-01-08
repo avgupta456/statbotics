@@ -1,7 +1,8 @@
-import attr
 from typing import Any, Dict, Optional
 
+import attr
 from sqlalchemy import Column, Float, Integer
+from sqlalchemy.sql.schema import PrimaryKeyConstraint
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -11,7 +12,9 @@ class YearORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "years"
-    year: Column[int] = Column(Integer, primary_key=True, index=True)
+    year = Column(Integer, index=True)
+
+    PrimaryKeyConstraint(year)
 
     """ELO"""
     elo_max = Column(Float)

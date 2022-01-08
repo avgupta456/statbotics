@@ -3,10 +3,9 @@ from typing import Any, Callable, Dict, List, Set, Tuple
 import numpy as np
 import scipy.linalg  # type: ignore
 
-
 from db.models.event import Event
-from db.models.team_event import TeamEvent
 from db.models.match import Match
+from db.models.team_event import TeamEvent
 from helper.utils import logistic
 
 
@@ -293,8 +292,9 @@ def get_ixOPR(
     for i in range(T):
         out[teams[i]] = [oprs[i]]
 
+    M_completed = len([m for m in quals if m.status == "Completed"])
     iterations = 2  # experimentally chosen
-    for i in range(M):
+    for i in range(M_completed):
         m = m_objs[i]
         output[2 * i] = np.array(func(m, "red"))  # type: ignore
         output[2 * i + 1] = np.array(func(m, "blue"))  # type: ignore
@@ -320,7 +320,8 @@ def get_ILS(team_events: List[TeamEvent], quals: List[Match]):
         curr = [team_event.ils_1_start, team_event.ils_2_start]
         out[teams[-1]][0] = np.array(curr)  # type: ignore
 
-    for i, m in enumerate(quals):
+    completed_quals = [m for m in quals if m.status == "Completed"]
+    for i, m in enumerate(completed_quals):
         red, blue = m.get_teams()
         adjust_red_1 = (
             (m.red_rp_1 or 0) - (logistic(sum([out[r][i][0] for r in red])) or 0)
@@ -350,8 +351,8 @@ def get_ILS(team_events: List[TeamEvent], quals: List[Match]):
 def opr_v1(
     event: Event, team_events: List[TeamEvent], matches: List[Match], score_mean: float
 ):
-    quals = sorted([m for m in matches if m.playoff == 0], key=lambda m: m.sort())
-    playoffs = sorted([m for m in matches if m.playoff == 1], key=lambda m: m.sort())
+    quals = sorted([m for m in matches if not m.playoff], key=lambda m: m.sort())
+    playoffs = sorted([m for m in matches if m.playoff], key=lambda m: m.sort())
     return get_ixOPR(
         event, team_events, quals, playoffs, score_mean, score, event_score
     )
@@ -360,8 +361,8 @@ def opr_v1(
 def opr_v2(
     event: Event, team_events: List[TeamEvent], matches: List[Match], score_mean: float
 ):
-    quals = sorted([m for m in matches if m.playoff == 0], key=lambda m: m.sort())
-    playoffs = sorted([m for m in matches if m.playoff == 1], key=lambda m: m.sort())
+    quals = sorted([m for m in matches if not m.playoff], key=lambda m: m.sort())
+    playoffs = sorted([m for m in matches if m.playoff], key=lambda m: m.sort())
     OPRs = get_ixOPR(event, team_events, quals, playoffs, score_mean, all, event_all)
     ILS = get_ILS(team_events, quals)
     return OPRs, ILS
