@@ -127,7 +127,7 @@ def process_main(
             year_num,
             end_year,
             teams,
-            cache=(year_num <= end_year),
+            cache=(year_num < end_year),
             fake_matches=fake_matches,
         )
         print(year_num, "\tTBA\t", datetime.now() - start)
