@@ -1,7 +1,7 @@
-import attr
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import Column, Float, Integer, String
+import attr
+from sqlalchemy import Boolean, Column, Float, Integer, String
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from db.main import Base
@@ -52,7 +52,7 @@ class MatchORM(Base, ModelORM):
     blue_rp_1_prob = Column(Float)
     blue_rp_2_prob = Column(Float)
 
-    playoff = Column(Integer)  # 0 is qual, 1 is playoff
+    playoff = Column(Boolean)
     time = Column(Integer)
 
     red_score = Column(Integer)
@@ -124,7 +124,7 @@ class Match(Model):
     blue_rp_1_prob: Optional[float] = None
     blue_rp_2_prob: Optional[float] = None
 
-    playoff: Optional[int] = None
+    playoff: bool = False
     time: Optional[int] = None
 
     red_score: Optional[int] = None

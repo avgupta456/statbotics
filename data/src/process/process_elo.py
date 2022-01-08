@@ -80,7 +80,8 @@ def process_year(
     acc, mse, count = 0, 0, 0
     event_stats: Dict[str, List[Union[float, int]]] = defaultdict(lambda: [0, 0, 0])
 
-    sorted_matches = sorted(matches, key=lambda m: m.sort())
+    completed_matches = [m for m in matches if m.status == "Completed"]
+    sorted_matches = sorted(completed_matches, key=lambda m: m.sort())
     for match in sorted_matches:
         event_key = match.event
         red, blue = match.get_teams()
@@ -105,7 +106,7 @@ def process_year(
             blue_elo_pre,
             match.red_score or 0,
             match.blue_score or 0,
-            match.playoff == 1,
+            match.playoff,
         )
 
         winner = match.winner or "red"  # in practice, never None
@@ -117,9 +118,9 @@ def process_year(
             team_matches_dict[t].append(red_elo_post[t])
             team_event_key = get_team_event_key(t, event_key)
             if team_event_key not in team_events_dict:
-                team_events_dict[team_event_key] = [(red_elo_pre[t], match.playoff == 1)]
+                team_events_dict[team_event_key] = [(red_elo_pre[t], match.playoff)]
             team_events_dict[team_event_key].append(
-                (red_elo_post[t], match.playoff == 1)
+                (red_elo_post[t], match.playoff)
             )
             team_year_stats[t][3] += 1
             team_year_stats[t][red_mapping[winner]] += 1
@@ -132,10 +133,10 @@ def process_year(
             team_event_key = get_team_event_key(t, event_key)
             if team_event_key not in team_events_dict:
                 team_events_dict[team_event_key] = [
-                    (blue_elo_pre[t], match.playoff == 1)
+                    (blue_elo_pre[t], match.playoff)
                 ]
             team_events_dict[team_event_key].append(
-                (blue_elo_post[t], match.playoff == 1)
+                (blue_elo_post[t], match.playoff)
             )
             team_year_stats[t][3] += 1
             team_year_stats[t][blue_mapping[winner]] += 1
@@ -158,19 +159,18 @@ def process_year(
     mse = None if count == 0 else round(mse / count, 4)
 
     # TEAM MATCHES
-    for team_match in team_matches:
+    completed_team_matches = [m for m in team_matches if m.status == "Completed"]
+    for team_match in completed_team_matches:
         match_key = get_team_match_key(team_match.team, team_match.match)
         team_match.elo = round(team_match_ids[match_key])
 
     # TEAM EVENTS
     event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
     team_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
-    for team_event in team_events:
+    filtered_team_events = [t for t in team_events if t.status != "Upcoming"]
+    for team_event in filtered_team_events:
         key = get_team_event_key(team_event.team, team_event.event)
         if key not in team_events_dict:
-            continue
-
-        if team_event.status == "Upcoming":
             continue
 
         event_team_events[team_event.event].append(team_event)
@@ -196,10 +196,8 @@ def process_year(
 
     # EVENTS
     event_types: Dict[str, int] = defaultdict(int)
-    for event in events:
-        if event.status == "Upcoming":
-            continue
-
+    filtered_events = [e for e in events if e.status != "Upcoming"]
+    for event in filtered_events:
         event_key = event.key
         event_types[event_key] = event.type
 
@@ -208,14 +206,16 @@ def process_year(
             elos.append(team_event.elo_pre_playoffs or 0)
         elos.sort(reverse=True)
 
-        event.elo_max = round(elos[0])
-        event.elo_top8 = None if len(elos) < 8 else round(elos[7])
-        event.elo_top24 = None if len(elos) < 24 else round(elos[23])
-        event.elo_mean = round(sum(elos) / len(elos))
-        event.elo_sd = round(statistics.pstdev(elos), 2)
+        if len(elos) > 0 and max(elos) > 0:
+            event.elo_max = round(elos[0])
+            event.elo_top8 = None if len(elos) < 8 else round(elos[7])
+            event.elo_top24 = None if len(elos) < 24 else round(elos[23])
+            event.elo_mean = round(sum(elos) / len(elos))
+            event.elo_sd = round(statistics.pstdev(elos), 2)
+
         event_acc, event_mse, event_count = event_stats[event_key]
-        event.elo_acc = round(event_acc / event_count, 4)
-        event.elo_mse = round(event_mse / event_count, 4)
+        event.elo_acc = None if event_count == 0 else round(event_acc / event_count, 4)
+        event.elo_mse = None if event_count == 0 else round(event_mse / event_count, 4)
 
     # TEAM YEARS
     year_elos: List[float] = []
@@ -286,7 +286,6 @@ def process_year(
     )
 
 
-# NOTE: should be updated every year to replace hardcoded values
 def post_process(end_year: int) -> None:
     team_team_years: Dict[int, List[TeamYear]] = defaultdict(list)
     all_team_years = get_team_years_db()
@@ -298,10 +297,10 @@ def post_process(end_year: int) -> None:
         years: Dict[int, float] = {}
         wins, losses, ties, count = 0, 0, 0, 0
 
-        team.active = 0
+        team.active = False
         for team_year in team_team_years[team.team]:
             if team_year.year == end_year:
-                team.active = 1
+                team.active = True
             if team_year.elo_max is not None:
                 years[team_year.year] = team_year.elo_max
             wins += team_year.wins or 0

@@ -1,7 +1,7 @@
-import attr
 from typing import Any, Dict, Optional
 
-from sqlalchemy import Column, Float, Integer, String
+import attr
+from sqlalchemy import Boolean, Column, Float, Integer, String
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from db.main import Base
@@ -27,7 +27,7 @@ class TeamMatchORM(Base, ModelORM):
 
     """GENERAL"""
     time = Column(Integer)
-    playoff = Column(Integer)
+    playoff = Column(Boolean)
     alliance = Column(String(10))
 
     # Choices are 'Upcoming', 'Completed'
@@ -55,7 +55,7 @@ class TeamMatch(Model):
     match: str
 
     time: int = 0
-    playoff: int = 0
+    playoff: bool = False
     alliance: str = ""
     status: str = ""
 

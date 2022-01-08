@@ -1,5 +1,5 @@
-from collections import defaultdict
 import statistics
+from collections import defaultdict
 from typing import Any, Dict, List, Tuple, Union
 
 from db.models.event import Event
@@ -8,7 +8,6 @@ from db.models.team_event import TeamEvent
 from db.models.team_match import TeamMatch
 from db.models.team_year import TeamYear
 from db.models.year import Year
-
 from helper.utils import logistic, logistic_inv
 from models import opr as opr_model
 
@@ -30,7 +29,7 @@ def process_event(
         red, blue = m.get_teams()
         red_oprs: List[float] = []
         blue_oprs: List[float] = []
-        ind = -1 if m.playoff == 1 else i
+        ind = -1 if m.playoff else i
 
         for r in red:
             if r in oprs and len(oprs[r]) > 0 and ind <= len(oprs[r]):
@@ -61,7 +60,7 @@ def process_event(
 
         count += 1
 
-        if year >= 2016 and m.playoff == 0:
+        if year >= 2016 and not m.playoff:
             m.red_ils_1_sum = red_ils_1_sum = round(
                 sum([ils[r][ind][0] for r in red]), 2
             )
@@ -175,6 +174,7 @@ def process_year(
         prior_opr = round(0.80 * prior_opr + 0.20 * prior_opr_global, 2)
         team_year_obj.opr_start = prior_opr
         team_year_obj.opr_end = prior_opr  # will be overwritten
+        team_year_obj.opr = prior_opr  # copies opr_end
 
         if year_num >= 2016:
             rate = prior_opr / prior_opr_global
@@ -185,6 +185,7 @@ def process_year(
             team_year_obj.opr_endgame = rate * (year.endgame_mean or 0) / TM
             team_year_obj.opr_fouls = rate * (year.fouls_mean or 0) / TM
             team_year_obj.opr_no_fouls = rate * (year.no_fouls_mean or 0) / TM
+            team_year_obj.opr = rate * (year.no_fouls_mean or 0) / TM  # copies opr_no_fouls
 
         boost = ((team_year_obj.elo_start or 0) - 1500) * 0.001
         team_ils_1[num] = max(-1 / 3, ils_1_seed + boost)
@@ -198,21 +199,26 @@ def process_year(
 
     team_team_events: Dict[int, List[Dict[str, float]]] = defaultdict(list)
     event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
-    for team_event in team_events:
+    filtered_team_events = [t for t in team_events if t.status != "Upcoming"]
+    for team_event in filtered_team_events:
         event_team_events[team_event.event].append(team_event)
 
     matches_dict: Dict[str, List[Match]] = defaultdict(list)
-    for match in matches:
+    filtered_matches = [m for m in matches if m.status == "Completed"]
+    for match in filtered_matches:
         matches_dict[match.event].append(match)
 
     t_team_match_dict = Dict[str, Dict[int, List[TeamMatch]]]
     team_matches_dict: t_team_match_dict = defaultdict(lambda: defaultdict(list))
-    for team_match in team_matches:
+    filtered_team_matches = [m for m in team_matches if m.status == "Completed"]
+    for team_match in filtered_team_matches:
         event_key, team_id = team_match.event, team_match.team
         team_matches_dict[event_key][team_id].append(team_match)
 
-    for event in events:
-        if event.status == "Upcoming":
+    filtered_events = [e for e in events if e.status != "Upcoming"]
+    for event in filtered_events:
+        event_matches = matches_dict[event.key]
+        if len(event_matches) == 0:
             continue
 
         for team_event in event_team_events[event.key]:
@@ -235,7 +241,6 @@ def process_year(
                 team_event.ils_1_end = team_ils_1[num]  # overwritten later
                 team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
-        event_matches = matches_dict[event.key]
         oprs, ils, stats = process_event(
             event,
             event_team_events[event.key],
@@ -333,6 +338,7 @@ def process_year(
         )[-1]
 
         obj.opr_end = best_event["opr_end"]
+        obj.opr = best_event["opr_end"]  # copies opr_end
         if year_num >= 2016:
             obj.opr_auto = best_event["opr_auto"]
             obj.opr_teleop = best_event["opr_teleop"]
@@ -341,6 +347,7 @@ def process_year(
             obj.opr_endgame = best_event["opr_endgame"]
             obj.opr_fouls = best_event["opr_fouls"]
             obj.opr_no_fouls = best_event["opr_no_fouls"]
+            obj.opr = best_event["opr_no_fouls"]  # copies opr_no_fouls
             obj.ils_1 = team_ils_1[num]
             obj.ils_2 = team_ils_2[num]
 

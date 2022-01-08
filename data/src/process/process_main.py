@@ -21,24 +21,23 @@ from db.read.year import get_num_years as get_num_years_db, get_years as get_yea
 from db.write.main import (
     update_events as update_events_db,
     update_matches as update_matches_db,
-    update_teams as update_teams_db,
-    update_team_years as update_team_years_db,
     update_team_events as update_team_events_db,
     update_team_matches as update_team_matches_db,
+    update_team_years as update_team_years_db,
+    update_teams as update_teams_db,
     update_years as update_years_db,
-)
-
-from process.process_tba import (
-    load_teams,
-    process_year as process_year_tba,
-    post_process as post_process_tba,
 )
 from process.process_avg import process_year as process_year_avg
 from process.process_elo import (
-    process_year as process_year_elo,
     post_process as post_process_elo,
+    process_year as process_year_elo,
 )
 from process.process_opr import process_year as process_year_opr
+from process.process_tba import (
+    load_teams,
+    post_process as post_process_tba,
+    process_year as process_year_tba,
+)
 
 objs_type = Tuple[
     Year,

@@ -1,6 +1,6 @@
-import attr
 from typing import Any, Dict, Optional, Tuple
 
+import attr
 from sqlalchemy import Column, Float, Integer
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.sql.sqltypes import String

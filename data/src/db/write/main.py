@@ -1,4 +1,5 @@
 from typing import List
+
 from db.models.event import Event, EventORM
 from db.models.match import Match, MatchORM
 from db.models.team import Team, TeamORM

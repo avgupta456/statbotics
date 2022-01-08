@@ -12,7 +12,6 @@ random.seed(5511)
 
 from process.process_main import process_main  # noqa: E402
 
-
 start_year = 2022
 end_year = 2022
 clean = False

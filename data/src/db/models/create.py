@@ -30,7 +30,7 @@ def create_team_event_obj(data: Dict[str, Any]) -> TeamEvent:
 
 
 def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
-    data["playoff"] = 0 if data["comp_level"] == "qm" else 1
+    data["playoff"] = data["comp_level"] != "qm"
     data["red_auto"] = data["red_score_breakdown"]["auto"]
     data["red_auto_movement"] = data["red_score_breakdown"]["auto_movement"]
     data["red_auto_1"] = data["red_score_breakdown"]["auto_1"]
