@@ -12,6 +12,7 @@ class TeamMatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "team_matches"
+    id = Column(Integer)  # placeholder for backend API
     team = Column(Integer, index=True)
     year = Column(Integer, index=True)
     event = Column(String(20), index=True)
@@ -49,6 +50,7 @@ class TeamMatchORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class TeamMatch(Model):
+    id: int
     team: int
     year: int
     event: str

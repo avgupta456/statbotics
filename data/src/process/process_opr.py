@@ -25,7 +25,8 @@ def process_event(
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
 
-    for i, m in enumerate(matches):
+    filtered_matches = [m for m in matches if m.status == "Completed"]
+    for i, m in enumerate(filtered_matches):
         red, blue = m.get_teams()
         red_oprs: List[float] = []
         blue_oprs: List[float] = []
@@ -101,10 +102,11 @@ def process_event(
     opr_stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
     rp_stats = [rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
 
-    event.opr_acc = round(opr_acc / count, 4)
-    event.opr_mse = round(opr_mse / count, 4)
-    event.mix_acc = round(mix_acc / count, 4)
-    event.mix_mse = round(mix_mse / count, 4)
+    if count > 0:
+        event.opr_acc = round(opr_acc / count, 4)
+        event.opr_mse = round(opr_mse / count, 4)
+        event.mix_acc = round(mix_acc / count, 4)
+        event.mix_mse = round(mix_mse / count, 4)
 
     if count_rp > 0:
         event.rp1_acc = round(rp1_acc / count_rp, 4)
@@ -185,7 +187,6 @@ def process_year(
             team_year_obj.opr_endgame = rate * (year.endgame_mean or 0) / TM
             team_year_obj.opr_fouls = rate * (year.fouls_mean or 0) / TM
             team_year_obj.opr_no_fouls = rate * (year.no_fouls_mean or 0) / TM
-            team_year_obj.opr = rate * (year.no_fouls_mean or 0) / TM  # copies opr_no_fouls
 
         boost = ((team_year_obj.elo_start or 0) - 1500) * 0.001
         team_ils_1[num] = max(-1 / 3, ils_1_seed + boost)
@@ -204,23 +205,18 @@ def process_year(
         event_team_events[team_event.event].append(team_event)
 
     matches_dict: Dict[str, List[Match]] = defaultdict(list)
-    filtered_matches = [m for m in matches if m.status == "Completed"]
-    for match in filtered_matches:
+    for match in matches:
         matches_dict[match.event].append(match)
 
     t_team_match_dict = Dict[str, Dict[int, List[TeamMatch]]]
     team_matches_dict: t_team_match_dict = defaultdict(lambda: defaultdict(list))
-    filtered_team_matches = [m for m in team_matches if m.status == "Completed"]
-    for team_match in filtered_team_matches:
+    for team_match in team_matches:
         event_key, team_id = team_match.event, team_match.team
         team_matches_dict[event_key][team_id].append(team_match)
 
     filtered_events = [e for e in events if e.status != "Upcoming"]
     for event in filtered_events:
         event_matches = matches_dict[event.key]
-        if len(event_matches) == 0:
-            continue
-
         for team_event in event_team_events[event.key]:
             num = team_event.team
             if num not in team_oprs_dict or num not in team_years_dict:
@@ -347,7 +343,6 @@ def process_year(
             obj.opr_endgame = best_event["opr_endgame"]
             obj.opr_fouls = best_event["opr_fouls"]
             obj.opr_no_fouls = best_event["opr_no_fouls"]
-            obj.opr = best_event["opr_no_fouls"]  # copies opr_no_fouls
             obj.ils_1 = team_ils_1[num]
             obj.ils_2 = team_ils_2[num]
 

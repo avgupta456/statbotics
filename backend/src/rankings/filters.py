@@ -102,7 +102,7 @@ class YearFilterSet(django_filters.FilterSet):
 
 class TeamFilterSet(django_filters.FilterSet):
     team = django_filters.NumberFilter(method=get_team, field_name="team")
-    active = django_filters.NumberFilter(method=get_active, field_name="active")
+    active = django_filters.BooleanFilter(method=get_active, field_name="active")
     state = django_filters.CharFilter(method=get_state, field_name="state")
     country = django_filters.CharFilter(method=get_country, field_name="country")
     district = django_filters.CharFilter(method=get_district, field_name="district")
@@ -271,7 +271,7 @@ class MatchFilterSet(django_filters.FilterSet):
     year = django_filters.NumberFilter(method=get_year, field_name="year")
     event = django_filters.CharFilter(method=get_event, field_name="event")
     key = django_filters.CharFilter(method=get_key, field_name="key")
-    playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
+    playoff = django_filters.BooleanFilter(method=get_playoff, field_name="playoff")
 
     o = django_filters.OrderingFilter(fields=(("year", "year"), ("time", "time")))
 
@@ -285,7 +285,7 @@ class TeamMatchFilterSet(django_filters.FilterSet):
     event = django_filters.CharFilter(method=get_event, field_name="event")
     match = django_filters.CharFilter(method=get_match, field_name="match")
     team = django_filters.NumberFilter(method=get_team, field_name="team")
-    playoff = django_filters.NumberFilter(method=get_playoff, field_name="playoff")
+    playoff = django_filters.BooleanFilter(method=get_playoff, field_name="playoff")
 
     o = django_filters.OrderingFilter(
         fields=(("team", "team"), ("year", "year"), ("time", "time"))

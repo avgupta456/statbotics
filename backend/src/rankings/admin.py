@@ -16,6 +16,8 @@ class YearAdmin(admin.ModelAdmin):
         "rp1_mse",
         "rp2_acc",
         "rp2_mse",
+        "score_sd",
+        "score_mean",
     )
 
 
@@ -35,12 +37,12 @@ class TeamAdmin(admin.ModelAdmin):
         "losses",
         "ties",
         "count",
+        "winrate",
     )
 
 
 class TeamYearAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
         "year",
         "team",
         "name",
@@ -74,15 +76,16 @@ class TeamYearAdmin(admin.ModelAdmin):
 
 class EventAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "year",
         "key",
+        "year",
         "name",
+        "time",
         "state",
         "country",
         "district",
         "type",
         "week",
+        "status",
         "elo_top8",
         "elo_top24",
         "elo_mean",
@@ -104,10 +107,18 @@ class EventAdmin(admin.ModelAdmin):
 
 class TeamEventAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
         "team",
         "year",
         "event",
+        "time",
+        "team_name",
+        "event_name",
+        "state",
+        "country",
+        "district",
+        "type",
+        "week",
+        "status",
         "elo_start",
         "elo_pre_playoffs",
         "elo_end",
@@ -136,14 +147,19 @@ class TeamEventAdmin(admin.ModelAdmin):
 
 class MatchAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
+        "key",
         "year",
         "event",
-        "key",
         "comp_level",
         "set_number",
         "match_number",
         "playoff",
+        "time",
+        "status",
+        "red",
+        "blue",
+        "red_score",
+        "blue_score",
         "winner",
         "elo_winner",
         "elo_win_prob",
@@ -164,12 +180,14 @@ class MatchAdmin(admin.ModelAdmin):
 
 class TeamMatchAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
         "team",
         "year",
         "event",
         "match",
+        "playoff",
         "alliance",
+        "time",
+        "status",
         "elo",
         "opr",
         "ils_1",

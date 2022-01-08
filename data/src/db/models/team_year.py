@@ -13,6 +13,7 @@ class TeamYearORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "team_years"
+    id = Column(Integer)  # placeholder for backend API
     year = Column(Integer, index=True)
     team = Column(Integer, index=True)
 
@@ -26,7 +27,6 @@ class TeamYearORM(Base, ModelORM):
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
-    opr = Column(Float)
 
     """ELO"""
     elo_start = Column(Float)
@@ -37,6 +37,7 @@ class TeamYearORM(Base, ModelORM):
     elo_diff = Column(Float)
 
     """OPR"""
+    opr = Column(Float)
     opr_start = Column(Float)
     opr_end = Column(Float)
 
@@ -67,6 +68,7 @@ class TeamYearORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class TeamYear(Model):
+    id: int
     year: int
     team: int
 
