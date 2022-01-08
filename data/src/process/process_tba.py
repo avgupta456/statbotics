@@ -36,7 +36,7 @@ def load_teams(cache: bool = True) -> List[Team]:
 
 
 def process_year(
-    year_num: int, end_year: int, all_team_nums: List[int], cache: bool = True
+    year_num: int, end_year: int, teams: List[Team], cache: bool = True
 ) -> Tuple[
     Year, List[TeamYear], List[Event], List[TeamEvent], List[Match], List[TeamMatch]
 ]:
@@ -48,17 +48,20 @@ def process_year(
     match_objs: List[Match] = []
     team_match_objs: List[TeamMatch] = []
 
+    teams_dict = {team.team: team for team in teams}
+
     for team_year in get_team_years_tba(year_num, cache=cache):
-        if team_year["team"] in all_team_nums:
+        if team_year["team"] in teams_dict:
+            team_obj = teams_dict[team_year["team"]]
+            team_year["name"] = team_obj.name
+            team_year["state"] = team_obj.state
+            team_year["country"] = team_obj.country
+            team_year["district"] = team_obj.district
             team_year_objs.append(create_team_year_obj(team_year))
 
     for event in get_events_tba(year_num, cache=cache):
         event_obj = create_event_obj(event)
-        event_key, event_id, event_time = (
-            event_obj.key,
-            event_obj.id,
-            event_obj.time,
-        )
+        event_key, event_time = event_obj.key, event_obj.time
 
         matches = get_matches_tba(year_num, event_key, event_time, cache=cache)
         num_matches = len(matches)
@@ -76,16 +79,27 @@ def process_year(
 
         for match in matches:
             match["year"] = year_num
-            match["event_id"] = event_id
             match_obj, curr_team_match_objs = create_match_obj(match)
             match_objs.append(match_obj)
             team_match_objs.extend(curr_team_match_objs)
 
         for team_event in get_team_events_tba(event_key, cache=cache):
             team_event["year"] = year_num
-            team_event["event_id"] = event_id
+            team_event["event"] = event_key
+            team_event["event_name"] = event_obj.name
+            team_event["state"] = event_obj.state
+            team_event["country"] = event_obj.country
+            team_event["district"] = event_obj.district
+            team_event["type"] = event_obj.type
+            team_event["week"] = event_obj.week
             team_event["time"] = event_time
             team_event["status"] = event_status
+
+            if team_event["team"] not in teams_dict:
+                continue
+            team_obj = teams_dict[team_event["team"]]
+            team_event["team_name"] = team_obj.name
+
             team_event_obj = create_team_event_obj(team_event)
             team_event_objs.append(team_event_obj)
 

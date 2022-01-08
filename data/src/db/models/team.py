@@ -2,6 +2,7 @@ import attr
 from typing import Any, Dict, Optional
 
 from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy.sql.schema import PrimaryKeyConstraint
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -11,7 +12,9 @@ class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team: Column[int] = Column(Integer, primary_key=True, index=True)
+    team = Column(Integer, index=True)
+
+    PrimaryKeyConstraint(team)
 
     """GENERAL"""
     name = Column(String(100))

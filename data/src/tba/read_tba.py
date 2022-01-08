@@ -29,7 +29,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
         data = get_tba("teams/" + str(i) + "/simple", cache=cache)
         for data_team in data:
             new_data = {
-                "number": data_team["team_number"],
+                "team": data_team["team_number"],
                 "name": data_team["nickname"],
                 "state": clean_state(data_team["state_prov"]),
                 "country": data_team["country"],

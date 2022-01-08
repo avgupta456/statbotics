@@ -197,25 +197,25 @@ def process_year(
         team_oprs_dict[num] = prior_opr
 
     team_team_events: Dict[int, List[Dict[str, float]]] = defaultdict(list)
-    event_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
+    event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
     for team_event in team_events:
-        event_team_events[team_event.event_id].append(team_event)
+        event_team_events[team_event.event].append(team_event)
 
-    matches_dict: Dict[int, List[Match]] = defaultdict(list)
+    matches_dict: Dict[str, List[Match]] = defaultdict(list)
     for match in matches:
-        matches_dict[match.event_id].append(match)
+        matches_dict[match.event].append(match)
 
-    t_team_match_dict = Dict[int, Dict[int, List[TeamMatch]]]
+    t_team_match_dict = Dict[str, Dict[int, List[TeamMatch]]]
     team_matches_dict: t_team_match_dict = defaultdict(lambda: defaultdict(list))
     for team_match in team_matches:
-        event_id, team_id = team_match.event_id, team_match.team
-        team_matches_dict[event_id][team_id].append(team_match)
+        event_key, team_id = team_match.event, team_match.team
+        team_matches_dict[event_key][team_id].append(team_match)
 
     for event in events:
         if event.status == "Upcoming":
             continue
 
-        for team_event in event_team_events[event.id]:
+        for team_event in event_team_events[event.key]:
             num = team_event.team
             if num not in team_oprs_dict or num not in team_years_dict:
                 continue
@@ -235,10 +235,10 @@ def process_year(
                 team_event.ils_1_end = team_ils_1[num]  # overwritten later
                 team_event.ils_2_end = team_ils_2[num]  # overwritten later
 
-        event_matches = matches_dict[event.id]
+        event_matches = matches_dict[event.key]
         oprs, ils, stats = process_event(
             event,
-            event_team_events[event.id],
+            event_team_events[event.key],
             event_matches,
             year_num,
             mean_score,
@@ -256,7 +256,7 @@ def process_year(
         rp2_mse += stats[8]
         count_rp += stats[9]
 
-        for team_event in event_team_events[event.id]:
+        for team_event in event_team_events[event.key]:
             num = team_event.team
             if num not in oprs:
                 continue
@@ -296,7 +296,7 @@ def process_year(
             team_ils_2[num] = ils_2
 
             team_matches_temp = sorted(
-                team_matches_dict[event.id][num], key=lambda m: (m.playoff, m.sort())
+                team_matches_dict[event.key][num], key=lambda m: (m.playoff, m.sort())
             )
             for i, m in enumerate(team_matches_temp):
                 index = min(i, len(oprs[num]) - 1)

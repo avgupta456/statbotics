@@ -1,7 +1,8 @@
 import attr
 from typing import Any, Dict, Optional, Tuple
 
-from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy import Column, Float, Integer
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.sql.sqltypes import String
 
 from db.main import Base
@@ -12,9 +13,13 @@ class TeamYearORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "team_years"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
+    year = Column(Integer, index=True)
+    team = Column(Integer, index=True)
+
+    # force unique (team, year)
+    PrimaryKeyConstraint(team, year)
+    ForeignKeyConstraint(["year"], ["years.year"])
+    ForeignKeyConstraint(["team"], ["teams.team"])
 
     """API COMPLETENESS"""
     name = Column(String(100))
@@ -62,7 +67,6 @@ class TeamYearORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class TeamYear(Model):
-    id: int
     year: int
     team: int
 

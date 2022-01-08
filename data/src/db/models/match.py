@@ -1,7 +1,8 @@
 import attr
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -11,13 +12,15 @@ class MatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "matches"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
+    key = Column(String(20), index=True)
+    year = Column(Integer, index=True)
+    event = Column(String(20), index=True)
+
+    PrimaryKeyConstraint(key)
+    ForeignKeyConstraint(["year"], ["years.year"])
+    ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    event = Column(String(20))
-    key = Column(String(20))
     comp_level = Column(String(10))
     set_number = Column(Integer)
     match_number = Column(Integer)
@@ -88,17 +91,14 @@ class MatchORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class Match(Model):
-    id: int
-    year: int
-    event_id: int
-
     key: str
+    year: int
+    event: str
+
     comp_level: str
     set_number: int
     match_number: int
     status: str
-
-    event: Optional[str] = None
 
     red: Optional[str] = None
     red_elo_sum: Optional[float] = None

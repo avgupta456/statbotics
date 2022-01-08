@@ -1,7 +1,8 @@
 import attr
 from typing import Any, Dict, Optional
 
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from db.main import Base
 from db.models.main import Model, ModelORM
@@ -11,11 +12,13 @@ class EventORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "events"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
-    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
+    key = Column(String(20), index=True)
+    year = Column(Integer, index=True)
+
+    PrimaryKeyConstraint(key)
+    ForeignKeyConstraint(["year"], ["years.year"])
 
     """GENERAL"""
-    key = Column(String(20))
     name = Column(String(100))
     time = Column(Integer)
     state = Column(String(10))
@@ -62,10 +65,9 @@ class EventORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class Event(Model):
-    id: int
+    key: str
     year: int
 
-    key: str
     name: str
     time: int
     state: str

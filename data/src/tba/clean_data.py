@@ -133,8 +133,11 @@ def clean_district(district: str) -> str:
 teams_info: Dict[int, Any] = load("src/teams_info.p")
 
 
-def get_team_district(team: int):
-    return teams_info.get(team, [None, None, None, None])[3]
+def get_team_district(team: int) -> Optional[str]:
+    district = teams_info.get(team, [None, None, None, None])[3]
+    if district == "None":
+        return None
+    return district
 
 
 def get_match_time(match: Dict[str, Any], event_time: int) -> int:

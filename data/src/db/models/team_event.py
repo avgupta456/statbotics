@@ -1,7 +1,8 @@
 import attr
 from typing import Any, Dict, Optional, Tuple
 
-from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy import Column, Float, Integer
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.sql.sqltypes import String
 
 from db.main import Base
@@ -12,18 +13,21 @@ class TeamEventORM(Base, ModelORM):
     """DECLARATIONS"""
 
     __tablename__ = "team_events"
-    id: Column[int] = Column(Integer, primary_key=True, index=True)
-    team: Column[int] = Column(Integer, ForeignKey("teams.team"), index=True)
-    team_year_id: Column[int] = Column(Integer, ForeignKey("team_years.id"), index=True)
-    year: Column[int] = Column(Integer, ForeignKey("years.year"), index=True)
-    event_id: Column[int] = Column(Integer, ForeignKey("events.id"), index=True)
+    team = Column(Integer, index=True)
+    year = Column(Integer, index=True)
+    event = Column(String, index=True)
+
+    PrimaryKeyConstraint(team, event)
+    ForeignKeyConstraint(["team"], ["teams.team"])
+    ForeignKeyConstraint(["year"], ["years.year"])
+    ForeignKeyConstraint(["team", "year"], ["team_years.team", "team_years.year"])
+    ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
     time = Column(Integer)
 
     """API COMPLETENESS"""
-    name = Column(String(100))
-    event = Column(String(20))
+    team_name = Column(String(100))
     event_name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
@@ -71,16 +75,13 @@ class TeamEventORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class TeamEvent(Model):
-    id: int
     team: int
-    team_year_id: int
     year: int
-    event_id: int
+    event: str
 
     time: int
 
-    name: Optional[str] = None
-    event: Optional[str] = None
+    team_name: Optional[str] = None
     event_name: Optional[str] = None
     state: Optional[str] = None
     country: Optional[str] = None

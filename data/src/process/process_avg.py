@@ -10,8 +10,8 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
     if len(events) == 0 or len(matches) == 0:
         return year
 
-    week_one_events = set([e.id for e in events if e.week == 1])
-    week_one_matches = [m for m in matches if m.event_id in week_one_events]
+    week_one_events = set([e.key for e in events if e.week == 1])
+    week_one_matches = [m for m in matches if m.event in week_one_events]
 
     scores: List[int] = []
     autos: List[int] = []

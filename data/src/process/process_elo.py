@@ -11,7 +11,7 @@ from db.models.year import Year
 from db.read.team import get_teams as get_teams_db
 from db.read.team_year import get_team_years as get_team_years_db
 from db.write.main import update_teams as update_teams_db
-from helper.utils import get_team_event_id, get_team_match_id
+from helper.utils import get_team_event_key, get_team_match_key
 from models.elo import (
     START_RATING,
     existing_rating,
@@ -39,14 +39,14 @@ def process_year(
     List[TeamMatch],
 ]:
     team_years_dict: Dict[int, TeamYear] = {}
-    team_events_dict: Dict[int, List[Tuple[float, bool]]] = {}
+    team_events_dict: Dict[str, List[Tuple[float, bool]]] = {}
     team_matches_dict: Dict[int, List[float]] = {}
     team_elos: Dict[int, float] = {}  # most recent elo
-    team_match_ids: Dict[int, float] = {}
+    team_match_ids: Dict[str, float] = {}
 
     # win, loss, tie, count
     team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
-    team_event_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
+    team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
 
     sd_score = year.score_sd or 0
 
@@ -78,20 +78,20 @@ def process_year(
 
     # MATCHES
     acc, mse, count = 0, 0, 0
-    event_stats: Dict[int, List[Union[float, int]]] = defaultdict(lambda: [0, 0, 0])
+    event_stats: Dict[str, List[Union[float, int]]] = defaultdict(lambda: [0, 0, 0])
 
     sorted_matches = sorted(matches, key=lambda m: m.sort())
     for match in sorted_matches:
-        event_id = match.event_id
+        event_key = match.event
         red, blue = match.get_teams()
         red_elo_pre: Dict[int, float] = {}
         blue_elo_pre: Dict[int, float] = {}
         for team in red:
             red_elo_pre[team] = team_elos[team]
-            team_match_ids[get_team_match_id(team, match.id)] = team_elos[team]
+            team_match_ids[get_team_match_key(team, match.key)] = team_elos[team]
         for team in blue:
             blue_elo_pre[team] = team_elos[team]
-            team_match_ids[get_team_match_id(team, match.id)] = team_elos[team]
+            team_match_ids[get_team_match_key(team, match.key)] = team_elos[team]
 
         match.red_elo_sum = round(sum(red_elo_pre.values()))
         match.blue_elo_sum = round(sum(blue_elo_pre.values()))
@@ -115,43 +115,43 @@ def process_year(
         for t in red:
             team_elos[t] = red_elo_post[t]
             team_matches_dict[t].append(red_elo_post[t])
-            team_event_id = get_team_event_id(t, event_id)
-            if team_event_id not in team_events_dict:
-                team_events_dict[team_event_id] = [(red_elo_pre[t], match.playoff == 1)]
-            team_events_dict[team_event_id].append(
+            team_event_key = get_team_event_key(t, event_key)
+            if team_event_key not in team_events_dict:
+                team_events_dict[team_event_key] = [(red_elo_pre[t], match.playoff == 1)]
+            team_events_dict[team_event_key].append(
                 (red_elo_post[t], match.playoff == 1)
             )
             team_year_stats[t][3] += 1
             team_year_stats[t][red_mapping[winner]] += 1
-            team_event_stats[team_event_id][3] += 1
-            team_event_stats[team_event_id][red_mapping[winner]] += 1
+            team_event_stats[team_event_key][3] += 1
+            team_event_stats[team_event_key][red_mapping[winner]] += 1
 
         for t in blue:
             team_elos[t] = blue_elo_post[t]
             team_matches_dict[t].append(blue_elo_post[t])
-            team_event_id = get_team_event_id(t, event_id)
-            if team_event_id not in team_events_dict:
-                team_events_dict[team_event_id] = [
+            team_event_key = get_team_event_key(t, event_key)
+            if team_event_key not in team_events_dict:
+                team_events_dict[team_event_key] = [
                     (blue_elo_pre[t], match.playoff == 1)
                 ]
-            team_events_dict[team_event_id].append(
+            team_events_dict[team_event_key].append(
                 (blue_elo_post[t], match.playoff == 1)
             )
             team_year_stats[t][3] += 1
             team_year_stats[t][blue_mapping[winner]] += 1
-            team_event_stats[team_event_id][3] += 1
-            team_event_stats[team_event_id][blue_mapping[winner]] += 1
+            team_event_stats[team_event_key][3] += 1
+            team_event_stats[team_event_key][blue_mapping[winner]] += 1
 
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
         error = (win_probs[winner] - match.elo_win_prob) ** 2
-        event_stats[event_id][1] += error  # mse
+        event_stats[event_key][1] += error  # mse
         mse += error
 
         if winner == match.elo_winner:
-            event_stats[event_id][0] += 1  # acc
+            event_stats[event_key][0] += 1  # acc
             acc += 1
 
-        event_stats[event_id][2] += 1  # count
+        event_stats[event_key][2] += 1  # count
         count += 1
 
     acc = None if count == 0 else round(acc / count, 4)
@@ -159,33 +159,34 @@ def process_year(
 
     # TEAM MATCHES
     for team_match in team_matches:
-        team_match.elo = round(team_match_ids[team_match.id])
+        match_key = get_team_match_key(team_match.team, team_match.match)
+        team_match.elo = round(team_match_ids[match_key])
 
     # TEAM EVENTS
-    event_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
+    event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
     team_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
     for team_event in team_events:
-        id = team_event.id
-        if id not in team_events_dict:
+        key = get_team_event_key(team_event.team, team_event.event)
+        if key not in team_events_dict:
             continue
 
         if team_event.status == "Upcoming":
             continue
 
-        event_team_events[team_event.event_id].append(team_event)
+        event_team_events[team_event.event].append(team_event)
         team_team_events[team_event.team].append(team_event)
 
-        elos = [obj[0] for obj in team_events_dict[id]]
+        elos = [obj[0] for obj in team_events_dict[key]]
         team_event.elo_start = round(elos[0])
         team_event.elo_end = round(elos[-1])
         team_event.elo_max = round(max(elos))
         team_event.elo_mean = round(sum(elos) / len(elos))
         team_event.elo_diff = round(elos[-1] - elos[0])
-        qual_elos = [obj[0] for obj in team_events_dict[id] if not obj[1]]
+        qual_elos = [obj[0] for obj in team_events_dict[key] if not obj[1]]
         elo_pre_playoffs = elos[0] if len(qual_elos) == 0 else qual_elos[-1]
         team_event.elo_pre_playoffs = round(elo_pre_playoffs)
 
-        wins, losses, ties, count = team_event_stats[id]
+        wins, losses, ties, count = team_event_stats[key]
         winrate = round((wins + ties / 2) / max(1, count), 4)
         team_event.wins = wins
         team_event.losses = losses
@@ -194,16 +195,16 @@ def process_year(
         team_event.winrate = winrate
 
     # EVENTS
-    event_types: Dict[int, int] = defaultdict(int)
+    event_types: Dict[str, int] = defaultdict(int)
     for event in events:
         if event.status == "Upcoming":
             continue
 
-        event_id = event.id
-        event_types[event_id] = event.type
+        event_key = event.key
+        event_types[event_key] = event.type
 
         elos: List[float] = []
-        for team_event in event_team_events[event_id]:
+        for team_event in event_team_events[event_key]:
             elos.append(team_event.elo_pre_playoffs or 0)
         elos.sort(reverse=True)
 
@@ -212,7 +213,7 @@ def process_year(
         event.elo_top24 = None if len(elos) < 24 else round(elos[23])
         event.elo_mean = round(sum(elos) / len(elos))
         event.elo_sd = round(statistics.pstdev(elos), 2)
-        event_acc, event_mse, event_count = event_stats[event_id]
+        event_acc, event_mse, event_count = event_stats[event_key]
         event.elo_acc = round(event_acc / event_count, 4)
         event.elo_mse = round(event_mse / event_count, 4)
 
@@ -243,7 +244,7 @@ def process_year(
 
         pre_champs = obj.elo_start or 0
         for team_event in sorted(team_team_events[team], key=lambda t: t.sort()):
-            if event_types[team_event.event_id] < 3 and team_event.elo_end is not None:
+            if event_types[team_event.event] < 3 and team_event.elo_end is not None:
                 pre_champs = team_event.elo_end
         obj.elo_pre_champs = round(pre_champs)
 
