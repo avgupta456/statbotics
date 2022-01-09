@@ -52,7 +52,7 @@ export default function TeamLookup() {
     return teams.map(function (x, i) {
       return [
         x["team"],
-        "teams/" + x["team"] + "|" + x["name"],
+        "team/" + x["team"] + "|" + x["name"],
         i + 1,
         x["elo"],
         x["elo_recent"],

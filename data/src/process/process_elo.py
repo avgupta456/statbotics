@@ -303,10 +303,10 @@ def post_process(end_year: int) -> None:
                 team.active = True
             if team_year.elo_max is not None:
                 years[team_year.year] = team_year.elo_max
-            wins += team_year.wins or 0
-            losses += team_year.losses or 0
-            ties += team_year.ties or 0
-            count += team_year.count or 0
+            wins += team_year.wins
+            losses += team_year.losses
+            ties += team_year.ties
+            count += team_year.count
         keys, values = years.keys(), years.values()
 
         # get recent elos (last five years)

@@ -19,16 +19,12 @@ import {
   usaOptions,
   canadaOptions,
   districtOptions,
-  yearOptions,
-  ilsMapping,
 } from "./../../../constants";
 
 import styles from "./TeamYearLookup.module.css";
 
 export default function TeamLookup() {
-  const [year, setYear] = useState(2020);
-  const [ILS1, setILS1] = useState("");
-  const [ILS2, setILS2] = useState("");
+  const year = 2022;
 
   const [country, setCountry] = useState("None");
   const [stateProv, setStateProv] = useState("None");
@@ -41,118 +37,52 @@ export default function TeamLookup() {
   const [countryDropdown, setCountryDropdown] = useState("Select Country");
   const [districtDropdown, setDistrictDropdown] = useState("Select District");
 
-  //column name, searchable, visible, link, hint
-  const eloColumns = [
+  // Name, Searchable, Visible, Link, Hint
+  const columns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
-    ["Rank", false, true, false, "By Max Elo"],
-    ["Max Elo", false, true, false, "All Elos are sortable"],
-    ["Mean Elo", false, true, false, ""],
-    ["Start Elo", false, true, false, ""],
-    ["Pre Champs Elo", false, false, false, ""],
-    ["End Elo", false, true, false, ""],
-  ];
-
-  const OPRColumns = [
-    ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
-    ["Rank", false, true, false, "By OPR"],
-    ["OPR", false, true, false, "Max OPR"],
+    ["Name", true, true, true, "Click name for details"],
+    ["Elo", false, true, false, ""],
+    ["OPR", false, true, false, ""],
     ["Auto OPR", false, true, false, ""],
     ["Teleop OPR", false, true, false, ""],
     ["Endgame OPR", false, true, false, ""],
-    [ILS1, false, true, false, "ILS score (higher is better)"],
-    [ILS2, false, true, false, "ILS score (higher is better)"],
+    ["Winrate", false, true, false, ""],
   ];
-
-  const OldOPRColumns = [
-    ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click name for details"],
-    ["Rank", false, true, false, "By OPR"],
-    ["OPR", false, true, false, "Max OPR"],
-  ];
-
-  const [showElo, setShowElo] = useState(true);
-  const [sortBy, setSortBy] = useState("-elo_max");
-
-  const handleElo = (event) => {
-    setShowElo(!showElo);
-  };
 
   useEffect(() => {
     function clean(teams) {
-      if (showElo) {
-        return teams.map(function (x, i) {
-          return [
-            x["team"],
-            "team/" + x["team"] + "|" + x["name"],
-            i + 1,
-            x["elo_max"],
-            x["elo_mean"],
-            x["elo_start"],
-            x["elo_pre_champs"],
-            x["elo_end"],
-          ];
-        });
-      } else if (year >= 2016) {
-        return teams.map(function (x, i) {
-          return [
-            x["team"],
-            "team/" + x["team"] + "|" + x["name"],
-            i + 1,
-            parseInt(x["opr_no_fouls"] * 10) / 10,
-            parseInt(x["opr_auto"] * 10) / 10,
-            parseInt(x["opr_teleop"] * 10) / 10,
-            parseInt(x["opr_endgame"] * 10) / 10,
-            x["ils_1"],
-            x["ils_2"],
-          ];
-        });
-      } else {
-        return teams.map(function (x, i) {
-          return [
-            x["team"],
-            "team/" + x["team"] + "|" + x["name"],
-            i + 1,
-            parseInt(x["opr"] * 10) / 10,
-          ];
-        });
-      }
+      console.log(teams);
+      return teams.map((x) => [
+        x["team"],
+        "team/" + x["team"] + "|" + x["name"],
+        x["elo_end"],
+        parseInt(x["opr_no_fouls"] * 10) / 10,
+        parseInt(x["opr_auto"] * 10) / 10,
+        parseInt(x["opr_teleop"] * 10) / 10,
+        parseInt(x["opr_endgame"] * 10) / 10,
+        parseInt(x["winrate"] * 1000) / 10 + "%",
+      ]);
     }
 
     const getTeams = async () => {
-      const new_teams = await fetchTeamsYear(year, sortBy);
+      const new_teams = await fetchTeamsYear(year);
       setData(clean(new_teams));
     };
 
     const getTeams_byCountry = async () => {
-      const new_teams = await fetchTeamsYear_byCountry(country, year, sortBy);
+      const new_teams = await fetchTeamsYear_byCountry(country, year);
       setData(clean(new_teams));
     };
 
     const getTeams_byState = async () => {
-      const new_teams = await fetchTeamsYear_byState(
-        country,
-        stateProv,
-        year,
-        sortBy
-      );
+      const new_teams = await fetchTeamsYear_byState(country, stateProv, year);
       setData(clean(new_teams));
     };
 
     const getTeams_byDistrict = async () => {
-      const new_teams = await fetchTeamsYear_byDistrict(district, year, sortBy);
+      const new_teams = await fetchTeamsYear_byDistrict(district, year);
       setData(clean(new_teams));
     };
-
-    if (showElo) setSortBy("-elo_max");
-    else if (year >= 2016) setSortBy("-opr_no_fouls");
-    else setSortBy("-opr");
-
-    if (year >= 2016) {
-      setILS1(ilsMapping[year][0]);
-      setILS2(ilsMapping[year][1]);
-    }
 
     setData([]);
     if (format === "Teams") {
@@ -164,12 +94,7 @@ export default function TeamLookup() {
     } else {
       getTeams_byDistrict();
     }
-  }, [format, country, stateProv, district, year, showElo, sortBy]);
-
-  const yearClick = (year) => {
-    setYear(year["value"]);
-    setTitle(`${year["value"]} Team Lookup`);
-  };
+  }, [format, country, stateProv, district, year]);
 
   function allClick() {
     setFormat("Teams");
@@ -243,28 +168,11 @@ export default function TeamLookup() {
   function getTopBar() {
     return (
       <div className={styles.button_group}>
-        <Select
-          className={styles.dropdown}
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-          }}
-          options={yearOptions}
-          onChange={yearClick}
-          value={{ value: `${year}`, label: `${year}` }}
-        />
         <Button
           variant="outline-dark"
           onClick={() => allClick()}
           className={styles.dropdown}
           children={<Typography>All Teams</Typography>}
-        />
-        <Button
-          variant="secondary"
-          onClick={() => handleElo()}
-          className={styles.dropdown}
-          children={
-            <Typography>{showElo ? "Show OPR" : "Show Elo"}</Typography>
-          }
         />
         <Select
           className={styles.dropdown}
@@ -317,13 +225,7 @@ export default function TeamLookup() {
         children={
           <div>
             {getTopBar()}
-            <ReactTable
-              title={title}
-              columns={
-                showElo ? eloColumns : year >= 2016 ? OPRColumns : OldOPRColumns
-              }
-              data={data}
-            />
+            <ReactTable title={title} columns={columns} data={data} />
           </div>
         }
       />

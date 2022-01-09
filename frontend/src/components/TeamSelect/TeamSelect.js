@@ -21,7 +21,7 @@ export default function TeamSelect({
         x["name"] = x["name"].substring(0, max_length - 3) + "...";
       }
       return {
-        value: "/teams/" + x["team"],
+        value: "/team/" + x["team"],
         label: x["team"] + " | " + x["name"],
       };
     });

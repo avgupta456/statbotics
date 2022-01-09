@@ -162,7 +162,7 @@ export default function EventView() {
           temp_teams.push({ team: x["team"], name: x["team_name"] });
           return [
             x["team"],
-            "./../teams/" + x["team"] + "|" + x["team_name"],
+            "./../team/" + x["team"] + "|" + x["team_name"],
             x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_no_fouls"] * 10) / 10,
@@ -178,7 +178,7 @@ export default function EventView() {
           temp_teams.push({ team: x["team"], name: x["team_name"] });
           return [
             x["team"],
-            "./../teams/" + x["team"] + "|" + x["team_name"],
+            "./../team/" + x["team"] + "|" + x["team_name"],
             x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_end"] * 10) / 10,
@@ -322,7 +322,7 @@ export default function EventView() {
       } catch (e) {}
       return [
         x["team"],
-        "./../teams/" + x["team"] + "|" + x["name"],
+        "./../team/" + x["team"] + "|" + x["name"],
         rank_mean,
         rank_5,
         rank_median,

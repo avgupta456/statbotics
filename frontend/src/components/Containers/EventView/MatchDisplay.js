@@ -32,7 +32,7 @@ export default function getMatchDisplays(year, matches) {
                   <Col key={i}>
                     <a
                       className={styles.link}
-                      href={`./../teams/${x["red"][i]}`}
+                      href={`./../team/${x["red"][i]}`}
                       children={
                         x["winner"] === "red" ? (
                           <b>{x["red"][i]}</b>
@@ -60,7 +60,7 @@ export default function getMatchDisplays(year, matches) {
                   <Col key={i}>
                     <a
                       className={styles.link}
-                      href={`./../teams/${x["blue"][i]}`}
+                      href={`./../team/${x["blue"][i]}`}
                       children={
                         x["winner"] === "blue" ? (
                           <b>{x["blue"][i]}</b>
