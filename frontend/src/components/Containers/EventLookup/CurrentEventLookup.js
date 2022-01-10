@@ -22,21 +22,21 @@ import {
   usaOptions,
   canadaOptions,
   districtOptions,
-  yearOptions,
   weekOptions,
 } from "./../../../constants";
 
 import styles from "./EventLookup.module.css";
 
 export default function TeamLookup() {
-  const [year, setYear] = useState(2020);
+  const year = 2022;
+
   const [week, setWeek] = useState("None");
 
   const [country, setCountry] = useState("None");
   const [stateProv, setStateProv] = useState("None");
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Events");
-  const [title, setTitle] = useState("Events Lookup");
+  const [title, setTitle] = useState(`${year} Completed Events Lookup`);
   const [data, setData] = useState([]);
 
   const [weekDropdown, setWeekDropdown] = useState("Select Week");
@@ -59,19 +59,23 @@ export default function TeamLookup() {
 
   useEffect(() => {
     function clean(events) {
-      return events.map(function (x, i) {
-        return [
-          x["key"],
-          "event/" + x["key"] + "|" + x["name"],
-          x["week"],
-          x["elo_top8"],
-          x["elo_top24"],
-          x["elo_mean"],
-          parseInt(x["opr_top8"] * 10) / 10,
-          parseInt(x["opr_top24"] * 10) / 10,
-          parseInt(x["opr_mean"] * 10) / 10,
-        ];
-      });
+      return events
+        .filter(function (x) {
+          return x["status"] === "Completed";
+        })
+        .map(function (x, i) {
+          return [
+            x["key"],
+            "event/" + x["key"] + "|" + x["name"],
+            x["week"],
+            x["elo_top8"],
+            x["elo_top24"],
+            x["elo_mean"],
+            parseInt(x["opr_top8"] * 10) / 10,
+            parseInt(x["opr_top24"] * 10) / 10,
+            parseInt(x["opr_mean"] * 10) / 10,
+          ];
+        });
     }
 
     const getEvents = async () => {
@@ -131,20 +135,9 @@ export default function TeamLookup() {
     }
   }, [format, country, stateProv, district, year, week]);
 
-  const yearClick = (year) => {
-    setYear(year["value"]);
-
-    setWeek("None");
-    setWeekDropdown("Select Week");
-
-    setTitle(`${year["value"]} Event Lookup`);
-  };
-
   const weekClick = (week) => {
     setWeek(week["value"]);
     setWeekDropdown(week["label"]);
-
-    setTitle(`${year} Event Lookup`);
   };
 
   function allClick() {
@@ -162,15 +155,15 @@ export default function TeamLookup() {
     setDistrict("None");
     setDistrictDropdown("Select District");
 
-    setTitle(`${year} Event Lookup`);
+    setTitle(`${year} Completed Events Lookup`);
   }
 
   const stateClick = (state) => {
     if (state["value"] === "All") {
-      setTitle(`${year} Event Lookup - ${country}`);
+      setTitle(`${year} Completed Events Lookup - ${country}`);
       setFormat("Country");
     } else {
-      setTitle(`${year} Event Lookup - ${state["label"]}`);
+      setTitle(`${year} Completed Events Lookup - ${state["label"]}`);
       setFormat("State");
     }
 
@@ -188,7 +181,7 @@ export default function TeamLookup() {
 
   const countryClick = (country) => {
     setFormat("Country");
-    setTitle(`${year} Event Lookup - ${country["label"]}`);
+    setTitle(`${year} Completed Events Lookup - ${country["label"]}`);
 
     setCountry(country["value"]);
     setCountryDropdown(country["label"]);
@@ -208,7 +201,7 @@ export default function TeamLookup() {
 
   const districtClick = (district) => {
     setFormat("District");
-    setTitle(`${year} Event Lookup - ${district["label"]}`);
+    setTitle(`${year} Completed Events Lookup - ${district["label"]}`);
 
     setCountry("None");
     setStateProv("None");
@@ -222,15 +215,6 @@ export default function TeamLookup() {
   function getTopBar() {
     return (
       <div className={styles.button_group}>
-        <Select
-          className={styles.dropdown}
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-          }}
-          options={yearOptions}
-          onChange={yearClick}
-          value={{ value: `${year}`, label: `${year}` }}
-        />
         <Select
           className={styles.dropdown}
           styles={{

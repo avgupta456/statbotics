@@ -42,6 +42,13 @@ export default function Navigation() {
           >
             Teams
           </Nav.Link>
+          <Nav.Link
+            onClick={() => setNavExpanded(false)}
+            className={styles.navItem}
+            href="/events"
+          >
+            Events
+          </Nav.Link>
           <NavDropdown title="Historical">
             <Nav.Link
               onClick={() => setNavExpanded(false)}
