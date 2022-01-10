@@ -9,6 +9,7 @@ import {
   TeamYearLookup,
   CurrentTeamYearLookup,
   EventLookup,
+  CurrentEventsHome,
   CurrentEventLookup,
   TeamView,
   EventView,
@@ -31,12 +32,15 @@ const App = () => {
           <CurrentTeamYearLookup />
         </Route>
         <Route exact path="/events">
+          <CurrentEventsHome />
+        </Route>
+        <Route exact path="/completed_events">
           <CurrentEventLookup />
         </Route>
         <Route exact path="/all/teams">
           <TeamLookup />
         </Route>
-        <Route exact path="/all/team-years">
+        <Route exact path="/all/team_years">
           <TeamYearLookup />
         </Route>
         <Route exact path="/all/events">

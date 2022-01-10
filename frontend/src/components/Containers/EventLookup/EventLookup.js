@@ -28,7 +28,7 @@ import {
 
 import styles from "./EventLookup.module.css";
 
-export default function TeamLookup() {
+export default function EventLookup() {
   const [year, setYear] = useState(2020);
   const [week, setWeek] = useState("None");
 

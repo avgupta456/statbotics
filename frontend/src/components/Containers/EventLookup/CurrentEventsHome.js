@@ -4,8 +4,6 @@ import { Paper, Typography } from "@material-ui/core";
 import { Button } from "react-bootstrap";
 import Select from "react-select";
 
-import { ReactTable } from "./../../../components";
-
 import {
   fetchEvents,
   fetchEvents_byWeek,
@@ -27,7 +25,7 @@ import {
 
 import styles from "./EventLookup.module.css";
 
-export default function CurrentEventLookup() {
+export default function CurrentEventsHome() {
   const year = 2022;
 
   const [week, setWeek] = useState("None");
@@ -36,47 +34,24 @@ export default function CurrentEventLookup() {
   const [stateProv, setStateProv] = useState("None");
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Events");
-  const [title, setTitle] = useState(`${year} Completed Events Lookup`);
-  const [data, setData] = useState([]);
 
   const [weekDropdown, setWeekDropdown] = useState("Select Week");
   const [stateDropdown, setStateDropdown] = useState("Select State");
   const [countryDropdown, setCountryDropdown] = useState("Select Country");
   const [districtDropdown, setDistrictDropdown] = useState("Select District");
 
-  //column name, searchable, visible, link, hint
-  const columns = [
-    ["Key", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
-    ["Week", false, true, false, "Competition Week"],
-    ["Top 8 Elo", false, true, false, "Average of Top 8 Elos"],
-    ["Top 24 Elo", false, true, false, "Average of Top 24 Elos"],
-    ["Mean Elo", false, true, false, ""],
-    ["Top 8 OPR", false, true, false, "Average of Top 8 OPRs"],
-    ["Top 24 OPR", false, true, false, "Average of Top 24 OPRs"],
-    ["Mean OPR", false, true, false, ""],
-  ];
+  const [ongoingEvents, setOngoingEvents] = useState([]);
+  const [completedEvents, setCompletedEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
-    function clean(events) {
-      return events
-        .filter(function (x) {
-          return x["status"] === "Completed";
-        })
-        .map(function (x, i) {
-          return [
-            x["key"],
-            "event/" + x["key"] + "|" + x["name"],
-            x["week"],
-            x["elo_top8"],
-            x["elo_top24"],
-            x["elo_mean"],
-            parseInt(x["opr_top8"] * 10) / 10,
-            parseInt(x["opr_top24"] * 10) / 10,
-            parseInt(x["opr_mean"] * 10) / 10,
-          ];
-        });
-    }
+    const setEvents = (events) => {
+      setOngoingEvents(events.filter((event) => event.status === "Ongoing"));
+      setCompletedEvents(
+        events.filter((event) => event.status === "Completed")
+      );
+      setUpcomingEvents(events.filter((event) => event.status === "Upcoming"));
+    };
 
     const getEvents = async () => {
       let new_events;
@@ -85,7 +60,7 @@ export default function CurrentEventLookup() {
       } else {
         new_events = await fetchEvents_byWeek(year, week);
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
     const getEvents_byCountry = async () => {
@@ -95,7 +70,7 @@ export default function CurrentEventLookup() {
       } else {
         new_events = await fetchEvents_byCountryWeek(year, country, week);
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
     const getEvents_byState = async () => {
@@ -110,7 +85,7 @@ export default function CurrentEventLookup() {
           week
         );
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
     const getEvents_byDistrict = async () => {
@@ -120,10 +95,10 @@ export default function CurrentEventLookup() {
       } else {
         new_events = await fetchEvents_byDistrictWeek(year, district, week);
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
-    setData([]);
+    setEvents([]);
     if (format === "Events") {
       getEvents();
     } else if (format === "Country") {
@@ -154,16 +129,12 @@ export default function CurrentEventLookup() {
 
     setDistrict("None");
     setDistrictDropdown("Select District");
-
-    setTitle(`${year} Completed Events Lookup`);
   }
 
   const stateClick = (state) => {
     if (state["value"] === "All") {
-      setTitle(`${year} Completed Events Lookup - ${country}`);
       setFormat("Country");
     } else {
-      setTitle(`${year} Completed Events Lookup - ${state["label"]}`);
       setFormat("State");
     }
 
@@ -181,8 +152,6 @@ export default function CurrentEventLookup() {
 
   const countryClick = (country) => {
     setFormat("Country");
-    setTitle(`${year} Completed Events Lookup - ${country["label"]}`);
-
     setCountry(country["value"]);
     setCountryDropdown(country["label"]);
 
@@ -201,7 +170,6 @@ export default function CurrentEventLookup() {
 
   const districtClick = (district) => {
     setFormat("District");
-    setTitle(`${year} Completed Events Lookup - ${district["label"]}`);
 
     setCountry("None");
     setStateProv("None");
@@ -278,7 +246,30 @@ export default function CurrentEventLookup() {
       <Paper elevation={3} className={styles.body}>
         <div>
           {getTopBar()}
-          <ReactTable title={title} columns={columns} data={data} />
+          <div>
+            <p className={styles.header}>
+              Ongoing Events ({ongoingEvents.length})
+            </p>
+            {ongoingEvents.slice(0, 5).map((event) => (
+              <p>{event["name"]}</p>
+            ))}
+          </div>
+          <div>
+            <p className={styles.header}>
+              Upcoming Events ({upcomingEvents.length})
+            </p>
+            {upcomingEvents.slice(0, 5).map((event) => (
+              <p>{event["name"]}</p>
+            ))}
+          </div>
+          <div>
+            <p className={styles.header}>
+              Completed Events ({completedEvents.length})
+            </p>
+            {completedEvents.slice(0, 5).map((event) => (
+              <p>{event["name"]}</p>
+            ))}
+          </div>
         </div>
       </Paper>
     </div>
