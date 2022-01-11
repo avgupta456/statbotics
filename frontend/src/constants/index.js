@@ -76,6 +76,7 @@ export const usaOptions = [
   { value: "WV", label: "West Virginia" },
   { value: "WI", label: "Wisconsin" },
   { value: "WY", label: "Wyoming" },
+  { value: "DC", label: "District of Columbia" },
 ];
 
 export const canadaOptions = [

@@ -23,6 +23,8 @@ import {
   weekOptions,
 } from "./../../../constants";
 
+import { default as EventView } from "./../../EventView/EventView";
+
 import styles from "./EventLookup.module.css";
 
 export default function CurrentEventsHome() {
@@ -250,25 +252,35 @@ export default function CurrentEventsHome() {
             <p className={styles.header}>
               Ongoing Events ({ongoingEvents.length})
             </p>
-            {ongoingEvents.slice(0, 5).map((event) => (
-              <p>{event["name"]}</p>
-            ))}
+            <div className={styles.eventsList}>
+              {ongoingEvents.slice(0, 5).map((event) => (
+                <EventView event={event} key={event["key"]} />
+              ))}
+            </div>
           </div>
+          <hr />
           <div>
             <p className={styles.header}>
               Upcoming Events ({upcomingEvents.length})
             </p>
-            {upcomingEvents.slice(0, 5).map((event) => (
-              <p>{event["name"]}</p>
-            ))}
+            <div className={styles.eventsList}>
+              {upcomingEvents.slice(0, 5).map((event) => (
+                <EventView event={event} key={event["key"]} />
+              ))}
+            </div>
           </div>
+          <hr />
           <div>
             <p className={styles.header}>
-              Completed Events ({completedEvents.length})
+              <a href="./completed_events">
+                Completed Events ({completedEvents.length})
+              </a>
             </p>
-            {completedEvents.slice(0, 5).map((event) => (
-              <p>{event["name"]}</p>
-            ))}
+            <div className={styles.eventsList}>
+              {completedEvents.slice(0, 5).map((event) => (
+                <EventView event={event} key={event["key"]} />
+              ))}
+            </div>
           </div>
         </div>
       </Paper>
