@@ -60,7 +60,7 @@ export default function Navigation() {
             <Nav.Link
               onClick={() => setNavExpanded(false)}
               className={styles.dropdown}
-              href="/all/team-years"
+              href="/all/team_years"
             >
               Team Years
             </Nav.Link>
@@ -72,13 +72,29 @@ export default function Navigation() {
               Events
             </Nav.Link>
           </NavDropdown>
-          <Nav.Link
-            onClick={() => setNavExpanded(false)}
-            className={styles.navItem}
-            href="/docs"
-          >
-            API Docs
-          </Nav.Link>
+          <NavDropdown title="Misc">
+            <Nav.Link
+              onClick={() => setNavExpanded(false)}
+              className={styles.dropdown}
+              href="/compare"
+            >
+              Compare Teams
+            </Nav.Link>
+            <Nav.Link
+              onClick={() => setNavExpanded(false)}
+              className={styles.dropdown}
+              href="/predict"
+            >
+              Predict Match
+            </Nav.Link>
+            <Nav.Link
+              onClick={() => setNavExpanded(false)}
+              className={styles.dropdown}
+              href="/docs"
+            >
+              API Docs
+            </Nav.Link>
+          </NavDropdown>
         </Nav>
         <NavDropdown.Divider />
         <Nav>

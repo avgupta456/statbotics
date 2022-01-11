@@ -55,6 +55,7 @@ export default function EventView({ event }) {
       <strong>{event["name"]}</strong>
       <p>{loc}</p>
       <p>{status}</p>
+      <p>{event.week}</p>
     </Paper>
   );
 }
