@@ -51,17 +51,23 @@ export default function TeamLookup() {
 
   useEffect(() => {
     function clean(teams) {
-      console.log(teams);
-      return teams.map((x) => [
-        x["team"],
-        "team/" + x["team"] + "|" + x["name"],
-        x["elo_end"],
-        parseInt(x["opr_no_fouls"] * 10) / 10,
-        parseInt(x["opr_auto"] * 10) / 10,
-        parseInt(x["opr_teleop"] * 10) / 10,
-        parseInt(x["opr_endgame"] * 10) / 10,
-        parseInt(x["winrate"] * 1000) / 10 + "%",
-      ]);
+      let newTeams = teams.map((x) => {
+        const elo = x["elo_end"] > 0 ? x["elo_end"] : x["elo_start"];
+        const opr = x["opr_no_fouls"] > 0 ? x["opr_no_fouls"] : x["opr"];
+        return [
+          x["team"],
+          "team/" + x["team"] + "|" + x["name"],
+          elo,
+          parseInt(opr * 10) / 10,
+          parseInt(x["opr_auto"] * 10) / 10,
+          parseInt(x["opr_teleop"] * 10) / 10,
+          parseInt(x["opr_endgame"] * 10) / 10,
+          parseInt(x["winrate"] * 1000) / 10 + "%",
+        ];
+      });
+
+      newTeams = newTeams.sort((a, b) => b[2] - a[2]);
+      return newTeams;
     }
 
     const getTeams = async () => {

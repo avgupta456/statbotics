@@ -197,13 +197,13 @@ def process_year(
 
         if year_num >= 2016:
             rate = prior_opr / prior_opr_global
-            team_year_obj.opr_auto = rate * (year.auto_mean or 0) / TM
-            team_year_obj.opr_teleop = rate * (year.teleop_mean or 0) / TM
-            team_year_obj.opr_1 = rate * (year.rp_1_mean or 0) / TM
-            team_year_obj.opr_2 = rate * (year.rp_2_mean or 0) / TM
-            team_year_obj.opr_endgame = rate * (year.endgame_mean or 0) / TM
-            team_year_obj.opr_fouls = rate * (year.fouls_mean or 0) / TM
-            team_year_obj.opr_no_fouls = rate * (year.no_fouls_mean or 0) / TM
+            team_year_obj.opr_auto = round(rate * (year.auto_mean or 0) / TM, 2)
+            team_year_obj.opr_teleop = round(rate * (year.teleop_mean or 0) / TM, 2)
+            team_year_obj.opr_1 = round(rate * (year.one_mean or 0) / TM, 2)
+            team_year_obj.opr_2 = round(rate * (year.two_mean or 0) / TM, 2)
+            team_year_obj.opr_endgame = round(rate * (year.endgame_mean or 0) / TM, 2)
+            team_year_obj.opr_fouls = round(rate * (year.fouls_mean or 0) / TM, 2)
+            team_year_obj.opr_no_fouls = round(rate * (year.no_fouls_mean or 0) / TM, 2)
 
         boost = ((team_year_obj.elo_start or 0) - 1500) * 0.001
         team_ils_1[num] = max(-1 / 3, ils_1_seed + boost)

@@ -46,6 +46,10 @@ export default function CurrentEventsHome() {
   const [completedEvents, setCompletedEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
+  const [showAllOngoing, setShowAllOngoing] = useState(false);
+  const [showAllCompleted, setShowAllCompleted] = useState(false);
+  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
+
   useEffect(() => {
     const setEvents = (events) => {
       setOngoingEvents(events.filter((event) => event.status === "Ongoing"));
@@ -245,41 +249,75 @@ export default function CurrentEventsHome() {
 
   return (
     <div>
-      <Paper elevation={3} className={styles.body}>
+      <Paper elevation={3} className={styles.body_padding}>
         <div>
           {getTopBar()}
           <div>
-            <p className={styles.header}>
-              Ongoing Events ({ongoingEvents.length})
-            </p>
+            <div className={styles.headerContainer}>
+              <p className={styles.header}>
+                Ongoing Events ({ongoingEvents.length})
+              </p>
+              {ongoingEvents.length > 4 && (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => setShowAllOngoing(!showAllOngoing)}
+                >
+                  {showAllOngoing ? "Show Less" : "Show All"}
+                </Button>
+              )}
+            </div>
             <div className={styles.eventsList}>
-              {ongoingEvents.slice(0, 5).map((event) => (
+              {ongoingEvents.slice(0, showAllOngoing ? 200 : 4).map((event) => (
                 <EventView event={event} key={event["key"]} />
               ))}
             </div>
           </div>
           <hr />
           <div>
-            <p className={styles.header}>
-              Upcoming Events ({upcomingEvents.length})
-            </p>
+            <div className={styles.headerContainer}>
+              <p className={styles.header}>
+                Upcoming Events ({upcomingEvents.length})
+              </p>
+              {upcomingEvents.length > 4 && (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => setShowAllUpcoming(!showAllUpcoming)}
+                >
+                  {showAllUpcoming ? "Show Less" : "Show All"}
+                </Button>
+              )}
+            </div>
             <div className={styles.eventsList}>
-              {upcomingEvents.slice(0, 5).map((event) => (
-                <EventView event={event} key={event["key"]} />
-              ))}
+              {upcomingEvents
+                .slice(0, showAllUpcoming ? 200 : 4)
+                .map((event) => (
+                  <EventView event={event} key={event["key"]} />
+                ))}
             </div>
           </div>
           <hr />
           <div>
-            <p className={styles.header}>
-              <a href="./completed_events">
-                Completed Events ({completedEvents.length})
-              </a>
-            </p>
+            <div className={styles.headerContainer}>
+              <p className={styles.header}>
+                <a href="./completed_events">
+                  Completed Events ({completedEvents.length})
+                </a>
+              </p>
+              {completedEvents.length > 4 && (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => setShowAllCompleted(!showAllCompleted)}
+                >
+                  {showAllCompleted ? "Show Less" : "Show All"}
+                </Button>
+              )}
+            </div>
             <div className={styles.eventsList}>
-              {completedEvents.slice(0, 5).map((event) => (
-                <EventView event={event} key={event["key"]} />
-              ))}
+              {completedEvents
+                .slice(0, showAllCompleted ? 200 : 4)
+                .map((event) => (
+                  <EventView event={event} key={event["key"]} />
+                ))}
             </div>
           </div>
         </div>

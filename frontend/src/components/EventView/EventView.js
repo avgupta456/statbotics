@@ -1,18 +1,12 @@
-import { Paper } from "@material-ui/core";
 import React from "react";
 
-import { usaOptions, canadaOptions } from "../../constants";
+import { Card, CardContent, Typography } from "@material-ui/core";
 
 import styles from "./EventView.module.css";
 
 export default function EventView({ event }) {
   const country = event.country;
-  let state = "";
-  if (country === "USA") {
-    state = usaOptions.find((state) => state.value === event.state)?.label;
-  } else if (country === "Canada") {
-    state = canadaOptions.find((state) => state.value === event.state)?.label;
-  }
+  const state = event.state === "All" ? null : event.state;
 
   let district = "";
   if (event.district) {
@@ -28,13 +22,11 @@ export default function EventView({ event }) {
     loc = `${loc} (${district})`;
   }
 
-  let status = "";
-  if (event.current_match < 0) {
-    status = "Upcoming";
+  let status = null;
+  if (event.status === "Upcoming" || event.status === "Completed") {
+    status = null;
   } else if (event.current_match === 0) {
     status = "Schedule Released";
-  } else if (event.status === "Completed") {
-    status = "Completed";
   } else if (event.current_match < event.qual_matches) {
     status = `Qual Match ${event.current_match}`;
   } else if (event.current_match === event.qual_matches) {
@@ -43,19 +35,27 @@ export default function EventView({ event }) {
     status = "Elims Ongoing";
   }
 
+  let name = event.name;
+  if (name.length > 35) {
+    name = name.substring(0, 32) + "...";
+  }
+
   return (
-    <Paper
-      elevation={1}
+    <Card
       className={styles.container}
-      style={{ backgroundColor: "#f8f8f8" }}
       onClick={() => {
         window.location.href = `/event/${event.key}`;
       }}
     >
-      <strong>{event["name"]}</strong>
-      <p>{loc}</p>
-      <p>{status}</p>
-      <p>{event.week}</p>
-    </Paper>
+      <CardContent>
+        <Typography variant="h6" component="div">
+          <strong>{name}</strong>
+        </Typography>
+        <Typography color="text.secondary">
+          {loc} - Week {event.week}
+        </Typography>
+        <Typography>{status}</Typography>
+      </CardContent>
+    </Card>
   );
 }
