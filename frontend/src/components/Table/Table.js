@@ -61,13 +61,11 @@ export default function ReactTable({ title, columns, data }) {
   const options = {
     filter: false,
     print: false,
-    responsive: "ScrollFullHeight",
+    responsive: "standard",
     rowsPerPageOptions: [10, 20, 50],
     selectableRows: "none",
-    fixedHeaderOptions: {
-      xAxis: false,
-      yAxis: true,
-    },
+    fixedSelectColumn: false,
+    fixedHeader: true,
     elevation: 0,
     textLabels: {
       body: {

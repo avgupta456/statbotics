@@ -200,8 +200,7 @@ def process_year(
 
     team_team_events: Dict[int, List[Dict[str, float]]] = defaultdict(list)
     event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
-    filtered_team_events = [t for t in team_events if t.status != "Upcoming"]
-    for team_event in filtered_team_events:
+    for team_event in team_events:
         event_team_events[team_event.event].append(team_event)
 
     matches_dict: Dict[str, List[Match]] = defaultdict(list)
@@ -214,8 +213,7 @@ def process_year(
         event_key, team_id = team_match.event, team_match.team
         team_matches_dict[event_key][team_id].append(team_match)
 
-    filtered_events = [e for e in events if e.status != "Upcoming"]
-    for event in filtered_events:
+    for event in events:
         event_matches = matches_dict[event.key]
         for team_event in event_team_events[event.key]:
             num = team_event.team
@@ -234,8 +232,11 @@ def process_year(
                 team_event.opr_no_fouls = team_years_dict[num].opr_no_fouls
                 team_event.ils_1_start = round(team_ils_1[num], 2)
                 team_event.ils_2_start = round(team_ils_2[num], 2)
-                team_event.ils_1_end = team_ils_1[num]  # overwritten later
-                team_event.ils_2_end = team_ils_2[num]  # overwritten later
+                team_event.ils_1_end = round(team_ils_1[num], 2)  # overwritten later
+                team_event.ils_2_end = round(team_ils_2[num], 2)  # overwritten later
+
+        if event.status == "Upcoming":
+            continue
 
         oprs, ils, stats = process_event(
             event,

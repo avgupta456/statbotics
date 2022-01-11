@@ -24,22 +24,37 @@ export default function EventView({ event }) {
   if (state) {
     loc = `${state}, ${loc}`;
   }
-
   if (district) {
     loc = `${loc} (${district})`;
+  }
+
+  let status = "";
+  if (event.current_match < 0) {
+    status = "Upcoming";
+  } else if (event.current_match === 0) {
+    status = "Schedule Released";
+  } else if (event.status === "Completed") {
+    status = "Completed";
+  } else if (event.current_match < event.qual_matches) {
+    status = `Qual Match ${event.current_match}`;
+  } else if (event.current_match === event.qual_matches) {
+    status = "Quals Over";
+  } else {
+    status = "Elims Ongoing";
   }
 
   return (
     <Paper
       elevation={1}
       className={styles.container}
-      style={{ "background-color": "#f8f8f8" }}
+      style={{ backgroundColor: "#f8f8f8" }}
       onClick={() => {
         window.location.href = `/event/${event.key}`;
       }}
     >
       <strong>{event["name"]}</strong>
       <p>{loc}</p>
+      <p>{status}</p>
     </Paper>
   );
 }
