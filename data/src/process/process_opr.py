@@ -21,23 +21,35 @@ def process_event(
     sd_score: float,
 ) -> Tuple[Any, Any, List[Union[int, float]]]:
     matches = sorted(matches, key=lambda m: (m.playoff, m.sort()))
-    oprs, ils = opr_model.opr_v2(event, team_events, matches, mean_score)
+
+    oprs: Dict[int, List[List[float]]] = {}
+    ils: Dict[int, List[List[float]]] = {}
+    if event.status != "Upcoming":
+        oprs, ils = opr_model.opr_v2(event, team_events, matches, mean_score)
+    else:
+        # Hack around not computing OPRs for upcoming events
+        M = len(matches)
+        oprs = {te.team: [[te.opr_start or 0] for _ in range(M)] for te in team_events}
+        ils = {
+            te.team: [[te.ils_1_start or 0, te.ils_2_start or 0] for _ in range(M)]
+            for te in team_events
+        }
+
     opr_acc, opr_mse, mix_acc, mix_mse, count = 0, 0, 0, 0, 0
     rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp = 0, 0, 0, 0, 0
 
-    filtered_matches = [m for m in matches if m.status == "Completed"]
-    for i, m in enumerate(filtered_matches):
+    max_ind = len([m for m in matches if m.status == "Completed" and not m.playoff]) - 1
+
+    for i, m in enumerate(matches):
         red, blue = m.get_teams()
         red_oprs: List[float] = []
         blue_oprs: List[float] = []
-        ind = -1 if m.playoff else i
+        ind = -1 if m.playoff else min(i, max_ind)
 
         for r in red:
-            if r in oprs and len(oprs[r]) > 0 and ind <= len(oprs[r]):
-                red_oprs.append(round(oprs[r][ind][0], 2))
+            red_oprs.append(round(oprs[r][ind][0], 2))
         for b in blue:
-            if b in oprs and len(oprs[b]) > 0 and ind <= len(oprs[b]):
-                blue_oprs.append(round(oprs[b][ind][0], 2))
+            blue_oprs.append(round(oprs[b][ind][0], 2))
 
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
         red_sum, blue_sum = sum(red_oprs), sum(blue_oprs)
@@ -48,18 +60,22 @@ def process_event(
         m.opr_winner = "red" if red_sum > blue_sum else "blue"
         win_prob = opr_model.win_prob(red_sum, blue_sum, sd_score)
         m.opr_win_prob = round(win_prob, 4)
-        opr_mse += (win_probs[winner] - win_prob) ** 2
-        if m.opr_winner == winner:
-            opr_acc += 1
+
+        if m.status == "Completed":
+            opr_mse += (win_probs[winner] - win_prob) ** 2
+            if m.opr_winner == winner:
+                opr_acc += 1
 
         win_prob = 0.5 * ((m.elo_win_prob or 0) + m.opr_win_prob)
         m.mix_winner = "red" if win_prob > 0.5 else "blue"
         m.mix_win_prob = round(win_prob, 4)
-        mix_mse += (win_probs[winner] - win_prob) ** 2
-        if m.mix_winner == winner:
-            mix_acc += 1
 
-        count += 1
+        if m.status == "Completed":
+            mix_mse += (win_probs[winner] - win_prob) ** 2
+            if m.mix_winner == winner:
+                mix_acc += 1
+
+            count += 1
 
         if year >= 2016 and not m.playoff:
             m.red_ils_1_sum = red_ils_1_sum = round(
@@ -80,24 +96,25 @@ def process_event(
             m.blue_rp_1_prob = blue_rp_1_prob = round(logistic(blue_ils_1_sum), 4)
             m.blue_rp_2_prob = blue_rp_2_prob = round(logistic(blue_ils_2_sum), 4)
 
-            red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
-            blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
+            if m.status == "Completed":
+                red_rp_1, red_rp_2 = m.red_rp_1, m.red_rp_2
+                blue_rp_1, blue_rp_2 = m.blue_rp_1, m.blue_rp_2
 
-            if int(red_rp_1_prob + 0.5) == red_rp_1:
-                rp1_acc += 1
-            if int(red_rp_2_prob + 0.5) == red_rp_2:
-                rp2_acc += 1
-            if int(blue_rp_1_prob + 0.5) == blue_rp_1:
-                rp1_acc += 1
-            if int(blue_rp_2_prob + 0.5) == blue_rp_2:
-                rp2_acc += 1
+                if int(red_rp_1_prob + 0.5) == red_rp_1:
+                    rp1_acc += 1
+                if int(red_rp_2_prob + 0.5) == red_rp_2:
+                    rp2_acc += 1
+                if int(blue_rp_1_prob + 0.5) == blue_rp_1:
+                    rp1_acc += 1
+                if int(blue_rp_2_prob + 0.5) == blue_rp_2:
+                    rp2_acc += 1
 
-            rp1_mse += (red_rp_1_prob - (red_rp_1 or 0)) ** 2
-            rp2_mse += (red_rp_2_prob - (red_rp_2 or 0)) ** 2
-            rp1_mse += (blue_rp_1_prob - (blue_rp_1 or 0)) ** 2
-            rp2_mse += (blue_rp_2_prob - (blue_rp_2 or 0)) ** 2
+                rp1_mse += (red_rp_1_prob - (red_rp_1 or 0)) ** 2
+                rp2_mse += (red_rp_2_prob - (red_rp_2 or 0)) ** 2
+                rp1_mse += (blue_rp_1_prob - (blue_rp_1 or 0)) ** 2
+                rp2_mse += (blue_rp_2_prob - (blue_rp_2 or 0)) ** 2
 
-            count_rp += 2
+                count_rp += 2
 
     opr_stats = [opr_acc, opr_mse, mix_acc, mix_mse, count]
     rp_stats = [rp1_acc, rp1_mse, rp2_acc, rp2_mse, count_rp]
@@ -235,9 +252,6 @@ def process_year(
                 team_event.ils_1_end = round(team_ils_1[num], 2)  # overwritten later
                 team_event.ils_2_end = round(team_ils_2[num], 2)  # overwritten later
 
-        if event.status == "Upcoming":
-            continue
-
         oprs, ils, stats = process_event(
             event,
             event_team_events[event.key],
@@ -246,6 +260,9 @@ def process_year(
             mean_score,
             sd_score,
         )
+
+        if event.status == "Upcoming":
+            continue
 
         opr_acc += stats[0]
         opr_mse += stats[1]

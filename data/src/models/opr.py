@@ -311,16 +311,18 @@ def get_ixOPR(
 
 
 def get_ILS(team_events: List[TeamEvent], quals: List[Match]):
+    completed_quals = [m for m in quals if m.status == "Completed"]
+
     min_ils = -1 / 3
     teams: List[int] = []
     out: Any = {}
+
     for team_event in team_events:
         teams.append(team_event.team)
-        out[teams[-1]] = np.zeros(shape=(len(quals) + 1, 2))  # type: ignore
+        out[teams[-1]] = np.zeros(shape=(len(completed_quals) + 1, 2))  # type: ignore
         curr = [team_event.ils_1_start, team_event.ils_2_start]
         out[teams[-1]][0] = np.array(curr)  # type: ignore
 
-    completed_quals = [m for m in quals if m.status == "Completed"]
     for i, m in enumerate(completed_quals):
         red, blue = m.get_teams()
         adjust_red_1 = (

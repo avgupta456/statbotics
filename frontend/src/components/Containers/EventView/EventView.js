@@ -168,7 +168,7 @@ export default function EventView() {
     function clean(rawStats) {
       let cleanStats;
       let temp_teams = [];
-      if (year >= 2016 && eventObj.current_match >= 0) {
+      if (year >= 2016 && eventObj.current_match > 0) {
         cleanStats = rawStats.map(function (x, i) {
           temp_teams.push({ team: x["team"], name: x["team_name"] });
           return [
@@ -239,9 +239,11 @@ export default function EventView() {
       let total = 0;
       if (year >= 2016) {
         cleanMatches = tempMatches.map(function (x, i) {
-          total += 1;
-          if (x["winner"] === x["mix_winner"]) {
-            correct += 1;
+          if (x["status"] === "Completed") {
+            total += 1;
+            if (x["winner"] === x["mix_winner"]) {
+              correct += 1;
+            }
           }
           return {
             match: x["key"].split("_")[1],
@@ -285,9 +287,11 @@ export default function EventView() {
         });
       } else {
         cleanMatches = tempMatches.map(function (x, i) {
-          total += 1;
-          if (x["winner"] === x["mix_winner"]) {
-            correct += 1;
+          if (x["status"] === "Completed") {
+            total += 1;
+            if (x["winner"] === x["mix_winner"]) {
+              correct += 1;
+            }
           }
           return {
             match: x["key"].split("_")[1],
@@ -306,7 +310,7 @@ export default function EventView() {
           };
         });
       }
-      return [cleanMatches, correct / total];
+      return [cleanMatches, total > 0 ? correct / total : 0];
     }
 
     const quals = clean(rawMatches, year, false);
@@ -471,7 +475,7 @@ export default function EventView() {
             marks
             step={1}
             min={0}
-            max={quals}
+            max={eventObj.current_match}
           />
         </div>
         <ReactTable
@@ -556,7 +560,7 @@ export default function EventView() {
             title="Team Statistics"
             columns={
               year >= 2016
-                ? eventObj.current_match < 0
+                ? eventObj.current_match <= 0
                   ? upcomingColumns
                   : columns
                 : oldColumns
@@ -569,7 +573,7 @@ export default function EventView() {
           eventKey="Figures"
           title="Figures"
           tabClassName={width > 600 ? "" : styles.mobileTab}
-          disabled={eventObj.current_match < 0}
+          disabled={eventObj.current_match <= 0}
         >
           <br />
           <Row>

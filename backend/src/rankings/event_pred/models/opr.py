@@ -163,17 +163,18 @@ def get_ILS(
     team_stats: Dict[int, Dict[str, Union[int, float]]],
     team_matches: Dict[str, Dict[int, Any]],
 ):
-    min_ils = -1 / 3
+    completed_quals = [m for m in quals if m["status"] == "Completed"]
 
+    min_ils = -1 / 3
     out: Dict[int, Any] = {}
+
     for team in teams:
-        out[team] = np.zeros(shape=(len(quals) + 1, 2))  # type: ignore
+        out[team] = np.zeros(shape=(len(completed_quals) + 1, 2))  # type: ignore
         out[team][0] = [
             team_stats[team]["ils_1_start"],
             team_stats[team]["ils_2_start"],
         ]
 
-    completed_quals = [m for m in quals if m["status"] == "Completed"]
     for i, m in enumerate(completed_quals):
         red, blue = m["red"], m["blue"]
         adjust_red_1 = (m["red_rp_1"] - logistic(sum([out[r][i][0] for r in red]))) / 10

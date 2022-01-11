@@ -10,8 +10,10 @@ def get_rps(matches: List[Dict[str, Any]], teams: List[int]) -> Dict[int, Any]:
 
     for i, m in enumerate(matches):
         red, blue = m["red"], m["blue"]
-        red_rps = max(0, m["red_rp_1"] + m["red_rp_2"])  # handles pre 2016
-        blue_rps = max(0, m["blue_rp_1"] + m["blue_rp_2"])  # handles pre 2016
+        red_rp_1, red_rp_2 = m["red_rp_1"] or 0, m["red_rp_2"] or 0
+        blue_rp_1, blue_rp_2 = m["blue_rp_1"] or 0, m["blue_rp_2"] or 0
+        red_rps = max(0, red_rp_1 + red_rp_2)  # handles pre-2016
+        blue_rps = max(0, blue_rp_1 + blue_rp_2)  # handles pre-2016
         if m["winner"] == "red":
             red_rps += 2
         elif m["winner"] == "blue":
