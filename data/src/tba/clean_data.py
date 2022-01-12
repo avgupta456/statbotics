@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 
-from helper.utils import load
-from tba.config import get_tba
+from src.helper.utils import load
+from src.tba.config import get_tba
 
 USA = {
     "Alabama": "AL",

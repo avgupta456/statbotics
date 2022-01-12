@@ -3,10 +3,10 @@ from typing import Any, Callable, Dict, List, Set, Tuple
 import numpy as np
 import scipy.linalg  # type: ignore
 
-from db.models.event import Event
-from db.models.match import Match
-from db.models.team_event import TeamEvent
-from helper.utils import logistic
+from src.db.models.event import Event
+from src.db.models.match import Match
+from src.db.models.team_event import TeamEvent
+from src.helper.utils import logistic
 
 
 def score(match: Match, alliance: str) -> List[int]:

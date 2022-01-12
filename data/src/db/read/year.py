@@ -3,8 +3,8 @@ from typing import List, Optional
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from db.main import Session
-from db.models.year import Year, YearORM
+from src.db.main import Session
+from src.db.models.year import Year, YearORM
 
 
 def get_years(year: Optional[int] = None) -> List[Year]:

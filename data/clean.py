@@ -6,7 +6,7 @@ load_dotenv()
 
 os.environ["LOCAL_DB"] = "True"
 
-from process.process_main import process_main  # noqa: E402
+from src.process.process_main import process_main  # noqa: E402
 
 start_year = 2002
 end_year = 2022

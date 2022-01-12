@@ -3,9 +3,9 @@ from typing import List, Optional
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from db.main import Session
-from db.models.event import EventORM
-from db.models.match import Match, MatchORM
+from src.db.main import Session
+from src.db.models.event import EventORM
+from src.db.models.match import Match, MatchORM
 
 
 def get_matches(

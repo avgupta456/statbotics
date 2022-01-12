@@ -14,6 +14,8 @@ sqlalchemy-cockroachdb = "^1.4.3"
 python-dotenv = "^0.19.2"
 psycopg2 = "^2.9.2"
 attrs = "^21.2.0"
+fastapi = "^0.71.0"
+uvicorn = "^0.16.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"

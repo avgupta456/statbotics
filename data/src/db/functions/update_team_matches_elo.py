@@ -3,8 +3,8 @@ from typing import Dict
 from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from db.main import Session
-from db.models.team_match import TeamMatchORM
+from src.db.main import Session
+from src.db.models.team_match import TeamMatchORM
 
 
 def update_team_matches_elo(year: int, team_match_ids: Dict[int, float]):

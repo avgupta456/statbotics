@@ -5,15 +5,15 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from db.main import Session
-from db.models.event import EventORM
-from db.models.main import TModel, TModelORM
-from db.models.match import MatchORM
-from db.models.team import TeamORM
-from db.models.team_event import TeamEventORM
-from db.models.team_match import TeamMatchORM
-from db.models.team_year import TeamYearORM
-from db.models.year import YearORM
+from src.db.main import Session
+from src.db.models.event import EventORM
+from src.db.models.main import TModel, TModelORM
+from src.db.models.match import MatchORM
+from src.db.models.team import TeamORM
+from src.db.models.team_event import TeamEventORM
+from src.db.models.team_match import TeamMatchORM
+from src.db.models.team_year import TeamYearORM
+from src.db.models.year import YearORM
 
 CUTOFF = 1000
 

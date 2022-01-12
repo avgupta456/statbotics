@@ -1,12 +1,12 @@
 from typing import Any, Dict, List, Tuple
 
-from db.models.event import Event
-from db.models.match import Match
-from db.models.team import Team
-from db.models.team_event import TeamEvent
-from db.models.team_match import TeamMatch
-from db.models.team_year import TeamYear
-from db.models.year import Year
+from src.db.models.event import Event
+from src.db.models.match import Match
+from src.db.models.team import Team
+from src.db.models.team_event import TeamEvent
+from src.db.models.team_match import TeamMatch
+from src.db.models.team_year import TeamYear
+from src.db.models.year import Year
 
 
 def create_team_obj(data: Dict[str, Any]) -> Team:
