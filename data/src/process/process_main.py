@@ -10,14 +10,20 @@ from src.db.models.team_year import TeamYear
 from src.db.models.year import Year
 from src.db.read.event import get_num_events as get_num_events_db
 from src.db.read.match import get_num_matches as get_num_matches_db
-from src.db.read.team import get_num_teams as get_num_teams_db, get_teams as get_teams_db
+from src.db.read.team import (
+    get_num_teams as get_num_teams_db,
+    get_teams as get_teams_db,
+)
 from src.db.read.team_event import get_num_team_events as get_num_team_events_db
 from src.db.read.team_match import get_num_team_matches as get_num_team_matches_db
 from src.db.read.team_year import (
     get_num_team_years as get_num_team_years_db,
     get_team_years as get_team_years_db,
 )
-from src.db.read.year import get_num_years as get_num_years_db, get_years as get_years_db
+from src.db.read.year import (
+    get_num_years as get_num_years_db,
+    get_years as get_years_db,
+)
 from src.db.write.main import (
     update_events as update_events_db,
     update_matches as update_matches_db,
