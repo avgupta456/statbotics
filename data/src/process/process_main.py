@@ -1,24 +1,30 @@
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-from db.main import clean_db
-from db.models.event import Event
-from db.models.match import Match
-from db.models.team_event import TeamEvent
-from db.models.team_match import TeamMatch
-from db.models.team_year import TeamYear
-from db.models.year import Year
-from db.read.event import get_num_events as get_num_events_db
-from db.read.match import get_num_matches as get_num_matches_db
-from db.read.team import get_num_teams as get_num_teams_db, get_teams as get_teams_db
-from db.read.team_event import get_num_team_events as get_num_team_events_db
-from db.read.team_match import get_num_team_matches as get_num_team_matches_db
-from db.read.team_year import (
+from src.db.main import clean_db
+from src.db.models.event import Event
+from src.db.models.match import Match
+from src.db.models.team_event import TeamEvent
+from src.db.models.team_match import TeamMatch
+from src.db.models.team_year import TeamYear
+from src.db.models.year import Year
+from src.db.read.event import get_num_events as get_num_events_db
+from src.db.read.match import get_num_matches as get_num_matches_db
+from src.db.read.team import (
+    get_num_teams as get_num_teams_db,
+    get_teams as get_teams_db,
+)
+from src.db.read.team_event import get_num_team_events as get_num_team_events_db
+from src.db.read.team_match import get_num_team_matches as get_num_team_matches_db
+from src.db.read.team_year import (
     get_num_team_years as get_num_team_years_db,
     get_team_years as get_team_years_db,
 )
-from db.read.year import get_num_years as get_num_years_db, get_years as get_years_db
-from db.write.main import (
+from src.db.read.year import (
+    get_num_years as get_num_years_db,
+    get_years as get_years_db,
+)
+from src.db.write.main import (
     update_events as update_events_db,
     update_matches as update_matches_db,
     update_team_events as update_team_events_db,
@@ -27,13 +33,13 @@ from db.write.main import (
     update_teams as update_teams_db,
     update_years as update_years_db,
 )
-from process.process_avg import process_year as process_year_avg
-from process.process_elo import (
+from src.process.process_avg import process_year as process_year_avg
+from src.process.process_elo import (
     post_process as post_process_elo,
     process_year as process_year_elo,
 )
-from process.process_opr import process_year as process_year_opr
-from process.process_tba import (
+from src.process.process_opr import process_year as process_year_opr
+from src.process.process_tba import (
     load_teams,
     post_process as post_process_tba,
     process_year as process_year_tba,

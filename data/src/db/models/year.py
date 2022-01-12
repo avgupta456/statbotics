@@ -4,8 +4,8 @@ import attr
 from sqlalchemy import Column, Float, Integer
 from sqlalchemy.sql.schema import PrimaryKeyConstraint
 
-from db.main import Base
-from db.models.main import Model, ModelORM
+from src.db.main import Base
+from src.db.models.main import Model, ModelORM
 
 
 class YearORM(Base, ModelORM):

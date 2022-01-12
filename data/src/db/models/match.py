@@ -4,8 +4,8 @@ import attr
 from sqlalchemy import Boolean, Column, Float, Integer, String
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
-from db.main import Base
-from db.models.main import Model, ModelORM
+from src.db.main import Base
+from src.db.models.main import Model, ModelORM
 
 
 class MatchORM(Base, ModelORM):

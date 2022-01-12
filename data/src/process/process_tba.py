@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
-from db.functions.remove_teams_no_events import remove_teams_with_no_events
-from db.models.create import (
+from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
+from src.db.models.create import (
     create_event_obj,
     create_match_obj,
     create_team_event_obj,
@@ -9,15 +9,15 @@ from db.models.create import (
     create_team_year_obj,
     create_year_obj,
 )
-from db.models.event import Event
-from db.models.match import Match
-from db.models.team import Team
-from db.models.team_event import TeamEvent
-from db.models.team_match import TeamMatch
-from db.models.team_year import TeamYear
-from db.models.year import Year
-from tba.clean_data import get_team_district as get_team_district_tba
-from tba.read_tba import (
+from src.db.models.event import Event
+from src.db.models.match import Match
+from src.db.models.team import Team
+from src.db.models.team_event import TeamEvent
+from src.db.models.team_match import TeamMatch
+from src.db.models.team_year import TeamYear
+from src.db.models.year import Year
+from src.tba.clean_data import get_team_district as get_team_district_tba
+from src.tba.read_tba import (
     get_events as get_events_tba,
     get_matches as get_matches_tba,
     get_team_events as get_team_events_tba,

@@ -5,8 +5,8 @@ from sqlalchemy import Column, Float, Integer
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.sql.sqltypes import String
 
-from db.main import Base
-from db.models.main import Model, ModelORM
+from src.db.main import Base
+from src.db.models.main import Model, ModelORM
 
 
 class TeamEventORM(Base, ModelORM):

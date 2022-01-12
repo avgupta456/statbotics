@@ -3,8 +3,8 @@ from typing import List
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from db.main import Session
-from db.models.team import Team, TeamORM
+from src.db.main import Session
+from src.db.models.team import Team, TeamORM
 
 
 def get_teams() -> List[Team]:

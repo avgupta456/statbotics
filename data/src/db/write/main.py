@@ -1,13 +1,13 @@
 from typing import List
 
-from db.models.event import Event, EventORM
-from db.models.match import Match, MatchORM
-from db.models.team import Team, TeamORM
-from db.models.team_event import TeamEvent, TeamEventORM
-from db.models.team_match import TeamMatch, TeamMatchORM
-from db.models.team_year import TeamYear, TeamYearORM
-from db.models.year import Year, YearORM
-from db.write.template import update_template
+from src.db.models.event import Event, EventORM
+from src.db.models.match import Match, MatchORM
+from src.db.models.team import Team, TeamORM
+from src.db.models.team_event import TeamEvent, TeamEventORM
+from src.db.models.team_match import TeamMatch, TeamMatchORM
+from src.db.models.team_year import TeamYear, TeamYearORM
+from src.db.models.year import Year, YearORM
+from src.db.write.template import update_template
 
 
 def update_events(items: List[Event], only_insert: bool = False) -> None:

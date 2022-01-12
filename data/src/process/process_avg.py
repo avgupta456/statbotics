@@ -1,9 +1,9 @@
 import statistics
 from typing import List
 
-from db.models.event import Event
-from db.models.match import Match
-from db.models.year import Year
+from src.db.models.event import Event
+from src.db.models.match import Match
+from src.db.models.year import Year
 
 
 def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
@@ -42,7 +42,7 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         year.two_mean = 0
         year.endgame_mean = 10
         year.fouls_mean = 0
-        year.no_fouls_mean = 10
+        year.no_fouls_mean = 30
         year.rp_1_mean = 0.2
         year.rp_2_mean = 0.1
 
