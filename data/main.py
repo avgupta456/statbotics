@@ -18,7 +18,7 @@ from src.process.process_main import process_main  # noqa: E402
 
 @app.get("/")
 def hello_world():
-    return {"message": "Hello World"}
+    return {"message": "Hello World!"}
 
 
 @app.get("/data_refresh")
