@@ -6,10 +6,13 @@ import numpy as np
 
 
 def dump(path: str, data: Any):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    with open(path, "wb") as f:
-        pickle.dump(data, f)
+    try:
+        if not os.path.exists(path):
+            os.makedirs(path)
+        with open(path, "wb") as f:
+            pickle.dump(data, f)
+    except OSError:
+        pass
 
 
 def load(file: str):
@@ -18,10 +21,13 @@ def load(file: str):
 
 
 def dump_cache(path: str, data: Any):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    with open(path + "/data.p", "wb") as f:
-        pickle.dump(data, f)
+    try:
+        if not os.path.exists(path):
+            os.makedirs(path)
+        with open(path + "/data.p", "wb") as f:
+            pickle.dump(data, f)
+    except OSError:
+        pass
 
 
 def load_cache(file: str):
