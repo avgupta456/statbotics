@@ -114,11 +114,11 @@ class TeamEvent(Model):
     ils_1_end: Optional[float] = None
     ils_2_end: Optional[float] = None
 
-    wins: Optional[int] = None
-    losses: Optional[int] = None
-    ties: Optional[int] = None
-    count: Optional[int] = None
-    winrate: Optional[float] = None
+    wins: int = 0
+    losses: int = 0
+    ties: int = 0
+    count: int = 0
+    winrate: float = 0
     rank: Optional[int] = None
 
     @classmethod

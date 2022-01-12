@@ -10,6 +10,10 @@ from db.models.year import Year
 
 
 def create_team_obj(data: Dict[str, Any]) -> Team:
+    data["wins"] = 0
+    data["losses"] = 0
+    data["ties"] = 0
+    data["count"] = 0
     return Team.from_dict(data)
 
 
@@ -18,6 +22,10 @@ def create_year_obj(data: Dict[str, Any]) -> Year:
 
 
 def create_team_year_obj(data: Dict[str, Any]) -> TeamYear:
+    data["wins"] = 0
+    data["losses"] = 0
+    data["ties"] = 0
+    data["count"] = 0
     return TeamYear.from_dict(data)
 
 
@@ -26,6 +34,10 @@ def create_event_obj(data: Dict[str, Any]) -> Event:
 
 
 def create_team_event_obj(data: Dict[str, Any]) -> TeamEvent:
+    data["wins"] = 0
+    data["losses"] = 0
+    data["ties"] = 0
+    data["count"] = 0
     return TeamEvent.from_dict(data)
 
 

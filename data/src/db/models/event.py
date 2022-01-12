@@ -33,6 +33,10 @@ class EventORM(Base, ModelORM):
     # Choices are 'Upcoming', 'Ongoing', 'Completed'
     status = Column(String(10))
 
+    # -1 represents upcoming event, 0 represents schedule release, x represents match x concluded
+    current_match = Column(Integer)
+    qual_matches = Column(Integer)
+
     """ELO"""
     elo_max = Column(Float)
     elo_top8 = Column(Float)
@@ -75,7 +79,10 @@ class Event(Model):
     district: str
     type: int
     week: int
+
     status: str
+    current_match: int
+    qual_matches: int
 
     elo_max: Optional[float] = None
     elo_top8: Optional[float] = None

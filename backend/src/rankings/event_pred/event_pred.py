@@ -13,6 +13,7 @@ from src.rankings.event_pred.models import (
 def get_dicts(event_key: str, year: int):
     key = str(year) + event_key
     sd_score, mean_score = read.get_year_dict(year=year)
+    sd_score, mean_score = sd_score or 1, mean_score or 1
     teams, team_stats = read.get_teams_dict(key)
     matches = read.get_matches_dict(key)
     team_matches = read.get_team_matches_dict(key)

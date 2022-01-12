@@ -33,6 +33,19 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         rp_1s.extend([match.red_rp_1 or 0, match.blue_rp_1 or 0])
         rp_2s.extend([match.red_rp_2 or 0, match.blue_rp_2 or 0])
 
+    if year.year == 2022:
+        year.score_mean = 30
+        year.score_sd = 10
+        year.auto_mean = 10
+        year.teleop_mean = 10
+        year.one_mean = 10
+        year.two_mean = 0
+        year.endgame_mean = 10
+        year.fouls_mean = 0
+        year.no_fouls_mean = 10
+        year.rp_1_mean = 0.2
+        year.rp_2_mean = 0.1
+
     if len(scores) > 0:
         year.score_mean = round(sum(scores) / len(scores), 2)
         year.score_sd = round(statistics.pstdev(scores), 2)

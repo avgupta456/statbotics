@@ -49,11 +49,11 @@ class Team(Model):
     elo_recent: Optional[float] = None
     elo_mean: Optional[float] = None
     elo_max: Optional[float] = None
-    wins: Optional[int] = None
-    losses: Optional[int] = None
-    ties: Optional[int] = None
-    count: Optional[int] = None
-    winrate: Optional[float] = None
+    wins: int = 0
+    losses: int = 0
+    ties: int = 0
+    count: int = 0
+    winrate: float = 0
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Team":

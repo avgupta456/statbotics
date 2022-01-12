@@ -23,12 +23,14 @@ export const fetchTeams_Simple = async () => {
 
 export const fetchTeams = async (active, method) => {
   try {
-    var teams;
+    let completeUrl = `${url}/teams`;
     if (active) {
-      teams = await axios.get(`${url}/teams/active/by/${method}`);
-    } else {
-      teams = await axios.get(`${url}/teams/by/${method}`);
+      completeUrl += `/active`;
     }
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);
@@ -38,14 +40,14 @@ export const fetchTeams = async (active, method) => {
 
 export const fetchTeams_byCountry = async (country, active, method) => {
   try {
-    var teams;
+    let completeUrl = `${url}/teams/country/${country}`;
     if (active) {
-      teams = await axios.get(
-        `${url}/teams/country/${country}/active/by/${method}`
-      );
-    } else {
-      teams = await axios.get(`${url}/teams/country/${country}/by/${method}`);
+      completeUrl += `/active`;
     }
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);
@@ -59,16 +61,14 @@ export const fetchTeams_byState = async (country, state, active, method) => {
   }
 
   try {
-    var teams;
+    let completeUrl = `${url}/teams/country/${country}/state/${state}`;
     if (active) {
-      teams = await axios.get(
-        `${url}/teams/country/${country}/state/${state}/active/by/${method}`
-      );
-    } else {
-      teams = await axios.get(
-        `${url}/teams/country/${country}/state/${state}/by/${method}`
-      );
+      completeUrl += `/active`;
     }
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);
@@ -78,14 +78,14 @@ export const fetchTeams_byState = async (country, state, active, method) => {
 
 export const fetchTeams_byDistrict = async (district, active, method) => {
   try {
-    var teams;
+    let completeUrl = `${url}/teams/district/${district}`;
     if (active) {
-      teams = await axios.get(
-        `${url}/teams/district/${district}/active/by/${method}`
-      );
-    } else {
-      teams = await axios.get(`${url}/teams/district/${district}/by/${method}`);
+      completeUrl += `/active`;
     }
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);

@@ -3,6 +3,11 @@
   padding: 5px;
 }
 
+.body_padding {
+  margin: 1%;
+  padding: 20px;
+}
+
 .button_group {
   width: auto;
   margin: 5px;
@@ -14,4 +19,23 @@
 .dropdown {
   margin: 10px 3px 0px 3px;
   width: 160px;
+}
+
+.headerContainer {
+  display: flex;
+  align-items: center;
+}
+
+.header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-top: 12px;
+}
+
+.eventsList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
 }

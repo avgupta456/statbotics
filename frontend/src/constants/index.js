@@ -76,6 +76,7 @@ export const usaOptions = [
   { value: "WV", label: "West Virginia" },
   { value: "WI", label: "Wisconsin" },
   { value: "WY", label: "Wyoming" },
+  { value: "DC", label: "District of Columbia" },
 ];
 
 export const canadaOptions = [
@@ -142,4 +143,5 @@ export const ilsMapping = {
   2018: ["Auto RP", "Climb RP"],
   2019: ["Rocket RP", "HAB RP"],
   2020: ["Generator RP", "Hang RP"],
+  2022: ["Cargo RP", "Climb RP"],
 };

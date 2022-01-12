@@ -127,7 +127,7 @@ export default function TeamView() {
       }
       return [
         x["event"],
-        "./../events/" + x["event"] + "|" + event_name,
+        "./../event/" + x["event"] + "|" + event_name,
         x["year"],
         x["week"],
         x["wins"] + "-" + x["losses"] + "-" + x["ties"],
@@ -197,7 +197,7 @@ export default function TeamView() {
       <hr />
       <br />
       <ReactTable
-        title=<Typography variant="h6">{team}: Recent Years</Typography>
+        title={<Typography variant="h6">{team}: Recent Years</Typography>}
         columns={yearColumns}
         data={yearData}
       />

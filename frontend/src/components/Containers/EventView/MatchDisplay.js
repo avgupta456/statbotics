@@ -32,7 +32,7 @@ export default function getMatchDisplays(year, matches) {
                   <Col key={i}>
                     <a
                       className={styles.link}
-                      href={`./../teams/${x["red"][i]}`}
+                      href={`./../team/${x["red"][i]}`}
                       children={
                         x["winner"] === "red" ? (
                           <b>{x["red"][i]}</b>
@@ -47,8 +47,10 @@ export default function getMatchDisplays(year, matches) {
               <Col>
                 {x["winner"] === "red" ? (
                   <b>{x["red_score"]}</b>
-                ) : (
+                ) : x["red_score"] >= 0 ? (
                   x["red_score"]
+                ) : (
+                  ""
                 )}
                 {x["red_rp_1"] === 1 ? <sup>●</sup> : ""}
                 {x["red_rp_2"] === 1 ? <sup>●</sup> : ""}
@@ -60,7 +62,7 @@ export default function getMatchDisplays(year, matches) {
                   <Col key={i}>
                     <a
                       className={styles.link}
-                      href={`./../teams/${x["blue"][i]}`}
+                      href={`./../team/${x["blue"][i]}`}
                       children={
                         x["winner"] === "blue" ? (
                           <b>{x["blue"][i]}</b>
@@ -75,8 +77,10 @@ export default function getMatchDisplays(year, matches) {
               <Col>
                 {x["winner"] === "blue" ? (
                   <b>{x["blue_score"]}</b>
-                ) : (
+                ) : x["blue_score"] >= 0 ? (
                   x["blue_score"]
+                ) : (
+                  ""
                 )}
                 {x["blue_rp_1"] === 1 ? <sup>●</sup> : ""}
                 {x["blue_rp_2"] === 1 ? <sup>●</sup> : ""}
@@ -87,7 +91,13 @@ export default function getMatchDisplays(year, matches) {
             <Row>
               <Col
                 className={
-                  x["winner_correct"] ? styles.correct : styles.incorrect
+                  x["red_score"] >= 0
+                    ? x["winner_correct"]
+                      ? styles.correct
+                      : styles.incorrect
+                    : x["winner_pred"] === "red"
+                    ? styles.red
+                    : styles.blue
                 }
               >
                 {x["winner_pred"] === "red" ? "Red" : "Blue"}
@@ -95,7 +105,7 @@ export default function getMatchDisplays(year, matches) {
               {year >= 2016 ? (
                 <Col
                   className={
-                    x["playoff"]
+                    x["playoff"] || x["red_score"] < 0
                       ? styles.none
                       : x["red_rp_1_correct"]
                       ? styles.correct
@@ -112,7 +122,7 @@ export default function getMatchDisplays(year, matches) {
               {year >= 2016 ? (
                 <Col
                   className={
-                    x["playoff"]
+                    x["playoff"] || x["red_score"] < 0
                       ? styles.none
                       : x["red_rp_2_correct"]
                       ? styles.correct
@@ -130,7 +140,13 @@ export default function getMatchDisplays(year, matches) {
             <Row>
               <Col
                 className={
-                  x["winner_correct"] ? styles.correct : styles.incorrect
+                  x["red_score"] >= 0
+                    ? x["winner_correct"]
+                      ? styles.correct
+                      : styles.incorrect
+                    : x["winner_pred"] === "red"
+                    ? styles.red
+                    : styles.blue
                 }
               >
                 {parseInt(x["win_prob"] * 100) + "%"}
@@ -138,7 +154,7 @@ export default function getMatchDisplays(year, matches) {
               {year >= 2016 ? (
                 <Col
                   className={
-                    x["playoff"]
+                    x["playoff"] || x["red_score"] < 0
                       ? styles.none
                       : x["blue_rp_1_correct"]
                       ? styles.correct
@@ -155,7 +171,7 @@ export default function getMatchDisplays(year, matches) {
               {year >= 2016 ? (
                 <Col
                   className={
-                    x["playoff"]
+                    x["playoff"] || x["red_score"] < 0
                       ? styles.none
                       : x["blue_rp_2_correct"]
                       ? styles.correct

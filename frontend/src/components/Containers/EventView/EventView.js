@@ -30,6 +30,7 @@ export default function EventView() {
 
   const [done, setDone] = useState(false);
 
+  const [eventObj, setEventObj] = useState({});
   const [event, setEvent] = useState("");
   const [year, setYear] = useState("");
   const [ILS1, setILS1] = useState("");
@@ -74,6 +75,15 @@ export default function EventView() {
     [ILS2, false, true, false, "ILS score (higher is better)"],
   ];
 
+  const upcomingColumns = [
+    columns[0],
+    columns[1],
+    columns[3],
+    columns[4],
+    columns[8],
+    columns[9],
+  ];
+
   //column name, searchable, visible, link, hint
   const oldColumns = [
     ["Number", true, true, false, ""],
@@ -113,6 +123,7 @@ export default function EventView() {
         history.push(`/404`);
         return;
       }
+      setEventObj(event);
       setEvent(event["name"]);
       setYear(event["year"]);
       if (event["year"] >= 2016) {
@@ -157,12 +168,12 @@ export default function EventView() {
     function clean(rawStats) {
       let cleanStats;
       let temp_teams = [];
-      if (year >= 2016) {
+      if (year >= 2016 && eventObj.current_match > 0) {
         cleanStats = rawStats.map(function (x, i) {
           temp_teams.push({ team: x["team"], name: x["team_name"] });
           return [
             x["team"],
-            "./../teams/" + x["team"] + "|" + x["team_name"],
+            "./../team/" + x["team"] + "|" + x["team_name"],
             x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_no_fouls"] * 10) / 10,
@@ -173,25 +184,40 @@ export default function EventView() {
             x["ils_2_end"],
           ];
         });
+        cleanStats.sort((a, b) => a[2] - b[2]);
+      } else if (year >= 2016) {
+        cleanStats = rawStats.map(function (x, i) {
+          temp_teams.push({ team: x["team"], name: x["team_name"] });
+          const opr = x["opr_no_fouls"] > 0 ? x["opr_no_fouls"] : x["opr_end"];
+          return [
+            x["team"],
+            "./../team/" + x["team"] + "|" + x["team_name"],
+            x["elo_end"],
+            parseInt(opr * 10) / 10,
+            x["ils_1_end"],
+            x["ils_2_end"],
+          ];
+        });
+        cleanStats.sort((a, b) => b[2] - a[2]);
       } else {
         cleanStats = rawStats.map(function (x, i) {
           temp_teams.push({ team: x["team"], name: x["team_name"] });
           return [
             x["team"],
-            "./../teams/" + x["team"] + "|" + x["team_name"],
+            "./../team/" + x["team"] + "|" + x["team_name"],
             x["rank"] > 0 ? x["rank"] : "",
             x["elo_end"],
             parseInt(x["opr_end"] * 10) / 10,
           ];
         });
+        cleanStats.sort((a, b) => a[2] - b[2]);
       }
       setTeams(temp_teams);
-      cleanStats.sort((a, b) => a[2] - b[2]);
       return cleanStats;
     }
 
     setStats(clean(rawStats));
-  }, [year, rawStats]);
+  }, [year, eventObj, rawStats]);
 
   useEffect(() => {
     function clean(rawMatches, year, playoffs) {
@@ -213,9 +239,11 @@ export default function EventView() {
       let total = 0;
       if (year >= 2016) {
         cleanMatches = tempMatches.map(function (x, i) {
-          total += 1;
-          if (x["winner"] === x["mix_winner"]) {
-            correct += 1;
+          if (x["status"] === "Completed") {
+            total += 1;
+            if (x["winner"] === x["mix_winner"]) {
+              correct += 1;
+            }
           }
           return {
             match: x["key"].split("_")[1],
@@ -259,9 +287,11 @@ export default function EventView() {
         });
       } else {
         cleanMatches = tempMatches.map(function (x, i) {
-          total += 1;
-          if (x["winner"] === x["mix_winner"]) {
-            correct += 1;
+          if (x["status"] === "Completed") {
+            total += 1;
+            if (x["winner"] === x["mix_winner"]) {
+              correct += 1;
+            }
           }
           return {
             match: x["key"].split("_")[1],
@@ -280,7 +310,7 @@ export default function EventView() {
           };
         });
       }
-      return [cleanMatches, correct / total];
+      return [cleanMatches, total > 0 ? correct / total : 0];
     }
 
     const quals = clean(rawMatches, year, false);
@@ -322,7 +352,7 @@ export default function EventView() {
       } catch (e) {}
       return [
         x["team"],
-        "./../teams/" + x["team"] + "|" + x["name"],
+        "./../team/" + x["team"] + "|" + x["name"],
         rank_mean,
         rank_5,
         rank_median,
@@ -417,47 +447,44 @@ export default function EventView() {
   }
 
   function simTab() {
-    if (quals === 0 || year === 2015 || year === 2010) {
-      return <Tab eventKey="simulation" title="Simulation" disabled></Tab>;
-    } else {
-      return (
-        <Tab
-          eventKey="simulation"
-          title="Simulation"
-          tabClassName={width > 600 ? "" : styles.mobileTab}
-        >
-          <br />
-          <h4>Simulation</h4>
-          Using the Elo, OPR, and ILS statistics from a snapshot in time, we can
-          simulate the remainder of the event. For each seed index, 100
-          simulations are run and analyzed. The first tiebreaker is included
-          from 2016 onwards.{" "}
-          <b>
-            The simulation happens live, and may take a few seconds to load. Be
-            patient :)
-          </b>
-          <hr />
-          Simulate from:
-          {index === 0 ? " Schedule Release" : ` Qualification Match ${index}`}
-          <div className={styles.slider}>
-            <Slider
-              defaultValue={0}
-              onChangeCommitted={handleSliderChange}
-              valueLabelDisplay="auto"
-              marks
-              step={1}
-              min={0}
-              max={quals}
-            />
-          </div>
-          <ReactTable
-            title="Ranking Simulation"
-            columns={simColumns}
-            data={cleanSim}
+    return (
+      <Tab
+        eventKey="simulation"
+        title="Simulation"
+        tabClassName={width > 600 ? "" : styles.mobileTab}
+        disabled={quals === 0 || year === 2015 || year === 2010}
+      >
+        <br />
+        <h4>Simulation</h4>
+        Using the Elo, OPR, and ILS statistics from a snapshot in time, we can
+        simulate the remainder of the event. For each seed index, 100
+        simulations are run and analyzed. The first tiebreaker is included from
+        2016 onwards.{" "}
+        <b>
+          The simulation happens live, and may take a few seconds to load. Be
+          patient :)
+        </b>
+        <hr />
+        Simulate from:
+        {index === 0 ? " Schedule Release" : ` Qualification Match ${index}`}
+        <div className={styles.slider}>
+          <Slider
+            defaultValue={0}
+            onChangeCommitted={handleSliderChange}
+            valueLabelDisplay="auto"
+            marks
+            step={1}
+            min={0}
+            max={eventObj.current_match}
           />
-        </Tab>
-      );
-    }
+        </div>
+        <ReactTable
+          title="Ranking Simulation"
+          columns={simColumns}
+          data={cleanSim}
+        />
+      </Tab>
+    );
   }
 
   function getBarChart() {
@@ -531,7 +558,13 @@ export default function EventView() {
           <h4>Team Statistics</h4>
           <ReactTable
             title="Team Statistics"
-            columns={year >= 2016 ? columns : oldColumns}
+            columns={
+              year >= 2016
+                ? eventObj.current_match <= 0
+                  ? upcomingColumns
+                  : columns
+                : oldColumns
+            }
             data={stats}
           />
         </Tab>
@@ -540,6 +573,7 @@ export default function EventView() {
           eventKey="Figures"
           title="Figures"
           tabClassName={width > 600 ? "" : styles.mobileTab}
+          disabled={eventObj.current_match <= 0}
         >
           <br />
           <Row>
@@ -568,6 +602,7 @@ export default function EventView() {
           eventKey="Quals"
           title="Qual Matches"
           tabClassName={width > 600 ? "" : styles.mobileTab}
+          disabled={eventObj.current_match < 0}
         >
           <br />
           <h4>Match Predictions</h4>
@@ -596,6 +631,10 @@ export default function EventView() {
           eventKey="Elims"
           title="Elim Matches"
           tabClassName={width > 600 ? "" : styles.mobileTab}
+          disabled={
+            eventObj.current_match < 0 ||
+            eventObj.current_match < eventObj.qual_matches
+          }
         >
           <br />
           <h4>Match Predictions</h4>

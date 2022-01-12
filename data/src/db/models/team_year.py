@@ -97,11 +97,11 @@ class TeamYear(Model):
     ils_1: Optional[float] = None
     ils_2: Optional[float] = None
 
-    wins: Optional[int] = None
-    losses: Optional[int] = None
-    ties: Optional[int] = None
-    count: Optional[int] = None
-    winrate: Optional[float] = None
+    wins: int = 0
+    losses: int = 0
+    ties: int = 0
+    count: int = 0
+    winrate: float = 0
 
     elo_rank: Optional[int] = None
     elo_percentile: Optional[float] = None

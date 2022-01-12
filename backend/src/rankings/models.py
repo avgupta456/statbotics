@@ -93,6 +93,8 @@ class Event(models.Model):
     type = models.IntegerField()  # ex: 1
     week = models.IntegerField()  # ex: 2
     status = models.CharField(max_length=10)  # ex: Upcoming
+    current_match = models.IntegerField()  # ex: 30
+    qual_matches = models.IntegerField()  # ex: 72
     elo_top8 = models.IntegerField()  # ex: 1800
     elo_top24 = models.IntegerField()  # ex: 1700
     elo_mean = models.IntegerField()  # ex: 1600

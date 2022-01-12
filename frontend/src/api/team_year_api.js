@@ -6,9 +6,11 @@ import { url } from "./index";
 
 export const fetchTeamsYear = async (year, method) => {
   try {
-    const teams = await axios.get(
-      `${url}/team_years/year/${year}/by/${method}`
-    );
+    let completeUrl = `${url}/team_years/year/${year}`;
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);
@@ -18,9 +20,11 @@ export const fetchTeamsYear = async (year, method) => {
 
 export const fetchTeamsYear_byCountry = async (country, year, method) => {
   try {
-    const teams = await axios.get(
-      `${url}/team_years/year/${year}/country/${country}/by/${method}`
-    );
+    let completeUrl = `${url}/team_years/year/${year}/country/${country}`;
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);
@@ -34,9 +38,11 @@ export const fetchTeamsYear_byState = async (country, state, year, method) => {
   }
 
   try {
-    const teams = await axios.get(
-      `${url}/team_years/year/${year}/country/${country}/state/${state}/by/${method}`
-    );
+    let completeUrl = `${url}/team_years/year/${year}/country/${country}/state/${state}`;
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);
@@ -46,9 +52,11 @@ export const fetchTeamsYear_byState = async (country, state, year, method) => {
 
 export const fetchTeamsYear_byDistrict = async (district, year, method) => {
   try {
-    const teams = await axios.get(
-      `${url}/team_years/year/${year}/district/${district}/by/${method}`
-    );
+    let completeUrl = `${url}/team_years/year/${year}/district/${district}`;
+    if (method) {
+      completeUrl += `/by/${method}`;
+    }
+    const teams = await axios.get(completeUrl);
     return teams.data;
   } catch (error) {
     console.log(error);

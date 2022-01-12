@@ -95,9 +95,16 @@ def process_year(
         if event_status == "Completed" and num_matches == 0:
             continue
 
+        current_match = 0 if len(matches) > 0 else -1
+        qual_matches = 0 if len(matches) > 0 else -1
+
         for match in matches:
             match["year"] = year_num
             match_obj, curr_team_match_objs = create_match_obj(match)
+            if match_obj.status == "Completed":
+                current_match += 1
+            if not match_obj.playoff:
+                qual_matches += 1
             match_objs.append(match_obj)
             team_match_objs.extend(curr_team_match_objs)
 
@@ -122,6 +129,8 @@ def process_year(
             team_event_objs.append(team_event_obj)
 
         event_obj.status = event_status
+        event_obj.current_match = current_match
+        event_obj.qual_matches = qual_matches
         event_objs.append(event_obj)
 
     return (

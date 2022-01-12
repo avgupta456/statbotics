@@ -4,8 +4,6 @@ import { Paper, Typography } from "@material-ui/core";
 import { Button } from "react-bootstrap";
 import Select from "react-select";
 
-import { ReactTable } from "./../../../components";
-
 import {
   fetchEvents,
   fetchEvents_byWeek,
@@ -22,57 +20,44 @@ import {
   usaOptions,
   canadaOptions,
   districtOptions,
-  yearOptions,
   weekOptions,
 } from "./../../../constants";
 
+import { default as EventView } from "./../../EventView/EventView";
+
 import styles from "./EventLookup.module.css";
 
-export default function EventLookup() {
-  const [year, setYear] = useState(2020);
+export default function CurrentEventsHome() {
+  const year = 2022;
+
   const [week, setWeek] = useState("None");
 
   const [country, setCountry] = useState("None");
   const [stateProv, setStateProv] = useState("None");
   const [district, setDistrict] = useState("None");
   const [format, setFormat] = useState("Events");
-  const [title, setTitle] = useState("Events Lookup");
-  const [data, setData] = useState([]);
 
   const [weekDropdown, setWeekDropdown] = useState("Select Week");
   const [stateDropdown, setStateDropdown] = useState("Select State");
   const [countryDropdown, setCountryDropdown] = useState("Select Country");
   const [districtDropdown, setDistrictDropdown] = useState("Select District");
 
-  //column name, searchable, visible, link, hint
-  const columns = [
-    ["Key", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
-    ["Week", false, true, false, "Competition Week"],
-    ["Top 8 Elo", false, true, false, "Average of Top 8 Elos"],
-    ["Top 24 Elo", false, true, false, "Average of Top 24 Elos"],
-    ["Mean Elo", false, true, false, ""],
-    ["Top 8 OPR", false, true, false, "Average of Top 8 OPRs"],
-    ["Top 24 OPR", false, true, false, "Average of Top 24 OPRs"],
-    ["Mean OPR", false, true, false, ""],
-  ];
+  const [ongoingEvents, setOngoingEvents] = useState([]);
+  const [completedEvents, setCompletedEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+  const [showAllOngoing, setShowAllOngoing] = useState(false);
+  const [showAllCompleted, setShowAllCompleted] = useState(false);
+  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
 
   useEffect(() => {
-    function clean(events) {
-      return events.map(function (x, i) {
-        return [
-          x["key"],
-          "event/" + x["key"] + "|" + x["name"],
-          x["week"],
-          x["elo_top8"],
-          x["elo_top24"],
-          x["elo_mean"],
-          parseInt(x["opr_top8"] * 10) / 10,
-          parseInt(x["opr_top24"] * 10) / 10,
-          parseInt(x["opr_mean"] * 10) / 10,
-        ];
-      });
-    }
+    const setEvents = (events) => {
+      setOngoingEvents(events.filter((event) => event.status === "Ongoing"));
+      setCompletedEvents(
+        events.filter((event) => event.status === "Completed")
+      );
+      setUpcomingEvents(events.filter((event) => event.status === "Upcoming"));
+    };
 
     const getEvents = async () => {
       let new_events;
@@ -81,7 +66,7 @@ export default function EventLookup() {
       } else {
         new_events = await fetchEvents_byWeek(year, week);
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
     const getEvents_byCountry = async () => {
@@ -91,7 +76,7 @@ export default function EventLookup() {
       } else {
         new_events = await fetchEvents_byCountryWeek(year, country, week);
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
     const getEvents_byState = async () => {
@@ -106,7 +91,7 @@ export default function EventLookup() {
           week
         );
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
     const getEvents_byDistrict = async () => {
@@ -116,10 +101,10 @@ export default function EventLookup() {
       } else {
         new_events = await fetchEvents_byDistrictWeek(year, district, week);
       }
-      setData(clean(new_events));
+      setEvents(new_events);
     };
 
-    setData([]);
+    setEvents([]);
     if (format === "Events") {
       getEvents();
     } else if (format === "Country") {
@@ -131,20 +116,9 @@ export default function EventLookup() {
     }
   }, [format, country, stateProv, district, year, week]);
 
-  const yearClick = (year) => {
-    setYear(year["value"]);
-
-    setWeek("None");
-    setWeekDropdown("Select Week");
-
-    setTitle(`${year["value"]} Event Lookup`);
-  };
-
   const weekClick = (week) => {
     setWeek(week["value"]);
     setWeekDropdown(week["label"]);
-
-    setTitle(`${year} Event Lookup`);
   };
 
   function allClick() {
@@ -161,16 +135,12 @@ export default function EventLookup() {
 
     setDistrict("None");
     setDistrictDropdown("Select District");
-
-    setTitle(`${year} Event Lookup`);
   }
 
   const stateClick = (state) => {
     if (state["value"] === "All") {
-      setTitle(`${year} Event Lookup - ${country}`);
       setFormat("Country");
     } else {
-      setTitle(`${year} Event Lookup - ${state["label"]}`);
       setFormat("State");
     }
 
@@ -188,8 +158,6 @@ export default function EventLookup() {
 
   const countryClick = (country) => {
     setFormat("Country");
-    setTitle(`${year} Event Lookup - ${country["label"]}`);
-
     setCountry(country["value"]);
     setCountryDropdown(country["label"]);
 
@@ -208,7 +176,6 @@ export default function EventLookup() {
 
   const districtClick = (district) => {
     setFormat("District");
-    setTitle(`${year} Event Lookup - ${district["label"]}`);
 
     setCountry("None");
     setStateProv("None");
@@ -222,15 +189,6 @@ export default function EventLookup() {
   function getTopBar() {
     return (
       <div className={styles.button_group}>
-        <Select
-          className={styles.dropdown}
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-          }}
-          options={yearOptions}
-          onChange={yearClick}
-          value={{ value: `${year}`, label: `${year}` }}
-        />
         <Select
           className={styles.dropdown}
           styles={{
@@ -291,10 +249,77 @@ export default function EventLookup() {
 
   return (
     <div>
-      <Paper elevation={3} className={styles.body}>
+      <Paper elevation={3} className={styles.body_padding}>
         <div>
           {getTopBar()}
-          <ReactTable title={title} columns={columns} data={data} />
+          <div>
+            <div className={styles.headerContainer}>
+              <p className={styles.header}>
+                Ongoing Events ({ongoingEvents.length})
+              </p>
+              {ongoingEvents.length > 4 && (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => setShowAllOngoing(!showAllOngoing)}
+                >
+                  {showAllOngoing ? "Show Less" : "Show All"}
+                </Button>
+              )}
+            </div>
+            <div className={styles.eventsList}>
+              {ongoingEvents.slice(0, showAllOngoing ? 200 : 4).map((event) => (
+                <EventView event={event} key={event["key"]} />
+              ))}
+            </div>
+          </div>
+          <hr />
+          <div>
+            <div className={styles.headerContainer}>
+              <p className={styles.header}>
+                Upcoming Events ({upcomingEvents.length})
+              </p>
+              {upcomingEvents.length > 4 && (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => setShowAllUpcoming(!showAllUpcoming)}
+                >
+                  {showAllUpcoming ? "Show Less" : "Show All"}
+                </Button>
+              )}
+            </div>
+            <div className={styles.eventsList}>
+              {upcomingEvents
+                .slice(0, showAllUpcoming ? 200 : 4)
+                .map((event) => (
+                  <EventView event={event} key={event["key"]} />
+                ))}
+            </div>
+          </div>
+          <hr />
+          <div>
+            <div className={styles.headerContainer}>
+              <p className={styles.header}>
+                <a href="./completed_events">
+                  Completed Events ({completedEvents.length})
+                </a>
+              </p>
+              {completedEvents.length > 4 && (
+                <Button
+                  variant="outline-primary"
+                  onClick={() => setShowAllCompleted(!showAllCompleted)}
+                >
+                  {showAllCompleted ? "Show Less" : "Show All"}
+                </Button>
+              )}
+            </div>
+            <div className={styles.eventsList}>
+              {completedEvents
+                .slice(0, showAllCompleted ? 200 : 4)
+                .map((event) => (
+                  <EventView event={event} key={event["key"]} />
+                ))}
+            </div>
+          </div>
         </div>
       </Paper>
     </div>
