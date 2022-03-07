@@ -76,7 +76,7 @@ class TeamMatch(Model):
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamMatch":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return TeamMatch(**dict)
 
     """SUPER FUNCTIONS"""

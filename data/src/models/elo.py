@@ -1,6 +1,6 @@
 from typing import Dict, Optional, Tuple
 
-START_RATING = 1500
+START_RATING = 1450
 MEAN_REVERSION = 1450
 
 
@@ -22,7 +22,7 @@ def update_rating(
 ) -> Tuple[Dict[int, float], Dict[int, float]]:
     win_margin = (red_score - blue_score) / sd_score
     pred_win_margin = 4 / 1000 * (sum(red.values()) - sum(blue.values()))
-    k = 4 if playoff else 12
+    k = 3 if playoff else 12
 
     # prevents modification to inputs red and blue
     new_red: Dict[int, float] = {}

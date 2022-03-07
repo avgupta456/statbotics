@@ -274,10 +274,10 @@ def get_breakdown(
         # TEMPORARY, replace once TBA API is published
         out = {
             "auto": breakdown["autoPoints"],
-            "auto_movement": 0,
-            "auto_1": breakdown["autoPoints"],
+            "auto_movement": breakdown["autoTaxiPoints"],
+            "auto_1": breakdown["autoCargoPoints"],
             "auto_2": 0,
-            "teleop_1": breakdown["teleop1Points"],
+            "teleop_1": breakdown["teleopCargoPoints"],
             "teleop_2": 0,
         }
         out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
@@ -285,8 +285,8 @@ def get_breakdown(
         out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
         out["endgame"] = breakdown["endgamePoints"]
         out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
-        out["fouls"] = 0
-        out["rp1"] = 0
-        out["rp2"] = 0
+        out["fouls"] = breakdown["foulPoints"]
+        out["rp1"] = 1 if breakdown["cargoBonusRankingPoint"] else 0
+        out["rp2"] = 1 if breakdown["hangarBonusRankingPoint"] else 0
         return out
     return {}

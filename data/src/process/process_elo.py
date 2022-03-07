@@ -97,7 +97,7 @@ def process_year(
         match.blue_elo_sum = round(sum(blue_elo_pre.values()))
         win_prob = elo_win_prob(match.red_elo_sum, match.blue_elo_sum)
         match.elo_win_prob = round(win_prob, 4)
-        match.elo_winner = "red" if win_prob > 0.5 else "blue"
+        match.elo_winner = "red" if win_prob >= 0.5 else "blue"
 
         for t in red:
             team_event_key = get_team_event_key(t, event_key)

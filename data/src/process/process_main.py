@@ -96,22 +96,22 @@ def process_main(
 ):
     main_start = datetime.now()
 
+    print("Pre Processing")
+    overall_start = datetime.now()
+    start = overall_start
+
     if clean:
-        print("Pre Processing")
-        overall_start = datetime.now()
-        start = overall_start
         clean_db()
         print("Clean\t", datetime.now() - start)
         start = datetime.now()
-        teams = load_teams(cache=False)
-        print("Load\t", datetime.now() - start)
-        start = datetime.now()
-        update_teams_db(teams, True)
-        print("Write\t", datetime.now() - start)
-        print("Total\t", datetime.now() - overall_start)
-        print()
-    else:
-        teams = get_teams_db()
+
+    teams = load_teams(cache=False)
+    print("Load\t", datetime.now() - start)
+    start = datetime.now()
+    update_teams_db(teams, clean)
+    print("Write\t", datetime.now() - start)
+    print("Total\t", datetime.now() - overall_start)
+    print()
 
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # master dictionary
     means: Dict[int, float] = {}  # for OPR seed ratings
