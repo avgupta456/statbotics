@@ -62,7 +62,7 @@ export default function TeamLookup() {
           parseInt(x["opr_auto"] * 10) / 10,
           parseInt(x["opr_teleop"] * 10) / 10,
           parseInt(x["opr_endgame"] * 10) / 10,
-          parseInt(x["winrate"] * 1000) / 10 + "%",
+          parseInt(x["winrate"] * 1000) / 1000,
         ];
       });
 
