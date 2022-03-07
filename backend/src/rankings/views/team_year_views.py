@@ -19,7 +19,7 @@ from src.rankings.serializers import TeamYearSerializer
 )
 @api_view(["GET"])
 def TeamYear(request, num, year):
-    teamYears = TeamYearModel.objects.filter(team=num).filter(year=year).all()
+    teamYears = TeamYearModel.objects.filter(team=num).filter(year=year).filter(count__gt=0).all()
     serializer = TeamYearSerializer(teamYears, many=True)
     return Response(serializer.data)
 
@@ -37,7 +37,7 @@ def _TeamYears(
     metric=None,
     page=1,
 ):
-    teamYears = TeamYearModel.objects
+    teamYears = TeamYearModel.objects.filter(count__gt=0)
     if num:
         teamYears = teamYears.filter(team=num)
     if year:
