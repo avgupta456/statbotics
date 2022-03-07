@@ -86,6 +86,7 @@ export default function ReactTable({ title, columns, data }) {
       label: `${name}`,
       options: {
         sort: true,
+        sortDescFirst: !(name === "Number" || name === "Name"),
         filter: "false",
         searchable: `${searchable}` === "true",
         display: `${visible}` === "true",

@@ -162,7 +162,7 @@ class Match(Model):
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Match":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Match(**dict)
 
     """SUPER FUNCTIONS"""

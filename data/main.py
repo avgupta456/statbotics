@@ -24,3 +24,4 @@ def hello_world():
 @app.get("/data_refresh")
 def data_refresh():
     process_main(start_year=2022, end_year=2022, clean=False, fake_matches=False)
+    return {"message": "Data refreshed!"}

@@ -565,7 +565,7 @@ export default function EventView() {
                   : columns
                 : oldColumns
             }
-            data={stats}
+            data={stats.filter((x) => x[2] > 0)}
           />
         </Tab>
 

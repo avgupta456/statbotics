@@ -13,3 +13,15 @@ def get_tba(url: str):
 
 # 2005va, 2007ga no matches, 2004va quals + elims mismatch, 2020wasp only elims
 event_blacklist = ["2004va", "2005va", "2007ga", "2020waspo"]
+
+# TBA data inconsistencies, revisit after season
+match_blacklist = [
+    "2022bcvi_f1m3",
+    "2022va306_sf1m3",
+    "2022va306_sf2m3",
+    "2022dc306_qm34",
+    "2022dc306_qm35",
+    "2022on306_sf1m3",
+    "2022on306_sf2m3",
+    "2022on306_f1m3"
+]

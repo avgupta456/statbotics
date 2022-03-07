@@ -10,7 +10,11 @@ from src.tba.clean_data import (
     get_breakdown,
     get_match_time,
 )
-from src.tba.config import event_blacklist, get_tba as _get_tba
+from src.tba.config import (
+    event_blacklist, 
+    get_tba as _get_tba, 
+    match_blacklist,
+)
 from src.tba.fake_matches import (
     elims_complete,
     elims_in_progress,
@@ -119,8 +123,9 @@ def get_team_events(event: str, cache: bool = True) -> List[Dict[str, Any]]:
     data = get_tba("event/" + str(event) + "/teams/simple", cache=cache)
     for team in data:
         team_num = team["team_number"]
-        new_data = {"team": team_num, "rank": -1}
-        out[team_num] = new_data
+        if team_num < 9985:
+            new_data = {"team": team_num, "rank": -1}
+            out[team_num] = new_data
 
     # queries TBA for rankings, some older events are not populated
     try:
@@ -165,18 +170,19 @@ def get_matches(
             winner = "red"
         elif blue_score > red_score:
             winner = "blue"
+    
+        if match["key"] in match_blacklist:
+            continue
 
         if year > 2004 and (len(red_teams) < 3 or len(blue_teams) < 3):
             continue
         if year <= 2004 and (len(red_teams) < 2 or len(blue_teams) < 2):
             continue
 
-        # handles elims in 2 team alliance era
-        if year <= 2004:
-            red_teams = red_teams[:2]
-            blue_teams = blue_teams[:2]
-
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
+            continue
+
+        if max([int(x[3:]) for x in red_teams + blue_teams]) >= 9985:
             continue
 
         breakdown = match["score_breakdown"]
