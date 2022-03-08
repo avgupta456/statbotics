@@ -14,7 +14,7 @@ class LineChart extends React.Component {
           id: "Baseline",
           data: [
             { x: 2002, y: 1500 },
-            { x: 2020, y: 1500 },
+            { x: 2022, y: 1500 },
           ],
         });
       }
@@ -25,7 +25,7 @@ class LineChart extends React.Component {
         <ResponsiveLine
           data={data}
           margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
-          xScale={{ type: "linear", min: 2002, max: 2020 }}
+          xScale={{ type: "linear", min: 2002, max: 2022 }}
           yScale={{
             type: "linear",
             min: 1300,
