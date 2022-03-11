@@ -57,12 +57,10 @@ def get_preds(
     year: int,
     sd_score: float,
 ):
-    team_matches: Dict[
-        int, Any
-    ] = {}  # for each match i after index, red and blue teams
-    preds: Dict[
-        int, List[float]
-    ] = {}  # for each match i after index , win_prob, red rps, blue rps
+    # for each match i after index, red and blue teams
+    team_matches: Dict[int, Any] = {}
+    # for each match i after index, win_prob, red rps, blue rps
+    preds: Dict[int, List[float]] = {}
     for i in range(index, len(quals)):
         m = quals[i]
         red, blue = m["red"], m["blue"]
