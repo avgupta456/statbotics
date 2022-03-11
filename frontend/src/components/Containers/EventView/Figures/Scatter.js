@@ -36,8 +36,10 @@ const BestFitLine = ({ data, xScale, yScale }) => {
 
 class ScatterPlot extends React.Component {
   render() {
-    const data = this.props.data;
+    let data = this.props.data;
     const axis = this.props.axis;
+
+    data = data.filter((x) => x.data[0]["x"] > 0 && x.data[0]["y"] > 0);
 
     return (
       <div className={styles.gray}>
