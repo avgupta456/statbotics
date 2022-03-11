@@ -78,8 +78,11 @@ def get_matches_dict(event_key: str) -> List[Dict[str, Any]]:
             "blue",
         )
         .filter(event=event_key, playoff=False)
-        .order_by("time")
     )
+
+    def parseNum(match_num: str) -> int:
+        return int(match_num.replace("qm", "0").replace("qf", "1").replace("sf", "2").replace("f", "3").replace("m", "0"))
+    data = sorted(data, key=lambda x: parseNum(x["key"].split("_")[1]))
 
     out: List[Dict[str, Any]] = []
     for entry in data:

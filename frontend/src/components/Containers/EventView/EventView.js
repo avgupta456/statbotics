@@ -64,7 +64,7 @@ export default function EventView() {
   //column name, searchable, visible, link, hint
   const columns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click name for details"],
+    ["Name", true, true, true, ""],
     ["Rank", false, true, false, "Rank at Event"],
     ["Elo", false, true, false, "Current Elo"],
     ["OPR", false, true, false, "Current OPR"],
@@ -87,7 +87,7 @@ export default function EventView() {
   //column name, searchable, visible, link, hint
   const oldColumns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click name for details"],
+    ["Name", true, true, true, ""],
     ["Rank", false, true, false, "Rank at Event"],
     ["Elo", false, true, false, "Current Elo"],
     ["OPR", false, true, false, "Current OPR"],
@@ -97,7 +97,7 @@ export default function EventView() {
   const simColumns = [
     ["Predicted Rank", false, true, false, ""],
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click name for details"],
+    ["Name", true, true, true, ""],
     ["Mean Rank", false, true, false, ""],
     ["5% Rank", false, true, false, ""],
     ["Median Rank", false, true, false, ""],
@@ -310,6 +310,18 @@ export default function EventView() {
           };
         });
       }
+
+      const parseNum = (str) =>
+        str
+          .replace("qm", "0")
+          .replace("qf", "1")
+          .replace("sf", "2")
+          .replace("f", "3")
+          .replace("m", "0");
+      cleanMatches = cleanMatches.sort(
+        (a, b) => parseNum(a["match"]) - parseNum(b["match"])
+      );
+
       return [cleanMatches, total > 0 ? correct / total : 0];
     }
 
@@ -374,6 +386,7 @@ export default function EventView() {
   useEffect(() => {
     const getBarOPRs = (stats) => {
       let temp_stats = stats.slice();
+      temp_stats = temp_stats.filter((x) => x[2] > 0);
       temp_stats.sort((a, b) => b[4] - a[4]);
       temp_stats = temp_stats.slice(0, 15);
       let oprs = [];
@@ -399,6 +412,7 @@ export default function EventView() {
 
     const getBarElos = (stats) => {
       let temp_stats = stats.slice();
+      temp_stats = temp_stats.filter((x) => x[2] > 0);
       temp_stats.sort((a, b) => b[3] - a[3]);
       temp_stats = temp_stats.slice(0, 15);
       const elos = temp_stats.map(function (x, i) {

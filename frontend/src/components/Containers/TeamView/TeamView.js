@@ -94,14 +94,14 @@ export default function TeamView() {
       return [
         x["year"],
         x["wins"] + "-" + x["losses"] + "-" + x["ties"],
-        parseInt(x["winrate"] * 1000) / 10 + "%",
+        parseInt(x["winrate"] * 1000) / 1000,
         x["elo_max"],
         x["elo_mean"],
         x["elo_start"],
         x["elo_pre_champs"],
         x["elo_end"],
         x["elo_rank"],
-        Math.max(parseInt(x["elo_percentile"] * 1000) / 10, 0.1) + "%",
+        100 - Math.max((100 * x["elo_percentile"]).toFixed(1), 0.1),
         opr,
         opr_auto,
         opr_teleop,
@@ -109,7 +109,7 @@ export default function TeamView() {
         ils_1,
         ils_2,
         x["opr_rank"],
-        Math.max(parseInt(x["opr_percentile"] * 1000) / 10, 0.1) + "%",
+        100 - Math.max((100 * x["opr_percentile"]).toFixed(1), 0.1),
       ];
     });
   }

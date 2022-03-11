@@ -44,7 +44,7 @@ export default function TeamLookup() {
   //column name, searchable, visible, link, hint
   const eloColumns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
+    ["Name", true, true, true, ""],
     ["Rank", false, true, false, "By Max Elo"],
     ["Max Elo", false, true, false, "All Elos are sortable"],
     ["Mean Elo", false, true, false, ""],
@@ -55,7 +55,7 @@ export default function TeamLookup() {
 
   const OPRColumns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
+    ["Name", true, true, true, ""],
     ["Rank", false, true, false, "By OPR"],
     ["OPR", false, true, false, "Max OPR"],
     ["Auto OPR", false, true, false, ""],
@@ -67,7 +67,7 @@ export default function TeamLookup() {
 
   const OldOPRColumns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click name for details"],
+    ["Name", true, true, true, ""],
     ["Rank", false, true, false, "By OPR"],
     ["OPR", false, true, false, "Max OPR"],
   ];

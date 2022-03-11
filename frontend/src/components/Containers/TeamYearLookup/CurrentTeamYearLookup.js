@@ -19,6 +19,7 @@ import {
   usaOptions,
   canadaOptions,
   districtOptions,
+  ilsMapping,
 } from "./../../../constants";
 
 import styles from "./TeamYearLookup.module.css";
@@ -40,13 +41,15 @@ export default function TeamLookup() {
   // Name, Searchable, Visible, Link, Hint
   const columns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click name for details"],
+    ["Name", true, true, true, ""],
     ["Elo", false, true, false, ""],
     ["OPR", false, true, false, ""],
     ["Auto OPR", false, true, false, ""],
     ["Teleop OPR", false, true, false, ""],
     ["Endgame OPR", false, true, false, ""],
-    ["Winrate", false, true, false, ""],
+    [ilsMapping[year][0], false, true, false, "ILS score (higher is better)"],
+    [ilsMapping[year][1], false, true, false, "ILS score (higher is better)"],
+    ["Record", false, true, false, ""],
   ];
 
   useEffect(() => {
@@ -62,7 +65,9 @@ export default function TeamLookup() {
           parseInt(x["opr_auto"] * 10) / 10,
           parseInt(x["opr_teleop"] * 10) / 10,
           parseInt(x["opr_endgame"] * 10) / 10,
-          parseInt(x["winrate"] * 1000) / 1000,
+          x["ils_1"],
+          x["ils_2"],
+          x["wins"] + "-" + x["losses"] + "-" + x["ties"],
         ];
       });
 
