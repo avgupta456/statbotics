@@ -30,4 +30,7 @@ match_blacklist = [
     "2022isde1_qf4m3",
     "2022isde1_sf1m3",
     "2022isde1_f1m3",
+    "2022isde2_qf1m3",
+    "2022isde2_qf3m3",
+    "2022isde2_sf1m3",
 ]
