@@ -39,7 +39,7 @@ export default function TeamLookup() {
   //column name, searchable, visible, link, hint
   const columns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
+    ["Name", true, true, true, ""],
     ["Rank", false, true, false, "By Current Elo"],
     ["Current Elo", false, true, false, "All Elos are sortable"],
     ["Recent Elo", false, true, false, ""],

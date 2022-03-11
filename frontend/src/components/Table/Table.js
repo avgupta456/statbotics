@@ -28,6 +28,12 @@ const getMuiTheme = () =>
           backgroundColor: "#3f51b5",
         },
 
+        root: {
+          margin: "Auto",
+          marginTop: "6px",
+          color: "white",
+        },
+
         sortAction: {
           margin: "auto",
           marginTop: "6px",
@@ -85,8 +91,8 @@ export default function ReactTable({ title, columns, data }) {
       name: `${name}`,
       label: `${name}`,
       options: {
-        sort: true,
-        sortDescFirst: !(name === "Number" || name === "Name"),
+        sort: name !== "Record" && name !== "Name",
+        sortDescFirst: name !== "Number" && name !== "Name",
         filter: "false",
         searchable: `${searchable}` === "true",
         display: `${visible}` === "true",

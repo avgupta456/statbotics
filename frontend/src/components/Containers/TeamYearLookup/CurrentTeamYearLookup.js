@@ -41,7 +41,7 @@ export default function TeamLookup() {
   // Name, Searchable, Visible, Link, Hint
   const columns = [
     ["Number", true, true, false, ""],
-    ["Name", true, true, true, "Click name for details"],
+    ["Name", true, true, true, ""],
     ["Elo", false, true, false, ""],
     ["OPR", false, true, false, ""],
     ["Auto OPR", false, true, false, ""],
@@ -49,7 +49,7 @@ export default function TeamLookup() {
     ["Endgame OPR", false, true, false, ""],
     [ilsMapping[year][0], false, true, false, "ILS score (higher is better)"],
     [ilsMapping[year][1], false, true, false, "ILS score (higher is better)"],
-    ["Winrate", false, true, false, ""],
+    ["Record", false, true, false, ""],
   ];
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function TeamLookup() {
           parseInt(x["opr_endgame"] * 10) / 10,
           x["ils_1"],
           x["ils_2"],
-          parseInt(x["winrate"] * 1000) / 1000,
+          x["wins"] + "-" + x["losses"] + "-" + x["ties"],
         ];
       });
 

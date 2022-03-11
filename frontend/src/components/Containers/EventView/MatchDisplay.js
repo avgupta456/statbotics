@@ -18,14 +18,6 @@ function getName(key) {
 }
 
 export default function getMatchDisplays(year, matches) {
-  const parseNum = (str) =>
-    str
-      .replace("qm", "0")
-      .replace("qf", "1")
-      .replace("sf", "2")
-      .replace("f", "3")
-      .replace("m", "0");
-  matches = matches.sort((a, b) => parseNum(a["match"]) - parseNum(b["match"]));
   const match_display = matches.map(function (x, i) {
     return (
       <Container className={styles.container} key={i}>

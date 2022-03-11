@@ -47,7 +47,7 @@ export default function EventLookup() {
   //column name, searchable, visible, link, hint
   const columns = [
     ["Key", true, true, false, ""],
-    ["Name", true, true, true, "Click names for details"],
+    ["Name", true, true, true, ""],
     ["Week", false, true, false, "Competition Week"],
     ["Top 8 Elo", false, true, false, "Average of Top 8 Elos"],
     ["Top 24 Elo", false, true, false, "Average of Top 24 Elos"],
