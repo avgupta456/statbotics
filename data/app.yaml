@@ -2,11 +2,10 @@ service: data
 runtime: python37
 entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
 
-#smallest instance class
-instance_class: F2
+instance_class: B2
 
-#prevents creating additional instances
-automatic_scaling:
+# exactly one instance
+basic_scaling:
   max_instances: 1
 
 #set to minimums
