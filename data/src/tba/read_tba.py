@@ -127,6 +127,12 @@ def get_team_events(event: str, cache: bool = True) -> List[Dict[str, Any]]:
             new_data = {"team": team_num, "rank": -1}
             out[team_num] = new_data
 
+    # TBA data inconsistency
+    # TODO: revisit later and remove
+    if event == "2022azfl":
+        for team in [4401, 7687]:
+            out[team] = {"team": team, "rank": -1}
+
     # queries TBA for rankings, some older events are not populated
     try:
         rankings = get_tba("event/" + str(event) + "/rankings", cache=cache)["rankings"]
