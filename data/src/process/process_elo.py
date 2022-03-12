@@ -41,7 +41,7 @@ def process_year(
     team_years_dict: Dict[int, TeamYear] = {}
     team_events_dict: Dict[str, List[Tuple[float, bool]]] = {}
     team_matches_dict: Dict[int, List[float]] = {}
-    team_elos: Dict[int, float] = {}  # most recent elo
+    team_elos: Dict[int, float] = defaultdict(lambda: START_RATING)  # most recent elo
     team_match_ids: Dict[str, float] = {}
 
     # win, loss, tie, count
