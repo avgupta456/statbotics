@@ -78,6 +78,12 @@ def process_year(
             teams=team_nums,
             fake_matches=fake_matches_num,
         )
+
+        # Hack: remove "Upcoming" matches once finals start
+        finals = [m for m in matches if m["comp_level"] == "f"]
+        if len(finals) >= 2 and finals[0]["status"] == "Completed":
+            matches = [m for m in matches if m["status"] == "Completed"]
+
         num_matches = len(matches)
         num_upcoming_matches = 0
         for match in matches:
