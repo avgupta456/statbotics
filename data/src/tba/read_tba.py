@@ -10,11 +10,7 @@ from src.tba.clean_data import (
     get_breakdown,
     get_match_time,
 )
-from src.tba.config import (
-    event_blacklist, 
-    get_tba as _get_tba, 
-    match_blacklist,
-)
+from src.tba.config import event_blacklist, get_tba as _get_tba
 from src.tba.fake_matches import (
     elims_complete,
     elims_in_progress,
@@ -179,9 +175,6 @@ def get_matches(
             winner = "red"
         elif blue_score > red_score:
             winner = "blue"
-    
-        if match["key"] in match_blacklist:
-            continue
 
         if year > 2004 and (len(red_teams) < 3 or len(blue_teams) < 3):
             continue
