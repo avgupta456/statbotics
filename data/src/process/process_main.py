@@ -104,12 +104,15 @@ def process_main(
         clean_db()
         print("Clean\t", datetime.now() - start)
         start = datetime.now()
+        teams = load_teams(cache=False)
+        print("Load\t", datetime.now() - start)
+        start = datetime.now()
+        update_teams_db(teams, clean)
+        print("Write\t", datetime.now() - start)
+    else:
+        teams = get_teams_db()
+        print("Load\t", datetime.now() - start)
 
-    teams = load_teams(cache=False)
-    print("Load\t", datetime.now() - start)
-    start = datetime.now()
-    update_teams_db(teams, clean)
-    print("Write\t", datetime.now() - start)
     print("Total\t", datetime.now() - overall_start)
     print()
 
