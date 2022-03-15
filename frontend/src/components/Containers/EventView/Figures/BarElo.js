@@ -26,9 +26,9 @@ class BarChart extends React.Component {
           padding={0.3}
           groupMode="stacked"
           colors="rgb(55,126,184)"
-          tooltip={({ id, value, color }) => (
+          tooltip={({ id, data, value, color }) => (
             <strong style={{ color }}>
-              {id}: {value + minValue}
+              {data["team"]} {id}: {value + minValue}
             </strong>
           )}
           defs={[
@@ -72,9 +72,7 @@ class BarChart extends React.Component {
             format: (v) => `${v + minValue}`,
           }}
           enableLabel={false}
-          animate={true}
-          motionStiffness={90}
-          motionDamping={15}
+          animate={false}
         />
       </div>
     );

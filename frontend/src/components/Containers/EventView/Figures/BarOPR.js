@@ -88,9 +88,7 @@ class BarChart extends React.Component {
               ],
             },
           ]}
-          animate={true}
-          motionStiffness={90}
-          motionDamping={15}
+          animate={false}
         />
       </div>
     );
