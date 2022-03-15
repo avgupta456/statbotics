@@ -56,6 +56,7 @@ export default function EventView() {
   const [cleanSim, setCleanSim] = useState([]);
 
   const [figState, setFigState] = useState("OPR");
+  const [barAll, setBarAll] = useState(false);
   const [barOPRs, setBarOPRs] = useState([]);
   const [barElos, setBarElos] = useState([]);
   const [scatterOPRs, setScatterOPRs] = useState([]);
@@ -113,6 +114,7 @@ export default function EventView() {
       numMatches > 0
     ) {
       setDone(true);
+      setBarAll(false);
     }
   }, [year, event, rawStats, numMatches]);
 
@@ -384,11 +386,13 @@ export default function EventView() {
   };
 
   useEffect(() => {
-    const getBarOPRs = (stats) => {
+    const getBarOPRs = (stats, barAll) => {
       let temp_stats = stats.slice();
       temp_stats = temp_stats.filter((x) => x[2] > 0);
       temp_stats.sort((a, b) => b[4] - a[4]);
-      temp_stats = temp_stats.slice(0, 15);
+      if (!barAll) {
+        temp_stats = temp_stats.slice(0, 15);
+      }
       let oprs = [];
       if (year >= 2016) {
         oprs = temp_stats.map(function (x, i) {
@@ -410,11 +414,13 @@ export default function EventView() {
       setBarOPRs(oprs);
     };
 
-    const getBarElos = (stats) => {
+    const getBarElos = (stats, barAll) => {
       let temp_stats = stats.slice();
       temp_stats = temp_stats.filter((x) => x[2] > 0);
       temp_stats.sort((a, b) => b[3] - a[3]);
-      temp_stats = temp_stats.slice(0, 15);
+      if (!barAll) {
+        temp_stats = temp_stats.slice(0, 15);
+      }
       const elos = temp_stats.map(function (x, i) {
         return {
           team: x[0].toString(),
@@ -445,12 +451,12 @@ export default function EventView() {
     };
 
     if (stats.length > 0) {
-      getBarOPRs(stats);
-      getBarElos(stats);
+      getBarOPRs(stats, barAll);
+      getBarElos(stats, barAll);
       getScatterOPRs(stats);
       getScatterElos(stats);
     }
-  }, [stats, year]);
+  }, [stats, year, barAll]);
 
   function FigClick() {
     if (figState === "OPR") {
@@ -507,14 +513,32 @@ export default function EventView() {
         year >= 2016 ? ["Auto OPR", "Teleop OPR", "Endgame OPR"] : ["OPR"];
       return (
         <div>
-          <h5>Top 15 OPRs</h5>
+          <div className={styles.horizontal}>
+            <h5 className={styles.rightPad}>Top OPRs</h5>
+            <Button
+              variant="outline-dark"
+              onClick={() => setBarAll(!barAll)}
+              className={styles.button}
+            >
+              <Typography>{barAll ? "Less" : "More"}</Typography>
+            </Button>
+          </div>
           <BarOPR data={barOPRs} keys={keys} />
         </div>
       );
     } else {
       return (
         <div>
-          <h5>Top 15 Elos</h5>
+          <div className={styles.horizontal}>
+            <h5 className={styles.rightPad}>Top Elos</h5>
+            <Button
+              variant="outline-dark"
+              onClick={() => setBarAll(!barAll)}
+              className={styles.button}
+            >
+              <Typography>{barAll ? "Less" : "More"}</Typography>
+            </Button>
+          </div>
           <BarElo data={barElos} />
         </div>
       );
@@ -595,11 +619,7 @@ export default function EventView() {
               <h4>Figures!</h4>
             </Col>
             <Col>
-              <Button
-                variant="outline-dark"
-                onClick={() => FigClick()}
-                className={styles.button}
-              >
+              <Button variant="outline-dark" onClick={() => FigClick()}>
                 <Typography>
                   {figState === "OPR" ? "Show Elo" : "Show OPR"}
                 </Typography>
