@@ -2,7 +2,7 @@ service: data
 runtime: python37
 entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
 
-instance_class: B2
+instance_class: B4
 
 # exactly one instance
 basic_scaling:
@@ -11,7 +11,7 @@ basic_scaling:
 #set to minimums
 resources:
   cpu: 1
-  memory_gb: 0.5
+  memory_gb: 1
   disk_size_gb: 10
 
 env_variables:
