@@ -114,6 +114,7 @@ export default function EventView() {
       numMatches > 0
     ) {
       setDone(true);
+      setBarAll(false);
     }
   }, [year, event, rawStats, numMatches]);
 
