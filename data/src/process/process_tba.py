@@ -134,7 +134,19 @@ def process_year(
             team_event_obj = create_team_event_obj(team_event)
             team_event_objs.append(team_event_obj)
 
+        # TODO: revisit after 2022
+        if event_obj.key in [
+            "2022dc312",
+            "2022dc313",
+            "2022va319",
+            "2022dc319",
+            "2022va320",
+            "2022dc320",
+        ]:
+            event_status = "Completed"
+
         event_obj.status = event_status
+
         event_obj.current_match = current_match
         event_obj.qual_matches = qual_matches
         event_objs.append(event_obj)

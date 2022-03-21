@@ -212,18 +212,20 @@ def process_year(
             team_year_obj.ils_2 = round(team_ils_2, 2)
 
         team_years_dict[num] = team_year_obj
-        team_team_events[num].append({
-            "opr_end": team_year_obj.opr_end,
-            "opr_auto": team_year_obj.opr_auto,
-            "opr_teleop": team_year_obj.opr_teleop,
-            "opr_1": team_year_obj.opr_1,
-            "opr_2": team_year_obj.opr_2,
-            "opr_endgame": team_year_obj.opr_endgame,
-            "opr_fouls": team_year_obj.opr_fouls,
-            "opr_no_fouls": team_year_obj.opr_no_fouls,
-            "ils_1_end": team_year_obj.ils_1,
-            "ils_2_end": team_year_obj.ils_2,
-        })
+        team_team_events[num].append(
+            {
+                "opr_end": team_year_obj.opr_end,
+                "opr_auto": team_year_obj.opr_auto,
+                "opr_teleop": team_year_obj.opr_teleop,
+                "opr_1": team_year_obj.opr_1,
+                "opr_2": team_year_obj.opr_2,
+                "opr_endgame": team_year_obj.opr_endgame,
+                "opr_fouls": team_year_obj.opr_fouls,
+                "opr_no_fouls": team_year_obj.opr_no_fouls,
+                "ils_1_end": team_year_obj.ils_1,
+                "ils_2_end": team_year_obj.ils_2,
+            }
+        )
 
     event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
     for team_event in team_events:
@@ -246,11 +248,6 @@ def process_year(
             if num not in team_team_events:
                 continue
 
-            if num == 1678:
-                print(event)
-                print(team_team_events[num][-1])
-                print()
-
             temp_team_event = team_team_events[num][-1]
             team_event.opr_start = temp_team_event["opr_end"]
             team_event.opr_end = temp_team_event["opr_end"]  # overwritten later
@@ -264,8 +261,12 @@ def process_year(
                 team_event.opr_no_fouls = temp_team_event["opr_no_fouls"]
                 team_event.ils_1_start = round(temp_team_event["ils_1_end"], 2)
                 team_event.ils_2_start = round(temp_team_event["ils_2_end"], 2)
-                team_event.ils_1_end = round(temp_team_event["ils_1_end"], 2)  # overwritten later
-                team_event.ils_2_end = round(temp_team_event["ils_2_end"], 2)  # overwritten later
+                team_event.ils_1_end = round(
+                    temp_team_event["ils_1_end"], 2
+                )  # overwritten later
+                team_event.ils_2_end = round(
+                    temp_team_event["ils_2_end"], 2
+                )  # overwritten later
 
         oprs, ils, stats = process_event(
             event,
@@ -408,10 +409,18 @@ def process_year(
     year.opr_mse = None if count == 0 else round(opr_mse / count, 4)
     year.mix_acc = None if count == 0 else round(mix_acc / count, 4)
     year.mix_mse = None if count == 0 else round(mix_mse / count, 4)
-    year.rp1_acc = None if count_rp == 0 or year_num < 2016 else round(rp1_acc / count_rp, 4)
-    year.rp1_mse = None if count_rp == 0 or year_num < 2016 else round(rp1_mse / count_rp, 4)
-    year.rp2_acc = None if count_rp == 0 or year_num < 2016 else round(rp2_acc / count_rp, 4)
-    year.rp2_mse = None if count_rp == 0 or year_num < 2016 else round(rp2_mse / count_rp, 4)
+    year.rp1_acc = (
+        None if count_rp == 0 or year_num < 2016 else round(rp1_acc / count_rp, 4)
+    )
+    year.rp1_mse = (
+        None if count_rp == 0 or year_num < 2016 else round(rp1_mse / count_rp, 4)
+    )
+    year.rp2_acc = (
+        None if count_rp == 0 or year_num < 2016 else round(rp2_acc / count_rp, 4)
+    )
+    year.rp2_mse = (
+        None if count_rp == 0 or year_num < 2016 else round(rp2_mse / count_rp, 4)
+    )
 
     return (
         team_years_all,
