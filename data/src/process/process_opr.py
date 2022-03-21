@@ -255,7 +255,15 @@ def process_year(
                 team_event.opr_auto = temp_team_event["opr_auto"]
                 team_event.opr_teleop = temp_team_event["opr_teleop"]
                 team_event.opr_1 = temp_team_event["opr_1"]
-                
+                team_event.opr_2 = temp_team_event["opr_2"]
+                team_event.opr_endgame = temp_team_event["opr_endgame"]
+                team_event.opr_fouls = temp_team_event["opr_fouls"]
+                team_event.opr_no_fouls = temp_team_event["opr_no_fouls"]
+                team_event.ils_1_start = round(temp_team_event["ils_1_end"], 2)
+                team_event.ils_2_start = round(temp_team_event["ils_2_end"], 2)
+                team_event.ils_1_end = round(temp_team_event["ils_1_end"], 2)
+                team_event.ils_2_end = round(temp_team_event["ils_2_end"], 2)
+
         oprs, ils, stats = process_event(
             event,
             event_team_events[event.key],
