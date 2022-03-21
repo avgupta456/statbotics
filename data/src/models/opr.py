@@ -136,7 +136,7 @@ def get_base(
     M, T, Y = len(quals), len(teams), len(event_func(team_events_dict[teams[0]]))
     input: Any = np.zeros(shape=(2 * M, T), dtype="float")  # type: ignore
     output: Any = np.zeros(shape=(2 * M, Y), dtype="float")  # type: ignore
-    match_objs = quals
+    match_objs = sorted(quals, key=lambda m: m.match_number)
 
     arr: List[List[List[int]]] = []
     for i in range(M):
