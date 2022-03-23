@@ -10,9 +10,12 @@ import { ReactTable, LineChart } from "./../../";
 import styles from "./TeamView.module.css";
 
 import { yearOptions } from "./../../../constants";
+import NotFound from "../NotFound/NotFound";
 
 export default function TeamView() {
   const history = useHistory();
+
+  const [show404, setShow404] = useState(false);
 
   const [eventData, setEventData] = useState([]);
   const [yearData, setYearData] = useState([]);
@@ -141,13 +144,13 @@ export default function TeamView() {
   useEffect(() => {
     const getTeamYears = async (team) => {
       const team_years = await fetchTeam_Years(team);
-      if (team_years.length === 0) {
-        history.push(`/404`);
-        return;
+      if (team_years.length > 0) {
+        setChartData(cleanChart(team, team_years));
+        setYearData(cleanYear(team_years));
+        setYear(team_years[0]["year"]);
+      } else {
+        setShow404(true);
       }
-      setChartData(cleanChart(team, team_years));
-      setYearData(cleanYear(team_years));
-      setYear(team_years[0]["year"]);
     };
 
     getTeamYears(team);
@@ -186,6 +189,10 @@ export default function TeamView() {
         </div>
       </div>
     );
+  }
+
+  if (show404) {
+    return <NotFound />;
   }
 
   return (

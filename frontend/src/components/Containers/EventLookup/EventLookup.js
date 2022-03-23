@@ -62,7 +62,7 @@ export default function EventLookup() {
       return events.map(function (x, i) {
         return [
           x["key"],
-          "event/" + x["key"] + "|" + x["name"],
+          "../event/" + x["key"] + "|" + x["name"],
           x["week"],
           x["elo_top8"],
           x["elo_top24"],
