@@ -61,10 +61,11 @@ const App = () => {
         <Route exact path="/docs">
           <Swagger />
         </Route>
-        <Route exact path="/404">
+        <Redirect from="/:team([0-9]*)" to="/team/:team" />
+        <Redirect from="/:event([A-Za-z0-9]*)" to="/event/:event" />
+        <Route path="/*">
           <NotFound />
         </Route>
-        <Redirect from="/*" to="/404" />
       </Switch>
     </div>
   );

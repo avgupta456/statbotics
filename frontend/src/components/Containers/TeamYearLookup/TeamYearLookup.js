@@ -85,7 +85,7 @@ export default function TeamLookup() {
         return teams.map(function (x, i) {
           return [
             x["team"],
-            "team/" + x["team"] + "|" + x["name"],
+            "../team/" + x["team"] + "|" + x["name"],
             i + 1,
             x["elo_max"],
             x["elo_mean"],

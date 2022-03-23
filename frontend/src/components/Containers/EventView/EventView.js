@@ -20,6 +20,7 @@ import {
 import { ilsMapping } from "./../../../constants";
 
 import styles from "./EventView.module.css";
+import NotFound from "../NotFound/NotFound";
 
 export default function EventView() {
   let { key } = useParams();
@@ -29,6 +30,7 @@ export default function EventView() {
   const { height, width } = useWindowDimensions();
 
   const [done, setDone] = useState(false);
+  const [show404, setShow404] = useState(false);
 
   const [eventObj, setEventObj] = useState({});
   const [event, setEvent] = useState("");
@@ -114,6 +116,7 @@ export default function EventView() {
       numMatches > 0
     ) {
       setDone(true);
+      setShow404(false);
       setBarAll(false);
     }
   }, [year, event, rawStats, numMatches]);
@@ -121,19 +124,19 @@ export default function EventView() {
   useEffect(() => {
     const getEvent = async (key) => {
       const event = await fetchEvent(key);
-      if (event === undefined) {
-        history.push(`/404`);
-        return;
+      if (event !== undefined) {
+        setEventObj(event);
+        setEvent(event["name"]);
+        setYear(event["year"]);
+        if (event["year"] >= 2016) {
+          setILS1(ilsMapping[event["year"]][0]);
+          setILS2(ilsMapping[event["year"]][1]);
+        }
+        setRp1Acc(event["rp1_acc"]);
+        setRp2Acc(event["rp2_acc"]);
+      } else {
+        setShow404(true);
       }
-      setEventObj(event);
-      setEvent(event["name"]);
-      setYear(event["year"]);
-      if (event["year"] >= 2016) {
-        setILS1(ilsMapping[event["year"]][0]);
-        setILS2(ilsMapping[event["year"]][1]);
-      }
-      setRp1Acc(event["rp1_acc"]);
-      setRp2Acc(event["rp2_acc"]);
     };
 
     const getTeamEvents = async (key) => {
@@ -147,6 +150,7 @@ export default function EventView() {
     };
 
     setDone(false);
+    setShow404(false);
     setEvent("");
     setRawStats([]);
     setRawMatches([]);
@@ -564,6 +568,10 @@ export default function EventView() {
   }
 
   //Function Render Below
+
+  if (show404) {
+    return <NotFound />;
+  }
 
   if (done === false) {
     return (
