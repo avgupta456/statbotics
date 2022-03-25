@@ -57,6 +57,7 @@ objs_type = Tuple[
 
 
 def write_objs(
+    year_num: int,
     year: Year,
     team_years: List[TeamYear],
     events: List[Event],
@@ -74,6 +75,7 @@ def write_objs(
     events = [e for e in events if e.key in event_keys]
 
     # writes to db
+    clear_year(year_num)
     update_years_db([year], clean)
     update_team_years_db(team_years, clean)
     update_events_db(events, clean)
@@ -133,10 +135,6 @@ def process_main(
     for year_num in range(start_year, end_year + 1):
         overall_start = datetime.now()
         start = overall_start
-        if not clean and year_num == end_year:
-            clear_year(year_num)
-            print(year_num, "\tClear\t", datetime.now() - start)
-
         objs: objs_type = process_year_tba(
             year_num,
             end_year,
@@ -165,7 +163,7 @@ def process_main(
         print(year_num, "\tOPR\t", datetime.now() - start)
         start = datetime.now()
 
-        write_objs(*objs, end_year, clean)
+        write_objs(year_num, *objs, end_year, clean)
         print(year_num, "\tWrite\t", datetime.now() - start)
         start = datetime.now()
 
