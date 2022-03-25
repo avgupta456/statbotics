@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Tuple
 
+from src.db.functions.clear_year import clear_year
 from src.db.main import clean_db
 from src.db.models.event import Event
 from src.db.models.match import Match
@@ -132,6 +133,10 @@ def process_main(
     for year_num in range(start_year, end_year + 1):
         overall_start = datetime.now()
         start = overall_start
+        if not clean and year_num == end_year:
+            clear_year(year_num)
+            print(year_num, "\tClear\t", datetime.now() - start)
+
         objs: objs_type = process_year_tba(
             year_num,
             end_year,
