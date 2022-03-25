@@ -171,7 +171,7 @@ def process_year(
     # TEAM EVENTS
     event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
     team_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
-    for team_event in team_events:
+    for team_event in sorted(team_events, key=lambda e: (e.week, e.time)):
         key = get_team_event_key(team_event.team, team_event.event)
 
         event_team_events[team_event.event].append(team_event)
