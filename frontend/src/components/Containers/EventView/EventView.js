@@ -167,8 +167,10 @@ export default function EventView() {
     };
 
     setRawSim([]);
-    getSim(key, index);
-  }, [key, index]);
+    if (year >= 2016) {
+      getSim(key, index);
+    }
+  }, [year, key, index]);
 
   useEffect(() => {
     function clean(rawStats) {
@@ -476,7 +478,7 @@ export default function EventView() {
         eventKey="simulation"
         title="Simulation"
         tabClassName={width > 600 ? "" : styles.mobileTab}
-        disabled={quals === 0 || year === 2015 || year === 2010}
+        disabled={quals === 0 || year < 2016}
       >
         <br />
         <h4>Simulation</h4>
@@ -611,7 +613,7 @@ export default function EventView() {
                   : columns
                 : oldColumns
             }
-            data={stats.filter((x) => x[2] > 0)}
+            data={stats.filter((x) => year <= 2006 || x[2] > 0)}
           />
         </Tab>
 
@@ -619,7 +621,7 @@ export default function EventView() {
           eventKey="Figures"
           title="Figures"
           tabClassName={width > 600 ? "" : styles.mobileTab}
-          disabled={eventObj.current_match <= 0}
+          disabled={eventObj.current_match <= 0 || year <= 2006}
         >
           <br />
           <Row>
