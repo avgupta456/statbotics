@@ -139,6 +139,9 @@ def get_team_events(event: str, cache: bool = True) -> List[Dict[str, Any]]:
         for team in [5612, 2767, 503]:
             out[team] = {"team": team, "rank": -1}
 
+    if event == "2022carv":
+        out[5462] = {"team": 5462, "rank": -1}
+
     # queries TBA for rankings, some older events are not populated
     try:
         rankings = get_tba("event/" + str(event) + "/rankings", cache=cache)["rankings"]
