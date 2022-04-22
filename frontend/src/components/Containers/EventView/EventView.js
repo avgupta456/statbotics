@@ -53,7 +53,7 @@ export default function EventView() {
   const [numMatches, setNumMatches] = useState([]);
 
   const [quals, setQuals] = useState(50);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(-1);
   const [rawSim, setRawSim] = useState([]);
   const [cleanSim, setCleanSim] = useState([]);
 
@@ -170,7 +170,7 @@ export default function EventView() {
     };
 
     setRawSim([]);
-    if (year >= 2016) {
+    if (year >= 2016 && index >= 0) {
       getSim(key, index);
     }
   }, [year, key, index]);
