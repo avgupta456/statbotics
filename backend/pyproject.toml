@@ -6,7 +6,7 @@ authors = ["Abhijit Gupta <avgupta456@gmail.com>"]
 
 [tool.poetry.dependencies]
 python =  ">=3.8,<3.11"
-Django = "3.2.2"
+Django = "3.2.13"
 numpy = "^1.21.5"
 scipy = "^1.7.3"
 django-filter = "^21.1"
