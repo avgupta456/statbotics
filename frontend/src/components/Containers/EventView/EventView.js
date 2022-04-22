@@ -134,6 +134,9 @@ export default function EventView() {
         }
         setRp1Acc(event["rp1_acc"]);
         setRp2Acc(event["rp2_acc"]);
+        setIndex(
+          event.current_match > event.qual_matches ? 0 : event.current_match
+        );
       } else {
         setShow404(true);
       }
@@ -493,17 +496,19 @@ export default function EventView() {
         <hr />
         Simulate from:
         {index === 0 ? " Schedule Release" : ` Qualification Match ${index}`}
-        <div className={styles.slider}>
-          <Slider
-            defaultValue={0}
-            onChangeCommitted={handleSliderChange}
-            valueLabelDisplay="auto"
-            marks
-            step={1}
-            min={0}
-            max={eventObj.current_match}
-          />
-        </div>
+        {eventObj.current_match > eventObj.qual_matches && (
+          <div className={styles.slider}>
+            <Slider
+              defaultValue={0}
+              onChangeCommitted={handleSliderChange}
+              valueLabelDisplay="auto"
+              marks
+              step={1}
+              min={0}
+              max={eventObj.current_match}
+            />
+          </div>
+        )}
         <ReactTable
           title="Ranking Simulation"
           columns={simColumns}
