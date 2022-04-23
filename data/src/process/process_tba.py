@@ -85,6 +85,7 @@ def process_year(
             matches = [m for m in matches if m["status"] == "Completed"]
 
         num_matches = len(matches)
+        num_qual_matches = len([m for m in matches if m["comp_level"] == "qm"])
         num_upcoming_matches = 0
         for match in matches:
             if match["status"] == "Upcoming":
@@ -92,11 +93,12 @@ def process_year(
 
         event_status = "Completed"
         if year_num == end_year:
-            event_status = (
-                "Upcoming"
-                if num_matches == 0
-                else ("Ongoing" if num_upcoming_matches > 0 else "Completed")
-            )
+            if num_matches == 0:
+                event_status = "Upcoming"
+            elif num_upcoming_matches > 0 or num_matches == num_qual_matches:
+                event_status = "Ongoing"
+            else:
+                event_status = "Completed"
 
         if event_status == "Completed" and num_matches == 0:
             continue
