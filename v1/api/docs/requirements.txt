@@ -16,7 +16,7 @@ identify==1.4.24
 idna==2.10
 imagesize==1.2.0
 importlib-metadata==1.7.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 keyring==21.2.1
 libcst==0.3.7
 MarkupSafe==1.1.1
