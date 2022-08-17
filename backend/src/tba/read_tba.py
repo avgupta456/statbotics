@@ -37,16 +37,6 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
     return out
 
 
-def get_team_years(year: int, cache: bool = True) -> List[Dict[str, Any]]:
-    out: List[Dict[str, Any]] = []
-    for i in range(20):
-        data = get_tba("teams/" + str(year) + "/" + str(i) + "/simple", cache=cache)
-        for team in data:
-            new_data = {"year": year, "team": team["team_number"]}
-            out.append(new_data)
-    return out
-
-
 def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []
     data = get_tba("events/" + str(year), cache=cache)
@@ -101,31 +91,19 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
     return out
 
 
-def get_team_events(event: str, cache: bool = True) -> List[Dict[str, Any]]:
-    out: Dict[int, Dict[str, Any]] = {}
-    data = get_tba("event/" + str(event) + "/teams/simple", cache=cache)
-    for team in data:
-        team_num = team["team_number"]
-        if team_num < 9985:
-            new_data = {"team": team_num, "rank": -1}
-            out[team_num] = new_data
-
-    # TBA data inconsistency
-    # TODO: revisit later and remove
-    if event == "2022micmp":
-        for team in [5612, 2767, 503]:
-            out[team] = {"team": team, "rank": -1}
+def get_event_rankings(event: str, cache: bool = True) -> Dict[int, int]:
+    out: Dict[int, int] = {}
 
     # queries TBA for rankings, some older events are not populated
     try:
         rankings = get_tba("event/" + str(event) + "/rankings", cache=cache)["rankings"]
         for ranking in rankings:
             team_num = int(ranking["team_key"][3:])
-            out[team_num]["rank"] = ranking["rank"]
+            out[team_num] = ranking["rank"]
     except Exception:
         pass
 
-    return list(out.values())
+    return out
 
 
 def get_matches(
