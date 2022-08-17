@@ -86,5 +86,5 @@ class Event(Model):
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Event":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Event(**dict)

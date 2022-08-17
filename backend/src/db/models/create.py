@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Tuple
 
+from src.db.models.etag import ETag
 from src.db.models.event import Event
 from src.db.models.match import Match
 from src.db.models.team import Team
@@ -87,3 +88,7 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
 
 def create_team_match_obj(data: Dict[str, Any]) -> TeamMatch:
     return TeamMatch.from_dict(data)
+
+
+def create_etag_obj(path: str, etag: str) -> ETag:
+    return ETag.from_dict({"path": path, "etag": etag})

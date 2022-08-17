@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 from src.tba.constants import CANADA_MAPPING, DISTRICT_MAPPING, USA_MAPPING
 
 
-def clean_state(state: str) -> str:
+def clean_state(state: str) -> Optional[str]:
     if state in USA_MAPPING:
         return USA_MAPPING[state]
     if state in CANADA_MAPPING:
@@ -15,7 +15,7 @@ def clean_state(state: str) -> str:
     return None
 
 
-def clean_district(district: str) -> str:
+def clean_district(district: Optional[str]) -> Optional[str]:
     if district in DISTRICT_MAPPING:
         return DISTRICT_MAPPING[district]
     return district
@@ -131,9 +131,9 @@ def get_breakdown(
             "rp2": int(breakdown["hangarBonusRankingPoint"]),
         }
 
-    out["1"] = out["auto_1"] + out["teleop_1"]
-    out["2"] = out["auto_2"] + out["teleop_2"]
-    out["teleop"] = out["teleop_1"] + out["teleop_2"]
-    out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
+    out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
+    out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
+    out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
+    out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
     out["fouls"] = breakdown["foulPoints"]
     return out

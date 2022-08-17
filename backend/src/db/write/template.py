@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, List, Type
 import attr
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.session import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.event import EventORM
@@ -24,13 +24,13 @@ def update_template(
     def upsert(items: List[obj_type], insert_only: bool = False) -> None:
         def _insert(session: SessionType, data: List[Dict[str, Any]]):
             for i in range(0, len(data), CUTOFF):
-                session.bulk_insert_mappings(orm_type, data[i : i + CUTOFF])
+                session.bulk_insert_mappings(orm_type, data[i : i + CUTOFF])  # type: ignore
 
         def _update(
             session: SessionType, primary_key: List[str], data: List[Dict[str, Any]]
         ):
             for i in range(0, len(data), CUTOFF):
-                insert = postgresql.insert(orm_type.__table__).values(
+                insert = postgresql.insert(orm_type.__table__).values(  # type: ignore
                     data[i : i + CUTOFF]
                 )
                 update_cols = {
@@ -39,10 +39,10 @@ def update_template(
                 update = insert.on_conflict_do_update(
                     index_elements=primary_key, set_=update_cols
                 )
-                session.execute(update.execution_options(synchronize_session=False))
+                session.execute(update.execution_options(synchronize_session=False))  # type: ignore
 
         def callback(session: SessionType):
-            new_items = [attr.asdict(x) for x in items]
+            new_items = [attr.asdict(x) for x in items]  # type: ignore
 
             if orm_type == TeamORM:
                 primary_key = ["team"]

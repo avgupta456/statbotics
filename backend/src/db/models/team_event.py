@@ -101,7 +101,7 @@ class TeamEvent(Model):
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamEvent":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}
+        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return TeamEvent(**dict)
 
     """SUPER FUNCTIONS"""

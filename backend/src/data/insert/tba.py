@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List, Set
 
 from src.data.insert.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
@@ -30,7 +30,7 @@ def load_teams(cache: bool = True) -> List[Team]:
     return team_objs
 
 
-def get_event_status(matches: List[Match], curr_year: bool) -> str:
+def get_event_status(matches: List[Dict[str, Any]], curr_year: bool) -> str:
     num_matches = len(matches)
     num_qual_matches = len([m for m in matches if m["comp_level"] == "qm"])
     num_upcoming_matches = 0
@@ -63,10 +63,10 @@ def process_year(
     team_match_objs: List[TeamMatch] = []
 
     teams_dict = {team.team: team for team in teams}
-    year_teams = set()
+    year_teams: Set[int] = set()
 
     for event in get_events_tba(year_num, cache=cache):
-        event_teams = set()
+        event_teams: Set[int] = set()
 
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
