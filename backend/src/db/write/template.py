@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, List, Type
 import attr
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.session import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction  # type: ignore
+from sqlalchemy_cockroachdb import run_transaction
 
 from src.db.main import Session
 from src.db.models.event import EventORM
@@ -24,16 +24,22 @@ def update_template(
     def upsert(items: List[obj_type], insert_only: bool = False) -> None:
         def _insert(session: SessionType, data: List[Dict[str, Any]]):
             for i in range(0, len(data), CUTOFF):
-                session.bulk_insert_mappings(orm_type, data[i : i + CUTOFF])  # type: ignore
+                session.bulk_insert_mappings(orm_type, data[i : i + CUTOFF])
 
         def _update(
             session: SessionType, primary_key: List[str], data: List[Dict[str, Any]]
         ):
             for i in range(0, len(data), CUTOFF):
-                insert = postgresql.insert(orm_type.__table__).values(data[i : i + CUTOFF])  # type: ignore
-                update_cols = {col.name: col for col in insert.excluded if col.name not in primary_key}  # type: ignore
-                update = insert.on_conflict_do_update(index_elements=primary_key, set_=update_cols)  # type: ignore
-                session.execute(update.execution_options(synchronize_session=False))  # type: ignore
+                insert = postgresql.insert(orm_type.__table__).values(
+                    data[i : i + CUTOFF]
+                )
+                update_cols = {
+                    c.name: c for c in insert.excluded if c.name not in primary_key
+                }
+                update = insert.on_conflict_do_update(
+                    index_elements=primary_key, set_=update_cols
+                )
+                session.execute(update.execution_options(synchronize_session=False))
 
         def callback(session: SessionType):
             new_items = [attr.asdict(x) for x in items]
@@ -56,8 +62,8 @@ def update_template(
                 raise Exception("Unknown orm_type")
 
             if insert_only:
-                return _insert(session, new_items)  # type: ignore
-            return _update(session, primary_key, new_items)  # type: ignore
+                return _insert(session, new_items)
+            return _update(session, primary_key, new_items)
 
         # short circuit if no items
         if len(items) == 0:

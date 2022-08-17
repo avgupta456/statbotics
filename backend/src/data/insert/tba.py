@@ -1,11 +1,12 @@
 from typing import List
 
+from src.data.insert.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
 from src.db.models.create import (
     create_event_obj,
     create_match_obj,
-    create_team_obj,
     create_team_event_obj,
+    create_team_obj,
     create_team_year_obj,
     create_year_obj,
 )
@@ -16,13 +17,11 @@ from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.tba.read_tba import (
+    get_event_rankings as get_event_rankings_tba,
     get_events as get_events_tba,
     get_matches as get_matches_tba,
-    get_event_rankings as get_event_rankings_tba,
     get_teams as get_teams_tba,
 )
-
-from src.data.insert.utils import objs_type
 
 
 def load_teams(cache: bool = True) -> List[Team]:

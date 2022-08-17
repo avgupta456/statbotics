@@ -1,6 +1,13 @@
 from datetime import datetime
 from typing import Dict, List
 
+from src.data.insert.avg import process_year as process_year_avg
+from src.data.insert.tba import (
+    load_teams,
+    post_process as post_process_tba,
+    process_year as process_year_tba,
+)
+from src.data.insert.utils import objs_type
 from src.db.functions.clear_year import clear_year
 from src.db.main import clean_db
 from src.db.models.event import Event
@@ -31,13 +38,6 @@ from src.db.write.main import (
     update_teams as update_teams_db,
     update_years as update_years_db,
 )
-from src.data.insert.avg import process_year as process_year_avg
-from src.data.insert.tba import (
-    load_teams,
-    post_process as post_process_tba,
-    process_year as process_year_tba,
-)
-from src.data.insert.utils import objs_type
 
 
 def write_objs(

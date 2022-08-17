@@ -8,8 +8,8 @@ from src.tba.clean_data import (
     get_breakdown,
     get_match_time,
 )
-from src.tba.main import get_tba
 from src.tba.constants import EVENT_BLACKLIST
+from src.tba.main import get_tba
 
 
 def get_timestamp_from_str(date: str):

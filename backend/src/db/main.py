@@ -31,9 +31,9 @@ else:
 
 Session = sessionmaker(bind=engine)
 
-Base: Any = declarative_base()  # type: ignore
+Base: Any = declarative_base()
 
 
 def clean_db() -> None:
-    Base.metadata.drop_all(bind=engine)  # type: ignore
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(engine)

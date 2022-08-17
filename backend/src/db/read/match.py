@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from sqlalchemy.orm.session import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction  # type: ignore
+from sqlalchemy_cockroachdb import run_transaction
 
 from src.db.main import Session
 from src.db.models.event import EventORM
@@ -14,22 +14,22 @@ def get_matches(
     event_id: Optional[int] = None,
 ) -> List[Match]:
     def callback(session: SessionType):
-        data = session.query(MatchORM)  # type: ignore
+        data = session.query(MatchORM)
         if year is not None:
-            data = data.filter(MatchORM.year == year)  # type: ignore
+            data = data.filter(MatchORM.year == year)
         if week is not None:
-            data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
+            data = data.join(EventORM).filter(EventORM.week == week)
         if event_id is not None:
-            data = data.filter(MatchORM.event_id == event_id)  # type: ignore
-        data: List[MatchORM] = data.all()  # type: ignore
+            data = data.filter(MatchORM.event_id == event_id)
+        out_data: List[MatchORM] = data.all()
 
-        return [Match.from_dict(x.__dict__) for x in data]
+        return [Match.from_dict(x.__dict__) for x in out_data]
 
-    return run_transaction(Session, callback)  # type: ignore
+    return run_transaction(Session, callback)
 
 
 def get_num_matches() -> int:
     def callback(session: SessionType):
-        return session.query(MatchORM).count()  # type: ignore
+        return session.query(MatchORM).count()
 
-    return run_transaction(Session, callback)  # type: ignore
+    return run_transaction(Session, callback)

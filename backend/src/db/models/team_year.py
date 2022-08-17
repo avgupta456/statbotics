@@ -83,7 +83,7 @@ class TeamYear(Model):
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamYear":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
         return TeamYear(**dict)
 
     """SUPER FUNCTIONS"""

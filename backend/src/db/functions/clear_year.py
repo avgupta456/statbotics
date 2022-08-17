@@ -2,10 +2,10 @@ from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction
 
 from src.db.main import Session
-from src.db.models.team_match import TeamMatchORM
+from src.db.models.event import EventORM
 from src.db.models.match import MatchORM
 from src.db.models.team_event import TeamEventORM
-from src.db.models.event import EventORM
+from src.db.models.team_match import TeamMatchORM
 
 
 def clear_year(year: int):

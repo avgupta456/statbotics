@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 
-from src.tba.constants import USA_MAPPING, CANADA_MAPPING, DISTRICT_MAPPING
+from src.tba.constants import CANADA_MAPPING, DISTRICT_MAPPING, USA_MAPPING
 
 
 def clean_state(state: str) -> str:
