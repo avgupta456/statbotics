@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
 from src.db.models.create import (
@@ -15,7 +15,6 @@ from src.db.models.team import Team
 from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
-from src.db.models.year import Year
 from src.tba.read_tba import (
     get_events as get_events_tba,
     get_matches as get_matches_tba,
@@ -23,6 +22,8 @@ from src.tba.read_tba import (
     get_team_years as get_team_years_tba,
     get_teams as get_teams_tba,
 )
+
+from src.data.insert.utils import objs_type
 
 
 def load_teams(cache: bool = True) -> List[Team]:
@@ -32,14 +33,8 @@ def load_teams(cache: bool = True) -> List[Team]:
 
 
 def process_year(
-    year_num: int,
-    end_year: int,
-    teams: List[Team],
-    cache: bool = True,
-    fake_matches: bool = False,
-) -> Tuple[
-    Year, List[TeamYear], List[Event], List[TeamEvent], List[Match], List[TeamMatch]
-]:
+    year_num: int, end_year: int, teams: List[Team], cache: bool = True
+) -> objs_type:
     year_obj = create_year_obj({"year": year_num})
 
     team_year_objs: List[TeamYear] = []
@@ -64,16 +59,7 @@ def process_year(
         event_key, event_time = event_obj.key, event_obj.time
 
         team_events = get_team_events_tba(event_key, cache=cache)
-        team_nums = [team_event["team"] for team_event in team_events]
-        fake_matches_num = event_obj.week if fake_matches and len(team_nums) > 24 else 0
-        matches = get_matches_tba(
-            year_num,
-            event_key,
-            event_time,
-            cache=cache,
-            teams=team_nums,
-            fake_matches=fake_matches_num,
-        )
+        matches = get_matches_tba(year_num, event_key, event_time, cache=cache)
 
         # Hack: remove "Upcoming" matches once finals start
         finals = [m for m in matches if m["comp_level"] == "f"]

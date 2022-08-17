@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from src.db.functions.clear_year import clear_year
 from src.db.main import clean_db
@@ -37,15 +37,7 @@ from src.data.insert.tba import (
     post_process as post_process_tba,
     process_year as process_year_tba,
 )
-
-objs_type = Tuple[
-    Year,
-    List[TeamYear],
-    List[Event],
-    List[TeamEvent],
-    List[Match],
-    List[TeamMatch],
-]
+from src.data.insert.utils import objs_type
 
 
 def write_objs(
@@ -86,9 +78,7 @@ def print_table_stats() -> None:
     print("Num Team Matches:", get_num_team_matches_db())
 
 
-def process_main(
-    start_year: int, end_year: int, clean: bool = True, fake_matches: bool = False
-):
+def process_main(start_year: int, end_year: int, clean: bool = True):
     main_start = datetime.now()
 
     print("Pre Processing")
@@ -99,7 +89,7 @@ def process_main(
         clean_db()
         print("Clean\t", datetime.now() - start)
         start = datetime.now()
-        teams = load_teams(cache=False)
+        teams = load_teams(cache=True)
         print("Load\t", datetime.now() - start)
         start = datetime.now()
         update_teams_db(teams, clean)
@@ -126,7 +116,6 @@ def process_main(
             end_year,
             teams,
             cache=(year_num < end_year),
-            fake_matches=fake_matches,
         )
         print(year_num, "\tTBA\t", datetime.now() - start)
         start = datetime.now()

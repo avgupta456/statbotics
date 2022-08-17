@@ -64,6 +64,7 @@ def get_breakdown(
             "auto_2": breakdown["autoBoulderPoints"],
             "teleop_1": breakdown["teleopCrossingPoints"],
             "teleop_2": breakdown["teleopBoulderPoints"],
+            "endgame": breakdown["teleopChallengePoints"],
             "rp1": int(breakdown["teleopDefensesBreached"]),
             "rp2": int(breakdown["teleopTowerCaptured"]),
         }
@@ -75,6 +76,7 @@ def get_breakdown(
             "auto_2": breakdown["autoFuelPoints"],
             "teleop_1": breakdown["teleopRotorPoints"],
             "teleop_2": breakdown["teleopFuelPoints"],
+            "endgame": breakdown["teleopTakeoffPoints"],
             "rp1": int(breakdown["rotorRankingPointAchieved"]),
             "rp2": int(breakdown["kPaRankingPointAchieved"]),
         }
@@ -86,8 +88,9 @@ def get_breakdown(
             "auto_2": breakdown["autoOwnershipPoints"],
             "teleop_1": breakdown["vaultPoints"],
             "teleop_2": breakdown["teleopOwnershipPoints"],
+            "endgame": breakdown["endgamePoints"],
             "rp1": int(breakdown["autoQuestRankingPoint"]),
-            "rp2": int(breakdown["faceTheBossRankingPOint"]),
+            "rp2": int(breakdown["faceTheBossRankingPoint"]),
         }
     elif year == 2019:
         out = {
@@ -97,6 +100,7 @@ def get_breakdown(
             "auto_2": 0,
             "teleop_1": breakdown["hatchPanelPoints"],
             "teleop_2": breakdown["cargoPoints"],
+            "endgame": breakdown["habClimbPoints"],
             "rp1": int(breakdown["completeRocketRankingPoint"]),
             "rp2": int(breakdown["habDockingRankingPoint"]),
         }
@@ -108,6 +112,7 @@ def get_breakdown(
             "auto_2": breakdown["autoCellPoints"],
             "teleop_1": breakdown["controlPanelPoints"],
             "teleop_2": breakdown["teleopCellPoints"],
+            "endgame": breakdown["endgamePoints"],
             "rp1": int(breakdown["shieldEnergizedRankingPoint"]),
             "rp2": int(breakdown["shieldOperationalRankingPoint"]),
         }
@@ -121,6 +126,7 @@ def get_breakdown(
             "auto_2": 0,
             "teleop_1": breakdown["teleopCargoPoints"],
             "teleop_2": 0,
+            "endgame": breakdown["endgamePoints"],
             "rp1": int(breakdown["cargoBonusRankingPoint"]),
             "rp2": int(breakdown["hangarBonusRankingPoint"]),
         }
@@ -128,7 +134,6 @@ def get_breakdown(
     out["1"] = out["auto_1"] + out["teleop_1"]
     out["2"] = out["auto_2"] + out["teleop_2"]
     out["teleop"] = out["teleop_1"] + out["teleop_2"]
-    out["endgame"] = breakdown["teleopChallengePoints"]
     out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]
     out["fouls"] = breakdown["foulPoints"]
     return out

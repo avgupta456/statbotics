@@ -12,5 +12,5 @@ async def read_root():
 
 @router.get("/reset")
 async def reset():
-    process_main(start_year=2002, end_year=2022, clean=True, fake_matches=False)
+    process_main(start_year=2002, end_year=2022, clean=True)
     return {"status": "success"}

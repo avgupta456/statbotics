@@ -134,8 +134,9 @@ def get_matches(
     event_time: int,
     cache: bool = True,
 ) -> List[Dict[str, Any]]:
-    out: List[Dict[str, Any]] = []
-    matches = get_tba("event/" + str(event) + "/matches", cache=cache)
+    m_type = List[Dict[str, Any]]
+    out: m_type = []
+    matches: m_type = get_tba("event/" + str(event) + "/matches", cache=cache)
     for match in matches:
         red_teams = match["alliances"]["red"]["team_keys"]
         blue_teams = match["alliances"]["blue"]["team_keys"]
@@ -159,12 +160,9 @@ def get_matches(
         if max([int(x[3:]) for x in red_teams + blue_teams]) >= 9985:
             continue
 
-        breakdown = match["score_breakdown"]
-        if breakdown is None or year < 2016:
-            red_breakdown, blue_breakdown = get_breakdown(year), get_breakdown(year)
-        else:
-            red_breakdown = get_breakdown(year, breakdown["red"])
-            blue_breakdown = get_breakdown(year, breakdown["blue"])
+        breakdown: Dict[str, Any] = match.get("score_breakdown", {}) or {}
+        red_breakdown = get_breakdown(year, breakdown.get("red", None))
+        blue_breakdown = get_breakdown(year, breakdown.get("blue", None))
 
         match_data: Dict[str, Any] = {
             "event": event,
