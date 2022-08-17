@@ -1,6 +1,11 @@
 {
-  // ignore __pycache__
   "files.exclude": {
     "**/__pycache__": true
-  }
+  },
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+    "--ignore=E501,E203,W503",
+    "--max-line-length=88"
+  ]
 }
