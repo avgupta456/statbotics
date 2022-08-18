@@ -6,12 +6,21 @@ from src.db.models.event import EventORM
 from src.db.models.match import MatchORM
 from src.db.models.team_event import TeamEventORM
 from src.db.models.team_match import TeamMatchORM
+from src.db.models.team_year import TeamYearORM
+from src.db.models.year import YearORM
 
 
 def clear_year(year: int):
     def callback(session: SessionType):
         # delete all data from a given year
-        for table in [TeamMatchORM, MatchORM, TeamEventORM, EventORM]:
+        for table in [
+            YearORM,
+            TeamYearORM,
+            EventORM,
+            TeamEventORM,
+            MatchORM,
+            TeamMatchORM,
+        ]:
             session.query(table).filter(table.year == year).delete(  # type: ignore
                 synchronize_session=False
             )

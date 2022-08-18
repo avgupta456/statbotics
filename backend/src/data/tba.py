@@ -1,10 +1,4 @@
 from typing import Any, Dict, List, Set
-from src.db.read.year import get_years as get_years_db
-from src.db.read.team_year import get_team_years as get_team_years_db
-from src.db.read.event import get_events as get_events_db
-from src.db.read.team_event import get_team_events as get_team_events_db
-from src.db.read.match import get_matches as get_matches_db
-from src.db.read.team_match import get_team_matches as get_team_matches_db
 
 from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
@@ -77,7 +71,6 @@ def process_year(
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
 
-        # team_events = get_team_events_tba(event_key, cache=cache)
         matches = get_matches_tba(year_num, event_key, event_time, cache=cache)
         # Hack: remove "Upcoming" matches once finals start
         finals = [m["status"] for m in matches if m["comp_level"] == "f"]
@@ -156,22 +149,47 @@ def process_year(
     )
 
 
-def process_year_partial(year_num: int, end_year: int, teams: List[Team]) -> objs_type:
-    year_obj = get_years_db(year_num)[0]
-    team_year_objs: List[TeamYear] = get_team_years_db(year_num)
-    event_objs: List[Event] = get_events_db(year_num)
-    team_event_objs: List[TeamEvent] = get_team_events_db(year_num)
-    match_objs: List[Match] = get_matches_db(year_num)
-    team_match_objs: List[TeamMatch] = get_team_matches_db(year_num)
+def process_year_partial(year_num: int, objs: objs_type) -> objs_type:
+    (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs) = objs
+    for event_obj in event_objs:
+        if event_obj.status != "Ongoing":
+            continue
 
-    return (
-        year_obj,
-        team_year_objs,
-        event_objs,
-        team_event_objs,
-        match_objs,
-        team_match_objs,
-    )
+        event_match_keys = [m.key for m in match_objs if m.event == event_obj.key]
+        matches = get_matches_tba(year_num, event_obj.key, event_obj.time, False)
+
+        # Hack: remove "Upcoming" matches once finals start
+        finals = [m["status"] for m in matches if m["comp_level"] == "f"]
+        if len(finals) >= 2 and set(finals) == {"Completed"}:
+            matches = [m for m in matches if m["status"] == "Completed"]
+
+        # "Completed", "Upcoming", "Ongoing", or "Invalid"
+        event_status = get_event_status(matches, True)
+        if event_status == "Invalid":
+            continue
+        event_obj.status = event_status
+
+        current_match = 0 if len(matches) > 0 else -1
+        qual_matches = 0 if len(matches) > 0 else -1
+        for match in matches:
+            match["year"] = year_num
+            match_obj, curr_team_match_objs = create_match_obj(match)
+            current_match += match_obj.status == "Completed"
+            qual_matches += not match_obj.playoff
+            if match_obj.key not in event_match_keys:
+                match_objs.append(match_obj)
+                team_match_objs.extend(curr_team_match_objs)
+
+        rankings = get_event_rankings_tba(event_obj.key, False)
+        for team_event_obj in team_event_objs:
+            if team_event_obj.event == event_obj.key:
+                team_event_obj.status = event_status
+                team_event_obj.rank = rankings.get(team_event_obj.team, -1)
+
+        event_obj.current_match = current_match
+        event_obj.qual_matches = qual_matches
+
+    return (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs)
 
 
 def post_process():
