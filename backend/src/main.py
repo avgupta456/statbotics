@@ -6,9 +6,9 @@ load_dotenv()
 
 
 # flake8: noqa E402
-from src.api.main import router as api_router
+from src.api.router import router as api_router
 from src.constants import PROD
-from src.data.main import router as data_router
+from src.data.router import router as data_router
 
 """
 SETUP

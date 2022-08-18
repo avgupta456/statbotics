@@ -1,6 +1,12 @@
 from typing import Any, Dict, List, Set
+from src.db.read.year import get_years as get_years_db
+from src.db.read.team_year import get_team_years as get_team_years_db
+from src.db.read.event import get_events as get_events_db
+from src.db.read.team_event import get_team_events as get_team_events_db
+from src.db.read.match import get_matches as get_matches_db
+from src.db.read.team_match import get_team_matches as get_team_matches_db
 
-from src.data.insert.utils import objs_type
+from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
 from src.db.models.create import (
     create_event_obj,
@@ -139,6 +145,24 @@ def process_year(
                 }
             )
         )
+
+    return (
+        year_obj,
+        team_year_objs,
+        event_objs,
+        team_event_objs,
+        match_objs,
+        team_match_objs,
+    )
+
+
+def process_year_partial(year_num: int, end_year: int, teams: List[Team]) -> objs_type:
+    year_obj = get_years_db(year_num)[0]
+    team_year_objs: List[TeamYear] = get_team_years_db(year_num)
+    event_objs: List[Event] = get_events_db(year_num)
+    team_event_objs: List[TeamEvent] = get_team_events_db(year_num)
+    match_objs: List[Match] = get_matches_db(year_num)
+    team_match_objs: List[TeamMatch] = get_team_matches_db(year_num)
 
     return (
         year_obj,
