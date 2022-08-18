@@ -39,19 +39,19 @@ class TeamEventORM(Base, ModelORM):
     # Choices are 'Upcoming', 'Ongoing', 'Completed'
     status = Column(String(10))
 
-    """ELO"""
-    elo_start = Column(Float)
-    elo_pre_playoffs = Column(Float)
-    elo_end = Column(Float)
-    elo_mean = Column(Float)
-    elo_max = Column(Float)
-    elo_diff = Column(Float)
+    """EPA"""
+    epa_start = Column(Float)
+    epa_pre_playoffs = Column(Float)
+    epa_end = Column(Float)
+    epa_mean = Column(Float)
+    epa_max = Column(Float)
+    epa_diff = Column(Float)
 
     """ILS"""
-    ils_1_start = Column(Float)
-    ils_2_start = Column(Float)
-    ils_1_end = Column(Float)
-    ils_2_end = Column(Float)
+    # ils_1_start = Column(Float)
+    # ils_2_start = Column(Float)
+    # ils_1_end = Column(Float)
+    # ils_2_end = Column(Float)
 
     """STATS"""
     wins = Column(Integer)
@@ -80,17 +80,17 @@ class TeamEvent(Model):
     week: Optional[int] = None
     status: Optional[str] = None
 
-    elo_start: Optional[float] = None
-    elo_pre_playoffs: Optional[float] = None
-    elo_end: Optional[float] = None
-    elo_mean: Optional[float] = None
-    elo_max: Optional[float] = None
-    elo_diff: Optional[float] = None
+    epa_start: Optional[float] = None
+    epa_pre_playoffs: Optional[float] = None
+    epa_end: Optional[float] = None
+    epa_mean: Optional[float] = None
+    epa_max: Optional[float] = None
+    epa_diff: Optional[float] = None
 
-    ils_1_start: Optional[float] = None
-    ils_2_start: Optional[float] = None
-    ils_1_end: Optional[float] = None
-    ils_2_end: Optional[float] = None
+    # ils_1_start: Optional[float] = None
+    # ls_2_start: Optional[float] = None
+    # ils_1_end: Optional[float] = None
+    # ils_2_end: Optional[float] = None
 
     wins: int = 0
     losses: int = 0

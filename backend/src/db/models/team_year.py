@@ -28,17 +28,17 @@ class TeamYearORM(Base, ModelORM):
     country = Column(String(30))
     district = Column(String(10))
 
-    """ELO"""
-    elo_start = Column(Float)
-    elo_pre_champs = Column(Float)
-    elo_end = Column(Float)
-    elo_mean = Column(Float)
-    elo_max = Column(Float)
-    elo_diff = Column(Float)
+    """EPA"""
+    epa_start = Column(Float)
+    epa_pre_champs = Column(Float)
+    epa_end = Column(Float)
+    epa_mean = Column(Float)
+    epa_max = Column(Float)
+    epa_diff = Column(Float)
 
     """ILS"""
-    ils_1 = Column(Float)
-    ils_2 = Column(Float)
+    # ils_1 = Column(Float)
+    # ils_2 = Column(Float)
 
     """STATS"""
     wins = Column(Integer)
@@ -47,8 +47,8 @@ class TeamYearORM(Base, ModelORM):
     count = Column(Integer)
     winrate = Column(Float)
 
-    elo_rank = Column(Integer)
-    elo_percentile = Column(Float)
+    epa_rank = Column(Integer)
+    epa_percentile = Column(Float)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -62,15 +62,15 @@ class TeamYear(Model):
     country: Optional[str] = None
     district: Optional[str] = None
 
-    elo_start: Optional[float] = None
-    elo_pre_champs: Optional[float] = None
-    elo_end: Optional[float] = None
-    elo_mean: Optional[float] = None
-    elo_max: Optional[float] = None
-    elo_diff: Optional[float] = None
+    epa_start: Optional[float] = None
+    epa_pre_champs: Optional[float] = None
+    epa_end: Optional[float] = None
+    epa_mean: Optional[float] = None
+    epa_max: Optional[float] = None
+    epa_diff: Optional[float] = None
 
-    ils_1: Optional[float] = None
-    ils_2: Optional[float] = None
+    # ils_1: Optional[float] = None
+    # ils_2: Optional[float] = None
 
     wins: int = 0
     losses: int = 0
@@ -78,8 +78,8 @@ class TeamYear(Model):
     count: int = 0
     winrate: float = 0
 
-    elo_rank: Optional[int] = None
-    elo_percentile: Optional[float] = None
+    epa_rank: Optional[int] = None
+    epa_percentile: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamYear":

@@ -34,10 +34,13 @@ class TeamMatchORM(Base, ModelORM):
     # Choices are 'Upcoming', 'Completed'
     status = Column(String(10))
 
-    elo = Column(Float)
+    epa = Column(Float)
+    auto_epa = Column(Float)
+    teleop_epa = Column(Float)
+    endgame_epa = Column(Float)
 
-    ils_1 = Column(Float)
-    ils_2 = Column(Float)
+    # ils_1 = Column(Float)
+    # ils_2 = Column(Float)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -53,10 +56,13 @@ class TeamMatch(Model):
     alliance: str = ""
     status: str = ""
 
-    elo: Optional[float] = None
+    epa: Optional[float] = None
+    auto_epa: Optional[float] = None
+    teleop_epa: Optional[float] = None
+    endgame_epa: Optional[float] = None
 
-    ils_1: Optional[float] = None
-    ils_2: Optional[float] = None
+    # ils_1: Optional[float] = None
+    # ils_2: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamMatch":

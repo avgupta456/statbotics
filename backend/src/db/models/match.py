@@ -29,22 +29,28 @@ class MatchORM(Base, ModelORM):
     status = Column(String(10))
 
     red = Column(String(20))
-    red_elo_sum = Column(Float)
-    red_ils_1_sum = Column(Float)
-    red_ils_2_sum = Column(Float)
+    red_epa_sum = Column(Float)
+    red_auto_epa_sum = Column(Float)
+    red_teleop_epa_sum = Column(Float)
+    red_endgame_epa_sum = Column(Float)
+    # red_ils_1_sum = Column(Float)
+    # red_ils_2_sum = Column(Float)
 
     blue = Column(String(20))
-    blue_elo_sum = Column(Float)
-    blue_ils_1_sum = Column(Float)
-    blue_ils_2_sum = Column(Float)
+    blue_epa_sum = Column(Float)
+    blue_auto_epa_sum = Column(Float)
+    blue_teleop_epa_sum = Column(Float)
+    blue_endgame_epa_sum = Column(Float)
+    # blue_ils_1_sum = Column(Float)
+    # blue_ils_2_sum = Column(Float)
 
     winner = Column(String(10))
-    elo_winner = Column(String(10))
-    elo_win_prob = Column(Float)
-    red_rp_1_prob = Column(Float)
-    red_rp_2_prob = Column(Float)
-    blue_rp_1_prob = Column(Float)
-    blue_rp_2_prob = Column(Float)
+    epa_winner = Column(String(10))
+    epa_win_prob = Column(Float)
+    # red_rp_1_prob = Column(Float)
+    # red_rp_2_prob = Column(Float)
+    # blue_rp_1_prob = Column(Float)
+    # blue_rp_2_prob = Column(Float)
 
     playoff = Column(Boolean)
     time = Column(Integer)
@@ -95,22 +101,28 @@ class Match(Model):
     status: str
 
     red: Optional[str] = None
-    red_elo_sum: Optional[float] = None
-    red_ils_1_sum: Optional[float] = None
-    red_ils_2_sum: Optional[float] = None
+    red_epa_sum: Optional[float] = None
+    red_auto_epa_sum: Optional[float] = None
+    red_teleop_epa_sum: Optional[float] = None
+    red_endgame_epa_sum: Optional[float] = None
+    # red_ils_1_sum: Optional[float] = None
+    # red_ils_2_sum: Optional[float] = None
 
     blue: Optional[str] = None
-    blue_elo_sum: Optional[float] = None
-    blue_ils_1_sum: Optional[float] = None
-    blue_ils_2_sum: Optional[float] = None
+    blue_epa_sum: Optional[float] = None
+    blue_auto_epa_sum: Optional[float] = None
+    blue_teleop_epa_sum: Optional[float] = None
+    blue_endgame_epa_sum: Optional[float] = None
+    # blue_ils_1_sum: Optional[float] = None
+    # blue_ils_2_sum: Optional[float] = None
 
     winner: Optional[str] = None
-    elo_winner: Optional[str] = None
-    elo_win_prob: Optional[float] = None
-    red_rp_1_prob: Optional[float] = None
-    red_rp_2_prob: Optional[float] = None
-    blue_rp_1_prob: Optional[float] = None
-    blue_rp_2_prob: Optional[float] = None
+    epa_winner: Optional[str] = None
+    epa_win_prob: Optional[float] = None
+    # red_rp_1_prob = Column(Float)
+    # red_rp_2_prob = Column(Float)
+    # blue_rp_1_prob = Column(Float)
+    # blue_rp_2_prob = Column(Float)
 
     playoff: bool = False
     time: Optional[int] = None

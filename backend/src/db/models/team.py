@@ -23,11 +23,12 @@ class TeamORM(Base, ModelORM):
     district = Column(String(10))
     active = Column(Boolean)
 
-    """ELO"""
-    elo = Column(Float)
-    elo_recent = Column(Float)
-    elo_mean = Column(Float)
-    elo_max = Column(Float)
+    """EPA"""
+    # TODO: normalized EPA values
+    # epa = Column(Float)
+    # epa_recent = Column(Float)
+    # epa_mean = Column(Float)
+    # epa_max = Column(Float)
 
     """STATS"""
     wins = Column(Integer)
@@ -45,10 +46,12 @@ class Team(Model):
     country: Optional[str] = None
     district: Optional[str] = None
     active: Optional[bool] = None
-    elo: Optional[float] = None
-    elo_recent: Optional[float] = None
-    elo_mean: Optional[float] = None
-    elo_max: Optional[float] = None
+
+    # epa: Optional[float] = None
+    # epa_recent: Optional[float] = None
+    # epa_mean: Optional[float] = None
+    # epa_max: Optional[float] = None
+
     wins: int = 0
     losses: int = 0
     ties: int = 0

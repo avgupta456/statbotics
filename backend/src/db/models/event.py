@@ -37,20 +37,24 @@ class EventORM(Base, ModelORM):
     current_match = Column(Integer)
     qual_matches = Column(Integer)
 
-    """ELO"""
-    elo_max = Column(Float)
-    elo_top8 = Column(Float)
-    elo_top24 = Column(Float)
-    elo_mean = Column(Float)
-    elo_sd = Column(Float)
+    """EPA"""
+    epa_max = Column(Float)
+    epa_top8 = Column(Float)
+    epa_top24 = Column(Float)
+    epa_mean = Column(Float)
+    epa_sd = Column(Float)
 
     """STATS"""
-    elo_acc = Column(Float)
-    elo_mse = Column(Float)
-    rp1_acc = Column(Float)
-    rp1_mse = Column(Float)
-    rp2_acc = Column(Float)
-    rp2_mse = Column(Float)
+    quals_epa_acc = Column(Float)
+    quals_epa_mse = Column(Float)
+    elims_epa_acc = Column(Float)
+    elims_epa_mse = Column(Float)
+    epa_acc = Column(Float)
+    epa_mse = Column(Float)
+    # rp1_acc = Column(Float)
+    # rp1_mse = Column(Float)
+    # rp2_acc = Column(Float)
+    # rp2_mse = Column(Float)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -70,19 +74,22 @@ class Event(Model):
     current_match: int
     qual_matches: int
 
-    elo_max: Optional[float] = None
-    elo_top8: Optional[float] = None
-    elo_top24: Optional[float] = None
-    elo_mean: Optional[float] = None
-    elo_sd: Optional[float] = None
+    epa_max: Optional[float] = None
+    epa_top8: Optional[float] = None
+    epa_top24: Optional[float] = None
+    epa_mean: Optional[float] = None
+    epa_sd: Optional[float] = None
 
-    elo_acc: Optional[float] = None
-    elo_mse: Optional[float] = None
-
-    rp1_acc: Optional[float] = None
-    rp1_mse: Optional[float] = None
-    rp2_acc: Optional[float] = None
-    rp2_mse: Optional[float] = None
+    quals_epa_acc: Optional[float] = None
+    quals_epa_mse: Optional[float] = None
+    elims_epa_acc: Optional[float] = None
+    elims_epa_mse: Optional[float] = None
+    epa_acc: Optional[float] = None
+    epa_mse: Optional[float] = None
+    # rp1_acc: Optional[float] = None
+    # rp1_mse: Optional[float] = None
+    # rp2_acc: Optional[float] = None
+    # rp2_mse: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Event":

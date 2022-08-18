@@ -16,23 +16,32 @@ class YearORM(Base, ModelORM):
 
     PrimaryKeyConstraint(year)
 
-    """ELO"""
-    elo_max = Column(Float)
-    elo_1p = Column(Float)
-    elo_5p = Column(Float)
-    elo_10p = Column(Float)
-    elo_25p = Column(Float)
-    elo_median = Column(Float)
-    elo_mean = Column(Float)
-    elo_sd = Column(Float)
-    elo_acc = Column(Float)
-    elo_mse = Column(Float)
+    """EPA"""
+    epa_max = Column(Float)
+    epa_1p = Column(Float)
+    epa_5p = Column(Float)
+    epa_10p = Column(Float)
+    epa_25p = Column(Float)
+    epa_median = Column(Float)
+    epa_mean = Column(Float)
+    epa_sd = Column(Float)
+
+    epa_quals_acc = Column(Float)
+    epa_quals_mse = Column(Float)
+    epa_elims_acc = Column(Float)
+    epa_elims_mse = Column(Float)
+    epa_season_quals_acc = Column(Float)
+    epa_season_elims_mse = Column(Float)
+    epa_champs_quals_acc = Column(Float)
+    epa_champs_elims_mse = Column(Float)
+    epa_acc = Column(Float)
+    epa_mse = Column(Float)
 
     """ILS"""
-    rp1_acc = Column(Float)
-    rp1_mse = Column(Float)
-    rp2_acc = Column(Float)
-    rp2_mse = Column(Float)
+    # rp1_acc = Column(Float)
+    # rp1_mse = Column(Float)
+    # rp2_acc = Column(Float)
+    # rp2_mse = Column(Float)
 
     """CONSTANTS"""
     score_mean = Column(Float)
@@ -51,21 +60,30 @@ class YearORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class Year(Model):
     year: int
-    elo_max: Optional[float] = None
-    elo_1p: Optional[float] = None
-    elo_5p: Optional[float] = None
-    elo_10p: Optional[float] = None
-    elo_25p: Optional[float] = None
-    elo_median: Optional[float] = None
-    elo_mean: Optional[float] = None
-    elo_sd: Optional[float] = None
-    elo_acc: Optional[float] = None
-    elo_mse: Optional[float] = None
+    epa_max: Optional[float] = None
+    epa_1p: Optional[float] = None
+    epa_5p: Optional[float] = None
+    epa_10p: Optional[float] = None
+    epa_25p: Optional[float] = None
+    epa_median: Optional[float] = None
+    epa_mean: Optional[float] = None
+    epa_sd: Optional[float] = None
 
-    rp1_acc: Optional[float] = None
-    rp1_mse: Optional[float] = None
-    rp2_acc: Optional[float] = None
-    rp2_mse: Optional[float] = None
+    epa_quals_acc: Optional[float] = None
+    epa_quals_mse: Optional[float] = None
+    epa_elims_acc: Optional[float] = None
+    epa_elims_mse: Optional[float] = None
+    epa_season_quals_acc: Optional[float] = None
+    epa_season_elims_mse: Optional[float] = None
+    epa_champs_quals_acc: Optional[float] = None
+    epa_champs_elims_mse: Optional[float] = None
+    epa_acc: Optional[float] = None
+    epa_mse: Optional[float] = None
+
+    # rp1_acc: Optional[float] = None
+    # rp1_mse: Optional[float] = None
+    # rp2_acc: Optional[float] = None
+    # rp2_mse: Optional[float] = None
 
     score_mean: Optional[float] = None
     score_sd: Optional[float] = None
