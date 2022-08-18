@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 from src.tba.clean_data import (
     clean_district,
@@ -16,30 +16,40 @@ def get_timestamp_from_str(date: str):
     return int(time.mktime(datetime.strptime(date, "%Y-%m-%d").timetuple()))
 
 
+def get_district(team: int) -> Optional[str]:
+    query_str = "team/frc" + str(team) + "/districts"
+    district_data, _ = get_tba(query_str, etag=None, cache=True)
+    if type(district_data) is bool or district_data is None or len(district_data) == 0:
+        return None
+    return district_data[0]["abbreviation"]
+
+
 def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []
     for i in range(20):
-        data = get_tba("teams/" + str(i) + "/simple", cache=cache)
+        data, _ = get_tba("teams/" + str(i) + "/simple", etag=None, cache=cache)
+        if type(data) is bool:
+            continue
         for data_team in data:
             num = data_team["team_number"]
-            district = None
-            district_data = get_tba("team/frc" + str(num) + "/districts")
-            if district_data is not None and len(district_data) > 0:
-                district = district_data[-1]["abbreviation"]
             new_data = {
                 "team": num,
                 "name": data_team["nickname"],
                 "state": clean_state(data_team["state_prov"]),
-                "district": clean_district(district),
+                "district": clean_district(get_district(num)),
                 "country": data_team["country"],
             }
             out.append(new_data)
     return out
 
 
-def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
+def get_events(
+    year: int, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[Dict[str, Any]], Optional[str]]:
     out: List[Dict[str, Any]] = []
-    data = get_tba("events/" + str(year), cache=cache)
+    data, new_etag = get_tba("events/" + str(year), etag=etag, cache=cache)
+    if type(data) is bool:
+        return out, new_etag
     for event in data:
         key = event["key"]
 
@@ -56,14 +66,14 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
 
         # renames district divisions to district championship
         # renames festival of championships to einsteins
-        type = event["event_type"]
-        if type == 5:
-            type = 2
-        if type == 6:
-            type = 4
+        event_type = event["event_type"]
+        if event_type == 5:
+            event_type = 2
+        if event_type == 6:
+            event_type = 4
 
         # assigns worlds to week 8
-        if type >= 3:
+        if event_type >= 3:
             event["week"] = 8
 
         # filter out incomplete events
@@ -71,7 +81,7 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
             continue
 
         # bug in TBA API
-        if type < 3 and year != 2016:
+        if event_type < 3 and year != 2016:
             event["week"] += 1
 
         out.append(
@@ -83,38 +93,48 @@ def get_events(year: int, cache: bool = True) -> List[Dict[str, Any]]:
                 "country": event["country"],
                 "district": clean_district(event["district"]),
                 "time": get_timestamp_from_str(event["start_date"]),
-                "type": type,
+                "type": event_type,
                 "week": event["week"],
             }
         )
 
-    return out
+    return out, new_etag
 
 
-def get_event_rankings(event: str, cache: bool = True) -> Dict[int, int]:
+def get_event_rankings(
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[Dict[int, int], Optional[str]]:
     out: Dict[int, int] = {}
-
+    new_etag: Optional[str] = None
     # queries TBA for rankings, some older events are not populated
     try:
-        rankings = get_tba("event/" + str(event) + "/rankings", cache=cache)["rankings"]
+        query_str = "event/" + str(event) + "/rankings"
+        data, new_etag = get_tba(query_str, etag=etag, cache=cache)
+        if type(data) is bool:
+            return out, new_etag
+        rankings = data["rankings"]
         for ranking in rankings:
             team_num = int(ranking["team_key"][3:])
             out[team_num] = ranking["rank"]
     except Exception:
         pass
 
-    return out
+    return out, new_etag
 
 
 def get_matches(
     year: int,
     event: str,
     event_time: int,
+    etag: Optional[str] = None,
     cache: bool = True,
-) -> List[Dict[str, Any]]:
+) -> Tuple[List[Dict[str, Any]], Optional[str]]:
     m_type = List[Dict[str, Any]]
     out: m_type = []
-    matches: m_type = get_tba("event/" + str(event) + "/matches", cache=cache)
+    query_str = "event/" + str(event) + "/matches"
+    matches, new_etag = get_tba(query_str, etag=etag, cache=cache)
+    if type(matches) is bool:
+        return out, new_etag
     for match in matches:
         red_teams = match["alliances"]["red"]["team_keys"]
         blue_teams = match["alliances"]["blue"]["team_keys"]
@@ -159,4 +179,4 @@ def get_matches(
             "blue_score_breakdown": blue_breakdown,
         }
         out.append(match_data)
-    return out
+    return out, new_etag

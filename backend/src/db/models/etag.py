@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 import attr
-from sqlalchemy import Column, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.sql.schema import PrimaryKeyConstraint
 
 from src.db.main import Base
@@ -12,6 +12,7 @@ class ETagORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "etags"
+    year = Column(Integer, index=True)
     path = Column(String, index=True)
 
     PrimaryKeyConstraint(path)
@@ -21,6 +22,7 @@ class ETagORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class ETag(Model):
+    year: int
     path: str
     etag: Optional[str] = None
 

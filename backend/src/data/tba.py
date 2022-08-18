@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Set, Tuple
 
 from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
@@ -10,6 +10,7 @@ from src.db.models.create import (
     create_team_year_obj,
     create_year_obj,
 )
+from src.db.models.etag import ETag
 from src.db.models.event import Event
 from src.db.models.match import Match
 from src.db.models.team import Team
@@ -53,8 +54,12 @@ def get_event_status(matches: List[Dict[str, Any]], curr_year: bool) -> str:
 
 
 def process_year(
-    year_num: int, end_year: int, teams: List[Team], cache: bool = True
-) -> objs_type:
+    year_num: int,
+    end_year: int,
+    teams: List[Team],
+    etags: List[ETag],
+    cache: bool = True,
+) -> Tuple[objs_type, List[ETag]]:
     year_obj = create_year_obj({"year": year_num})
     team_year_objs: List[TeamYear] = []
     event_objs: List[Event] = []
@@ -62,16 +67,28 @@ def process_year(
     match_objs: List[Match] = []
     team_match_objs: List[TeamMatch] = []
 
+    etags_dict = {etag.path: etag for etag in etags}
+    default_etag = ETag(year_num, "NA", "NA")
+    new_etags: List[ETag] = []
+
     teams_dict = {team.team: team for team in teams}
     year_teams: Set[int] = set()
 
-    for event in get_events_tba(year_num, cache=cache):
+    events, _ = get_events_tba(year_num, cache=cache)
+
+    for event in events:
         event_teams: Set[int] = set()
 
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
 
-        matches = get_matches_tba(year_num, event_key, event_time, cache=cache)
+        matches, new_etag = get_matches_tba(
+            year_num, event_key, event_time, cache=cache
+        )
+        prev_etag = etags_dict.get(event_key + "/matches", default_etag).etag
+        if new_etag != prev_etag and new_etag is not None:
+            new_etags.append(ETag(year_num, event_key + "/matches", new_etag))
+
         # Hack: remove "Upcoming" matches once finals start
         finals = [m["status"] for m in matches if m["comp_level"] == "f"]
         if len(finals) >= 2 and set(finals) == {"Completed"}:
@@ -83,7 +100,7 @@ def process_year(
             continue
         event_obj.status = event_status
 
-        rankings = get_event_rankings_tba(event_key, cache=cache)
+        rankings, _ = get_event_rankings_tba(event_key, cache=cache)
 
         current_match = 0 if len(matches) > 0 else -1
         qual_matches = 0 if len(matches) > 0 else -1
@@ -140,23 +157,38 @@ def process_year(
         )
 
     return (
-        year_obj,
-        team_year_objs,
-        event_objs,
-        team_event_objs,
-        match_objs,
-        team_match_objs,
+        (
+            year_obj,
+            team_year_objs,
+            event_objs,
+            team_event_objs,
+            match_objs,
+            team_match_objs,
+        ),
+        new_etags,
     )
 
 
-def process_year_partial(year_num: int, objs: objs_type) -> objs_type:
+def process_year_partial(
+    year_num: int, objs: objs_type, etags: List[ETag]
+) -> Tuple[objs_type, List[ETag]]:
     (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs) = objs
+
+    etags_dict = {etag.path: etag for etag in etags}
+    default_etag = ETag(year_num, "NA", "NA")
+    new_etags: List[ETag] = []
+
     for event_obj in event_objs:
-        if event_obj.status != "Ongoing":
+        if event_obj.status == "Completed":
             continue
 
-        event_match_keys = [m.key for m in match_objs if m.event == event_obj.key]
-        matches = get_matches_tba(year_num, event_obj.key, event_obj.time, False)
+        # Load matches, if same as before then skip event
+        prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
+        matches, new_etag = get_matches_tba(
+            year_num, event_obj.key, event_obj.time, prev_etag, False
+        )
+        if new_etag == prev_etag and new_etag is not None:
+            continue
 
         # Hack: remove "Upcoming" matches once finals start
         finals = [m["status"] for m in matches if m["comp_level"] == "f"]
@@ -169,6 +201,7 @@ def process_year_partial(year_num: int, objs: objs_type) -> objs_type:
             continue
         event_obj.status = event_status
 
+        event_match_keys = [m.key for m in match_objs if m.event == event_obj.key]
         current_match = 0 if len(matches) > 0 else -1
         qual_matches = 0 if len(matches) > 0 else -1
         for match in matches:
@@ -180,7 +213,7 @@ def process_year_partial(year_num: int, objs: objs_type) -> objs_type:
                 match_objs.append(match_obj)
                 team_match_objs.extend(curr_team_match_objs)
 
-        rankings = get_event_rankings_tba(event_obj.key, False)
+        rankings, new_etag = get_event_rankings_tba(event_obj.key, None, False)
         for team_event_obj in team_event_objs:
             if team_event_obj.event == event_obj.key:
                 team_event_obj.status = event_status
@@ -189,7 +222,10 @@ def process_year_partial(year_num: int, objs: objs_type) -> objs_type:
         event_obj.current_match = current_match
         event_obj.qual_matches = qual_matches
 
-    return (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs)
+    return (
+        (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs),
+        new_etags,
+    )
 
 
 def post_process():

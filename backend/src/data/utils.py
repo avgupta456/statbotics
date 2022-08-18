@@ -2,12 +2,14 @@ from datetime import datetime
 from typing import Any, Callable, Dict, List, Tuple
 
 from src.db.functions.clear_year import clear_year
+from src.db.models.etag import ETag
 from src.db.models.event import Event
 from src.db.models.match import Match
 from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.db.models.year import Year
+from src.db.read.etag import get_num_etags as get_num_etags_db
 from src.db.read.event import (
     get_events as get_events_db,
     get_num_events as get_num_events_db,
@@ -34,6 +36,7 @@ from src.db.read.year import (
     get_years as get_years_db,
 )
 from src.db.write.main import (
+    update_etags as update_etags_db,
     update_events as update_events_db,
     update_matches as update_matches_db,
     update_team_events as update_team_events_db,
@@ -78,6 +81,7 @@ def write_objs(
     team_events: List[TeamEvent],
     matches: List[Match],
     team_matches: List[TeamMatch],
+    etags: List[ETag],
     end_year: int,
     clean: bool,
 ) -> None:
@@ -89,6 +93,7 @@ def write_objs(
     update_team_events_db(team_events, clean)
     update_matches_db(matches, clean)
     update_team_matches_db(team_matches, clean)
+    update_etags_db(etags, clean)
 
 
 def print_table_stats() -> None:
@@ -99,6 +104,7 @@ def print_table_stats() -> None:
     print("Num Team Events:", get_num_team_events_db())
     print("Num Matches:", get_num_matches_db())
     print("Num Team Matches:", get_num_team_matches_db())
+    print("Num ETags", get_num_etags_db())
 
 
 def time_func(

@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Tuple, Union
 
 from requests import Session
 
@@ -12,32 +12,36 @@ session = Session()
 session.headers.update({"X-TBA-Auth-Key": AUTH_KEY, "X-TBA-Auth-Id": ""})
 
 
-def _get_tba(url: str, etag: Optional[str] = None) -> Any:
-    if etag:
+def _get_tba(
+    url: str, etag: Optional[str] = None
+) -> Tuple[Union[Any, bool], Optional[str]]:
+    if etag is not None:
         session.headers.update({"If-None-Match": etag})
         response = session.get(read_prefix + url)
         if response.status_code == 304:
-            return True
+            return True, response.headers.get("ETag")
         elif response.status_code == 200:
-            return response.json()
+            return response.json(), response.headers.get("ETag")
     else:
         response = session.get(read_prefix + url)
         if response.status_code == 200:
-            return response.json()
-    return False
+            return response.json(), response.headers.get("ETag")
+    return False, None
 
 
-def get_tba(url: str, etag: Optional[str] = None, cache: bool = True) -> Any:
+def get_tba(
+    url: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[Union[Any, bool], Optional[str]]:
     if cache and os.path.exists("cache/" + url):
         # Cache Hit
-        return load_cache("cache/" + url)
+        return load_cache("cache/" + url), None
 
-    data = _get_tba(url, etag)
+    data, new_etag = _get_tba(url, etag)
 
     # Either Etag or Invalid
     if type(data) == bool:
-        return data
+        return data, new_etag
 
     # Cache Miss
     dump_cache("cache/" + url, data)
-    return data
+    return data, new_etag

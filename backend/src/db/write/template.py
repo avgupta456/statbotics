@@ -6,6 +6,7 @@ from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
+from src.db.models.etag import ETagORM
 from src.db.models.event import EventORM
 from src.db.models.main import TModel, TModelORM
 from src.db.models.match import MatchORM
@@ -44,7 +45,9 @@ def update_template(
         def callback(session: SessionType):
             new_items = [attr.asdict(x) for x in items]  # type: ignore
 
-            if orm_type == TeamORM:
+            if orm_type == ETagORM:
+                primary_key = ["path"]
+            elif orm_type == TeamORM:
                 primary_key = ["team"]
             elif orm_type == YearORM:
                 primary_key = ["year"]

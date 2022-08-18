@@ -2,20 +2,21 @@ from typing import Dict
 
 from src.data.avg import process_year as process_year_avg
 from src.data.tba import (
-    load_teams,
+    load_teams as load_teams_tba,
     post_process as post_process_tba,
     process_year as process_year_tba,
     process_year_partial as process_year_partial_tba,
 )
 from src.data.utils import (
     objs_type,
-    print_table_stats,
+    # print_table_stats,
     read_objs,
     time_func,
     write_objs,
 )
 from src.db.main import clean_db
 from src.db.models.team_year import TeamYear
+from src.db.read.etag import get_etags as get_etags_db
 from src.db.read.team import get_teams as get_teams_db
 from src.db.read.team_year import get_team_years as get_team_years_db
 from src.db.write.main import update_teams as update_teams_db
@@ -23,7 +24,7 @@ from src.db.write.main import update_teams as update_teams_db
 
 def reset_all_years(start_year: int, end_year: int):
     time_func("Clean DB", clean_db)
-    teams = time_func("Load Teams", load_teams, cache=True)  # type: ignore
+    teams = time_func("Load Teams", load_teams_tba, cache=True)  # type: ignore
     time_func("Update DB", update_teams_db, teams, True)  # type: ignore
 
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
@@ -32,8 +33,8 @@ def reset_all_years(start_year: int, end_year: int):
         team_years_dict[year] = teams_dict
 
     for year_num in range(start_year, end_year + 1):
-        objs: objs_type = time_func(
-            str(year_num) + " TBA", process_year_tba, year_num, end_year, teams, year_num <= end_year  # type: ignore
+        objs, new_etags = time_func(
+            str(year_num) + " TBA", process_year_tba, year_num, end_year, teams, [], year_num <= end_year  # type: ignore
         )
         year = time_func(
             str(year_num) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -46,18 +47,19 @@ def reset_all_years(start_year: int, end_year: int):
         objs = out[1:]
         """
 
-        time_func(str(year_num) + " Write", write_objs, year_num, *objs, end_year, True)  # type: ignore
+        time_func(str(year_num) + " Write", write_objs, year_num, *objs, new_etags, end_year, True)  # type: ignore
 
     """
     post_process_elo(end_year)
     """
 
     time_func("Post TBA", post_process_tba)
-    print_table_stats()
+    # print_table_stats()
 
 
 def reset_curr_year(curr_year: int):
     teams = time_func("Load Teams", get_teams_db)
+    etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
 
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # master dictionary
     # Need up to four years of previous data for rating initialization
@@ -66,8 +68,8 @@ def reset_curr_year(curr_year: int):
         team_years_dict[year] = teams_dict
 
     # NOTE: True normally False
-    objs: objs_type = time_func(
-        str(curr_year) + " TBA", process_year_tba, curr_year, curr_year, teams, True  # type: ignore
+    objs, new_etags = time_func(
+        str(curr_year) + " TBA", process_year_tba, curr_year, curr_year, teams, etags, False  # type: ignore
     )
     year = time_func(
         str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -80,16 +82,17 @@ def reset_curr_year(curr_year: int):
     objs = out[1:]
     """
 
-    time_func("Write", write_objs, curr_year, *objs, curr_year, True)  # type: ignore
+    time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, True)  # type: ignore
     """
     post_process_elo(end_year)
     """
     time_func("Post TBA", post_process_tba)
-    print_table_stats()
 
 
 def update_curr_year(curr_year: int):
-    objs = time_func("Load Objs", read_objs, curr_year)  # type: ignore
+    # teams = time_func("Load Teams", get_teams_db)
+    objs: objs_type = time_func("Load Objs", read_objs, curr_year)  # type: ignore
+    etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
 
     objs_dict = {}
     objs_dict[0] = str(objs[0])
@@ -99,8 +102,8 @@ def update_curr_year(curr_year: int):
     objs_dict[4] = {x.key: str(x) for x in objs[4]}
     objs_dict[5] = {str(x.team) + "_" + x.match: str(x) for x in objs[5]}
 
-    objs: objs_type = time_func(
-        str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs  # type: ignore
+    objs, new_etags = time_func(
+        str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags  # type: ignore
     )
     year = time_func(
         str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -126,5 +129,4 @@ def update_curr_year(curr_year: int):
     tm_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[5].get(k, "")]
     new_objs = (year_obj, ty_objs, e_objs, te_objs, m_objs, tm_objs)
 
-    time_func("Write", write_objs, curr_year, *new_objs, curr_year, False)  # type: ignore
-    print_table_stats()
+    time_func("Write", write_objs, curr_year, *new_objs, new_etags, curr_year, False)  # type: ignore
