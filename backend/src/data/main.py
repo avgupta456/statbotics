@@ -1,6 +1,7 @@
 from typing import Dict
 
 from src.data.avg import process_year as process_year_avg
+from src.data.epa import process_year as process_year_epa
 from src.data.tba import (
     load_teams as load_teams_tba,
     post_process as post_process_tba,
@@ -19,6 +20,7 @@ from src.db.models.team_year import TeamYear
 from src.db.read.etag import get_etags as get_etags_db
 from src.db.read.team import get_teams as get_teams_db
 from src.db.read.team_year import get_team_years as get_team_years_db
+from src.db.read.year import get_years as get_years_db
 from src.db.write.main import update_teams as update_teams_db
 
 
@@ -28,9 +30,11 @@ def reset_all_years(start_year: int, end_year: int):
     time_func("Update DB", update_teams_db, teams, True)  # type: ignore
 
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
+    year_mean_epas: Dict[int, float] = {}
     for year in range(max(2002, start_year - 4), start_year):
         teams_dict = {t.team: t for t in get_team_years_db(year)}
         team_years_dict[year] = teams_dict
+        year_mean_epas[year] = get_years_db(year)[0].epa_mean or 0
 
     for year_num in range(start_year, end_year + 1):
         objs, new_etags = time_func(
@@ -39,15 +43,15 @@ def reset_all_years(start_year: int, end_year: int):
         year = time_func(
             str(year_num) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
         )
-        objs = (year, *objs[1:])
+        objs: objs_type = (year, *objs[1:])
 
-        """
-        out = process_year_elo(year_num, team_years_dict, *objs)
+        out = time_func(str(year_num) + " EPA", process_year_epa, year_num, team_years_dict, *objs, year_mean_epas)  # type: ignore
         team_years_dict = out[0]
         objs = out[1:]
-        """
 
         time_func(str(year_num) + " Write", write_objs, year_num, *objs, new_etags, end_year, True)  # type: ignore
+
+        year_mean_epas[year_num] = objs[0].epa_mean or 0
 
     """
     post_process_elo(end_year)
@@ -61,11 +65,12 @@ def reset_curr_year(curr_year: int):
     teams = time_func("Load Teams", get_teams_db)
     etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
 
-    team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # master dictionary
-    # Need up to four years of previous data for rating initialization
+    team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
+    year_mean_epas: Dict[int, float] = {}
     for year in range(max(2002, curr_year - 4), curr_year):
         teams_dict = {t.team: t for t in get_team_years_db(year)}
         team_years_dict[year] = teams_dict
+        year_mean_epas[year] = get_years_db(year)[0].epa_mean or 0
 
     # NOTE: True normally False
     objs, new_etags = time_func(
@@ -76,11 +81,9 @@ def reset_curr_year(curr_year: int):
     )
     objs = (year, *objs[1:])
 
-    """
-    out = process_year_elo(year_num, team_years_dict, *objs)
+    out = time_func(str(curr_year) + " EPA", process_year_epa, curr_year, team_years_dict, *objs, year_mean_epas)  # type: ignore
     team_years_dict = out[0]
     objs = out[1:]
-    """
 
     time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, True)  # type: ignore
     """
@@ -102,6 +105,13 @@ def update_curr_year(curr_year: int):
     objs_dict[4] = {x.key: str(x) for x in objs[4]}
     objs_dict[5] = {str(x.team) + "_" + x.match: str(x) for x in objs[5]}
 
+    team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
+    year_mean_epas: Dict[int, float] = {}
+    for year in range(max(2002, curr_year - 4), curr_year):
+        teams_dict = {t.team: t for t in get_team_years_db(year)}
+        team_years_dict[year] = teams_dict
+        year_mean_epas[year] = get_years_db(year)[0].epa_mean or 0
+
     objs, new_etags = time_func(
         str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags  # type: ignore
     )
@@ -110,11 +120,9 @@ def update_curr_year(curr_year: int):
     )
     objs = (year, *objs[1:])
 
-    """
-    out = process_year_elo(year_num, team_years_dict, *objs)
+    out = time_func(str(curr_year) + " EPA", process_year_epa, curr_year, team_years_dict, *objs, year_mean_epas)  # type: ignore
     team_years_dict = out[0]
     objs = out[1:]
-    """
 
     year_obj = objs[0]
     curr_dict = {str(x.team) + "_" + str(x.year): x for x in objs[1]}

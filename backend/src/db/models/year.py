@@ -31,9 +31,13 @@ class YearORM(Base, ModelORM):
     epa_elims_acc = Column(Float)
     epa_elims_mse = Column(Float)
     epa_season_quals_acc = Column(Float)
+    epa_season_quals_mse = Column(Float)
+    epa_season_elims_acc = Column(Float)
     epa_season_elims_mse = Column(Float)
-    epa_champs_quals_acc = Column(Float)
+    epa_champs_elims_acc = Column(Float)
     epa_champs_elims_mse = Column(Float)
+    epa_champs_quals_acc = Column(Float)
+    epa_champs_quals_mse = Column(Float)
     epa_acc = Column(Float)
     epa_mse = Column(Float)
 
@@ -74,9 +78,13 @@ class Year(Model):
     epa_elims_acc: Optional[float] = None
     epa_elims_mse: Optional[float] = None
     epa_season_quals_acc: Optional[float] = None
+    epa_season_quals_mse: Optional[float] = None
+    epa_season_elims_acc: Optional[float] = None
     epa_season_elims_mse: Optional[float] = None
-    epa_champs_quals_acc: Optional[float] = None
+    epa_champs_elims_acc: Optional[float] = None
     epa_champs_elims_mse: Optional[float] = None
+    epa_champs_quals_acc: Optional[float] = None
+    epa_champs_quals_mse: Optional[float] = None
     epa_acc: Optional[float] = None
     epa_mse: Optional[float] = None
 
