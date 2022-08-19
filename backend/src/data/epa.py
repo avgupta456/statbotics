@@ -1,17 +1,18 @@
 from collections import defaultdict
-from typing import List, Tuple, Dict, Union
 from statistics import stdev
+from typing import Dict, List, Tuple, Union
 
-from src.db.models.year import Year
-from src.db.models.team_year import TeamYear
 from src.db.models.event import Event
-from src.db.models.team_event import TeamEvent
 from src.db.models.match import Match
+from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
+from src.db.models.team_year import TeamYear
+from src.db.models.year import Year
+from src.utils import get_team_event_key, get_team_match_key
 
-from src.utils import get_team_match_key, get_team_event_key
 
-
+# TODO: run simulation on previous years to determine if any others are 0 or 1
+# TODO: run simulation to determine if margin_func should reach 1 or ~0.8
 def margin_func(year: int, x: int) -> float:
     if year in [2015]:
         return 0
@@ -28,6 +29,7 @@ def sum_func(arr: List[float], mean: float) -> float:
     return min(sum(arr), 2 * mean + 0.8 * (sum(arr) - 2 * mean))
 
 
+# TODO: Handle RPs somehow
 def process_year(
     year_num: int,
     team_years_all: Dict[int, Dict[int, TeamYear]],
@@ -47,17 +49,20 @@ def process_year(
     List[Match],
     List[TeamMatch],
 ]:
-    TOTAL_MEAN = year.no_fouls_mean or 0
+    NUM_TEAMS = 2 if year_num <= 2004 else 3
+    USE_COMPONENTS = year_num >= 2016
+
+    # no_fouls_mean after 2016, score_mean before 2016
+    TOTAL_MEAN = year.no_fouls_mean or year.score_mean or 0
     TOTAL_SD = year.score_sd or 0
+    INIT_EPA = TOTAL_MEAN / NUM_TEAMS - 0.2 * TOTAL_SD
 
     # AUTO_MEAN = year.auto_mean or 0
     # TELEOP_MEAN = year.teleop_mean or 0
     # ENDGAME_MEAN = year.endgame_mean or 0
 
-    use_components = year_num >= 2016
-
     team_counts: Dict[int, int] = defaultdict(int)  # for updating epa
-    team_epas: Dict[int, float] = defaultdict(lambda: TOTAL_MEAN)  # most recent epa
+    team_epas: Dict[int, float] = defaultdict(lambda: INIT_EPA)  # most recent epa
 
     team_years_dict: Dict[int, TeamYear] = {}
     team_events_dict: Dict[str, List[Tuple[float, bool]]] = {}
@@ -77,7 +82,9 @@ def process_year(
             for past_year in range(year_num - 1, year_num - 5, -1):
                 past_team_year = team_years_all.get(past_year, {}).get(num, None)
                 if past_team_year is not None and past_team_year.epa_max is not None:
-                    norm_epa = past_team_year.epa_max / year_mean_epas[past_year]
+                    norm_epa = (
+                        INIT_EPA * past_team_year.epa_max / year_mean_epas[past_year]
+                    )
                     past_epas.append(norm_epa)
             epa_1yr = past_epas[0] if len(past_epas) > 0 else None
             epa_2yr = past_epas[1] if len(past_epas) > 1 else None
@@ -85,19 +92,19 @@ def process_year(
             # Otherwise use the two most recent years (regardless of team activity)
             team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
             if team_year_1 is not None and team_year_1.epa_max is not None:
-                epa_1yr = team_year_1.epa_max / year_mean_epas[year_num - 1]
+                epa_1yr = INIT_EPA * team_year_1.epa_max / year_mean_epas[year_num - 1]
             team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
             if team_year_2 is not None and team_year_2.epa_max is not None:
-                epa_2yr = team_year_2.epa_max / year_mean_epas[year_num - 2]
+                epa_2yr = INIT_EPA * team_year_2.epa_max / year_mean_epas[year_num - 2]
 
-        epa_1yr = epa_1yr or TOTAL_MEAN
-        epa_2yr = epa_2yr or TOTAL_MEAN
+        epa_1yr = epa_1yr or INIT_EPA
+        epa_2yr = epa_2yr or INIT_EPA
         epa_prior = 0.7 * epa_1yr + 0.3 * epa_2yr
-        epa_prior = 0.8 * epa_prior + 0.2 * TOTAL_MEAN
-        team_epas[num] = TOTAL_MEAN if year_num == 2002 else epa_prior
+        epa_prior = 0.8 * epa_prior + 0.2 * INIT_EPA
+        team_epas[num] = INIT_EPA if year_num == 2002 else epa_prior
         team_year.epa_start = round(team_epas[num], 2)
 
-        if use_components:
+        if USE_COMPONENTS:
             # TODO: add components calculations
             pass
 
@@ -133,8 +140,10 @@ def process_year(
         for team in blue:
             blue_epa_pre[team] = team_epas[team]
             team_match_ids[get_team_match_key(team, match.key)] = team_epas[team]
-        match.red_epa_sum = round(sum(red_epa_pre.values()), 2)
-        match.blue_epa_sum = round(sum(blue_epa_pre.values()), 2)
+        red_epa_sum = sum_func(list(red_epa_pre.values()), TOTAL_MEAN)
+        match.red_epa_sum = round(red_epa_sum, 2)
+        blue_epa_sum = sum_func(list(blue_epa_pre.values()), TOTAL_MEAN)
+        match.blue_epa_sum = round(blue_epa_sum, 2)
         norm_diff = (match.red_epa_sum - match.blue_epa_sum) / TOTAL_SD
         win_prob = 1 / (1 + 10 ** (-5 / 8 * norm_diff))
         match.epa_win_prob = round(win_prob, 4)
@@ -155,16 +164,19 @@ def process_year(
         blue_mapping = {"blue": 0, "red": 1, "draw": 2}
 
         # UPDATE EPA
-        weight = 1 / 3 if match.playoff else 0
+        weight = 1 / 3 if match.playoff else 1
+        red_score = match.red_no_fouls or match.red_score or 0
+        red_pred = match.red_epa_sum
+        blue_score = match.blue_no_fouls or match.blue_score or 0
+        blue_pred = match.blue_epa_sum
         for t in red:
-            count = team_counts[t]
-            percent, margin = percent_func(count), margin_func(year_num, count)
-            red_score, red_pred = match.red_score or 0, match.red_epa_sum
-            blue_score, blue_pred = match.blue_score or 0, match.blue_epa_sum
+            team_count = team_counts[t]
+            percent = percent_func(team_count)
+            margin = margin_func(year_num, team_count)
             error = ((red_score - red_pred) + margin * (blue_pred - blue_score)) / (
                 1 + margin
             )
-            new_epa = red_epa_pre[t] + weight * percent * error
+            new_epa = max(0, red_epa_pre[t] + weight * percent * error / NUM_TEAMS)
 
             team_epas[t] = new_epa
             team_matches_dict[t].append(new_epa)
@@ -174,17 +186,18 @@ def process_year(
             team_year_stats[t][3] += 1
             team_event_stats[team_event_key][red_mapping[winner]] += 1
             team_event_stats[team_event_key][3] += 1
-            team_counts[t] += 1
+
+            if not match.playoff:
+                team_counts[t] += 1
 
         for t in blue:
-            count = team_counts[t]
-            percent, margin = percent_func(count), margin_func(year_num, count)
-            red_score, red_pred = match.red_score or 0, match.red_epa_sum
-            blue_score, blue_pred = match.blue_score or 0, match.blue_epa_sum
+            team_count = team_counts[t]
+            percent = percent_func(team_count)
+            margin = margin_func(year_num, team_count)
             error = ((blue_score - blue_pred) + margin * (red_pred - red_score)) / (
                 1 + margin
             )
-            new_epa = blue_epa_pre[t] + weight * percent * error
+            new_epa = max(0, blue_epa_pre[t] + weight * percent * error / NUM_TEAMS)
 
             team_epas[t] = new_epa
             team_matches_dict[t].append(new_epa)
@@ -194,7 +207,9 @@ def process_year(
             team_year_stats[t][3] += 1
             team_event_stats[team_event_key][blue_mapping[winner]] += 1
             team_event_stats[team_event_key][3] += 1
-            team_counts[t] += 1
+
+            if not match.playoff:
+                team_counts[t] += 1
 
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
         new_acc = 1 if winner == match.epa_winner else 0

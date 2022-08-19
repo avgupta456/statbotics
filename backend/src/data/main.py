@@ -34,7 +34,11 @@ def reset_all_years(start_year: int, end_year: int):
     for year in range(max(2002, start_year - 4), start_year):
         teams_dict = {t.team: t for t in get_team_years_db(year)}
         team_years_dict[year] = teams_dict
-        year_mean_epas[year] = get_years_db(year)[0].epa_mean or 0
+
+        year_mean_epas[year] = 0
+        year_objs = get_years_db(year)
+        if len(year_objs) > 0:
+            year_mean_epas[year] = year_objs[0].epa_mean or 0
 
     for year_num in range(start_year, end_year + 1):
         objs, new_etags = time_func(
@@ -70,7 +74,11 @@ def reset_curr_year(curr_year: int):
     for year in range(max(2002, curr_year - 4), curr_year):
         teams_dict = {t.team: t for t in get_team_years_db(year)}
         team_years_dict[year] = teams_dict
-        year_mean_epas[year] = get_years_db(year)[0].epa_mean or 0
+
+        year_mean_epas[year] = 0
+        year_objs = get_years_db(year)
+        if len(year_objs) > 0:
+            year_mean_epas[year] = year_objs[0].epa_mean or 0
 
     # NOTE: True normally False
     objs, new_etags = time_func(
@@ -110,7 +118,11 @@ def update_curr_year(curr_year: int):
     for year in range(max(2002, curr_year - 4), curr_year):
         teams_dict = {t.team: t for t in get_team_years_db(year)}
         team_years_dict[year] = teams_dict
-        year_mean_epas[year] = get_years_db(year)[0].epa_mean or 0
+
+        year_mean_epas[year] = 0
+        year_objs = get_years_db(year)
+        if len(year_objs) > 0:
+            year_mean_epas[year] = year_objs[0].epa_mean or 0
 
     objs, new_etags = time_func(
         str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags  # type: ignore
