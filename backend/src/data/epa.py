@@ -11,17 +11,17 @@ from src.db.models.year import Year
 from src.utils import get_team_event_key, get_team_match_key
 
 
-# TODO: run simulation on previous years to determine if any others are 0 or 1
-# TODO: run simulation to determine if margin_func should reach 1 or ~0.8
 def margin_func(year: int, x: int) -> float:
+    if year in [2002, 2003, 2018]:
+        return 1
     if year in [2015]:
         return 0
-    if year in [2018]:
-        return 1
     return min(1, max(0, 1 / 24 * (x - 12)))
 
 
-def percent_func(x: int) -> float:
+def percent_func(year: int, x: int) -> float:
+    if year <= 2010:
+        return 0.3
     return min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
 
 
@@ -39,7 +39,7 @@ def process_year(
     team_events: List[TeamEvent],
     matches: List[Match],
     team_matches: List[TeamMatch],
-    year_mean_epas: Dict[int, float],
+    year_epa_stats: Dict[int, Tuple[float, float]],
 ) -> Tuple[
     Dict[int, Dict[int, TeamYear]],
     Year,
@@ -51,6 +51,7 @@ def process_year(
 ]:
     NUM_TEAMS = 2 if year_num <= 2004 else 3
     USE_COMPONENTS = year_num >= 2016
+    K = -5 / 8 if year_num >= 2008 else -5 / 12
 
     # no_fouls_mean after 2016, score_mean before 2016
     TOTAL_MEAN = year.no_fouls_mean or year.score_mean or 0
@@ -82,20 +83,24 @@ def process_year(
             for past_year in range(year_num - 1, year_num - 5, -1):
                 past_team_year = team_years_all.get(past_year, {}).get(num, None)
                 if past_team_year is not None and past_team_year.epa_max is not None:
-                    norm_epa = (
-                        INIT_EPA * past_team_year.epa_max / year_mean_epas[past_year]
-                    )
-                    past_epas.append(norm_epa)
+                    prev_mean, prev_sd = year_epa_stats[past_year]
+                    prev_norm_epa = (past_team_year.epa_max - prev_mean) / prev_sd
+                    new_epa = (TOTAL_MEAN + TOTAL_SD * (prev_norm_epa)) / NUM_TEAMS
+                    past_epas.append(new_epa)
             epa_1yr = past_epas[0] if len(past_epas) > 0 else None
             epa_2yr = past_epas[1] if len(past_epas) > 1 else None
         else:
             # Otherwise use the two most recent years (regardless of team activity)
             team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
             if team_year_1 is not None and team_year_1.epa_max is not None:
-                epa_1yr = INIT_EPA * team_year_1.epa_max / year_mean_epas[year_num - 1]
+                prev_mean, prev_sd = year_epa_stats[year_num - 1]
+                prev_norm_epa = (team_year_1.epa_max - prev_mean) / prev_sd
+                epa_1yr = (TOTAL_MEAN + TOTAL_SD * (prev_norm_epa)) / NUM_TEAMS
             team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
             if team_year_2 is not None and team_year_2.epa_max is not None:
-                epa_2yr = INIT_EPA * team_year_2.epa_max / year_mean_epas[year_num - 2]
+                prev_mean, prev_sd = year_epa_stats[year_num - 2]
+                prev_norm_epa = (team_year_2.epa_max - prev_mean) / prev_sd
+                epa_2yr = (TOTAL_MEAN + TOTAL_SD * (prev_norm_epa)) / NUM_TEAMS
 
         epa_1yr = epa_1yr or INIT_EPA
         epa_2yr = epa_2yr or INIT_EPA
@@ -145,7 +150,7 @@ def process_year(
         blue_epa_sum = sum_func(list(blue_epa_pre.values()), TOTAL_MEAN)
         match.blue_epa_sum = round(blue_epa_sum, 2)
         norm_diff = (match.red_epa_sum - match.blue_epa_sum) / TOTAL_SD
-        win_prob = 1 / (1 + 10 ** (-5 / 8 * norm_diff))
+        win_prob = 1 / (1 + 10 ** (K * norm_diff))
         match.epa_win_prob = round(win_prob, 4)
         match.epa_winner = "red" if win_prob >= 0.5 else "blue"
 
@@ -171,7 +176,7 @@ def process_year(
         blue_pred = match.blue_epa_sum
         for t in red:
             team_count = team_counts[t]
-            percent = percent_func(team_count)
+            percent = percent_func(year_num, team_count)
             margin = margin_func(year_num, team_count)
             error = ((red_score - red_pred) + margin * (blue_pred - blue_score)) / (
                 1 + margin
@@ -192,7 +197,7 @@ def process_year(
 
         for t in blue:
             team_count = team_counts[t]
-            percent = percent_func(team_count)
+            percent = percent_func(year_num, team_count)
             margin = margin_func(year_num, team_count)
             error = ((blue_score - blue_pred) + margin * (red_pred - red_score)) / (
                 1 + margin
