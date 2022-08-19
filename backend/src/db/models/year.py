@@ -28,18 +28,16 @@ class YearORM(Base, ModelORM):
 
     epa_quals_acc = Column(Float)
     epa_quals_mse = Column(Float)
+    quals_count = Column(Integer)
     epa_elims_acc = Column(Float)
     epa_elims_mse = Column(Float)
-    epa_season_quals_acc = Column(Float)
-    epa_season_quals_mse = Column(Float)
-    epa_season_elims_acc = Column(Float)
-    epa_season_elims_mse = Column(Float)
-    epa_champs_elims_acc = Column(Float)
-    epa_champs_elims_mse = Column(Float)
-    epa_champs_quals_acc = Column(Float)
-    epa_champs_quals_mse = Column(Float)
+    elims_count = Column(Integer)
+    epa_champs_acc = Column(Float)
+    epa_champs_mse = Column(Float)
+    champs_count = Column(Integer)
     epa_acc = Column(Float)
     epa_mse = Column(Float)
+    count = Column(Integer)
 
     """ILS"""
     # rp1_acc = Column(Float)
@@ -75,18 +73,16 @@ class Year(Model):
 
     epa_quals_acc: Optional[float] = None
     epa_quals_mse: Optional[float] = None
+    quals_count: Optional[int] = None
     epa_elims_acc: Optional[float] = None
     epa_elims_mse: Optional[float] = None
-    epa_season_quals_acc: Optional[float] = None
-    epa_season_quals_mse: Optional[float] = None
-    epa_season_elims_acc: Optional[float] = None
-    epa_season_elims_mse: Optional[float] = None
-    epa_champs_elims_acc: Optional[float] = None
-    epa_champs_elims_mse: Optional[float] = None
-    epa_champs_quals_acc: Optional[float] = None
-    epa_champs_quals_mse: Optional[float] = None
+    elims_count: Optional[int] = None
+    epa_champs_acc: Optional[float] = None
+    epa_champs_mse: Optional[float] = None
+    champs_count: Optional[int] = None
     epa_acc: Optional[float] = None
     epa_mse: Optional[float] = None
+    count: Optional[int] = None
 
     # rp1_acc: Optional[float] = None
     # rp1_mse: Optional[float] = None

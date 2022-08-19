@@ -47,6 +47,24 @@ class TeamEventORM(Base, ModelORM):
     epa_max = Column(Float)
     epa_diff = Column(Float)
 
+    auto_epa_start = Column(Float)
+    auto_epa_pre_playoffs = Column(Float)
+    auto_epa_end = Column(Float)
+    auto_epa_mean = Column(Float)
+    auto_epa_max = Column(Float)
+
+    teleop_epa_start = Column(Float)
+    teleop_epa_pre_playoffs = Column(Float)
+    teleop_epa_end = Column(Float)
+    teleop_epa_mean = Column(Float)
+    teleop_epa_max = Column(Float)
+
+    endgame_epa_start = Column(Float)
+    endgame_epa_pre_playoffs = Column(Float)
+    endgame_epa_end = Column(Float)
+    endgame_epa_mean = Column(Float)
+    endgame_epa_max = Column(Float)
+
     """ILS"""
     # ils_1_start = Column(Float)
     # ils_2_start = Column(Float)
@@ -86,6 +104,24 @@ class TeamEvent(Model):
     epa_mean: Optional[float] = None
     epa_max: Optional[float] = None
     epa_diff: Optional[float] = None
+
+    auto_epa_start: Optional[float] = None
+    auto_epa_pre_playoffs: Optional[float] = None
+    auto_epa_end: Optional[float] = None
+    auto_epa_mean: Optional[float] = None
+    auto_epa_max: Optional[float] = None
+
+    teleop_epa_start: Optional[float] = None
+    teleop_epa_pre_playoffs: Optional[float] = None
+    teleop_epa_end: Optional[float] = None
+    teleop_epa_mean: Optional[float] = None
+    teleop_epa_max: Optional[float] = None
+
+    endgame_epa_start: Optional[float] = None
+    endgame_epa_pre_playoffs: Optional[float] = None
+    endgame_epa_end: Optional[float] = None
+    endgame_epa_mean: Optional[float] = None
+    endgame_epa_max: Optional[float] = None
 
     # ils_1_start: Optional[float] = None
     # ls_2_start: Optional[float] = None

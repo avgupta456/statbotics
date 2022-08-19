@@ -45,10 +45,6 @@ class EventORM(Base, ModelORM):
     epa_sd = Column(Float)
 
     """STATS"""
-    quals_epa_acc = Column(Float)
-    quals_epa_mse = Column(Float)
-    elims_epa_acc = Column(Float)
-    elims_epa_mse = Column(Float)
     epa_acc = Column(Float)
     epa_mse = Column(Float)
     # rp1_acc = Column(Float)
@@ -80,10 +76,6 @@ class Event(Model):
     epa_mean: Optional[float] = None
     epa_sd: Optional[float] = None
 
-    quals_epa_acc: Optional[float] = None
-    quals_epa_mse: Optional[float] = None
-    elims_epa_acc: Optional[float] = None
-    elims_epa_mse: Optional[float] = None
     epa_acc: Optional[float] = None
     epa_mse: Optional[float] = None
     # rp1_acc: Optional[float] = None

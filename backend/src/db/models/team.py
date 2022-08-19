@@ -52,6 +52,7 @@ class Team(Model):
     # epa_mean: Optional[float] = None
     # epa_max: Optional[float] = None
 
+    # TODO: populate Team Model in post_process_epa
     wins: int = 0
     losses: int = 0
     ties: int = 0
