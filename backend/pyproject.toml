@@ -5,7 +5,7 @@ description = ""
 authors = ["Abhijit Gupta <avgupta456@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.12"
 fastapi = "^0.79.0"
 python-dotenv = "^0.20.0"
 uvicorn = "^0.18.2"
@@ -15,6 +15,7 @@ SQLAlchemy = "^1.4.40"
 sqlalchemy-cockroachdb = "^1.4.3"
 psycopg2 = "^2.9.3"
 attrs = "^22.1.0"
+scipy = "^1.9.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
