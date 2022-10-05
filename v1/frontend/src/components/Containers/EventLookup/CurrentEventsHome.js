@@ -28,7 +28,7 @@ import { default as EventView } from "./../../EventView/EventView";
 import styles from "./EventLookup.module.css";
 
 export default function CurrentEventsHome() {
-  const year = 2022;
+  const year = 2023;
 
   const [week, setWeek] = useState("None");
 
@@ -276,7 +276,9 @@ export default function CurrentEventsHome() {
           <div>
             <div className={styles.headerContainer}>
               <p className={styles.header}>
-                Upcoming Events ({upcomingEvents.length})
+                <a href="./all/events">
+                  Upcoming Events ({upcomingEvents.length})
+                </a>
               </p>
               {upcomingEvents.length > 4 && (
                 <Button
