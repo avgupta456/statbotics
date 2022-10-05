@@ -104,6 +104,8 @@ export const districtOptions = [
 ];
 
 export const yearOptions = [
+  { value: "2023", label: "2023" },
+  { value: "2022", label: "2022" },
   { value: "2020", label: "2020" },
   { value: "2019", label: "2019" },
   { value: "2018", label: "2018" },
@@ -144,4 +146,5 @@ export const ilsMapping = {
   2019: ["Rocket RP", "HAB RP"],
   2020: ["Generator RP", "Hang RP"],
   2022: ["Cargo RP", "Hanger RP"],
+  2023: ["RP 1", "RP 2"],
 };

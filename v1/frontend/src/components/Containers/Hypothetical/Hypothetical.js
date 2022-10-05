@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Hypothetical() {
   const classes = useStyles();
-  const default_year = 2019;
+  const default_year = 2023;
 
   const [red1, setRed1] = React.useState(0);
   const [red2, setRed2] = React.useState(0);

@@ -25,7 +25,7 @@ import {
 import styles from "./TeamYearLookup.module.css";
 
 export default function TeamLookup() {
-  const year = 2022;
+  const year = 2023;
 
   const [country, setCountry] = useState("None");
   const [stateProv, setStateProv] = useState("None");

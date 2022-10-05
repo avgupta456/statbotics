@@ -180,7 +180,9 @@ def process_year(
         # placeholder for upcoming events
         upcoming_elos = [(team_elos[team_event.team], False)]
         elos = [obj[0] for obj in team_events_dict.get(key, upcoming_elos)]
-        qual_elos = [obj[0] for obj in team_events_dict.get(key, upcoming_elos) if not obj[1]]
+        qual_elos = [
+            obj[0] for obj in team_events_dict.get(key, upcoming_elos) if not obj[1]
+        ]
 
         team_event.elo_start = round(elos[0])
         team_event.elo_end = round(elos[-1])
@@ -307,6 +309,8 @@ def post_process(end_year: int) -> None:
                 team.active = True
             if team_year.elo_max is not None:
                 years[team_year.year] = team_year.elo_max
+            elif team_year.elo_start is not None:
+                years[team_year.year] = team_year.elo_start
             wins += team_year.wins
             losses += team_year.losses
             ties += team_year.ties

@@ -2,6 +2,7 @@
 
 from django.core.paginator import Paginator
 from django.views.decorators.cache import cache_page
+from django.db.models import Q
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
@@ -19,7 +20,12 @@ from src.rankings.serializers import TeamYearSerializer
 )
 @api_view(["GET"])
 def TeamYear(request, num, year):
-    teamYears = TeamYearModel.objects.filter(team=num).filter(year=year).filter(count__gt=0).all()
+    teamYears = (
+        TeamYearModel.objects.filter(team=num)
+        .filter(year=year)
+        .filter(Q(count__gt=0) | Q(year=2023))
+        .all()
+    )
     serializer = TeamYearSerializer(teamYears, many=True)
     return Response(serializer.data)
 
@@ -37,7 +43,7 @@ def _TeamYears(
     metric=None,
     page=1,
 ):
-    teamYears = TeamYearModel.objects.filter(count__gt=0)
+    teamYears = TeamYearModel.objects.filter(Q(count__gt=0) | Q(year=2023))
     if num:
         teamYears = teamYears.filter(team=num)
     if year:
