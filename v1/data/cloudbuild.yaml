@@ -2,11 +2,11 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["install"]
-    dir: "data"
+    dir: "v1/data"
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "create-env"]
-    dir: "data"
+    dir: "v1/data"
     env:
       - "CRDB_USER=abhijit"
       - "CRDB_PWD=${_CRDB_PWD}"
@@ -14,4 +14,4 @@ steps:
       - "CRDB_CLUSTER=statbotics-5256"
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy", "--appyaml", "./app.yaml"]
-    dir: "data"
+    dir: "v1/data"
