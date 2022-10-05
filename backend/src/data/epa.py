@@ -1,6 +1,7 @@
 from collections import defaultdict
 from statistics import stdev
 from typing import Dict, List, Tuple, Union
+from scipy.stats import exponnorm  # type: ignore
 
 from src.db.models.event import Event
 from src.db.models.match import Match
@@ -14,15 +15,20 @@ from src.utils import get_team_event_key, get_team_match_key
 # HELPER FUNCTIONS
 
 
+distrib = exponnorm(1.6, -0.3, 0.2)
+
+
+def ppf(x: float) -> float:
+    return distrib.ppf(x)  # type: ignore
+
+
 def norm_epa(
-    prev_mean: float,
-    prev_sd: float,
-    prev_epa: float,
+    prev_percentile: float,
     curr_mean: float,
     curr_sd: float,
     curr_num_teams: int,
 ) -> float:
-    return (curr_mean + curr_sd * (prev_epa - prev_mean) / prev_sd) / curr_num_teams
+    return max(curr_mean / curr_num_teams + curr_sd * ppf(prev_percentile), 0)
 
 
 # TUNABLE PARAMETERS
@@ -126,11 +132,8 @@ def process_year(
             for past_year in range(year_num - 1, year_num - 5, -1):
                 past_team_year = team_years_all.get(past_year, {}).get(num, None)
                 if past_team_year is not None and past_team_year.epa_max is not None:
-                    prev_mean, prev_sd = year_epa_stats[past_year]
-                    prev_epa = past_team_year.epa_max
-                    new_epa = norm_epa(
-                        prev_mean, prev_sd, prev_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
-                    )
+                    prev_percentile = past_team_year.epa_percentile or 0.9
+                    new_epa = norm_epa(prev_percentile, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS)
                     past_epas.append(new_epa)
             epa_1yr = past_epas[0] if len(past_epas) > 0 else None
             epa_2yr = past_epas[1] if len(past_epas) > 1 else None
@@ -138,18 +141,12 @@ def process_year(
             # Otherwise use the two most recent years (regardless of team activity)
             team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
             if team_year_1 is not None and team_year_1.epa_max is not None:
-                prev_mean, prev_sd = year_epa_stats[year_num - 1]
-                prev_epa = team_year_1.epa_max
-                epa_1yr = norm_epa(
-                    prev_mean, prev_sd, prev_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
-                )
+                prev_percentile = team_year_1.epa_percentile or 0.9
+                epa_1yr = norm_epa(prev_percentile, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS)
             team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
             if team_year_2 is not None and team_year_2.epa_max is not None:
-                prev_mean, prev_sd = year_epa_stats[year_num - 2]
-                prev_epa = team_year_2.epa_max
-                epa_2yr = norm_epa(
-                    prev_mean, prev_sd, prev_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
-                )
+                prev_percentile = team_year_2.epa_percentile or 0.9
+                epa_2yr = norm_epa(prev_percentile, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS)
 
         epa_1yr = epa_1yr or INIT_EPA
         epa_2yr = epa_2yr or INIT_EPA
