@@ -7,7 +7,7 @@
   width: 40%;
   margin: 3%;
   padding: 2%;
-  border: 3px solid #3f52b5;
+  box-shadow: 5px gray;
 }
 
 @media (max-width: 750px) {

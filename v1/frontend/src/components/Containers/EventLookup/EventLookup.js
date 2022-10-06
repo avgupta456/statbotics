@@ -29,7 +29,7 @@ import {
 import styles from "./EventLookup.module.css";
 
 export default function EventLookup() {
-  const [year, setYear] = useState(2020);
+  const [year, setYear] = useState(2023);
   const [week, setWeek] = useState("None");
 
   const [country, setCountry] = useState("None");

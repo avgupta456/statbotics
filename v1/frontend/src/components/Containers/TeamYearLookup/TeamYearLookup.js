@@ -26,7 +26,7 @@ import {
 import styles from "./TeamYearLookup.module.css";
 
 export default function TeamLookup() {
-  const [year, setYear] = useState(2020);
+  const [year, setYear] = useState(2023);
   const [ILS1, setILS1] = useState("");
   const [ILS2, setILS2] = useState("");
 

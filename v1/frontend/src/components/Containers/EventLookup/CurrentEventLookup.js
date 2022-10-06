@@ -28,7 +28,7 @@ import {
 import styles from "./EventLookup.module.css";
 
 export default function CurrentEventLookup() {
-  const year = 2022;
+  const year = 2023;
 
   const [week, setWeek] = useState("None");
 
