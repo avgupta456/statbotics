@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev --turbo\" \"tailwindcss -i app/globals.css -o app/dist.css -w\"",
+    "dev": "concurrently \"next dev\" \"tailwindcss -i app/globals.css -o app/dist.css -w\"",
     "build": "tailwindcss -m -i app/globals.css -o app/dist.css && next build",
     "start": "next start",
     "lint": "next lint"
