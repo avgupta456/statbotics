@@ -182,3 +182,9 @@ class Match(Model):
 
     def get_teams(self) -> List[List[int]]:
         return [self.get_red(), self.get_blue()]
+
+    def to_dict(self) -> Dict[str, Any]:
+        out: Dict[str, Any] = {k: getattr(self, k) for k in self.__slots__}  # type: ignore
+        out["red"] = self.get_red()
+        out["blue"] = self.get_blue()
+        return out
