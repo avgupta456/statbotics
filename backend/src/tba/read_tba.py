@@ -137,7 +137,12 @@ def get_matches(
         return out, new_etag
     for match in matches:
         red_teams = match["alliances"]["red"]["team_keys"]
+        red_dq_teams = match["alliances"]["red"]["dq_team_keys"]
+        red_surrogate_teams = match["alliances"]["red"]["surrogate_team_keys"]
         blue_teams = match["alliances"]["blue"]["team_keys"]
+        blue_dq_teams = match["alliances"]["blue"]["dq_team_keys"]
+        blue_surrogate_teams = match["alliances"]["blue"]["surrogate_team_keys"]
+
         red_score = match["alliances"]["red"]["score"]
         blue_score = match["alliances"]["blue"]["score"]
         winner = "draw"
@@ -162,6 +167,15 @@ def get_matches(
         red_breakdown = get_breakdown(year, breakdown.get("red", None))
         blue_breakdown = get_breakdown(year, breakdown.get("blue", None))
 
+        video = None
+        if "videos" in match:
+            if len(match["videos"]) > 0:
+                if match["videos"][0]["type"] != "youtube":
+                    continue
+                video = match["videos"][0]["key"].split("&")[0].split("?")[0]
+                if len(video) > 20:
+                    video = None
+
         match_data: Dict[str, Any] = {
             "event": event,
             "key": match["key"],
@@ -169,8 +183,13 @@ def get_matches(
             "set_number": match["set_number"],
             "match_number": match["match_number"],
             "status": "Completed" if min(red_score, blue_score) >= 0 else "Upcoming",
+            "video": video,
             "red": ",".join([t[3:] for t in red_teams]),
             "blue": ",".join([t[3:] for t in blue_teams]),
+            "red_dq": ",".join([t[3:] for t in red_dq_teams]),
+            "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
+            "red_surrogate": ",".join([t[3:] for t in red_surrogate_teams]),
+            "blue_surrogate": ",".join([t[3:] for t in blue_surrogate_teams]),
             "winner": winner,
             "time": get_match_time(match, event_time),
             "red_score": red_score,

@@ -44,8 +44,12 @@ def get_breakdown(
             "auto_movement": None,
             "auto_1": None,
             "auto_2": None,
+            "auto_2_1": None,
+            "auto_2_2": None,
             "teleop_1": None,
             "teleop_2": None,
+            "teleop_2_1": None,
+            "teleop_2_2": None,
             "1": None,
             "2": None,
             "teleop": None,
@@ -62,9 +66,14 @@ def get_breakdown(
             "auto_movement": breakdown["autoReachPoints"],
             "auto_1": breakdown["autoCrossingPoints"],
             "auto_2": breakdown["autoBoulderPoints"],
+            "auto_2_1": 5 * breakdown["autoBouldersLow"],
+            "auto_2_2": 10 * breakdown["autoBouldersHigh"],
             "teleop_1": breakdown["teleopCrossingPoints"],
             "teleop_2": breakdown["teleopBoulderPoints"],
-            "endgame": breakdown["teleopChallengePoints"],
+            "teleop_2_1": 2 * breakdown["teleopBouldersLow"],
+            "teleop_2_2": 5 * breakdown["teleopBouldersHigh"],
+            "endgame": breakdown["teleopChallengePoints"]
+            + breakdown["teleopScalePoints"],
             "rp1": int(breakdown["teleopDefensesBreached"]),
             "rp2": int(breakdown["teleopTowerCaptured"]),
         }
@@ -74,20 +83,40 @@ def get_breakdown(
             "auto_movement": breakdown["autoMobilityPoints"],
             "auto_1": breakdown["autoRotorPoints"],
             "auto_2": breakdown["autoFuelPoints"],
+            "auto_2_1": breakdown["autoFuelLow"] // 3,
+            "auto_2_2": breakdown["autoFuelHigh"],
             "teleop_1": breakdown["teleopRotorPoints"],
             "teleop_2": breakdown["teleopFuelPoints"],
+            "teleop_2_1": breakdown["teleopFuelLow"] // 9,
+            "teleop_2_2": breakdown["teleopFuelHigh"] // 3,
             "endgame": breakdown["teleopTakeoffPoints"],
             "rp1": int(breakdown["rotorRankingPointAchieved"]),
             "rp2": int(breakdown["kPaRankingPointAchieved"]),
         }
+
+        # Correct some off-by-one edge cases
+        a, b, c = int(out["auto_2_1"]), int(out["auto_2_2"]), int(out["auto_2"])  # type: ignore
+        if a + b != c:
+            out["auto_2_1" if a > b else "auto_2_2"] = c - min(a, b)
+
+        a, b, c = int(out["teleop_2_1"]), int(out["teleop_2_2"]), int(out["teleop_2"])  # type: ignore
+        if a + b != c:
+            out["teleop_2_1" if a > b else "teleop_2_2"] = c - min(a, b)
+
     elif year == 2018:
         out = {
             "auto": breakdown["autoPoints"],
             "auto_movement": breakdown["autoRunPoints"],
             "auto_1": 0,
             "auto_2": breakdown["autoOwnershipPoints"],
+            "auto_2_1": 2 * breakdown["autoSwitchOwnershipSec"],
+            "auto_2_2": 2 * breakdown["autoScaleOwnershipSec"],
             "teleop_1": breakdown["vaultPoints"],
             "teleop_2": breakdown["teleopOwnershipPoints"],
+            "teleop_2_1": breakdown["teleopSwitchOwnershipSec"]
+            + breakdown["teleopSwitchBoostSec"],
+            "teleop_2_2": breakdown["teleopScaleOwnershipSec"]
+            + breakdown["teleopScaleBoostSec"],
             "endgame": breakdown["endgamePoints"],
             "rp1": int(breakdown["autoQuestRankingPoint"]),
             "rp2": int(breakdown["faceTheBossRankingPoint"]),
@@ -98,8 +127,12 @@ def get_breakdown(
             "auto_movement": breakdown["sandStormBonusPoints"],
             "auto_1": 0,
             "auto_2": 0,
+            "auto_2_1": 0,
+            "auto_2_2": 0,
             "teleop_1": breakdown["hatchPanelPoints"],
             "teleop_2": breakdown["cargoPoints"],
+            "teleop_2_1": 0,
+            "teleop_2_2": 0,
             "endgame": breakdown["habClimbPoints"],
             "rp1": int(breakdown["completeRocketRankingPoint"]),
             "rp2": int(breakdown["habDockingRankingPoint"]),
@@ -110,8 +143,14 @@ def get_breakdown(
             "auto_movement": breakdown["autoInitLinePoints"],
             "auto_1": 0,
             "auto_2": breakdown["autoCellPoints"],
+            "auto_2_1": 2 * breakdown["autoCellsBottom"],
+            "auto_2_2": 4 * breakdown["autoCellsOuter"]
+            + 6 * breakdown["autoCellsInner"],
             "teleop_1": breakdown["controlPanelPoints"],
             "teleop_2": breakdown["teleopCellPoints"],
+            "teleop_2_1": breakdown["teleopCellsBottom"],
+            "teleop_2_2": 2 * breakdown["teleopCellsOuter"]
+            + 3 * breakdown["teleopCellsInner"],
             "endgame": breakdown["endgamePoints"],
             "rp1": int(breakdown["shieldEnergizedRankingPoint"]),
             "rp2": int(breakdown["shieldOperationalRankingPoint"]),
@@ -122,14 +161,42 @@ def get_breakdown(
         out = {
             "auto": breakdown["autoPoints"],
             "auto_movement": breakdown["autoTaxiPoints"],
-            "auto_1": breakdown["autoCargoPoints"],
-            "auto_2": 0,
-            "teleop_1": breakdown["teleopCargoPoints"],
-            "teleop_2": 0,
+            "auto_1": 0,
+            "auto_2": breakdown["autoCargoPoints"],
+            "auto_2_1": breakdown["autoCargoLowerBlue"]
+            + breakdown["autoCargoLowerRed"]
+            + breakdown["autoCargoLowerFar"]
+            + breakdown["autoCargoLowerNear"],
+            "auto_2_2": breakdown["autoCargoUpperBlue"]
+            + breakdown["autoCargoUpperRed"]
+            + breakdown["autoCargoUpperFar"]
+            + breakdown["autoCargoUpperNear"],
+            "teleop_1": 0,
+            "teleop_2": breakdown["teleopCargoPoints"],
+            "teleop_2_1": breakdown["teleopCargoLowerBlue"]
+            + breakdown["teleopCargoLowerRed"]
+            + breakdown["teleopCargoLowerFar"]
+            + breakdown["teleopCargoLowerNear"],
+            "teleop_2_2": 2
+            * (
+                breakdown["teleopCargoUpperBlue"]
+                + breakdown["teleopCargoUpperRed"]
+                + breakdown["teleopCargoUpperFar"]
+                + breakdown["teleopCargoUpperNear"]
+            ),
             "endgame": breakdown["endgamePoints"],
             "rp1": int(breakdown["cargoBonusRankingPoint"]),
             "rp2": int(breakdown["hangarBonusRankingPoint"]),
         }
+
+        # Correct some edge cases (sensor issues, etc.)
+        a, b, c = int(out["auto_2_1"]), int(out["auto_2_2"]), int(out["auto_2"])  # type: ignore
+        if a + b != c:
+            out["auto_2_1" if a > b else "auto_2_2"] = c - min(a, b)
+
+        a, b, c = int(out["teleop_2_1"]), int(out["teleop_2_2"]), int(out["teleop_2"])  # type: ignore
+        if a + b != c:
+            out["teleop_2_1" if a > b else "teleop_2_2"] = c - min(a, b)
 
     out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
     out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore

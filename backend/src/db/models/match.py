@@ -27,8 +27,11 @@ class MatchORM(Base, ModelORM):
 
     # Choices are 'Upcoming', 'Completed'
     status = Column(String(10))
+    video = Column(String(20))
 
     red = Column(String(20))
+    red_dq = Column(String(20))
+    red_surrogate = Column(String(20))
     red_epa_sum = Column(Float)
     red_auto_epa_sum = Column(Float)
     red_teleop_epa_sum = Column(Float)
@@ -37,6 +40,8 @@ class MatchORM(Base, ModelORM):
     # red_ils_2_sum = Column(Float)
 
     blue = Column(String(20))
+    blue_dq = Column(String(20))
+    blue_surrogate = Column(String(20))
     blue_epa_sum = Column(Float)
     blue_auto_epa_sum = Column(Float)
     blue_teleop_epa_sum = Column(Float)
@@ -62,8 +67,12 @@ class MatchORM(Base, ModelORM):
     red_auto_movement = Column(Integer)
     red_auto_1 = Column(Integer)
     red_auto_2 = Column(Integer)
+    red_auto_2_1 = Column(Integer)
+    red_auto_2_2 = Column(Integer)
     red_teleop_1 = Column(Integer)
     red_teleop_2 = Column(Integer)
+    red_teleop_2_1 = Column(Integer)
+    red_teleop_2_2 = Column(Integer)
     red_1 = Column(Integer)
     red_2 = Column(Integer)
     red_teleop = Column(Integer)
@@ -77,8 +86,12 @@ class MatchORM(Base, ModelORM):
     blue_auto_movement = Column(Integer)
     blue_auto_1 = Column(Integer)
     blue_auto_2 = Column(Integer)
+    blue_auto_2_1 = Column(Integer)
+    blue_auto_2_2 = Column(Integer)
     blue_teleop_1 = Column(Integer)
     blue_teleop_2 = Column(Integer)
+    blue_teleop_2_1 = Column(Integer)
+    blue_teleop_2_2 = Column(Integer)
     blue_1 = Column(Integer)
     blue_2 = Column(Integer)
     blue_teleop = Column(Integer)
@@ -99,8 +112,11 @@ class Match(Model):
     set_number: int
     match_number: int
     status: str
+    video: Optional[str] = None
 
     red: Optional[str] = None
+    red_dq: Optional[str] = None
+    red_surrogate: Optional[str] = None
     red_epa_sum: Optional[float] = None
     red_auto_epa_sum: Optional[float] = None
     red_teleop_epa_sum: Optional[float] = None
@@ -109,6 +125,8 @@ class Match(Model):
     # red_ils_2_sum: Optional[float] = None
 
     blue: Optional[str] = None
+    blue_dq: Optional[str] = None
+    blue_surrogate: Optional[str] = None
     blue_epa_sum: Optional[float] = None
     blue_auto_epa_sum: Optional[float] = None
     blue_teleop_epa_sum: Optional[float] = None
@@ -134,8 +152,12 @@ class Match(Model):
     red_auto_movement: Optional[int] = None
     red_auto_1: Optional[int] = None
     red_auto_2: Optional[int] = None
+    red_auto_2_1: Optional[int] = None
+    red_auto_2_2: Optional[int] = None
     red_teleop_1: Optional[int] = None
     red_teleop_2: Optional[int] = None
+    red_teleop_2_1: Optional[int] = None
+    red_teleop_2_2: Optional[int] = None
     red_1: Optional[int] = None
     red_2: Optional[int] = None
     red_teleop: Optional[int] = None
@@ -149,8 +171,12 @@ class Match(Model):
     blue_auto_movement: Optional[int] = None
     blue_auto_1: Optional[int] = None
     blue_auto_2: Optional[int] = None
+    blue_auto_2_1: Optional[int] = None
+    blue_auto_2_2: Optional[int] = None
     blue_teleop_1: Optional[int] = None
     blue_teleop_2: Optional[int] = None
+    blue_teleop_2_1: Optional[int] = None
+    blue_teleop_2_2: Optional[int] = None
     blue_1: Optional[int] = None
     blue_2: Optional[int] = None
     blue_teleop: Optional[int] = None
