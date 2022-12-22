@@ -54,9 +54,17 @@ class TeamYearORM(Base, ModelORM):
     endgame_epa_mean = Column(Float)
     endgame_epa_max = Column(Float)
 
-    """ILS"""
-    # ils_1 = Column(Float)
-    # ils_2 = Column(Float)
+    rp_1_epa_start = Column(Float)
+    rp_1_epa_pre_champs = Column(Float)
+    rp_1_epa_end = Column(Float)
+    rp_1_epa_mean = Column(Float)
+    rp_1_epa_max = Column(Float)
+
+    rp_2_epa_start = Column(Float)
+    rp_2_epa_pre_champs = Column(Float)
+    rp_2_epa_end = Column(Float)
+    rp_2_epa_mean = Column(Float)
+    rp_2_epa_max = Column(Float)
 
     """STATS"""
     wins = Column(Integer)
@@ -105,8 +113,17 @@ class TeamYear(Model):
     endgame_epa_mean: Optional[float] = None
     endgame_epa_max: Optional[float] = None
 
-    # ils_1: Optional[float] = None
-    # ils_2: Optional[float] = None
+    rp_1_epa_start: Optional[float] = None
+    rp_1_epa_pre_champs: Optional[float] = None
+    rp_1_epa_end: Optional[float] = None
+    rp_1_epa_mean: Optional[float] = None
+    rp_1_epa_max: Optional[float] = None
+
+    rp_2_epa_start: Optional[float] = None
+    rp_2_epa_pre_champs: Optional[float] = None
+    rp_2_epa_end: Optional[float] = None
+    rp_2_epa_mean: Optional[float] = None
+    rp_2_epa_max: Optional[float] = None
 
     wins: int = 0
     losses: int = 0

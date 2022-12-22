@@ -36,8 +36,8 @@ class MatchORM(Base, ModelORM):
     red_auto_epa_sum = Column(Float)
     red_teleop_epa_sum = Column(Float)
     red_endgame_epa_sum = Column(Float)
-    # red_ils_1_sum = Column(Float)
-    # red_ils_2_sum = Column(Float)
+    red_rp_1_epa_sum = Column(Float)
+    red_rp_2_epa_sum = Column(Float)
 
     blue = Column(String(20))
     blue_dq = Column(String(20))
@@ -46,16 +46,16 @@ class MatchORM(Base, ModelORM):
     blue_auto_epa_sum = Column(Float)
     blue_teleop_epa_sum = Column(Float)
     blue_endgame_epa_sum = Column(Float)
-    # blue_ils_1_sum = Column(Float)
-    # blue_ils_2_sum = Column(Float)
+    blue_rp_1_epa_sum = Column(Float)
+    blue_rp_2_epa_sum = Column(Float)
 
     winner = Column(String(10))
     epa_winner = Column(String(10))
     epa_win_prob = Column(Float)
-    # red_rp_1_prob = Column(Float)
-    # red_rp_2_prob = Column(Float)
-    # blue_rp_1_prob = Column(Float)
-    # blue_rp_2_prob = Column(Float)
+    red_rp_1_prob = Column(Float)
+    red_rp_2_prob = Column(Float)
+    blue_rp_1_prob = Column(Float)
+    blue_rp_2_prob = Column(Float)
 
     playoff = Column(Boolean)
     time = Column(Integer)
@@ -121,8 +121,8 @@ class Match(Model):
     red_auto_epa_sum: Optional[float] = None
     red_teleop_epa_sum: Optional[float] = None
     red_endgame_epa_sum: Optional[float] = None
-    # red_ils_1_sum: Optional[float] = None
-    # red_ils_2_sum: Optional[float] = None
+    red_rp_1_epa_sum: Optional[float] = None
+    red_rp_2_epa_sum: Optional[float] = None
 
     blue: Optional[str] = None
     blue_dq: Optional[str] = None
@@ -131,16 +131,16 @@ class Match(Model):
     blue_auto_epa_sum: Optional[float] = None
     blue_teleop_epa_sum: Optional[float] = None
     blue_endgame_epa_sum: Optional[float] = None
-    # blue_ils_1_sum: Optional[float] = None
-    # blue_ils_2_sum: Optional[float] = None
+    blue_rp_1_epa_sum: Optional[float] = None
+    blue_rp_2_epa_sum: Optional[float] = None
 
     winner: Optional[str] = None
     epa_winner: Optional[str] = None
     epa_win_prob: Optional[float] = None
-    # red_rp_1_prob = Column(Float)
-    # red_rp_2_prob = Column(Float)
-    # blue_rp_1_prob = Column(Float)
-    # blue_rp_2_prob = Column(Float)
+    red_rp_1_prob: Optional[float] = None
+    red_rp_2_prob: Optional[float] = None
+    blue_rp_1_prob: Optional[float] = None
+    blue_rp_2_prob: Optional[float] = None
 
     playoff: bool = False
     time: Optional[int] = None
