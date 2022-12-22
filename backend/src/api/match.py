@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Response
@@ -7,6 +8,7 @@ from src.db.read.event import get_event
 from src.db.read.match import get_match
 from src.db.read.year import get_year
 from src.db.read.team_match import get_team_matches
+from src.utils.alru_cache import alru_cache
 from src.utils.decorators import async_fail_gracefully
 from src.utils.utils import get_match_name
 
@@ -18,9 +20,8 @@ async def read_root():
     return {"name": "Match Router"}
 
 
-@router.get("/{match_id}")
-@async_fail_gracefully
-async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
+@alru_cache(ttl=timedelta(minutes=5))
+async def _read_match(match_id: str, no_cache: bool = False) -> Dict[str, Any]:
     match: Optional[Match] = get_match(match_id)
 
     if match is None:
@@ -57,15 +58,24 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
 
     match_name = get_match_name(match.key)
 
-    return {
-        "match": match.to_dict(),
-        "team_matches": team_matches_dict,
-        "event_name": event_name,
-        "match_name": match_name,
-        "year_stats": {
-            "auto_mean": auto_mean,
-            "teleop_mean": teleop_mean,
-            "endgame_mean": endgame_mean,
-            "total_mean": total_mean,
+    return (
+        True,
+        {
+            "match": match.to_dict(),
+            "team_matches": team_matches_dict,
+            "event_name": event_name,
+            "match_name": match_name,
+            "year_stats": {
+                "auto_mean": auto_mean,
+                "teleop_mean": teleop_mean,
+                "endgame_mean": endgame_mean,
+                "total_mean": total_mean,
+            },
         },
-    }
+    )  # type: ignore
+
+
+@router.get("/{match_id}")
+@async_fail_gracefully
+async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
+    return await _read_match(match_id)
