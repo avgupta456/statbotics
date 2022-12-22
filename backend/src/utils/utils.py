@@ -25,6 +25,6 @@ def get_match_name(key: str) -> str:
         match_num = key.split("sf")[1].split("m")[1]
         return "Semis " + set_num + " Match " + match_num
     elif "f" in key:
-        return "Finals Match " + key.split("f")[1]
+        return "Finals Match " + key.split("f")[1].split("m")[1]
 
     raise Exception("Invalid match key")

@@ -12,10 +12,10 @@ type Match = {
   blue_endgame: number;
   red_fouls: number;
   blue_fouls: number;
-  red_rp1: number;
-  blue_rp1: number;
-  red_rp2: number;
-  blue_rp2: number;
+  red_rp_1: number;
+  blue_rp_1: number;
+  red_rp_2: number;
+  blue_rp_2: number;
   red_score: number;
   blue_score: number;
   red_auto_epa_sum: number;

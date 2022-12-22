@@ -1,11 +1,9 @@
 import React from "react";
 
-import PredTable from "./predTable";
-import ResultTable from "./resultTable";
+import MatchTable, { TableKey } from "./table";
 import Summary from "./summary";
 import Video from "./video";
 import { Data } from "./types";
-import { TableKey } from "../../../components/MatchTables";
 import { BACKEND_URL } from "../../../constants";
 
 async function getData(match_id: string) {
@@ -40,9 +38,9 @@ async function Match({ params }: { params: { match_id: string } }) {
   }
 
   return (
-    <div className="w-full h-full p-4">
+    <div className="w-full h-full p-4 bg-gray-50">
       <div className="container mx-auto">
-        <div className="flex flex-row items-end mb-4">
+        <div className="w-full flex flex-row items-end text-center mb-4">
           <p className="text-3xl lg:text-4xl">{data.match_name}</p>
           <a
             href={`/event/${data.match.event}`}
@@ -53,11 +51,10 @@ async function Match({ params }: { params: { match_id: string } }) {
             {truncatedEventName}
           </a>
         </div>
-        <div className="w-full flex flex-row flex-wrap">
+        <div className="w-full flex flex-row flex-wrap justify-center">
           <Summary data={data} />
           <Video video={data.match.video} />
-          <PredTable data={data} />
-          <ResultTable data={data} />
+          <MatchTable data={data} />
         </div>
         <TableKey />
       </div>
