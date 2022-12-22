@@ -8,6 +8,18 @@ from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
 
 
+def get_match(match_id: str) -> Optional[Match]:
+    def callback(session: SessionType):
+        data = session.query(MatchORM).filter(MatchORM.key == match_id).first()  # type: ignore
+
+        if data is None:
+            return None
+
+        return Match.from_dict(data.__dict__)
+
+    return run_transaction(Session, callback)  # type: ignore
+
+
 def get_matches(
     year: Optional[int] = None,
     week: Optional[int] = None,

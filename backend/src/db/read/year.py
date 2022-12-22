@@ -7,6 +7,16 @@ from src.db.main import Session
 from src.db.models.year import Year, YearORM
 
 
+def get_year(year: int) -> Optional[Year]:
+    def callback(session: SessionType):
+        data = session.query(YearORM).filter(YearORM.year == year).first()  # type: ignore
+        if data is None:
+            return None
+        return Year.from_dict(data.__dict__)
+
+    return run_transaction(Session, callback)  # type: ignore
+
+
 def get_years(year: Optional[int] = None) -> List[Year]:
     def callback(session: SessionType):
         data = session.query(YearORM)

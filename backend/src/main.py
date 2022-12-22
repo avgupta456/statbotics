@@ -42,4 +42,4 @@ def get_info():
 
 
 app.include_router(api_router, prefix="/api")
-app.include_router(data_router, prefix="/data")
+app.include_router(data_router, prefix="/data", tags=["data"])

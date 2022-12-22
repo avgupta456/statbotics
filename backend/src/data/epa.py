@@ -1,6 +1,7 @@
 from collections import defaultdict
 from statistics import stdev
 from typing import Dict, List, Tuple, Union
+
 from scipy.stats import exponnorm  # type: ignore
 
 from src.db.models.event import Event
@@ -9,8 +10,7 @@ from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.db.models.year import Year
-from src.utils import get_team_event_key, get_team_match_key
-
+from src.utils.utils import get_team_event_key, get_team_match_key
 
 # HELPER FUNCTIONS
 

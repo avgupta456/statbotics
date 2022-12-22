@@ -48,8 +48,12 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["red_auto_movement"] = data["red_score_breakdown"]["auto_movement"]
     data["red_auto_1"] = data["red_score_breakdown"]["auto_1"]
     data["red_auto_2"] = data["red_score_breakdown"]["auto_2"]
+    data["red_auto_2_1"] = data["red_score_breakdown"]["auto_2_1"]
+    data["red_auto_2_2"] = data["red_score_breakdown"]["auto_2_2"]
     data["red_teleop_1"] = data["red_score_breakdown"]["teleop_1"]
     data["red_teleop_2"] = data["red_score_breakdown"]["teleop_2"]
+    data["red_teleop_2_1"] = data["red_score_breakdown"]["teleop_2_1"]
+    data["red_teleop_2_2"] = data["red_score_breakdown"]["teleop_2_2"]
     data["red_1"] = data["red_score_breakdown"]["1"]
     data["red_2"] = data["red_score_breakdown"]["2"]
     data["red_teleop"] = data["red_score_breakdown"]["teleop"]
@@ -62,8 +66,12 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["blue_auto_movement"] = data["blue_score_breakdown"]["auto_movement"]
     data["blue_auto_1"] = data["blue_score_breakdown"]["auto_1"]
     data["blue_auto_2"] = data["blue_score_breakdown"]["auto_2"]
+    data["blue_auto_2_1"] = data["blue_score_breakdown"]["auto_2_1"]
+    data["blue_auto_2_2"] = data["blue_score_breakdown"]["auto_2_2"]
     data["blue_teleop_1"] = data["blue_score_breakdown"]["teleop_1"]
     data["blue_teleop_2"] = data["blue_score_breakdown"]["teleop_2"]
+    data["blue_teleop_2_1"] = data["blue_score_breakdown"]["teleop_2_1"]
+    data["blue_teleop_2_2"] = data["blue_score_breakdown"]["teleop_2_2"]
     data["blue_1"] = data["blue_score_breakdown"]["1"]
     data["blue_2"] = data["blue_score_breakdown"]["2"]
     data["blue_teleop"] = data["blue_score_breakdown"]["teleop"]
@@ -81,6 +89,8 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
         new_data["alliance"] = alliance
         for team in data[alliance].split(","):
             new_data["team"] = int(team)
+            new_data["dq"] = team in data[f"{alliance}_dq"].split(",")
+            new_data["surrogate"] = team in data[f"{alliance}_surrogate"].split(",")
             team_matches.append(create_team_match_obj(new_data))
 
     return (match, team_matches)

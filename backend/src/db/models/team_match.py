@@ -31,6 +31,9 @@ class TeamMatchORM(Base, ModelORM):
     playoff = Column(Boolean)
     alliance = Column(String(10))
 
+    dq = Column(Boolean)
+    surrogate = Column(Boolean)
+
     # Choices are 'Upcoming', 'Completed'
     status = Column(String(10))
 
@@ -56,6 +59,9 @@ class TeamMatch(Model):
     alliance: str = ""
     status: str = ""
 
+    dq: bool = False
+    surrogate: bool = False
+
     epa: Optional[float] = None
     auto_epa: Optional[float] = None
     teleop_epa: Optional[float] = None
@@ -73,3 +79,6 @@ class TeamMatch(Model):
 
     def sort(self) -> int:
         return self.time
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {k: getattr(self, k) for k in self.__slots__}  # type: ignore

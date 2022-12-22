@@ -8,9 +8,8 @@ from src.data.tba import (
     process_year as process_year_tba,
     process_year_partial as process_year_partial_tba,
 )
-from src.data.utils import (
+from src.data.utils import (  # print_table_stats,
     objs_type,
-    # print_table_stats,
     read_objs,
     time_func,
     write_objs,
@@ -62,10 +61,6 @@ def reset_all_years(start_year: int, end_year: int):
         new_sd = (objs[0].score_sd or 0) / num_teams
         year_epa_stats[year_num] = (new_mean, new_sd)
 
-    """
-    post_process_elo(end_year)
-    """
-
     time_func("Post TBA", post_process_tba)
     # print_table_stats()
 
@@ -101,9 +96,6 @@ def reset_curr_year(curr_year: int):
     objs = out[1:]
 
     time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, True)  # type: ignore
-    """
-    post_process_elo(end_year)
-    """
     time_func("Post TBA", post_process_tba)
 
 

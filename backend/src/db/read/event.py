@@ -7,6 +7,16 @@ from src.db.main import Session
 from src.db.models.event import Event, EventORM
 
 
+def get_event(event_id: str) -> Optional[Event]:
+    def callback(session: SessionType):
+        data = session.query(EventORM).filter(EventORM.key == event_id).first()  # type: ignore
+        if data is None:
+            return None
+        return Event.from_dict(data.__dict__)
+
+    return run_transaction(Session, callback)  # type: ignore
+
+
 def get_events(year: Optional[int] = None, id: Optional[int] = None) -> List[Event]:
     def callback(session: SessionType):
         data = session.query(EventORM)
