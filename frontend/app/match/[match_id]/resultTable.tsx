@@ -7,42 +7,27 @@ import { Data } from "./types";
 import { round } from "../../../utils";
 
 const ResultTable = ({ data }: { data: Data }) => {
-  const red1 = data.match.red[0];
-  const red1Data = data.team_matches[red1];
-  const red2 = data.match.red[1];
-  const red2Data = data.team_matches[red2];
-  const red3 = data.match.red[2];
-  const red3Data = data.team_matches[red3];
-  const blue1 = data.match.blue[0];
-  const blue1Data = data.team_matches[blue1];
-  const blue2 = data.match.blue[1];
-  const blue2Data = data.team_matches[blue2];
-  const blue3 = data.match.blue[2];
-  const blue3Data = data.team_matches[blue3];
-
   const autoResultComponent: ResultComponent = {
     name: "Auto",
-    redPred: red1Data.auto_epa + red2Data.auto_epa + red3Data.auto_epa,
+    redPred: data.match.red_auto_epa_sum,
     redActual: data.match.red_auto,
-    bluePred: blue1Data.auto_epa + blue2Data.auto_epa + blue3Data.auto_epa,
+    bluePred: data.match.blue_auto_epa_sum,
     blueActual: data.match.blue_auto,
   };
 
   const teleopResultComponent: ResultComponent = {
     name: "Teleop",
-    redPred: red1Data.teleop_epa + red2Data.teleop_epa + red3Data.teleop_epa,
+    redPred: data.match.red_teleop_epa_sum,
     redActual: data.match.red_teleop,
-    bluePred:
-      blue1Data.teleop_epa + blue2Data.teleop_epa + blue3Data.teleop_epa,
+    bluePred: data.match.blue_teleop_epa_sum,
     blueActual: data.match.blue_teleop,
   };
 
   const endgameResultComponent: ResultComponent = {
     name: "Endgame",
-    redPred: red1Data.endgame_epa + red2Data.endgame_epa + red3Data.endgame_epa,
+    redPred: data.match.red_endgame_epa_sum,
     redActual: data.match.red_endgame,
-    bluePred:
-      blue1Data.endgame_epa + blue2Data.endgame_epa + blue3Data.endgame_epa,
+    bluePred: data.match.blue_endgame_epa_sum,
     blueActual: data.match.blue_endgame,
   };
 
@@ -72,9 +57,9 @@ const ResultTable = ({ data }: { data: Data }) => {
 
   const totalResultComponent: ResultComponent = {
     name: "Total",
-    redPred: red1Data.epa + red2Data.epa + red3Data.epa,
+    redPred: data.match.red_epa_sum,
     redActual: data.match.red_score,
-    bluePred: blue1Data.epa + blue2Data.epa + blue3Data.epa,
+    bluePred: data.match.blue_epa_sum,
     blueActual: data.match.blue_score,
   };
 

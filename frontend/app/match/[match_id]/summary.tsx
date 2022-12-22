@@ -90,7 +90,7 @@ const Summary = ({ data }: { data: Data }) => {
             </div>
           </div>
         </div>
-        <div className="w-full lg:w-1/2 h-full flex flex-col justify-center items-center">
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
           <PieChart
             data={[
               {
@@ -106,7 +106,6 @@ const Summary = ({ data }: { data: Data }) => {
             ]}
             colors={[RED, BLUE]}
           />
-          <div className="text-lg">Win Probability</div>
         </div>
       </div>
     </div>

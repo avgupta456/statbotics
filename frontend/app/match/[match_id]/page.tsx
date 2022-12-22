@@ -6,9 +6,10 @@ import Summary from "./summary";
 import Video from "./video";
 import { Data } from "./types";
 import { TableKey } from "../../../components/MatchTables";
+import { BACKEND_URL } from "../../../constants";
 
 async function getData(match_id: string) {
-  const res = await fetch("http://localhost:8000/api/match/" + match_id);
+  const res = await fetch(`${BACKEND_URL}/match/` + match_id);
   if (!res.ok) {
     return undefined;
   }

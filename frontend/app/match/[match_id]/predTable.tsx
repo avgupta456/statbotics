@@ -25,11 +25,11 @@ const PredTable = ({ data }: { data: Data }) => {
     red1: red1Data.auto_epa,
     red2: red2Data.auto_epa,
     red3: red3Data.auto_epa,
-    redTotal: red1Data.auto_epa + red2Data.auto_epa + red3Data.auto_epa,
+    redTotal: data.match.red_auto_epa_sum,
     blue1: blue1Data.auto_epa,
     blue2: blue2Data.auto_epa,
     blue3: blue3Data.auto_epa,
-    blueTotal: blue1Data.auto_epa + blue2Data.auto_epa + blue3Data.auto_epa,
+    blueTotal: data.match.blue_auto_epa_sum,
   };
 
   const teleopPredComponent: PredComponent = {
@@ -37,12 +37,11 @@ const PredTable = ({ data }: { data: Data }) => {
     red1: red1Data.teleop_epa,
     red2: red2Data.teleop_epa,
     red3: red3Data.teleop_epa,
-    redTotal: red1Data.teleop_epa + red2Data.teleop_epa + red3Data.teleop_epa,
+    redTotal: data.match.red_teleop_epa_sum,
     blue1: blue1Data.teleop_epa,
     blue2: blue2Data.teleop_epa,
     blue3: blue3Data.teleop_epa,
-    blueTotal:
-      blue1Data.teleop_epa + blue2Data.teleop_epa + blue3Data.teleop_epa,
+    blueTotal: data.match.blue_teleop_epa_sum,
   };
 
   const endgamePredComponent: PredComponent = {
@@ -50,13 +49,11 @@ const PredTable = ({ data }: { data: Data }) => {
     red1: red1Data.endgame_epa,
     red2: red2Data.endgame_epa,
     red3: red3Data.endgame_epa,
-    redTotal:
-      red1Data.endgame_epa + red2Data.endgame_epa + red3Data.endgame_epa,
+    redTotal: data.match.red_endgame_epa_sum,
     blue1: blue1Data.endgame_epa,
     blue2: blue2Data.endgame_epa,
     blue3: blue3Data.endgame_epa,
-    blueTotal:
-      blue1Data.endgame_epa + blue2Data.endgame_epa + blue3Data.endgame_epa,
+    blueTotal: data.match.blue_endgame_epa_sum,
   };
 
   const foulPredComponent: PredComponent = {
@@ -100,11 +97,11 @@ const PredTable = ({ data }: { data: Data }) => {
     red1: red1Data.epa,
     red2: red2Data.epa,
     red3: red3Data.epa,
-    redTotal: red1Data.epa + red2Data.epa + red3Data.epa,
+    redTotal: data.match.red_epa_sum,
     blue1: blue1Data.epa,
     blue2: blue2Data.epa,
     blue3: blue3Data.epa,
-    blueTotal: blue1Data.epa + blue2Data.epa + blue3Data.epa,
+    blueTotal: data.match.blue_epa_sum,
   };
 
   const matchPredictionData = [

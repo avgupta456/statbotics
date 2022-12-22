@@ -23,7 +23,7 @@ const PieChart = ({ data, colors }: { data: Datum[]; colors: string[] }) => {
     <ResponsivePie
       data={data}
       id="title"
-      margin={{ top: 20, right: 40, bottom: 20, left: 40 }}
+      margin={{ right: 40, left: 40 }}
       innerRadius={0.4}
       padAngle={0.7}
       cornerRadius={3}

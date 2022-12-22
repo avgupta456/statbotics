@@ -18,6 +18,12 @@ type Match = {
   blue_rp2: number;
   red_score: number;
   blue_score: number;
+  red_auto_epa_sum: number;
+  blue_auto_epa_sum: number;
+  red_teleop_epa_sum: number;
+  blue_teleop_epa_sum: number;
+  red_endgame_epa_sum: number;
+  blue_endgame_epa_sum: number;
   red_epa_sum: number;
   blue_epa_sum: number;
   epa_winner: string;
