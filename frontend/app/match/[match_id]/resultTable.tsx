@@ -88,11 +88,11 @@ const ResultTable = ({ data }: { data: Data }) => {
     totalResultComponent,
   ].map((component) => {
     const redPred =
-      component.redPred !== null ? round(component.redPred) : null;
+      component.redPred !== null ? round(component.redPred, 0) : null;
     const redActual =
       component.redActual !== null ? round(component.redActual) : null;
     const bluePred =
-      component.bluePred !== null ? round(component.bluePred) : null;
+      component.bluePred !== null ? round(component.bluePred, 0) : null;
     const blueActual =
       component.blueActual !== null ? round(component.blueActual) : null;
     return {
@@ -110,7 +110,8 @@ const ResultTable = ({ data }: { data: Data }) => {
   };
 
   return (
-    <div className="w-full lg:w-1/2 flex justify-center items-center">
+    <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
+      <p className="text-2xl lg:text-3xl mt-8 mb-4">Results</p>
       <MatchResultTable {...MatchResultTableProps} />
     </div>
   );

@@ -146,7 +146,8 @@ const PredTable = ({ data }: { data: Data }) => {
   };
 
   return (
-    <div className="w-full lg:w-1/2 flex justify-center items-center">
+    <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
+      <p className="text-2xl lg:text-3xl mt-8 mb-4">Predictions</p>
       <MatchPredictionTable {...MatchPredictionTableProps} />
     </div>
   );

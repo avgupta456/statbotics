@@ -5,6 +5,7 @@ import ResultTable from "./resultTable";
 import Summary from "./summary";
 import Video from "./video";
 import { Data } from "./types";
+import { TableKey } from "../../../components/MatchTables";
 
 async function getData(match_id: string) {
   const res = await fetch("http://localhost:8000/api/match/" + match_id);
@@ -51,16 +52,13 @@ async function Match({ params }: { params: { match_id: string } }) {
             {truncatedEventName}
           </a>
         </div>
-        <p className="text-2xl lg:text-3xl mt-8 mb-4">Predictions</p>
         <div className="w-full flex flex-row flex-wrap">
-          <PredTable data={data} />
           <Summary data={data} />
-        </div>
-        <p className="text-2xl lg:text-3xl mt-8 mb-4">Results</p>
-        <div className="w-full flex flex-row flex-wrap">
-          <ResultTable data={data} />
           <Video video={data.match.video} />
+          <PredTable data={data} />
+          <ResultTable data={data} />
         </div>
+        <TableKey />
       </div>
     </div>
   );
