@@ -41,9 +41,8 @@ class TeamMatchORM(Base, ModelORM):
     auto_epa = Column(Float)
     teleop_epa = Column(Float)
     endgame_epa = Column(Float)
-
-    # ils_1 = Column(Float)
-    # ils_2 = Column(Float)
+    rp_1_epa = Column(Float)
+    rp_2_epa = Column(Float)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -66,9 +65,8 @@ class TeamMatch(Model):
     auto_epa: Optional[float] = None
     teleop_epa: Optional[float] = None
     endgame_epa: Optional[float] = None
-
-    # ils_1: Optional[float] = None
-    # ils_2: Optional[float] = None
+    rp_1_epa: Optional[float] = None
+    rp_2_epa: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamMatch":

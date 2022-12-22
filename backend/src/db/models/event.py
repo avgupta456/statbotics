@@ -47,10 +47,10 @@ class EventORM(Base, ModelORM):
     """STATS"""
     epa_acc = Column(Float)
     epa_mse = Column(Float)
-    # rp1_acc = Column(Float)
-    # rp1_mse = Column(Float)
-    # rp2_acc = Column(Float)
-    # rp2_mse = Column(Float)
+    rp_1_acc = Column(Float)
+    rp_1_mse = Column(Float)
+    rp_2_acc = Column(Float)
+    rp_2_mse = Column(Float)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -78,10 +78,10 @@ class Event(Model):
 
     epa_acc: Optional[float] = None
     epa_mse: Optional[float] = None
-    # rp1_acc: Optional[float] = None
-    # rp1_mse: Optional[float] = None
-    # rp2_acc: Optional[float] = None
-    # rp2_mse: Optional[float] = None
+    rp_1_acc: Optional[float] = None
+    rp_1_mse: Optional[float] = None
+    rp_2_acc: Optional[float] = None
+    rp_2_mse: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Event":

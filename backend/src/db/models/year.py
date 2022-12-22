@@ -26,6 +26,7 @@ class YearORM(Base, ModelORM):
     epa_mean = Column(Float)
     epa_sd = Column(Float)
 
+    """WIN PROB"""
     epa_quals_acc = Column(Float)
     epa_quals_mse = Column(Float)
     quals_count = Column(Integer)
@@ -39,11 +40,17 @@ class YearORM(Base, ModelORM):
     epa_mse = Column(Float)
     count = Column(Integer)
 
-    """ILS"""
-    # rp1_acc = Column(Float)
-    # rp1_mse = Column(Float)
-    # rp2_acc = Column(Float)
-    # rp2_mse = Column(Float)
+    """RP PROB"""
+    rp_1_acc = Column(Float)
+    rp_1_mse = Column(Float)
+    rp_1_champs_acc = Column(Float)
+    rp_1_champs_mse = Column(Float)
+    rp_2_acc = Column(Float)
+    rp_2_mse = Column(Float)
+    rp_2_champs_acc = Column(Float)
+    rp_2_champs_mse = Column(Float)
+    rp_champs_count = Column(Integer)
+    rp_count = Column(Integer)
 
     """CONSTANTS"""
     score_mean = Column(Float)
@@ -84,10 +91,16 @@ class Year(Model):
     epa_mse: Optional[float] = None
     count: Optional[int] = None
 
-    # rp1_acc: Optional[float] = None
-    # rp1_mse: Optional[float] = None
-    # rp2_acc: Optional[float] = None
-    # rp2_mse: Optional[float] = None
+    rp_1_acc: Optional[float] = None
+    rp_1_mse: Optional[float] = None
+    rp_1_champs_acc: Optional[float] = None
+    rp_1_champs_mse: Optional[float] = None
+    rp_2_acc: Optional[float] = None
+    rp_2_mse: Optional[float] = None
+    rp_2_champs_acc: Optional[float] = None
+    rp_2_champs_mse: Optional[float] = None
+    rp_champs_count: Optional[int] = None
+    rp_count: Optional[int] = None
 
     score_mean: Optional[float] = None
     score_sd: Optional[float] = None
