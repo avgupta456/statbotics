@@ -22,6 +22,7 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
     rp_1s: List[int] = []
     rp_2s: List[int] = []
 
+    # TODO: investigate discrepancy between scores and fouls + no_fouls
     for match in week_one_matches:
         scores.extend([match.red_score or 0, match.blue_score or 0])
         autos.extend([match.red_auto or 0, match.blue_auto or 0])

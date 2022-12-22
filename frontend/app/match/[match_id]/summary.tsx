@@ -10,6 +10,12 @@ const Summary = ({ data }: { data: Data }) => {
   const redWinProb = winProb * 100;
   const blueWinProb = (1 - winProb) * 100;
 
+  const redPred = data.match.red_epa_sum * (1 + data.year_stats.foul_rate);
+  const bluePred = data.match.blue_epa_sum * (1 + data.year_stats.foul_rate);
+
+  const redScore = data.match.red_score;
+  const blueScore = data.match.blue_score;
+
   return (
     <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-4">Summary</p>
@@ -20,23 +26,19 @@ const Summary = ({ data }: { data: Data }) => {
               <p
                 className={classnames(
                   "data text-red-500",
-                  data.match.red_epa_sum > data.match.blue_epa_sum
-                    ? "font-bold"
-                    : ""
+                  redPred > bluePred ? "font-bold" : ""
                 )}
               >
-                {Math.round(data.match.red_epa_sum)}
+                {Math.round(redPred)}
               </p>
               <p className="mx-2">-</p>
               <p
                 className={classnames(
                   "data text-blue-500",
-                  data.match.blue_epa_sum > data.match.red_epa_sum
-                    ? "font-bold"
-                    : ""
+                  bluePred > redPred ? "font-bold" : ""
                 )}
               >
-                {Math.round(data.match.blue_epa_sum)}
+                {Math.round(bluePred)}
               </p>
             </div>
             <div className="mt-4 text-lg flex">
@@ -58,23 +60,19 @@ const Summary = ({ data }: { data: Data }) => {
               <p
                 className={classnames(
                   "data text-red-500",
-                  data.match.red_score > data.match.blue_score
-                    ? "font-bold"
-                    : ""
+                  redScore > blueScore ? "font-bold" : ""
                 )}
               >
-                {Math.round(data.match.red_score)}
+                {Math.round(redScore)}
               </p>
               <p className="mx-2">-</p>
               <p
                 className={classnames(
                   "data text-blue-500",
-                  data.match.blue_score > data.match.red_score
-                    ? "font-bold"
-                    : ""
+                  blueScore > redScore ? "font-bold" : ""
                 )}
               >
-                {Math.round(data.match.blue_score)}
+                {Math.round(blueScore)}
               </p>
             </div>
             <div className="mt-4 text-lg flex">
