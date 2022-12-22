@@ -5,6 +5,7 @@ from fastapi import APIRouter, Response
 from src.db.models.match import Match
 from src.db.read.event import get_event
 from src.db.read.match import get_match
+from src.db.read.year import get_year
 from src.db.read.team_match import get_team_matches
 from src.utils.decorators import async_fail_gracefully
 from src.utils.utils import get_match_name
@@ -46,6 +47,14 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
         raise Exception("Event not found")
     event_name = event_obj.name
 
+    year_obj = get_year(match.year)
+    if year_obj is None:
+        raise Exception("Year not found")
+    auto_mean = year_obj.auto_mean
+    teleop_mean = year_obj.teleop_mean
+    endgame_mean = year_obj.endgame_mean
+    total_mean = year_obj.score_mean
+
     match_name = get_match_name(match.key)
 
     return {
@@ -53,4 +62,10 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
         "team_matches": team_matches_dict,
         "event_name": event_name,
         "match_name": match_name,
+        "year_stats": {
+            "auto_mean": auto_mean,
+            "teleop_mean": teleop_mean,
+            "endgame_mean": endgame_mean,
+            "total_mean": total_mean,
+        },
     }
