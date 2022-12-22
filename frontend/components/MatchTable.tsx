@@ -185,6 +185,12 @@ const MatchTable = ({
       "w-24 py-2",
       ["redTotal", "blueTotal", "name"].includes(cell.column.id)
         ? "border-l-2 border-r-2"
+        : "",
+      cell.row.original.name === "Total" && cell.column.id === "red1"
+        ? "rounded-bl-lg"
+        : "",
+      cell.row.original.name === "Total" && cell.column.id === "blue1"
+        ? "rounded-br-lg"
         : ""
     );
 
