@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { createColumnHelper } from "@tanstack/react-table";
+import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import Table from "./Table";
 import { classnames } from "../utils";
@@ -21,11 +21,29 @@ export type Component = {
   blueActual: number | null;
 };
 
+type CleanComponent = {
+  name: string;
+  red1: number | string;
+  red2: number | string;
+  red3: number | string;
+  redTotal: number | string;
+  redActual: number | string;
+  blue1: number | string;
+  blue2: number | string;
+  blue3: number | string;
+  blueTotal: number | string;
+  blueActual: number | string;
+};
+
+// Copied from frontend\app\match\[match_id]\types.tsx
 type YearStats = {
   auto_mean: number;
   teleop_mean: number;
   endgame_mean: number;
   total_mean: number;
+  foul_rate: number;
+  rp_1_mean: number;
+  rp_2_mean: number;
 };
 
 const TeamLink = ({ team }: { team: string }) => (
@@ -39,53 +57,84 @@ const TeamLink = ({ team }: { team: string }) => (
   </a>
 );
 
+const CONDITIONAL_COLORS = [
+  "text-red-700 bg-red-300",
+  "text-gray-800 bg-gray-200",
+  "text-green-500 bg-green-100",
+  "text-green-700 bg-green-300",
+  "text-black bg-green-500",
+  "text-blue-500 bg-blue-100",
+  "text-blue-700 bg-blue-300",
+  "text-white bg-blue-500",
+];
+
+const getColor = (value: number, mean: number) => {
+  let color = "";
+  if (value < 0.5 * mean) {
+    color = CONDITIONAL_COLORS[0];
+  } else if (value < 1.5 * mean) {
+    color = CONDITIONAL_COLORS[1];
+  } else if (value < 2 * mean) {
+    color = CONDITIONAL_COLORS[2];
+  } else if (value < 3 * mean) {
+    color = CONDITIONAL_COLORS[3];
+  } else if (value < 4 * mean) {
+    color = CONDITIONAL_COLORS[4];
+  } else if (value < 5 * mean) {
+    color = CONDITIONAL_COLORS[5];
+  } else if (value < 6 * mean) {
+    color = CONDITIONAL_COLORS[6];
+  } else {
+    color = CONDITIONAL_COLORS[7];
+  }
+
+  return color;
+};
+
 const formatCell = (
   stats: YearStats,
-  info: any,
+  info: CellContext<CleanComponent, number | string>,
   multiplier: number = 1 / 3
 ) => {
   const row = info.row.original.name;
   const value = info.getValue();
-  const mean =
-    multiplier *
-    (row === "Auto"
-      ? stats.auto_mean
-      : row === "Teleop"
-      ? stats.teleop_mean
-      : row === "Endgame"
-      ? stats.endgame_mean
-      : row === "Fouls"
-      ? value // Fouls are not normalized
-      : stats.total_mean);
-  let color = "text-gray-800 bg-gray-200";
-  if (value < 0.5 * mean) {
-    color = "text-red-700 bg-red-300";
-  }
-  if (value > 1.5 * mean) {
-    color = "text-green-500 bg-green-100";
-  }
-  if (value > 2 * mean) {
-    color = "text-green-700 bg-green-300";
-  }
-  if (value > 3 * mean) {
-    color = "text-black bg-green-500";
-  }
-  if (value > 4 * mean) {
-    color = "text-blue-500 bg-blue-100";
-  }
-  if (value > 5 * mean) {
-    color = "text-blue-700 bg-blue-300";
-  }
-  if (value > 6 * mean) {
-    color = "text-white bg-blue-500";
-  }
 
-  // RP is special
-  if (row.includes("RP") && value === 0) {
-    color = "text-gray-800 bg-gray-200";
-  }
-  if (row.includes("RP") && value > 0) {
-    color = "text-black bg-green-500";
+  let color = "";
+  if (typeof value === "string" || row == "Fouls") {
+    color = CONDITIONAL_COLORS[1];
+  } else {
+    const compValue = row == "RP1" || row == "RP2" ? value + 1 / 3 : value;
+    const mean =
+      multiplier *
+      (row === "Auto"
+        ? stats.auto_mean
+        : row === "Teleop"
+        ? stats.teleop_mean
+        : row === "Endgame"
+        ? stats.endgame_mean
+        : row === "RP1"
+        ? stats.rp_1_mean
+        : row === "RP2"
+        ? stats.rp_2_mean
+        : stats.total_mean);
+    color = getColor(compValue, mean);
+    // RP is special
+    if (
+      row.includes("RP") &&
+      (info.column.id.includes("Actual") || info.column.id.includes("Total"))
+    ) {
+      if (value < 0.25) {
+        color = CONDITIONAL_COLORS[0];
+      } else if (value < 0.5) {
+        color = CONDITIONAL_COLORS[1];
+      } else if (value < 0.75) {
+        color = CONDITIONAL_COLORS[2];
+      } else if (value < 0.9) {
+        color = CONDITIONAL_COLORS[3];
+      } else {
+        color = CONDITIONAL_COLORS[4];
+      }
+    }
   }
 
   return (
@@ -111,7 +160,7 @@ const MatchTable = ({
   teams: string[];
   stats: YearStats;
 }) => {
-  const columnHelper = createColumnHelper<Component>();
+  const columnHelper = createColumnHelper<CleanComponent>();
 
   const columns = [
     columnHelper.accessor("red1", {
