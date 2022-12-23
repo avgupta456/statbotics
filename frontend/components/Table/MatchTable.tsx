@@ -5,7 +5,7 @@ import React, { useMemo, useState } from "react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import { classnames } from "../../utils";
-import { YearStats } from "../types/api";
+import { PercentileStats, YearStats } from "../types/api";
 import Table from "./Table";
 import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 
@@ -26,35 +26,32 @@ export type Component = {
 const formatCell = (
   stats: YearStats,
   info: CellContext<Component, number | string>,
-  multiplier: number = 1 / 3
+  multiplier: number = 1
 ) => {
   const row = info.row.original.name;
-  const column = info.column.id;
   const value = info.getValue();
 
   let color = "";
   if (typeof value === "string" || row == "Fouls") {
     color = CONDITIONAL_COLORS[1];
   } else {
-    const compValue = row == "RP1" || row == "RP2" ? value + 1 / 3 : value;
-    const mean =
-      multiplier *
-      (row === "Auto"
-        ? stats.auto_mean
+    const percentileStats: PercentileStats =
+      row === "Auto"
+        ? stats.auto
         : row === "Teleop"
-        ? stats.teleop_mean
+        ? stats.teleop
         : row === "Endgame"
-        ? stats.endgame_mean
+        ? stats.endgame
         : row === "RP1"
-        ? stats.rp_1_mean
+        ? stats.rp_1
         : row === "RP2"
-        ? stats.rp_2_mean
-        : stats.total_mean);
+        ? stats.rp_2
+        : stats.total;
 
-    if (row.includes("RP") && (column.includes("Total") || column.includes("Actual"))) {
-      color = getRPColor(compValue, mean);
+    if (row.includes("RP")) {
+      color = getRPColor(value);
     } else {
-      color = getColor(compValue, mean);
+      color = getColor(value, percentileStats, multiplier);
     }
   }
 
@@ -96,12 +93,12 @@ const MatchTable = ({
         enableSorting: false,
       }),
       columnHelper.accessor("redTotal", {
-        cell: (info) => formatCell(stats, info, 1),
+        cell: (info) => formatCell(stats, info, 3),
         header: () => <span>Predicted</span>,
         enableSorting: false,
       }),
       columnHelper.accessor("redActual", {
-        cell: (info) => formatCell(stats, info, 1),
+        cell: (info) => formatCell(stats, info, 3),
         header: () => <span>Actual</span>,
         enableSorting: false,
       }),
@@ -111,12 +108,12 @@ const MatchTable = ({
         enableSorting: false,
       }),
       columnHelper.accessor("blueActual", {
-        cell: (info) => formatCell(stats, info, 1),
+        cell: (info) => formatCell(stats, info, 3),
         header: () => <span>Actual</span>,
         enableSorting: false,
       }),
       columnHelper.accessor("blueTotal", {
-        cell: (info) => formatCell(stats, info, 1),
+        cell: (info) => formatCell(stats, info, 3),
         header: () => <span>Predicted</span>,
         enableSorting: false,
       }),

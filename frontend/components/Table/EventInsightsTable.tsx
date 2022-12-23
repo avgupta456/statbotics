@@ -5,9 +5,9 @@ import React, { useMemo, useState } from "react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import { classnames } from "../../utils";
-import { YearStats } from "../types/api";
+import { PercentileStats, YearStats } from "../types/api";
 import Table from "./Table";
-import { CONDITIONAL_COLORS, TeamLink, getColor } from "./shared";
+import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 
 export type TeamEventInsights = {
   num: number;
@@ -21,16 +21,20 @@ export type TeamEventInsights = {
   rp_2_epa: number | string;
 };
 
-const formatCell = (mean: number, info: CellContext<TeamEventInsights, number | string>) => {
+const formatCell = (
+  percentileStats: PercentileStats,
+  info: CellContext<TeamEventInsights, number | string>
+) => {
   const column = info.column.id;
   const value = info.getValue();
 
   let color = "";
   if (typeof value === "string") {
     color = CONDITIONAL_COLORS[1];
+  } else if (column == "rp_1_epa" || column == "rp_2_epa") {
+    color = getRPColor(value);
   } else {
-    const compValue = column == "rp_1_epa" || column == "rp_2_epa" ? value + 1 / 3 : value;
-    color = getColor(compValue, mean);
+    color = getColor(value, percentileStats);
   }
 
   return (
@@ -60,27 +64,27 @@ const EventInsightsTable = ({ data, stats }: { data: TeamEventInsights[]; stats:
         header: "Rank",
       }),
       columnHelper.accessor("epa", {
-        cell: (info) => formatCell(stats.total_mean / 3, info),
+        cell: (info) => formatCell(stats.total, info),
         header: "EPA",
       }),
       columnHelper.accessor("auto_epa", {
-        cell: (info) => formatCell(stats.auto_mean / 3, info),
+        cell: (info) => formatCell(stats.auto, info),
         header: "Auto EPA",
       }),
       columnHelper.accessor("teleop_epa", {
-        cell: (info) => formatCell(stats.teleop_mean / 3, info),
+        cell: (info) => formatCell(stats.teleop, info),
         header: "Teleop EPA",
       }),
       columnHelper.accessor("endgame_epa", {
-        cell: (info) => formatCell(stats.endgame_mean / 3, info),
+        cell: (info) => formatCell(stats.endgame, info),
         header: "Endgame EPA",
       }),
       columnHelper.accessor("rp_1_epa", {
-        cell: (info) => formatCell(stats.rp_1_mean / 3, info),
+        cell: (info) => formatCell(stats.rp_1, info),
         header: "RP1 EPA",
       }),
       columnHelper.accessor("rp_2_epa", {
-        cell: (info) => formatCell(stats.rp_2_mean / 3, info),
+        cell: (info) => formatCell(stats.rp_2, info),
         header: "RP2 EPA",
       }),
     ],
