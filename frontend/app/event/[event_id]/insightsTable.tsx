@@ -3,7 +3,7 @@ import React from "react";
 import EventInsightsTable, {
   TeamEventInsights,
 } from "../../../components/Table/EventInsightsTable";
-import { TableKey } from "../../../components/Table/shared";
+import { TableFooter, TableKey } from "../../../components/Table/shared";
 import { round } from "../../../utils";
 import { Data } from "./types";
 
@@ -31,9 +31,10 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <p className="text-2xl lg:text-3xl mt-8 mb-4">Event Insights</p>
-      <EventInsightsTable {...EventInsightsTableProps} />
+      <p className="text-2xl lg:text-3xl mt-8 mb-2">Event Insights</p>
       <TableKey />
+      <EventInsightsTable {...EventInsightsTableProps} />
+      <TableFooter />
     </div>
   );
 };

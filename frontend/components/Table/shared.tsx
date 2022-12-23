@@ -58,29 +58,32 @@ export const getRPColor = (value: number) => {
 };
 
 export const TableKey = () => (
-  <>
-    <div className="w-full flex justify-center items-center text-xs mt-8">
-      <p className="text-sm">Key (Percentile):</p>
-      {[
-        { color: CONDITIONAL_COLORS[0], text: "0 - 25" },
-        { color: CONDITIONAL_COLORS[1], text: "25 - 75" },
-        { color: CONDITIONAL_COLORS[2], text: "75 - 90" },
-        { color: CONDITIONAL_COLORS[3], text: "90 - 99" },
-        { color: CONDITIONAL_COLORS[4], text: "99 - 100" },
-      ].map((item) => (
-        <span
-          key={item.color}
-          className={classnames(
-            item.color,
-            "data w-16 p-1 ml-4 rounded lg:rounded-lg flex justify-center items-center"
-          )}
-        >
-          {item.text}
-        </span>
-      ))}
-    </div>
+  <div className="w-full flex justify-center items-center text-xs my-4">
+    <p className="text-sm">Key (Percentile):</p>
+    {[
+      { color: CONDITIONAL_COLORS[0], text: "0 - 25" },
+      { color: CONDITIONAL_COLORS[1], text: "25 - 75" },
+      { color: CONDITIONAL_COLORS[2], text: "75 - 90" },
+      { color: CONDITIONAL_COLORS[3], text: "90 - 99" },
+      { color: CONDITIONAL_COLORS[4], text: "99 - 100" },
+    ].map((item) => (
+      <span
+        key={item.color}
+        className={classnames(
+          item.color,
+          "data w-16 p-1 ml-4 rounded lg:rounded-lg flex justify-center items-center"
+        )}
+      >
+        {item.text}
+      </span>
+    ))}
+  </div>
+);
+
+export const TableFooter = () => {
+  return (
     <div className="hidden lg:flex w-full justify-center items-center text-sm mt-4">
       Note: Nonlinear sum for alliance component predictions, see docs for more details!
     </div>
-  </>
-);
+  );
+};
