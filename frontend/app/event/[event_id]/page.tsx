@@ -29,8 +29,6 @@ async function Page({ params }: { params: { event_id: string } }) {
     return <div>Event not found</div>;
   }
 
-  console.log(data);
-
   let truncatedEventName = data.event_name;
   if (data.event_name.length > 30) {
     truncatedEventName = data.event_name.slice(0, 27) + "...";

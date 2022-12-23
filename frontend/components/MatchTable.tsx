@@ -91,12 +91,29 @@ const getColor = (value: number, mean: number) => {
   return color;
 };
 
+const getRPColor = (value: number, mean: number) => {
+  let color = "";
+  if (value < 0.25) {
+    color = CONDITIONAL_COLORS[0];
+  } else if (value < 0.5) {
+    color = CONDITIONAL_COLORS[1];
+  } else if (value < 0.75) {
+    color = CONDITIONAL_COLORS[2];
+  } else if (value < 0.9) {
+    color = CONDITIONAL_COLORS[3];
+  } else {
+    color = CONDITIONAL_COLORS[4];
+  }
+  return color;
+};
+
 const formatCell = (
   stats: YearStats,
   info: CellContext<CleanComponent, number | string>,
   multiplier: number = 1 / 3
 ) => {
   const row = info.row.original.name;
+  const column = info.column.id;
   const value = info.getValue();
 
   let color = "";
@@ -117,23 +134,14 @@ const formatCell = (
         : row === "RP2"
         ? stats.rp_2_mean
         : stats.total_mean);
-    color = getColor(compValue, mean);
-    // RP is special
+
     if (
       row.includes("RP") &&
-      (info.column.id.includes("Actual") || info.column.id.includes("Total"))
+      (column.includes("Total") || column.includes("Actual"))
     ) {
-      if (value < 0.25) {
-        color = CONDITIONAL_COLORS[0];
-      } else if (value < 0.5) {
-        color = CONDITIONAL_COLORS[1];
-      } else if (value < 0.75) {
-        color = CONDITIONAL_COLORS[2];
-      } else if (value < 0.9) {
-        color = CONDITIONAL_COLORS[3];
-      } else {
-        color = CONDITIONAL_COLORS[4];
-      }
+      color = getRPColor(compValue, mean);
+    } else {
+      color = getColor(compValue, mean);
     }
   }
 
