@@ -1,6 +1,6 @@
 import React from "react";
 
-import PieChart from "../../../components/Pie";
+import PieChart from "../../../components/Figures/Pie";
 import { BLUE, RED } from "../../../constants";
 import { classnames } from "../../../utils";
 import { Data } from "./types";
