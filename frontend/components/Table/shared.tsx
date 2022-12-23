@@ -2,13 +2,7 @@ import React from "react";
 
 import { classnames } from "../../utils";
 
-export const TeamLink = ({
-  team,
-  num,
-}: {
-  team: string | number;
-  num: string | number;
-}) => (
+export const TeamLink = ({ team, num }: { team: string | number; num: string | number }) => (
   <a
     href={`/team/${num}`}
     target="_blank"
@@ -98,8 +92,7 @@ export const TableKey = () => (
       ))}
     </div>
     <div className="hidden lg:flex w-full justify-center items-center text-sm mt-4">
-      Note: Nonlinear sum for alliance component predictions, see docs for more
-      details!
+      Note: Nonlinear sum for alliance component predictions, see docs for more details!
     </div>
   </>
 );

@@ -1,10 +1,10 @@
 import React from "react";
 
-import MatchTable from "./table";
-import Summary from "./summary";
-import Video from "./video";
-import { Data } from "./types";
 import { BACKEND_URL } from "../../../constants";
+import Summary from "./summary";
+import MatchTable from "./table";
+import { Data } from "./types";
+import Video from "./video";
 
 async function getData(match_id: string) {
   const res = await fetch(`${BACKEND_URL}/match/` + match_id);

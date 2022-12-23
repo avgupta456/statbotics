@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import Table from "./Table";
-import { TeamLink, CONDITIONAL_COLORS, getColor, getRPColor } from "./shared";
-import { YearStats } from "../types/api";
 import { classnames } from "../../utils";
+import { YearStats } from "../types/api";
+import Table from "./Table";
+import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 
 export type Component = {
   name: string;
@@ -51,10 +51,7 @@ const formatCell = (
         ? stats.rp_2_mean
         : stats.total_mean);
 
-    if (
-      row.includes("RP") &&
-      (column.includes("Total") || column.includes("Actual"))
-    ) {
+    if (row.includes("RP") && (column.includes("Total") || column.includes("Actual"))) {
       color = getRPColor(compValue, mean);
     } else {
       color = getColor(compValue, mean);
@@ -63,12 +60,7 @@ const formatCell = (
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <div
-        className={classnames(
-          color,
-          "data w-6 lg:w-12 p-0.5 lg:p-1 rounded lg:rounded-lg"
-        )}
-      >
+      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:p-1 rounded lg:rounded-lg")}>
         {info.getValue()}
       </div>
     </div>
@@ -161,23 +153,15 @@ const MatchTable = ({
     classnames(
       "text-center h-full",
       row.index % 2 === 0 ? "" : "bg-gray-100",
-      row.original.name === "Total"
-        ? "font-bold bg-gray-300"
-        : "hover:bg-blue-100"
+      row.original.name === "Total" ? "font-bold bg-gray-300" : "hover:bg-blue-100"
     );
 
   const cellClassName = (cell: any) =>
     classnames(
       "w-24 py-2",
-      ["redTotal", "blueTotal", "name"].includes(cell.column.id)
-        ? "border-l-2 border-r-2"
-        : "",
-      cell.row.original.name === "Total" && cell.column.id === "red1"
-        ? "rounded-bl-lg"
-        : "",
-      cell.row.original.name === "Total" && cell.column.id === "blue1"
-        ? "rounded-br-lg"
-        : ""
+      ["redTotal", "blueTotal", "name"].includes(cell.column.id) ? "border-l-2 border-r-2" : "",
+      cell.row.original.name === "Total" && cell.column.id === "red1" ? "rounded-bl-lg" : "",
+      cell.row.original.name === "Total" && cell.column.id === "blue1" ? "rounded-br-lg" : ""
     );
 
   return Table(data, columns, headerClassName, rowClassName, cellClassName);

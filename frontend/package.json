@@ -6,11 +6,13 @@
     "dev": "concurrently \"next dev --turbo\" \"tailwindcss -i app/globals.css -o app/dist.css -w\"",
     "build": "tailwindcss -m -i app/globals.css -o app/dist.css && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier": "prettier --write app pages components"
   },
   "dependencies": {
     "@nivo/core": "^0.80.0",
     "@nivo/pie": "^0.80.0",
+    "@nivo/tooltip": "^0.80.0",
     "@tanstack/react-table": "^8.7.4",
     "@types/node": "18.11.17",
     "@types/react": "18.0.26",
@@ -23,8 +25,28 @@
     "typescript": "4.9.4"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
     "autoprefixer": "^10.4.13",
     "concurrently": "^7.6.0",
+    "prettier": "^2.8.1",
     "tailwindcss": "^3.2.4"
+  },
+  "prettier": {
+    "plugins": [
+      "@trivago/prettier-plugin-sort-imports"
+    ],
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "importOrder": [
+      "^react",
+      "^next",
+      "^@",
+      "^#",
+      "^[./]"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
   }
 }

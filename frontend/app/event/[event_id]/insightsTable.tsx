@@ -3,9 +3,9 @@ import React from "react";
 import EventInsightsTable, {
   TeamEventInsights,
 } from "../../../components/Table/EventInsightsTable";
-import { Data } from "./types";
-import { round } from "../../../utils";
 import { TableKey } from "../../../components/Table/shared";
+import { round } from "../../../utils";
+import { Data } from "./types";
 
 const PageEventInsightsTable = ({ data }: { data: Data }) => {
   const eventInsightsData: TeamEventInsights[] = data.team_events

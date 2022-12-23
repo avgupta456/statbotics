@@ -12,11 +12,7 @@ type Datum = {
 
 const PieChart = ({ data, colors }: { data: Datum[]; colors: string[] }) => {
   if (!(Array.isArray(data) && data.length > 0)) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        No data to show
-      </div>
-    );
+    return <div className="w-full h-full flex items-center justify-center">No data to show</div>;
   }
 
   return (

@@ -1,8 +1,8 @@
 import React from "react";
 
-import { Data } from "./types";
-import InsightsTable from "./insightsTable";
 import { BACKEND_URL } from "../../../constants";
+import InsightsTable from "./insightsTable";
+import { Data } from "./types";
 
 async function getData(event_id: string) {
   const res = await fetch(`${BACKEND_URL}/event/` + event_id);

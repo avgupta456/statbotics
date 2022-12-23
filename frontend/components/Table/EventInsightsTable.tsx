@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import Table from "./Table";
-import { TeamLink, CONDITIONAL_COLORS, getColor } from "./shared";
-import { YearStats } from "../types/api";
 import { classnames } from "../../utils";
+import { YearStats } from "../types/api";
+import Table from "./Table";
+import { CONDITIONAL_COLORS, TeamLink, getColor } from "./shared";
 
 export type TeamEventInsights = {
   num: number;
@@ -21,10 +21,7 @@ export type TeamEventInsights = {
   rp_2_epa: number | string;
 };
 
-const formatCell = (
-  mean: number,
-  info: CellContext<TeamEventInsights, number | string>
-) => {
+const formatCell = (mean: number, info: CellContext<TeamEventInsights, number | string>) => {
   const column = info.column.id;
   const value = info.getValue();
 
@@ -32,19 +29,13 @@ const formatCell = (
   if (typeof value === "string") {
     color = CONDITIONAL_COLORS[1];
   } else {
-    const compValue =
-      column == "rp_1_epa" || column == "rp_2_epa" ? value + 1 / 3 : value;
+    const compValue = column == "rp_1_epa" || column == "rp_2_epa" ? value + 1 / 3 : value;
     color = getColor(compValue, mean);
   }
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <div
-        className={classnames(
-          color,
-          "data w-6 lg:w-12 p-0.5 lg:p-1 rounded lg:rounded-lg"
-        )}
-      >
+      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:p-1 rounded lg:rounded-lg")}>
         {info.getValue()}
       </div>
     </div>
@@ -53,13 +44,7 @@ const formatCell = (
 
 const columnHelper = createColumnHelper<TeamEventInsights>();
 
-const EventInsightsTable = ({
-  data,
-  stats,
-}: {
-  data: TeamEventInsights[];
-  stats: YearStats;
-}) => {
+const EventInsightsTable = ({ data, stats }: { data: TeamEventInsights[]; stats: YearStats }) => {
   const columns = useMemo<any>(
     () => [
       columnHelper.accessor("num", {
@@ -67,8 +52,7 @@ const EventInsightsTable = ({
         header: "Number",
       }),
       columnHelper.accessor("team", {
-        cell: (info) =>
-          TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
         header: "Name",
       }),
       columnHelper.accessor("rank", {
@@ -111,20 +95,13 @@ const EventInsightsTable = ({
     );
 
   const rowClassName = (row: any) =>
-    classnames(
-      "text-center h-full hover:bg-blue-100",
-      row.index % 2 === 0 ? "" : "bg-gray-100"
-    );
+    classnames("text-center h-full hover:bg-blue-100", row.index % 2 === 0 ? "" : "bg-gray-100");
 
   const cellClassName = (cell: any) =>
     classnames(
       "w-28 py-2",
-      cell.row.index === data.length - 1 && cell.column.id === "num"
-        ? "rounded-bl-lg"
-        : "",
-      cell.row.index === data.length - 1 && cell.column.id === "rp_2_epa"
-        ? "rounded-br-lg"
-        : ""
+      cell.row.index === data.length - 1 && cell.column.id === "num" ? "rounded-bl-lg" : "",
+      cell.row.index === data.length - 1 && cell.column.id === "rp_2_epa" ? "rounded-br-lg" : ""
     );
 
   return Table(data, columns, headerClassName, rowClassName, cellClassName);

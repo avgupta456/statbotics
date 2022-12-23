@@ -2,9 +2,9 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
+from src.api.aggregation.year import get_year_stats
 from src.api.db.event import get_event
 from src.api.db.team_event import get_team_events
-from src.api.aggregation.year import get_year_stats
 from src.db.models.event import Event
 from src.db.models.team_event import TeamEvent
 from src.utils.decorators import async_fail_gracefully

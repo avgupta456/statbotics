@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 
 import {
+  ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-  ColumnDef,
   getSortedRowModel,
-  SortingState,
+  useReactTable,
 } from "@tanstack/react-table";
 
 const Table = (
@@ -39,24 +39,15 @@ const Table = (
             <tr key={headerGroup.id} className="lg:text-sm">
               {headerGroup.headers.map((header) => {
                 return (
-                  <th
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className={headerClassName(header)}
-                  >
+                  <th key={header.id} colSpan={header.colSpan} className={headerClassName(header)}>
                     {header.isPlaceholder ? null : (
                       <div
                         {...{
-                          className: header.column.getCanSort()
-                            ? "cursor-pointer select-none"
-                            : "",
+                          className: header.column.getCanSort() ? "cursor-pointer select-none" : "",
                           onClick: header.column.getToggleSortingHandler(),
                         }}
                       >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                         {{
                           asc: " 🔼",
                           desc: " 🔽",
