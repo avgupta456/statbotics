@@ -1,7 +1,8 @@
 import React from "react";
 
 import MatchTable, { Component } from "../../../components/Table/MatchTable";
-import { classnames, round } from "../../../utils";
+import { TableKey } from "../../../components/Table/shared";
+import { round } from "../../../utils";
 import { Data } from "./types";
 
 const PageMatchTable = ({ data }: { data: Data }) => {
@@ -172,43 +173,9 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     <div className="w-full flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-4">Match Breakdown</p>
       <MatchTable {...MatchTableProps} />
+      <TableKey />
     </div>
   );
 };
-
-export const TableKey = () => (
-  <>
-    <div className="w-full flex justify-center items-center text-xs mt-8">
-      <p className="text-sm">Key (Multiples of Mean):</p>
-      {[
-        { color: "text-red-700 bg-red-300", text: "< 0.5" },
-        {
-          color: "text-gray-800 bg-gray-200",
-          text: "0.5 - 1.5",
-        },
-        { color: "text-green-500 bg-green-100", text: "1.5 - 2" },
-        { color: "text-green-700 bg-green-300", text: "2 - 3" },
-        { color: "text-black bg-green-500", text: "3 - 4" },
-        { color: "text-blue-500 bg-blue-100", text: "4 - 5" },
-        { color: "text-blue-700 bg-blue-300", text: "5 - 6" },
-        { color: "text-white bg-blue-500", text: "6+" },
-      ].map((item) => (
-        <span
-          key={item.color}
-          className={classnames(
-            item.color,
-            "data w-16 p-1 ml-4 rounded lg:rounded-lg flex justify-center items-center"
-          )}
-        >
-          {item.text}
-        </span>
-      ))}
-    </div>
-    <div className="hidden lg:flex w-full justify-center items-center text-sm mt-4">
-      Note: Nonlinear sum for alliance component predictions, see docs for more
-      details!
-    </div>
-  </>
-);
 
 export default PageMatchTable;

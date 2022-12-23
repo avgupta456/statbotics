@@ -1,6 +1,6 @@
 import React from "react";
 
-import MatchTable, { TableKey } from "./table";
+import MatchTable from "./table";
 import Summary from "./summary";
 import Video from "./video";
 import { Data } from "./types";
@@ -56,7 +56,6 @@ async function Page({ params }: { params: { match_id: string } }) {
           <Video video={data.match.video} />
           <MatchTable data={data} />
         </div>
-        <TableKey />
       </div>
     </div>
   );

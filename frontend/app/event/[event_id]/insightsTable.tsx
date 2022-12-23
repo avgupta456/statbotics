@@ -5,6 +5,7 @@ import EventInsightsTable, {
 } from "../../../components/Table/EventInsightsTable";
 import { Data } from "./types";
 import { round } from "../../../utils";
+import { TableKey } from "../../../components/Table/shared";
 
 const PageEventInsightsTable = ({ data }: { data: Data }) => {
   const eventInsightsData: TeamEventInsights[] = data.team_events
@@ -32,6 +33,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
     <div className="w-full flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-4">Event Insights</p>
       <EventInsightsTable {...EventInsightsTableProps} />
+      <TableKey />
     </div>
   );
 };
