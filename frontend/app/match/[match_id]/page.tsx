@@ -15,7 +15,7 @@ async function getData(match_id: string) {
   return data?.data;
 }
 
-async function Match({ params }: { params: { match_id: string } }) {
+async function Page({ params }: { params: { match_id: string } }) {
   const { match_id } = params;
   console.log("Fetching match data for match_id: " + match_id);
   const start = performance.now();
@@ -62,4 +62,4 @@ async function Match({ params }: { params: { match_id: string } }) {
   );
 }
 
-export default Match;
+export default Page;
