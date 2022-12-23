@@ -15,7 +15,7 @@ def get_team_events(
         if year is not None:
             data = data.filter(TeamEventORM.year == year)  # type: ignore
         if event_id is not None:
-            data = data.filter(TeamEventORM.event_id == event_id)  # type: ignore
+            data = data.filter(TeamEventORM.event == event_id)  # type: ignore
         out_data: List[TeamEventORM] = data.all()
         return [TeamEvent.from_dict(x.__dict__) for x in out_data]
 

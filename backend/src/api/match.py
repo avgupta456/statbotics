@@ -2,11 +2,11 @@ from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Response
 
-from src.db.models.match import Match
 from src.api.db.event import get_event
 from src.api.db.match import get_match
-from src.api.db.year import get_year
 from src.api.db.team_match import get_team_matches
+from src.api.aggregation.year import get_year_stats
+from src.db.models.match import Match
 from src.utils.decorators import async_fail_gracefully
 from src.utils.utils import get_match_name
 
@@ -48,34 +48,16 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
     if event_obj is None:
         raise Exception("Event not found")
     event_name = event_obj.name
-
-    year_obj = await get_year(match.year)
-    if year_obj is None:
-        raise Exception("Year not found")
-    auto_mean = year_obj.auto_mean
-    teleop_mean = year_obj.teleop_mean
-    endgame_mean = year_obj.endgame_mean
-    total_mean = year_obj.score_mean
-    foul_rate = (year_obj.fouls_mean or 0) / (year_obj.no_fouls_mean or 1)
-    rp_1_mean = (year_obj.rp_1_mean or 0) + 1
-    rp_2_mean = (year_obj.rp_2_mean or 0) + 1
-
     match_name = get_match_name(match.key)
+
+    year_stats = await get_year_stats(match.year)
 
     out = {
         "match": match.to_dict(),
         "team_matches": team_matches_dict,
         "event_name": event_name,
         "match_name": match_name,
-        "year_stats": {
-            "auto_mean": auto_mean,
-            "teleop_mean": teleop_mean,
-            "endgame_mean": endgame_mean,
-            "total_mean": total_mean,
-            "foul_rate": foul_rate,
-            "rp_1_mean": rp_1_mean,
-            "rp_2_mean": rp_2_mean,
-        },
+        "year_stats": year_stats,
     }
 
     return out
