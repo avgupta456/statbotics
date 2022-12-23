@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Data } from "./types";
+import InsightsTable from "./insightsTable";
 import { BACKEND_URL } from "../../../constants";
 
 async function getData(event_id: string) {
@@ -39,6 +40,9 @@ async function Page({ params }: { params: { event_id: string } }) {
       <div className="container mx-auto">
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-3xl lg:text-4xl">{truncatedEventName}</p>
+        </div>
+        <div className="w-full flex flex-row flex-wrap justify-center">
+          <InsightsTable data={data} />
         </div>
       </div>
     </div>

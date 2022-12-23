@@ -1,6 +1,6 @@
 import React from "react";
 
-import MatchTable, { Component } from "../../../components/MatchTable";
+import MatchTable, { Component } from "../../../components/Table/MatchTable";
 import { classnames, round } from "../../../utils";
 import { Data } from "./types";
 
@@ -116,10 +116,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_score,
   };
 
-  console.log(rp1Component);
-  console.log(rp2Component);
-
-  const matchPredictionData = [
+  const matchData = [
     autoComponent,
     teleopComponent,
     endgameComponent,
@@ -165,16 +162,16 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     };
   });
 
-  const MatchPredictionTableProps = {
+  const MatchTableProps = {
     teams: [red1, red2, red3, blue1, blue2, blue3],
-    data: matchPredictionData,
+    data: matchData,
     stats: data.year_stats,
   };
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-4">Match Breakdown</p>
-      <MatchTable {...MatchPredictionTableProps} />
+      <MatchTable {...MatchTableProps} />
     </div>
   );
 };
