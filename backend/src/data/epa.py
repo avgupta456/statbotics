@@ -635,6 +635,11 @@ def process_year(
 
     # TEAM YEARS
     year_epas: List[float] = []
+    year_auto_epas: List[float] = []
+    year_teleop_epas: List[float] = []
+    year_endgame_epas: List[float] = []
+    year_rp_1_epas: List[float] = []
+    year_rp_2_epas: List[float] = []
     to_remove: List[int] = []
     for team in team_years_dict:
         curr_team_epas = team_matches_dict[team]
@@ -642,11 +647,16 @@ def process_year(
             to_remove.append(team)
             continue
 
-        n = len(curr_team_epas)
-        # TODO: revisit how we calculate epa_max (maybe use max of 6 match rolling average?)
-        # Since higher variability due to increased percent change per match
-        epa_max = round(max(curr_team_epas[min(n - 1, 8) :]), 2)
-        year_epas.append(epa_max)
+        # Use end of season epa
+        year_epas.append(round(curr_team_epas[-1], 2))
+
+        if USE_COMPONENTS:
+            curr_component_team_epas = component_team_matches_dict[team]
+            year_auto_epas.append(round(curr_component_team_epas[-1][0], 2))
+            year_teleop_epas.append(round(curr_component_team_epas[-1][1], 2))
+            year_endgame_epas.append(round(curr_component_team_epas[-1][2], 2))
+            year_rp_1_epas.append(round(curr_component_team_epas[-1][3], 4))
+            year_rp_2_epas.append(round(curr_component_team_epas[-1][4], 4))
 
     for team in to_remove:
         team_years_dict.pop(team)
@@ -662,6 +672,9 @@ def process_year(
         curr_endgame_team_epas = [x[2] for x in curr_component_team_epas]
         curr_rp_1_team_epas = [x[3] for x in curr_component_team_epas]
         curr_rp_2_team_epas = [x[4] for x in curr_component_team_epas]
+
+        # TODO: revisit how we calculate epa_max (maybe use max of 6 match rolling average?)
+        # Since higher variability due to increased percent change per match
 
         n = len(curr_team_epas)
         obj.epa_max = round(max(curr_team_epas[min(n - 1, 8) :]), 2)
@@ -719,7 +732,7 @@ def process_year(
         obj.ties = ties
         obj.winrate = winrate
 
-        obj.epa_rank = rank = year_epas.index(obj.epa_max) + 1
+        obj.epa_rank = rank = year_epas.index(obj.epa_end) + 1
         obj.epa_percentile = round(1 - rank / team_year_count, 4)
 
     # YEARS
@@ -731,8 +744,130 @@ def process_year(
         year.epa_10p = round(year_epas[round(0.1 * len(year_epas))], 2)
         year.epa_25p = round(year_epas[round(0.25 * len(year_epas))], 2)
         year.epa_median = round(year_epas[round(0.5 * len(year_epas))], 2)
+        year.epa_75p = round(year_epas[round(0.75 * len(year_epas))], 2)
         year.epa_mean = round(sum(year_epas) / len(year_epas), 2)
         year.epa_sd = round(stdev(year_epas), 2)
+
+        if USE_COMPONENTS:
+            year_auto_epas.sort(reverse=True)
+            year.auto_epa_max = round(year_auto_epas[0], 2)
+            year.auto_epa_1p = round(
+                year_auto_epas[round(0.01 * len(year_auto_epas))], 2
+            )
+            year.auto_epa_5p = round(
+                year_auto_epas[round(0.05 * len(year_auto_epas))], 2
+            )
+            year.auto_epa_10p = round(
+                year_auto_epas[round(0.1 * len(year_auto_epas))], 2
+            )
+            year.auto_epa_25p = round(
+                year_auto_epas[round(0.25 * len(year_auto_epas))], 2
+            )
+            year.auto_epa_median = round(
+                year_auto_epas[round(0.5 * len(year_auto_epas))], 2
+            )
+            year.auto_epa_75p = round(
+                year_auto_epas[round(0.75 * len(year_auto_epas))], 2
+            )
+            year.auto_epa_mean = round(sum(year_auto_epas) / len(year_auto_epas), 2)
+            year.auto_epa_sd = round(stdev(year_auto_epas), 2)
+
+            year_teleop_epas.sort(reverse=True)
+            year.teleop_epa_max = round(year_teleop_epas[0], 2)
+            year.teleop_epa_1p = round(
+                year_teleop_epas[round(0.01 * len(year_teleop_epas))], 2
+            )
+            year.teleop_epa_5p = round(
+                year_teleop_epas[round(0.05 * len(year_teleop_epas))], 2
+            )
+            year.teleop_epa_10p = round(
+                year_teleop_epas[round(0.1 * len(year_teleop_epas))], 2
+            )
+            year.teleop_epa_25p = round(
+                year_teleop_epas[round(0.25 * len(year_teleop_epas))], 2
+            )
+            year.teleop_epa_median = round(
+                year_teleop_epas[round(0.5 * len(year_teleop_epas))], 2
+            )
+            year.teleop_epa_75p = round(
+                year_teleop_epas[round(0.75 * len(year_teleop_epas))], 2
+            )
+            year.teleop_epa_mean = round(
+                sum(year_teleop_epas) / len(year_teleop_epas), 2
+            )
+            year.teleop_epa_sd = round(stdev(year_teleop_epas), 2)
+
+            year_endgame_epas.sort(reverse=True)
+            year.endgame_epa_max = round(year_endgame_epas[0], 2)
+            year.endgame_epa_1p = round(
+                year_endgame_epas[round(0.01 * len(year_endgame_epas))], 2
+            )
+            year.endgame_epa_5p = round(
+                year_endgame_epas[round(0.05 * len(year_endgame_epas))], 2
+            )
+            year.endgame_epa_10p = round(
+                year_endgame_epas[round(0.1 * len(year_endgame_epas))], 2
+            )
+            year.endgame_epa_25p = round(
+                year_endgame_epas[round(0.25 * len(year_endgame_epas))], 2
+            )
+            year.endgame_epa_median = round(
+                year_endgame_epas[round(0.5 * len(year_endgame_epas))], 2
+            )
+            year.endgame_epa_75p = round(
+                year_endgame_epas[round(0.75 * len(year_endgame_epas))], 2
+            )
+            year.endgame_epa_mean = round(
+                sum(year_endgame_epas) / len(year_endgame_epas), 2
+            )
+            year.endgame_epa_sd = round(stdev(year_endgame_epas), 2)
+
+            year_rp_1_epas.sort(reverse=True)
+            year.rp_1_epa_max = round(year_rp_1_epas[0], 4)
+            year.rp_1_epa_1p = round(
+                year_rp_1_epas[round(0.01 * len(year_rp_1_epas))], 4
+            )
+            year.rp_1_epa_5p = round(
+                year_rp_1_epas[round(0.05 * len(year_rp_1_epas))], 4
+            )
+            year.rp_1_epa_10p = round(
+                year_rp_1_epas[round(0.1 * len(year_rp_1_epas))], 4
+            )
+            year.rp_1_epa_25p = round(
+                year_rp_1_epas[round(0.25 * len(year_rp_1_epas))], 4
+            )
+            year.rp_1_epa_median = round(
+                year_rp_1_epas[round(0.5 * len(year_rp_1_epas))], 4
+            )
+            year.rp_1_epa_75p = round(
+                year_rp_1_epas[round(0.75 * len(year_rp_1_epas))], 4
+            )
+            year.rp_1_epa_mean = round(sum(year_rp_1_epas) / len(year_rp_1_epas), 4)
+            year.rp_1_epa_sd = round(stdev(year_rp_1_epas), 4)
+
+            year_rp_2_epas.sort(reverse=True)
+            year.rp_2_epa_max = round(year_rp_2_epas[0], 4)
+            year.rp_2_epa_1p = round(
+                year_rp_2_epas[round(0.01 * len(year_rp_2_epas))], 4
+            )
+            year.rp_2_epa_5p = round(
+                year_rp_2_epas[round(0.05 * len(year_rp_2_epas))], 4
+            )
+            year.rp_2_epa_10p = round(
+                year_rp_2_epas[round(0.1 * len(year_rp_2_epas))], 4
+            )
+            year.rp_2_epa_25p = round(
+                year_rp_2_epas[round(0.25 * len(year_rp_2_epas))], 4
+            )
+            year.rp_2_epa_median = round(
+                year_rp_2_epas[round(0.5 * len(year_rp_2_epas))], 4
+            )
+            year.rp_2_epa_75p = round(
+                year_rp_2_epas[round(0.75 * len(year_rp_2_epas))], 4
+            )
+            year.rp_2_epa_mean = round(sum(year_rp_2_epas) / len(year_rp_2_epas), 4)
+            year.rp_2_epa_sd = round(stdev(year_rp_2_epas), 4)
+
         year.epa_acc = acc
         year.epa_mse = mse
         year.count = count
