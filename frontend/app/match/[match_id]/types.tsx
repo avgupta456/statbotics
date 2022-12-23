@@ -24,6 +24,10 @@ type Match = {
   blue_teleop_epa_sum: number;
   red_endgame_epa_sum: number;
   blue_endgame_epa_sum: number;
+  red_rp_1_prob: number;
+  blue_rp_1_prob: number;
+  red_rp_2_prob: number;
+  blue_rp_2_prob: number;
   red_epa_sum: number;
   blue_epa_sum: number;
   epa_winner: string;
@@ -37,6 +41,8 @@ type TeamMatch = {
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;
+  rp_1_epa: number;
+  rp_2_epa: number;
   epa: number;
 };
 
@@ -49,6 +55,9 @@ type YearStats = {
   teleop_mean: number;
   endgame_mean: number;
   total_mean: number;
+  foul_rate: number;
+  rp_1_mean: number;
+  rp_2_mean: number;
 };
 
 export type Data = {

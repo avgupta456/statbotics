@@ -18,7 +18,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const blue3 = data.match.blue[2];
   const blue3Data = data.team_matches[blue3];
 
-  const autoPredComponent: Component = {
+  const autoComponent: Component = {
     name: "Auto",
     red1: red1Data.auto_epa,
     red2: red2Data.auto_epa,
@@ -32,7 +32,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_auto,
   };
 
-  const teleopPredComponent: Component = {
+  const teleopComponent: Component = {
     name: "Teleop",
     red1: red1Data.teleop_epa,
     red2: red2Data.teleop_epa,
@@ -46,7 +46,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_teleop,
   };
 
-  const endgamePredComponent: Component = {
+  const endgameComponent: Component = {
     name: "Endgame",
     red1: red1Data.endgame_epa,
     red2: red2Data.endgame_epa,
@@ -60,83 +60,94 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_endgame,
   };
 
-  const foulPredComponent: Component = {
+  const foulComponent: Component = {
     name: "Fouls",
-    red1: 0,
-    red2: 0,
-    red3: 0,
-    redTotal: 0,
+    red1: null,
+    red2: null,
+    red3: null,
+    redTotal: data.match.red_epa_sum * data.year_stats.foul_rate,
     redActual: data.match.red_fouls,
-    blue1: 0,
-    blue2: 0,
-    blue3: 0,
-    blueTotal: 0,
+    blue1: null,
+    blue2: null,
+    blue3: null,
+    blueTotal: data.match.blue_epa_sum * data.year_stats.foul_rate,
     blueActual: data.match.blue_fouls,
   };
 
-  const rp1PredComponent: Component = {
+  const rp1Component: Component = {
     name: "RP1",
-    red1: null,
-    red2: null,
-    red3: null,
-    redTotal: null,
+    red1: red1Data.rp_1_epa,
+    red2: red2Data.rp_1_epa,
+    red3: red3Data.rp_1_epa,
+    redTotal: data.match.red_rp_1_prob,
     redActual: data.match.red_rp_1,
-    blue1: null,
-    blue2: null,
-    blue3: null,
-    blueTotal: null,
+    blue1: blue1Data.rp_1_epa,
+    blue2: blue2Data.rp_1_epa,
+    blue3: blue3Data.rp_1_epa,
+    blueTotal: data.match.blue_rp_1_prob,
     blueActual: data.match.blue_rp_1,
   };
 
-  const rp2PredComponent: Component = {
+  const rp2Component: Component = {
     name: "RP2",
-    red1: null,
-    red2: null,
-    red3: null,
-    redTotal: null,
+    red1: red1Data.rp_2_epa,
+    red2: red2Data.rp_2_epa,
+    red3: red3Data.rp_2_epa,
+    redTotal: data.match.red_rp_2_prob,
     redActual: data.match.red_rp_2,
-    blue1: null,
-    blue2: null,
-    blue3: null,
-    blueTotal: null,
+    blue1: blue1Data.rp_2_epa,
+    blue2: blue2Data.rp_2_epa,
+    blue3: blue3Data.rp_2_epa,
+    blueTotal: data.match.blue_rp_2_prob,
     blueActual: data.match.blue_rp_2,
   };
 
-  const totalPredComponent: Component = {
+  const totalComponent: Component = {
     name: "Total",
     red1: red1Data.epa,
     red2: red2Data.epa,
     red3: red3Data.epa,
-    redTotal: data.match.red_epa_sum,
+    redTotal: data.match.red_epa_sum * (1 + data.year_stats.foul_rate),
     redActual: data.match.red_score,
     blue1: blue1Data.epa,
     blue2: blue2Data.epa,
     blue3: blue3Data.epa,
-    blueTotal: data.match.blue_epa_sum,
+    blueTotal: data.match.blue_epa_sum * (1 + data.year_stats.foul_rate),
     blueActual: data.match.blue_score,
   };
 
+  console.log(rp1Component);
+  console.log(rp2Component);
+
   const matchPredictionData = [
-    autoPredComponent,
-    teleopPredComponent,
-    endgamePredComponent,
-    foulPredComponent,
-    rp1PredComponent,
-    rp2PredComponent,
-    totalPredComponent,
-  ].map((component) => {
-    const red1 = component.red1 !== null ? round(component.red1) : null;
-    const red2 = component.red2 !== null ? round(component.red2) : null;
-    const red3 = component.red3 !== null ? round(component.red3) : null;
+    autoComponent,
+    teleopComponent,
+    endgameComponent,
+    foulComponent,
+    rp1Component,
+    rp2Component,
+    totalComponent,
+  ].map((component, i) => {
+    const digits = i === 4 || i === 5 ? 2 : 1;
+    const red1 = component.red1 !== null ? round(component.red1, digits) : null;
+    const red2 = component.red2 !== null ? round(component.red2, digits) : null;
+    const red3 = component.red3 !== null ? round(component.red3, digits) : null;
     const redTotal =
-      component.redTotal !== null ? round(component.redTotal, 0) : null;
+      component.redTotal !== null
+        ? round(component.redTotal, digits === 2 ? 2 : 0)
+        : null;
     const redActual =
       component.redActual !== null ? round(component.redActual, 0) : null;
-    const blue1 = component.blue1 !== null ? round(component.blue1) : null;
-    const blue2 = component.blue2 !== null ? round(component.blue2) : null;
-    const blue3 = component.blue3 !== null ? round(component.blue3) : null;
+    const blue1 =
+      component.blue1 !== null ? round(component.blue1, digits) : null;
+    const blue2 =
+      component.blue2 !== null ? round(component.blue2, digits) : null;
+    const blue3 =
+      component.blue3 !== null ? round(component.blue3, digits) : null;
     const blueTotal =
-      component.blueTotal !== null ? round(component.blueTotal, 0) : null;
+      component.blueTotal !== null
+        ? round(component.blueTotal, digits === 2 ? 2 : 0)
+        : null;
     const blueActual =
       component.blueActual !== null ? round(component.blueActual, 0) : null;
     return {
