@@ -1,27 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import Table from "./Table";
-import { TeamLink, CONDITIONAL_COLORS, getColor, getRPColor } from "./shared";
+import { TeamLink, CONDITIONAL_COLORS, getColor } from "./shared";
 import { YearStats } from "../types/api";
 import { classnames } from "../../utils";
 
 export type TeamEventInsights = {
-  num: number;
-  team: string;
-  rank: number | null;
-  epa: number | null;
-  auto_epa: number | null;
-  teleop_epa: number | null;
-  endgame_epa: number | null;
-  rp_1_epa: number | null;
-  rp_2_epa: number | null;
-};
-
-type CleanTeamEventInsights = {
   num: number;
   team: string;
   rank: number | string;
@@ -35,7 +23,7 @@ type CleanTeamEventInsights = {
 
 const formatCell = (
   mean: number,
-  info: CellContext<CleanTeamEventInsights, number | string>
+  info: CellContext<TeamEventInsights, number | string>
 ) => {
   const column = info.column.id;
   const value = info.getValue();
@@ -63,6 +51,8 @@ const formatCell = (
   );
 };
 
+const columnHelper = createColumnHelper<TeamEventInsights>();
+
 const EventInsightsTable = ({
   data,
   stats,
@@ -70,46 +60,48 @@ const EventInsightsTable = ({
   data: TeamEventInsights[];
   stats: YearStats;
 }) => {
-  const columnHelper = createColumnHelper<CleanTeamEventInsights>();
-
-  const columns = [
-    columnHelper.accessor("num", {
-      cell: (info) => info.getValue(),
-      header: "Number",
-    }),
-    columnHelper.accessor("team", {
-      cell: (info) => TeamLink({ team: info.getValue() }),
-      header: "Name",
-    }),
-    columnHelper.accessor("rank", {
-      cell: (info) => info.getValue(),
-      header: "Rank",
-    }),
-    columnHelper.accessor("epa", {
-      cell: (info) => formatCell(stats.total_mean / 3, info),
-      header: "EPA",
-    }),
-    columnHelper.accessor("auto_epa", {
-      cell: (info) => formatCell(stats.auto_mean / 3, info),
-      header: "Auto EPA",
-    }),
-    columnHelper.accessor("teleop_epa", {
-      cell: (info) => formatCell(stats.teleop_mean / 3, info),
-      header: "Teleop EPA",
-    }),
-    columnHelper.accessor("endgame_epa", {
-      cell: (info) => formatCell(stats.endgame_mean / 3, info),
-      header: "Endgame EPA",
-    }),
-    columnHelper.accessor("rp_1_epa", {
-      cell: (info) => formatCell(stats.rp_1_mean / 3, info),
-      header: "RP1 EPA",
-    }),
-    columnHelper.accessor("rp_2_epa", {
-      cell: (info) => formatCell(stats.rp_2_mean / 3, info),
-      header: "RP2 EPA",
-    }),
-  ];
+  const columns = useMemo<any>(
+    () => [
+      columnHelper.accessor("num", {
+        cell: (info) => info.getValue(),
+        header: "Number",
+      }),
+      columnHelper.accessor("team", {
+        cell: (info) =>
+          TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        header: "Name",
+      }),
+      columnHelper.accessor("rank", {
+        cell: (info) => info.getValue(),
+        header: "Rank",
+      }),
+      columnHelper.accessor("epa", {
+        cell: (info) => formatCell(stats.total_mean / 3, info),
+        header: "EPA",
+      }),
+      columnHelper.accessor("auto_epa", {
+        cell: (info) => formatCell(stats.auto_mean / 3, info),
+        header: "Auto EPA",
+      }),
+      columnHelper.accessor("teleop_epa", {
+        cell: (info) => formatCell(stats.teleop_mean / 3, info),
+        header: "Teleop EPA",
+      }),
+      columnHelper.accessor("endgame_epa", {
+        cell: (info) => formatCell(stats.endgame_mean / 3, info),
+        header: "Endgame EPA",
+      }),
+      columnHelper.accessor("rp_1_epa", {
+        cell: (info) => formatCell(stats.rp_1_mean / 3, info),
+        header: "RP1 EPA",
+      }),
+      columnHelper.accessor("rp_2_epa", {
+        cell: (info) => formatCell(stats.rp_2_mean / 3, info),
+        header: "RP2 EPA",
+      }),
+    ],
+    [stats]
+  );
 
   const headerClassName = (header: any) =>
     classnames(

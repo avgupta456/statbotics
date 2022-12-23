@@ -1,10 +1,14 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
   ColumnDef,
+  getSortedRowModel,
+  SortingState,
 } from "@tanstack/react-table";
 
 const Table = (
@@ -14,20 +18,17 @@ const Table = (
   rowClassName: (row: any) => string,
   cellClassName: (cell: any) => string
 ) => {
-  const cleanData = data.map((row) => {
-    // replace null with "N/A"
-    Object.keys(row).forEach((key) => {
-      if (row[key] === null) {
-        row[key] = "N/A";
-      }
-    });
-    return row;
-  });
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
-    data: cleanData,
+    data: data,
     columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -43,12 +44,25 @@ const Table = (
                     colSpan={header.colSpan}
                     className={headerClassName(header)}
                   >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
+                    {header.isPlaceholder ? null : (
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? "cursor-pointer select-none"
+                            : "",
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
                   </th>
                 );
               })}
@@ -66,22 +80,6 @@ const Table = (
             </tr>
           ))}
         </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
       </table>
     </div>
   );

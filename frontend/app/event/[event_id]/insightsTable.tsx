@@ -11,15 +11,15 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
   const eventInsightsData: TeamEventInsights[] = data.team_events
     .map((teamEvent) => {
       return {
-        num: teamEvent.num,
-        team: teamEvent.team,
-        epa: round(teamEvent.epa, 1),
-        auto_epa: round(teamEvent.auto_epa, 1),
-        teleop_epa: round(teamEvent.teleop_epa, 1),
-        endgame_epa: round(teamEvent.endgame_epa, 1),
-        rp_1_epa: round(teamEvent.rp_1_epa, 2),
-        rp_2_epa: round(teamEvent.rp_2_epa, 2),
-        rank: teamEvent.rank,
+        num: teamEvent.num ?? "N/A",
+        team: teamEvent.team ?? "N/A",
+        epa: round(teamEvent.epa, 1) ?? "N/A",
+        auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
+        teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
+        endgame_epa: round(teamEvent.endgame_epa, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent.rp_1_epa, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent.rp_2_epa, 2) ?? "N/A",
+        rank: teamEvent.rank ?? "N/A",
       };
     })
     .sort((a, b) => a.rank - b.rank);

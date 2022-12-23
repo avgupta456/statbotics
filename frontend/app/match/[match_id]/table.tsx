@@ -19,7 +19,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const blue3 = data.match.blue[2];
   const blue3Data = data.team_matches[blue3];
 
-  const autoComponent: Component = {
+  const autoComponent = {
     name: "Auto",
     red1: red1Data.auto_epa,
     red2: red2Data.auto_epa,
@@ -33,7 +33,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_auto,
   };
 
-  const teleopComponent: Component = {
+  const teleopComponent = {
     name: "Teleop",
     red1: red1Data.teleop_epa,
     red2: red2Data.teleop_epa,
@@ -47,7 +47,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_teleop,
   };
 
-  const endgameComponent: Component = {
+  const endgameComponent = {
     name: "Endgame",
     red1: red1Data.endgame_epa,
     red2: red2Data.endgame_epa,
@@ -61,7 +61,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_endgame,
   };
 
-  const foulComponent: Component = {
+  const foulComponent = {
     name: "Fouls",
     red1: null,
     red2: null,
@@ -75,7 +75,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_fouls,
   };
 
-  const rp1Component: Component = {
+  const rp1Component = {
     name: "RP1",
     red1: red1Data.rp_1_epa,
     red2: red2Data.rp_1_epa,
@@ -89,7 +89,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_rp_1,
   };
 
-  const rp2Component: Component = {
+  const rp2Component = {
     name: "RP2",
     red1: red1Data.rp_2_epa,
     red2: red2Data.rp_2_epa,
@@ -103,7 +103,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_rp_2,
   };
 
-  const totalComponent: Component = {
+  const totalComponent = {
     name: "Total",
     red1: red1Data.epa,
     red2: red2Data.epa,
@@ -127,27 +127,30 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     totalComponent,
   ].map((component, i) => {
     const digits = i === 4 || i === 5 ? 2 : 1;
-    const red1 = component.red1 !== null ? round(component.red1, digits) : null;
-    const red2 = component.red2 !== null ? round(component.red2, digits) : null;
-    const red3 = component.red3 !== null ? round(component.red3, digits) : null;
+    const red1 =
+      component.red1 !== null ? round(component.red1, digits) : "N/A";
+    const red2 =
+      component.red2 !== null ? round(component.red2, digits) : "N/A";
+    const red3 =
+      component.red3 !== null ? round(component.red3, digits) : "N/A";
     const redTotal =
       component.redTotal !== null
         ? round(component.redTotal, digits === 2 ? 2 : 0)
-        : null;
+        : "N/A";
     const redActual =
-      component.redActual !== null ? round(component.redActual, 0) : null;
+      component.redActual !== null ? round(component.redActual, 0) : "N/A";
     const blue1 =
-      component.blue1 !== null ? round(component.blue1, digits) : null;
+      component.blue1 !== null ? round(component.blue1, digits) : "N/A";
     const blue2 =
-      component.blue2 !== null ? round(component.blue2, digits) : null;
+      component.blue2 !== null ? round(component.blue2, digits) : "N/A";
     const blue3 =
-      component.blue3 !== null ? round(component.blue3, digits) : null;
+      component.blue3 !== null ? round(component.blue3, digits) : "N/A";
     const blueTotal =
       component.blueTotal !== null
         ? round(component.blueTotal, digits === 2 ? 2 : 0)
-        : null;
+        : "N/A";
     const blueActual =
-      component.blueActual !== null ? round(component.blueActual, 0) : null;
+      component.blueActual !== null ? round(component.blueActual, 0) : "N/A";
     return {
       name: component.name,
       red1,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
@@ -10,20 +10,6 @@ import { YearStats } from "../types/api";
 import { classnames } from "../../utils";
 
 export type Component = {
-  name: string;
-  red1: number | null;
-  red2: number | null;
-  red3: number | null;
-  redTotal: number | null;
-  redActual: number | null;
-  blue1: number | null;
-  blue2: number | null;
-  blue3: number | null;
-  blueTotal: number | null;
-  blueActual: number | null;
-};
-
-type CleanComponent = {
   name: string;
   red1: number | string;
   red2: number | string;
@@ -39,7 +25,7 @@ type CleanComponent = {
 
 const formatCell = (
   stats: YearStats,
-  info: CellContext<CleanComponent, number | string>,
+  info: CellContext<Component, number | string>,
   multiplier: number = 1 / 3
 ) => {
   const row = info.row.original.name;
@@ -89,6 +75,8 @@ const formatCell = (
   );
 };
 
+const columnHelper = createColumnHelper<Component>();
+
 const MatchTable = ({
   data,
   teams,
@@ -98,54 +86,66 @@ const MatchTable = ({
   teams: string[];
   stats: YearStats;
 }) => {
-  const columnHelper = createColumnHelper<CleanComponent>();
-
-  const columns = [
-    columnHelper.accessor("red1", {
-      cell: (info) => formatCell(stats, info),
-      header: () => TeamLink({ team: teams[0] }),
-    }),
-    columnHelper.accessor("red2", {
-      cell: (info) => formatCell(stats, info),
-      header: () => TeamLink({ team: teams[1] }),
-    }),
-    columnHelper.accessor("red3", {
-      cell: (info) => formatCell(stats, info),
-      header: () => TeamLink({ team: teams[2] }),
-    }),
-    columnHelper.accessor("redTotal", {
-      cell: (info) => formatCell(stats, info, 1),
-      header: () => <span>Predicted</span>,
-    }),
-    columnHelper.accessor("redActual", {
-      cell: (info) => formatCell(stats, info, 1),
-      header: () => <span>Actual</span>,
-    }),
-    columnHelper.accessor("name", {
-      cell: (info) => info.getValue(),
-      header: () => <span></span>,
-    }),
-    columnHelper.accessor("blueActual", {
-      cell: (info) => formatCell(stats, info, 1),
-      header: () => <span>Actual</span>,
-    }),
-    columnHelper.accessor("blueTotal", {
-      cell: (info) => formatCell(stats, info, 1),
-      header: () => <span>Predicted</span>,
-    }),
-    columnHelper.accessor("blue3", {
-      cell: (info) => formatCell(stats, info),
-      header: () => TeamLink({ team: teams[5] }),
-    }),
-    columnHelper.accessor("blue2", {
-      cell: (info) => formatCell(stats, info),
-      header: () => TeamLink({ team: teams[4] }),
-    }),
-    columnHelper.accessor("blue1", {
-      cell: (info) => formatCell(stats, info),
-      header: () => TeamLink({ team: teams[3] }),
-    }),
-  ];
+  const columns = useMemo<any>(
+    () => [
+      columnHelper.accessor("red1", {
+        cell: (info) => formatCell(stats, info),
+        header: () => TeamLink({ team: teams[0], num: teams[0] }),
+        enableSorting: false,
+      }),
+      columnHelper.accessor("red2", {
+        cell: (info) => formatCell(stats, info),
+        header: () => TeamLink({ team: teams[1], num: teams[1] }),
+        enableSorting: false,
+      }),
+      columnHelper.accessor("red3", {
+        cell: (info) => formatCell(stats, info),
+        header: () => TeamLink({ team: teams[2], num: teams[2] }),
+        enableSorting: false,
+      }),
+      columnHelper.accessor("redTotal", {
+        cell: (info) => formatCell(stats, info, 1),
+        header: () => <span>Predicted</span>,
+        enableSorting: false,
+      }),
+      columnHelper.accessor("redActual", {
+        cell: (info) => formatCell(stats, info, 1),
+        header: () => <span>Actual</span>,
+        enableSorting: false,
+      }),
+      columnHelper.accessor("name", {
+        cell: (info) => info.getValue(),
+        header: () => <span></span>,
+        enableSorting: false,
+      }),
+      columnHelper.accessor("blueActual", {
+        cell: (info) => formatCell(stats, info, 1),
+        header: () => <span>Actual</span>,
+        enableSorting: false,
+      }),
+      columnHelper.accessor("blueTotal", {
+        cell: (info) => formatCell(stats, info, 1),
+        header: () => <span>Predicted</span>,
+        enableSorting: false,
+      }),
+      columnHelper.accessor("blue3", {
+        cell: (info) => formatCell(stats, info),
+        header: () => TeamLink({ team: teams[5], num: teams[5] }),
+        enableSorting: false,
+      }),
+      columnHelper.accessor("blue2", {
+        cell: (info) => formatCell(stats, info),
+        header: () => TeamLink({ team: teams[4], num: teams[4] }),
+        enableSorting: false,
+      }),
+      columnHelper.accessor("blue1", {
+        cell: (info) => formatCell(stats, info),
+        header: () => TeamLink({ team: teams[3], num: teams[3] }),
+        enableSorting: false,
+      }),
+    ],
+    [stats, teams]
+  );
 
   const headerClassName = (header: any) =>
     classnames(

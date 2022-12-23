@@ -2,9 +2,15 @@ import React from "react";
 
 import { classnames } from "../../utils";
 
-export const TeamLink = ({ team }: { team: string }) => (
+export const TeamLink = ({
+  team,
+  num,
+}: {
+  team: string | number;
+  num: string | number;
+}) => (
   <a
-    href={`/team/${team}`}
+    href={`/team/${num}`}
     target="_blank"
     rel="noopener noreferrer"
     className="text-blue-500 hover:text-blue-600 underline cursor-pointer"
