@@ -11,22 +11,19 @@ const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
       keys={keys}
       indexBy="team"
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-      padding={0.3}
+      padding={0.1}
       groupMode="stacked"
       colors={{ scheme: "set1" }}
       tooltip={({ id, data, value, color }) => {
+        const hashId = `bar-tooltip-${data["team"]}-${id}`;
         setTimeout(() => {
-          const tooltip = document.getElementById("bar-tooltip");
+          const tooltip = document.getElementById(hashId);
           if (tooltip) {
             tooltip.classList.remove("invisible");
           }
         }, 200);
         return (
-          <strong
-            id="bar-tooltip"
-            style={{ color }}
-            className="invisible bg-white p-2 rounded text-sm"
-          >
+          <strong id={hashId} style={{ color }} className="invisible bg-white p-2 rounded text-sm">
             {data["team"]} {id}: {value}
           </strong>
         );
