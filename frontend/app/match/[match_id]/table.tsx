@@ -74,8 +74,6 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_fouls,
   };
 
-  console.log(data.match);
-
   const rp1Component: Component = {
     name: "RP1",
     red1: red1Data.rp_1_epa,

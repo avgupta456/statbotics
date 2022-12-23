@@ -56,6 +56,8 @@ type YearStats = {
   endgame_mean: number;
   total_mean: number;
   foul_rate: number;
+  rp_1_mean: number;
+  rp_2_mean: number;
 };
 
 export type Data = {

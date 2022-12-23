@@ -58,6 +58,8 @@ async def _read_match(match_id: str, no_cache: bool = False) -> Dict[str, Any]:
     endgame_mean = year_obj.endgame_mean
     total_mean = year_obj.score_mean
     foul_rate = (year_obj.fouls_mean or 0) / (year_obj.no_fouls_mean or 1)
+    rp_1_mean = (year_obj.rp_1_mean or 0) + 1 / 3
+    rp_2_mean = (year_obj.rp_2_mean or 0) + 1 / 3
 
     match_name = get_match_name(match.key)
 
@@ -74,6 +76,8 @@ async def _read_match(match_id: str, no_cache: bool = False) -> Dict[str, Any]:
                 "endgame_mean": endgame_mean,
                 "total_mean": total_mean,
                 "foul_rate": foul_rate,
+                "rp_1_mean": rp_1_mean,
+                "rp_2_mean": rp_2_mean,
             },
         },
     )  # type: ignore
