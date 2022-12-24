@@ -6,7 +6,7 @@ import HC_more from "highcharts/highcharts-more";
 
 import React, { useState } from "react";
 
-import { filterData } from "../filter";
+import { FilterBar, filterData } from "../filter";
 import { YearStats } from "../types/api";
 
 if (typeof Highcharts === "object") {
@@ -26,7 +26,9 @@ type ScatterData = {
 };
 
 const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: YearStats }) => {
-  const filteredData = filterData(data, { state: "CA" });
+  const [filters, setFilters] = useState({ state: "", country: "", district: "" });
+  console.log(filters);
+  const filteredData = filterData(data, filters);
   const filteredDataSubset = filteredData.map((datum) => ({
     x: datum.x,
     y: datum.y,
@@ -38,6 +40,7 @@ const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: Year
 
   const totals = filteredDataSubset.map((datum) => datum.total);
   const totalsCutoff = totals.sort((a, b) => b - a)[40];
+  console.log(filteredDataSubset.length, totalsCutoff);
 
   const options: Highcharts.Options = {
     title: {
@@ -134,6 +137,7 @@ const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: Year
   // use bottom-padding to make the chart responsive
   return (
     <div className="w-full">
+      <FilterBar filters={filters} setFilters={setFilters} />
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );
