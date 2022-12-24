@@ -1,26 +1,18 @@
 export const countryOptions = [
-  { value: "", label: "All" },
+  { value: "", label: "Select Country" },
   { value: "USA", label: "USA" },
   { value: "Canada", label: "Canada" },
   { value: "Turkey", label: "Turkey" },
-  { value: "Israel", label: "Israel" },
-  { value: "China", label: "China" },
   { value: "Mexico", label: "Mexico" },
+  { value: "Israel", label: "Israel" },
+  { value: "Chinese Taipei", label: "Chinese Taipei" },
   { value: "Australia", label: "Australia" },
   { value: "Brazil", label: "Brazil" },
-  { value: "Chinese Taipei", label: "Chinese Taipei" },
-  { value: "Netherlands", label: "Netherlands" },
-  { value: "Chile", label: "Chile" },
-  { value: "United Kingdom", label: "United Kingdom" },
-  { value: "Colombia", label: "Colombia" },
-  { value: "Japan", label: "Japan" },
-  { value: "Poland", label: "Poland" },
   { value: "India", label: "India" },
-  { value: "Switzerland", label: "Switzerland" },
 ];
 
 export const usaOptions = [
-  { value: "", label: "All" },
+  { value: "", label: "Select State" },
   { value: "AL", label: "Alabama" },
   { value: "AK", label: "Alaska" },
   { value: "AZ", label: "Arizona" },
@@ -71,21 +63,19 @@ export const usaOptions = [
   { value: "WV", label: "West Virginia" },
   { value: "WI", label: "Wisconsin" },
   { value: "WY", label: "Wyoming" },
-  { value: "DC", label: "District of Columbia" },
+  { value: "DC", label: "DC" },
 ];
 
 export const canadaOptions = [
-  { value: "", label: "All" },
+  { value: "", label: "Select Province" },
   { value: "AB", label: "Alberta" },
   { value: "BC", label: "British Columbia" },
-  { value: "MB", label: "Manitoba" },
   { value: "ON", label: "Ontario" },
   { value: "QC", label: "Québec" },
-  { value: "SK", label: "Saskatchewan" },
 ];
 
 export const districtOptions = [
-  { value: "", label: "All" },
+  { value: "", label: "Select District" },
   { value: "chs", label: "Chesapeake" },
   { value: "fim", label: "Michigan" },
   { value: "fin", label: "Indiana" },

@@ -39,8 +39,8 @@ const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: Year
   }));
 
   const totals = filteredDataSubset.map((datum) => datum.total);
-  const totalsCutoff = totals.sort((a, b) => b - a)[40];
-  console.log(filteredDataSubset.length, totalsCutoff);
+  const totalLength = Math.min(40, totals.length - 1);
+  const totalsCutoff = totals.sort((a, b) => b - a)[totalLength];
 
   const options: Highcharts.Options = {
     title: {

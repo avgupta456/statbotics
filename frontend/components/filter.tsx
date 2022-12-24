@@ -44,9 +44,16 @@ export const FilterBar = ({ filters, setFilters }: { filters: Filter; setFilters
 
   return (
     <div className="flex flex-row items-center justify-center">
+      <button
+        id="clear-filters"
+        className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-40 px-2 mr-1 rounded text-base flex items-center justify-center"
+        onClick={() => setFilters({ country: "", state: "", district: "" })}
+      >
+        Clear Filters
+      </button>
       {filterKeys.includes("year") && (
         <select
-          className="border-2 border-gray-300 bg-white h-10 pl-5 pr-10 rounded-lg text-base focus:outline-none appearance-none"
+          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
           onChange={(e) => smartSetFilters("year", e.target.value)}
           value={filters.year}
         >
@@ -59,7 +66,7 @@ export const FilterBar = ({ filters, setFilters }: { filters: Filter; setFilters
       )}
       {filterKeys.includes("country") && (
         <select
-          className="border-2 border-gray-300 bg-white h-10 pl-5 pr-10 rounded-lg text-base focus:outline-none appearance-none"
+          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
           onChange={(e) => smartSetFilters("country", e.target.value)}
           value={filters.country}
         >
@@ -72,7 +79,7 @@ export const FilterBar = ({ filters, setFilters }: { filters: Filter; setFilters
       )}
       {filterKeys.includes("state") && (
         <select
-          className="border-2 border-gray-300 bg-white h-10 pl-5 pr-10 rounded-lg text-base focus:outline-none appearance-none"
+          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
           onChange={(e) => smartSetFilters("state", e.target.value)}
           value={filters.state}
         >
@@ -85,7 +92,7 @@ export const FilterBar = ({ filters, setFilters }: { filters: Filter; setFilters
       )}
       {filterKeys.includes("district") && (
         <select
-          className="border-2 border-gray-300 bg-white h-10 pl-5 pr-10 rounded-lg text-base focus:outline-none appearance-none"
+          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
           onChange={(e) => smartSetFilters("district", e.target.value)}
           value={filters.district}
         >
