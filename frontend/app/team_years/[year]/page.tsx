@@ -1,6 +1,7 @@
 import React from "react";
 
 import { BACKEND_URL } from "../../../constants";
+import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
 import { Data } from "./types";
 
@@ -37,6 +38,7 @@ async function Page({ params }: { params: { year: number } }) {
           <p className="text-3xl lg:text-4xl">{year}</p>
         </div>
         <div className="w-full flex flex-row flex-wrap justify-center">
+          <FigureSection data={data} />
           <InsightsTable data={data} />
         </div>
       </div>

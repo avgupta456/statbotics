@@ -11,7 +11,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
       return {
         num: teamYear.num ?? -1,
         team: teamYear.name ?? "N/A",
-        epa: round(teamYear.total_epa, 1) ?? "N/A",
+        epa: round(teamYear.total_epa, 1) ?? 0,
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamYear.endgame_epa, 1) ?? "N/A",
