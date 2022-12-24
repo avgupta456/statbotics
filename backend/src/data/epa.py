@@ -69,9 +69,8 @@ def percent_func(year: int, x: int) -> float:
     return min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
 
 
-def sum_func(arr: List[float], mean: float) -> float:
-    return min(sum(arr), 2 * mean + 0.8 * (sum(arr) - 2 * mean))
-
+# TODO: I removed nonlinear sum_func, but it might be useful
+# In general, model overpredicts when 2+ strong teams
 
 # MAIN FUNCTION
 def process_year(
@@ -230,8 +229,8 @@ def process_year(
             blue_epa_pre[team] = team_epas[team]
             team_match_ids[get_team_match_key(team, match.key)] = team_epas[team]
 
-        red_epa_sum = sum_func(list(red_epa_pre.values()), TOTAL_MEAN)
-        blue_epa_sum = sum_func(list(blue_epa_pre.values()), TOTAL_MEAN)
+        red_epa_sum = sum(red_epa_pre.values())
+        blue_epa_sum = sum(blue_epa_pre.values())
 
         match.red_epa_sum = round(red_epa_sum, 2)
         match.blue_epa_sum = round(blue_epa_sum, 2)
@@ -270,10 +269,10 @@ def process_year(
                     team_rp_2_epas[team],
                 )
 
-            red_auto_epa_sum = sum_func(list(red_auto_epa_pre.values()), AUTO_MEAN)
-            blue_auto_epa_sum = sum_func(list(blue_auto_epa_pre.values()), AUTO_MEAN)
-            red_endgame_epa_sum = sum_func(list(red_endgame_epa_pre.values()), ENDGAME_MEAN)  # type: ignore
-            blue_endgame_epa_sum = sum_func(list(blue_endgame_epa_pre.values()), ENDGAME_MEAN)  # type: ignore
+            red_auto_epa_sum = sum(red_auto_epa_pre.values())
+            blue_auto_epa_sum = sum(blue_auto_epa_pre.values())
+            red_endgame_epa_sum = sum(red_endgame_epa_pre.values())
+            blue_endgame_epa_sum = sum(blue_endgame_epa_pre.values())
             red_rp_1_epa_sum = sum(list(red_rp_1_epa_pre.values()))
             blue_rp_1_epa_sum = sum(list(blue_rp_1_epa_pre.values()))
             red_rp_2_epa_sum = sum(list(red_rp_2_epa_pre.values()))

@@ -6,12 +6,10 @@ import { Data } from "./types";
 
 async function getData(year: number) {
   const res = await fetch(`${BACKEND_URL}/team_year/` + year);
-  console.log("RESULT", res.ok);
   if (!res.ok) {
     return undefined;
   }
   const data = await res.json();
-  console.log("DATA", data);
   return data?.data;
 }
 

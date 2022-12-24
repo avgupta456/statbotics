@@ -10,8 +10,6 @@ import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 // TypeScript Hack
 const BestFitLine: any = (props) => {
   const { nodes, xScale, yScale } = props;
-
-  console.log(nodes);
   nodes.sort((a, b) => a.data.x - b.data.x);
   const points = nodes.map(function (node, i) {
     return [node.data.x, node.data.y];
