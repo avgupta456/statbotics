@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.get("/")
 async def read_root():
-    return {"name": "Match Router"}
+    return {"name": "Event Router"}
 
 
 @router.get("/{event_id}")
