@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./dist.css";
+import "../styles/globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -43,8 +43,8 @@ async function Page({ params }: { params: { event_id: string } }) {
           <p className="text-3xl lg:text-4xl">{truncatedEventName}</p>
         </div>
         <div className="w-full flex flex-row flex-wrap justify-center">
-          <FiguresSection data={data} />
           <InsightsTable data={data} />
+          <FiguresSection data={data} />
         </div>
       </div>
     </div>
