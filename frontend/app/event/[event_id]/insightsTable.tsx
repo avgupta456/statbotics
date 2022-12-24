@@ -34,7 +34,6 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
       <p className="text-2xl lg:text-3xl mt-8 mb-2">Event Insights</p>
       <TableKey />
       <EventInsightsTable {...EventInsightsTableProps} />
-      <TableFooter />
     </div>
   );
 };
