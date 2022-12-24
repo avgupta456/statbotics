@@ -6,6 +6,8 @@ import HC_more from "highcharts/highcharts-more";
 
 import React, { useState } from "react";
 
+import { YearStats } from "../types/api";
+
 if (typeof Highcharts === "object") {
   HC_more(Highcharts);
 }
@@ -19,7 +21,7 @@ type ScatterData = {
   total: number;
 };
 
-const BubbleChart = ({ data }: { data: ScatterData[] }) => {
+const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: YearStats }) => {
   const options: Highcharts.Options = {
     title: {
       text: "",
@@ -77,13 +79,13 @@ const BubbleChart = ({ data }: { data: ScatterData[] }) => {
           filter: {
             property: "total",
             operator: ">",
-            value: 40,
+            value: yearStats.total.p90,
           },
           y: -15,
           borderWidth: 1,
           style: {
             fontSize: "10px",
-            color: "gray",
+            color: "black",
             textOutline: "none",
           },
         },
@@ -100,6 +102,16 @@ const BubbleChart = ({ data }: { data: ScatterData[] }) => {
         data: data,
       },
     ],
+    credits: {
+      enabled: false,
+    },
+    caption: {
+      text: "Size of Bubble is Endgame EPA",
+      align: "right",
+      verticalAlign: "bottom",
+      y: -75,
+      x: -10,
+    },
   };
 
   // use bottom-padding to make the chart responsive
