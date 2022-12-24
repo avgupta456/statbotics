@@ -12,7 +12,7 @@ import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 export type TeamYearInsights = {
   num: number;
   team: string;
-  epa: number | string;
+  epa: number; // used for sorting
   auto_epa: number | string;
   teleop_epa: number | string;
   endgame_epa: number | string;
