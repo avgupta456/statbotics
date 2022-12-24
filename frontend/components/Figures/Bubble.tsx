@@ -6,6 +6,7 @@ import HC_more from "highcharts/highcharts-more";
 
 import React, { useState } from "react";
 
+import { filterData } from "../filter";
 import { YearStats } from "../types/api";
 
 if (typeof Highcharts === "object") {
@@ -19,9 +20,25 @@ type ScatterData = {
   num: number;
   auto: number;
   total: number;
+  state: string;
+  country: string;
+  district: string;
 };
 
 const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: YearStats }) => {
+  const filteredData = filterData(data, { state: "CA" });
+  const filteredDataSubset = filteredData.map((datum) => ({
+    x: datum.x,
+    y: datum.y,
+    z: datum.z,
+    num: datum.num,
+    auto: datum.auto,
+    total: datum.total,
+  }));
+
+  const totals = filteredDataSubset.map((datum) => datum.total);
+  const totalsCutoff = totals.sort((a, b) => b - a)[40];
+
   const options: Highcharts.Options = {
     title: {
       text: "",
@@ -79,7 +96,7 @@ const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: Year
           filter: {
             property: "total",
             operator: ">",
-            value: yearStats.total.p90,
+            value: Math.min(totalsCutoff, yearStats.total.p90),
           },
           y: -15,
           borderWidth: 1,
@@ -99,7 +116,7 @@ const BubbleChart = ({ data, yearStats }: { data: ScatterData[]; yearStats: Year
     series: [
       {
         type: "bubble",
-        data: data,
+        data: filteredDataSubset,
       },
     ],
     credits: {

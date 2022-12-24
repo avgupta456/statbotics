@@ -12,6 +12,9 @@ const FigureSection = ({ data }: { data: Data }) => {
     num: teamYear.num,
     auto: teamYear.auto_epa,
     total: teamYear.total_epa,
+    state: teamYear.state,
+    country: teamYear.country,
+    district: teamYear.district,
   }));
 
   return (
