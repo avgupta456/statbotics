@@ -7,6 +7,7 @@ import {
   SortingState,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -14,6 +15,7 @@ import {
 const Table = (
   data: any[],
   columns: ColumnDef<any, any>[],
+  paginate: boolean,
   headerClassName: (header: any) => string,
   rowClassName: (row: any) => string,
   cellClassName: (cell: any) => string
@@ -29,7 +31,12 @@ const Table = (
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
+  const numRows = data.length;
 
   return (
     <div className="p-2 text-xxs lg:text-xs">
@@ -72,6 +79,53 @@ const Table = (
           ))}
         </tbody>
       </table>
+      {paginate && (
+        <div className="w-full flex justify-center gap-8 mt-2">
+          <div className="flex gap-2">
+            <div className="flex items-center">Rows per page:</div>
+            <select
+              value={table.getState().pagination.pageSize}
+              onChange={(e) => {
+                table.setPageSize(Number(e.target.value));
+              }}
+            >
+              {[
+                { dispSize: 10, pageSize: 10 },
+                { dispSize: 25, pageSize: 25 },
+                { dispSize: 50, pageSize: 50 },
+                { dispSize: 100, pageSize: 100 },
+                { dispSize: "All", pageSize: data.length },
+              ].map((x) => (
+                <option key={x.pageSize} value={x.pageSize}>
+                  {x.dispSize}
+                </option>
+              ))}
+            </select>
+          </div>
+          <span className="flex items-center gap-1">
+            <div>{`${pageIndex * pageSize + 1} - ${Math.min(
+              (pageIndex + 1) * pageSize,
+              numRows
+            )} of ${numRows}`}</div>
+          </span>
+          <div>
+            <button
+              className="border rounded p-1"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {"<"}
+            </button>
+            <button
+              className="border rounded p-1"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              {">"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

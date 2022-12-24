@@ -161,7 +161,7 @@ const MatchTable = ({
       cell.row.original.name === "Total" && cell.column.id === "blue1" ? "rounded-br-lg" : ""
     );
 
-  return Table(data, columns, headerClassName, rowClassName, cellClassName);
+  return Table(data, columns, false, headerClassName, rowClassName, cellClassName);
 };
 
 export default MatchTable;

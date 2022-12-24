@@ -108,7 +108,7 @@ const EventInsightsTable = ({ data, stats }: { data: TeamEventInsights[]; stats:
       cell.row.index === data.length - 1 && cell.column.id === "rp_2_epa" ? "rounded-br-lg" : ""
     );
 
-  return Table(data, columns, headerClassName, rowClassName, cellClassName);
+  return Table(data, columns, true, headerClassName, rowClassName, cellClassName);
 };
 
 export default EventInsightsTable;
