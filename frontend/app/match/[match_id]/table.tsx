@@ -1,7 +1,8 @@
 import React from "react";
 
-import MatchTable, { Component } from "../../../components/MatchTable";
-import { classnames, round } from "../../../utils";
+import MatchTable, { Component } from "../../../components/Table/MatchTable";
+import { TableFooter, TableKey } from "../../../components/Table/shared";
+import { round } from "../../../utils";
 import { Data } from "./types";
 
 const PageMatchTable = ({ data }: { data: Data }) => {
@@ -18,7 +19,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const blue3 = data.match.blue[2];
   const blue3Data = data.team_matches[blue3];
 
-  const autoComponent: Component = {
+  const autoComponent = {
     name: "Auto",
     red1: red1Data.auto_epa,
     red2: red2Data.auto_epa,
@@ -32,7 +33,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_auto,
   };
 
-  const teleopComponent: Component = {
+  const teleopComponent = {
     name: "Teleop",
     red1: red1Data.teleop_epa,
     red2: red2Data.teleop_epa,
@@ -46,7 +47,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_teleop,
   };
 
-  const endgameComponent: Component = {
+  const endgameComponent = {
     name: "Endgame",
     red1: red1Data.endgame_epa,
     red2: red2Data.endgame_epa,
@@ -60,7 +61,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_endgame,
   };
 
-  const foulComponent: Component = {
+  const foulComponent = {
     name: "Fouls",
     red1: null,
     red2: null,
@@ -74,7 +75,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_fouls,
   };
 
-  const rp1Component: Component = {
+  const rp1Component = {
     name: "RP1",
     red1: red1Data.rp_1_epa,
     red2: red2Data.rp_1_epa,
@@ -88,7 +89,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_rp_1,
   };
 
-  const rp2Component: Component = {
+  const rp2Component = {
     name: "RP2",
     red1: red1Data.rp_2_epa,
     red2: red2Data.rp_2_epa,
@@ -102,7 +103,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_rp_2,
   };
 
-  const totalComponent: Component = {
+  const totalComponent = {
     name: "Total",
     red1: red1Data.epa,
     red2: red2Data.epa,
@@ -116,10 +117,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: data.match.blue_score,
   };
 
-  console.log(rp1Component);
-  console.log(rp2Component);
-
-  const matchPredictionData = [
+  const matchData = [
     autoComponent,
     teleopComponent,
     endgameComponent,
@@ -129,27 +127,18 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     totalComponent,
   ].map((component, i) => {
     const digits = i === 4 || i === 5 ? 2 : 1;
-    const red1 = component.red1 !== null ? round(component.red1, digits) : null;
-    const red2 = component.red2 !== null ? round(component.red2, digits) : null;
-    const red3 = component.red3 !== null ? round(component.red3, digits) : null;
+    const red1 = component.red1 !== null ? round(component.red1, digits) : "N/A";
+    const red2 = component.red2 !== null ? round(component.red2, digits) : "N/A";
+    const red3 = component.red3 !== null ? round(component.red3, digits) : "N/A";
     const redTotal =
-      component.redTotal !== null
-        ? round(component.redTotal, digits === 2 ? 2 : 0)
-        : null;
-    const redActual =
-      component.redActual !== null ? round(component.redActual, 0) : null;
-    const blue1 =
-      component.blue1 !== null ? round(component.blue1, digits) : null;
-    const blue2 =
-      component.blue2 !== null ? round(component.blue2, digits) : null;
-    const blue3 =
-      component.blue3 !== null ? round(component.blue3, digits) : null;
+      component.redTotal !== null ? round(component.redTotal, digits === 2 ? 2 : 0) : "N/A";
+    const redActual = component.redActual !== null ? round(component.redActual, 0) : "N/A";
+    const blue1 = component.blue1 !== null ? round(component.blue1, digits) : "N/A";
+    const blue2 = component.blue2 !== null ? round(component.blue2, digits) : "N/A";
+    const blue3 = component.blue3 !== null ? round(component.blue3, digits) : "N/A";
     const blueTotal =
-      component.blueTotal !== null
-        ? round(component.blueTotal, digits === 2 ? 2 : 0)
-        : null;
-    const blueActual =
-      component.blueActual !== null ? round(component.blueActual, 0) : null;
+      component.blueTotal !== null ? round(component.blueTotal, digits === 2 ? 2 : 0) : "N/A";
+    const blueActual = component.blueActual !== null ? round(component.blueActual, 0) : "N/A";
     return {
       name: component.name,
       red1,
@@ -165,53 +154,20 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     };
   });
 
-  const MatchPredictionTableProps = {
+  const MatchTableProps = {
     teams: [red1, red2, red3, blue1, blue2, blue3],
-    data: matchPredictionData,
+    data: matchData,
     stats: data.year_stats,
   };
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <p className="text-2xl lg:text-3xl mt-8 mb-4">Match Breakdown</p>
-      <MatchTable {...MatchPredictionTableProps} />
+      <p className="text-2xl lg:text-3xl mt-8 mb-2">Match Breakdown</p>
+      <TableKey />
+      <MatchTable {...MatchTableProps} />
+      <TableFooter />
     </div>
   );
 };
-
-export const TableKey = () => (
-  <>
-    <div className="w-full flex justify-center items-center text-xs mt-8">
-      <p className="text-sm">Key (Multiples of Mean):</p>
-      {[
-        { color: "text-red-700 bg-red-300", text: "< 0.5" },
-        {
-          color: "text-gray-800 bg-gray-200",
-          text: "0.5 - 1.5",
-        },
-        { color: "text-green-500 bg-green-100", text: "1.5 - 2" },
-        { color: "text-green-700 bg-green-300", text: "2 - 3" },
-        { color: "text-black bg-green-500", text: "3 - 4" },
-        { color: "text-blue-500 bg-blue-100", text: "4 - 5" },
-        { color: "text-blue-700 bg-blue-300", text: "5 - 6" },
-        { color: "text-white bg-blue-500", text: "6+" },
-      ].map((item) => (
-        <span
-          key={item.color}
-          className={classnames(
-            item.color,
-            "data w-16 p-1 ml-4 rounded lg:rounded-lg flex justify-center items-center"
-          )}
-        >
-          {item.text}
-        </span>
-      ))}
-    </div>
-    <div className="hidden lg:flex w-full justify-center items-center text-sm mt-4">
-      Note: Nonlinear sum for alliance component predictions, see docs for more
-      details!
-    </div>
-  </>
-);
 
 export default PageMatchTable;

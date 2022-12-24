@@ -1,10 +1,10 @@
 import React from "react";
 
-import MatchTable, { TableKey } from "./table";
-import Summary from "./summary";
-import Video from "./video";
-import { Data } from "./types";
 import { BACKEND_URL } from "../../../constants";
+import Summary from "./summary";
+import MatchTable from "./table";
+import { Data } from "./types";
+import Video from "./video";
 
 async function getData(match_id: string) {
   const res = await fetch(`${BACKEND_URL}/match/` + match_id);
@@ -15,7 +15,7 @@ async function getData(match_id: string) {
   return data?.data;
 }
 
-async function Match({ params }: { params: { match_id: string } }) {
+async function Page({ params }: { params: { match_id: string } }) {
   const { match_id } = params;
   console.log("Fetching match data for match_id: " + match_id);
   const start = performance.now();
@@ -56,10 +56,9 @@ async function Match({ params }: { params: { match_id: string } }) {
           <Video video={data.match.video} />
           <MatchTable data={data} />
         </div>
-        <TableKey />
       </div>
     </div>
   );
 }
 
-export default Match;
+export default Page;

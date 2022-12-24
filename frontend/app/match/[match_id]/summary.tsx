@@ -1,7 +1,7 @@
 import React from "react";
 
-import PieChart from "../../../components/Pie";
-import { RED, BLUE } from "../../../constants";
+import PieChart from "../../../components/Figures/Pie";
+import { BLUE, RED } from "../../../constants";
 import { classnames } from "../../../utils";
 import { Data } from "./types";
 
@@ -23,20 +23,12 @@ const Summary = ({ data }: { data: Data }) => {
         <div className="w-full lg:w-1/2 h-full flex flex-col justify-around">
           <div className="w-full flex flex-col items-center">
             <div className="flex text-3xl">
-              <p
-                className={classnames(
-                  "data text-red-500",
-                  redPred > bluePred ? "font-bold" : ""
-                )}
-              >
+              <p className={classnames("data text-red-500", redPred > bluePred ? "font-bold" : "")}>
                 {Math.round(redPred)}
               </p>
               <p className="mx-2">-</p>
               <p
-                className={classnames(
-                  "data text-blue-500",
-                  bluePred > redPred ? "font-bold" : ""
-                )}
+                className={classnames("data text-blue-500", bluePred > redPred ? "font-bold" : "")}
               >
                 {Math.round(bluePred)}
               </p>
@@ -46,9 +38,7 @@ const Summary = ({ data }: { data: Data }) => {
               <p
                 className={classnames(
                   "ml-2",
-                  data.match.epa_winner === "red"
-                    ? "text-red-500"
-                    : "text-blue-500"
+                  data.match.epa_winner === "red" ? "text-red-500" : "text-blue-500"
                 )}
               >
                 {data.match.epa_winner.toUpperCase()}
@@ -58,10 +48,7 @@ const Summary = ({ data }: { data: Data }) => {
           <div className="w-full flex flex-col items-center">
             <div className="flex text-3xl">
               <p
-                className={classnames(
-                  "data text-red-500",
-                  redScore > blueScore ? "font-bold" : ""
-                )}
+                className={classnames("data text-red-500", redScore > blueScore ? "font-bold" : "")}
               >
                 {Math.round(redScore)}
               </p>

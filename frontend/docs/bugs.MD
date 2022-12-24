@@ -1,0 +1,3 @@
+## Random Bugs (For posterity)
+
+- NextJS 13 is Beta, 13.07 causes some issues with the build process and turbo but 13.06 works fine. 13.1 is out and provides better support for TailwindCSS but has a bug and fails in production. 13.1.1.canary fixes this. Simultaneously, react-table 8.7.4 has a bug in production regarding undefined variable. Downgrading to 8.7.0 fixes this with 13.0.6, but causes an issue (only in development) with NextJS 13.1.1.canary where there is a duplicate variable in the minified code. 13.1.1.canary with 8.7.4 does not resolve the react-table bug. Currently the best solution is to use NextJS 13.0.6 and react-table 8.7.0. Ideally we would use the latest versions of both.
