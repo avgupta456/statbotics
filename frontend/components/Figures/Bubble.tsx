@@ -19,7 +19,7 @@ type ScatterData = {
   total: number;
 };
 
-const YearScatter = ({ data }: { data: ScatterData[] }) => {
+const BubbleChart = ({ data }: { data: ScatterData[] }) => {
   const options: Highcharts.Options = {
     title: {
       text: "",
@@ -89,8 +89,8 @@ const YearScatter = ({ data }: { data: ScatterData[] }) => {
         },
       },
       bubble: {
-        minSize: 3,
-        maxSize: 15,
+        minSize: 2,
+        maxSize: 20,
         color: "#3b82f6",
       },
     },
@@ -110,4 +110,4 @@ const YearScatter = ({ data }: { data: ScatterData[] }) => {
   );
 };
 
-export default YearScatter;
+export default BubbleChart;

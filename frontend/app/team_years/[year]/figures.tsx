@@ -1,6 +1,6 @@
 import React from "react";
 
-import YearScatter from "../../../components/Figures/YearScatter";
+import BubbleChart from "../../../components/Figures/Bubble";
 import { Data } from "./types";
 
 const FigureSection = ({ data }: { data: Data }) => {
@@ -16,7 +16,7 @@ const FigureSection = ({ data }: { data: Data }) => {
   return (
     <div className="w-3/4 flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-2">Figures</p>
-      <YearScatter data={scatterData} />
+      <BubbleChart data={scatterData} />
     </div>
   );
 };
