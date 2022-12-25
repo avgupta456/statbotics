@@ -8,10 +8,7 @@ import {
   yearOptions,
 } from "./filterConstants";
 
-type Datum = { [key: string]: any };
-type Filter = { [key: string]: any };
-
-export const filterData = (data: Datum[], filter: Filter) => {
+export const filterData = (data: any, filter: any) => {
   let filteredData = data;
   Object.keys(filter).forEach((key) => {
     const value = filter[key];
@@ -22,7 +19,7 @@ export const filterData = (data: Datum[], filter: Filter) => {
   return filteredData;
 };
 
-export const FilterBar = ({ filters, setFilters }: { filters: Filter; setFilters: any }) => {
+export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: any }) => {
   const filterKeys = Object.keys(filters);
   const stateOptions = filters.country === "Canada" ? canadaOptions : usaOptions;
 
@@ -43,66 +40,39 @@ export const FilterBar = ({ filters, setFilters }: { filters: Filter; setFilters
   };
 
   return (
-    <div className="flex flex-row items-center justify-center">
+    <div className="flex flex-row items-end justify-center">
       <button
         id="clear-filters"
-        className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-40 px-2 mr-1 rounded text-base flex items-center justify-center"
+        className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-28 px-2 mr-2 rounded text-sm flex items-center justify-center"
         onClick={() => setFilters({ country: "", state: "", district: "" })}
       >
         Clear Filters
       </button>
-      {filterKeys.includes("year") && (
-        <select
-          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
-          onChange={(e) => smartSetFilters("year", e.target.value)}
-          value={filters.year}
-        >
-          {yearOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
-      {filterKeys.includes("country") && (
-        <select
-          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
-          onChange={(e) => smartSetFilters("country", e.target.value)}
-          value={filters.country}
-        >
-          {countryOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
-      {filterKeys.includes("state") && (
-        <select
-          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
-          onChange={(e) => smartSetFilters("state", e.target.value)}
-          value={filters.state}
-        >
-          {stateOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
-      {filterKeys.includes("district") && (
-        <select
-          className="border-2 border-gray-300 bg-white h-10 w-40 px-2 mr-1 rounded text-base focus:outline-none appearance-none"
-          onChange={(e) => smartSetFilters("district", e.target.value)}
-          value={filters.district}
-        >
-          {districtOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
+      {[
+        { key: "year", options: yearOptions },
+        { key: "country", options: countryOptions },
+        { key: "state", options: stateOptions },
+        { key: "district", options: districtOptions },
+      ].map((filter) => {
+        if (filterKeys.includes(filter.key)) {
+          return (
+            <div key={filter.key} className="flex flex-col items-center justify-center">
+              <p className="w-full pl-1 text-sm text-gray-500 capitalize">{filter.key}</p>
+              <select
+                className="border-2 border-gray-300 bg-white h-10 w-28 px-2 mr-2 rounded text-sm focus:outline-none appearance-none"
+                onChange={(e) => smartSetFilters(filter.key, e.target.value)}
+                value={filters[filter.key]}
+              >
+                {filter.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          );
+        }
+      })}
     </div>
   );
 };

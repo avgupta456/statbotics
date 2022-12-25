@@ -1,3 +1,21 @@
+export type TeamYear = {
+  num: number;
+  name: string;
+  state: string;
+  country: string;
+  district: string;
+  total_epa: number;
+  auto_epa: number;
+  teleop_epa: number;
+  endgame_epa: number;
+  rp_1_epa: number;
+  rp_2_epa: number;
+  wins: number;
+  losses: number;
+  ties: number;
+  count: number;
+};
+
 export type PercentileStats = {
   p99: number;
   p95: number;
