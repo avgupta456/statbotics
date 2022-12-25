@@ -27,6 +27,7 @@ const Table = (
     columns,
     state: {
       sorting,
+      pagination: paginate ? { pageIndex: 0, pageSize: 50 } : undefined,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
