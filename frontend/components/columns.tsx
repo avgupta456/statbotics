@@ -4,23 +4,27 @@ import { round } from "../utils";
 import { TeamYear } from "./types/api";
 
 export const columnOptions = [
-  { label: "Constant", accessor: (datum: TeamYear) => 1 },
-  { label: "Auto EPA", accessor: (datum: TeamYear) => round(datum.auto_epa) },
-  { label: "Teleop EPA", accessor: (datum: TeamYear) => round(datum.teleop_epa) },
-  { label: "Endgame EPA", accessor: (datum: TeamYear) => round(datum.endgame_epa) },
+  { label: "Constant", accessor: (datum) => 1 },
+  { label: "Auto EPA", accessor: (datum) => round(datum.auto_epa) },
+  { label: "Teleop EPA", accessor: (datum) => round(datum.teleop_epa) },
+  { label: "Endgame EPA", accessor: (datum) => round(datum.endgame_epa) },
   {
     label: "Auto + Endgame EPA",
-    accessor: (datum: TeamYear) => round(datum.auto_epa + datum.endgame_epa),
+    accessor: (datum) => round(datum.auto_epa + datum.endgame_epa),
   },
-  { label: "RP 1 EPA", accessor: (datum: TeamYear) => round(datum.rp_1_epa, 2) },
-  { label: "RP 2 EPA", accessor: (datum: TeamYear) => round(datum.rp_2_epa, 2) },
+  { label: "RP 1 EPA", accessor: (datum) => round(datum.rp_1_epa, 3) },
+  { label: "RP 2 EPA", accessor: (datum) => round(datum.rp_2_epa, 3) },
 
-  { label: "Total EPA", accessor: (datum: TeamYear) => round(datum.total_epa) },
-  { label: "Wins", accessor: (datum: TeamYear) => datum.wins },
+  { label: "Total EPA", accessor: (datum) => round(datum.total_epa) },
+  { label: "Wins", accessor: (datum) => datum.wins },
   {
     label: "Win Rate",
-    accessor: (datum: TeamYear) => round(datum.wins / (datum.wins + datum.losses + datum.ties), 2),
+    accessor: (datum) => round(datum.wins / (datum.wins + datum.losses + datum.ties), 3),
   },
+  // For events
+  { label: "Rank", accessor: (datum) => datum.rank },
+  { label: "N - Rank", accessor: (datum) => datum.numTeams - datum.rank },
+  { label: "RPs / Match", accessor: (datum) => round(datum.rps / datum.matches, 3) },
 ];
 
 export const columnOptionsDict = columnOptions.reduce((acc, curr) => {
@@ -28,7 +32,15 @@ export const columnOptionsDict = columnOptions.reduce((acc, curr) => {
   return acc;
 }, {});
 
-export const ColumnBar = ({ columns, setColumns }: { columns: any; setColumns: any }) => {
+export const ColumnBar = ({
+  currColumnOptions,
+  columns,
+  setColumns,
+}: {
+  currColumnOptions: string[];
+  columns: any;
+  setColumns: any;
+}) => {
   const columnKeys = Object.keys(columns);
 
   const smartSetColumns = (key: string, value: any) => {
@@ -46,11 +58,17 @@ export const ColumnBar = ({ columns, setColumns }: { columns: any; setColumns: a
             onChange={(e) => smartSetColumns(key, e.target.value)}
             value={columns[key]}
           >
-            {columnOptions.map((option) => (
-              <option key={option.label} value={option.label}>
-                {option.label}
-              </option>
-            ))}
+            {columnOptions
+              .filter(
+                (option) =>
+                  currColumnOptions.includes(option.label) ||
+                  (option.label === "Constant" && key === "z")
+              )
+              .map((option) => (
+                <option key={option.label} value={option.label}>
+                  {option.label}
+                </option>
+              ))}
           </select>
         </div>
       ))}
