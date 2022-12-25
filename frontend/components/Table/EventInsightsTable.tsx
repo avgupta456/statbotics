@@ -23,13 +23,16 @@ export type TeamEventInsights = {
 
 const formatCell = (
   percentileStats: PercentileStats,
-  info: CellContext<TeamEventInsights, number | string>
+  info: CellContext<TeamEventInsights, number | string>,
+  disableHighlight: boolean
 ) => {
   const column = info.column.id;
   const value = info.getValue();
 
   let color = "";
-  if (typeof value === "string") {
+  if (disableHighlight) {
+    color = "";
+  } else if (typeof value === "string") {
     color = CONDITIONAL_COLORS[1];
   } else if (column == "rp_1_epa" || column == "rp_2_epa") {
     color = getRPColor(value);
@@ -48,7 +51,15 @@ const formatCell = (
 
 const columnHelper = createColumnHelper<TeamEventInsights>();
 
-const EventInsightsTable = ({ data, stats }: { data: TeamEventInsights[]; stats: YearStats }) => {
+const EventInsightsTable = ({
+  data,
+  stats,
+  disableHighlight,
+}: {
+  data: TeamEventInsights[];
+  stats: YearStats;
+  disableHighlight: boolean;
+}) => {
   const columns = useMemo<any>(
     () => [
       columnHelper.accessor("num", {
@@ -64,31 +75,31 @@ const EventInsightsTable = ({ data, stats }: { data: TeamEventInsights[]; stats:
         header: "Rank",
       }),
       columnHelper.accessor("epa", {
-        cell: (info) => formatCell(stats.total, info),
+        cell: (info) => formatCell(stats.total, info, disableHighlight),
         header: "EPA",
       }),
       columnHelper.accessor("auto_epa", {
-        cell: (info) => formatCell(stats.auto, info),
+        cell: (info) => formatCell(stats.auto, info, disableHighlight),
         header: "Auto EPA",
       }),
       columnHelper.accessor("teleop_epa", {
-        cell: (info) => formatCell(stats.teleop, info),
+        cell: (info) => formatCell(stats.teleop, info, disableHighlight),
         header: "Teleop EPA",
       }),
       columnHelper.accessor("endgame_epa", {
-        cell: (info) => formatCell(stats.endgame, info),
+        cell: (info) => formatCell(stats.endgame, info, disableHighlight),
         header: "Endgame EPA",
       }),
       columnHelper.accessor("rp_1_epa", {
-        cell: (info) => formatCell(stats.rp_1, info),
+        cell: (info) => formatCell(stats.rp_1, info, disableHighlight),
         header: "RP1 EPA",
       }),
       columnHelper.accessor("rp_2_epa", {
-        cell: (info) => formatCell(stats.rp_2, info),
+        cell: (info) => formatCell(stats.rp_2, info, disableHighlight),
         header: "RP2 EPA",
       }),
     ],
-    [stats]
+    [stats, disableHighlight]
   );
 
   const headerClassName = (header: any) =>
