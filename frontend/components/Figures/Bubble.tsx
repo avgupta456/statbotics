@@ -8,7 +8,6 @@ import React, { useState } from "react";
 
 import { ColumnBar, columnOptionsDict } from "../columns";
 import { FilterBar, filterData } from "../filter";
-import { TeamYear } from "../types/api";
 
 if (typeof Highcharts === "object") {
   HC_more(Highcharts);
@@ -100,7 +99,6 @@ const BubbleChart = ({
       footerFormat: "</table>",
       followPointer: true,
     },
-
     chart: {
       reflow: true,
       width: 900,
@@ -152,6 +150,9 @@ const BubbleChart = ({
       },
     ],
     credits: {
+      enabled: false,
+    },
+    accessibility: {
       enabled: false,
     },
   };

@@ -62,6 +62,7 @@ export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: a
                 {filter.key === "state" && filters?.country === "Canada" ? "province" : filter.key}
               </p>
               <Select
+                instanceId={"filter-select" + filter.key}
                 className="w-36 h-10 text-sm mr-2"
                 styles={{
                   menu: (provided) => ({ ...provided, zIndex: 9999 }),

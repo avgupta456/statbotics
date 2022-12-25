@@ -54,6 +54,7 @@ export const ColumnBar = ({
         <div key={key} className="flex flex-col items-center justify-center">
           <p className="w-full pl-1 text-sm text-gray-500 capitalize">{key}-axis</p>
           <Select
+            instanceId={"column-select-" + key}
             className="w-36 h-10 text-sm mr-2"
             styles={{
               menu: (provided) => ({ ...provided, zIndex: 9999 }),

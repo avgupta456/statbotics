@@ -7,11 +7,14 @@ import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
 import { Data } from "./types";
 
-const Tabs = ({ data }: { data: Data }) => {
+const Tabs = ({ event_id, data }: { event_id: string; data: Data }) => {
   const [tab, setTab] = useState("Insights");
 
   const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data} />, [data]);
-  const MemoizedFigureSection = useMemo(() => <FiguresSection data={data} />, [data]);
+  const MemoizedFigureSection = useMemo(
+    () => <FiguresSection event_id={event_id} data={data} />,
+    [event_id, data]
+  );
 
   return (
     <div className="w-full">
