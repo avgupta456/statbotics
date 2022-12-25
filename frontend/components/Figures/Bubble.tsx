@@ -93,6 +93,7 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
 
     chart: {
       reflow: true,
+      width: 900,
       height: (9 / 16) * 100 + "%", // 16:9 ratio
       backgroundColor: "transparent",
       type: "bubble",
@@ -145,7 +146,6 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
     },
   };
 
-  // use bottom-padding to make the chart responsive
   return (
     <div className="w-full">
       <div className="flex items-end justify-center mb-2">
@@ -153,7 +153,7 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
         <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
         <FilterBar filters={filters} setFilters={setFilters} />
       </div>
-      <div className="w-4/5 mx-auto">
+      <div className="w-full flex justify-center">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </div>

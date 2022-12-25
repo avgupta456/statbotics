@@ -40,7 +40,6 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <p className="text-2xl lg:text-3xl mt-8 mb-2">Team Insights</p>
       <div className="flex items-end justify-center mb-2">
         <button
           className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-32 px-2 mr-2 rounded text-sm flex items-center justify-center"
