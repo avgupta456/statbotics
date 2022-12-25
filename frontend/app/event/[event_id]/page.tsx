@@ -1,8 +1,7 @@
 import React from "react";
 
 import { BACKEND_URL } from "../../../constants";
-import FiguresSection from "./figures";
-import InsightsTable from "./insightsTable";
+import Tabs from "./tabs";
 import { Data } from "./types";
 
 async function getData(event_id: string) {
@@ -42,10 +41,7 @@ async function Page({ params }: { params: { event_id: string } }) {
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-3xl lg:text-4xl">{truncatedEventName}</p>
         </div>
-        <div className="w-full flex flex-row flex-wrap justify-center">
-          <InsightsTable data={data} />
-          <FiguresSection data={data} />
-        </div>
+        <Tabs data={data} />
       </div>
     </div>
   );

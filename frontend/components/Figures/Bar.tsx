@@ -7,6 +7,7 @@ import { ResponsiveBar } from "@nivo/bar";
 const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
   return (
     <ResponsiveBar
+      motionConfig={"gentle"}
       data={data}
       keys={keys}
       indexBy="team"
