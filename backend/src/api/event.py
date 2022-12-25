@@ -5,9 +5,12 @@ from fastapi import APIRouter, Response
 from src.api.aggregation.year import get_year_stats
 from src.api.db.event import get_event
 from src.api.db.team_event import get_team_events
+from src.api.db.team_match import get_team_matches
 from src.db.models.event import Event
 from src.db.models.team_event import TeamEvent
+from src.db.models.team_match import TeamMatch
 from src.utils.decorators import async_fail_gracefully
+from src.utils.utils import get_match_number
 
 router = APIRouter()
 
@@ -58,3 +61,27 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     }
 
     return out
+
+
+@router.get("/{event_id}/team_matches/{team}")
+@async_fail_gracefully
+async def read_team_matches(
+    response: Response, event_id: str, team: int
+) -> List[Dict[str, Any]]:
+    team_match_objs: List[TeamMatch] = await get_team_matches(event=event_id, team=team)
+
+    team_matches = [
+        {
+            "match": get_match_number(x.match),
+            "playoff": x.playoff,
+            "total_epa": x.epa,
+            "auto_epa": x.auto_epa,
+            "teleop_epa": x.teleop_epa,
+            "endgame_epa": x.endgame_epa,
+            "rp_1_epa": x.rp_1_epa,
+            "rp_2_epa": x.rp_2_epa,
+        }
+        for x in team_match_objs
+    ]
+
+    return team_matches
