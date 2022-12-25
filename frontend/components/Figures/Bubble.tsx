@@ -35,8 +35,8 @@ const BubbleChart = ({
     filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {})
   );
   const [columns, setColumns] = useState({
-    x: "Teleop EPA",
-    y: "Auto + Endgame EPA",
+    x: "Teleop",
+    y: "Auto + Endgame",
     z: "Constant",
   });
 
@@ -81,13 +81,13 @@ const BubbleChart = ({
       title: {
         text: xAxis["label"],
       },
-      min: 0,
+      min: xAxis["label"].includes("RP") ? -1 / 3 : 0,
     },
     yAxis: {
       title: {
         text: yAxis["label"],
       },
-      min: 0,
+      min: yAxis["label"].includes("RP") ? -1 / 3 : 0,
     },
     tooltip: {
       useHTML: true,

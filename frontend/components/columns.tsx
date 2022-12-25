@@ -1,21 +1,21 @@
 import React from "react";
+import Select from "react-select";
 
 import { round } from "../utils";
-import { TeamYear } from "./types/api";
 
 export const columnOptions = [
   { label: "Constant", accessor: (datum) => 1 },
-  { label: "Auto EPA", accessor: (datum) => round(datum.auto_epa) },
-  { label: "Teleop EPA", accessor: (datum) => round(datum.teleop_epa) },
-  { label: "Endgame EPA", accessor: (datum) => round(datum.endgame_epa) },
+  { label: "Auto", accessor: (datum) => round(datum.auto_epa) },
+  { label: "Teleop", accessor: (datum) => round(datum.teleop_epa) },
+  { label: "Endgame", accessor: (datum) => round(datum.endgame_epa) },
   {
-    label: "Auto + Endgame EPA",
+    label: "Auto + Endgame",
     accessor: (datum) => round(datum.auto_epa + datum.endgame_epa),
   },
-  { label: "RP 1 EPA", accessor: (datum) => round(datum.rp_1_epa, 3) },
-  { label: "RP 2 EPA", accessor: (datum) => round(datum.rp_2_epa, 3) },
+  { label: "RP 1", accessor: (datum) => round(datum.rp_1_epa, 3) },
+  { label: "RP 2", accessor: (datum) => round(datum.rp_2_epa, 3) },
 
-  { label: "Total EPA", accessor: (datum) => round(datum.total_epa) },
+  { label: "Total", accessor: (datum) => round(datum.total_epa) },
   { label: "Wins", accessor: (datum) => datum.wins },
   {
     label: "Win Rate",
@@ -53,23 +53,27 @@ export const ColumnBar = ({
       {columnKeys.map((key) => (
         <div key={key} className="flex flex-col items-center justify-center">
           <p className="w-full pl-1 text-sm text-gray-500 capitalize">{key}-axis</p>
-          <select
-            className="border-2 border-gray-300 bg-white h-10 w-32 px-2 mr-2 rounded text-sm focus:outline-none appearance-none"
-            onChange={(e) => smartSetColumns(key, e.target.value)}
-            value={columns[key]}
-          >
-            {columnOptions
+          <Select
+            className="w-36 h-10 text-sm mr-2"
+            styles={{
+              menu: (provided) => ({ ...provided, zIndex: 9999 }),
+            }}
+            options={columnOptions
               .filter(
                 (option) =>
                   currColumnOptions.includes(option.label) ||
                   (option.label === "Constant" && key === "z")
               )
-              .map((option) => (
-                <option key={option.label} value={option.label}>
-                  {option.label}
-                </option>
-              ))}
-          </select>
+              .map((option) => ({
+                value: option.label,
+                label: option.label,
+              }))}
+            onChange={(e) => smartSetColumns(key, e?.value)}
+            value={{
+              value: columns[key],
+              label: columns[key],
+            }}
+          />
         </div>
       ))}
     </div>

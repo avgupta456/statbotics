@@ -1,4 +1,5 @@
 import React from "react";
+import Select from "react-select";
 
 import {
   canadaOptions,
@@ -60,17 +61,22 @@ export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: a
               <p className="w-full pl-1 text-sm text-gray-500 capitalize">
                 {filter.key === "state" && filters?.country === "Canada" ? "province" : filter.key}
               </p>
-              <select
-                className="border-2 border-gray-300 bg-white h-10 w-32 px-2 mr-2 rounded text-sm focus:outline-none appearance-none"
-                onChange={(e) => smartSetFilters(filter.key, e.target.value)}
-                value={filters[filter.key]}
-              >
-                {filter.options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <Select
+                className="w-36 h-10 text-sm mr-2"
+                styles={{
+                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                }}
+                options={filter.options.map((option) => ({
+                  value: option.value,
+                  label: option.label,
+                }))}
+                onChange={(e) => smartSetFilters(filter.key, e?.value)}
+                value={{
+                  value: filters[filter.key],
+                  label: filter.options.find((option) => option.value === filters[filter.key])
+                    ?.label,
+                }}
+              />
             </div>
           );
         }

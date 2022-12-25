@@ -28,13 +28,13 @@ const FiguresSection = ({ data }: { data: Data }) => {
         data={bubbleData}
         filterOptions={[]}
         columnOptions={[
-          "Auto EPA",
-          "Teleop EPA",
-          "Endgame EPA",
-          "Auto + Endgame EPA",
-          "RP 1 EPA",
-          "RP 2 EPA",
-          "Total EPA",
+          "Auto",
+          "Teleop",
+          "Endgame",
+          "Auto + Endgame",
+          "RP 1",
+          "RP 2",
+          "Total",
           "Rank",
           "N - Rank",
           "RPs / Match",

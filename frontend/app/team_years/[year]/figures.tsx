@@ -9,13 +9,13 @@ const FigureSection = ({ data }: { data: Data }) => {
       data={data.team_years}
       filterOptions={["country", "state", "district"]}
       columnOptions={[
-        "Auto EPA",
-        "Teleop EPA",
-        "Endgame EPA",
-        "Auto + Endgame EPA",
-        "RP 1 EPA",
-        "RP 2 EPA",
-        "Total EPA",
+        "Auto",
+        "Teleop",
+        "Endgame",
+        "Auto + Endgame",
+        "RP 1",
+        "RP 2",
+        "Total",
         "Wins",
         "Win Rate",
       ]}
