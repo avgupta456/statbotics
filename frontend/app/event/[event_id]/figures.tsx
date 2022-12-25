@@ -1,7 +1,7 @@
 import React from "react";
 
 import BarChart from "../../../components/Figures/Bar";
-import ScatterPlot from "../../../components/Figures/Scatter";
+import BubbleChart from "../../../components/Figures/Bubble";
 import { Data } from "./types";
 
 const FiguresSection = ({ data }: { data: Data }) => {
@@ -16,16 +16,31 @@ const FiguresSection = ({ data }: { data: Data }) => {
     .sort((a, b) => b.sortEpa - a.sortEpa)
     .slice(0, 16);
 
-  const scatterData = data.team_events.map((teamEvent) => ({
-    id: teamEvent.num,
-    data: [{ x: teamEvent.rank, y: teamEvent.epa }],
+  const bubbleData = data.team_events.map((teamEvent) => ({
+    ...teamEvent,
+    numTeams: data.team_events.length,
   }));
 
   return (
-    <div className="w-3/4 h-[1000px] flex flex-col justify-center items-center">
-      <p className="text-2xl lg:text-3xl mt-8 mb-2">Figures</p>
+    <div className="w-full h-[1000px] flex flex-col justify-center items-center gap-4">
       <BarChart data={barData} keys={["Auto EPA", "Teleop EPA", "Endgame EPA"]} />
-      <ScatterPlot data={scatterData} axis="EPA" />
+      <BubbleChart
+        data={bubbleData}
+        filterOptions={[]}
+        columnOptions={[
+          "Auto EPA",
+          "Teleop EPA",
+          "Endgame EPA",
+          "Auto + Endgame EPA",
+          "RP 1 EPA",
+          "RP 2 EPA",
+          "Total EPA",
+          "Rank",
+          "N - Rank",
+          "RPs / Match",
+          "Wins",
+        ]}
+      />
     </div>
   );
 };
