@@ -11,7 +11,7 @@ const FiguresSection = ({ data }: { data: Data }) => {
       "Auto EPA": teamEvent.auto_epa,
       "Teleop EPA": teamEvent.teleop_epa,
       "Endgame EPA": teamEvent.endgame_epa,
-      sortEpa: teamEvent.epa,
+      sortEpa: teamEvent.total_epa,
     }))
     .sort((a, b) => b.sortEpa - a.sortEpa)
     .slice(0, 16);

@@ -4,7 +4,7 @@ type TeamEvent = {
   num: number;
   team: string;
   epa_start: number;
-  epa: number;
+  total_epa: number;
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;

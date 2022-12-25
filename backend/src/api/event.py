@@ -34,7 +34,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
             "num": x.team,
             "team": x.team_name,
             "epa_start": x.epa_start,
-            "epa": x.epa_end,
+            "total_epa": x.epa_end,
             "auto_epa": x.auto_epa_end,
             "teleop_epa": x.teleop_epa_end,
             "endgame_epa": x.endgame_epa_end,
