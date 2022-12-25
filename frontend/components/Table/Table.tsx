@@ -25,9 +25,13 @@ const Table = (
   const table = useReactTable({
     data: data,
     columns,
+    initialState: {
+      pagination: {
+        pageSize: 25,
+      },
+    },
     state: {
       sorting,
-      pagination: paginate ? { pageIndex: 0, pageSize: 50 } : undefined,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
