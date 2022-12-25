@@ -2,6 +2,7 @@ import React from "react";
 
 import BarChart from "../../../components/Figures/Bar";
 import BubbleChart from "../../../components/Figures/Bubble";
+import EventLineChart from "../../../components/Figures/EventLine";
 import { Data } from "./types";
 
 const FiguresSection = ({ data }: { data: Data }) => {
@@ -20,6 +21,26 @@ const FiguresSection = ({ data }: { data: Data }) => {
     ...teamEvent,
     numTeams: data.team_events.length,
   }));
+
+  const lineData = [
+    {
+      id: "Test",
+      data: [
+        {
+          x: 1,
+          y: 2,
+        },
+        {
+          x: 2,
+          y: 3,
+        },
+        {
+          x: 3,
+          y: 4,
+        },
+      ],
+    },
+  ];
 
   return (
     <div className="w-full h-[1000px] flex flex-col justify-center items-center gap-4">
@@ -41,6 +62,7 @@ const FiguresSection = ({ data }: { data: Data }) => {
           "Wins",
         ]}
       />
+      <EventLineChart />
     </div>
   );
 };
