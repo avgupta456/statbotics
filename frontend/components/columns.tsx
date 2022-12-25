@@ -42,7 +42,7 @@ export const ColumnBar = ({ columns, setColumns }: { columns: any; setColumns: a
         <div key={key} className="flex flex-col items-center justify-center">
           <p className="w-full pl-1 text-sm text-gray-500 capitalize">{key}-axis</p>
           <select
-            className="border-2 border-gray-300 bg-white h-10 w-28 px-2 mr-2 rounded text-sm focus:outline-none appearance-none"
+            className="border-2 border-gray-300 bg-white h-10 w-32 px-2 mr-2 rounded text-sm focus:outline-none appearance-none"
             onChange={(e) => smartSetColumns(key, e.target.value)}
             value={columns[key]}
           >

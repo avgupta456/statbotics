@@ -149,7 +149,6 @@ const MatchTable = ({
   const rowClassName = (row: any) =>
     classnames(
       "text-center h-full",
-      row.index % 2 === 0 ? "" : "bg-gray-100",
       row.original.name === "Total" ? "font-bold bg-gray-300" : "hover:bg-blue-100"
     );
 

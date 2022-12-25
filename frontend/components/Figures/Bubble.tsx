@@ -30,20 +30,11 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
     z: "Endgame EPA",
   });
 
-  console.log("Filters: ", filters);
-  console.log("Columns: ", columns);
-
   const filteredData: TeamYear[] = filterData(data, filters);
 
   const xAxis = columnOptionsDict[columns.x];
   const yAxis = columnOptionsDict[columns.y];
   const zAxis = columnOptionsDict[columns.z];
-
-  console.log("columnOptionsDict: ", columnOptionsDict);
-
-  console.log("xAxis: ", xAxis);
-  console.log("yAxis: ", yAxis);
-  console.log("zAxis: ", zAxis);
 
   const scatterData: ScatterData[] = filteredData.map((datum) => ({
     x: xAxis.accessor(datum),
@@ -160,7 +151,6 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
       <div className="flex items-end justify-center mb-2">
         <ColumnBar columns={columns} setColumns={setColumns} />
         <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-
         <FilterBar filters={filters} setFilters={setFilters} />
       </div>
       <div className="w-4/5 mx-auto">
