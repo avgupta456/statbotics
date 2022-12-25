@@ -38,7 +38,7 @@ async function Page({ params }: { params: { match_id: string } }) {
   }
 
   return (
-    <div className="w-full h-full p-4 bg-gray-50">
+    <div className="w-full h-full p-4">
       <div className="container mx-auto">
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-3xl lg:text-4xl">{data.match_name}</p>

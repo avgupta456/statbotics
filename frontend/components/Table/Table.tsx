@@ -27,6 +27,7 @@ const Table = (
     columns,
     state: {
       sorting,
+      pagination: paginate ? { pageIndex: 0, pageSize: 50 } : undefined,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -39,11 +40,11 @@ const Table = (
   const numRows = data.length;
 
   return (
-    <div className="p-2 text-xxs lg:text-xs">
+    <div className="p-2 text-xs text-sm">
       <table>
         <thead className="border-b-2">
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="lg:text-sm">
+            <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <th key={header.id} colSpan={header.colSpan} className={headerClassName(header)}>

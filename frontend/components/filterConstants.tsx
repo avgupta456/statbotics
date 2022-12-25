@@ -1,5 +1,5 @@
 export const countryOptions = [
-  { value: "", label: "Select Country" },
+  { value: "", label: "All" },
   { value: "USA", label: "USA" },
   { value: "Canada", label: "Canada" },
   { value: "Turkey", label: "Turkey" },
@@ -12,7 +12,7 @@ export const countryOptions = [
 ];
 
 export const usaOptions = [
-  { value: "", label: "Select State" },
+  { value: "", label: "All" },
   { value: "AL", label: "Alabama" },
   { value: "AK", label: "Alaska" },
   { value: "AZ", label: "Arizona" },
@@ -67,7 +67,7 @@ export const usaOptions = [
 ];
 
 export const canadaOptions = [
-  { value: "", label: "Select Province" },
+  { value: "", label: "All" },
   { value: "AB", label: "Alberta" },
   { value: "BC", label: "British Columbia" },
   { value: "ON", label: "Ontario" },
@@ -75,7 +75,7 @@ export const canadaOptions = [
 ];
 
 export const districtOptions = [
-  { value: "", label: "Select District" },
+  { value: "", label: "All" },
   { value: "chs", label: "Chesapeake" },
   { value: "fim", label: "Michigan" },
   { value: "fin", label: "Indiana" },

@@ -98,8 +98,7 @@ const EventInsightsTable = ({ data, stats }: { data: TeamEventInsights[]; stats:
       header.id === "rp_2_epa" ? "rounded-tr-lg" : ""
     );
 
-  const rowClassName = (row: any) =>
-    classnames("text-center h-full hover:bg-blue-100", row.index % 2 === 0 ? "" : "bg-gray-100");
+  const rowClassName = (row: any) => classnames("text-center h-full hover:bg-blue-100");
 
   const cellClassName = (cell: any) =>
     classnames(
