@@ -16,7 +16,7 @@ const Tab = ({ data }: { data: Data }) => {
   return (
     <div className="w-full">
       <div className="w-full flex flex-row">
-        {["Insights", "Figures"].map((_tab) => (
+        {["Insights", "Bubble Chart"].map((_tab) => (
           <div
             key={`tab-${_tab}`}
             className={classnames(tab === _tab ? "" : "border-b-[1px] border-gray-200")}
@@ -36,9 +36,9 @@ const Tab = ({ data }: { data: Data }) => {
         ))}
         <div className="flex-grow border-b-[1px] border-gray-200" />
       </div>
-      <div className="w-full flex flex-row flex-wrap justify-center pt-4">
+      <div className="w-full flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
         <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
-        <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
+        <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
       </div>
     </div>
   );
