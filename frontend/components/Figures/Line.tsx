@@ -45,16 +45,17 @@ const LineChart = ({
         colors={{ scheme: "category10" }}
         pointSize={5}
         enableArea={!isRP && data.length <= 1}
+        areaOpacity={0.1}
         pointLabel="y"
         pointLabelYOffset={-12}
         useMesh={true}
         tooltip={({ point }) => {
           const y: any = point.data.yFormatted;
-          const rounded = round(parseFloat(y));
+          const xLabel = point.data.xFormatted < 1 ? "" : `(M${point.data.xFormatted})`;
           return (
             <div className="bg-white rounded shadow p-2" style={{ color: point.color }}>
-              <div className="text-sm font-bold">{`Team ${point.serieId} (M${point.data.xFormatted})`}</div>
-              <div className="text-sm">{`${yAxis}: ${rounded}`}</div>
+              <div className="text-sm font-bold">{`Team ${point.serieId} ${xLabel}`}</div>
+              <div className="text-sm">{`${yAxis}: ${round(parseFloat(y))}`}</div>
             </div>
           );
         }}

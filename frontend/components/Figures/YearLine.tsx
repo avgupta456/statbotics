@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 
 import { BACKEND_URL } from "../../constants";
+import { round } from "../../utils";
 import { TeamYear } from "../types/api";
 import LineChart from "./Line";
 
@@ -17,6 +18,7 @@ const YearLineChart = ({
   teams: any;
 }) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
+  const [xAxis, setXAxis] = useState("match");
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
   const [allData, setAllData] = useState<any>({});
 
@@ -74,13 +76,16 @@ const YearLineChart = ({
 
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
-    .map((teamNum) => ({
-      id: teamNum,
-      data: allData[teamNum].map((teamMatch: any, i) => ({
-        x: i,
-        y: teamMatch[yAxis.value],
-      })),
-    }));
+    .map((teamNum) => {
+      const N = allData[teamNum].length;
+      return {
+        id: teamNum,
+        data: allData[teamNum].map((teamMatch: any, i) => ({
+          x: xAxis === "match" ? i : i / N,
+          y: teamMatch[yAxis.value],
+        })),
+      };
+    });
 
   // RENDER
 
@@ -121,11 +126,17 @@ const YearLineChart = ({
         >
           Show Top 3 Teams
         </button>
+        <button
+          className="flex-shrink-0 border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-36 px-2 mr-2 rounded text-sm flex items-center justify-center"
+          onClick={() => setXAxis(xAxis === "match" ? "season" : "match")}
+        >
+          {xAxis === "match" ? "Show % of Season" : "Show Match Num"}
+        </button>
       </div>
       <div className="flex">
         <LineChart
           data={lineData}
-          xAxis="Match Num"
+          xAxis={xAxis === "match" ? "Match Num" : "Season %"}
           yAxis={yAxis.label}
           isRP={yAxis.value.includes("rp_")}
         />
