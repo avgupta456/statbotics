@@ -1,7 +1,7 @@
 import React from "react";
 
 import MatchTable, { Component } from "../../../components/Table/MatchTable";
-import { TableFooter, TableKey } from "../../../components/Table/shared";
+import { TableKey } from "../../../components/Table/shared";
 import { round } from "../../../utils";
 import { Data } from "./types";
 
@@ -165,7 +165,6 @@ const PageMatchTable = ({ data }: { data: Data }) => {
       <p className="text-2xl lg:text-3xl mt-8 mb-2">Match Breakdown</p>
       <TableKey />
       <MatchTable {...MatchTableProps} />
-      <TableFooter />
     </div>
   );
 };

@@ -79,13 +79,21 @@ const EventLineChart = ({
 
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
-    .map((teamNum) => ({
-      id: teamNum,
-      data: allData[teamNum].map((teamMatch: any) => ({
-        x: teamMatch.match,
-        y: teamMatch[yAxis.value],
-      })),
-    }));
+    .map((teamNum) => {
+      let teamData = {
+        id: teamNum,
+        data: allData[teamNum].map((teamMatch: any, i: number) => ({
+          x: allData[teamNum][i - 1] ? allData[teamNum][i - 1].match : 0,
+          y: teamMatch[yAxis.value],
+        })),
+      };
+
+      const lastMatch = allData[teamNum][allData[teamNum].length - 1].match;
+      const lastEPA = teamEvents[teamEvents.findIndex((team) => team.num === teamNum)][yAxis.value];
+      teamData.data.push({ x: lastMatch, y: lastEPA });
+
+      return teamData;
+    });
 
   // RENDER
 

@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import EventInsightsTable, {
   TeamEventInsights,
 } from "../../../components/Table/EventInsightsTable";
-import { TableFooter, TableKey } from "../../../components/Table/shared";
+import { TableKey } from "../../../components/Table/shared";
 import { round } from "../../../utils";
 import { Data } from "./types";
 

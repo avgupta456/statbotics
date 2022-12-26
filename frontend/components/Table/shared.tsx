@@ -79,11 +79,3 @@ export const TableKey = () => (
     ))}
   </div>
 );
-
-export const TableFooter = () => {
-  return (
-    <div className="hidden lg:flex w-full justify-center items-center text-sm mt-4">
-      Note: Nonlinear sum for alliance component predictions, see docs for more details!
-    </div>
-  );
-};
