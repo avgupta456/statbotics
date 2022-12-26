@@ -15,26 +15,21 @@ const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
   const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data || emptyData} />, [data]);
   const MemoizedBubbleChart = useMemo(
     () => (
-      <>
-        <div className="w-full text-2xl font-bold text-gray-800 mb-4">
-          Customizable Bubble Chart
-        </div>
-        <BubbleChart
-          data={data?.team_years ?? []}
-          filterOptions={["country", "state", "district"]}
-          columnOptions={[
-            "Auto",
-            "Teleop",
-            "Endgame",
-            "Auto + Endgame",
-            "RP 1",
-            "RP 2",
-            "Total",
-            "Wins",
-            "Win Rate",
-          ]}
-        />
-      </>
+      <BubbleChart
+        data={data?.team_years ?? []}
+        filterOptions={["country", "state", "district"]}
+        columnOptions={[
+          "Auto",
+          "Teleop",
+          "Endgame",
+          "Auto + Endgame",
+          "RP 1",
+          "RP 2",
+          "Total",
+          "Wins",
+          "Win Rate",
+        ]}
+      />
     ),
     [data]
   );

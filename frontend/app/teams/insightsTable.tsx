@@ -21,6 +21,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
       return {
         num: teamYear.num ?? -1,
         team: teamYear.team ?? "N/A",
+        epa_rank: teamYear.epa_rank ?? -1,
         epa: round(teamYear.total_epa, 1) ?? 0,
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
@@ -40,7 +41,6 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="w-full text-2xl font-bold text-gray-800 mb-4">Team Insights</div>
       <div className="flex items-end justify-center mb-2">
         <button
           className="filter_button w-32"

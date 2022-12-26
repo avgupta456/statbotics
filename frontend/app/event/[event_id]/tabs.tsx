@@ -19,28 +19,23 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data} />, [data]);
   const MemoizedBubbleChart = useMemo(
     () => (
-      <>
-        <div className="w-full text-2xl font-bold text-gray-800 mb-4">
-          Customizable Bubble Chart
-        </div>
-        <BubbleChart
-          data={bubbleData}
-          filterOptions={[]}
-          columnOptions={[
-            "Auto",
-            "Teleop",
-            "Endgame",
-            "Auto + Endgame",
-            "RP 1",
-            "RP 2",
-            "Total",
-            "Rank",
-            "N - Rank",
-            "RPs / Match",
-            "Wins",
-          ]}
-        />
-      </>
+      <BubbleChart
+        data={bubbleData}
+        filterOptions={[]}
+        columnOptions={[
+          "Auto",
+          "Teleop",
+          "Endgame",
+          "Auto + Endgame",
+          "RP 1",
+          "RP 2",
+          "Total",
+          "Rank",
+          "N - Rank",
+          "RPs / Match",
+          "Wins",
+        ]}
+      />
     ),
     [bubbleData]
   );

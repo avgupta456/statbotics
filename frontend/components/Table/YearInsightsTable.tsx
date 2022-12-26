@@ -12,6 +12,7 @@ import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 export type TeamYearInsights = {
   num: number;
   team: string;
+  epa_rank: number;
   epa: number; // used for sorting
   auto_epa: number | string;
   teleop_epa: number | string;
@@ -69,6 +70,10 @@ const EventInsightsTable = ({
       columnHelper.accessor("team", {
         cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
         header: "Name",
+      }),
+      columnHelper.accessor("epa_rank", {
+        cell: (info) => info.getValue(),
+        header: "EPA Rank",
       }),
       columnHelper.accessor("epa", {
         cell: (info) => formatCell(stats.total, info, disableHighlight),

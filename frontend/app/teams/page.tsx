@@ -58,7 +58,7 @@ const Page = () => {
               label: year.toString(),
             }}
           />
-          <p className="text-3xl lg:text-4xl text-gray-800 ml-2">Team Lookup</p>
+          <p className="text-2xl lg:text-3xl text-gray-800 ml-3">Team Lookup</p>
         </div>
         <Tabs year={year} data={data} />
       </div>
