@@ -36,7 +36,7 @@ async function Page({ params }: { params: { year: number } }) {
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-3xl lg:text-4xl text-gray-800">{year} Team Lookup</p>
         </div>
-        <Tabs data={data} />
+        <Tabs year={year} data={data} />
       </div>
     </div>
   );

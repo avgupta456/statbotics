@@ -4,16 +4,16 @@ import React, { useState } from "react";
 import Select from "react-select";
 
 import { BACKEND_URL } from "../../constants";
-import { TeamEvent } from "../types/api";
+import { TeamYear } from "../types/api";
 import LineChart from "./Line";
 
-const EventLineChart = ({
-  eventId,
-  teamEvents,
+const YearLineChart = ({
+  year,
+  teamYears,
   teams,
 }: {
-  eventId: string;
-  teamEvents: TeamEvent[];
+  year: number;
+  teamYears: TeamYear[];
   teams: any;
 }) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
@@ -23,7 +23,7 @@ const EventLineChart = ({
   // FUNCTIONS
 
   const fetchData = async (teamNum: number) => {
-    const res = await fetch(`${BACKEND_URL}/event/${eventId}/team_matches/${teamNum}`);
+    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}`);
     if (!res.ok) {
       return undefined;
     }
@@ -35,8 +35,8 @@ const EventLineChart = ({
     }
 
     const sortedData = data.data
-      .filter((teamMatch: any) => !teamMatch.playoff)
-      .sort((a: any, b: any) => a.match - b.match);
+      .filter((teamYear: any) => !teamYear.playoff)
+      .sort((a: any, b: any) => a.time - b.time);
 
     return sortedData;
   };
@@ -60,29 +60,24 @@ const EventLineChart = ({
       const newData = await fetchData(team.value);
       allDataCopy = { ...allDataCopy, [team.value]: newData };
     }
-    setAllData(allDataCopy);
+    setAllData({ ...allData, ...allDataCopy });
   };
 
   // VARIABLES
 
-  const topTeams = teamEvents
+  const topTeams = teamYears
     .sort((a, b) => b[yAxis.value] - a[yAxis.value])
     .slice(0, 3)
-    .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
+    .map((team) => ({ value: team.num, albel: `${team.team} | ${team.num}` }));
 
-  // const moverTeams = teamEvents
-  //   .sort((a, b) => b[`${yAxis}_diff`] - a[`${yAxis}_diff`])
-  //   .slice(0, 3)
-  //   .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
-
-  const selectedTeamNums: number[] = selectedTeams.map((team: any) => team.value);
+  const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
 
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
     .map((teamNum) => ({
       id: teamNum,
-      data: allData[teamNum].map((teamMatch: any) => ({
-        x: teamMatch.match,
+      data: allData[teamNum].map((teamMatch: any, i) => ({
+        x: i,
         y: teamMatch[yAxis.value],
       })),
     }));
@@ -130,7 +125,7 @@ const EventLineChart = ({
       <div className="flex">
         <LineChart
           data={lineData}
-          xAxis="Match"
+          xAxis="Match Num"
           yAxis={yAxis.label}
           isRP={yAxis.value.includes("rp_")}
         />
@@ -139,4 +134,4 @@ const EventLineChart = ({
   );
 };
 
-export default EventLineChart;
+export default YearLineChart;

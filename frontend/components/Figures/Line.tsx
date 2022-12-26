@@ -53,7 +53,7 @@ const LineChart = ({
           const rounded = round(parseFloat(y));
           return (
             <div className="bg-white rounded shadow p-2" style={{ color: point.color }}>
-              <div className="text-sm font-bold">{`Team ${point.serieId} (Q${point.data.xFormatted})`}</div>
+              <div className="text-sm font-bold">{`Team ${point.serieId} (M${point.data.xFormatted})`}</div>
               <div className="text-sm">{`${yAxis}: ${rounded}`}</div>
             </div>
           );

@@ -22,7 +22,7 @@ export type TeamEvent = {
 
 export type TeamYear = {
   num: number;
-  name: string;
+  team: string;
   state: string;
   country: string;
   district: string;
