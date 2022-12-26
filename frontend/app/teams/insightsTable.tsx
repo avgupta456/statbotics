@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 
-import YearInsightsTable, { TeamYearInsights } from "../../../components/Table/YearInsightsTable";
-import { TableKey } from "../../../components/Table/shared";
-import { FilterBar, filterData } from "../../../components/filter";
-import { round } from "../../../utils";
+import YearInsightsTable, { TeamYearInsights } from "../../components/Table/YearInsightsTable";
+import { TableKey } from "../../components/Table/shared";
+import { FilterBar, filterData } from "../../components/filter";
+import { round } from "../../utils";
 import { Data } from "./types";
 
 const PageEventInsightsTable = ({ data }: { data: Data }) => {

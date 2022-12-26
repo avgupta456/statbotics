@@ -1,4 +1,4 @@
-import { TeamYear, YearStats } from "../../../components/types/api";
+import { TeamYear, YearStats } from "../../components/types/api";
 
 export type Data = {
   team_years: TeamYear[];
