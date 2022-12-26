@@ -20,7 +20,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
     .map((teamYear) => {
       return {
         num: teamYear.num ?? -1,
-        team: teamYear.name ?? "N/A",
+        team: teamYear.team ?? "N/A",
         epa: round(teamYear.total_epa, 1) ?? 0,
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
@@ -40,6 +40,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
+      <div className="w-full text-2xl font-bold text-gray-800 mb-4">Team Insights</div>
       <div className="flex items-end justify-center mb-2">
         <button
           className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-32 px-2 mr-2 rounded text-sm flex items-center justify-center"

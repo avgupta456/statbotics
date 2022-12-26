@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Select from "react-select";
 
 import {
   ColumnDef,
@@ -11,6 +12,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
+import { classnames } from "../../utils";
 
 const Table = (
   data: any[],
@@ -25,9 +28,13 @@ const Table = (
   const table = useReactTable({
     data: data,
     columns,
+    initialState: {
+      pagination: {
+        pageSize: 25,
+      },
+    },
     state: {
       sorting,
-      pagination: paginate ? { pageIndex: 0, pageSize: 50 } : undefined,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -39,8 +46,16 @@ const Table = (
   const pageSize = table.getState().pagination.pageSize;
   const numRows = data.length;
 
+  const pageOptions: any = [
+    { value: 10, label: 10 },
+    { value: 25, label: 25 },
+    { value: 50, label: 50 },
+    { value: 100, label: 100 },
+    { value: data.length, label: "All" },
+  ];
+
   return (
-    <div className="p-2 text-xs text-sm">
+    <div className="p-2 text-sm">
       <table>
         <thead className="border-b-2">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -81,27 +96,23 @@ const Table = (
         </tbody>
       </table>
       {paginate && (
-        <div className="w-full flex justify-center gap-8 mt-2">
+        <div className="w-full h-10 flex items-center justify-center gap-4 mt-2">
           <div className="flex gap-2">
             <div className="flex items-center">Rows per page:</div>
-            <select
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
+            <Select
+              instanceId="paginate-select"
+              menuPlacement="top"
+              className="w-20 mr-2"
+              styles={{
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
               }}
-            >
-              {[
-                { dispSize: 10, pageSize: 10 },
-                { dispSize: 25, pageSize: 25 },
-                { dispSize: 50, pageSize: 50 },
-                { dispSize: 100, pageSize: 100 },
-                { dispSize: "All", pageSize: data.length },
-              ].map((x) => (
-                <option key={x.pageSize} value={x.pageSize}>
-                  {x.dispSize}
-                </option>
-              ))}
-            </select>
+              options={pageOptions}
+              onChange={(e) => table.setPageSize(Number((e as any).value))}
+              value={{
+                value: table.getState().pagination.pageSize,
+                label: table.getState().pagination.pageSize,
+              }}
+            />
           </div>
           <span className="flex items-center gap-1">
             <div>{`${pageIndex * pageSize + 1} - ${Math.min(
@@ -111,14 +122,20 @@ const Table = (
           </span>
           <div>
             <button
-              className="border rounded p-1"
+              className={classnames(
+                "border rounded py-1 px-2 mr-2",
+                !table.getCanPreviousPage() ? "opacity-50" : ""
+              )}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               {"<"}
             </button>
             <button
-              className="border rounded p-1"
+              className={classnames(
+                "border rounded py-1 px-2",
+                !table.getCanNextPage() ? "opacity-50" : ""
+              )}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >

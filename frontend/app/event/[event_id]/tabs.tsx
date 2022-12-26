@@ -4,12 +4,17 @@ import React, { useMemo, useState } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
 import { classnames } from "../../../utils";
-import FigureSection from "./figures";
+import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
 import { Data } from "./types";
 
-const Tab = ({ year, data }: { year: number; data: Data }) => {
+const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   const [tab, setTab] = useState("Insights");
+
+  const bubbleData = data.team_events.map((teamEvent) => ({
+    ...teamEvent,
+    numTeams: data.team_events.length,
+  }));
 
   const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data} />, [data]);
   const MemoizedBubbleChart = useMemo(
@@ -19,8 +24,8 @@ const Tab = ({ year, data }: { year: number; data: Data }) => {
           Customizable Bubble Chart
         </div>
         <BubbleChart
-          data={data.team_years}
-          filterOptions={["country", "state", "district"]}
+          data={bubbleData}
+          filterOptions={[]}
           columnOptions={[
             "Auto",
             "Teleop",
@@ -29,17 +34,19 @@ const Tab = ({ year, data }: { year: number; data: Data }) => {
             "RP 1",
             "RP 2",
             "Total",
+            "Rank",
+            "N - Rank",
+            "RPs / Match",
             "Wins",
-            "Win Rate",
           ]}
         />
       </>
     ),
-    [data]
+    [bubbleData]
   );
   const MemoizedFigureSection = useMemo(
-    () => <FigureSection year={year} data={data} />,
-    [year, data]
+    () => <FiguresSection eventId={eventId} data={data} />,
+    [eventId, data]
   );
 
   return (
@@ -65,7 +72,7 @@ const Tab = ({ year, data }: { year: number; data: Data }) => {
         ))}
         <div className="flex-grow border-b-[1px] border-gray-200" />
       </div>
-      <div className="w-full flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
+      <div className="w-full h-auto flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
         <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
         <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>{MemoizedBubbleChart}</div>
         <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
@@ -74,4 +81,4 @@ const Tab = ({ year, data }: { year: number; data: Data }) => {
   );
 };
 
-export default Tab;
+export default Tabs;

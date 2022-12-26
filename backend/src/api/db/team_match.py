@@ -10,7 +10,8 @@ from src.utils.alru_cache import alru_cache
 async def get_team_matches(
     year: Optional[int] = None,
     event: Optional[str] = None,
+    team: Optional[int] = None,
     match: Optional[str] = None,
     no_cache: bool = False,
 ) -> List[TeamMatch]:
-    return (True, _get_team_matches(year, event, match))  # type: ignore
+    return (True, _get_team_matches(year, event, team, match))  # type: ignore

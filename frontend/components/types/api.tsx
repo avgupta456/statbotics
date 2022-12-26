@@ -1,6 +1,28 @@
+export type TeamEvent = {
+  num: number;
+  team: string;
+  total_epa: number;
+  // total_epa_diff: number;
+  auto_epa: number;
+  // auto_epa_diff: number;
+  teleop_epa: number;
+  // teleop_epa_diff: number;
+  endgame_epa: number;
+  // endgame_epa_diff: number;
+  rp_1_epa: number;
+  // rp_1_epa_diff: number;
+  rp_2_epa: number;
+  // rp_2_epa_diff: number;
+  wins: number;
+  losses: number;
+  ties: number;
+  count: number;
+  rank: number;
+};
+
 export type TeamYear = {
   num: number;
-  name: string;
+  team: string;
   state: string;
   country: string;
   district: string;

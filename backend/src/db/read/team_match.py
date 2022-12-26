@@ -8,7 +8,10 @@ from src.db.models.team_match import TeamMatch, TeamMatchORM
 
 
 def get_team_matches(
-    year: Optional[int] = None, event: Optional[str] = None, match: Optional[str] = None
+    year: Optional[int] = None,
+    event: Optional[str] = None,
+    team: Optional[int] = None,
+    match: Optional[str] = None,
 ) -> List[TeamMatch]:
     def callback(session: SessionType):
         data = session.query(TeamMatchORM)
@@ -16,6 +19,8 @@ def get_team_matches(
             data = data.filter(TeamMatchORM.year == year)  # type: ignore
         if event is not None:
             data = data.filter(TeamMatchORM.event == event)  # type: ignore
+        if team is not None:
+            data = data.filter(TeamMatchORM.team == team)  # type: ignore
         if match is not None:
             data = data.filter(TeamMatchORM.match == match)  # type: ignore
         out_data: List[TeamMatchORM] = data.all()

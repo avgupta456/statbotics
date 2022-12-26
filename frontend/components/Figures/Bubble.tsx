@@ -8,7 +8,6 @@ import React, { useState } from "react";
 
 import { ColumnBar, columnOptionsDict } from "../columns";
 import { FilterBar, filterData } from "../filter";
-import { TeamYear, YearStats } from "../types/api";
 
 if (typeof Highcharts === "object") {
   HC_more(Highcharts);
@@ -22,15 +21,25 @@ type ScatterData = {
   labelInt: number;
 };
 
-const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearStats }) => {
-  const [filters, setFilters] = useState({ state: "", country: "", district: "" });
+const BubbleChart = ({
+  data,
+  columnOptions,
+  filterOptions,
+}: {
+  data: any[];
+  columnOptions: string[];
+  filterOptions: string[];
+}) => {
+  const [filters, setFilters] = useState(
+    filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {})
+  );
   const [columns, setColumns] = useState({
-    x: "Teleop EPA",
-    y: "Auto + Endgame EPA",
-    z: "Endgame EPA",
+    x: "Teleop",
+    y: "Auto + Endgame",
+    z: "Constant",
   });
 
-  const filteredData: TeamYear[] = filterData(data, filters);
+  const filteredData: any[] = filterData(data, filters);
 
   const xAxis = columnOptionsDict[columns.x];
   const yAxis = columnOptionsDict[columns.y];
@@ -71,29 +80,28 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
       title: {
         text: xAxis["label"],
       },
-      min: 0,
+      min: xAxis["label"].includes("RP") ? -1 / 3 : 0,
     },
     yAxis: {
       title: {
         text: yAxis["label"],
       },
-      min: 0,
+      min: yAxis["label"].includes("RP") ? -1 / 3 : 0,
     },
     tooltip: {
       useHTML: true,
       headerFormat: "<table>",
       pointFormat:
         '<tr><th colspan="2"><h3>{point.num}</h3></th></tr>' +
-        (xAxis.label !== "Constant" ? `<tr><th>${xAxis.label}: </th><td>{point.x}</td></tr>` : "") +
-        (yAxis.label !== "Constant" ? `<tr><th>${yAxis.label}: </th><td>{point.y}</td></tr>` : "") +
-        (zAxis.label !== "Constant" ? `<tr><th>${zAxis.label}: </th><td>{point.z}</td></tr>` : ""),
+        (xAxis.label !== "Constant" ? `<tr><th>${xAxis.label}:</th><td>{point.x}</td></tr>` : "") +
+        (yAxis.label !== "Constant" ? `<tr><th>${yAxis.label}:</th><td>{point.y}</td></tr>` : "") +
+        (zAxis.label !== "Constant" ? `<tr><th>${zAxis.label}:</th><td>{point.z}</td></tr>` : ""),
       footerFormat: "</table>",
       followPointer: true,
     },
-
     chart: {
       reflow: true,
-      width: 900,
+      width: 1000,
       height: (9 / 16) * 100 + "%", // 16:9 ratio
       backgroundColor: "transparent",
       type: "bubble",
@@ -130,8 +138,8 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
         },
       },
       bubble: {
-        minSize: zAxis.label === "Constant" ? 6 : 2,
-        maxSize: zAxis.label === "Constant" ? 6 : 12,
+        minSize: zAxis.label === "Constant" ? 10 : 1,
+        maxSize: zAxis.label === "Constant" ? 10 : 15,
         color: "#3b82f6",
       },
     },
@@ -144,14 +152,21 @@ const BubbleChart = ({ data, yearStats }: { data: TeamYear[]; yearStats: YearSta
     credits: {
       enabled: false,
     },
+    accessibility: {
+      enabled: false,
+    },
   };
 
   return (
     <div className="w-full">
       <div className="flex items-end justify-center mb-2">
-        <ColumnBar columns={columns} setColumns={setColumns} />
-        <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-        <FilterBar filters={filters} setFilters={setFilters} />
+        <ColumnBar currColumnOptions={columnOptions} columns={columns} setColumns={setColumns} />
+        {filterOptions.length > 0 && (
+          <>
+            <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
+            <FilterBar filters={filters} setFilters={setFilters} />
+          </>
+        )}
       </div>
       <div className="w-full flex justify-center">
         <HighchartsReact highcharts={Highcharts} options={options} />
