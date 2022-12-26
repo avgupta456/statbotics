@@ -43,7 +43,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
       <div className="w-full text-2xl font-bold text-gray-800 mb-4">Team Insights</div>
       <div className="flex items-end justify-center mb-2">
         <button
-          className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-32 px-2 mr-2 rounded text-sm flex items-center justify-center"
+          className="filter_button w-32"
           onClick={() => setDisableHighlight(!disableHighlight)}
         >
           {disableHighlight ? "Enable" : "Disable"} Color

@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { BounceLoader } from "react-spinners";
 
 import BubbleChart from "../../components/Figures/Bubble";
 import { classnames } from "../../utils";
 import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
-import { Data } from "./types";
+import { Data, emptyData } from "./types";
 
-const Tab = ({ year, data }: { year: number; data: Data }) => {
+const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
   const [tab, setTab] = useState("Insights");
 
-  const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data} />, [data]);
+  const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data || emptyData} />, [data]);
   const MemoizedBubbleChart = useMemo(
     () => (
       <>
@@ -19,7 +20,7 @@ const Tab = ({ year, data }: { year: number; data: Data }) => {
           Customizable Bubble Chart
         </div>
         <BubbleChart
-          data={data.team_years}
+          data={data?.team_years ?? []}
           filterOptions={["country", "state", "district"]}
           columnOptions={[
             "Auto",
@@ -38,12 +39,12 @@ const Tab = ({ year, data }: { year: number; data: Data }) => {
     [data]
   );
   const MemoizedFigureSection = useMemo(
-    () => <FigureSection year={year} data={data} />,
+    () => <FigureSection year={year} data={data || emptyData} />,
     [year, data]
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full flex-grow flex flex-col">
       <div className="w-full flex flex-row">
         {["Insights", "Bubble Chart", "Figures"].map((_tab) => (
           <div
@@ -65,10 +66,21 @@ const Tab = ({ year, data }: { year: number; data: Data }) => {
         ))}
         <div className="flex-grow border-b-[1px] border-gray-200" />
       </div>
-      <div className="w-full flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
-        <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
-        <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>{MemoizedBubbleChart}</div>
-        <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
+      <div className="w-full flex-grow flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
+        {data === undefined ? (
+          <div className="w-full flex-grow flex flex-col items-center justify-center">
+            <BounceLoader color="#3B82F6" />
+            <div className="text-gray-700 mt-4">Loading data, please wait...</div>
+          </div>
+        ) : (
+          <>
+            <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
+            <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>
+              {MemoizedBubbleChart}
+            </div>
+            <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
+          </>
+        )}
       </div>
     </div>
   );

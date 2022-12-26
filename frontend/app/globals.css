@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.filter_button {
+  @apply border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 px-2 mr-2 rounded text-sm flex items-center justify-center;
+}
+
+[data-nextjs-scroll-focus-boundary] {
+  display: contents;
+}
+
 @import url("https://fonts.googleapis.com/css?family=Josefin+Sans");
 @import url("https://fonts.googleapis.com/css?family=Roboto");
 

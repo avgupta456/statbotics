@@ -30,6 +30,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-select": "^5.7.0",
+    "react-spinners": "^0.13.7",
     "react-windowed-select": "^5.1.0",
     "typescript": "4.9.4"
   },

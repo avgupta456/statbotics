@@ -27,7 +27,7 @@ const Navbar = () => {
         <Link href="/">Statbotics</Link>
       </div>
       <div className="flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
-        <Link href="/team_years/2022">Teams</Link>
+        <Link href="/teams">Teams</Link>
       </div>
       <div className="flex-grow" />
       <div className="flex items-center gap-2 text-base font-thin">Search Bar</div>

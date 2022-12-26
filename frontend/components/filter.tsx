@@ -44,7 +44,7 @@ export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: a
     <div className="flex flex-row items-end justify-center">
       <button
         id="clear-filters"
-        className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-32 px-2 mr-2 rounded text-sm flex items-center justify-center"
+        className="filter_button w-32"
         onClick={() => setFilters({ country: "", state: "", district: "" })}
       >
         Clear Filters
