@@ -53,7 +53,7 @@ const EventLineChart = ({
   };
 
   const addManyTeams = async (_newTeams) => {
-    const newTeams = _newTeams; // _newTeams.filter((team) => !selectedTeamNums.includes(team.value));
+    const newTeams = _newTeams;
     setSelectedTeams([, ...newTeams]);
     let allDataCopy = {};
     for (const team of newTeams) {
@@ -91,10 +91,10 @@ const EventLineChart = ({
 
   return (
     <div className="w-full flex flex-col">
-      <div className="w-3/4 mx-auto flex flex-row justify-center">
+      <div className="w-4/5 mx-auto flex flex-row justify-center">
         <Select
           instanceId={"y-axis-select"}
-          className="w-36 h-10 text-sm mr-2"
+          className="flex-shrink-0 w-36 h-10 text-sm mr-2"
           styles={{
             menu: (provided) => ({ ...provided, zIndex: 9999 }),
           }}
@@ -121,13 +121,13 @@ const EventLineChart = ({
           value={selectedTeams}
         />
         <button
-          className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-32 px-2 mr-2 rounded text-sm flex items-center justify-center"
+          className="flex-shrink-0 border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-36 px-2 mr-2 rounded text-sm flex items-center justify-center"
           onClick={() => addManyTeams(topTeams)}
         >
-          Add Top 3 Teams
+          Show Top 3 Teams
         </button>
       </div>
-      <div className="w-3/4 mx-auto flex">
+      <div className="flex">
         <LineChart
           data={lineData}
           xAxis="Match"

@@ -101,7 +101,7 @@ const BubbleChart = ({
     },
     chart: {
       reflow: true,
-      width: 900,
+      width: 1000,
       height: (9 / 16) * 100 + "%", // 16:9 ratio
       backgroundColor: "transparent",
       type: "bubble",
