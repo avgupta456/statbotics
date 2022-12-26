@@ -5,7 +5,7 @@ import BubbleChart from "../../../components/Figures/Bubble";
 import EventLineChart from "../../../components/Figures/EventLine";
 import { Data } from "./types";
 
-const FiguresSection = ({ event_id, data }: { event_id: string; data: Data }) => {
+const FiguresSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const barData = data.team_events
     .map((teamEvent) => ({
       team: teamEvent.num,
@@ -47,7 +47,7 @@ const FiguresSection = ({ event_id, data }: { event_id: string; data: Data }) =>
           "Wins",
         ]}
       />
-      <EventLineChart event_id={event_id} teams={lineData} />
+      <EventLineChart eventId={eventId} teamEvents={data.team_events} teams={lineData} />
     </div>
   );
 };

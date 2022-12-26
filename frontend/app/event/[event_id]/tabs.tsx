@@ -7,13 +7,13 @@ import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
 import { Data } from "./types";
 
-const Tabs = ({ event_id, data }: { event_id: string; data: Data }) => {
+const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   const [tab, setTab] = useState("Insights");
 
   const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data} />, [data]);
   const MemoizedFigureSection = useMemo(
-    () => <FiguresSection event_id={event_id} data={data} />,
-    [event_id, data]
+    () => <FiguresSection eventId={eventId} data={data} />,
+    [eventId, data]
   );
 
   return (
