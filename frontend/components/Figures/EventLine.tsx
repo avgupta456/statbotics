@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 
 import { BACKEND_URL } from "../../constants";
+import { multiSelectStyles } from "../multiSelect";
 import { TeamEvent } from "../types/api";
 import LineChart from "./Line";
 
@@ -54,7 +55,7 @@ const EventLineChart = ({
 
   const addManyTeams = async (_newTeams) => {
     const newTeams = _newTeams;
-    setSelectedTeams([, ...newTeams]);
+    setSelectedTeams([...newTeams]);
     let allDataCopy = {};
     for (const team of newTeams) {
       const newData = await fetchData(team.value);
@@ -121,9 +122,13 @@ const EventLineChart = ({
           isMulti
           instanceId={"team-select"}
           className="flex-grow text-sm mr-2"
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-          }}
+          styles={multiSelectStyles((value) => {
+            let index = 0;
+            if (selectedTeams.length > 0) {
+              index = selectedTeams.findIndex((team) => team?.value === value);
+            }
+            return index;
+          })}
           options={teams}
           onChange={addTeam}
           value={selectedTeams}

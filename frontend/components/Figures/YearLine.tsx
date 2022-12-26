@@ -5,15 +5,9 @@ import Select, { components, createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
 import { BACKEND_URL } from "../../constants";
-import { round } from "../../utils";
+import { Option, multiSelectStyles } from "../multiSelect";
 import { TeamYear } from "../types/api";
 import LineChart from "./Line";
-
-const Option = ({ children, ...props }) => {
-  const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
-  const newProps: any = Object.assign(props, { innerProps: rest });
-  return <components.Option {...newProps}>{children}</components.Option>;
-};
 
 const YearLineChart = ({
   year,
@@ -63,7 +57,7 @@ const YearLineChart = ({
 
   const addManyTeams = async (_newTeams) => {
     const newTeams = _newTeams;
-    setSelectedTeams([, ...newTeams]);
+    setSelectedTeams([...newTeams]);
     let allDataCopy = {};
     for (const team of newTeams) {
       const newData = await fetchData(team.value);
@@ -88,7 +82,8 @@ const YearLineChart = ({
       return {
         id: teamNum,
         data: allData[teamNum].map((teamMatch: any, i) => ({
-          x: xAxis === "match" ? i : i / N,
+          // hack to make all points < 1, for correct formatting
+          x: xAxis === "match" ? i : i / Math.max(1, N - 1) - 0.0001,
           y: teamMatch[yAxis.value],
         })),
       };
@@ -120,14 +115,17 @@ const YearLineChart = ({
           isMulti
           instanceId={"team-select"}
           className="flex-grow text-sm mr-2"
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-          }}
+          styles={multiSelectStyles((value) => {
+            let index = 0;
+            if (selectedTeams.length > 0) {
+              index = selectedTeams.findIndex((team) => team?.value === value);
+            }
+            return index;
+          })}
           options={teams}
           onChange={addTeam}
           value={selectedTeams}
           filterOption={createFilter({ ignoreAccents: false })}
-          components={{ Option }}
           windowThreshold={100}
         />
         <button
