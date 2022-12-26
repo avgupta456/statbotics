@@ -1,12 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import Select from "react-select";
+import Select, { components, createFilter } from "react-select";
+import WindowedSelect from "react-windowed-select";
 
 import { BACKEND_URL } from "../../constants";
 import { round } from "../../utils";
 import { TeamYear } from "../types/api";
 import LineChart from "./Line";
+
+const Option = ({ children, ...props }) => {
+  const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
+  const newProps: any = Object.assign(props, { innerProps: rest });
+  return <components.Option {...newProps}>{children}</components.Option>;
+};
 
 const YearLineChart = ({
   year,
@@ -70,7 +77,7 @@ const YearLineChart = ({
   const topTeams = teamYears
     .sort((a, b) => b[yAxis.value] - a[yAxis.value])
     .slice(0, 3)
-    .map((team) => ({ value: team.num, albel: `${team.team} | ${team.num}` }));
+    .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
 
   const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
 
@@ -109,7 +116,7 @@ const YearLineChart = ({
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
         />
-        <Select
+        <WindowedSelect
           isMulti
           instanceId={"team-select"}
           className="flex-grow text-sm mr-2"
@@ -119,6 +126,9 @@ const YearLineChart = ({
           options={teams}
           onChange={addTeam}
           value={selectedTeams}
+          filterOption={createFilter({ ignoreAccents: false })}
+          components={{ Option }}
+          windowThreshold={100}
         />
         <button
           className="flex-shrink-0 border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-36 px-2 mr-2 rounded text-sm flex items-center justify-center"
