@@ -16,7 +16,10 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
     numTeams: data.team_events.length,
   }));
 
-  const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data} />, [data]);
+  const MemoizedInsightsTable = useMemo(
+    () => <InsightsTable eventId={eventId} data={data} />,
+    [eventId, data]
+  );
   const MemoizedBubbleChart = useMemo(
     () => (
       <BubbleChart
@@ -45,7 +48,7 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full flex-grow flex flex-col">
       <div className="w-full flex flex-row">
         {["Insights", "Bubble Chart", "Figures"].map((_tab) => (
           <div
@@ -67,10 +70,20 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
         ))}
         <div className="flex-grow border-b-[1px] border-gray-200" />
       </div>
-      <div className="w-full h-auto flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
-        <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
-        <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>{MemoizedBubbleChart}</div>
-        <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
+      <div className="w-full flex-grow flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
+        {data === undefined ? (
+          <div className="w-full flex-grow flex flex-col items-center justify-center">
+            <div className="text-gray-700 mt-4">Loading data, please wait...</div>
+          </div>
+        ) : (
+          <>
+            <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
+            <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>
+              {MemoizedBubbleChart}
+            </div>
+            <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
+          </>
+        )}
       </div>
     </div>
   );

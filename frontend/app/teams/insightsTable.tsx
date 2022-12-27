@@ -20,7 +20,11 @@ const PageEventInsightsTable = ({ year, data }: { year: number; data: Data }) =>
   const [search, setSearch] = useState("");
 
   const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
-    .filter((teamYear) => teamYear.team?.toLowerCase().includes(search.toLowerCase()))
+    .filter(
+      (teamYear) =>
+        teamYear.team?.toLowerCase().includes(search.toLowerCase()) ||
+        teamYear.num.toString().includes(search.toLowerCase())
+    )
     .map((teamYear) => {
       return {
         num: teamYear.num ?? -1,

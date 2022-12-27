@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 

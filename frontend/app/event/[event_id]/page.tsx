@@ -34,10 +34,10 @@ async function Page({ params }: { params: { event_id: string } }) {
   let truncatedEventName = truncate(data.event_name, 30);
 
   return (
-    <div className="w-full h-full p-4">
-      <div className="container mx-auto">
+    <div className="w-full h-full flex-grow flex flex-col p-4">
+      <div className="h-full container mx-auto flex-grow flex flex-col">
         <div className="w-full flex flex-row items-end justify-center mb-4">
-          <p className="text-3xl lg:text-4xl">{truncatedEventName}</p>
+          <p className="text-2xl lg:text-3xl">{truncatedEventName}</p>
         </div>
         <Tabs eventId={event_id} data={data} />
       </div>
