@@ -2,9 +2,7 @@ import React from "react";
 import { components } from "react-select";
 
 export const Option = ({ children, ...props }) => {
-  const { ...rest } = props.innerProps;
-  // Currently does nothing, can be used to remove props from innerProps
-  // const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
+  const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
   const newProps: any = Object.assign(props, { innerProps: rest });
   return <components.Option {...newProps}>{children}</components.Option>;
 };
