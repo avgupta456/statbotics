@@ -595,6 +595,7 @@ def process_year(
         team_event.wins = wins
         team_event.losses = losses
         team_event.ties = ties
+        team_event.count = event_count
         team_event.winrate = winrate
 
     # EVENTS
@@ -729,6 +730,7 @@ def process_year(
         obj.wins = wins
         obj.losses = losses
         obj.ties = ties
+        obj.count = team_count
         obj.winrate = winrate
 
         obj.epa_rank = rank = year_epas.index(obj.epa_end) + 1

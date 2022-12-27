@@ -30,6 +30,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
             "state": x.state,
             "country": x.country,
             "district": x.district,
+            "epa_rank": x.epa_rank,
             "total_epa": x.epa_end,
             "auto_epa": x.auto_epa_end,
             "teleop_epa": x.teleop_epa_end,

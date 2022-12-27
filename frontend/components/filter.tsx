@@ -23,6 +23,7 @@ export const filterData = (data: any, filter: any) => {
 export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: any }) => {
   const filterKeys = Object.keys(filters);
   const stateOptions = filters?.country === "Canada" ? canadaOptions : usaOptions;
+  const stateLabel = filters?.country === "Canada" ? "Province" : "State";
 
   const smartSetFilters = (key: string, value: any) => {
     // Can add more logic here if needed
@@ -44,27 +45,34 @@ export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: a
     <div className="flex flex-row items-end justify-center">
       <button
         id="clear-filters"
-        className="border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-32 px-2 mr-2 rounded text-sm flex items-center justify-center"
+        className="filter_button w-32"
         onClick={() => setFilters({ country: "", state: "", district: "" })}
       >
         Clear Filters
       </button>
       {[
-        { key: "year", options: yearOptions },
-        { key: "country", options: countryOptions },
-        { key: "state", options: stateOptions },
-        { key: "district", options: districtOptions },
+        { key: "year", label: "Year", options: yearOptions },
+        { key: "country", label: "Country", options: countryOptions },
+        { key: "state", label: stateLabel, options: stateOptions },
+        { key: "district", label: "District", options: districtOptions },
       ].map((filter) => {
         if (filterKeys.includes(filter.key)) {
+          const currValue = filters[filter.key];
+          let currLabel = filter.options.find((option) => option.value === currValue)?.label;
+          let placeholder = currLabel === "All";
+          if (placeholder) {
+            currLabel = `${filter.label}`;
+          }
           return (
             <div key={filter.key} className="flex flex-col items-center justify-center">
-              <p className="w-full pl-1 text-sm text-gray-500 capitalize">
-                {filter.key === "state" && filters?.country === "Canada" ? "province" : filter.key}
-              </p>
               <Select
                 instanceId={"filter-select" + filter.key}
-                className="w-36 h-10 text-sm mr-2"
+                className={"w-36 h-10 text-sm mr-2 text-gray-800"}
                 styles={{
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: placeholder ? "#a0aec0" : "#2d3748",
+                  }),
                   menu: (provided) => ({ ...provided, zIndex: 9999 }),
                 }}
                 options={filter.options.map((option) => ({
@@ -72,11 +80,7 @@ export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: a
                   label: option.label,
                 }))}
                 onChange={(e) => smartSetFilters(filter.key, e?.value)}
-                value={{
-                  value: filters[filter.key],
-                  label: filter.options.find((option) => option.value === filters[filter.key])
-                    ?.label,
-                }}
+                value={{ value: currValue, label: currLabel }}
               />
             </div>
           );

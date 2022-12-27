@@ -69,12 +69,12 @@ const EventLineChart = ({
   const topTeams = teamEvents
     .sort((a, b) => b[yAxis.value] - a[yAxis.value])
     .slice(0, 3)
-    .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
+    .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
 
   // const moverTeams = teamEvents
   //   .sort((a, b) => b[`${yAxis}_diff`] - a[`${yAxis}_diff`])
   //   .slice(0, 3)
-  //   .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
+  //   .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
 
   const selectedTeamNums: number[] = selectedTeams.map((team: any) => team.value);
 
@@ -133,10 +133,7 @@ const EventLineChart = ({
           onChange={addTeam}
           value={selectedTeams}
         />
-        <button
-          className="flex-shrink-0 border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-36 px-2 mr-2 rounded text-sm flex items-center justify-center"
-          onClick={() => addManyTeams(topTeams)}
-        >
+        <button className="flex-shrink-0 filter_button w-36" onClick={() => addManyTeams(topTeams)}>
           Show Top 3 Teams
         </button>
       </div>

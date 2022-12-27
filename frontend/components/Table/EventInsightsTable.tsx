@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
@@ -42,7 +42,7 @@ const formatCell = (
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:p-1 rounded lg:rounded-lg")}>
+      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:m-0.5 rounded lg:rounded-lg")}>
         {info.getValue()}
       </div>
     </div>
@@ -102,7 +102,9 @@ const EventInsightsTable = ({
     [stats, disableHighlight]
   );
 
-  const headerClassName = (header: any) =>
+  const headerClassName = () => "border-b-2 border-gray-800";
+
+  const headerCellClassName = (header: any) =>
     classnames(
       "w-28 py-2",
       header.id === "num" ? "rounded-tl-lg" : "",
@@ -113,12 +115,20 @@ const EventInsightsTable = ({
 
   const cellClassName = (cell: any) =>
     classnames(
-      "w-28 py-2",
+      cell.column.id === "team" ? "w-40 py-2 truncate" : "w-28 py-2",
       cell.row.index === data.length - 1 && cell.column.id === "num" ? "rounded-bl-lg" : "",
       cell.row.index === data.length - 1 && cell.column.id === "rp_2_epa" ? "rounded-br-lg" : ""
     );
 
-  return Table(data, columns, true, headerClassName, rowClassName, cellClassName);
+  return Table(
+    data,
+    columns,
+    true,
+    headerClassName,
+    headerCellClassName,
+    rowClassName,
+    cellClassName
+  );
 };
 
 export default EventInsightsTable;

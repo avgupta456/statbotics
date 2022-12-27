@@ -19,7 +19,8 @@ const Table = (
   data: any[],
   columns: ColumnDef<any, any>[],
   paginate: boolean,
-  headerClassName: (header: any) => string,
+  headerClassName: () => string,
+  headerCellClassName: (header: any) => string,
   rowClassName: (row: any) => string,
   cellClassName: (cell: any) => string
 ) => {
@@ -57,12 +58,16 @@ const Table = (
   return (
     <div className="p-2 text-sm">
       <table>
-        <thead className="border-b-2">
+        <thead className={headerClassName()}>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <th key={header.id} colSpan={header.colSpan} className={headerClassName(header)}>
+                  <th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className={headerCellClassName(header)}
+                  >
                     {header.isPlaceholder ? null : (
                       <div
                         {...{
@@ -96,7 +101,7 @@ const Table = (
         </tbody>
       </table>
       {paginate && (
-        <div className="w-full h-10 flex items-center justify-center gap-4 mt-2">
+        <div className="w-full h-10 flex items-center justify-center gap-4 mt-4">
           <div className="flex gap-2">
             <div className="flex items-center">Rows per page:</div>
             <Select

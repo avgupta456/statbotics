@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import Select, { components, createFilter } from "react-select";
+import React, { useEffect, useState } from "react";
+import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
 import { BACKEND_URL } from "../../constants";
@@ -22,6 +22,11 @@ const YearLineChart = ({
   const [xAxis, setXAxis] = useState("match");
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
   const [allData, setAllData] = useState<any>({});
+
+  useEffect(() => {
+    setSelectedTeams([]);
+    setAllData({});
+  }, [year]);
 
   // FUNCTIONS
 
@@ -71,7 +76,7 @@ const YearLineChart = ({
   const topTeams = teamYears
     .sort((a, b) => b[yAxis.value] - a[yAxis.value])
     .slice(0, 3)
-    .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
+    .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
 
   const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
 
@@ -128,14 +133,11 @@ const YearLineChart = ({
           filterOption={createFilter({ ignoreAccents: false })}
           windowThreshold={100}
         />
-        <button
-          className="flex-shrink-0 border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-36 px-2 mr-2 rounded text-sm flex items-center justify-center"
-          onClick={() => addManyTeams(topTeams)}
-        >
+        <button className="flex-shrink-0 filter_button w-36" onClick={() => addManyTeams(topTeams)}>
           Show Top 3 Teams
         </button>
         <button
-          className="flex-shrink-0 border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 w-36 px-2 mr-2 rounded text-sm flex items-center justify-center"
+          className="flex-shrink-0 filter_button w-36"
           onClick={() => setXAxis(xAxis === "match" ? "season" : "match")}
         >
           {xAxis === "match" ? "Show % of Season" : "Show Match Num"}

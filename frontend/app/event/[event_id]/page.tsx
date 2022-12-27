@@ -1,6 +1,7 @@
 import React from "react";
 
 import { BACKEND_URL } from "../../../constants";
+import { truncate } from "../../../utils";
 import Tabs from "./tabs";
 import { Data } from "./types";
 
@@ -30,16 +31,13 @@ async function Page({ params }: { params: { event_id: string } }) {
     return <div>Event not found</div>;
   }
 
-  let truncatedEventName = data.event_name;
-  if (data.event_name.length > 30) {
-    truncatedEventName = data.event_name.slice(0, 27) + "...";
-  }
+  let truncatedEventName = truncate(data.event_name, 30);
 
   return (
-    <div className="w-full h-full p-4">
-      <div className="container mx-auto">
+    <div className="w-full h-full flex-grow flex flex-col p-4">
+      <div className="h-full container mx-auto flex-grow flex flex-col">
         <div className="w-full flex flex-row items-end justify-center mb-4">
-          <p className="text-3xl lg:text-4xl">{truncatedEventName}</p>
+          <p className="text-2xl lg:text-3xl">{truncatedEventName}</p>
         </div>
         <Tabs eventId={event_id} data={data} />
       </div>
