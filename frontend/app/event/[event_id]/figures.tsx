@@ -16,10 +16,12 @@ const FiguresSection = ({ eventId, data }: { eventId: string; data: Data }) => {
     .sort((a, b) => b.sortEpa - a.sortEpa)
     .slice(0, 16);
 
-  const lineData = data.team_events.map((teamEvent) => ({
-    value: teamEvent.num,
-    label: `${teamEvent.num} | ${teamEvent.team}`,
-  }));
+  const lineData = data.team_events
+    .map((teamEvent) => ({
+      value: teamEvent.num,
+      label: `${teamEvent.num} | ${teamEvent.team}`,
+    }))
+    .sort((a, b) => a.value - b.value);
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">

@@ -4,10 +4,12 @@ import YearLineChart from "../../components/Figures/YearLine";
 import { Data } from "./types";
 
 const FigureSection = ({ year, data }: { year: number; data: Data }) => {
-  const lineData = data.team_years.map((teamEvent) => ({
-    value: teamEvent.num,
-    label: `${teamEvent.num} | ${teamEvent.team}`,
-  }));
+  const lineData = data.team_years
+    .map((teamEvent) => ({
+      value: teamEvent.num,
+      label: `${teamEvent.num} | ${teamEvent.team}`,
+    }))
+    .sort((a, b) => a.value - b.value);
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">

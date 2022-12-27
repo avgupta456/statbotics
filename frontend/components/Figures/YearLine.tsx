@@ -76,7 +76,7 @@ const YearLineChart = ({
   const topTeams = teamYears
     .sort((a, b) => b[yAxis.value] - a[yAxis.value])
     .slice(0, 3)
-    .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
+    .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
 
   const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
 

@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import YearInsightsTable, { TeamYearInsights } from "../../components/Table/YearInsightsTable";
 import { TableKey } from "../../components/Table/shared";
 import { FilterBar, filterData } from "../../components/filter";
-import { round } from "../../utils";
+import { round, truncate } from "../../utils";
 import { Data } from "./types";
 
 const PageEventInsightsTable = ({ data }: { data: Data }) => {
@@ -20,7 +20,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
     .map((teamYear) => {
       return {
         num: teamYear.num ?? -1,
-        team: teamYear.team ?? "N/A",
+        team: teamYear.team ? truncate(teamYear.team, 30) : "N/A",
         epa_rank: teamYear.epa_rank ?? -1,
         epa: round(teamYear.total_epa, 1) ?? 0,
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",

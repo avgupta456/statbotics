@@ -1,6 +1,7 @@
 import React from "react";
 
 import { BACKEND_URL } from "../../../constants";
+import { truncate } from "../../../utils";
 import Summary from "./summary";
 import MatchTable from "./table";
 import { Data } from "./types";
@@ -32,10 +33,7 @@ async function Page({ params }: { params: { match_id: string } }) {
     return <div>Match not found</div>;
   }
 
-  let truncatedEventName = data.event_name;
-  if (data.event_name.length > 30) {
-    truncatedEventName = data.event_name.slice(0, 27) + "...";
-  }
+  let truncatedEventName = truncate(data.event_name, 30);
 
   return (
     <div className="w-full h-full p-4">

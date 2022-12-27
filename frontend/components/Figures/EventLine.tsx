@@ -69,12 +69,12 @@ const EventLineChart = ({
   const topTeams = teamEvents
     .sort((a, b) => b[yAxis.value] - a[yAxis.value])
     .slice(0, 3)
-    .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
+    .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
 
   // const moverTeams = teamEvents
   //   .sort((a, b) => b[`${yAxis}_diff`] - a[`${yAxis}_diff`])
   //   .slice(0, 3)
-  //   .map((team) => ({ value: team.num, label: `${team.team} | ${team.num}` }));
+  //   .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
 
   const selectedTeamNums: number[] = selectedTeams.map((team: any) => team.value);
 
