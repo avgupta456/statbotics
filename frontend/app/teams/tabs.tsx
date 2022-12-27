@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { BarLoader } from "react-spinners";
 
 import BubbleChart from "../../components/Figures/Bubble";
 import { classnames } from "../../utils";
@@ -12,7 +11,10 @@ import { Data, emptyData } from "./types";
 const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
   const [tab, setTab] = useState("Insights");
 
-  const MemoizedInsightsTable = useMemo(() => <InsightsTable data={data || emptyData} />, [data]);
+  const MemoizedInsightsTable = useMemo(
+    () => <InsightsTable year={year} data={data || emptyData} />,
+    [year, data]
+  );
   const MemoizedBubbleChart = useMemo(
     () => (
       <BubbleChart
@@ -64,7 +66,6 @@ const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
       <div className="w-full flex-grow flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
         {data === undefined ? (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
-            <BarLoader color="#3B82F6" />
             <div className="text-gray-700 mt-4">Loading data, please wait...</div>
           </div>
         ) : (

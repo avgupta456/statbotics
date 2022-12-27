@@ -10,6 +10,9 @@ module.exports = {
       fontSize: {
         xxs: ".625rem",
       },
+      colors: {
+        inputBlue: "#2684FF",
+      },
     },
   },
   plugins: [],

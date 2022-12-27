@@ -40,7 +40,7 @@ const Navbar = () => {
       className="text-gray-100 shadow-md body-font sticky top-0 z-50 px-4 py-3 flex"
       style={{ background: "#343A40" }}
     >
-      <div className="flex items-center gap-2 text-xl font-thin mr-8">
+      <Link href="/" className="flex items-center gap-2 text-xl font-thin mr-8">
         <Image
           src="/circ_favicon.ico"
           alt="logo"
@@ -49,8 +49,8 @@ const Navbar = () => {
           loader={loaderProp}
           unoptimized
         />
-        <Link href="/">Statbotics</Link>
-      </div>
+        Statbotics
+      </Link>
       <div className="flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
         <Link href="/teams">Teams</Link>
       </div>

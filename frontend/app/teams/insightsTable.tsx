@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { CSVLink } from "react-csv";
+import { DebounceInput } from "react-debounce-input";
 
 import YearInsightsTable, { TeamYearInsights } from "../../components/Table/YearInsightsTable";
 import { TableKey } from "../../components/Table/shared";
@@ -8,15 +10,17 @@ import { FilterBar, filterData } from "../../components/filter";
 import { round, truncate } from "../../utils";
 import { Data } from "./types";
 
-const PageEventInsightsTable = ({ data }: { data: Data }) => {
+const PageEventInsightsTable = ({ year, data }: { year: number; data: Data }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [filters, setFilters] = useState({
     country: "",
     state: "",
     district: "",
   });
+  const [search, setSearch] = useState("");
 
   const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
+    .filter((teamYear) => teamYear.team?.toLowerCase().includes(search.toLowerCase()))
     .map((teamYear) => {
       return {
         num: teamYear.num ?? -1,
@@ -41,7 +45,7 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="flex items-end justify-center mb-2">
+      <div className="flex items-center justify-center mb-2">
         <button
           className="filter_button w-32"
           onClick={() => setDisableHighlight(!disableHighlight)}
@@ -50,6 +54,17 @@ const PageEventInsightsTable = ({ data }: { data: Data }) => {
         </button>
         <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
         <FilterBar filters={filters} setFilters={setFilters} />
+        <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
+        <DebounceInput
+          minLength={2}
+          debounceTimeout={300}
+          className="w-40 p-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
+          placeholder="Search"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <CSVLink data={yearInsightsData} filename={`${year}_team_insights.csv`}>
+          <button className="filter_button w-20 ml-2">Export</button>
+        </CSVLink>
       </div>
       <YearInsightsTable {...YearInsightsTableProps} />
       <TableKey />
