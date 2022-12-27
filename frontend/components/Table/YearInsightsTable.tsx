@@ -107,7 +107,9 @@ const EventInsightsTable = ({
     [stats, disableHighlight]
   );
 
-  const headerClassName = (header: any) =>
+  const headerClassName = () => "border-b-2 border-gray-800";
+
+  const headerCellClassName = (header: any) =>
     classnames(
       "w-28 py-2",
       header.id === "num" ? "rounded-tl-lg" : "",
@@ -118,12 +120,20 @@ const EventInsightsTable = ({
 
   const cellClassName = (cell: any) =>
     classnames(
-      cell.column.id === "team" ? "w-40 py-1 truncate" : "w-28 py-1",
+      cell.column.id === "team" ? "w-40 py-2 truncate" : "w-28 py-2",
       cell.row.index === data.length - 1 && cell.column.id === "num" ? "rounded-bl-lg" : "",
       cell.row.index === data.length - 1 && cell.column.id === "rp_2_epa" ? "rounded-br-lg" : ""
     );
 
-  return Table(data, columns, true, headerClassName, rowClassName, cellClassName);
+  return Table(
+    data,
+    columns,
+    true,
+    headerClassName,
+    headerCellClassName,
+    rowClassName,
+    cellClassName
+  );
 };
 
 export default EventInsightsTable;

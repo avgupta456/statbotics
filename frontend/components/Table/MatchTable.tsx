@@ -136,7 +136,9 @@ const MatchTable = ({
     [stats, teams]
   );
 
-  const headerClassName = (header: any) =>
+  const headerClassName = () => "border-b-2";
+
+  const headerCellClassName = (header: any) =>
     classnames(
       "w-24 py-2",
       header.id.includes("red") ? "bg-red-200" : "",
@@ -160,7 +162,15 @@ const MatchTable = ({
       cell.row.original.name === "Total" && cell.column.id === "blue1" ? "rounded-br-lg" : ""
     );
 
-  return Table(data, columns, false, headerClassName, rowClassName, cellClassName);
+  return Table(
+    data,
+    columns,
+    false,
+    headerClassName,
+    headerCellClassName,
+    rowClassName,
+    cellClassName
+  );
 };
 
 export default MatchTable;

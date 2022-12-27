@@ -45,7 +45,7 @@ const PageEventInsightsTable = ({ year, data }: { year: number; data: Data }) =>
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="flex items-center justify-center mb-2">
+      <div className="flex items-center justify-center mb-4">
         <button
           className="filter_button w-32"
           onClick={() => setDisableHighlight(!disableHighlight)}

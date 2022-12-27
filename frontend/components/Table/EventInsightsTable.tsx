@@ -102,7 +102,9 @@ const EventInsightsTable = ({
     [stats, disableHighlight]
   );
 
-  const headerClassName = (header: any) =>
+  const headerClassName = () => "bg-blue-800 text-white";
+
+  const headerCellClassName = (header: any) =>
     classnames(
       "w-28 py-2",
       header.id === "num" ? "rounded-tl-lg" : "",
@@ -118,7 +120,15 @@ const EventInsightsTable = ({
       cell.row.index === data.length - 1 && cell.column.id === "rp_2_epa" ? "rounded-br-lg" : ""
     );
 
-  return Table(data, columns, true, headerClassName, rowClassName, cellClassName);
+  return Table(
+    data,
+    columns,
+    true,
+    headerClassName,
+    headerCellClassName,
+    rowClassName,
+    cellClassName
+  );
 };
 
 export default EventInsightsTable;
