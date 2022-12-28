@@ -18,7 +18,7 @@ async def read_root():
     return {"name": "Match Router"}
 
 
-@router.get("/{match_id}")
+@router.get("/match/{match_id}")
 @async_fail_gracefully
 async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
     match: Optional[Match] = await get_match(match_id)

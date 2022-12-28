@@ -33,7 +33,9 @@ async function Page({ params }: { params: { team: number } }) {
     <div className="w-full h-full p-4">
       <div className="container mx-auto">
         <div className="w-full flex flex-row items-end justify-center mb-4">
-          <p className="text-3xl lg:text-4xl">5511 Cortechs Robotics</p>
+          <p className="text-2xl lg:text-3xl">
+            Team {data.num}: {data.team}
+          </p>
         </div>
         <div className="w-full flex flex-row flex-wrap justify-center">TODO</div>
       </div>

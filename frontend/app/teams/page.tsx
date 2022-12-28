@@ -9,7 +9,7 @@ import Tabs from "./tabs";
 import { Data } from "./types";
 
 async function getData(year: number) {
-  const res = await fetch(`${BACKEND_URL}/team_year/` + year);
+  const res = await fetch(`${BACKEND_URL}/team_years/` + year);
   if (!res.ok) {
     return undefined;
   }

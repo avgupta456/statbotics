@@ -20,7 +20,7 @@ const Navbar = () => {
   const [teams, setTeams] = React.useState([]);
 
   useEffect(() => {
-    fetch(`${BACKEND_URL}/team/all`)
+    fetch(`${BACKEND_URL}/teams/all`)
       .then((res) => res.json())
       .then((data) => {
         setTeams(data.data);

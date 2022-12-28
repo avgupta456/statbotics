@@ -20,7 +20,7 @@ async def read_root():
     return {"name": "Event Router"}
 
 
-@router.get("/{event_id}")
+@router.get("/event/{event_id}")
 @async_fail_gracefully
 async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     event: Optional[Event] = await get_event(event_id)

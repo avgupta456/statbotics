@@ -18,7 +18,7 @@ async def read_root():
     return {"name": "Team Year Router"}
 
 
-@router.get("/{year}")
+@router.get("/team_years/{year}")
 @async_fail_gracefully
 async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
     team_year_objs: List[TeamYear] = await get_team_years(year)
@@ -56,7 +56,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
     return out
 
 
-@router.get("/{year}/{team}")
+@router.get("/team_year/{year}/{team}")
 @async_fail_gracefully
 async def read_team_matches(
     response: Response, year: int, team: int

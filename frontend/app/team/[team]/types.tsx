@@ -1,1 +1,4 @@
-export type Data = {};
+export type Data = {
+  num: number;
+  team: string;
+};
