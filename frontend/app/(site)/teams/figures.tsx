@@ -1,7 +1,7 @@
 import React from "react";
 
 import YearLineChart from "../../../components/Figures/YearLine";
-import { Data } from "./types";
+import { Data } from "../types";
 
 const FigureSection = ({ year, data }: { year: number; data: Data }) => {
   const lineData = data.team_years

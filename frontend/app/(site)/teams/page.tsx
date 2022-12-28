@@ -4,58 +4,25 @@ import React, { useContext, useEffect, useState } from "react";
 import Select from "react-select";
 
 import { yearOptions } from "../../../components/filterConstants";
-import { BACKEND_URL } from "../../../constants";
-import { getWithExpiry, setWithExpiry } from "../../api/local_storage";
-import { AppContext } from "../layout";
+import { AppContext } from "../context";
+// store types in (site) root so layout can access them
+import { Data } from "../types";
 import Tabs from "./tabs";
-import { Data } from "./types";
-
-async function getData(year: number) {
-  const cacheData = getWithExpiry(`team_years_${year}`);
-  if (cacheData && cacheData?.team_years?.length > 100) {
-    console.log("Using cached team data for year: " + year);
-    return cacheData;
-  }
-
-  const res = await fetch(`${BACKEND_URL}/team_years/` + year);
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = (await res.json())?.data;
-  setWithExpiry(`team_years_${year}`, data, 60); // 60 seconds
-  return data;
-}
 
 const Page = () => {
   const [year, setYear] = useState(2022);
-  const [dataDict, setDataDict] = useState<{ [key: number]: Data }>({});
-
-  const { team } = useContext(AppContext);
-
-  console.log("TEAM", team);
+  const {
+    dataDict,
+    getDataForYear,
+  }: {
+    dataDict: { [key: number]: Data };
+    getDataForYear: (year: number) => void;
+  } = useContext(AppContext);
 
   useEffect(() => {
     console.log("UseEffect", dataDict, year);
-    async function fetchData() {
-      if (dataDict[year]) {
-        return;
-      }
-
-      console.log("Fetching team data for year: " + year);
-      const start = performance.now();
-      const data: Data = await getData(year);
-      console.log(
-        "Fetched team data for year: " +
-          year +
-          ". Took " +
-          Math.round(performance.now() - start) +
-          "ms"
-      );
-      setDataDict((prev) => ({ ...prev, [year]: data }));
-    }
-
-    fetchData();
-  }, [dataDict, year]);
+    getDataForYear(year);
+  }, [dataDict, getDataForYear, year]);
 
   const data: Data | undefined = dataDict[year];
 
