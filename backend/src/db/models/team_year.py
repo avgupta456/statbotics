@@ -66,6 +66,9 @@ class TeamYearORM(Base, ModelORM):
     rp_2_epa_mean = Column(Float)
     rp_2_epa_max = Column(Float)
 
+    """NORM EPA"""
+    norm_epa_end = Column(Float)
+
     """STATS"""
     wins = Column(Integer)
     losses = Column(Integer)
@@ -124,6 +127,10 @@ class TeamYear(Model):
     rp_2_epa_end: Optional[float] = None
     rp_2_epa_mean: Optional[float] = None
     rp_2_epa_max: Optional[float] = None
+
+    norm_epa_start: Optional[float] = None
+    norm_epa_pre_champs: Optional[float] = None
+    norm_epa_end: Optional[float] = None
 
     wins: int = 0
     losses: int = 0

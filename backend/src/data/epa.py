@@ -3,7 +3,7 @@ from statistics import stdev
 from typing import Dict, List, Tuple
 
 import numpy as np
-from scipy.stats import exponnorm  # type: ignore
+from scipy.stats import expon, exponnorm  # type: ignore
 
 from src.db.models.event import Event
 from src.db.models.match import Match
@@ -11,10 +11,15 @@ from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.db.models.year import Year
+from src.db.read.team_year import get_team_years as get_team_years_db
+from src.db.write.main import update_teams as update_teams_db
+from src.db.read.team import get_teams as get_teams_db
 from src.utils.utils import get_team_event_key, get_team_match_key
 
 # HELPER FUNCTIONS
 
+NORM_MEAN = 1500
+NORM_SD = 250
 
 distrib = exponnorm(1.6, -0.3, 0.2)
 
@@ -23,13 +28,17 @@ def ppf(x: float) -> float:
     return distrib.ppf(x)  # type: ignore
 
 
-def norm_epa(
-    prev_percentile: float,
+def norm_epa_to_sd(norm_epa: float) -> float:
+    return (norm_epa - NORM_MEAN) / NORM_SD
+
+
+def norm_epa_to_next_season_epa(
+    norm_epa: float,
     curr_mean: float,
     curr_sd: float,
     curr_num_teams: int,
 ) -> float:
-    return max(curr_mean / curr_num_teams + curr_sd * ppf(prev_percentile), 0)
+    return max(curr_mean / curr_num_teams + curr_sd * norm_epa_to_sd(norm_epa), 0)
 
 
 def sigmoid(x: float) -> float:
@@ -38,6 +47,12 @@ def sigmoid(x: float) -> float:
 
 def inv_sigmoid(x: float) -> float:
     return 0.5 + np.log(x / (1 - x)) / 4
+
+
+def ewma(arr: List[float], halflife: int = 2) -> float:
+    alpha, N = 0.5 ** (1 / halflife), len(arr)
+    total = sum([alpha**i * arr[-i - 1] for i in range(N)])
+    return total / sum([alpha**i for i in range(N)])
 
 
 # TUNABLE PARAMETERS
@@ -150,8 +165,10 @@ def process_year(
             for past_year in range(year_num - 1, year_num - 5, -1):
                 past_team_year = team_years_all.get(past_year, {}).get(num, None)
                 if past_team_year is not None and past_team_year.epa_max is not None:
-                    prev_percentile = past_team_year.epa_percentile or 0.9
-                    new_epa = norm_epa(prev_percentile, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS)
+                    prev_norm_epa = past_team_year.norm_epa_end or NORM_MEAN
+                    new_epa = norm_epa_to_next_season_epa(
+                        prev_norm_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
+                    )
                     past_epas.append(new_epa)
             epa_1yr = past_epas[0] if len(past_epas) > 0 else None
             epa_2yr = past_epas[1] if len(past_epas) > 1 else None
@@ -159,12 +176,16 @@ def process_year(
             # Otherwise use the two most recent years (regardless of team activity)
             team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
             if team_year_1 is not None and team_year_1.epa_max is not None:
-                prev_percentile = team_year_1.epa_percentile or 0.9
-                epa_1yr = norm_epa(prev_percentile, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS)
+                prev_norm_epa = team_year_1.norm_epa_end or NORM_MEAN
+                epa_1yr = norm_epa_to_next_season_epa(
+                    prev_norm_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
+                )
             team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
             if team_year_2 is not None and team_year_2.epa_max is not None:
-                prev_percentile = team_year_2.epa_percentile or 0.9
-                epa_2yr = norm_epa(prev_percentile, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS)
+                prev_norm_epa = team_year_2.norm_epa_end or NORM_MEAN
+                epa_2yr = norm_epa_to_next_season_epa(
+                    prev_norm_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
+                )
 
         epa_1yr = epa_1yr or INIT_EPA
         epa_2yr = epa_2yr or INIT_EPA
@@ -635,6 +656,7 @@ def process_year(
 
     # TEAM YEARS
     year_epas: List[float] = []
+    year_ewma_epas: Dict[int, float] = {}
     year_auto_epas: List[float] = []
     year_teleop_epas: List[float] = []
     year_endgame_epas: List[float] = []
@@ -649,6 +671,7 @@ def process_year(
 
         # Use end of season epa
         year_epas.append(round(curr_team_epas[-1], 2))
+        year_ewma_epas[team] = round(ewma(curr_team_epas), 2)
 
         if USE_COMPONENTS:
             curr_component_team_epas = component_team_matches_dict[team]
@@ -660,6 +683,24 @@ def process_year(
 
     for team in to_remove:
         team_years_dict.pop(team)
+
+    year_ewma_epa_list = list(year_ewma_epas.values())
+    year_ewma_epa_list.sort(reverse=True)
+    total_N, cutoff_N = len(year_ewma_epa_list), int(len(year_ewma_epas) / 10)
+    exponnorm_disrib = None if total_N == 0 else exponnorm(*exponnorm.fit(year_ewma_epa_list))  # type: ignore
+    expon_distrib = None if cutoff_N == 0 else expon(*expon.fit(year_ewma_epa_list[:cutoff_N]))  # type: ignore
+
+    def get_norm_epa(epa: float, i: int) -> float:
+        exponnorm_value: float = exponnorm_disrib.cdf(epa)  # type: ignore
+        percentile = exponnorm_value
+        if i < cutoff_N:
+            expon_value: float = expon_distrib.cdf(epa)  # type: ignore
+            expon_value = 1 - cutoff_N / total_N * (1 - expon_value)
+            # Linearly interpolate between the two distributions from 10% to 5%
+            expon_frac = min(1, 2 * (cutoff_N - i) / cutoff_N)
+            percentile = expon_frac * expon_value + (1 - expon_frac) * exponnorm_value
+        out: float = distrib.ppf(percentile)  # type: ignore
+        return NORM_MEAN + NORM_SD * out
 
     year_epas.sort(reverse=True)
     team_year_count = len(team_years_dict)
@@ -675,12 +716,17 @@ def process_year(
 
         # TODO: revisit how we calculate epa_max (maybe use max of 6 match rolling average?)
         # Since higher variability due to increased percent change per match
+        # Maybe use EWMA instead of rolling average?
 
         n = len(curr_team_epas)
         obj.epa_max = round(max(curr_team_epas[min(n - 1, 8) :]), 2)
         obj.epa_mean = round(sum(curr_team_epas) / n, 2)
         obj.epa_end = round(team_epas[team], 2)
         obj.epa_diff = round(obj.epa_end - (obj.epa_start or 0), 2)
+
+        ewma_epa = year_ewma_epas[team]
+        ewma_index = year_ewma_epa_list.index(ewma_epa)
+        obj.norm_epa_end = round(get_norm_epa(ewma_epa, ewma_index), 2)
 
         if USE_COMPONENTS:
             obj.auto_epa_max = round(max(curr_auto_team_epas[min(n - 1, 8) :]), 2)
@@ -903,3 +949,50 @@ def process_year(
         matches,
         team_matches,
     )
+
+
+def post_process(end_year: int):
+    team_team_years: Dict[int, List[TeamYear]] = defaultdict(list)
+    all_team_years = get_team_years_db()
+    for team_year in all_team_years:
+        team_team_years[team_year.team].append(team_year)
+
+    all_teams = get_teams_db()
+    for team in all_teams:
+        years: Dict[int, float] = {}
+        wins, losses, ties, count = 0, 0, 0, 0
+
+        team.active = False
+        for team_year in team_team_years[team.team]:
+            if team_year.year == end_year:
+                team.active = True
+            if team_year.norm_epa_end is not None:
+                years[team_year.year] = team_year.norm_epa_end
+
+            wins += team_year.wins
+            losses += team_year.losses
+            ties += team_year.ties
+            count += team_year.count
+
+        keys, values = years.keys(), years.values()
+
+        # get recent epas (last five years)
+        recent: List[float] = []
+        for year in range(end_year - 5, end_year):
+            if year in keys:
+                recent.append(years[year])
+        r_y, y = len(recent), len(keys)
+
+        team.norm_epa = None if y == 0 else round(years[max(keys)])
+        team.norm_epa_recent = None if r_y == 0 else round(sum(recent) / r_y)
+        team.norm_epa_mean = None if y == 0 else round(sum(values) / y)
+        team.norm_epa_max = None if y == 0 else round(max(values))
+
+        winrate = round((wins + ties / 2) / max(1, count), 4)
+        team.wins = wins
+        team.losses = losses
+        team.ties = ties
+        team.count = count
+        team.winrate = winrate
+
+    update_teams_db(all_teams, False)
