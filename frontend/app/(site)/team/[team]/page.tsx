@@ -1,6 +1,6 @@
 import React from "react";
 
-import { BACKEND_URL } from "../../../constants";
+import { BACKEND_URL } from "../../../../constants";
 import { Data } from "./types";
 
 async function getData(team: number) {

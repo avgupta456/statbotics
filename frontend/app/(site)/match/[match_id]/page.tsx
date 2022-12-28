@@ -1,7 +1,7 @@
 import React from "react";
 
-import { BACKEND_URL } from "../../../constants";
-import { truncate } from "../../../utils";
+import { BACKEND_URL } from "../../../../constants";
+import { truncate } from "../../../../utils";
 import Summary from "./summary";
 import MatchTable from "./table";
 import { Data } from "./types";

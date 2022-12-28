@@ -1,17 +1,17 @@
 import React from "react";
 
+import Link from "next/link";
+
 import { classnames } from "../../utils";
 import { PercentileStats } from "../types/api";
 
 export const TeamLink = ({ team, num }: { team: string | number; num: string | number }) => (
-  <a
+  <Link
     href={`/team/${num}`}
-    target="_blank"
-    rel="noopener noreferrer"
     className="text-blue-500 hover:text-blue-600 underline cursor-pointer"
   >
     {team}
-  </a>
+  </Link>
 );
 
 export const CONDITIONAL_COLORS = [

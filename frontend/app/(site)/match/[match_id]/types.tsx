@@ -1,4 +1,4 @@
-import { YearStats } from "../../../components/types/api";
+import { YearStats } from "../../../../components/types/api";
 
 type Match = {
   key: string;

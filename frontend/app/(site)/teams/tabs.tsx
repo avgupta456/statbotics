@@ -4,27 +4,22 @@ import React, { useMemo, useState } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
 import { classnames } from "../../../utils";
-import FiguresSection from "./figures";
+import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
-import { Data } from "./types";
+import { Data, emptyData } from "./types";
 
-const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
+const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
   const [tab, setTab] = useState("Insights");
 
-  const bubbleData = data.team_events.map((teamEvent) => ({
-    ...teamEvent,
-    numTeams: data.team_events.length,
-  }));
-
   const MemoizedInsightsTable = useMemo(
-    () => <InsightsTable eventId={eventId} data={data} />,
-    [eventId, data]
+    () => <InsightsTable year={year} data={data || emptyData} />,
+    [year, data]
   );
   const MemoizedBubbleChart = useMemo(
     () => (
       <BubbleChart
-        data={bubbleData}
-        filterOptions={[]}
+        data={data?.team_years ?? []}
+        filterOptions={["country", "state", "district"]}
         columnOptions={[
           "Auto",
           "Teleop",
@@ -33,18 +28,16 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
           "RP 1",
           "RP 2",
           "Total",
-          "Rank",
-          "N - Rank",
-          "RPs / Match",
           "Wins",
+          "Win Rate",
         ]}
       />
     ),
-    [bubbleData]
+    [data]
   );
   const MemoizedFigureSection = useMemo(
-    () => <FiguresSection eventId={eventId} data={data} />,
-    [eventId, data]
+    () => <FigureSection year={year} data={data || emptyData} />,
+    [year, data]
   );
 
   return (
@@ -89,4 +82,4 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   );
 };
 
-export default Tabs;
+export default Tab;

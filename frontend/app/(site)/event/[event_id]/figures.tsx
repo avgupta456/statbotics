@@ -1,7 +1,7 @@
 import React from "react";
 
-import BarChart from "../../../components/Figures/Bar";
-import EventLineChart from "../../../components/Figures/EventLine";
+import BarChart from "../../../../components/Figures/Bar";
+import EventLineChart from "../../../../components/Figures/EventLine";
 import { Data } from "./types";
 
 const FiguresSection = ({ eventId, data }: { eventId: string; data: Data }) => {

@@ -1,37 +1,51 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Select from "react-select";
 
-import { yearOptions } from "../../components/filterConstants";
-import { BACKEND_URL } from "../../constants";
+import { yearOptions } from "../../../components/filterConstants";
+import { BACKEND_URL } from "../../../constants";
+import { getWithExpiry, setWithExpiry } from "../../api/local_storage";
+import { AppContext } from "../layout";
 import Tabs from "./tabs";
 import { Data } from "./types";
 
 async function getData(year: number) {
+  const cacheData = getWithExpiry(`team_years_${year}`);
+  if (cacheData && cacheData?.team_years?.length > 100) {
+    console.log("Using cached team data for year: " + year);
+    return cacheData;
+  }
+
   const res = await fetch(`${BACKEND_URL}/team_years/` + year);
   if (!res.ok) {
     return undefined;
   }
-  const data = await res.json();
-  return data?.data;
+  const data = (await res.json())?.data;
+  setWithExpiry(`team_years_${year}`, data, 60); // 60 seconds
+  return data;
 }
 
 const Page = () => {
   const [year, setYear] = useState(2022);
   const [dataDict, setDataDict] = useState<{ [key: number]: Data }>({});
 
+  const { team } = useContext(AppContext);
+
+  console.log("TEAM", team);
+
   useEffect(() => {
+    console.log("UseEffect", dataDict, year);
     async function fetchData() {
       if (dataDict[year]) {
         return;
       }
 
-      console.log("Fetching event data for year: " + year);
+      console.log("Fetching team data for year: " + year);
       const start = performance.now();
       const data: Data = await getData(year);
       console.log(
-        "Fetched event data for year: " +
+        "Fetched team data for year: " +
           year +
           ". Took " +
           Math.round(performance.now() - start) +
@@ -44,6 +58,8 @@ const Page = () => {
   }, [dataDict, year]);
 
   const data: Data | undefined = dataDict[year];
+
+  console.log("Rerender");
 
   return (
     <div className="w-full h-full flex-grow flex flex-col p-4">

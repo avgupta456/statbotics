@@ -1,6 +1,6 @@
 import React from "react";
 
-import YearLineChart from "../../components/Figures/YearLine";
+import YearLineChart from "../../../components/Figures/YearLine";
 import { Data } from "./types";
 
 const FigureSection = ({ year, data }: { year: number; data: Data }) => {

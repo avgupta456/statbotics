@@ -1,8 +1,8 @@
 import React from "react";
 
-import MatchTable, { Component } from "../../../components/Table/MatchTable";
-import { TableKey } from "../../../components/Table/shared";
-import { round } from "../../../utils";
+import MatchTable, { Component } from "../../../../components/Table/MatchTable";
+import { TableKey } from "../../../../components/Table/shared";
+import { round } from "../../../../utils";
 import { Data } from "./types";
 
 const PageMatchTable = ({ data }: { data: Data }) => {
