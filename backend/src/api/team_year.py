@@ -2,11 +2,11 @@ from typing import Any, Dict, List
 
 from fastapi import APIRouter, Response
 
-from src.db.models.team_year import TeamYear
-from src.db.models.team_match import TeamMatch
 from src.api.aggregation.year import get_year_stats
-from src.api.db.team_year import get_team_years
 from src.api.db.team_match import get_team_matches
+from src.api.db.team_year import get_team_years
+from src.db.models.team_match import TeamMatch
+from src.db.models.team_year import TeamYear
 from src.utils.decorators import async_fail_gracefully
 from src.utils.utils import get_match_number
 
@@ -31,6 +31,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
             "country": x.country,
             "district": x.district,
             "epa_rank": x.epa_rank,
+            "norm_epa": x.norm_epa_end,
             "total_epa": x.epa_end,
             "auto_epa": x.auto_epa_end,
             "teleop_epa": x.teleop_epa_end,

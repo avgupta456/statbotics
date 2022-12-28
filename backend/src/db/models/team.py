@@ -24,11 +24,10 @@ class TeamORM(Base, ModelORM):
     active = Column(Boolean)
 
     """EPA"""
-    # TODO: normalized EPA values
-    # epa = Column(Float)
-    # epa_recent = Column(Float)
-    # epa_mean = Column(Float)
-    # epa_max = Column(Float)
+    norm_epa = Column(Float)
+    norm_epa_recent = Column(Float)
+    norm_epa_mean = Column(Float)
+    norm_epa_max = Column(Float)
 
     """STATS"""
     wins = Column(Integer)
@@ -47,12 +46,11 @@ class Team(Model):
     district: Optional[str] = None
     active: Optional[bool] = None
 
-    # epa: Optional[float] = None
-    # epa_recent: Optional[float] = None
-    # epa_mean: Optional[float] = None
-    # epa_max: Optional[float] = None
+    norm_epa: Optional[float] = None
+    norm_epa_recent: Optional[float] = None
+    norm_epa_mean: Optional[float] = None
+    norm_epa_max: Optional[float] = None
 
-    # TODO: populate Team Model in post_process_epa
     wins: int = 0
     losses: int = 0
     ties: int = 0
