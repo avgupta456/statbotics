@@ -23,6 +23,10 @@ const Page = () => {
 
   useEffect(() => {
     async function fetchData() {
+      if (dataDict[year]) {
+        return;
+      }
+
       console.log("Fetching event data for year: " + year);
       const start = performance.now();
       const data: Data = await getData(year);
@@ -37,7 +41,7 @@ const Page = () => {
     }
 
     fetchData();
-  }, [year]);
+  }, [dataDict, year]);
 
   const data: Data | undefined = dataDict[year];
 

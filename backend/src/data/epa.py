@@ -11,9 +11,9 @@ from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.db.models.year import Year
+from src.db.read.team import get_teams as get_teams_db
 from src.db.read.team_year import get_team_years as get_team_years_db
 from src.db.write.main import update_teams as update_teams_db
-from src.db.read.team import get_teams as get_teams_db
 from src.utils.utils import get_team_event_key, get_team_match_key
 
 # HELPER FUNCTIONS
@@ -47,12 +47,6 @@ def sigmoid(x: float) -> float:
 
 def inv_sigmoid(x: float) -> float:
     return 0.5 + np.log(x / (1 - x)) / 4
-
-
-def ewma(arr: List[float], halflife: int = 2) -> float:
-    alpha, N = 0.5 ** (1 / halflife), len(arr)
-    total = sum([alpha**i * arr[-i - 1] for i in range(N)])
-    return total / sum([alpha**i for i in range(N)])
 
 
 # TUNABLE PARAMETERS
@@ -656,7 +650,7 @@ def process_year(
 
     # TEAM YEARS
     year_epas: List[float] = []
-    year_ewma_epas: Dict[int, float] = {}
+    year_epas_dict: Dict[int, float] = {}  # for norm epa
     year_auto_epas: List[float] = []
     year_teleop_epas: List[float] = []
     year_endgame_epas: List[float] = []
@@ -671,7 +665,7 @@ def process_year(
 
         # Use end of season epa
         year_epas.append(round(curr_team_epas[-1], 2))
-        year_ewma_epas[team] = round(ewma(curr_team_epas), 2)
+        year_epas_dict[team] = round(curr_team_epas[-1], 2)
 
         if USE_COMPONENTS:
             curr_component_team_epas = component_team_matches_dict[team]
@@ -684,11 +678,10 @@ def process_year(
     for team in to_remove:
         team_years_dict.pop(team)
 
-    year_ewma_epa_list = list(year_ewma_epas.values())
-    year_ewma_epa_list.sort(reverse=True)
-    total_N, cutoff_N = len(year_ewma_epa_list), int(len(year_ewma_epas) / 10)
-    exponnorm_disrib = None if total_N == 0 else exponnorm(*exponnorm.fit(year_ewma_epa_list))  # type: ignore
-    expon_distrib = None if cutoff_N == 0 else expon(*expon.fit(year_ewma_epa_list[:cutoff_N]))  # type: ignore
+    year_epas.sort(reverse=True)
+    total_N, cutoff_N = len(year_epas), int(len(year_epas) / 10)
+    exponnorm_disrib = None if total_N == 0 else exponnorm(*exponnorm.fit(year_epas))  # type: ignore
+    expon_distrib = None if cutoff_N == 0 else expon(*expon.fit(year_epas[:cutoff_N]))  # type: ignore
 
     def get_norm_epa(epa: float, i: int) -> float:
         exponnorm_value: float = exponnorm_disrib.cdf(epa)  # type: ignore
@@ -716,7 +709,6 @@ def process_year(
 
         # TODO: revisit how we calculate epa_max (maybe use max of 6 match rolling average?)
         # Since higher variability due to increased percent change per match
-        # Maybe use EWMA instead of rolling average?
 
         n = len(curr_team_epas)
         obj.epa_max = round(max(curr_team_epas[min(n - 1, 8) :]), 2)
@@ -724,9 +716,8 @@ def process_year(
         obj.epa_end = round(team_epas[team], 2)
         obj.epa_diff = round(obj.epa_end - (obj.epa_start or 0), 2)
 
-        ewma_epa = year_ewma_epas[team]
-        ewma_index = year_ewma_epa_list.index(ewma_epa)
-        obj.norm_epa_end = round(get_norm_epa(ewma_epa, ewma_index), 2)
+        epa_index = year_epas.index(obj.epa_end)
+        obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 2)
 
         if USE_COMPONENTS:
             obj.auto_epa_max = round(max(curr_auto_team_epas[min(n - 1, 8) :]), 2)
@@ -978,7 +969,7 @@ def post_process(end_year: int):
 
         # get recent epas (last five years)
         recent: List[float] = []
-        for year in range(end_year - 5, end_year):
+        for year in range(end_year - 5, end_year + 1):
             if year in keys:
                 recent.append(years[year])
         r_y, y = len(recent), len(keys)

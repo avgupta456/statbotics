@@ -10,7 +10,7 @@ import { FilterBar, filterData } from "../../components/filter";
 import { round, truncate } from "../../utils";
 import { Data } from "./types";
 
-const PageEventInsightsTable = ({ year, data }: { year: number; data: Data }) => {
+const PageTeamInsightsTable = ({ year, data }: { year: number; data: Data }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [filters, setFilters] = useState({
     country: "",
@@ -30,7 +30,8 @@ const PageEventInsightsTable = ({ year, data }: { year: number; data: Data }) =>
         num: teamYear.num ?? -1,
         team: teamYear.team ? truncate(teamYear.team, 30) : "N/A",
         epa_rank: teamYear.epa_rank ?? -1,
-        epa: round(teamYear.total_epa, 1) ?? 0,
+        norm_epa: round(teamYear.norm_epa, 0) ?? 0,
+        epa: round(teamYear.total_epa, 1) ?? "N/A",
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamYear.endgame_epa, 1) ?? "N/A",
@@ -39,7 +40,7 @@ const PageEventInsightsTable = ({ year, data }: { year: number; data: Data }) =>
         record: `${teamYear.wins}-${teamYear.losses}-${teamYear.ties}` ?? "N/A",
       };
     })
-    .sort((a, b) => b.epa - a.epa);
+    .sort((a, b) => b.norm_epa - a.norm_epa);
 
   const YearInsightsTableProps = {
     data: yearInsightsData,
@@ -76,4 +77,4 @@ const PageEventInsightsTable = ({ year, data }: { year: number; data: Data }) =>
   );
 };
 
-export default PageEventInsightsTable;
+export default PageTeamInsightsTable;

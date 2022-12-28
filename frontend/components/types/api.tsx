@@ -26,6 +26,7 @@ export type TeamYear = {
   state: string;
   country: string;
   district: string;
+  norm_epa: number;
   total_epa: number;
   auto_epa: number;
   teleop_epa: number;

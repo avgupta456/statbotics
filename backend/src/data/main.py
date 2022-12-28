@@ -1,7 +1,10 @@
 from typing import Dict, Tuple
 
 from src.data.avg import process_year as process_year_avg
-from src.data.epa import process_year as process_year_epa
+from src.data.epa import (
+    post_process as post_process_epa,
+    process_year as process_year_epa,
+)
 from src.data.tba import (
     load_teams as load_teams_tba,
     post_process as post_process_tba,
@@ -62,6 +65,7 @@ def reset_all_years(start_year: int, end_year: int):
         year_epa_stats[year_num] = (new_mean, new_sd)
 
     time_func("Post TBA", post_process_tba)
+    time_func("Post EPA", lambda: post_process_epa(end_year))
     # print_table_stats()
 
 
@@ -97,6 +101,7 @@ def reset_curr_year(curr_year: int):
 
     time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, True)  # type: ignore
     time_func("Post TBA", post_process_tba)
+    time_func("Post EPA", lambda: post_process_epa(curr_year))
 
 
 def update_curr_year(curr_year: int):

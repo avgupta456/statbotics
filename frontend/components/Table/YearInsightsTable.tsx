@@ -75,6 +75,10 @@ const EventInsightsTable = ({
         cell: (info) => info.getValue(),
         header: "EPA Rank",
       }),
+      columnHelper.accessor("norm_epa", {
+        cell: (info) => info.getValue(),
+        header: "Norm EPA",
+      }),
       columnHelper.accessor("epa", {
         cell: (info) => formatCell(stats.total, info, disableHighlight),
         header: "EPA",

@@ -128,8 +128,6 @@ class TeamYear(Model):
     rp_2_epa_mean: Optional[float] = None
     rp_2_epa_max: Optional[float] = None
 
-    norm_epa_start: Optional[float] = None
-    norm_epa_pre_champs: Optional[float] = None
     norm_epa_end: Optional[float] = None
 
     wins: int = 0
