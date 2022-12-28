@@ -45,6 +45,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: Data }) => 
   const YearInsightsTableProps = {
     data: yearInsightsData,
     stats: data.year_stats,
+    year,
     disableHighlight,
   };
 

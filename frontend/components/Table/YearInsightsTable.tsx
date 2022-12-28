@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
+import { CURR_YEAR } from "../../constants";
 import { classnames } from "../../utils";
 import { PercentileStats, YearStats } from "../types/api";
 import Table from "./Table";
@@ -13,6 +14,7 @@ export type TeamYearInsights = {
   num: number;
   team: string;
   epa_rank: number;
+  norm_epa: number;
   epa: number; // used for sorting
   auto_epa: number | string;
   teleop_epa: number | string;
@@ -52,17 +54,19 @@ const formatCell = (
 
 const columnHelper = createColumnHelper<TeamYearInsights>();
 
-const EventInsightsTable = ({
+const TeamInsightsTable = ({
   data,
   stats,
+  year,
   disableHighlight,
 }: {
   data: TeamYearInsights[];
   stats: YearStats;
+  year: number;
   disableHighlight: boolean;
 }) => {
-  const columns = useMemo<any>(
-    () => [
+  const columns = useMemo<any>(() => {
+    const showColumns = [
       columnHelper.accessor("num", {
         cell: (info) => info.getValue(),
         header: "Number",
@@ -75,41 +79,47 @@ const EventInsightsTable = ({
         cell: (info) => info.getValue(),
         header: "EPA Rank",
       }),
-      columnHelper.accessor("norm_epa", {
-        cell: (info) => info.getValue(),
-        header: "Norm EPA",
-      }),
+      year < CURR_YEAR &&
+        columnHelper.accessor("norm_epa", {
+          cell: (info) => info.getValue(),
+          header: "Norm EPA",
+        }),
       columnHelper.accessor("epa", {
         cell: (info) => formatCell(stats.total, info, disableHighlight),
         header: "EPA",
       }),
-      columnHelper.accessor("auto_epa", {
-        cell: (info) => formatCell(stats.auto, info, disableHighlight),
-        header: "Auto EPA",
-      }),
-      columnHelper.accessor("teleop_epa", {
-        cell: (info) => formatCell(stats.teleop, info, disableHighlight),
-        header: "Teleop EPA",
-      }),
-      columnHelper.accessor("endgame_epa", {
-        cell: (info) => formatCell(stats.endgame, info, disableHighlight),
-        header: "Endgame EPA",
-      }),
-      columnHelper.accessor("rp_1_epa", {
-        cell: (info) => formatCell(stats.rp_1, info, disableHighlight),
-        header: "RP1 EPA",
-      }),
-      columnHelper.accessor("rp_2_epa", {
-        cell: (info) => formatCell(stats.rp_2, info, disableHighlight),
-        header: "RP2 EPA",
-      }),
+      year >= 2016 &&
+        columnHelper.accessor("auto_epa", {
+          cell: (info) => formatCell(stats.auto, info, disableHighlight),
+          header: "Auto EPA",
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("teleop_epa", {
+          cell: (info) => formatCell(stats.teleop, info, disableHighlight),
+          header: "Teleop EPA",
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("endgame_epa", {
+          cell: (info) => formatCell(stats.endgame, info, disableHighlight),
+          header: "Endgame EPA",
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("rp_1_epa", {
+          cell: (info) => formatCell(stats.rp_1, info, disableHighlight),
+          header: "RP1 EPA",
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("rp_2_epa", {
+          cell: (info) => formatCell(stats.rp_2, info, disableHighlight),
+          header: "RP2 EPA",
+        }),
       columnHelper.accessor("record", {
         cell: (info) => info.getValue(),
         header: "Record",
       }),
-    ],
-    [stats, disableHighlight]
-  );
+    ].filter((x) => x);
+    return showColumns;
+  }, [year, stats, disableHighlight]);
 
   const headerClassName = () => "border-b-2 border-gray-800";
 
@@ -140,4 +150,4 @@ const EventInsightsTable = ({
   );
 };
 
-export default EventInsightsTable;
+export default TeamInsightsTable;
