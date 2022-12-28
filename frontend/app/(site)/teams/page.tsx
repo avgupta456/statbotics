@@ -13,8 +13,6 @@ const Page = () => {
   const { dataDict, year, setYear } = useContext(AppContext);
   const data: Data | undefined = dataDict[year];
 
-  console.log("Rerender");
-
   return (
     <div className="w-full h-full flex-grow flex flex-col p-4">
       <div className="h-full container mx-auto flex-grow flex flex-col">
@@ -32,7 +30,7 @@ const Page = () => {
               label: year.toString(),
             }}
           />
-          <p className="text-2xl lg:text-3xl text-gray-800 ml-3">Team Lookup</p>
+          <p className="text-2xl lg:text-3xl ml-3">Team Lookup</p>
         </div>
         <Tabs year={year} data={data} />
       </div>

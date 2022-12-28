@@ -1,6 +1,7 @@
 import React from "react";
 
 import { BACKEND_URL } from "../../../../constants";
+import Tabs from "./tabs";
 import { Data } from "./types";
 
 async function getData(team: number) {
@@ -14,15 +15,13 @@ async function getData(team: number) {
 
 async function Page({ params }: { params: { team: number } }) {
   const { team } = params;
-  console.log("Fetching match data for team: " + team);
+  const year = 2022;
+
+  console.log("Fetching data for team: " + team);
   const start = performance.now();
   const data: Data = await getData(team);
   console.log(
-    "Fetched match data for team: " +
-      team +
-      ". Took " +
-      Math.round(performance.now() - start) +
-      "ms"
+    "Fetched data for team: " + team + ". Took " + Math.round(performance.now() - start) + "ms"
   );
 
   if (!data) {
@@ -33,11 +32,11 @@ async function Page({ params }: { params: { team: number } }) {
     <div className="w-full h-full p-4">
       <div className="container mx-auto">
         <div className="w-full flex flex-row items-end justify-center mb-4">
-          <p className="text-2xl lg:text-3xl">
-            Team {data.num}: {data.team}
+          <p className="text-2xl lg:text-3xl text-gray-800">
+            Team {data.num} - {data.team}
           </p>
         </div>
-        <div className="w-full flex flex-row flex-wrap justify-center">TODO</div>
+        <Tabs year={year} data={data} />
       </div>
     </div>
   );
