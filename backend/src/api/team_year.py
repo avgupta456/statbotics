@@ -7,7 +7,6 @@ from src.api.db.team_match import get_team_matches
 from src.api.db.team_year import get_team_years
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
-from src.data.nepa import get_epa_to_norm_epa_func
 from src.utils.decorators import async_fail_gracefully
 from src.utils.utils import get_match_number
 
@@ -24,8 +23,6 @@ async def read_root():
 async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
     team_year_objs: List[TeamYear] = await get_team_years(year)
 
-    epa_to_norm_epa = get_epa_to_norm_epa_func(year)
-
     team_years = [
         {
             "num": x.team,
@@ -34,7 +31,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
             "country": x.country,
             "district": x.district,
             "epa_rank": x.epa_rank,
-            "norm_epa": epa_to_norm_epa(x.epa_end or 0),
+            "norm_epa": x.norm_epa_end,
             "total_epa": x.epa_end,
             "auto_epa": x.auto_epa_end,
             "teleop_epa": x.teleop_epa_end,
