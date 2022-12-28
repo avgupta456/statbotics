@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import Select from "react-select";
 
 import { yearOptions } from "../../../components/filterConstants";
@@ -10,20 +10,7 @@ import { Data } from "../types";
 import Tabs from "./tabs";
 
 const Page = () => {
-  const [year, setYear] = useState(2022);
-  const {
-    dataDict,
-    getDataForYear,
-  }: {
-    dataDict: { [key: number]: Data };
-    getDataForYear: (year: number) => void;
-  } = useContext(AppContext);
-
-  useEffect(() => {
-    console.log("UseEffect", dataDict, year);
-    getDataForYear(year);
-  }, [dataDict, getDataForYear, year]);
-
+  const { dataDict, year, setYear } = useContext(AppContext);
   const data: Data | undefined = dataDict[year];
 
   console.log("Rerender");
