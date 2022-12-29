@@ -82,6 +82,7 @@ class TeamEventORM(Base, ModelORM):
     count = Column(Integer)
     winrate = Column(Float)
     rank = Column(Integer)
+    num_teams = Column(Integer)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -143,6 +144,7 @@ class TeamEvent(Model):
     count: int = 0
     winrate: float = 0
     rank: Optional[int] = None
+    num_teams: Optional[int] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamEvent":

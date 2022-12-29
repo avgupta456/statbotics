@@ -1,8 +1,22 @@
 import React from "react";
 
+import Link from "next/link";
+
 import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
 import { Category10Colors } from "../../../../constants";
 import { TeamData, TeamYearData } from "./types";
+
+const epaCard = (epa: string, label: string, bg: string) => {
+  if (!epa || !label || !bg) {
+    return null;
+  }
+
+  return (
+    <span style={{ backgroundColor: bg }} className="px-2 py-1 rounded text-gray-50 text-sm m-1">
+      {label}: <strong>{epa}</strong>
+    </span>
+  );
+};
 
 const rankCard = (rank: number, count: number, label: string) => {
   if (!rank || !count || !label) {
@@ -10,7 +24,10 @@ const rankCard = (rank: number, count: number, label: string) => {
   }
 
   return (
-    <div className="w-32 h-auto p-2 flex flex-col justify-center items-center rounded-lg bg-blue-500">
+    <div
+      style={{ backgroundColor: Category10Colors[0] }}
+      className="w-32 h-auto p-2 flex flex-col justify-center items-center rounded-lg"
+    >
       <div className="text-2xl font-bold text-white">{rank}</div>
       <div className="text-sm text-white">{label}</div>
       <div className="text-xs text-white">out of {count}</div>
@@ -61,40 +78,23 @@ const OverviewSection = ({
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">
-      <div className="w-full text-center">
-        Record:{" "}
+      <div className="w-full mb-4">
+        Team {teamData.num} had a record of{" "}
         <strong>
           {teamYear.wins}-{teamYear.losses}-{teamYear.ties}
         </strong>{" "}
-        ({winrate.toFixed(1)}% winrate)
+        ({winrate.toFixed(1)}% winrate).
       </div>
-      <div className="w-full text-center mt-2">
-        EPA Breakdown:{" "}
-        <span style={{ color: Category10Colors[0] }}>
-          Auto: <strong>{teamYear.auto_epa.toFixed(2)}</strong>
-        </span>{" "}
-        |{" "}
-        <span style={{ color: Category10Colors[1] }}>
-          Teleop: <strong>{teamYear.teleop_epa.toFixed(2)}</strong>
-        </span>{" "}
-        |{" "}
-        <span style={{ color: Category10Colors[2] }}>
-          Endgame: <strong>{teamYear.endgame_epa.toFixed(2)}</strong>
-        </span>{" "}
-        |{" "}
-        <span style={{ color: Category10Colors[3] }}>
-          RP 1: <strong>{teamYear.rp_1_epa.toFixed(2)}</strong>
-        </span>{" "}
-        |{" "}
-        <span style={{ color: Category10Colors[4] }}>
-          RP 2: <strong>{teamYear.rp_2_epa.toFixed(2)}</strong>
-        </span>{" "}
-        |{" "}
-        <span style={{ color: Category10Colors[5] }}>
-          Total: <strong>{teamYear.epa.toFixed(2)}</strong>
-        </span>
+      <div className="w-full mb-8">
+        EPA Breakdown:
+        {epaCard(teamYear.auto_epa.toFixed(1), "Auto", Category10Colors[0])}
+        {epaCard(teamYear.teleop_epa.toFixed(1), "Teleop", Category10Colors[1])}
+        {epaCard(teamYear.endgame_epa.toFixed(1), "Endgame", Category10Colors[2])}
+        {epaCard(teamYear.rp_1_epa.toFixed(2), "RP 1", Category10Colors[3])}
+        {epaCard(teamYear.rp_2_epa.toFixed(2), "RP 2", Category10Colors[4])}
+        {epaCard(teamYear.epa.toFixed(1), "Total", Category10Colors[5])}
       </div>
-      <div className="w-full flex justify-center mt-4 mb-4 gap-4">
+      <div className="w-full flex justify-center my-4 gap-4">
         {rankCard(teamYear.epa_rank, teamYear.epa_count, "Worldwide")}
         {rankCard(teamYear.country_epa_rank, teamYear.country_count, teamData.country)}
         {rankCard(teamYear.district_epa_rank, teamYear.district_count, district)}
@@ -102,8 +102,70 @@ const OverviewSection = ({
       </div>
       <div className="w-full h-1 bg-gray-300" />
       {teamEvents.map((event) => (
-        <div key={event.event}>
-          {event.event_name} - {event.event}
+        <div key={event.event} className="w-full my-4 flex">
+          <div className="w-1/4 h-full flex flex-col">
+            <div className="flex flex-col mb-2">
+              <Link href={`/event/${event.event}`} className="text_link text-xl">
+                {event.event_name}
+              </Link>
+              Week {event.week}
+            </div>
+            <div className="flex flex-col mb-2">
+              {event.rank > 0 && event.num_teams > 0 && (
+                <div>
+                  Rank:{" "}
+                  <strong>
+                    {event.rank} of {event.num_teams}
+                  </strong>
+                </div>
+              )}
+              {event.count > 0 && (
+                <div>
+                  Record:{" "}
+                  <strong>
+                    {event.wins}-{event.losses}-{event.ties}
+                  </strong>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-row flex-wrap mb-2">
+              {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
+              {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
+              {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
+              {epaCard(event?.rp_1_epa?.toFixed(2), "RP 1", Category10Colors[3])}
+              {epaCard(event?.rp_2_epa?.toFixed(2), "RP 2", Category10Colors[4])}
+              {epaCard(event?.epa?.toFixed(1), "Total", Category10Colors[5])}
+            </div>
+          </div>
+          <div className="w-3/4 h-full">
+            {event.matches.map((match, i) => {
+              return (
+                <div
+                  key={i}
+                  className="bg-gray-800 w-full h-auto flex flex-row justify-between items-center"
+                >
+                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
+                    <div className="text-sm text-white">{match.match_number}</div>
+                    <div className="text-xs text-white">{match.set_number}</div>
+                  </div>
+                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
+                    <div className="text-sm text-white">{match.red[0]}</div>
+                    <div className="text-sm text-white">{match.red[1]}</div>
+                    <div className="text-sm text-white">{match.red[2]}</div>
+                  </div>
+                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
+                    <div className="text-sm text-white">{match.blue[0]}</div>
+                    <div className="text-sm text-white">{match.blue[1]}</div>
+                    <div className="text-sm text-white">{match.blue[2]}</div>
+                  </div>
+                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
+                    <div className="text-sm text-white">{match.red_score}</div>
+                    <div className="text-sm text-white">{match.blue_score}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ))}
     </div>

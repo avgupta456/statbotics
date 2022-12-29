@@ -87,8 +87,10 @@ async def read_team_year(
 
         team_events.append(
             {
+                "time": x.time,
                 "event": x.event,
                 "event_name": x.event_name,
+                "week": x.week,
                 "epa": x.epa_end,
                 "norm_epa": epa_to_norm_epa(x.epa_end or 0),
                 "auto_epa": x.auto_epa_end,
@@ -101,9 +103,12 @@ async def read_team_year(
                 "ties": x.ties,
                 "count": x.count,
                 "rank": x.rank,
+                "num_teams": x.num_teams,
                 "matches": team_event_matches,
             }
         )
+
+    team_events.sort(key=lambda x: x["time"] or 0)
 
     team_matches = await get_team_matches(team_num, year, epa_to_norm_epa)
 

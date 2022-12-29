@@ -38,7 +38,7 @@ async function Page({ params }: { params: { match_id: string } }) {
             href={`/event/${data.match.event}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="lg:text-2xl ml-2 text-blue-500 hover:text-blue-600 cursor-pointer underline"
+            className="lg:text-2xl ml-2 text_link"
           >
             {truncatedEventName}
           </a>

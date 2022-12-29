@@ -89,7 +89,7 @@ def process_year(
         if new_etag != prev_etag and new_etag is not None:
             new_etags.append(ETag(year_num, event_key + "/matches", new_etag))
 
-        # Hack: remove "Upcoming" matches once finals start
+        # Hack: remove "Upcoming" matches once finals finished
         finals = [m["status"] for m in matches if m["comp_level"] == "f"]
         if len(finals) >= 2 and set(finals) == {"Completed"}:
             matches = [m for m in matches if m["status"] == "Completed"]
@@ -133,6 +133,7 @@ def process_year(
                         "week": event_obj.week,
                         "status": event_status,
                         "rank": rankings.get(team, -1),
+                        "num_teams": len(rankings),
                     }
                 )
             )
@@ -218,6 +219,7 @@ def process_year_partial(
             if team_event_obj.event == event_obj.key:
                 team_event_obj.status = event_status
                 team_event_obj.rank = rankings.get(team_event_obj.team, -1)
+                team_event_obj.num_teams = len(rankings)
 
         event_obj.current_match = current_match
         event_obj.qual_matches = qual_matches

@@ -28,7 +28,7 @@ const Tabs = ({
   );
 
   const MemoizedFigureSection = useMemo(() => {
-    const matches = teamYearData?.matches || fallbackTeamYearData?.matches || [];
+    const matches = teamYearData?.team_matches || fallbackTeamYearData?.team_matches || [];
     return (
       <FigureSection
         teamNum={teamNum}

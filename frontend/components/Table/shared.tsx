@@ -6,10 +6,7 @@ import { classnames } from "../../utils";
 import { PercentileStats } from "../types/api";
 
 export const TeamLink = ({ team, num }: { team: string | number; num: string | number }) => (
-  <Link
-    href={`/team/${num}`}
-    className="text-blue-500 hover:text-blue-600 underline cursor-pointer"
-  >
+  <Link href={`/team/${num}`} className="text_link">
     {team}
   </Link>
 );

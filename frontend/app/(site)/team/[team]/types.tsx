@@ -36,6 +36,7 @@ export type TeamYearData = {
   team_events: {
     event: string;
     event_name: string;
+    week: number;
     epa: number;
     norm_epa: number;
     auto_epa: number;
@@ -48,6 +49,7 @@ export type TeamYearData = {
     ties: number;
     count: number;
     rank: number;
+    num_teams: number;
     matches: {
       comp_level: string;
       set_number: number;
