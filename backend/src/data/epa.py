@@ -21,7 +21,7 @@ from src.utils.utils import get_team_event_key, get_team_match_key
 NORM_MEAN = 1500
 NORM_SD = 250
 
-distrib = exponnorm(1.6, -0.3, 0.2)
+distrib = exponnorm(1.6, -0.3, 0.2)  # type: ignore
 
 
 def ppf(x: float) -> float:
@@ -651,6 +651,9 @@ def process_year(
     # TEAM YEARS
     year_epas: List[float] = []
     year_epas_dict: Dict[int, float] = {}  # for norm epa
+    country_year_epas: Dict[str, List[float]] = defaultdict(list)  # for rank/percentile
+    state_year_epas: Dict[str, List[float]] = defaultdict(list)
+    district_year_epas: Dict[str, List[float]] = defaultdict(list)
     year_auto_epas: List[float] = []
     year_teleop_epas: List[float] = []
     year_endgame_epas: List[float] = []
@@ -664,8 +667,17 @@ def process_year(
             continue
 
         # Use end of season epa
-        year_epas.append(round(curr_team_epas[-1], 2))
-        year_epas_dict[team] = round(curr_team_epas[-1], 2)
+        end_epa = curr_team_epas[-1]
+        year_epas.append(round(end_epa, 2))
+        year_epas_dict[team] = round(end_epa, 2)
+
+        team_year_obj = team_years_dict[team]
+        if team_year_obj.country is not None:
+            country_year_epas[team_year_obj.country].append(round(end_epa, 2))
+        if team_year_obj.state is not None:
+            state_year_epas[team_year_obj.state].append(round(end_epa, 2))
+        if team_year_obj.district is not None:
+            district_year_epas[team_year_obj.district].append(round(end_epa, 2))
 
         if USE_COMPONENTS:
             curr_component_team_epas = component_team_matches_dict[team]
@@ -679,6 +691,14 @@ def process_year(
         team_years_dict.pop(team)
 
     year_epas.sort(reverse=True)
+    country_year_epas = {
+        k: sorted(v, reverse=True) for k, v in country_year_epas.items()
+    }
+    state_year_epas = {k: sorted(v, reverse=True) for k, v in state_year_epas.items()}
+    district_year_epas = {
+        k: sorted(v, reverse=True) for k, v in district_year_epas.items()
+    }
+
     total_N, cutoff_N = len(year_epas), int(len(year_epas) / 10)
     exponnorm_disrib = None if total_N == 0 else exponnorm(*exponnorm.fit(year_epas))  # type: ignore
     expon_distrib = None if cutoff_N == 0 else expon(*expon.fit(year_epas[:cutoff_N]))  # type: ignore
@@ -695,7 +715,6 @@ def process_year(
         out: float = distrib.ppf(percentile)  # type: ignore
         return NORM_MEAN + NORM_SD * out
 
-    year_epas.sort(reverse=True)
     team_year_count = len(team_years_dict)
     for team in team_years_dict:
         obj = team_years_dict[team]
@@ -706,9 +725,6 @@ def process_year(
         curr_endgame_team_epas = [x[2] for x in curr_component_team_epas]
         curr_rp_1_team_epas = [x[3] for x in curr_component_team_epas]
         curr_rp_2_team_epas = [x[4] for x in curr_component_team_epas]
-
-        # TODO: revisit how we calculate epa_max (maybe use max of 6 match rolling average?)
-        # Since higher variability due to increased percent change per match
 
         n = len(curr_team_epas)
         obj.epa_max = round(max(curr_team_epas[min(n - 1, 8) :]), 2)
@@ -772,6 +788,22 @@ def process_year(
 
         obj.epa_rank = rank = year_epas.index(obj.epa_end) + 1
         obj.epa_percentile = round(1 - rank / team_year_count, 4)
+
+        if obj.country is not None:
+            rank = country_year_epas[obj.country].index(obj.epa_end) + 1
+            country_count = len(country_year_epas[obj.country])
+            obj.country_epa_rank = rank
+            obj.country_epa_percentile = round(1 - rank / country_count, 4)
+        if obj.state is not None:
+            rank = state_year_epas[obj.state].index(obj.epa_end) + 1
+            state_count = len(state_year_epas[obj.state])
+            obj.state_epa_rank = rank
+            obj.state_epa_percentile = round(1 - rank / state_count, 4)
+        if obj.district is not None:
+            rank = district_year_epas[obj.district].index(obj.epa_end) + 1
+            district_count = len(district_year_epas[obj.district])
+            obj.district_epa_rank = rank
+            obj.district_epa_percentile = round(1 - rank / district_count, 4)
 
     # YEARS
     if len(year_epas) > 0:

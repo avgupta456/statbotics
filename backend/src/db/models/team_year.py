@@ -79,6 +79,13 @@ class TeamYearORM(Base, ModelORM):
     epa_rank = Column(Integer)
     epa_percentile = Column(Float)
 
+    country_epa_rank = Column(Integer)
+    country_epa_percentile = Column(Float)
+    state_epa_rank = Column(Integer)
+    state_epa_percentile = Column(Float)
+    district_epa_rank = Column(Integer)
+    district_epa_percentile = Column(Float)
+
 
 @attr.s(auto_attribs=True, slots=True)
 class TeamYear(Model):
@@ -138,6 +145,13 @@ class TeamYear(Model):
 
     epa_rank: Optional[int] = None
     epa_percentile: Optional[float] = None
+
+    country_epa_rank: Optional[int] = None
+    country_epa_percentile: Optional[float] = None
+    state_epa_rank: Optional[int] = None
+    state_epa_percentile: Optional[float] = None
+    district_epa_rank: Optional[int] = None
+    district_epa_percentile: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamYear":

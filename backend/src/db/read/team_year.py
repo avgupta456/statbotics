@@ -7,6 +7,19 @@ from src.db.main import Session
 from src.db.models.team_year import TeamYear, TeamYearORM
 
 
+def get_team_year(team_num: int, year: int) -> Optional[TeamYear]:
+    def callback(session: SessionType):
+        data = session.query(TeamYearORM).filter(  # type: ignore
+            TeamYearORM.team == team_num, TeamYearORM.year == year
+        )
+        out_data: Optional[TeamYearORM] = data.first()
+        if out_data is None:
+            return None
+        return TeamYear.from_dict(out_data.__dict__)
+
+    return run_transaction(Session, callback)  # type: ignore
+
+
 def get_team_years(year: Optional[int] = None) -> List[TeamYear]:
     def callback(session: SessionType):
         data = session.query(TeamYearORM)

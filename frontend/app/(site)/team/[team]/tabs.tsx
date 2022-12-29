@@ -2,11 +2,10 @@
 
 import React, { useMemo, useState } from "react";
 
-import { TeamMatch } from "../../../../components/types/api";
 import { classnames } from "../../../../utils";
 import FigureSection from "./figures";
 import OverviewSection from "./overview";
-import { Data } from "./types";
+import { TeamData, TeamYearData, emptyTeamData, emptyTeamYearData } from "./types";
 
 const Tabs = ({
   teamNum,
@@ -17,25 +16,33 @@ const Tabs = ({
 }: {
   teamNum: number;
   year: number;
-  teamData: Data | undefined;
-  teamYearData: TeamMatch[] | undefined;
-  fallbackTeamYearData: TeamMatch[] | undefined;
+  teamData: TeamData | undefined;
+  teamYearData: TeamYearData | undefined;
+  fallbackTeamYearData: TeamYearData | undefined;
 }) => {
   const [tab, setTab] = useState("Overview");
 
-  const MemoizedOverviewSection = useMemo(() => <OverviewSection />, []);
-
-  const MemoizedFigureSection = useMemo(
+  const MemoizedOverviewSection = useMemo(
     () => (
+      <OverviewSection
+        teamData={teamData || emptyTeamData}
+        teamYearData={teamYearData || emptyTeamYearData}
+      />
+    ),
+    [teamData, teamYearData]
+  );
+
+  const MemoizedFigureSection = useMemo(() => {
+    const matches = teamYearData?.matches || fallbackTeamYearData?.matches || [];
+    return (
       <FigureSection
         teamNum={teamNum}
         year={year}
         // creates smooth transition
-        teamYearData={teamYearData || fallbackTeamYearData || []}
+        matches={matches}
       />
-    ),
-    [teamNum, year, teamYearData, fallbackTeamYearData]
-  );
+    );
+  }, [teamNum, year, teamYearData, fallbackTeamYearData]);
 
   return (
     <div className="w-full flex-grow flex flex-col">

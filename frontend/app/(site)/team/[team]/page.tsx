@@ -8,7 +8,7 @@ import { TeamMatch } from "../../../../components/types/api";
 import { BACKEND_URL } from "../../../../constants";
 import { round } from "../../../../utils";
 import Tabs from "./tabs";
-import { Data } from "./types";
+import { TeamData, TeamYearData } from "./types";
 
 async function getTeamData(team: number) {
   const start = performance.now();
@@ -25,8 +25,8 @@ async function getTeamData(team: number) {
 
 async function getTeamYearData(team: number, year: number) {
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/team_year/${year}/${team}`);
-  console.log(`/team_year/${year}/${team} took ${round(performance.now() - start, 0)}ms`);
+  const res = await fetch(`${BACKEND_URL}/team/${team}/${year}`);
+  console.log(`/team/${team}/${year} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
     return undefined;
@@ -45,8 +45,10 @@ const Page = ({ params }: { params: { team: number } }) => {
     _setYear(newYear);
   };
 
-  const [teamData, setTeamData] = useState<Data>();
-  const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: TeamMatch[] }>({});
+  const [teamData, setTeamData] = useState<TeamData | undefined>();
+  const [teamYearDataDict, setTeamYearDataDict] = useState<{
+    [key: number]: TeamYearData | undefined;
+  }>({});
 
   useEffect(() => {
     const getTeamDataForYear = async (team: number) => {
@@ -54,7 +56,7 @@ const Page = ({ params }: { params: { team: number } }) => {
         return;
       }
 
-      const data: Data = await getTeamData(team);
+      const data: TeamData | undefined = await getTeamData(team);
       setTeamData(data);
     };
 
@@ -67,7 +69,7 @@ const Page = ({ params }: { params: { team: number } }) => {
         return;
       }
 
-      const data: TeamMatch[] = await getTeamYearData(team, year);
+      const data: TeamYearData | undefined = await getTeamYearData(team, year);
       setTeamYearDataDict((prev) => ({ ...prev, [year]: data }));
     };
 

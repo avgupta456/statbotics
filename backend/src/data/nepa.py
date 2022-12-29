@@ -1,6 +1,6 @@
 import bisect
-from typing import Callable, List
 from functools import lru_cache
+from typing import Callable, List
 
 from scipy.interpolate import interp1d  # type: ignore
 

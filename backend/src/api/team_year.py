@@ -2,14 +2,11 @@ from typing import Any, Dict, List
 
 from fastapi import APIRouter, Response
 
+from src.api.aggregation.team_match import get_team_matches
 from src.api.aggregation.year import get_year_stats
-from src.api.db.team_match import get_team_matches
 from src.api.db.team_year import get_team_years
-from src.data.nepa import get_epa_to_norm_epa_func
-from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.utils.decorators import async_fail_gracefully
-from src.utils.utils import get_match_number
 
 router = APIRouter()
 
@@ -32,6 +29,9 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
             "country": x.country,
             "district": x.district,
             "epa_rank": x.epa_rank,
+            "country_epa_rank": x.country_epa_rank,
+            "state_epa_rank": x.state_epa_rank,
+            "district_epa_rank": x.district_epa_rank,
             "norm_epa": x.norm_epa_end,
             "total_epa": x.epa_end,
             "auto_epa": x.auto_epa_end,
@@ -62,28 +62,4 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
 async def read_team_matches(
     response: Response, year: int, team: int
 ) -> List[Dict[str, Any]]:
-    team_match_objs: List[TeamMatch] = await get_team_matches(year=year, team=team)
-
-    epa_to_norm_epa = get_epa_to_norm_epa_func(year)
-
-    team_matches = [
-        {
-            "match": get_match_number(x.match),
-            "label": x.match,
-            "time": x.time,
-            "playoff": x.playoff,
-            "norm_epa": epa_to_norm_epa(x.epa or 0),
-            "total_epa": x.epa,
-            "auto_epa": x.auto_epa,
-            "teleop_epa": x.teleop_epa,
-            "endgame_epa": x.endgame_epa,
-            "rp_1_epa": x.rp_1_epa,
-            "rp_2_epa": x.rp_2_epa,
-        }
-        for x in team_match_objs
-    ]
-
-    # Sort by timestamp
-    team_matches.sort(key=lambda x: x["time"] or -1)
-
-    return team_matches
+    return await get_team_matches(year=year, team=team)
