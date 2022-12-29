@@ -7,7 +7,28 @@ function setWithExpiry(key, value, ttl) {
     value: value,
     expiry: now.getTime() + 1000 * ttl,
   };
-  localStorage.setItem(key, JSON.stringify(item));
+
+  try {
+    localStorage.setItem(key, JSON.stringify(item));
+  } catch (e) {
+    // Clear localStorage if it's full except the 'key' item
+    if (e.name === "QuotaExceededError") {
+      const fullTeamList = localStorage.getItem("full_team_list");
+      localStorage.clear();
+
+      // Re-add "full_team_list" item, but do not re-catch errors
+      try {
+        localStorage.setItem(
+          "full_team_list",
+          JSON.stringify({ value: fullTeamList, expiry: 60 * 60 * 24 * 7 })
+        ); // 1 week expiry
+      } catch (e) {
+        console.log("Error clearing localStorage");
+      }
+    } else {
+      throw e;
+    }
+  }
 }
 
 function getWithExpiry(key) {

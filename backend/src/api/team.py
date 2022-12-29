@@ -28,4 +28,8 @@ async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
     if team is None:
         raise Exception("Team not found")
 
-    return {"num": team_num, "team": team.name}
+    return {
+        "num": team_num,
+        "team": team.name,
+        "rookie_year": 2008,  # TODO: Add to, get from DB
+    }

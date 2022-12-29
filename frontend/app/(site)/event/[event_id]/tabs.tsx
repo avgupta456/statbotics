@@ -26,13 +26,14 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
         data={bubbleData}
         filterOptions={[]}
         columnOptions={[
+          "Total EPA",
+          "Norm EPA",
           "Auto",
           "Teleop",
           "Endgame",
           "Auto + Endgame",
           "RP 1",
           "RP 2",
-          "Total",
           "Rank",
           "N - Rank",
           "RPs / Match",

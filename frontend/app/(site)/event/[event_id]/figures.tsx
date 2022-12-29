@@ -31,7 +31,12 @@ const FiguresSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       <div className="w-full text-2xl font-bold pt-8 mb-4 border-t-2 border-gray-300">
         Team EPA Over Time
       </div>
-      <EventLineChart eventId={eventId} teamEvents={data.team_events} teams={lineData} />
+      <EventLineChart
+        eventId={eventId}
+        year={data.year}
+        teamEvents={data.team_events}
+        teams={lineData}
+      />
     </div>
   );
 };

@@ -19,15 +19,18 @@ def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
     norm_epas: List[float] = sorted(
         [ty.norm_epa_end for ty in team_years if ty.norm_epa_end is not None]
     )
-    spline = interp1d(norm_epas, epas, kind="linear", fill_value=(epas[0], epas[-1]), bounds_error=False)  # type: ignore
+    spline = interp1d(norm_epas, epas, kind="linear", fill_value="extrapolate")  # type: ignore
 
     keys: List[float] = []
     values: List[float] = []
-    for norm_epa in range(1200, 2200):
+    for norm_epa in range(1200, 2400):
         keys.append(max(0, spline(norm_epa)))  # type: ignore
         values.append(norm_epa)  # type: ignore
 
     def epa_to_norm_epa(epa: float) -> float:
-        return values[bisect.bisect_left(keys, epa)]
+        try:
+            return values[bisect.bisect_left(keys, epa)]
+        except IndexError:
+            return 2400
 
     return epa_to_norm_epa

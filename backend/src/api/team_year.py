@@ -5,6 +5,7 @@ from fastapi import APIRouter, Response
 from src.api.aggregation.year import get_year_stats
 from src.api.db.team_match import get_team_matches
 from src.api.db.team_year import get_team_years
+from src.data.nepa import get_epa_to_norm_epa_func
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.utils.decorators import async_fail_gracefully
@@ -63,12 +64,15 @@ async def read_team_matches(
 ) -> List[Dict[str, Any]]:
     team_match_objs: List[TeamMatch] = await get_team_matches(year=year, team=team)
 
+    epa_to_norm_epa = get_epa_to_norm_epa_func(year)
+
     team_matches = [
         {
             "match": get_match_number(x.match),
             "label": x.match,
             "time": x.time,
             "playoff": x.playoff,
+            "norm_epa": epa_to_norm_epa(x.epa or 0),
             "total_epa": x.epa,
             "auto_epa": x.auto_epa,
             "teleop_epa": x.teleop_epa,

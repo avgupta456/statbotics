@@ -13,19 +13,28 @@ const Tabs = ({
   year,
   teamData,
   teamYearData,
+  fallbackTeamYearData,
 }: {
   teamNum: number;
   year: number;
-  teamData: Data;
-  teamYearData: TeamMatch[];
+  teamData: Data | undefined;
+  teamYearData: TeamMatch[] | undefined;
+  fallbackTeamYearData: TeamMatch[] | undefined;
 }) => {
   const [tab, setTab] = useState("Overview");
 
   const MemoizedOverviewSection = useMemo(() => <OverviewSection />, []);
 
   const MemoizedFigureSection = useMemo(
-    () => <FigureSection teamNum={teamNum} teamYearData={teamYearData} />,
-    [teamNum, teamYearData]
+    () => (
+      <FigureSection
+        teamNum={teamNum}
+        year={year}
+        // creates smooth transition
+        teamYearData={teamYearData || fallbackTeamYearData || []}
+      />
+    ),
+    [teamNum, year, teamYearData, fallbackTeamYearData]
   );
 
   return (
@@ -52,18 +61,10 @@ const Tabs = ({
         <div className="flex-grow border-b-[1px] border-gray-200" />
       </div>
       <div className="w-full flex-grow flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
-        {teamData === undefined || teamYearData === undefined ? (
-          <div className="w-full flex-grow flex flex-col items-center justify-center">
-            <div className="text-gray-700 mt-4">Loading data, please wait...</div>
-          </div>
-        ) : (
-          <>
-            <div className={tab === "Overview" ? "w-full" : "hidden"}>
-              {MemoizedOverviewSection}
-            </div>
-            <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
-          </>
-        )}
+        <>
+          <div className={tab === "Overview" ? "w-full" : "hidden"}>{MemoizedOverviewSection}</div>
+          <div className={tab === "Figures" ? "w-full" : "hidden"}>{MemoizedFigureSection}</div>
+        </>
       </div>
     </div>
   );

@@ -38,6 +38,7 @@ export type TeamMatch = {
   label: string;
   time: number;
   playoff: boolean;
+  norm_epa: number;
   total_epa: number;
   auto_epa: number;
   teleop_epa: number;

@@ -21,13 +21,14 @@ const Tabs = ({ year, data }: { year: number; data: Data | undefined }) => {
         data={data?.team_years ?? []}
         filterOptions={["country", "state", "district"]}
         columnOptions={[
+          "Total EPA",
+          "Norm EPA",
           "Auto",
           "Teleop",
           "Endgame",
           "Auto + Endgame",
           "RP 1",
           "RP 2",
-          "Total",
           "Wins",
           "Win Rate",
         ]}

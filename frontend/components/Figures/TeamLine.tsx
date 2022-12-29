@@ -6,7 +6,15 @@ import Select from "react-select";
 import { TeamMatch } from "../types/api";
 import LineChart from "./Line";
 
-const TeamLineChart = ({ teamNum, data }: { teamNum: number; data: TeamMatch[] }) => {
+const TeamLineChart = ({
+  teamNum,
+  year,
+  data,
+}: {
+  teamNum: number;
+  year: number;
+  data: TeamMatch[];
+}) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
 
   // VARIABLES
@@ -26,6 +34,22 @@ const TeamLineChart = ({ teamNum, data }: { teamNum: number; data: TeamMatch[] }
 
   // RENDER
 
+  const yAxisOptions =
+    year >= 2016
+      ? [
+          { value: "total_epa", label: "Total EPA" },
+          { value: "norm_epa", label: "Norm EPA" },
+          { value: "auto_epa", label: "Auto EPA" },
+          { value: "teleop_epa", label: "Teleop EPA" },
+          { value: "endgame_epa", label: "Endgame EPA" },
+          { value: "rp_1_epa", label: "RP 1 EPA" },
+          { value: "rp_2_epa", label: "RP 2 EPA" },
+        ]
+      : [
+          { value: "total_epa", label: "EPA" },
+          { value: "norm_epa", label: "Norm EPA" },
+        ];
+
   return (
     <div className="w-full flex flex-col">
       <div className="w-4/5 mx-auto flex flex-row justify-center">
@@ -35,14 +59,7 @@ const TeamLineChart = ({ teamNum, data }: { teamNum: number; data: TeamMatch[] }
           styles={{
             menu: (provided) => ({ ...provided, zIndex: 9999 }),
           }}
-          options={[
-            { value: "auto_epa", label: "Auto EPA" },
-            { value: "teleop_epa", label: "Teleop EPA" },
-            { value: "endgame_epa", label: "Endgame EPA" },
-            { value: "total_epa", label: "Total EPA" },
-            { value: "rp_1_epa", label: "RP 1 EPA" },
-            { value: "rp_2_epa", label: "RP 2 EPA" },
-          ]}
+          options={yAxisOptions}
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
         />

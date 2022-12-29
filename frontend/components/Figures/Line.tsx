@@ -27,13 +27,16 @@ const LineChart = ({
     return acc;
   }, {});
 
+  const yMin = yAxis.includes("RP") ? -1 / 3 : yAxis.includes("Norm") ? 1200 : 0;
+  const enableArea = !(yAxis.includes("RP") || yAxis.includes("Norm"));
+
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveLine
         data={data}
         margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
         xScale={{ type: "linear", min: 0, max: data.length === 0 ? 1 : "auto" }}
-        yScale={{ type: "linear", min: isRP ? -1 / 3 : 0, max: data.length === 0 ? 1 : "auto" }}
+        yScale={{ type: "linear", min: yMin, max: data.length === 0 ? 1 : "auto" }}
         curve="monotoneX"
         axisBottom={{
           tickSize: 5,
@@ -53,7 +56,7 @@ const LineChart = ({
         }}
         colors={{ scheme: "category10" }}
         pointSize={5}
-        enableArea={!isRP && data.length <= 1}
+        enableArea={enableArea && data.length <= 1}
         areaOpacity={0.1}
         pointLabel="y"
         pointLabelYOffset={-12}
