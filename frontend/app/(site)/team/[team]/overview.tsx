@@ -1,6 +1,6 @@
 import React from "react";
 
-import { districtOptions, usaOptions } from "../../../../components/filterConstants";
+import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
 import { Category10Colors } from "../../../../constants";
 import { TeamData, TeamYearData } from "./types";
 
@@ -41,6 +41,12 @@ const OverviewSection = ({
     }
   });
 
+  canadaOptions.forEach((option) => {
+    if (option.value === teamData.state) {
+      state = option.label;
+    }
+  });
+
   let district: any = teamData.district;
   districtOptions.forEach((option) => {
     if (option.value === teamData.district) {
@@ -48,7 +54,7 @@ const OverviewSection = ({
     }
   });
 
-  if (["Michigan", "Israel", "Indiana", "Texas", "North Carolina"].includes(district)) {
+  if (["Michigan", "Israel", "Indiana", "Texas", "North Carolina", "Ontario"].includes(district)) {
     district = undefined;
   }
 
