@@ -66,6 +66,7 @@ async def read_team_matches(
     team_matches = [
         {
             "match": get_match_number(x.match),
+            "label": x.match,
             "time": x.time,
             "playoff": x.playoff,
             "total_epa": x.epa,
@@ -77,5 +78,8 @@ async def read_team_matches(
         }
         for x in team_match_objs
     ]
+
+    # Sort by timestamp
+    team_matches.sort(key=lambda x: x["time"] or -1)
 
     return team_matches

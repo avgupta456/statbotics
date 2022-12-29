@@ -18,6 +18,15 @@ const LineChart = ({
   yAxis: string;
   isRP: boolean;
 }) => {
+  const xLabels = data.reduce((acc, curr) => {
+    const xToLabel = curr.data.reduce((acc, curr) => {
+      acc[curr.x] = curr.label;
+      return acc;
+    }, {});
+    acc[curr.id] = xToLabel;
+    return acc;
+  }, {});
+
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveLine
@@ -51,10 +60,11 @@ const LineChart = ({
         useMesh={true}
         tooltip={({ point }) => {
           const y: any = point.data.yFormatted;
-          const xLabel = point.data.xFormatted < 1 ? "" : `(M${point.data.xFormatted})`;
+          const xLabel = xLabels[point.serieId][point.data.x];
           return (
             <div className="bg-white rounded shadow p-2" style={{ color: point.color }}>
-              <div className="text-sm font-bold">{`Team ${point.serieId} ${xLabel}`}</div>
+              <div className="text-sm font-bold">{`Team ${point.serieId}`}</div>
+              <div className="text-xs mb-1">{xLabel}</div>
               <div className="text-sm">{`${yAxis}: ${round(parseFloat(y))}`}</div>
             </div>
           );

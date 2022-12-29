@@ -1,14 +1,17 @@
 import React from "react";
 
 import { BACKEND_URL } from "../../../../constants";
-import { truncate } from "../../../../utils";
+import { round, truncate } from "../../../../utils";
 import Summary from "./summary";
 import MatchTable from "./table";
 import { Data } from "./types";
 import Video from "./video";
 
 async function getData(match_id: string) {
+  const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/match/` + match_id);
+  console.log(`/match/${match_id} took ${round(performance.now() - start, 0)}ms`);
+
   if (!res.ok) {
     return undefined;
   }
@@ -18,16 +21,7 @@ async function getData(match_id: string) {
 
 async function Page({ params }: { params: { match_id: string } }) {
   const { match_id } = params;
-  console.log("Fetching match data for match_id: " + match_id);
-  const start = performance.now();
   const data: Data = await getData(match_id);
-  console.log(
-    "Fetched match data for match_id: " +
-      match_id +
-      ". Took " +
-      Math.round(performance.now() - start) +
-      "ms"
-  );
 
   if (!data) {
     return <div>Match not found</div>;

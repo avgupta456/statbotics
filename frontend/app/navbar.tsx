@@ -9,10 +9,31 @@ import { useRouter } from "next/navigation";
 
 import { Option } from "../components/multiSelect";
 import { BACKEND_URL } from "../constants";
+import { round } from "../utils";
+import { getWithExpiry, setWithExpiry } from "./localStorage";
 
 const loaderProp = ({ src }) => {
   return src;
 };
+
+async function getData() {
+  const cacheData = getWithExpiry("full_team_list");
+  if (cacheData && cacheData?.length > 1000) {
+    console.log("Used Local Storage: Full Team List");
+    return cacheData;
+  }
+
+  const start = performance.now();
+  const res = await fetch(`${BACKEND_URL}/teams/all`);
+  console.log(`/teams/all took ${round(performance.now() - start, 0)}ms`);
+
+  if (!res.ok) {
+    return undefined;
+  }
+  const data = (await res.json())?.data;
+  setWithExpiry("full_team_list", data, 60 * 60 * 24 * 7); // 1 week expiry
+  return data;
+}
 
 const Navbar = () => {
   const router = useRouter();
@@ -20,14 +41,7 @@ const Navbar = () => {
   const [teams, setTeams] = React.useState([]);
 
   useEffect(() => {
-    fetch(`${BACKEND_URL}/teams/all`)
-      .then((res) => res.json())
-      .then((data) => {
-        setTeams(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    getData().then((data) => setTeams(data));
   }, []);
 
   const teamOptions = teams.map((team: any) => ({
