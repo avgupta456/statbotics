@@ -16,21 +16,45 @@ const TeamLineChart = ({
   data: TeamMatch[];
 }) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
+  const [splitEvents, setSplitEvents] = useState(false);
 
   // VARIABLES
 
-  let teamData = {
-    id: teamNum.toString(),
-    data: data.map((teamMatch: any, i: number) => ({
-      x: i,
-      label: data[i - 1]?.label || "Start",
-      y: teamMatch[yAxis.value],
-    })),
-  };
+  let arr = data.map((teamMatch: any, i: number) => ({
+    x: i,
+    event: teamMatch.label.split("_")[0],
+    label: data[i - 1]?.label || "Start",
+    y: teamMatch[yAxis.value],
+  }));
 
   // TODO: fix this to the actual post-match EPA
   const lastEPA = data[data.length - 1]?.[yAxis.value];
-  teamData.data.push({ x: data.length, label: "End", y: lastEPA });
+  const lastEvent = data[data.length - 1]?.label.split("_")[0];
+  arr.push({ x: data.length, event: lastEvent, label: "End", y: lastEPA });
+
+  let teamData = [
+    {
+      id: teamNum.toString(),
+      data: arr,
+    },
+  ];
+
+  if (splitEvents) {
+    teamData = teamData[0].data.reduce((acc, curr) => {
+      if (!acc[curr.event]) {
+        acc[curr.event] = [];
+      }
+      acc[curr.event].push(curr);
+      return acc;
+    }, {} as any);
+
+    teamData = Object.keys(teamData).map((event) => ({
+      id: event,
+      data: teamData[event],
+    }));
+
+    teamData = teamData.sort((a, b) => a.data[0].x - b.data[0].x);
+  }
 
   // RENDER
 
@@ -63,10 +87,16 @@ const TeamLineChart = ({
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
         />
+        <button
+          className="flex-shrink-0 filter_button w-36"
+          onClick={() => setSplitEvents(!splitEvents)}
+        >
+          {splitEvents ? "Combine Events" : "Split Events"}
+        </button>
       </div>
       <div className="flex">
         <LineChart
-          data={[teamData]}
+          data={teamData}
           xAxis="Match"
           yAxis={yAxis.label}
           isRP={yAxis.value.includes("rp_")}

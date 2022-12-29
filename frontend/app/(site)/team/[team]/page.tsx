@@ -77,9 +77,6 @@ const Page = ({ params }: { params: { team: number } }) => {
   const teamYearData = teamYearDataDict[year];
   const fallbackTeamYearData = teamYearDataDict[prevYear];
 
-  console.log(teamData);
-  console.log(teamYearData);
-
   const rookieYear = teamData?.rookie_year ?? 2002;
 
   return (
