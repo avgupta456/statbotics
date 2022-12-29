@@ -10,6 +10,7 @@ from src.utils.alru_cache import alru_cache
 async def get_team_events(
     year: Optional[int] = None,
     event_id: Optional[int] = None,
+    team: Optional[int] = None,
     no_cache: bool = False,
 ) -> List[TeamEvent]:
-    return (True, _get_team_events(year, event_id))  # type: ignore
+    return (True, _get_team_events(year, event_id, team))  # type: ignore

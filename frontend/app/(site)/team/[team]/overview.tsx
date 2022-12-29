@@ -10,7 +10,7 @@ const rankCard = (rank: number, count: number, label: string) => {
   }
 
   return (
-    <div className="w-32 h-auto p-4 flex flex-col justify-center items-center rounded-lg shadow-md bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700">
+    <div className="w-32 h-auto p-2 flex flex-col justify-center items-center rounded-lg bg-blue-500">
       <div className="text-2xl font-bold text-white">{rank}</div>
       <div className="text-sm text-white">{label}</div>
       <div className="text-xs text-white">out of {count}</div>
@@ -32,6 +32,7 @@ const OverviewSection = ({
   }
 
   const teamYear = teamYearData.team_year;
+  const teamEvents = teamYearData.team_events;
   const winrate = ((teamYear.wins + teamYear.ties / 2) / teamYear.count) * 100;
 
   let state = teamData.state;
@@ -61,7 +62,7 @@ const OverviewSection = ({
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">
       <div className="w-full text-center">
-        Team {teamData.num} went{" "}
+        Record:{" "}
         <strong>
           {teamYear.wins}-{teamYear.losses}-{teamYear.ties}
         </strong>{" "}
@@ -99,6 +100,12 @@ const OverviewSection = ({
         {rankCard(teamYear.district_epa_rank, teamYear.district_count, district)}
         {rankCard(teamYear.state_epa_rank, teamYear.state_count, state)}
       </div>
+      <div className="w-full h-1 bg-gray-300" />
+      {teamEvents.map((event) => (
+        <div key={event.event}>
+          {event.event_name} - {event.event}
+        </div>
+      ))}
     </div>
   );
 };

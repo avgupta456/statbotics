@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 from src.data.nepa import get_epa_to_norm_epa_func
 from src.db.models.team_match import TeamMatch
@@ -6,10 +6,13 @@ from src.db.read.team_match import get_team_matches as _get_team_matches
 from src.utils.utils import get_match_number
 
 
-async def get_team_matches(team: int, year: int) -> List[Dict[str, Any]]:
+async def get_team_matches(
+    team: int, year: int, epa_to_norm_epa: Optional[Callable[[float], float]] = None
+) -> List[Dict[str, Any]]:
     team_match_objs: List[TeamMatch] = _get_team_matches(year=year, team=team)
 
-    epa_to_norm_epa = get_epa_to_norm_epa_func(year)
+    if epa_to_norm_epa is None:
+        epa_to_norm_epa = get_epa_to_norm_epa_func(year)
 
     team_matches = [
         {

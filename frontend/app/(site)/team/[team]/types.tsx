@@ -33,5 +33,35 @@ export type TeamYearData = {
     rp_1_epa: number;
     rp_2_epa: number;
   };
-  matches: TeamMatch[];
+  team_events: {
+    event: string;
+    event_name: string;
+    epa: number;
+    norm_epa: number;
+    auto_epa: number;
+    teleop_epa: number;
+    endgame_epa: number;
+    rp_1_epa: number;
+    rp_2_epa: number;
+    wins: number;
+    losses: number;
+    ties: number;
+    count: number;
+    rank: number;
+    matches: {
+      comp_level: string;
+      set_number: number;
+      match_number: number;
+      alliance: string;
+      red: number[];
+      blue: number[];
+      red_score: number;
+      blue_score: number;
+      red_rp_1: number;
+      red_rp_2: number;
+      blue_rp_1: number;
+      blue_rp_2: number;
+    }[];
+  }[];
+  team_matches: TeamMatch[];
 };
