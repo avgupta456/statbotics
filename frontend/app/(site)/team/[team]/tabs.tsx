@@ -5,7 +5,7 @@ import React, { useMemo, useState } from "react";
 import { classnames } from "../../../../utils";
 import FigureSection from "./figures";
 import OverviewSection from "./overview";
-import { TeamData, TeamYearData, emptyTeamData, emptyTeamYearData } from "./types";
+import { TeamData, TeamYearData } from "./types";
 
 const Tabs = ({
   teamNum,
@@ -23,12 +23,7 @@ const Tabs = ({
   const [tab, setTab] = useState("Overview");
 
   const MemoizedOverviewSection = useMemo(
-    () => (
-      <OverviewSection
-        teamData={teamData || emptyTeamData}
-        teamYearData={teamYearData || emptyTeamYearData}
-      />
-    ),
+    () => <OverviewSection teamData={teamData} teamYearData={teamYearData} />,
     [teamData, teamYearData]
   );
 

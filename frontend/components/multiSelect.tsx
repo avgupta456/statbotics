@@ -1,24 +1,13 @@
 import React from "react";
 import { components } from "react-select";
 
+import { Category10Colors } from "../constants";
+
 export const Option = ({ children, ...props }) => {
   const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
   const newProps: any = Object.assign(props, { innerProps: rest });
   return <components.Option {...newProps}>{children}</components.Option>;
 };
-
-export const Category10Colors = [
-  "#1f77b4",
-  "#ff7f0e",
-  "#2ca02c",
-  "#d62728",
-  "#9467bd",
-  "#8c564b",
-  "#e377c2",
-  "#7f7f7f",
-  "#bcbd22",
-  "#17becf",
-];
 
 export const multiSelectStyles = (getIndex: any) => ({
   menu: (provided) => ({ ...provided, zIndex: 9999 }),

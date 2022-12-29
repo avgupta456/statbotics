@@ -28,10 +28,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
             "state": x.state,
             "country": x.country,
             "district": x.district,
-            "epa_rank": x.epa_rank,
-            "country_epa_rank": x.country_epa_rank,
-            "state_epa_rank": x.state_epa_rank,
-            "district_epa_rank": x.district_epa_rank,
+            "epa_rank": x.total_epa_rank,
             "norm_epa": x.norm_epa_end,
             "total_epa": x.epa_end,
             "auto_epa": x.auto_epa_end,
@@ -57,7 +54,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
     return out
 
 
-@router.get("/team_year/{year}/{team}")
+@router.get("/team_year/{year}/{team}/matches")
 @async_fail_gracefully
 async def read_team_matches(
     response: Response, year: int, team: int

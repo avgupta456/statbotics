@@ -786,24 +786,28 @@ def process_year(
         obj.count = team_count
         obj.winrate = winrate
 
-        obj.epa_rank = rank = year_epas.index(obj.epa_end) + 1
-        obj.epa_percentile = round(1 - rank / team_year_count, 4)
+        obj.total_epa_rank = rank = year_epas.index(obj.epa_end) + 1
+        obj.total_epa_percentile = round(1 - rank / team_year_count, 4)
+        obj.total_team_count = team_year_count
 
         if obj.country is not None:
             rank = country_year_epas[obj.country].index(obj.epa_end) + 1
             country_count = len(country_year_epas[obj.country])
             obj.country_epa_rank = rank
             obj.country_epa_percentile = round(1 - rank / country_count, 4)
+            obj.country_team_count = country_count
         if obj.state is not None:
             rank = state_year_epas[obj.state].index(obj.epa_end) + 1
             state_count = len(state_year_epas[obj.state])
             obj.state_epa_rank = rank
             obj.state_epa_percentile = round(1 - rank / state_count, 4)
+            obj.state_team_count = state_count
         if obj.district is not None:
             rank = district_year_epas[obj.district].index(obj.epa_end) + 1
             district_count = len(district_year_epas[obj.district])
             obj.district_epa_rank = rank
             obj.district_epa_percentile = round(1 - rank / district_count, 4)
+            obj.district_team_count = district_count
 
     # YEARS
     if len(year_epas) > 0:

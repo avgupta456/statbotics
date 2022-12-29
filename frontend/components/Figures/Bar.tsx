@@ -15,7 +15,7 @@ const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
         margin={{ top: 20, right: 130, bottom: 50, left: 60 }}
         padding={0.1}
         groupMode="stacked"
-        colors={{ scheme: "set1" }}
+        colors={{ scheme: "category10" }}
         tooltip={({ id, data, value, color }) => {
           const hashId = `bar-tooltip-${data["team"]}-${id}`;
           setTimeout(() => {

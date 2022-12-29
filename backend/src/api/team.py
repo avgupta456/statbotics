@@ -34,6 +34,9 @@ async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
     return {
         "num": team_num,
         "team": team.name,
+        "country": team.country,
+        "state": team.state,
+        "district": team.district,
         "rookie_year": 2008,  # TODO: Add to, get from DB
     }
 
@@ -52,12 +55,21 @@ async def read_team_year(
 
     out = {
         "num": team_num,
+        "team": team_year.name,
         "year": year,
         "team_year": {
-            "epa_rank": team_year.epa_rank,
+            "epa_rank": team_year.total_epa_rank,
+            "epa_count": team_year.total_team_count,
             "country_epa_rank": team_year.country_epa_rank,
+            "country_count": team_year.country_team_count,
             "state_epa_rank": team_year.state_epa_rank,
+            "state_count": team_year.state_team_count,
             "district_epa_rank": team_year.district_epa_rank,
+            "district_count": team_year.district_team_count,
+            "wins": team_year.wins,
+            "losses": team_year.losses,
+            "ties": team_year.ties,
+            "count": team_year.count,
             "epa": team_year.epa_end,
             "norm_epa": team_year.norm_epa_end,
             "auto_epa": team_year.auto_epa_end,

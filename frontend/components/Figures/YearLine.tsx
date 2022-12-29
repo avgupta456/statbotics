@@ -33,8 +33,10 @@ const YearLineChart = ({
 
   const fetchData = async (teamNum: number) => {
     const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}`);
-    console.log(`/team_year/${year}/${teamNum} took ${round(performance.now() - start, 0)} ms`);
+    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`);
+    console.log(
+      `/team_year/${year}/${teamNum}/matches took ${round(performance.now() - start, 0)} ms`
+    );
 
     if (!res.ok) {
       return undefined;
