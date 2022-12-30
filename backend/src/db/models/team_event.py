@@ -81,6 +81,12 @@ class TeamEventORM(Base, ModelORM):
     ties = Column(Integer)
     count = Column(Integer)
     winrate = Column(Float)
+    qual_wins = Column(Integer)
+    qual_losses = Column(Integer)
+    qual_ties = Column(Integer)
+    qual_count = Column(Integer)
+    rps = Column(Integer)
+    rps_per_match = Column(Float)
     rank = Column(Integer)
     num_teams = Column(Integer)
 
@@ -143,6 +149,12 @@ class TeamEvent(Model):
     ties: int = 0
     count: int = 0
     winrate: float = 0
+    qual_wins: int = 0
+    qual_losses: int = 0
+    qual_ties: int = 0
+    qual_count: int = 0
+    rps: int = 0
+    rps_per_match: float = 0
     rank: Optional[int] = None
     num_teams: Optional[int] = None
 

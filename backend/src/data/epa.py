@@ -203,11 +203,10 @@ def process_year(
             team_year.rp_1_epa_start = round(team_rp_1_epas[num], 4)
             team_year.rp_2_epa_start = round(team_rp_2_epas[num], 4)
 
-    # win, loss, tie, count
+    # win, loss, tie, (rp), count
     team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
-
-    # TODO: accumulate stats for RP1, RP2
+    qual_team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0, 0])
 
     acc, mse, count = 0, 0, 0
     quals_acc, quals_mse, quals_count = 0, 0, 0
@@ -351,9 +350,39 @@ def process_year(
         red_pred = match.red_epa_sum
         blue_score = match.blue_no_fouls or match.blue_score or 0
         blue_pred = match.blue_epa_sum
-        for teams, my_score, my_pred, opp_score, opp_pred, epa_pre, mapping in [
-            (red, red_score, red_pred, blue_score, blue_pred, red_epa_pre, red_mapping),
-            (blue, blue_score, blue_pred, red_score, red_pred, blue_epa_pre, blue_mapping),  # type: ignore
+        for (
+            teams,
+            my_score,
+            my_pred,
+            opp_score,
+            opp_pred,
+            epa_pre,
+            my_rp_1,
+            my_rp_2,
+            mapping,
+        ) in [
+            (
+                red,
+                red_score,
+                red_pred,
+                blue_score,
+                blue_pred,
+                red_epa_pre,
+                match.red_rp_1 or 0,
+                match.red_rp_2 or 0,
+                red_mapping,
+            ),
+            (
+                blue,
+                blue_score,
+                blue_pred,
+                red_score,
+                red_pred,
+                blue_epa_pre,
+                match.blue_rp_1 or 0,
+                match.blue_rp_2 or 0,
+                blue_mapping,
+            ),
         ]:
             for t in teams:
                 team_count = team_counts[t]
@@ -371,6 +400,12 @@ def process_year(
                 team_year_stats[t][3] += 1
                 team_event_stats[team_event_key][mapping[winner]] += 1
                 team_event_stats[team_event_key][3] += 1
+
+                if not match.playoff:
+                    qual_team_event_stats[team_event_key][mapping[winner]] += 1
+                    rps = my_rp_1 + my_rp_2 + (2 if mapping[winner] == 0 else 0)
+                    qual_team_event_stats[team_event_key][3] += rps
+                    qual_team_event_stats[team_event_key][4] += 1
 
                 if not match.playoff:
                     team_counts[t] += 1
@@ -613,6 +648,20 @@ def process_year(
         team_event.ties = ties
         team_event.count = event_count
         team_event.winrate = winrate
+
+        (
+            qual_wins,
+            qual_losses,
+            qual_ties,
+            qual_rps,
+            qual_event_count,
+        ) = qual_team_event_stats[key]
+        team_event.qual_wins = qual_wins
+        team_event.qual_losses = qual_losses
+        team_event.qual_ties = qual_ties
+        team_event.rps = qual_rps
+        team_event.rps_per_match = qual_rps / max(1, qual_event_count)
+        team_event.qual_count = qual_event_count
 
     # EVENTS
     event_types: Dict[str, int] = defaultdict(int)
