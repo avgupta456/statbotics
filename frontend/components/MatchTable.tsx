@@ -24,10 +24,12 @@ const lightBlue = "#EEEEFF";
 const lightGray = "#F0F0F0";
 
 const MatchTable = ({
+  year,
   teamNum,
   matches,
   foulRate,
 }: {
+  year: number;
   teamNum: number;
   matches: Match[];
   foulRate: number;
@@ -131,8 +133,8 @@ const MatchTable = ({
                     >
                       {match.red_score}
                     </span>
-                    {match.red_rp_1 > 0.5 && <sup>●</sup>}
-                    {match.red_rp_2 > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && match.red_rp_1 > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && match.red_rp_2 > 0.5 && <sup>●</sup>}
                   </div>
                   <div
                     style={{
@@ -148,8 +150,8 @@ const MatchTable = ({
                     >
                       {match.blue_score}
                     </span>
-                    {match.blue_rp_1 > 0.5 && <sup>●</sup>}
-                    {match.blue_rp_2 > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && match.blue_rp_1 > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && match.blue_rp_2 > 0.5 && <sup>●</sup>}
                   </div>
                   <div className="w-1/12 border-double border-l-4 border-gray-300">
                     <span
@@ -160,8 +162,8 @@ const MatchTable = ({
                     >
                       {round((1 + foulRate) * match.red_epa_pred, 0)}
                     </span>
-                    {!match.playoff && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
-                    {!match.playoff && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && !match.playoff && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && !match.playoff && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
                   </div>
                   <div className="w-1/12">
                     <span
@@ -172,8 +174,8 @@ const MatchTable = ({
                     >
                       {round((1 + foulRate) * match.blue_epa_pred, 0)}
                     </span>
-                    {!match.playoff && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
-                    {!match.playoff && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && !match.playoff && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
+                    {year >= 2016 && !match.playoff && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
                   </div>
                 </div>
               );

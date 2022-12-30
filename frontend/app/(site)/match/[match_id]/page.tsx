@@ -45,8 +45,8 @@ async function Page({ params }: { params: { match_id: string } }) {
         </div>
         <div className="w-full flex flex-row flex-wrap justify-center">
           <Summary data={data} />
-          <Video video={data.match.video} />
           <MatchTable data={data} />
+          <Video video={data.match.video} />
         </div>
       </div>
     </div>
