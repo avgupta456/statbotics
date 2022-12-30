@@ -65,6 +65,7 @@ def k_func(year: int) -> float:
 
 
 def margin_func(year: int, x: int) -> float:
+    # TODO: better handle 2018, currently vastly overestimates scores
     if year in [2002, 2003, 2018]:
         return 1
     if year in [2015]:
@@ -202,11 +203,10 @@ def process_year(
             team_year.rp_1_epa_start = round(team_rp_1_epas[num], 4)
             team_year.rp_2_epa_start = round(team_rp_2_epas[num], 4)
 
-    # win, loss, tie, count
+    # win, loss, tie, (rp), count
     team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
-
-    # TODO: accumulate stats for RP1, RP2
+    qual_team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0, 0])
 
     acc, mse, count = 0, 0, 0
     quals_acc, quals_mse, quals_count = 0, 0, 0
@@ -350,9 +350,58 @@ def process_year(
         red_pred = match.red_epa_sum
         blue_score = match.blue_no_fouls or match.blue_score or 0
         blue_pred = match.blue_epa_sum
-        for teams, my_score, my_pred, opp_score, opp_pred, epa_pre, mapping in [
-            (red, red_score, red_pred, blue_score, blue_pred, red_epa_pre, red_mapping),
-            (blue, blue_score, blue_pred, red_score, red_pred, blue_epa_pre, blue_mapping),  # type: ignore
+
+        # Track surrogates and DQs for RP calculations
+        red_surrogates = [
+            int(x) for x in (match.red_surrogate or "").split(",") if x != ""
+        ]
+        blue_surrogates = [
+            int(x) for x in (match.blue_surrogate or "").split(",") if x != ""
+        ]
+        red_dqs = [int(x) for x in (match.red_dq or "").split(",") if x != ""]
+        blue_dqs = [int(x) for x in (match.blue_dq or "").split(",") if x != ""]
+
+        playoff_dq = match.playoff and (len(red_dqs) == 3 or len(blue_dqs) == 3)
+
+        for (
+            teams,
+            my_score,
+            my_pred,
+            opp_score,
+            opp_pred,
+            epa_pre,
+            my_rp_1,
+            my_rp_2,
+            mapping,
+            surrogates,
+            dqs,
+        ) in [
+            (
+                red,
+                red_score,
+                red_pred,
+                blue_score,
+                blue_pred,
+                red_epa_pre,
+                match.red_rp_1 or 0,
+                match.red_rp_2 or 0,
+                red_mapping,
+                red_surrogates,
+                red_dqs,
+            ),
+            (
+                blue,
+                blue_score,
+                blue_pred,
+                red_score,
+                red_pred,
+                blue_epa_pre,
+                match.blue_rp_1 or 0,
+                match.blue_rp_2 or 0,
+                blue_mapping,
+                blue_surrogates,
+                blue_dqs,
+            ),
         ]:
             for t in teams:
                 team_count = team_counts[t]
@@ -362,17 +411,28 @@ def process_year(
                 error = (my_error - margin * opp_error) / (1 + margin)
                 new_epa = max(0, epa_pre[t] + weight * percent * error / NUM_TEAMS)
 
+                # Skip EPA update for playoff DQs
+                if playoff_dq:
+                    new_epa = epa_pre[t]
+
                 team_epas[t] = new_epa
                 team_event_key = get_team_event_key(t, event_key)
                 team_events_dict[team_event_key].append((new_epa, match.playoff))
                 team_matches_dict[t].append(new_epa)
+
                 team_year_stats[t][mapping[winner]] += 1
                 team_year_stats[t][3] += 1
                 team_event_stats[team_event_key][mapping[winner]] += 1
                 team_event_stats[team_event_key][3] += 1
 
                 if not match.playoff:
-                    team_counts[t] += 1
+                    team_counts[t] += 1  # for EPA count
+                    if t not in surrogates:  # Count win/loss/ties for all qual matches
+                        qual_team_event_stats[team_event_key][mapping[winner]] += 1
+                        qual_team_event_stats[team_event_key][4] += 1
+                    if t not in surrogates and t not in dqs:  # count RPs if not DQ
+                        rps = my_rp_1 + my_rp_2 + (2 if mapping[winner] == 0 else 0)
+                        qual_team_event_stats[team_event_key][3] += rps
 
         if USE_COMPONENTS:
             red_auto_err = (match.red_auto or 0) - (match.red_auto_epa_sum or 0)
@@ -496,26 +556,10 @@ def process_year(
     rp_1_mse = None if rp_1_count == 0 else round(rp_1_mse / rp_1_count, 4)
     rp_2_acc = None if rp_2_count == 0 else round(rp_2_acc / rp_2_count, 4)
     rp_2_mse = None if rp_2_count == 0 else round(rp_2_mse / rp_2_count, 4)
-    champs_rp_1_acc = (
-        None
-        if champs_rp_1_count == 0
-        else round(champs_rp_1_acc / champs_rp_1_count, 4)
-    )
-    champs_rp_1_mse = (
-        None
-        if champs_rp_1_count == 0
-        else round(champs_rp_1_mse / champs_rp_1_count, 4)
-    )
-    champs_rp_2_acc = (
-        None
-        if champs_rp_2_count == 0
-        else round(champs_rp_2_acc / champs_rp_2_count, 4)
-    )
-    champs_rp_2_mse = (
-        None
-        if champs_rp_2_count == 0
-        else round(champs_rp_2_mse / champs_rp_2_count, 4)
-    )
+    champs_rp_1_acc = None if champs_rp_1_count == 0 else round(champs_rp_1_acc / champs_rp_1_count, 4)  # type: ignore
+    champs_rp_1_mse = None if champs_rp_1_count == 0 else round(champs_rp_1_mse / champs_rp_1_count, 4)  # type: ignore
+    champs_rp_2_acc = None if champs_rp_2_count == 0 else round(champs_rp_2_acc / champs_rp_2_count, 4)  # type: ignore
+    champs_rp_2_mse = None if champs_rp_2_count == 0 else round(champs_rp_2_mse / champs_rp_2_count, 4)  # type: ignore
 
     # TEAM MATCHES
     completed_team_matches = [m for m in team_matches if m.status == "Completed"]
@@ -612,6 +656,20 @@ def process_year(
         team_event.ties = ties
         team_event.count = event_count
         team_event.winrate = winrate
+
+        (
+            qual_wins,
+            qual_losses,
+            qual_ties,
+            qual_rps,
+            qual_event_count,
+        ) = qual_team_event_stats[key]
+        team_event.qual_wins = qual_wins
+        team_event.qual_losses = qual_losses
+        team_event.qual_ties = qual_ties
+        team_event.rps = qual_rps
+        team_event.rps_per_match = qual_rps / max(1, qual_event_count)
+        team_event.qual_count = qual_event_count
 
     # EVENTS
     event_types: Dict[str, int] = defaultdict(int)

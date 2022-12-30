@@ -88,18 +88,18 @@ const OverviewSection = ({
       </div>
       <div className="w-full mb-12">
         EPA Breakdown:
-        {epaCard(teamYear.auto_epa.toFixed(1), "Auto", Category10Colors[0])}
-        {epaCard(teamYear.teleop_epa.toFixed(1), "Teleop", Category10Colors[1])}
-        {epaCard(teamYear.endgame_epa.toFixed(1), "Endgame", Category10Colors[2])}
-        {epaCard(teamYear.rp_1_epa.toFixed(2), "RP 1", Category10Colors[3])}
-        {epaCard(teamYear.rp_2_epa.toFixed(2), "RP 2", Category10Colors[4])}
-        {epaCard(teamYear.epa.toFixed(1), "Total", Category10Colors[5])}
+        {epaCard(teamYear?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
+        {epaCard(teamYear?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
+        {epaCard(teamYear?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
+        {epaCard(teamYear?.rp_1_epa?.toFixed(2), "RP 1", Category10Colors[3])}
+        {epaCard(teamYear?.rp_2_epa?.toFixed(2), "RP 2", Category10Colors[4])}
+        {epaCard(teamYear?.epa?.toFixed(1), "Total", Category10Colors[5])}
       </div>
       <div className="w-full flex justify-center mb-12 gap-4">
-        {rankCard(teamYear.epa_rank, teamYear.epa_count, "Worldwide")}
-        {rankCard(teamYear.country_epa_rank, teamYear.country_count, teamData.country)}
-        {rankCard(teamYear.district_epa_rank, teamYear.district_count, district)}
-        {rankCard(teamYear.state_epa_rank, teamYear.state_count, state)}
+        {rankCard(teamYear?.epa_rank, teamYear?.epa_count, "Worldwide")}
+        {rankCard(teamYear?.country_epa_rank, teamYear?.country_count, teamData?.country)}
+        {rankCard(teamYear?.district_epa_rank, teamYear?.district_count, district)}
+        {rankCard(teamYear?.state_epa_rank, teamYear?.state_count, state)}
       </div>
       <div className="w-full h-1 bg-gray-300" />
       {teamEvents.map((event) => (

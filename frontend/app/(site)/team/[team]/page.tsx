@@ -70,6 +70,10 @@ const Page = ({ params }: { params: { team: number } }) => {
       }
 
       const data: TeamYearData | undefined = await getTeamYearData(team, year);
+      if (!data) {
+        return;
+      }
+
       setTeamYearDataDict((prev) => ({ ...prev, [year]: data }));
     };
 

@@ -32,7 +32,7 @@ def _get_tba(
 def get_tba(
     url: str, etag: Optional[str] = None, cache: bool = True
 ) -> Tuple[Union[Any, bool], Optional[str]]:
-    if cache and os.path.exists("cache/" + url):
+    if cache and os.path.exists("cache/" + url + "/data.p"):
         # Cache Hit
         return load_cache("cache/" + url), None
 

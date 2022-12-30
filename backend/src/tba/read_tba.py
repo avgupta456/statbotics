@@ -27,7 +27,7 @@ def get_district(team: int) -> Optional[str]:
 def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []
     for i in range(20):
-        data, _ = get_tba("teams/" + str(i) + "/simple", etag=None, cache=cache)
+        data, _ = get_tba("teams/" + str(i), etag=None, cache=cache)
         if type(data) is bool:
             continue
         for data_team in data:
@@ -35,6 +35,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
             new_data = {
                 "team": num,
                 "name": data_team["nickname"],
+                "rookie_year": data_team["rookie_year"],
                 "state": clean_state(data_team["state_prov"]),
                 "district": clean_district(get_district(num)),
                 "country": data_team["country"],

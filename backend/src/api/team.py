@@ -43,7 +43,7 @@ async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
         "country": team.country,
         "state": team.state,
         "district": team.district,
-        "rookie_year": 2008,  # TODO: Add to, get from DB
+        "rookie_year": max(2002, team.rookie_year or 0),
     }
 
 

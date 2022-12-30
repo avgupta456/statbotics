@@ -65,7 +65,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     return out
 
 
-@router.get("/{event_id}/team_matches/{team}")
+@router.get("/event/{event_id}/team_matches/{team}")
 @async_fail_gracefully
 async def read_team_matches(
     response: Response, event_id: str, team: int
