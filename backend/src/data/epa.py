@@ -65,6 +65,7 @@ def k_func(year: int) -> float:
 
 
 def margin_func(year: int, x: int) -> float:
+    # TODO: better handle 2018, currently vastly overestimates scores
     if year in [2002, 2003, 2018]:
         return 1
     if year in [2015]:
