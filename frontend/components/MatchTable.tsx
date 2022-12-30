@@ -55,7 +55,11 @@ const MatchTable = ({ teamNum, matches }: { teamNum: number; matches: Match[] })
           {matches
             .filter((match) => match.comp_level === compLevel)
             .map((match) => {
-              const displayMatch = `${compLevelShortNames[compLevel]} ${match.match_number}`;
+              let displayMatch = `${compLevelShortNames[compLevel]} ${match.match_number}`;
+              if (compLevel === "qf" || compLevel === "sf") {
+                displayMatch = `${compLevelShortNames[compLevel]} ${match.set_number}-${match.match_number}`;
+              }
+
               return (
                 <div
                   className="w-full h-8 flex text-center"
