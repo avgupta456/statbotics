@@ -2,6 +2,7 @@ import React from "react";
 
 import Link from "next/link";
 
+import { CORRECT_COLOR, INCORRECT_COLOR } from "../constants";
 import { classnames, round } from "../utils";
 import { Match } from "./types/api";
 
@@ -40,16 +41,16 @@ const MatchTable = ({
     .sort((a, b) => compLevels.indexOf(a) - compLevels.indexOf(b));
 
   return (
-    <div className="w-4/5 mx-auto flex flex-col border-2 border-gray-300">
+    <div className="w-full flex flex-col border-2 border-gray-300">
       <div
         style={{ backgroundColor: lightGray }}
         className="w-full h-8 flex text-center items-center"
       >
-        <div className="w-1/6">Match</div>
-        <div className="w-1/4">Red Alliance</div>
-        <div className="w-1/4">Blue Alliance</div>
-        <div className="w-1/6">Scores</div>
-        <div className="w-1/6">Predictions</div>
+        <div className="w-2/13">Match</div>
+        <div className="w-3/13">Red Alliance</div>
+        <div className="w-3/13">Blue Alliance</div>
+        <div className="w-2/13">Scores</div>
+        <div className="w-3/13">Predictions</div>
       </div>
       {uniqueCompLevels.map((compLevel) => (
         <>
@@ -68,12 +69,21 @@ const MatchTable = ({
                 displayMatch = `${compLevelShortNames[compLevel]} ${match.set_number}-${match.match_number}`;
               }
 
+              const _winProb =
+                match.alliance === "red" ? match.epa_win_prob : 1 - match.epa_win_prob;
+              const winProb = round(_winProb * 100, 0);
+
+              const correctWinner = match.winner === match.pred_winner;
+
               return (
                 <div
                   className="w-full h-8 flex text-center"
                   key={`${match.comp_level}-${match.comp_level}-${match.match_number}`}
                 >
-                  <Link href={`/match/${match.key}`} className="w-1/6">
+                  <Link
+                    href={`/match/${match.key}`}
+                    className="w-2/13 flex justify-center items-center"
+                  >
                     <a className="text-blue-600 hover:text-blue-700 cursor-pointer">
                       {displayMatch}
                     </a>
@@ -82,7 +92,7 @@ const MatchTable = ({
                     style={{
                       backgroundColor: lightRed,
                     }}
-                    className="w-1/4 flex"
+                    className="w-3/13 flex justify-center items-center"
                   >
                     {match.red.map((team) => (
                       <Link
@@ -102,7 +112,7 @@ const MatchTable = ({
                     style={{
                       backgroundColor: lightBlue,
                     }}
-                    className="w-1/4 flex"
+                    className="w-3/13 flex justify-center items-center"
                   >
                     {match.blue.map((team) => (
                       <Link
@@ -122,11 +132,10 @@ const MatchTable = ({
                     style={{
                       backgroundColor: lightRed,
                     }}
-                    className="w-1/12"
+                    className="w-1/13 flex justify-center items-center"
                   >
                     <span
                       className={classnames(
-                        "w-1/12",
                         match.winner === "red" ? "font-bold" : "font-thin",
                         match.alliance === "red" ? "underline" : ""
                       )}
@@ -140,7 +149,7 @@ const MatchTable = ({
                     style={{
                       backgroundColor: lightBlue,
                     }}
-                    className="w-1/12"
+                    className="w-1/13 flex justify-center items-center"
                   >
                     <span
                       className={classnames(
@@ -153,7 +162,7 @@ const MatchTable = ({
                     {year >= 2016 && match.blue_rp_1 > 0.5 && <sup>●</sup>}
                     {year >= 2016 && match.blue_rp_2 > 0.5 && <sup>●</sup>}
                   </div>
-                  <div className="w-1/12 border-double border-l-4 border-gray-300">
+                  <div className="w-1/13 border-double border-l-4 border-gray-300 flex justify-center items-center">
                     <span
                       className={classnames(
                         match.pred_winner === "red" ? "font-bold" : "font-thin",
@@ -165,7 +174,7 @@ const MatchTable = ({
                     {year >= 2016 && !match.playoff && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
                     {year >= 2016 && !match.playoff && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
                   </div>
-                  <div className="w-1/12">
+                  <div className="w-1/13 flex justify-center items-center">
                     <span
                       className={classnames(
                         match.pred_winner === "blue" ? "font-bold" : "font-thin",
@@ -176,6 +185,12 @@ const MatchTable = ({
                     </span>
                     {year >= 2016 && !match.playoff && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
                     {year >= 2016 && !match.playoff && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
+                  </div>
+                  <div
+                    style={{ backgroundColor: correctWinner ? CORRECT_COLOR : INCORRECT_COLOR }}
+                    className="w-1/13 flex justify-center items-center"
+                  >
+                    {winProb}%
                   </div>
                 </div>
               );

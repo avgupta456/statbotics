@@ -87,6 +87,7 @@ async def read_team_year(
                 "blue_epa_pred": m.blue_epa_sum,
                 "red_rp_1_pred": m.red_rp_1_epa_sum,
                 "red_rp_2_pred": m.red_rp_2_epa_sum,
+                "epa_win_prob": m.epa_win_prob,
                 "pred_winner": m.epa_winner,
                 "blue_rp_1_pred": m.blue_rp_1_epa_sum,
                 "blue_rp_2_pred": m.blue_rp_2_epa_sum,

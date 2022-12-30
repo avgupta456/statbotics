@@ -51,6 +51,7 @@ export type Match = {
   blue_rp_2: number;
   red_epa_pred: number;
   blue_epa_pred: number;
+  epa_win_prob: number;
   pred_winner: string;
   red_rp_1_pred: number;
   red_rp_2_pred: number;

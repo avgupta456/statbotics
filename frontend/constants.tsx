@@ -3,6 +3,9 @@ export const BACKEND_URL = "http://127.0.0.1:8000/api";
 
 export const CURR_YEAR = 2023;
 
+export const CORRECT_COLOR = "#86CFA3";
+export const INCORRECT_COLOR = "#F77F84";
+
 export const Category10Colors = [
   "#1f77b4",
   "#ff7f0e",

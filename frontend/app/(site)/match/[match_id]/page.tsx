@@ -1,5 +1,7 @@
 import React from "react";
 
+import Link from "next/link";
+
 import { BACKEND_URL } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
 import Summary from "./summary";
@@ -34,14 +36,9 @@ async function Page({ params }: { params: { match_id: string } }) {
       <div className="container mx-auto">
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-3xl lg:text-4xl">{data.match_name}</p>
-          <a
-            href={`/event/${data.match.event}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="lg:text-2xl ml-2 text_link"
-          >
-            {truncatedEventName}
-          </a>
+          <Link href={`/event/${data.match.event}`} className="lg:text-2xl ml-2 text_link">
+            <a>{truncatedEventName}</a>
+          </Link>
         </div>
         <div className="w-full flex flex-row flex-wrap justify-center">
           <Summary data={data} />
