@@ -2,13 +2,13 @@
 
 import React, { useMemo, useState } from "react";
 
-import BubbleChart from "../../components/Figures/Bubble";
-import { classnames } from "../../utils";
+import BubbleChart from "../../../components/Figures/Bubble";
+import { classnames } from "../../../utils";
+import { Data, emptyData } from "../types";
 import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
-import { Data, emptyData } from "./types";
 
-const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
+const Tabs = ({ year, data }: { year: number; data: Data | undefined }) => {
   const [tab, setTab] = useState("Insights");
 
   const MemoizedInsightsTable = useMemo(
@@ -21,13 +21,14 @@ const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
         data={data?.team_years ?? []}
         filterOptions={["country", "state", "district"]}
         columnOptions={[
+          "Total EPA",
+          "Norm EPA",
           "Auto",
           "Teleop",
           "Endgame",
           "Auto + Endgame",
           "RP 1",
           "RP 2",
-          "Total",
           "Wins",
           "Win Rate",
         ]}
@@ -82,4 +83,4 @@ const Tab = ({ year, data }: { year: number; data: Data | undefined }) => {
   );
 };
 
-export default Tab;
+export default Tabs;

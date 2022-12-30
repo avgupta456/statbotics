@@ -24,6 +24,7 @@ def get_matches(
     year: Optional[int] = None,
     week: Optional[int] = None,
     event_id: Optional[int] = None,
+    team: Optional[int] = None,
 ) -> List[Match]:
     def callback(session: SessionType):
         data = session.query(MatchORM)
@@ -32,7 +33,16 @@ def get_matches(
         if week is not None:
             data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
         if event_id is not None:
-            data = data.filter(MatchORM.event_id == event_id)  # type: ignore
+            data = data.filter(MatchORM.event == event_id)  # type: ignore
+        if team is not None:
+            data = data.filter(  # type: ignore
+                (MatchORM.red_1 == team)  # type: ignore
+                | (MatchORM.red_2 == team)
+                | (MatchORM.red_3 == team)
+                | (MatchORM.blue_1 == team)
+                | (MatchORM.blue_2 == team)
+                | (MatchORM.blue_3 == team)
+            )
         out_data: List[MatchORM] = data.all()
 
         return [Match.from_dict(x.__dict__) for x in out_data]

@@ -5,6 +5,8 @@ import { round } from "../utils";
 
 export const columnOptions = [
   { label: "Constant", accessor: (datum) => 1 },
+  { label: "Total EPA", accessor: (datum) => round(datum.total_epa) },
+  { label: "Norm EPA", accessor: (datum) => round(datum.norm_epa, 0) },
   { label: "Auto", accessor: (datum) => round(datum.auto_epa) },
   { label: "Teleop", accessor: (datum) => round(datum.teleop_epa) },
   { label: "Endgame", accessor: (datum) => round(datum.endgame_epa) },
@@ -15,7 +17,6 @@ export const columnOptions = [
   { label: "RP 1", accessor: (datum) => round(datum.rp_1_epa, 3) },
   { label: "RP 2", accessor: (datum) => round(datum.rp_2_epa, 3) },
 
-  { label: "Total", accessor: (datum) => round(datum.total_epa) },
   { label: "Wins", accessor: (datum) => datum.wins },
   {
     label: "Win Rate",

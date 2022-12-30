@@ -76,8 +76,21 @@ class TeamYearORM(Base, ModelORM):
     count = Column(Integer)
     winrate = Column(Float)
 
-    epa_rank = Column(Integer)
-    epa_percentile = Column(Float)
+    total_epa_rank = Column(Integer)
+    total_epa_percentile = Column(Float)
+    total_team_count = Column(Integer)
+
+    country_epa_rank = Column(Integer)
+    country_epa_percentile = Column(Float)
+    country_team_count = Column(Integer)
+
+    state_epa_rank = Column(Integer)
+    state_epa_percentile = Column(Float)
+    state_team_count = Column(Integer)
+
+    district_epa_rank = Column(Integer)
+    district_epa_percentile = Column(Float)
+    district_team_count = Column(Integer)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -136,8 +149,21 @@ class TeamYear(Model):
     count: int = 0
     winrate: float = 0
 
-    epa_rank: Optional[int] = None
-    epa_percentile: Optional[float] = None
+    total_epa_rank: Optional[int] = None
+    total_epa_percentile: Optional[float] = None
+    total_team_count: Optional[int] = None
+
+    country_epa_rank: Optional[int] = None
+    country_epa_percentile: Optional[float] = None
+    country_team_count: Optional[int] = None
+
+    state_epa_rank: Optional[int] = None
+    state_epa_percentile: Optional[float] = None
+    state_team_count: Optional[int] = None
+
+    district_epa_rank: Optional[int] = None
+    district_epa_percentile: Optional[float] = None
+    district_team_count: Optional[int] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamYear":

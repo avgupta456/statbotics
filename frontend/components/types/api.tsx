@@ -2,17 +2,11 @@ export type TeamEvent = {
   num: number;
   team: string;
   total_epa: number;
-  // total_epa_diff: number;
   auto_epa: number;
-  // auto_epa_diff: number;
   teleop_epa: number;
-  // teleop_epa_diff: number;
   endgame_epa: number;
-  // endgame_epa_diff: number;
   rp_1_epa: number;
-  // rp_1_epa_diff: number;
   rp_2_epa: number;
-  // rp_2_epa_diff: number;
   wins: number;
   losses: number;
   ties: number;
@@ -38,6 +32,48 @@ export type TeamYear = {
   ties: number;
   count: number;
 };
+
+export type Match = {
+  key: string;
+  comp_level: string;
+  set_number: number;
+  match_number: number;
+  playoff: boolean;
+  alliance: string;
+  red: number[];
+  blue: number[];
+  red_score: number;
+  blue_score: number;
+  winner: string;
+  red_rp_1: number;
+  red_rp_2: number;
+  blue_rp_1: number;
+  blue_rp_2: number;
+  red_epa_pred: number;
+  blue_epa_pred: number;
+  epa_win_prob: number;
+  pred_winner: string;
+  red_rp_1_pred: number;
+  red_rp_2_pred: number;
+  blue_rp_1_pred: number;
+  blue_rp_2_pred: number;
+};
+
+export type TeamMatch = {
+  match: number;
+  label: string;
+  time: number;
+  playoff: boolean;
+  norm_epa: number;
+  total_epa: number;
+  auto_epa: number;
+  teleop_epa: number;
+  endgame_epa: number;
+  rp_1_epa: number;
+  rp_2_epa: number;
+};
+
+// Percentile/Year Stats
 
 export type PercentileStats = {
   p99: number;

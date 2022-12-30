@@ -2,8 +2,8 @@
 
 import React, { useMemo, useState } from "react";
 
-import BubbleChart from "../../../components/Figures/Bubble";
-import { classnames } from "../../../utils";
+import BubbleChart from "../../../../components/Figures/Bubble";
+import { classnames } from "../../../../utils";
 import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
 import { Data } from "./types";
@@ -26,13 +26,14 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
         data={bubbleData}
         filterOptions={[]}
         columnOptions={[
+          "Total EPA",
+          "Norm EPA",
           "Auto",
           "Teleop",
           "Endgame",
           "Auto + Endgame",
           "RP 1",
           "RP 2",
-          "Total",
           "Rank",
           "N - Rank",
           "RPs / Match",

@@ -6,9 +6,9 @@ import { DebounceInput } from "react-debounce-input";
 
 import EventInsightsTable, {
   TeamEventInsights,
-} from "../../../components/Table/EventInsightsTable";
-import { TableKey } from "../../../components/Table/shared";
-import { round, truncate } from "../../../utils";
+} from "../../../../components/Table/EventInsightsTable";
+import { TableKey } from "../../../../components/Table/shared";
+import { round, truncate } from "../../../../utils";
 import { Data } from "./types";
 
 const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data }) => {

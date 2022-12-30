@@ -6,6 +6,7 @@ from src.api.aggregation.year import get_year_stats
 from src.api.db.event import get_event
 from src.api.db.team_event import get_team_events
 from src.api.db.team_match import get_team_matches
+from src.data.nepa import get_epa_to_norm_epa_func
 from src.db.models.event import Event
 from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
@@ -20,7 +21,7 @@ async def read_root():
     return {"name": "Event Router"}
 
 
-@router.get("/{event_id}")
+@router.get("/event/{event_id}")
 @async_fail_gracefully
 async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     event: Optional[Event] = await get_event(event_id)
@@ -28,7 +29,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     if event is None:
         raise Exception("Event not found")
 
-    event_name = event.name
+    epa_to_norm_epa = get_epa_to_norm_epa_func(event.year)
 
     team_event_objs: List[TeamEvent] = await get_team_events(event_id=event_id)
 
@@ -37,17 +38,12 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
             "num": x.team,
             "team": x.team_name,
             "total_epa": x.epa_end,
-            # "total_epa_diff": (x.epa_end or 0) - (x.epa_start or 0),
+            "norm_epa": epa_to_norm_epa(x.epa_end or 0),
             "auto_epa": x.auto_epa_end,
-            # "auto_epa_diff": (x.auto_epa_end or 0) - (x.auto_epa_start or 0),
             "teleop_epa": x.teleop_epa_end,
-            # "teleop_epa_diff": (x.teleop_epa_end or 0) - (x.teleop_epa_start or 0),
             "endgame_epa": x.endgame_epa_end,
-            # "endgame_epa_diff": (x.endgame_epa_end or 0) - (x.endgame_epa_start or 0),
             "rp_1_epa": x.rp_1_epa_end,
-            # "rp_1_epa_diff": (x.rp_1_epa_end or 0) - (x.rp_1_epa_start or 0),
             "rp_2_epa": x.rp_2_epa_end,
-            # "rp_2_epa_diff": (x.rp_2_epa_end or 0) - (x.rp_2_epa_start or 0),
             "wins": x.wins,
             "losses": x.losses,
             "ties": x.ties,
@@ -60,7 +56,8 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     year_stats = await get_year_stats(event.year)
 
     out = {
-        "event_name": event_name,
+        "event_name": event.name,
+        "year": event.year,
         "team_events": team_events,
         "year_stats": year_stats,
     }

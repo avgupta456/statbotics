@@ -14,8 +14,6 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
     scores: List[int] = []
     autos: List[int] = []
     teleops: List[int] = []
-    ones: List[int] = []
-    twos: List[int] = []
     endgames: List[int] = []
     fouls: List[int] = []
     no_fouls: List[int] = []
@@ -27,8 +25,6 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         scores.extend([match.red_score or 0, match.blue_score or 0])
         autos.extend([match.red_auto or 0, match.blue_auto or 0])
         teleops.extend([match.red_teleop or 0, match.blue_teleop or 0])
-        ones.extend([match.red_1 or 0, match.blue_1 or 0])
-        twos.extend([match.red_2 or 0, match.blue_2 or 0])
         endgames.extend([match.red_endgame or 0, match.blue_endgame or 0])
         fouls.extend([match.red_fouls or 0, match.blue_fouls or 0])
         no_fouls.extend([match.red_no_fouls or 0, match.blue_no_fouls or 0])
@@ -40,8 +36,6 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         year.score_sd = 10
         year.auto_mean = 10
         year.teleop_mean = 10
-        year.one_mean = 10
-        year.two_mean = 0
         year.endgame_mean = 10
         year.fouls_mean = 0
         year.no_fouls_mean = 30
@@ -53,8 +47,6 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         year.score_sd = round(statistics.pstdev(scores), 2)
         year.auto_mean = round(sum(autos) / len(autos), 2)
         year.teleop_mean = round(sum(teleops) / len(teleops), 2)
-        year.one_mean = round(sum(ones) / len(ones), 2)
-        year.two_mean = round(sum(twos) / len(twos), 2)
         year.endgame_mean = round(sum(endgames) / len(endgames), 2)
         year.fouls_mean = round(sum(fouls) / len(fouls), 2)
         year.no_fouls_mean = round(sum(no_fouls) / len(no_fouls), 2)
@@ -64,8 +56,6 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
     if year.year < 2016:
         year.auto_mean = None
         year.teleop_mean = None
-        year.one_mean = None
-        year.two_mean = None
         year.endgame_mean = None
         year.fouls_mean = None
         year.no_fouls_mean = None

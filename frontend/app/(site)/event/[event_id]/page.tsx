@@ -1,12 +1,15 @@
 import React from "react";
 
-import { BACKEND_URL } from "../../../constants";
-import { truncate } from "../../../utils";
+import { BACKEND_URL } from "../../../../constants";
+import { round, truncate } from "../../../../utils";
 import Tabs from "./tabs";
 import { Data } from "./types";
 
 async function getData(event_id: string) {
+  const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/event/` + event_id);
+  console.log(`/event/${event_id} took ${round(performance.now() - start, 0)}ms`);
+
   if (!res.ok) {
     return undefined;
   }
@@ -16,16 +19,7 @@ async function getData(event_id: string) {
 
 async function Page({ params }: { params: { event_id: string } }) {
   const { event_id } = params;
-  console.log("Fetching event data for event_id: " + event_id);
-  const start = performance.now();
   const data: Data = await getData(event_id);
-  console.log(
-    "Fetched event data for event_id: " +
-      event_id +
-      ". Took " +
-      Math.round(performance.now() - start) +
-      "ms"
-  );
 
   if (!data) {
     return <div>Event not found</div>;

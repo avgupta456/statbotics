@@ -5,8 +5,9 @@ import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
 import { BACKEND_URL } from "../../constants";
+import { round } from "../../utils";
 import { Option, multiSelectStyles } from "../multiSelect";
-import { TeamYear } from "../types/api";
+import { TeamMatch, TeamYear } from "../types/api";
 import LineChart from "./Line";
 
 const YearLineChart = ({
@@ -21,7 +22,7 @@ const YearLineChart = ({
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
   const [xAxis, setXAxis] = useState("match");
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
-  const [allData, setAllData] = useState<any>({});
+  const [allData, setAllData] = useState<{ [key: number]: TeamMatch[] | undefined }>({});
 
   useEffect(() => {
     setSelectedTeams([]);
@@ -31,7 +32,12 @@ const YearLineChart = ({
   // FUNCTIONS
 
   const fetchData = async (teamNum: number) => {
-    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}`);
+    const start = performance.now();
+    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`);
+    console.log(
+      `/team_year/${year}/${teamNum}/matches took ${round(performance.now() - start, 0)} ms`
+    );
+
     if (!res.ok) {
       return undefined;
     }
@@ -42,8 +48,8 @@ const YearLineChart = ({
       return undefined;
     }
 
-    const sortedData = data.data
-      .filter((teamYear: any) => !teamYear.playoff)
+    const sortedData: TeamMatch[] = data.data
+      // .filter((teamYear: any) => !teamYear.playoff)
       .sort((a: any, b: any) => a.time - b.time);
 
     return sortedData;
@@ -83,18 +89,41 @@ const YearLineChart = ({
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
     .map((teamNum) => {
-      const N = allData[teamNum].length;
-      return {
+      const N = allData[teamNum]?.length || 0;
+      let teamData = {
         id: teamNum,
-        data: allData[teamNum].map((teamMatch: any, i) => ({
-          // hack to make all points < 1, for correct formatting
-          x: xAxis === "match" ? i : i / Math.max(1, N - 1) - 0.0001,
-          y: teamMatch[yAxis.value],
-        })),
+        data:
+          allData[teamNum]?.map((teamMatch: any, i) => ({
+            x: xAxis === "match" ? i : i / Math.max(1, N - 1),
+            label: allData[teamNum]?.[i - 1]?.label || "Start",
+            y: teamMatch[yAxis.value],
+          })) || [],
       };
+
+      // TODO: fix this to the actual post-match EPA
+      const lastEPA = allData[teamNum]?.[N - 1]?.[yAxis.value];
+      teamData.data.push({ x: xAxis === "match" ? N : 1, label: "End", y: lastEPA });
+
+      return teamData;
     });
 
   // RENDER
+
+  const yAxisOptions =
+    year >= 2016
+      ? [
+          { value: "total_epa", label: "Total EPA" },
+          { value: "norm_epa", label: "Norm EPA" },
+          { value: "auto_epa", label: "Auto EPA" },
+          { value: "teleop_epa", label: "Teleop EPA" },
+          { value: "endgame_epa", label: "Endgame EPA" },
+          { value: "rp_1_epa", label: "RP 1 EPA" },
+          { value: "rp_2_epa", label: "RP 2 EPA" },
+        ]
+      : [
+          { value: "total_epa", label: "EPA" },
+          { value: "norm_epa", label: "Norm EPA" },
+        ];
 
   return (
     <div className="w-full flex flex-col">
@@ -105,14 +134,7 @@ const YearLineChart = ({
           styles={{
             menu: (provided) => ({ ...provided, zIndex: 9999 }),
           }}
-          options={[
-            { value: "auto_epa", label: "Auto EPA" },
-            { value: "teleop_epa", label: "Teleop EPA" },
-            { value: "endgame_epa", label: "Endgame EPA" },
-            { value: "total_epa", label: "Total EPA" },
-            { value: "rp_1_epa", label: "RP 1 EPA" },
-            { value: "rp_2_epa", label: "RP 2 EPA" },
-          ]}
+          options={yAxisOptions}
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
         />

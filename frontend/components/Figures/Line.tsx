@@ -18,13 +18,25 @@ const LineChart = ({
   yAxis: string;
   isRP: boolean;
 }) => {
+  const xLabels = data.reduce((acc, curr) => {
+    const xToLabel = curr.data.reduce((acc, curr) => {
+      acc[curr.x] = curr.label;
+      return acc;
+    }, {});
+    acc[curr.id] = xToLabel;
+    return acc;
+  }, {});
+
+  const yMin = yAxis.includes("RP") ? -1 / 3 : yAxis.includes("Norm") ? 1200 : 0;
+  const enableArea = !(yAxis.includes("RP") || yAxis.includes("Norm"));
+
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveLine
         data={data}
         margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
         xScale={{ type: "linear", min: 0, max: data.length === 0 ? 1 : "auto" }}
-        yScale={{ type: "linear", min: isRP ? -1 / 3 : 0, max: data.length === 0 ? 1 : "auto" }}
+        yScale={{ type: "linear", min: yMin, max: data.length === 0 ? 1 : "auto" }}
         curve="monotoneX"
         axisBottom={{
           tickSize: 5,
@@ -44,17 +56,18 @@ const LineChart = ({
         }}
         colors={{ scheme: "category10" }}
         pointSize={5}
-        enableArea={!isRP && data.length <= 1}
+        enableArea={enableArea && data.length <= 1}
         areaOpacity={0.1}
         pointLabel="y"
         pointLabelYOffset={-12}
         useMesh={true}
         tooltip={({ point }) => {
           const y: any = point.data.yFormatted;
-          const xLabel = point.data.xFormatted < 1 ? "" : `(M${point.data.xFormatted})`;
+          const xLabel = xLabels[point.serieId][point.data.x];
           return (
             <div className="bg-white rounded shadow p-2" style={{ color: point.color }}>
-              <div className="text-sm font-bold">{`Team ${point.serieId} ${xLabel}`}</div>
+              <div className="text-sm font-bold">{`Team ${point.serieId}`}</div>
+              <div className="text-xs mb-1">{xLabel}</div>
               <div className="text-sm">{`${yAxis}: ${round(parseFloat(y))}`}</div>
             </div>
           );

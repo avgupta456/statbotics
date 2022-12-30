@@ -8,7 +8,9 @@ from src.db.models.team_event import TeamEvent, TeamEventORM
 
 
 def get_team_events(
-    year: Optional[int] = None, event_id: Optional[int] = None
+    year: Optional[int] = None,
+    event_id: Optional[int] = None,
+    team: Optional[int] = None,
 ) -> List[TeamEvent]:
     def callback(session: SessionType):
         data = session.query(TeamEventORM)
@@ -16,6 +18,8 @@ def get_team_events(
             data = data.filter(TeamEventORM.year == year)  # type: ignore
         if event_id is not None:
             data = data.filter(TeamEventORM.event == event_id)  # type: ignore
+        if team is not None:
+            data = data.filter(TeamEventORM.team == team)  # type: ignore
         out_data: List[TeamEventORM] = data.all()
         return [TeamEvent.from_dict(x.__dict__) for x in out_data]
 

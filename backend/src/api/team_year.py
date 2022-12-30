@@ -2,13 +2,11 @@ from typing import Any, Dict, List
 
 from fastapi import APIRouter, Response
 
+from src.api.aggregation.team_match import get_team_matches
 from src.api.aggregation.year import get_year_stats
-from src.api.db.team_match import get_team_matches
 from src.api.db.team_year import get_team_years
-from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.utils.decorators import async_fail_gracefully
-from src.utils.utils import get_match_number
 
 router = APIRouter()
 
@@ -18,7 +16,7 @@ async def read_root():
     return {"name": "Team Year Router"}
 
 
-@router.get("/{year}")
+@router.get("/team_years/{year}")
 @async_fail_gracefully
 async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
     team_year_objs: List[TeamYear] = await get_team_years(year)
@@ -30,7 +28,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
             "state": x.state,
             "country": x.country,
             "district": x.district,
-            "epa_rank": x.epa_rank,
+            "epa_rank": x.total_epa_rank,
             "norm_epa": x.norm_epa_end,
             "total_epa": x.epa_end,
             "auto_epa": x.auto_epa_end,
@@ -56,26 +54,9 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
     return out
 
 
-@router.get("/{year}/{team}")
+@router.get("/team_year/{year}/{team}/matches")
 @async_fail_gracefully
 async def read_team_matches(
     response: Response, year: int, team: int
 ) -> List[Dict[str, Any]]:
-    team_match_objs: List[TeamMatch] = await get_team_matches(year=year, team=team)
-
-    team_matches = [
-        {
-            "match": get_match_number(x.match),
-            "time": x.time,
-            "playoff": x.playoff,
-            "total_epa": x.epa,
-            "auto_epa": x.auto_epa,
-            "teleop_epa": x.teleop_epa,
-            "endgame_epa": x.endgame_epa,
-            "rp_1_epa": x.rp_1_epa,
-            "rp_2_epa": x.rp_2_epa,
-        }
-        for x in team_match_objs
-    ]
-
-    return team_matches
+    return await get_team_matches(year=year, team=team)

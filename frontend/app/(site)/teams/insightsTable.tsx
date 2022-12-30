@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import { DebounceInput } from "react-debounce-input";
 
-import YearInsightsTable, { TeamYearInsights } from "../../components/Table/YearInsightsTable";
-import { TableKey } from "../../components/Table/shared";
-import { FilterBar, filterData } from "../../components/filter";
-import { round, truncate } from "../../utils";
-import { Data } from "./types";
+import YearInsightsTable, { TeamYearInsights } from "../../../components/Table/YearInsightsTable";
+import { TableKey } from "../../../components/Table/shared";
+import { FilterBar, filterData } from "../../../components/filter";
+import { round, truncate } from "../../../utils";
+import { Data } from "../types";
 
 const PageTeamInsightsTable = ({ year, data }: { year: number; data: Data }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
