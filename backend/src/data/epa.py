@@ -350,6 +350,15 @@ def process_year(
         red_pred = match.red_epa_sum
         blue_score = match.blue_no_fouls or match.blue_score or 0
         blue_pred = match.blue_epa_sum
+
+        # Track DQs and surrogates for RP calculations
+        red_surrogates = [
+            int(x) for x in (match.red_surrogate or "").split(",") if x != ""
+        ]
+        blue_surrogates = [
+            int(x) for x in (match.blue_surrogate or "").split(",") if x != ""
+        ]
+
         for (
             teams,
             my_score,
@@ -360,6 +369,7 @@ def process_year(
             my_rp_1,
             my_rp_2,
             mapping,
+            surrogates,
         ) in [
             (
                 red,
@@ -371,6 +381,7 @@ def process_year(
                 match.red_rp_1 or 0,
                 match.red_rp_2 or 0,
                 red_mapping,
+                red_surrogates,
             ),
             (
                 blue,
@@ -382,6 +393,7 @@ def process_year(
                 match.blue_rp_1 or 0,
                 match.blue_rp_2 or 0,
                 blue_mapping,
+                blue_surrogates,
             ),
         ]:
             for t in teams:
@@ -401,7 +413,7 @@ def process_year(
                 team_event_stats[team_event_key][mapping[winner]] += 1
                 team_event_stats[team_event_key][3] += 1
 
-                if not match.playoff:
+                if not match.playoff and t not in surrogates:
                     qual_team_event_stats[team_event_key][mapping[winner]] += 1
                     rps = my_rp_1 + my_rp_2 + (2 if mapping[winner] == 0 else 0)
                     qual_team_event_stats[team_event_key][3] += rps
