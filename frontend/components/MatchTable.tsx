@@ -22,9 +22,16 @@ const compLevelShortNames = {
 const lightRed = "#FFEEEE";
 const lightBlue = "#EEEEFF";
 const lightGray = "#F0F0F0";
-const lighterGray = "#F8F8F8";
 
-const MatchTable = ({ teamNum, matches }: { teamNum: number; matches: Match[] }) => {
+const MatchTable = ({
+  teamNum,
+  matches,
+  foulRate,
+}: {
+  teamNum: number;
+  matches: Match[];
+  foulRate: number;
+}) => {
   const compLevels = matches.map((match) => match.comp_level);
   const uniqueCompLevels = compLevels
     .filter((v, i, a) => a.indexOf(v) === i)
@@ -113,49 +120,60 @@ const MatchTable = ({ teamNum, matches }: { teamNum: number; matches: Match[] })
                     style={{
                       backgroundColor: lightRed,
                     }}
-                    className={classnames(
-                      "w-1/12",
-                      match.winner === "red" ? "font-bold" : "font-thin",
-                      match.alliance === "red" ? "underline" : ""
-                    )}
+                    className="w-1/12"
                   >
-                    {match.red_score}
+                    <span
+                      className={classnames(
+                        "w-1/12",
+                        match.winner === "red" ? "font-bold" : "font-thin",
+                        match.alliance === "red" ? "underline" : ""
+                      )}
+                    >
+                      {match.red_score}
+                    </span>
+                    {match.red_rp_1 > 0.5 && <sup>●</sup>}
+                    {match.red_rp_2 > 0.5 && <sup>●</sup>}
                   </div>
                   <div
                     style={{
                       backgroundColor: lightBlue,
                     }}
-                    className={classnames(
-                      "w-1/12",
-                      match.winner === "blue" ? "font-bold" : "font-thin",
-                      match.alliance === "blue" ? "underline" : ""
-                    )}
+                    className="w-1/12"
                   >
-                    {match.blue_score}
+                    <span
+                      className={classnames(
+                        match.winner === "blue" ? "font-bold" : "font-thin",
+                        match.alliance === "blue" ? "underline" : ""
+                      )}
+                    >
+                      {match.blue_score}
+                    </span>
+                    {match.blue_rp_1 > 0.5 && <sup>●</sup>}
+                    {match.blue_rp_2 > 0.5 && <sup>●</sup>}
                   </div>
-                  <div
-                    style={{
-                      backgroundColor: lighterGray,
-                    }}
-                    className={classnames(
-                      "w-1/12 border-double border-l-4 border-gray-300",
-                      match.pred_winner === "red" ? "font-bold" : "font-thin",
-                      match.alliance === "red" ? "underline" : ""
-                    )}
-                  >
-                    {round(match.red_epa_pred, 0)}
+                  <div className="w-1/12 border-double border-l-4 border-gray-300">
+                    <span
+                      className={classnames(
+                        match.pred_winner === "red" ? "font-bold" : "font-thin",
+                        match.alliance === "red" ? "underline" : ""
+                      )}
+                    >
+                      {round((1 + foulRate) * match.red_epa_pred, 0)}
+                    </span>
+                    {!match.playoff && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
+                    {!match.playoff && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
                   </div>
-                  <div
-                    style={{
-                      backgroundColor: lighterGray,
-                    }}
-                    className={classnames(
-                      "w-1/12",
-                      match.pred_winner === "blue" ? "font-bold" : "font-thin",
-                      match.alliance === "blue" ? "underline" : ""
-                    )}
-                  >
-                    {round(match.blue_epa_pred, 0)}
+                  <div className="w-1/12">
+                    <span
+                      className={classnames(
+                        match.pred_winner === "blue" ? "font-bold" : "font-thin",
+                        match.alliance === "blue" ? "underline" : ""
+                      )}
+                    >
+                      {round((1 + foulRate) * match.blue_epa_pred, 0)}
+                    </span>
+                    {!match.playoff && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
+                    {!match.playoff && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
                   </div>
                 </div>
               );

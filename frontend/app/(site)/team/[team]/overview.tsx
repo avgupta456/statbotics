@@ -139,7 +139,11 @@ const OverviewSection = ({
             </div>
           </div>
           <div className="w-3/4 h-full">
-            <MatchTable teamNum={teamData.num} matches={event.matches} />
+            <MatchTable
+              teamNum={teamData.num}
+              matches={event.matches}
+              foulRate={teamYear.foul_rate}
+            />
           </div>
         </div>
       ))}

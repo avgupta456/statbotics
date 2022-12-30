@@ -32,6 +32,7 @@ export type TeamYearData = {
     endgame_epa: number;
     rp_1_epa: number;
     rp_2_epa: number;
+    foul_rate: number;
   };
   team_events: {
     event: string;

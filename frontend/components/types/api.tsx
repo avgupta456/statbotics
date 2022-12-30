@@ -38,6 +38,7 @@ export type Match = {
   comp_level: string;
   set_number: number;
   match_number: number;
+  playoff: boolean;
   alliance: string;
   red: number[];
   blue: number[];
