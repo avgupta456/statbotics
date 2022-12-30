@@ -80,6 +80,13 @@ async def read_team_year(
                 "red_rp_2": m.red_rp_2,
                 "blue_rp_1": m.blue_rp_1,
                 "blue_rp_2": m.blue_rp_2,
+                "red_epa_pred": m.red_epa_sum,
+                "blue_epa_pred": m.blue_epa_sum,
+                "red_rp_1_pred": m.red_rp_1_epa_sum,
+                "red_rp_2_pred": m.red_rp_2_epa_sum,
+                "pred_winner": m.epa_winner,
+                "blue_rp_1_pred": m.blue_rp_1_epa_sum,
+                "blue_rp_2_pred": m.blue_rp_2_epa_sum,
             }
             for m in match_objs
             if m.event == x.event

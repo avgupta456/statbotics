@@ -48,6 +48,13 @@ export type Match = {
   red_rp_2: number;
   blue_rp_1: number;
   blue_rp_2: number;
+  red_epa_pred: number;
+  blue_epa_pred: number;
+  pred_winner: string;
+  red_rp_1_pred: number;
+  red_rp_2_pred: number;
+  blue_rp_1_pred: number;
+  blue_rp_2_pred: number;
 };
 
 export type TeamMatch = {
