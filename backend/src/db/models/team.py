@@ -21,6 +21,7 @@ class TeamORM(Base, ModelORM):
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
+    rookie_year = Column(Integer)
     active = Column(Boolean)
 
     """EPA"""
@@ -44,6 +45,7 @@ class Team(Model):
     state: Optional[str] = None
     country: Optional[str] = None
     district: Optional[str] = None
+    rookie_year: Optional[int] = None
     active: Optional[bool] = None
 
     norm_epa: Optional[float] = None
