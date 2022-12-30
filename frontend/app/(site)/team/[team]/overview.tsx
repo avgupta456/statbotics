@@ -2,6 +2,7 @@ import React from "react";
 
 import Link from "next/link";
 
+import MatchTable from "../../../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
 import { Category10Colors } from "../../../../constants";
 import { TeamData, TeamYearData } from "./types";
@@ -85,7 +86,7 @@ const OverviewSection = ({
         </strong>{" "}
         ({winrate.toFixed(1)}% winrate).
       </div>
-      <div className="w-full mb-8">
+      <div className="w-full mb-12">
         EPA Breakdown:
         {epaCard(teamYear.auto_epa.toFixed(1), "Auto", Category10Colors[0])}
         {epaCard(teamYear.teleop_epa.toFixed(1), "Teleop", Category10Colors[1])}
@@ -94,7 +95,7 @@ const OverviewSection = ({
         {epaCard(teamYear.rp_2_epa.toFixed(2), "RP 2", Category10Colors[4])}
         {epaCard(teamYear.epa.toFixed(1), "Total", Category10Colors[5])}
       </div>
-      <div className="w-full flex justify-center my-4 gap-4">
+      <div className="w-full flex justify-center mb-12 gap-4">
         {rankCard(teamYear.epa_rank, teamYear.epa_count, "Worldwide")}
         {rankCard(teamYear.country_epa_rank, teamYear.country_count, teamData.country)}
         {rankCard(teamYear.district_epa_rank, teamYear.district_count, district)}
@@ -138,33 +139,7 @@ const OverviewSection = ({
             </div>
           </div>
           <div className="w-3/4 h-full">
-            {event.matches.map((match, i) => {
-              return (
-                <div
-                  key={i}
-                  className="bg-gray-800 w-full h-auto flex flex-row justify-between items-center"
-                >
-                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
-                    <div className="text-sm text-white">{match.match_number}</div>
-                    <div className="text-xs text-white">{match.set_number}</div>
-                  </div>
-                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
-                    <div className="text-sm text-white">{match.red[0]}</div>
-                    <div className="text-sm text-white">{match.red[1]}</div>
-                    <div className="text-sm text-white">{match.red[2]}</div>
-                  </div>
-                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
-                    <div className="text-sm text-white">{match.blue[0]}</div>
-                    <div className="text-sm text-white">{match.blue[1]}</div>
-                    <div className="text-sm text-white">{match.blue[2]}</div>
-                  </div>
-                  <div className="w-1/4 h-full flex flex-col justify-center items-center">
-                    <div className="text-sm text-white">{match.red_score}</div>
-                    <div className="text-sm text-white">{match.blue_score}</div>
-                  </div>
-                </div>
-              );
-            })}
+            <MatchTable teamNum={teamData.num} matches={event.matches} />
           </div>
         </div>
       ))}

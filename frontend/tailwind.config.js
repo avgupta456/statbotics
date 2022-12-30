@@ -13,6 +13,10 @@ module.exports = {
       colors: {
         inputBlue: "#2684FF",
       },
+      width: {
+        "1/10": "10%",
+        "3/10": "30%",
+      },
     },
   },
   plugins: [],

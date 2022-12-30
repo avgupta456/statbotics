@@ -1,4 +1,4 @@
-import { TeamMatch } from "../../../../components/types/api";
+import { Match, TeamMatch } from "../../../../components/types/api";
 
 export type TeamData = {
   num: number;
@@ -50,20 +50,7 @@ export type TeamYearData = {
     count: number;
     rank: number;
     num_teams: number;
-    matches: {
-      comp_level: string;
-      set_number: number;
-      match_number: number;
-      alliance: string;
-      red: number[];
-      blue: number[];
-      red_score: number;
-      blue_score: number;
-      red_rp_1: number;
-      red_rp_2: number;
-      blue_rp_1: number;
-      blue_rp_2: number;
-    }[];
+    matches: Match[];
   }[];
   team_matches: TeamMatch[];
 };

@@ -66,6 +66,7 @@ async def read_team_year(
         team_event_matches = [
             {
                 "time": m.time,
+                "key": m.key,
                 "comp_level": m.comp_level,
                 "set_number": m.set_number,
                 "match_number": m.match_number,
@@ -74,6 +75,7 @@ async def read_team_year(
                 "blue": m.get_blue(),
                 "red_score": m.red_score,
                 "blue_score": m.blue_score,
+                "winner": m.winner,
                 "red_rp_1": m.red_rp_1,
                 "red_rp_2": m.red_rp_2,
                 "blue_rp_1": m.blue_rp_1,

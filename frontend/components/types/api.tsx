@@ -33,6 +33,23 @@ export type TeamYear = {
   count: number;
 };
 
+export type Match = {
+  key: string;
+  comp_level: string;
+  set_number: number;
+  match_number: number;
+  alliance: string;
+  red: number[];
+  blue: number[];
+  red_score: number;
+  blue_score: number;
+  winner: string;
+  red_rp_1: number;
+  red_rp_2: number;
+  blue_rp_1: number;
+  blue_rp_2: number;
+};
+
 export type TeamMatch = {
   match: number;
   label: string;
