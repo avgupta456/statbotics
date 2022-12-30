@@ -26,10 +26,9 @@ const lighterGray = "#F8F8F8";
 
 const MatchTable = ({ teamNum, matches }: { teamNum: number; matches: Match[] }) => {
   const compLevels = matches.map((match) => match.comp_level);
-  // get list of unique comp levels, sorted by first appearance in matches
-  const uniqueCompLevels = [...new Set(compLevels)].sort(
-    (a, b) => compLevels.indexOf(a) - compLevels.indexOf(b)
-  );
+  const uniqueCompLevels = compLevels
+    .filter((v, i, a) => a.indexOf(v) === i)
+    .sort((a, b) => compLevels.indexOf(a) - compLevels.indexOf(b));
 
   return (
     <div className="w-4/5 mx-auto flex flex-col border-2 border-gray-300">

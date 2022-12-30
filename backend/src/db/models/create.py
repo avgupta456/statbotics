@@ -54,8 +54,6 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["red_teleop_2"] = data["red_score_breakdown"]["teleop_2"]
     data["red_teleop_2_1"] = data["red_score_breakdown"]["teleop_2_1"]
     data["red_teleop_2_2"] = data["red_score_breakdown"]["teleop_2_2"]
-    data["red_1"] = data["red_score_breakdown"]["1"]
-    data["red_2"] = data["red_score_breakdown"]["2"]
     data["red_teleop"] = data["red_score_breakdown"]["teleop"]
     data["red_endgame"] = data["red_score_breakdown"]["endgame"]
     data["red_no_fouls"] = data["red_score_breakdown"]["no_fouls"]
@@ -72,8 +70,6 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["blue_teleop_2"] = data["blue_score_breakdown"]["teleop_2"]
     data["blue_teleop_2_1"] = data["blue_score_breakdown"]["teleop_2_1"]
     data["blue_teleop_2_2"] = data["blue_score_breakdown"]["teleop_2_2"]
-    data["blue_1"] = data["blue_score_breakdown"]["1"]
-    data["blue_2"] = data["blue_score_breakdown"]["2"]
     data["blue_teleop"] = data["blue_score_breakdown"]["teleop"]
     data["blue_endgame"] = data["blue_score_breakdown"]["endgame"]
     data["blue_no_fouls"] = data["blue_score_breakdown"]["no_fouls"]
@@ -87,8 +83,10 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
 
     for alliance in ["red", "blue"]:
         new_data["alliance"] = alliance
-        for team in data[alliance].split(","):
-            new_data["team"] = int(team)
+        teams = [data[f"{alliance}_1"], data[f"{alliance}_2"], data[f"{alliance}_3"]]
+        teams = [team for team in teams if team is not None]
+        for team in teams:
+            new_data["team"] = team
             new_data["dq"] = team in data[f"{alliance}_dq"].split(",")
             new_data["surrogate"] = team in data[f"{alliance}_surrogate"].split(",")
             team_matches.append(create_team_match_obj(new_data))

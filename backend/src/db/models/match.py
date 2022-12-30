@@ -29,7 +29,9 @@ class MatchORM(Base, ModelORM):
     status = Column(String(10))
     video = Column(String(20))
 
-    red = Column(String(20))
+    red_1 = Column(Integer)
+    red_2 = Column(Integer)
+    red_3 = Column(Integer)
     red_dq = Column(String(20))
     red_surrogate = Column(String(20))
     red_epa_sum = Column(Float)
@@ -39,7 +41,10 @@ class MatchORM(Base, ModelORM):
     red_rp_1_epa_sum = Column(Float)
     red_rp_2_epa_sum = Column(Float)
 
-    blue = Column(String(20))
+    # Different than dq/surrogate to allow for easier querying
+    blue_1 = Column(Integer)
+    blue_2 = Column(Integer)
+    blue_3 = Column(Integer)
     blue_dq = Column(String(20))
     blue_surrogate = Column(String(20))
     blue_epa_sum = Column(Float)
@@ -73,8 +78,6 @@ class MatchORM(Base, ModelORM):
     red_teleop_2 = Column(Integer)
     red_teleop_2_1 = Column(Integer)
     red_teleop_2_2 = Column(Integer)
-    red_1 = Column(Integer)
-    red_2 = Column(Integer)
     red_teleop = Column(Integer)
     red_endgame = Column(Integer)
     red_no_fouls = Column(Integer)
@@ -92,8 +95,6 @@ class MatchORM(Base, ModelORM):
     blue_teleop_2 = Column(Integer)
     blue_teleop_2_1 = Column(Integer)
     blue_teleop_2_2 = Column(Integer)
-    blue_1 = Column(Integer)
-    blue_2 = Column(Integer)
     blue_teleop = Column(Integer)
     blue_endgame = Column(Integer)
     blue_no_fouls = Column(Integer)
@@ -114,7 +115,9 @@ class Match(Model):
     status: str
     video: Optional[str] = None
 
-    red: Optional[str] = None
+    red_1: Optional[int] = None
+    red_2: Optional[int] = None
+    red_3: Optional[int] = None
     red_dq: Optional[str] = None
     red_surrogate: Optional[str] = None
     red_epa_sum: Optional[float] = None
@@ -124,7 +127,9 @@ class Match(Model):
     red_rp_1_epa_sum: Optional[float] = None
     red_rp_2_epa_sum: Optional[float] = None
 
-    blue: Optional[str] = None
+    blue_1: Optional[int] = None
+    blue_2: Optional[int] = None
+    blue_3: Optional[int] = None
     blue_dq: Optional[str] = None
     blue_surrogate: Optional[str] = None
     blue_epa_sum: Optional[float] = None
@@ -158,8 +163,6 @@ class Match(Model):
     red_teleop_2: Optional[int] = None
     red_teleop_2_1: Optional[int] = None
     red_teleop_2_2: Optional[int] = None
-    red_1: Optional[int] = None
-    red_2: Optional[int] = None
     red_teleop: Optional[int] = None
     red_endgame: Optional[int] = None
     red_no_fouls: Optional[int] = None
@@ -177,8 +180,6 @@ class Match(Model):
     blue_teleop_2: Optional[int] = None
     blue_teleop_2_1: Optional[int] = None
     blue_teleop_2_2: Optional[int] = None
-    blue_1: Optional[int] = None
-    blue_2: Optional[int] = None
     blue_teleop: Optional[int] = None
     blue_endgame: Optional[int] = None
     blue_no_fouls: Optional[int] = None
@@ -197,14 +198,10 @@ class Match(Model):
         return self.time or 0
 
     def get_red(self) -> List[int]:
-        if self.red is None:
-            return []
-        return [int(x) for x in self.red.split(",")]
+        return [x for x in [self.red_1, self.red_2, self.red_3] if x is not None]
 
     def get_blue(self) -> List[int]:
-        if self.blue is None:
-            return []
-        return [int(x) for x in self.blue.split(",")]
+        return [x for x in [self.blue_1, self.blue_2, self.blue_3] if x is not None]
 
     def get_teams(self) -> List[List[int]]:
         return [self.get_red(), self.get_blue()]
