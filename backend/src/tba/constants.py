@@ -91,4 +91,5 @@ DISTRICT_MAPPING = {
 # BLACKLISTS
 
 # 2005va, 2007ga no matches, 2004va quals + elims mismatch
-EVENT_BLACKLIST = ["2004va", "2005va", "2007ga"]
+# 2022auwarp, 2022ilrr, 2022mabil are incomplete offseason events
+EVENT_BLACKLIST = ["2004va", "2005va", "2007ga", "2022auwarp", "2022mabil", "2022ilrr"]

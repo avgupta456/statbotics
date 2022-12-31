@@ -25,12 +25,16 @@ def get_match_time(match: Dict[str, Any], event_time: int) -> int:
     match_time = event_time  # start value
     if match["comp_level"] == "qm":
         match_time += match["match_number"]
-    elif match["comp_level"] == "qf":
+    elif match["comp_level"] == "ef":
         match_time += 200 + 10 * match["set_number"] + match["match_number"]
+    elif match["comp_level"] == "qf":
+        match_time += 300 + 10 * match["set_number"] + match["match_number"]
     elif match["comp_level"] == "sf":
         match_time += 400 + 10 * match["set_number"] + match["match_number"]
+    elif match["comp_level"] == "f":
+        match_time += 500 + match["match_number"]
     else:
-        match_time += 600 + match["match_number"]
+        raise ValueError("Invalid comp_level: " + match["comp_level"])
     return match_time
 
 
@@ -62,36 +66,36 @@ def get_breakdown(
 
     if year == 2016:
         out = {
-            "auto": breakdown["autoPoints"],
-            "auto_movement": breakdown["autoReachPoints"],
-            "auto_1": breakdown["autoCrossingPoints"],
-            "auto_2": breakdown["autoBoulderPoints"],
-            "auto_2_1": 5 * breakdown["autoBouldersLow"],
-            "auto_2_2": 10 * breakdown["autoBouldersHigh"],
-            "teleop_1": breakdown["teleopCrossingPoints"],
-            "teleop_2": breakdown["teleopBoulderPoints"],
-            "teleop_2_1": 2 * breakdown["teleopBouldersLow"],
-            "teleop_2_2": 5 * breakdown["teleopBouldersHigh"],
-            "endgame": breakdown["teleopChallengePoints"]
-            + breakdown["teleopScalePoints"],
-            "rp1": int(breakdown["teleopDefensesBreached"]),
-            "rp2": int(breakdown["teleopTowerCaptured"]),
+            "auto": breakdown.get("autoPoints", 0),
+            "auto_movement": breakdown.get("autoReachPoints", 0),
+            "auto_1": breakdown.get("autoCrossingPoints", 0),
+            "auto_2": breakdown.get("autoBoulderPoints", 0),
+            "auto_2_1": 5 * breakdown.get("autoBouldersLow", 0),
+            "auto_2_2": 10 * breakdown.get("autoBouldersHigh", 0),
+            "teleop_1": breakdown.get("teleopCrossingPoints", 0),
+            "teleop_2": breakdown.get("teleopBoulderPoints", 0),
+            "teleop_2_1": 2 * breakdown.get("teleopBouldersLow", 0),
+            "teleop_2_2": 5 * breakdown.get("teleopBouldersHigh", 0),
+            "endgame": breakdown.get("teleopChallengePoints", 0)
+            + breakdown.get("teleopScalePoints", 0),
+            "rp1": int(breakdown.get("teleopDefensesBreached", 0)),
+            "rp2": int(breakdown.get("teleopTowerCaptured", 0)),
         }
     elif year == 2017:
         out = {
-            "auto": breakdown["autoPoints"],
-            "auto_movement": breakdown["autoMobilityPoints"],
-            "auto_1": breakdown["autoRotorPoints"],
-            "auto_2": breakdown["autoFuelPoints"],
-            "auto_2_1": breakdown["autoFuelLow"] // 3,
-            "auto_2_2": breakdown["autoFuelHigh"],
-            "teleop_1": breakdown["teleopRotorPoints"],
-            "teleop_2": breakdown["teleopFuelPoints"],
-            "teleop_2_1": breakdown["teleopFuelLow"] // 9,
-            "teleop_2_2": breakdown["teleopFuelHigh"] // 3,
-            "endgame": breakdown["teleopTakeoffPoints"],
-            "rp1": int(breakdown["rotorRankingPointAchieved"]),
-            "rp2": int(breakdown["kPaRankingPointAchieved"]),
+            "auto": breakdown.get("autoPoints", 0),
+            "auto_movement": breakdown.get("autoMobilityPoints", 0),
+            "auto_1": breakdown.get("autoRotorPoints", 0),
+            "auto_2": breakdown.get("autoFuelPoints", 0),
+            "auto_2_1": breakdown.get("autoFuelLow", 0) // 3,
+            "auto_2_2": breakdown.get("autoFuelHigh", 0),
+            "teleop_1": breakdown.get("teleopRotorPoints", 0),
+            "teleop_2": breakdown.get("teleopFuelPoints", 0),
+            "teleop_2_1": breakdown.get("teleopFuelLow", 0) // 9,
+            "teleop_2_2": breakdown.get("teleopFuelHigh", 0) // 3,
+            "endgame": breakdown.get("teleopTakeoffPoints", 0),
+            "rp1": int(breakdown.get("rotorRankingPointAchieved", 0)),
+            "rp2": int(breakdown.get("kPaRankingPointAchieved", 0)),
         }
 
         # Correct some off-by-one edge cases
@@ -105,88 +109,88 @@ def get_breakdown(
 
     elif year == 2018:
         out = {
-            "auto": breakdown["autoPoints"],
-            "auto_movement": breakdown["autoRunPoints"],
+            "auto": breakdown.get("autoPoints", 0),
+            "auto_movement": breakdown.get("autoRunPoints", 0),
             "auto_1": 0,
-            "auto_2": breakdown["autoOwnershipPoints"],
-            "auto_2_1": 2 * breakdown["autoSwitchOwnershipSec"],
-            "auto_2_2": 2 * breakdown["autoScaleOwnershipSec"],
-            "teleop_1": breakdown["vaultPoints"],
-            "teleop_2": breakdown["teleopOwnershipPoints"],
-            "teleop_2_1": breakdown["teleopSwitchOwnershipSec"]
-            + breakdown["teleopSwitchBoostSec"],
-            "teleop_2_2": breakdown["teleopScaleOwnershipSec"]
-            + breakdown["teleopScaleBoostSec"],
-            "endgame": breakdown["endgamePoints"],
-            "rp1": int(breakdown["autoQuestRankingPoint"]),
-            "rp2": int(breakdown["faceTheBossRankingPoint"]),
+            "auto_2": breakdown.get("autoOwnershipPoints", 0),
+            "auto_2_1": 2 * breakdown.get("autoSwitchOwnershipSec", 0),
+            "auto_2_2": 2 * breakdown.get("autoScaleOwnershipSec", 0),
+            "teleop_1": breakdown.get("vaultPoints", 0),
+            "teleop_2": breakdown.get("teleopOwnershipPoints", 0),
+            "teleop_2_1": breakdown.get("teleopSwitchOwnershipSec", 0)
+            + breakdown.get("teleopSwitchBoostSec", 0),
+            "teleop_2_2": breakdown.get("teleopScaleOwnershipSec", 0)
+            + breakdown.get("teleopScaleBoostSec", 0),
+            "endgame": breakdown.get("endgamePoints", 0),
+            "rp1": int(breakdown.get("autoQuestRankingPoint", 0)),
+            "rp2": int(breakdown.get("faceTheBossRankingPoint", 0)),
         }
     elif year == 2019:
         out = {
-            "auto": breakdown["autoPoints"],
-            "auto_movement": breakdown["sandStormBonusPoints"],
+            "auto": breakdown.get("autoPoints", 0),
+            "auto_movement": breakdown.get("sandStormBonusPoints", 0),
             "auto_1": 0,
             "auto_2": 0,
             "auto_2_1": 0,
             "auto_2_2": 0,
-            "teleop_1": breakdown["hatchPanelPoints"],
-            "teleop_2": breakdown["cargoPoints"],
+            "teleop_1": breakdown.get("hatchPanelPoints", 0),
+            "teleop_2": breakdown.get("cargoPoints", 0),
             "teleop_2_1": 0,
             "teleop_2_2": 0,
-            "endgame": breakdown["habClimbPoints"],
-            "rp1": int(breakdown["completeRocketRankingPoint"]),
-            "rp2": int(breakdown["habDockingRankingPoint"]),
+            "endgame": breakdown.get("habClimbPoints", 0),
+            "rp1": int(breakdown.get("completeRocketRankingPoint", 0)),
+            "rp2": int(breakdown.get("habDockingRankingPoint", 0)),
         }
     elif year == 2020:
         out = {
-            "auto": breakdown["autoPoints"],
-            "auto_movement": breakdown["autoInitLinePoints"],
+            "auto": breakdown.get("autoPoints", 0),
+            "auto_movement": breakdown.get("autoInitLinePoints", 0),
             "auto_1": 0,
-            "auto_2": breakdown["autoCellPoints"],
-            "auto_2_1": 2 * breakdown["autoCellsBottom"],
-            "auto_2_2": 4 * breakdown["autoCellsOuter"]
-            + 6 * breakdown["autoCellsInner"],
-            "teleop_1": breakdown["controlPanelPoints"],
-            "teleop_2": breakdown["teleopCellPoints"],
-            "teleop_2_1": breakdown["teleopCellsBottom"],
-            "teleop_2_2": 2 * breakdown["teleopCellsOuter"]
-            + 3 * breakdown["teleopCellsInner"],
-            "endgame": breakdown["endgamePoints"],
-            "rp1": int(breakdown["shieldEnergizedRankingPoint"]),
-            "rp2": int(breakdown["shieldOperationalRankingPoint"]),
+            "auto_2": breakdown.get("autoCellPoints", 0),
+            "auto_2_1": 2 * breakdown.get("autoCellsBottom", 0),
+            "auto_2_2": 4 * breakdown.get("autoCellsOuter", 0)
+            + 6 * breakdown.get("autoCellsInner", 0),
+            "teleop_1": breakdown.get("controlPanelPoints", 0),
+            "teleop_2": breakdown.get("teleopCellPoints", 0),
+            "teleop_2_1": breakdown.get("teleopCellsBottom", 0),
+            "teleop_2_2": 2 * breakdown.get("teleopCellsOuter", 0)
+            + 3 * breakdown.get("teleopCellsInner", 0),
+            "endgame": breakdown.get("endgamePoints", 0),
+            "rp1": int(breakdown.get("shieldEnergizedRankingPoint", 0)),
+            "rp2": int(breakdown.get("shieldOperationalRankingPoint", 0)),
         }
     elif year == 2021:
         return {}
     elif year == 2022:
         out = {
-            "auto": breakdown["autoPoints"],
-            "auto_movement": breakdown["autoTaxiPoints"],
+            "auto": breakdown.get("autoPoints", 0),
+            "auto_movement": breakdown.get("autoTaxiPoints", 0),
             "auto_1": 0,
-            "auto_2": breakdown["autoCargoPoints"],
-            "auto_2_1": breakdown["autoCargoLowerBlue"]
-            + breakdown["autoCargoLowerRed"]
-            + breakdown["autoCargoLowerFar"]
-            + breakdown["autoCargoLowerNear"],
-            "auto_2_2": breakdown["autoCargoUpperBlue"]
-            + breakdown["autoCargoUpperRed"]
-            + breakdown["autoCargoUpperFar"]
-            + breakdown["autoCargoUpperNear"],
+            "auto_2": breakdown.get("autoCargoPoints", 0),
+            "auto_2_1": breakdown.get("autoCargoLowerBlue", 0)
+            + breakdown.get("autoCargoLowerRed", 0)
+            + breakdown.get("autoCargoLowerFar", 0)
+            + breakdown.get("autoCargoLowerNear", 0),
+            "auto_2_2": breakdown.get("autoCargoUpperBlue", 0)
+            + breakdown.get("autoCargoUpperRed", 0)
+            + breakdown.get("autoCargoUpperFar", 0)
+            + breakdown.get("autoCargoUpperNear", 0),
             "teleop_1": 0,
-            "teleop_2": breakdown["teleopCargoPoints"],
-            "teleop_2_1": breakdown["teleopCargoLowerBlue"]
-            + breakdown["teleopCargoLowerRed"]
-            + breakdown["teleopCargoLowerFar"]
-            + breakdown["teleopCargoLowerNear"],
+            "teleop_2": breakdown.get("teleopCargoPoints", 0),
+            "teleop_2_1": breakdown.get("teleopCargoLowerBlue", 0)
+            + breakdown.get("teleopCargoLowerRed", 0)
+            + breakdown.get("teleopCargoLowerFar", 0)
+            + breakdown.get("teleopCargoLowerNear", 0),
             "teleop_2_2": 2
             * (
-                breakdown["teleopCargoUpperBlue"]
-                + breakdown["teleopCargoUpperRed"]
-                + breakdown["teleopCargoUpperFar"]
-                + breakdown["teleopCargoUpperNear"]
+                breakdown.get("teleopCargoUpperBlue", 0)
+                + breakdown.get("teleopCargoUpperRed", 0)
+                + breakdown.get("teleopCargoUpperFar", 0)
+                + breakdown.get("teleopCargoUpperNear", 0)
             ),
-            "endgame": breakdown["endgamePoints"],
-            "rp1": int(breakdown["cargoBonusRankingPoint"]),
-            "rp2": int(breakdown["hangarBonusRankingPoint"]),
+            "endgame": breakdown.get("endgamePoints", 0),
+            "rp1": int(breakdown.get("cargoBonusRankingPoint", 0)),
+            "rp2": int(breakdown.get("hangarBonusRankingPoint", 0)),
         }
 
         # Correct some edge cases (sensor issues, etc.)
@@ -202,5 +206,5 @@ def get_breakdown(
     out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
     out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
     out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
-    out["fouls"] = breakdown["foulPoints"]
+    out["fouls"] = breakdown.get("foulPoints", 0)
     return out

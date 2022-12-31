@@ -70,11 +70,17 @@ class TeamYearORM(Base, ModelORM):
     norm_epa_end = Column(Float)
 
     """STATS"""
-    wins = Column(Integer)
+    wins = Column(Integer)  # competition season only
     losses = Column(Integer)
     ties = Column(Integer)
     count = Column(Integer)
     winrate = Column(Float)
+
+    full_wins = Column(Integer)  # includes offseason
+    full_losses = Column(Integer)
+    full_ties = Column(Integer)
+    full_count = Column(Integer)
+    full_winrate = Column(Float)
 
     total_epa_rank = Column(Integer)
     total_epa_percentile = Column(Float)
@@ -148,6 +154,12 @@ class TeamYear(Model):
     ties: int = 0
     count: int = 0
     winrate: float = 0
+
+    full_wins: int = 0
+    full_losses: int = 0
+    full_ties: int = 0
+    full_count: int = 0
+    full_winrate: float = 0
 
     total_epa_rank: Optional[int] = None
     total_epa_percentile: Optional[float] = None

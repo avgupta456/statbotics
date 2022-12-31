@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Any, Dict, List, Set, Tuple
 
 from src.data.utils import objs_type
@@ -71,7 +72,13 @@ def process_year(
     default_etag = ETag(year_num, "NA", "NA")
     new_etags: List[ETag] = []
 
-    teams_dict = {team.team: team for team in teams}
+    default_team = create_team_obj(
+        {"name": None, "team": None, "state": None, "country": None, "district": None}
+    )
+    teams_dict: Dict[int, Team] = defaultdict(lambda: default_team)
+    for team in teams:
+        teams_dict[team.team] = team
+
     year_teams: Set[int] = set()
 
     events, _ = get_events_tba(year_num, cache=cache)
