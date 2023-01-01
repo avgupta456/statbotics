@@ -37,5 +37,3 @@ next-env.d.ts
 
 # tailwind
 app/dist.css
-
-tsconfig.json

@@ -84,11 +84,9 @@ const MatchTable = ({
                 >
                   <Link
                     href={`/match/${match.key}`}
-                    className="w-2/13 flex justify-center items-center"
+                    className="w-2/13 flex justify-center items-center text-blue-600 hover:text-blue-700 cursor-pointer"
                   >
-                    <a className="text-blue-600 hover:text-blue-700 cursor-pointer">
-                      {displayMatch}
-                    </a>
+                    {displayMatch}
                   </Link>
                   <div
                     style={{
@@ -102,11 +100,12 @@ const MatchTable = ({
                         className={classnames(
                           "w-1/3",
                           match.winner === "red" ? "font-bold" : "font-thin",
-                          team === teamNum ? "underline" : ""
+                          team === teamNum ? "underline" : "",
+                          "text-blue-600 hover:text-blue-700 cursor-pointer"
                         )}
                         key={team}
                       >
-                        <a className="text-blue-600 hover:text-blue-700 cursor-pointer">{team}</a>
+                        {team}
                       </Link>
                     ))}
                   </div>
@@ -122,11 +121,12 @@ const MatchTable = ({
                         className={classnames(
                           "w-1/3",
                           match.winner === "blue" ? "font-bold" : "font-thin",
-                          team === teamNum ? "underline" : ""
+                          team === teamNum ? "underline" : "",
+                          "text-blue-600 hover:text-blue-700 cursor-pointer"
                         )}
                         key={team}
                       >
-                        <a className="text-blue-600 hover:text-blue-700 cursor-pointer">{team}</a>
+                        {team}
                       </Link>
                     ))}
                   </div>
