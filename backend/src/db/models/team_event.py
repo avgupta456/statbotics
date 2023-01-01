@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Tuple
 
 import attr
-from sqlalchemy import Column, Float, Integer
+from sqlalchemy import Boolean, Column, Float, Integer
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.sql.sqltypes import String
 
@@ -26,6 +26,7 @@ class TeamEventORM(Base, ModelORM):
 
     """GENERAL"""
     time = Column(Integer)
+    offseason = Column(Boolean)
 
     """API COMPLETENESS"""
     team_name = Column(String(100))
@@ -99,6 +100,7 @@ class TeamEvent(Model):
     event: str
 
     time: int
+    offseason: bool
 
     team_name: Optional[str] = None
     event_name: Optional[str] = None

@@ -18,6 +18,7 @@ class TeamORM(Base, ModelORM):
 
     """GENERAL"""
     name = Column(String(100))
+    offseason = Column(Boolean)
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
@@ -37,11 +38,18 @@ class TeamORM(Base, ModelORM):
     count = Column(Integer)
     winrate = Column(Float)
 
+    full_wins = Column(Integer)
+    full_losses = Column(Integer)
+    full_ties = Column(Integer)
+    full_count = Column(Integer)
+    full_winrate = Column(Float)
+
 
 @attr.s(auto_attribs=True, slots=True)
 class Team(Model):
     team: int
     name: str
+    offseason: bool
     state: Optional[str] = None
     country: Optional[str] = None
     district: Optional[str] = None
@@ -58,6 +66,12 @@ class Team(Model):
     ties: int = 0
     count: int = 0
     winrate: float = 0
+
+    full_wins: int = 0
+    full_losses: int = 0
+    full_ties: int = 0
+    full_count: int = 0
+    full_winrate: float = 0
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Team":

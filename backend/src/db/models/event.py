@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 import attr
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Boolean, Column, Float, Integer, String
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
@@ -24,11 +24,18 @@ class EventORM(Base, ModelORM):
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
+    start_date = Column(String(10))
+    end_date = Column(String(10))
 
     # 0 is regional, 1 is district, 2 is district champ,
     # 3 is worlds division, 4 is einsteins/FOC
+    # 99 is offseason, 100 is preseason
     type = Column(Integer)
     week = Column(Integer)
+    offseason = Column(Boolean)
+
+    # Link to livestream, full link (unlike Match) to handle Twitch/YT
+    video = Column(String(50))
 
     # Choices are 'Upcoming', 'Ongoing', 'Completed'
     status = Column(String(10))
@@ -63,8 +70,12 @@ class Event(Model):
     state: str
     country: str
     district: str
+    start_date: str
+    end_date: str
     type: int
     week: int
+    offseason: bool
+    video: str
 
     status: str
     current_match: int

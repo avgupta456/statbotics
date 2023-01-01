@@ -8,7 +8,7 @@ from src.tba.clean_data import (
     get_breakdown,
     get_match_time,
 )
-from src.tba.constants import EVENT_BLACKLIST
+from src.tba.constants import EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
 
 
@@ -36,6 +36,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
                 "team": num,
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
+                "offseason": num >= 9985,
                 "state": clean_state(data_team["state_prov"]),
                 "district": clean_district(get_district(num)),
                 "country": data_team["country"],
@@ -58,10 +59,6 @@ def get_events(
         if key in EVENT_BLACKLIST:
             continue
 
-        # filters out offseason events
-        if int(event["event_type"]) > 10:
-            continue
-
         if event["district"] is not None:
             event["district"] = event["district"]["abbreviation"]
 
@@ -77,6 +74,14 @@ def get_events(
         if event_type >= 3:
             event["week"] = 8
 
+        # assigns preseason to week 0
+        if event_type == 100:
+            event["week"] = 0
+
+        # assigns offseasons to week 9
+        if event_type == 99:
+            event["week"] = 9
+
         # filter out incomplete events
         if "week" not in event or event["week"] is None:
             continue
@@ -84,6 +89,18 @@ def get_events(
         # bug in TBA API
         if event_type < 3 and year != 2016:
             event["week"] += 1
+
+        video = None
+        webcasts = event["webcasts"]
+        if len(webcasts) > 0:
+            video_type = webcasts[0]["type"]
+            if video_type == "twitch":
+                video = "https://www.twitch.tv/" + webcasts[0]["channel"]
+            elif video_type == "youtube":
+                video = "https://www.youtube.com/watch?v=" + webcasts[0]["channel"]
+
+            if video is not None and len(video) > 50:
+                video = None
 
         out.append(
             {
@@ -93,9 +110,12 @@ def get_events(
                 "state": clean_state(event["state_prov"]),
                 "country": event["country"],
                 "district": clean_district(event["district"]),
+                "start_date": event["start_date"],
+                "end_date": event["end_date"],
                 "time": get_timestamp_from_str(event["start_date"]),
                 "type": event_type,
                 "week": event["week"],
+                "video": video,
             }
         )
 
@@ -152,6 +172,9 @@ def get_matches(
         elif blue_score > red_score:
             winner = "blue"
 
+        if match["key"] in MATCH_BLACKLIST:
+            continue
+
         if year <= 2004 and (len(red_teams) < 2 or len(blue_teams) < 2):
             continue
 
@@ -161,8 +184,14 @@ def get_matches(
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
             continue
 
-        if max([int(x[3:]) for x in red_teams + blue_teams]) >= 9985:
-            continue
+        def format_team(team: str) -> int:
+            team = team[3:]
+            if not team[-1].isdigit():
+                team = team[:-1] + "000" + str(ord(team[-1]) - ord("A")).rjust(2, "0")
+            return int(team)
+
+        red_teams = [format_team(team) for team in red_teams]
+        blue_teams = [format_team(team) for team in blue_teams]
 
         breakdown: Dict[str, Any] = match.get("score_breakdown", {}) or {}
         red_breakdown = get_breakdown(year, breakdown.get("red", None))
@@ -185,16 +214,20 @@ def get_matches(
             "match_number": match["match_number"],
             "status": "Completed" if min(red_score, blue_score) >= 0 else "Upcoming",
             "video": video,
-            "red_1": int(red_teams[0][3:]) if len(red_teams) > 0 else None,
-            "red_2": int(red_teams[1][3:]) if len(red_teams) > 1 else None,
-            "red_3": int(red_teams[2][3:]) if len(red_teams) > 2 else None,
-            "blue_1": int(blue_teams[0][3:]) if len(blue_teams) > 0 else None,
-            "blue_2": int(blue_teams[1][3:]) if len(blue_teams) > 1 else None,
-            "blue_3": int(blue_teams[2][3:]) if len(blue_teams) > 2 else None,
-            "red_dq": ",".join([t[3:] for t in red_dq_teams]),
-            "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
-            "red_surrogate": ",".join([t[3:] for t in red_surrogate_teams]),
-            "blue_surrogate": ",".join([t[3:] for t in blue_surrogate_teams]),
+            "red_1": red_teams[0] if len(red_teams) > 0 else None,
+            "red_2": red_teams[1] if len(red_teams) > 1 else None,
+            "red_3": red_teams[2] if len(red_teams) > 2 else None,
+            "blue_1": blue_teams[0] if len(blue_teams) > 0 else None,
+            "blue_2": blue_teams[1] if len(blue_teams) > 1 else None,
+            "blue_3": blue_teams[2] if len(blue_teams) > 2 else None,
+            "red_dq": ",".join([str(format_team(t)) for t in red_dq_teams]),
+            "blue_dq": ",".join([str(format_team(t)) for t in blue_dq_teams]),
+            "red_surrogate": ",".join(
+                [str(format_team(t)) for t in red_surrogate_teams]
+            ),
+            "blue_surrogate": ",".join(
+                [str(format_team(t)) for t in blue_surrogate_teams]
+            ),
             "winner": winner,
             "time": get_match_time(match, event_time),
             "red_score": red_score,

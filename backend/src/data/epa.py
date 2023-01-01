@@ -204,7 +204,10 @@ def process_year(
             team_year.rp_2_epa_start = round(team_rp_2_epas[num], 4)
 
     # win, loss, tie, (rp), count
-    team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
+    team_year_stats: Dict[int, List[int]] = defaultdict(
+        lambda: [0, 0, 0, 0]
+    )  # no offseason
+    full_team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     qual_team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0, 0])
 
@@ -229,6 +232,7 @@ def process_year(
     # TODO: compute RP Precision, Recall, F1-Score
 
     event_weeks = {e.key: e.week for e in events}
+    event_types = {e.key: e.type for e in events}
     sorted_matches = sorted(matches, key=lambda m: m.sort())
     for match in sorted_matches:
         event_key = match.event
@@ -361,7 +365,9 @@ def process_year(
         red_dqs = [int(x) for x in (match.red_dq or "").split(",") if x != ""]
         blue_dqs = [int(x) for x in (match.blue_dq or "").split(",") if x != ""]
 
+        # If either, do not update EPA values
         playoff_dq = match.playoff and (len(red_dqs) == 3 or len(blue_dqs) == 3)
+        offseason_event = event_types[match.event] > 10
 
         for (
             teams,
@@ -412,7 +418,7 @@ def process_year(
                 new_epa = max(0, epa_pre[t] + weight * percent * error / NUM_TEAMS)
 
                 # Skip EPA update for playoff DQs
-                if playoff_dq:
+                if playoff_dq or offseason_event:
                     new_epa = epa_pre[t]
 
                 team_epas[t] = new_epa
@@ -420,19 +426,26 @@ def process_year(
                 team_events_dict[team_event_key].append((new_epa, match.playoff))
                 team_matches_dict[t].append(new_epa)
 
-                team_year_stats[t][mapping[winner]] += 1
-                team_year_stats[t][3] += 1
+                if not offseason_event:
+                    team_year_stats[t][mapping[winner]] += 1
+                    team_year_stats[t][3] += 1
+
+                full_team_year_stats[t][mapping[winner]] += 1
+                full_team_year_stats[t][3] += 1
+
                 team_event_stats[team_event_key][mapping[winner]] += 1
                 team_event_stats[team_event_key][3] += 1
 
                 if not match.playoff:
-                    team_counts[t] += 1  # for EPA count
                     if t not in surrogates:  # Count win/loss/ties for all qual matches
                         qual_team_event_stats[team_event_key][mapping[winner]] += 1
                         qual_team_event_stats[team_event_key][4] += 1
                     if t not in surrogates and t not in dqs:  # count RPs if not DQ
                         rps = my_rp_1 + my_rp_2 + (2 if mapping[winner] == 0 else 0)
                         qual_team_event_stats[team_event_key][3] += rps
+
+                if not match.playoff and not offseason_event:
+                    team_counts[t] += 1  # for EPA calculation
 
         if USE_COMPONENTS:
             red_auto_err = (match.red_auto or 0) - (match.red_auto_epa_sum or 0)
@@ -485,6 +498,10 @@ def process_year(
         new_mse = (win_probs[winner] - match.epa_win_prob) ** 2
         _a, _m, _c = event_stats[event_key]
         event_stats[event_key] = (_a + new_acc, _m + new_mse, _c + 1)
+
+        if offseason_event:
+            continue
+
         acc += new_acc
         mse += new_mse
         count += 1
@@ -672,11 +689,9 @@ def process_year(
         team_event.qual_count = qual_event_count
 
     # EVENTS
-    event_types: Dict[str, int] = defaultdict(int)
     filtered_events = [e for e in events if e.status != "Upcoming"]
     for event in filtered_events:
         event_key = event.key
-        event_types[event_key] = event.type
 
         event_epas: List[float] = []
         for team_event in event_team_events[event_key]:
@@ -843,6 +858,14 @@ def process_year(
         obj.ties = ties
         obj.count = team_count
         obj.winrate = winrate
+
+        wins, losses, ties, team_count = full_team_year_stats[team]
+        winrate = round((wins + ties / 2) / max(1, team_count), 4)
+        obj.full_wins = wins
+        obj.full_losses = losses
+        obj.full_ties = ties
+        obj.full_count = team_count
+        obj.full_winrate = winrate
 
         obj.total_epa_rank = rank = year_epas.index(obj.epa_end) + 1
         obj.total_epa_percentile = round(1 - rank / team_year_count, 4)
@@ -1046,6 +1069,7 @@ def post_process(end_year: int):
     for team in all_teams:
         years: Dict[int, float] = {}
         wins, losses, ties, count = 0, 0, 0, 0
+        full_wins, full_losses, full_ties, full_count = 0, 0, 0, 0
 
         team.active = False
         for team_year in team_team_years[team.team]:
@@ -1058,6 +1082,11 @@ def post_process(end_year: int):
             losses += team_year.losses
             ties += team_year.ties
             count += team_year.count
+
+            full_wins += team_year.full_wins
+            full_losses += team_year.full_losses
+            full_ties += team_year.full_ties
+            full_count += team_year.full_count
 
         keys, values = years.keys(), years.values()
 
@@ -1079,5 +1108,12 @@ def post_process(end_year: int):
         team.ties = ties
         team.count = count
         team.winrate = winrate
+
+        full_winrate = round((full_wins + full_ties / 2) / max(1, full_count), 4)
+        team.full_wins = full_wins
+        team.full_losses = full_losses
+        team.full_ties = full_ties
+        team.full_count = full_count
+        team.full_winrate = full_winrate
 
     update_teams_db(all_teams, False)

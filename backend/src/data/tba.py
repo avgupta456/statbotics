@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Any, Dict, List, Set, Tuple
 
 from src.data.utils import objs_type
@@ -17,6 +18,7 @@ from src.db.models.team import Team
 from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
+from src.tba.constants import YEAR_BLACKLIST
 from src.tba.read_tba import (
     get_event_rankings as get_event_rankings_tba,
     get_events as get_events_tba,
@@ -67,11 +69,31 @@ def process_year(
     match_objs: List[Match] = []
     team_match_objs: List[TeamMatch] = []
 
+    # TODO: Handle 2021 offseason events (low priority)
+    if year_num in YEAR_BLACKLIST:
+        return (
+            (
+                year_obj,
+                team_year_objs,
+                event_objs,
+                team_event_objs,
+                match_objs,
+                team_match_objs,
+            ),
+            [],
+        )
+
     etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
     new_etags: List[ETag] = []
 
-    teams_dict = {team.team: team for team in teams}
+    default_team = create_team_obj(
+        {"name": None, "team": None, "state": None, "country": None, "district": None}
+    )
+    teams_dict: Dict[int, Team] = defaultdict(lambda: default_team)
+    for team in teams:
+        teams_dict[team.team] = team
+
     year_teams: Set[int] = set()
 
     events, _ = get_events_tba(year_num, cache=cache)
@@ -106,6 +128,7 @@ def process_year(
         qual_matches = 0 if len(matches) > 0 else -1
         for match in matches:
             match["year"] = year_num
+            match["offseason"] = event_obj.offseason
             match_obj, curr_team_match_objs = create_match_obj(match)
             current_match += match_obj.status == "Completed"
             qual_matches += not match_obj.playoff
@@ -126,6 +149,7 @@ def process_year(
                         "time": event_time,
                         "team_name": team_obj.name,
                         "event_name": event_obj.name,
+                        "offseason": event_obj.offseason,
                         "state": event_obj.state,
                         "country": event_obj.country,
                         "district": event_obj.district,
@@ -149,6 +173,7 @@ def process_year(
                 {
                     "year": year_num,
                     "team": team,
+                    "offseason": team >= 9985,
                     "name": team_obj.name,
                     "state": team_obj.state,
                     "country": team_obj.country,
@@ -207,6 +232,7 @@ def process_year_partial(
         qual_matches = 0 if len(matches) > 0 else -1
         for match in matches:
             match["year"] = year_num
+            match["offseason"] = event_obj.offseason
             match_obj, curr_team_match_objs = create_match_obj(match)
             current_match += match_obj.status == "Completed"
             qual_matches += not match_obj.playoff
