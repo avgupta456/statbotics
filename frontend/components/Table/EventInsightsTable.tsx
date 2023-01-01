@@ -6,6 +6,7 @@ import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import { classnames } from "../../utils";
 import { PercentileStats, YearStats } from "../types/api";
+import { formatNumber } from "../utils";
 import Table from "./Table";
 import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 
@@ -63,7 +64,7 @@ const EventInsightsTable = ({
   const columns = useMemo<any>(
     () => [
       columnHelper.accessor("num", {
-        cell: (info) => info.getValue(),
+        cell: (info) => formatNumber(info.getValue()),
         header: "Number",
       }),
       columnHelper.accessor("team", {

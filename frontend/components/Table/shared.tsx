@@ -2,14 +2,21 @@ import React from "react";
 
 import Link from "next/link";
 
-import { classnames } from "../../utils";
+import { classnames, round } from "../../utils";
 import { PercentileStats } from "../types/api";
+import { formatNumber } from "../utils";
 
-export const TeamLink = ({ team, num }: { team: string | number; num: string | number }) => (
-  <Link href={`/team/${num}`} className="text_link">
-    {team}
-  </Link>
-);
+export const TeamLink = ({ team, num }: { team: string | number; num: number }) => {
+  if (num > 100000) {
+    return formatNumber(num);
+  } else {
+    return (
+      <Link href={`/team/${num}`} className="text_link">
+        {team}
+      </Link>
+    );
+  }
+};
 
 export const CONDITIONAL_COLORS = [
   "text-red-700 bg-red-100",
