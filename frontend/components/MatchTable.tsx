@@ -8,6 +8,7 @@ import { Match } from "./types/api";
 
 const compLevelFullNames = {
   qm: "Qualifications",
+  ef: "Eighth Finals",
   qf: "Quarterfinals",
   sf: "Semifinals",
   f: "Finals",
@@ -15,6 +16,7 @@ const compLevelFullNames = {
 
 const compLevelShortNames = {
   qm: "Quals",
+  ef: "Eighths",
   qf: "Quarters",
   sf: "Semis",
   f: "Finals",
