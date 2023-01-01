@@ -31,6 +31,7 @@ def create_team_year_obj(data: Dict[str, Any]) -> TeamYear:
 
 
 def create_event_obj(data: Dict[str, Any]) -> Event:
+    data["offseason"] = data["type"] > 10
     return Event.from_dict(data)
 
 

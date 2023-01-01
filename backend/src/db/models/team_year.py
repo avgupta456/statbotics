@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Tuple
 
 import attr
-from sqlalchemy import Column, Float, Integer
+from sqlalchemy import Boolean, Column, Float, Integer
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.sql.sqltypes import String
 
@@ -23,6 +23,7 @@ class TeamYearORM(Base, ModelORM):
     ForeignKeyConstraint(["team"], ["teams.team"])
 
     """API COMPLETENESS"""
+    offseason = Column(Boolean)
     name = Column(String(100))
     state = Column(String(10))
     country = Column(String(30))
@@ -104,6 +105,7 @@ class TeamYear(Model):
     id: int
     year: int
     team: int
+    offseason: bool
 
     name: Optional[str] = None
     state: Optional[str] = None

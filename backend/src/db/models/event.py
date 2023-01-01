@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 import attr
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Boolean, Column, Float, Integer, String
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
@@ -32,6 +32,7 @@ class EventORM(Base, ModelORM):
     # 99 is offseason, 100 is preseason
     type = Column(Integer)
     week = Column(Integer)
+    offseason = Column(Boolean)
 
     # Link to livestream, full link (unlike Match) to handle Twitch/YT
     video = Column(String(50))
@@ -73,6 +74,7 @@ class Event(Model):
     end_date: str
     type: int
     week: int
+    offseason: bool
     video: str
 
     status: str

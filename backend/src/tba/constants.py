@@ -90,6 +90,28 @@ DISTRICT_MAPPING = {
 
 # BLACKLISTS
 
+YEAR_BLACKLIST = [2021]
+
 # 2005va, 2007ga no matches, 2004va quals + elims mismatch
-# 2022auwarp, 2022ilrr, 2022mabil are incomplete offseason events
-EVENT_BLACKLIST = ["2004va", "2005va", "2007ga", "2022auwarp", "2022mabil", "2022ilrr"]
+# Rest are incomplete/invalid offseason events
+EVENT_BLACKLIST = [
+    "2004va",
+    "2005va",
+    "2007ga",
+    "2016cafc2",  # "" team
+]
+
+MATCH_BLACKLIST = [
+    "2014cafc2_qm4",  # duplicate teams
+    "2016mttd_qm13",  # duplicate teams
+    "2016mttd_qm18",  # duplicate teams
+    "2016mttd_qm30",  # duplicate teams
+    "2016ohsc_qf1m1",  # 0's
+    "2016ohsc_qf1m2",  # 0's
+    "2016ohsc_qf3m1",  # 0's
+    "2016ohsc_qf3m2",  # 0's
+    "2017crc_qf3m1",  # duplicate teams
+    "2019wiwi_ef2m1",  # 58 /
+    "2019wiwi_ef5m1",  # 58 /
+    "2019wiwi_qf3m1",  # 58 /
+]

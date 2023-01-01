@@ -24,6 +24,7 @@ class MatchORM(Base, ModelORM):
     comp_level = Column(String(10))
     set_number = Column(Integer)
     match_number = Column(Integer)
+    offseason = Column(Boolean)
 
     # Choices are 'Upcoming', 'Completed'
     status = Column(String(10))
@@ -112,6 +113,7 @@ class Match(Model):
     comp_level: str
     set_number: int
     match_number: int
+    offseason: bool
     status: str
     video: Optional[str] = None
 

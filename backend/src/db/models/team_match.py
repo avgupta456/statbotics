@@ -28,6 +28,7 @@ class TeamMatchORM(Base, ModelORM):
 
     """GENERAL"""
     time = Column(Integer)
+    offseason = Column(Boolean)
     playoff = Column(Boolean)
     alliance = Column(String(10))
 
@@ -54,6 +55,7 @@ class TeamMatch(Model):
     match: str
 
     time: int = 0
+    offseason: bool = False
     playoff: bool = False
     alliance: str = ""
     status: str = ""

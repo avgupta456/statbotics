@@ -18,6 +18,7 @@ class TeamORM(Base, ModelORM):
 
     """GENERAL"""
     name = Column(String(100))
+    offseason = Column(Boolean)
     state = Column(String(10))
     country = Column(String(30))
     district = Column(String(10))
@@ -48,6 +49,7 @@ class TeamORM(Base, ModelORM):
 class Team(Model):
     team: int
     name: str
+    offseason: bool
     state: Optional[str] = None
     country: Optional[str] = None
     district: Optional[str] = None

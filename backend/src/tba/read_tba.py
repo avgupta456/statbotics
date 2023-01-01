@@ -8,7 +8,7 @@ from src.tba.clean_data import (
     get_breakdown,
     get_match_time,
 )
-from src.tba.constants import EVENT_BLACKLIST
+from src.tba.constants import EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
 
 
@@ -36,6 +36,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
                 "team": num,
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
+                "offseason": num >= 9985,
                 "state": clean_state(data_team["state_prov"]),
                 "district": clean_district(get_district(num)),
                 "country": data_team["country"],
@@ -97,6 +98,9 @@ def get_events(
                 video = "https://www.twitch.tv/" + webcasts[0]["channel"]
             elif video_type == "youtube":
                 video = "https://www.youtube.com/watch?v=" + webcasts[0]["channel"]
+
+            if video is not None and len(video) > 50:
+                video = None
 
         out.append(
             {
@@ -167,6 +171,9 @@ def get_matches(
             winner = "red"
         elif blue_score > red_score:
             winner = "blue"
+
+        if match["key"] in MATCH_BLACKLIST:
+            continue
 
         if year <= 2004 and (len(red_teams) < 2 or len(blue_teams) < 2):
             continue

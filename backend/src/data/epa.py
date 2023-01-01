@@ -498,6 +498,10 @@ def process_year(
         new_mse = (win_probs[winner] - match.epa_win_prob) ** 2
         _a, _m, _c = event_stats[event_key]
         event_stats[event_key] = (_a + new_acc, _m + new_mse, _c + 1)
+
+        if offseason_event:
+            continue
+
         acc += new_acc
         mse += new_mse
         count += 1
