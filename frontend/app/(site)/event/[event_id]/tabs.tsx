@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import BubbleChart from "../../../../components/Figures/Bubble";
 import { classnames } from "../../../../utils";
@@ -10,6 +10,29 @@ import { Data } from "./types";
 
 const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   const [tab, setTab] = useState("Insights");
+
+  const tsWorkerRef = useRef<Worker | null>();
+  const [tsWorkerMessages, setTsWorkerMessages] = useState<String[]>([]);
+
+  const appendTsWorkerMessage = (message: string) => {};
+
+  useEffect(() => {
+    // From https://webpack.js.org/guides/web-workers/#syntax
+    if (tsWorkerRef.current) {
+      return;
+    }
+
+    tsWorkerRef.current = new Worker(new URL("./ts.worker.ts", import.meta.url));
+    tsWorkerRef.current.addEventListener("message", (evt) => {
+      console.log("Message from TS worker:", evt.data);
+      const newMessages = [...tsWorkerMessages, evt.data];
+      setTsWorkerMessages(newMessages);
+    });
+
+    tsWorkerRef.current.postMessage({ type: "start" });
+  }, [tsWorkerMessages]);
+
+  console.log("TS worker messages:", tsWorkerMessages);
 
   const bubbleData = data.team_events.map((teamEvent) => ({
     ...teamEvent,

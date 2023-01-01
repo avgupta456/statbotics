@@ -37,7 +37,7 @@ async function Page({ params }: { params: { match_id: string } }) {
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-3xl lg:text-4xl">{data.match_name}</p>
           <Link href={`/event/${data.match.event}`} className="lg:text-2xl ml-2 text_link">
-            <a>{truncatedEventName}</a>
+            {truncatedEventName}
           </Link>
         </div>
         <div className="w-full flex flex-row flex-wrap justify-center">
