@@ -6,6 +6,7 @@ import BubbleChart from "../../../../components/Figures/Bubble";
 import { classnames } from "../../../../utils";
 import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
+import MatchSection from "./matches";
 import { Data } from "./types";
 
 const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
@@ -34,15 +35,21 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
 
   console.log("TS worker messages:", tsWorkerMessages);
 
+  const MemoizedInsightsTable = useMemo(
+    () => <InsightsTable eventId={eventId} data={data} />,
+    [eventId, data]
+  );
+
+  const MemoizedMatchSection = useMemo(
+    () => <MatchSection eventId={eventId} data={data} />,
+    [eventId, data]
+  );
+
   const bubbleData = data.team_events.map((teamEvent) => ({
     ...teamEvent,
     numTeams: data.team_events.length,
   }));
 
-  const MemoizedInsightsTable = useMemo(
-    () => <InsightsTable eventId={eventId} data={data} />,
-    [eventId, data]
-  );
   const MemoizedBubbleChart = useMemo(
     () => (
       <BubbleChart
@@ -74,7 +81,7 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   return (
     <div className="w-full flex-grow flex flex-col">
       <div className="w-full flex flex-row">
-        {["Insights", "Bubble Chart", "Figures"].map((_tab) => (
+        {["Insights", "Matches", "Bubble Chart", "Figures"].map((_tab) => (
           <div
             key={`tab-${_tab}`}
             className={classnames(tab === _tab ? "" : "border-b-[1px] border-gray-200")}
@@ -102,6 +109,7 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
         ) : (
           <>
             <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
+            <div className={tab === "Matches" ? "w-full" : "hidden"}>{MemoizedMatchSection}</div>
             <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>
               {MemoizedBubbleChart}
             </div>

@@ -52,7 +52,8 @@ const MatchTable = ({
         <div className="w-3/13">Red Alliance</div>
         <div className="w-3/13">Blue Alliance</div>
         <div className="w-2/13">Scores</div>
-        <div className="w-3/13">Predictions</div>
+        <div className="w-2/13">Predictions</div>
+        <div className="w-1/13">Red Win %</div>
       </div>
       {uniqueCompLevels.map((compLevel) => (
         <>
@@ -67,13 +68,11 @@ const MatchTable = ({
             .filter((match) => match.comp_level === compLevel)
             .map((match) => {
               let displayMatch = `${compLevelShortNames[compLevel]} ${match.match_number}`;
-              if (compLevel === "qf" || compLevel === "sf") {
+              if (compLevel !== "qm") {
                 displayMatch = `${compLevelShortNames[compLevel]} ${match.set_number}-${match.match_number}`;
               }
 
-              const _winProb =
-                match.alliance === "red" ? match.epa_win_prob : 1 - match.epa_win_prob;
-              const winProb = round(_winProb * 100, 0);
+              const winProb = round(match.epa_win_prob * 100, 0);
 
               const correctWinner = match.winner === match.pred_winner;
 
