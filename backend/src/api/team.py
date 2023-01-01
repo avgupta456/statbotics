@@ -27,7 +27,8 @@ async def read_root():
 @router.get("/teams/all")
 @async_fail_gracefully
 async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
-    return [{"num": x.team, "team": x.name} for x in await get_teams()]
+    teams: List[Team] = await get_teams()
+    return [{"num": x.team, "team": x.name} for x in teams if not x.offseason]
 
 
 @router.get("/team/{team_num}")
@@ -35,7 +36,7 @@ async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
 async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
     team: Optional[Team] = await get_team(team_num)
 
-    if team is None:
+    if team is None or team.offseason:
         raise Exception("Team not found")
 
     return {
@@ -58,7 +59,7 @@ async def read_team_year(
     foul_rate = (await get_year_stats(year))["foul_rate"]
     team_year: Optional[TeamYear] = await get_team_year(team_num, year)
 
-    if team_year is None:
+    if team_year is None or team_year.offseason:
         raise Exception("TeamYear not found")
 
     team_event_objs: List[TeamEvent] = await get_team_events(year=year, team=team_num)

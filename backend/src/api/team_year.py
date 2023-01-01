@@ -42,6 +42,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
             "count": x.count,
         }
         for x in team_year_objs
+        if x.count > 0
     ]
 
     year_stats = await get_year_stats(year)
