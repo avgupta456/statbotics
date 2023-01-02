@@ -91,8 +91,8 @@ async function indexSim(data: Data, index: number, simCount: number) {
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    simRanks[teamEvent.num] = 0;
-    simRPs[teamEvent.num] = 0;
+    simRanks[teamEvent.num] = [];
+    simRPs[teamEvent.num] = [];
   }
 
   const jitterPercent = 0.4;
@@ -177,19 +177,11 @@ async function indexSim(data: Data, index: number, simCount: number) {
       return currSimRPs[b] - currSimRPs[a];
     });
 
-    console.log(simRanksArr);
-
     for (let j = 0; j < data.team_events.length; j++) {
       const teamEvent = data.team_events[j];
-      simRanks[teamEvent.num] += simRanksArr.indexOf(teamEvent.num.toString()) + 1;
-      simRPs[teamEvent.num] += currSimRPs[teamEvent.num];
+      simRanks[teamEvent.num].push(simRanksArr.indexOf(teamEvent.num.toString()) + 1);
+      simRPs[teamEvent.num].push(currSimRPs[teamEvent.num]);
     }
-  }
-
-  for (let i = 0; i < data.team_events.length; i++) {
-    const teamEvent = data.team_events[i];
-    simRanks[teamEvent.num] /= simCount;
-    simRPs[teamEvent.num] /= simCount;
   }
 
   ctx.postMessage({ index, simRanks, simRPs });
