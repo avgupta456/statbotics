@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 
+import SimulationTable from "../../../../components/Table/SimulationTable";
 import { Data } from "./types";
 
 type SimResults = {
@@ -64,21 +67,22 @@ const SimulationSection = ({ data }: { data: Data }) => {
     rank95[teamNum] = sortedRanks[Math.floor(sortedRanks.length * 0.95)];
   }
 
+  const simulationData = data.team_events
+    .sort((a, b) => rankMean[a.num] - rankMean[b.num])
+    .map((teamEvent, i) => ({
+      rank: i + 1,
+      num: teamEvent.num,
+      team: teamEvent.team,
+      rankMean: rankMean[teamEvent.num],
+      rank5: rank5[teamEvent.num],
+      rank50: rank50[teamEvent.num],
+      rank95: rank95[teamEvent.num],
+      RPMean: RPMean[teamEvent.num],
+    }));
+
   return (
-    <div>
-      {data.team_events
-        .sort((a, b) => rankMean[a.num] - rankMean[b.num])
-        .map((teamEvent) => (
-          <div key={teamEvent.num} className="flex gap-16">
-            <div>{teamEvent.num}</div>
-            <div>{teamEvent.team}</div>
-            <div>{rankMean[teamEvent.num]}</div>
-            <div>{rank5[teamEvent.num]}</div>
-            <div>{rank50[teamEvent.num]}</div>
-            <div>{rank95[teamEvent.num]}</div>
-            <div>{RPMean[teamEvent.num]}</div>
-          </div>
-        ))}
+    <div className="w-full flex flex-col justify-center items-center">
+      <SimulationTable data={simulationData} />
     </div>
   );
 };
