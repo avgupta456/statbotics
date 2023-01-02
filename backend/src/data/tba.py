@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Set, Tuple
 
+from src.constants import MAX_TEAM
 from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
 from src.db.models.create import (
@@ -173,7 +174,7 @@ def process_year(
                 {
                     "year": year_num,
                     "team": team,
-                    "offseason": team >= 9985,
+                    "offseason": team >= MAX_TEAM,
                     "name": team_obj.name,
                     "state": team_obj.state,
                     "country": team_obj.country,

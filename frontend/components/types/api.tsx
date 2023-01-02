@@ -1,6 +1,11 @@
 export type TeamEvent = {
   num: number;
   team: string;
+  // For simulation initialization
+  start_total_epa: number;
+  start_rp_1_epa: number;
+  start_rp_2_epa: number;
+  // For tables and figures
   total_epa: number;
   auto_epa: number;
   teleop_epa: number;
@@ -57,10 +62,24 @@ export type Match = {
   red_rp_2_pred: number;
   blue_rp_1_pred: number;
   blue_rp_2_pred: number;
+  // for simulation
+  red_auto: number;
+  red_teleop: number;
+  red_endgame: number;
+  red_1: number;
+  red_2: number;
+  blue_auto: number;
+  blue_teleop: number;
+  blue_endgame: number;
+  blue_1: number;
+  blue_2: number;
 };
 
 export type TeamMatch = {
-  match: number;
+  team: number;
+  match: string;
+  alliance: string;
+  match_num: number;
   label: string;
   time: number;
   playoff: boolean;

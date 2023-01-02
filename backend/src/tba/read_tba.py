@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
+from src.constants import MAX_TEAM
 from src.tba.clean_data import (
     clean_district,
     clean_state,
@@ -36,7 +37,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
                 "team": num,
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
-                "offseason": num >= 9985,
+                "offseason": num >= MAX_TEAM,
                 "state": clean_state(data_team["state_prov"]),
                 "district": clean_district(get_district(num)),
                 "country": data_team["country"],

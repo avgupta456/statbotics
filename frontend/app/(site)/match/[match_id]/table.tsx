@@ -1,6 +1,6 @@
 import React from "react";
 
-import MatchTable, { Component } from "../../../../components/Table/MatchTable";
+import MatchTable from "../../../../components/Table/MatchBreakdown";
 import { TableKey } from "../../../../components/Table/shared";
 import { round } from "../../../../utils";
 import { Data } from "./types";

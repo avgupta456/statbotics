@@ -8,6 +8,7 @@ import React, { useState } from "react";
 
 import { ColumnBar, columnOptionsDict } from "../columns";
 import { FilterBar, filterData } from "../filter";
+import { formatNumber } from "../utils";
 
 if (typeof Highcharts === "object") {
   HC_more(Highcharts);
@@ -17,7 +18,7 @@ type ScatterData = {
   x: number;
   y: number;
   z: number;
-  num: number;
+  num: string; // to handle offseason
   labelInt: number;
 };
 
@@ -49,7 +50,7 @@ const BubbleChart = ({
     x: xAxis.accessor(datum),
     y: yAxis.accessor(datum),
     z: zAxis.accessor(datum),
-    num: datum.num,
+    num: formatNumber(datum.num),
     labelInt: 0,
   }));
 

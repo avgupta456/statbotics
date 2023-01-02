@@ -79,17 +79,17 @@ const MatchTable = ({
     () => [
       columnHelper.accessor("red1", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[0], num: teams[0] }),
+        header: () => TeamLink({ team: teams[0], num: parseInt(teams[0]) }),
         enableSorting: false,
       }),
       columnHelper.accessor("red2", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[1], num: teams[1] }),
+        header: () => TeamLink({ team: teams[1], num: parseInt(teams[1]) }),
         enableSorting: false,
       }),
       columnHelper.accessor("red3", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[2], num: teams[2] }),
+        header: () => TeamLink({ team: teams[2], num: parseInt(teams[2]) }),
         enableSorting: false,
       }),
       columnHelper.accessor("redTotal", {
@@ -119,17 +119,17 @@ const MatchTable = ({
       }),
       columnHelper.accessor("blue3", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[5], num: teams[5] }),
+        header: () => TeamLink({ team: teams[5], num: parseInt(teams[5]) }),
         enableSorting: false,
       }),
       columnHelper.accessor("blue2", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[4], num: teams[4] }),
+        header: () => TeamLink({ team: teams[4], num: parseInt(teams[4]) }),
         enableSorting: false,
       }),
       columnHelper.accessor("blue1", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[3], num: teams[3] }),
+        header: () => TeamLink({ team: teams[3], num: parseInt(teams[3]) }),
         enableSorting: false,
       }),
     ],

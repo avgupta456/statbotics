@@ -475,11 +475,19 @@ def process_year(
                 (blue, blue_auto_epa_pre, blue_endgame_epa_pre, blue_rp_1_epa_pre, blue_rp_2_epa_pre, blue_auto_err, blue_endgame_err, blue_rp_1_err, blue_rp_2_err),  # type: ignore
             ]:
                 for t in teams:
-                    a_epa = max(0, auto_epa_pre[t] + weight * percent * auto_err / NUM_TEAMS)  # type: ignore
-                    e_epa = max(0, endgame_epa_pre[t] + weight * percent * endgame_err / NUM_TEAMS)  # type: ignore
-                    t_epa = max(0, team_epas[t] - a_epa - e_epa)  # type: ignore
+                    a_epa = auto_epa_pre[t] + weight * percent * auto_err / NUM_TEAMS  # type: ignore
+                    e_epa = endgame_epa_pre[t] + weight * percent * endgame_err / NUM_TEAMS  # type: ignore
+                    t_epa = team_epas[t] - a_epa - e_epa  # type: ignore
                     rp_1_epa = max(MIN_RP_EPA, rp_1_epa_pre[t] + rp_weight * RP_PERCENT * rp_1_err / NUM_TEAMS)  # type: ignore
                     rp_2_epa = max(MIN_RP_EPA, rp_2_epa_pre[t] + rp_weight * RP_PERCENT * rp_2_err / NUM_TEAMS)  # type: ignore
+
+                    if playoff_dq or offseason_event:
+                        a_epa = auto_epa_pre[t]
+                        e_epa = endgame_epa_pre[t]
+                        t_epa = team_epas[t] - a_epa - e_epa
+                        rp_1_epa = rp_1_epa_pre[t]
+                        rp_2_epa = rp_2_epa_pre[t]
+
                     team_auto_epas[t] = a_epa
                     team_teleop_epas[t] = t_epa
                     team_endgame_epas[t] = e_epa

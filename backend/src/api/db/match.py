@@ -20,6 +20,9 @@ async def get_match(match_id: str, no_cache: bool = False) -> Optional[Match]:
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_matches(
-    team: Optional[int], year: Optional[int], no_cache: bool = False
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    event_id: Optional[str] = None,
+    no_cache: bool = False,
 ) -> List[Match]:
-    return (True, _get_matches(team=team, year=year))  # type: ignore
+    return (True, _get_matches(team=team, year=year, event_id=event_id))  # type: ignore

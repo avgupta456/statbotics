@@ -20,11 +20,15 @@ def get_team_year(team_num: int, year: int) -> Optional[TeamYear]:
     return run_transaction(Session, callback)  # type: ignore
 
 
-def get_team_years(year: Optional[int] = None) -> List[TeamYear]:
+def get_team_years(
+    year: Optional[int] = None, offseason: Optional[bool] = False
+) -> List[TeamYear]:
     def callback(session: SessionType):
         data = session.query(TeamYearORM)
         if year is not None:
             data = data.filter(TeamYearORM.year == year)  # type: ignore
+        if offseason is not None:
+            data = data.filter(TeamYearORM.offseason == offseason)  # type: ignore
         out_data: List[TeamYearORM] = data.all()
         return [TeamYear.from_dict(x.__dict__) for x in out_data]
 

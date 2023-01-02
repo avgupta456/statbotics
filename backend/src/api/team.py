@@ -12,6 +12,7 @@ from src.db.models.team import Team
 from src.db.models.team_year import TeamYear
 from src.db.models.team_event import TeamEvent
 from src.db.models.match import Match
+from src.api.utils import unpack_match
 from src.data.nepa import get_epa_to_norm_epa_func
 from src.utils.decorators import async_fail_gracefully
 
@@ -26,7 +27,8 @@ async def read_root():
 @router.get("/teams/all")
 @async_fail_gracefully
 async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
-    return [{"num": x.team, "team": x.name} for x in await get_teams()]
+    teams: List[Team] = await get_teams()
+    return [{"num": x.team, "team": x.name} for x in teams if not x.offseason]
 
 
 @router.get("/team/{team_num}")
@@ -34,7 +36,7 @@ async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
 async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
     team: Optional[Team] = await get_team(team_num)
 
-    if team is None:
+    if team is None or team.offseason:
         raise Exception("Team not found")
 
     return {
@@ -57,7 +59,7 @@ async def read_team_year(
     foul_rate = (await get_year_stats(year))["foul_rate"]
     team_year: Optional[TeamYear] = await get_team_year(team_num, year)
 
-    if team_year is None:
+    if team_year is None or team_year.offseason:
         raise Exception("TeamYear not found")
 
     team_event_objs: List[TeamEvent] = await get_team_events(year=year, team=team_num)
@@ -67,30 +69,8 @@ async def read_team_year(
     for x in team_event_objs:
         team_event_matches = [
             {
-                "time": m.time,
-                "key": m.key,
-                "comp_level": m.comp_level,
-                "set_number": m.set_number,
-                "match_number": m.match_number,
-                "playoff": m.playoff,
+                **unpack_match(m),
                 "alliance": "red" if team_num in m.get_red() else "blue",
-                "red": m.get_red(),
-                "blue": m.get_blue(),
-                "red_score": m.red_score,
-                "blue_score": m.blue_score,
-                "winner": m.winner,
-                "red_rp_1": m.red_rp_1,
-                "red_rp_2": m.red_rp_2,
-                "blue_rp_1": m.blue_rp_1,
-                "blue_rp_2": m.blue_rp_2,
-                "red_epa_pred": m.red_epa_sum,
-                "blue_epa_pred": m.blue_epa_sum,
-                "red_rp_1_pred": m.red_rp_1_epa_sum,
-                "red_rp_2_pred": m.red_rp_2_epa_sum,
-                "epa_win_prob": m.epa_win_prob,
-                "pred_winner": m.epa_winner,
-                "blue_rp_1_pred": m.blue_rp_1_epa_sum,
-                "blue_rp_2_pred": m.blue_rp_2_epa_sum,
             }
             for m in match_objs
             if m.event == x.event
