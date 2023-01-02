@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { Range } from "react-range";
 
 import SimulationTable from "../../../../components/Table/SimulationTable";
 import { Data } from "./types";
@@ -12,12 +13,15 @@ type SimResults = {
 };
 
 const SimulationSection = ({ data }: { data: Data }) => {
+  const [index, setIndex] = useState(0);
+  const [finalIndex, setFinalIndex] = useState(0);
+
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SimResults[]>([]);
 
   useEffect(() => {
     // From https://webpack.js.org/guides/web-workers/#syntax
-    if (workerRef.current || data == null || data == undefined) {
+    if (workerRef.current) {
       return;
     }
 
@@ -25,13 +29,22 @@ const SimulationSection = ({ data }: { data: Data }) => {
     workerRef.current.addEventListener("message", (evt) => {
       setWorkerMessages([...workerMessages, evt.data]);
     });
+  }, [workerMessages]);
 
-    workerRef.current.postMessage({ type: "indexSim", data: data, index: 0, simCount: 1000 });
-  }, [workerMessages, data]);
+  useEffect(() => {
+    if (!workerRef.current) {
+      return;
+    }
 
-  if (workerMessages.length == 0) {
-    return <div>Simulating...</div>;
-  }
+    setWorkerMessages([]);
+
+    workerRef.current.postMessage({
+      type: "indexSim",
+      data,
+      index: finalIndex,
+      simCount: 1000,
+    });
+  }, [data, finalIndex]);
 
   const simRanks = {};
   const simRPs = {};
@@ -80,8 +93,46 @@ const SimulationSection = ({ data }: { data: Data }) => {
       RPMean: RPMean[teamEvent.num],
     }));
 
+  const qualsN = data.matches.filter((m) => !m.playoff).length;
+
   return (
     <div className="w-full flex flex-col justify-center items-center">
+      <div className="w-full text-2xl font-bold mb-4">Simulation</div>
+      <div className="w-full mb-4">
+        Using EPA ratings and RP strengths from a snapshot in time, we can simulate the remainder of
+        the event. The entire event is simulated 1000 times. Surrogates and DQed teams are correctly
+        handled. The first tiebreaker is included from 2016 onwards.{" "}
+        <strong>The simulation happens live, and may take a few seconds to load.</strong>
+      </div>
+      <div className="w-full mb-4 flex flex-col">
+        <div>
+          Simulate from:{" "}
+          <strong>{index === 0 ? "Schedule Release" : "Qualification Match " + index}</strong>
+        </div>
+        <div className="px-16">
+          <Range
+            step={1}
+            min={0}
+            max={qualsN}
+            values={[index]}
+            onChange={(values) => setIndex(values[0])}
+            onFinalChange={(values) => {
+              setFinalIndex(values[0]);
+            }}
+            renderTrack={({ props, children }) => (
+              <div {...props} className="w-full h-[2px] pr-2 my-4 bg-gray-200 rounded-md">
+                {children}
+              </div>
+            )}
+            renderThumb={({ props }) => (
+              <div {...props} className="w-4 h-4 bg-blue-800 rounded-full" />
+            )}
+            renderMark={({ props }) => (
+              <div {...props} className="w-[2px] h-[2px] bg-blue-500 rounded-full" />
+            )}
+          />
+        </div>
+      </div>
       <SimulationTable data={simulationData} />
     </div>
   );

@@ -30,6 +30,7 @@
     "react-csv": "^2.2.2",
     "react-debounce-input": "^3.3.0",
     "react-dom": "^18.2.0",
+    "react-range": "^1.8.14",
     "react-select": "^5.7.0",
     "react-spinners": "^0.13.7",
     "react-windowed-select": "^5.1.0",
