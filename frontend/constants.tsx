@@ -2,6 +2,7 @@
 export const BACKEND_URL = "http://127.0.0.1:8000/api";
 
 export const CURR_YEAR = 2023;
+export const MAX_TEAM = 9311; // above is offseason
 
 export const CORRECT_COLOR = "#86CFA3";
 export const INCORRECT_COLOR = "#F77F84";

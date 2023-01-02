@@ -1,6 +1,7 @@
 import React from "react";
 
 import MatchTable from "../../../../components/MatchTable";
+import { MAX_TEAM } from "../../../../constants";
 import { classnames, round } from "../../../../utils";
 import { Data } from "./types";
 
@@ -42,6 +43,10 @@ const MatchSection = ({ eventId, data }: { eventId: string; data: Data }) => {
     }, 0);
   const rp2Accuracy = round((rp2CorrectPreds / (2 * qualsN)) * 100, 1);
 
+  const hasOffseasonTeams = data.matches.some(
+    (match) => Math.max(...match.red, ...match.blue) > MAX_TEAM
+  );
+
   return (
     <div className="flex flex-col">
       <div className="w-full text-2xl font-bold mb-4">Match Predictions</div>
@@ -50,6 +55,12 @@ const MatchSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         <strong>Accuracy: {accuracy}%</strong> | RP 1 Accuracy: {rp1Accuracy}% | RP 2 Accuracy:{" "}
         {rp2Accuracy}%
       </div>
+      {hasOffseasonTeams && (
+        <div className="mb-4">
+          This event has <strong>offseason teams</strong> which are assigned a default EPA value. As
+          a result, prediction accuracy may be lower than expected.
+        </div>
+      )}
       <MatchTable
         year={2022} // TODO
         teamNum={null}
