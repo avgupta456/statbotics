@@ -40,9 +40,11 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
     [eventId, data]
   );
 
-  const MemoizedMatchSection = useMemo(
-    () => <MatchSection eventId={eventId} data={data} />,
-    [eventId, data]
+  const MemoizedQualMatchSection = useMemo(() => <MatchSection quals={true} data={data} />, [data]);
+
+  const MemoizedElimMatchSection = useMemo(
+    () => <MatchSection quals={false} data={data} />,
+    [data]
   );
 
   const bubbleData = data.team_events.map((teamEvent) => ({
@@ -78,10 +80,25 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
     [eventId, data]
   );
 
+  let tabs = ["Insights"];
+
+  const qualsN = data?.matches?.filter((match) => !match.playoff)?.length || 0;
+  const elimsN = data?.matches?.filter((match) => match.playoff)?.length || 0;
+
+  if (qualsN > 0) {
+    tabs.push("Qual Matches");
+  }
+
+  if (elimsN > 0) {
+    tabs.push("Elim Matches");
+  }
+
+  tabs.push("Bubble Chart", "Figures");
+
   return (
     <div className="w-full flex-grow flex flex-col">
       <div className="w-full flex flex-row">
-        {["Insights", "Matches", "Bubble Chart", "Figures"].map((_tab) => (
+        {tabs.map((_tab) => (
           <div
             key={`tab-${_tab}`}
             className={classnames(tab === _tab ? "" : "border-b-[1px] border-gray-200")}
@@ -109,7 +126,12 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
         ) : (
           <>
             <div className={tab === "Insights" ? "w-full" : "hidden"}>{MemoizedInsightsTable}</div>
-            <div className={tab === "Matches" ? "w-full" : "hidden"}>{MemoizedMatchSection}</div>
+            <div className={tab === "Qual Matches" ? "w-full" : "hidden"}>
+              {MemoizedQualMatchSection}
+            </div>
+            <div className={tab === "Elim Matches" ? "w-full" : "hidden"}>
+              {MemoizedElimMatchSection}
+            </div>
             <div className={tab === "Bubble Chart" ? "w-full" : "hidden"}>
               {MemoizedBubbleChart}
             </div>
