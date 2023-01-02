@@ -40,6 +40,11 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
         {
             "num": x.team,
             "team": x.team_name,
+            # For simulation initial conditions
+            "start_total_epa": x.epa_start,
+            "start_rp_1_epa": x.rp_1_epa_start,
+            "start_rp_2_epa": x.rp_2_epa_start,
+            # For tables and figures
             "total_epa": x.epa_end,
             "norm_epa": epa_to_norm_epa(x.epa_end or 0),
             "auto_epa": x.auto_epa_end,
@@ -60,6 +65,25 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     matches = [unpack_match(m) for m in match_objs]
     matches.sort(key=lambda x: x["time"] or 0)
 
+    team_match_objs: List[TeamMatch] = await get_team_matches(event=event_id)
+
+    team_matches = [
+        {
+            "team": x.team,
+            "match": x.match,
+            "alliance": x.alliance,
+            "match_num": get_match_number(x.match),
+            "playoff": x.playoff,
+            "total_epa": x.epa,
+            "auto_epa": x.auto_epa,
+            "teleop_epa": x.teleop_epa,
+            "endgame_epa": x.endgame_epa,
+            "rp_1_epa": x.rp_1_epa,
+            "rp_2_epa": x.rp_2_epa,
+        }
+        for x in team_match_objs
+    ]
+
     year_stats = await get_year_stats(event.year)
 
     out = {
@@ -67,6 +91,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
         "year": event.year,
         "team_events": team_events,
         "matches": matches,
+        "team_matches": team_matches,
         "year_stats": year_stats,
     }
 
@@ -82,7 +107,10 @@ async def read_team_matches(
 
     team_matches = [
         {
-            "match": get_match_number(x.match),
+            "team": x.team,
+            "match": x.match,
+            "alliance": x.alliance,
+            "match_num": get_match_number(x.match),
             "playoff": x.playoff,
             "total_epa": x.epa,
             "auto_epa": x.auto_epa,

@@ -2,6 +2,7 @@ import React from "react";
 
 import BarChart from "../../../../components/Figures/Bar";
 import EventLineChart from "../../../../components/Figures/EventLine";
+import { MAX_TEAM } from "../../../../constants";
 import { Data } from "./types";
 
 const FiguresSection = ({ eventId, data }: { eventId: string; data: Data }) => {
@@ -17,6 +18,7 @@ const FiguresSection = ({ eventId, data }: { eventId: string; data: Data }) => {
     .slice(0, 16);
 
   const lineData = data.team_events
+    .filter((teamEvent) => teamEvent.num <= MAX_TEAM) // Filter out offseason teams
     .map((teamEvent) => ({
       value: teamEvent.num,
       label: `${teamEvent.num} | ${teamEvent.team}`,

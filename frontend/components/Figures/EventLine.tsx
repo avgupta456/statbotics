@@ -6,7 +6,7 @@ import Select from "react-select";
 import { BACKEND_URL } from "../../constants";
 import { round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
-import { TeamEvent } from "../types/api";
+import { TeamEvent, TeamMatch } from "../types/api";
 import LineChart from "./Line";
 
 const EventLineChart = ({
@@ -22,7 +22,7 @@ const EventLineChart = ({
 }) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
-  const [allData, setAllData] = useState<any>({});
+  const [allData, setAllData] = useState<{ [key: number]: TeamMatch[] }>({});
 
   // FUNCTIONS
 
@@ -45,7 +45,7 @@ const EventLineChart = ({
 
     const sortedData = data.data
       .filter((teamMatch: any) => !teamMatch.playoff)
-      .sort((a: any, b: any) => a.match - b.match);
+      .sort((a: any, b: any) => a.match_num - b.match_num);
 
     return sortedData;
   };
@@ -87,13 +87,13 @@ const EventLineChart = ({
       let teamData = {
         id: teamNum,
         data: allData[teamNum].map((teamMatch: any, i: number) => ({
-          x: allData[teamNum][i - 1]?.match || 0,
+          x: allData[teamNum][i - 1]?.match_num || 0,
           label: allData[teamNum][i - 1]?.label || "Start",
           y: teamMatch[yAxis.value],
         })),
       };
 
-      const lastMatch = allData[teamNum][allData[teamNum].length - 1].match;
+      const lastMatch = allData[teamNum][allData[teamNum].length - 1].match_num;
       const lastEPA = teamEvents[teamEvents.findIndex((team) => team.num === teamNum)][yAxis.value];
       teamData.data.push({ x: lastMatch, label: "End", y: lastEPA });
 
