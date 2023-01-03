@@ -7,10 +7,10 @@ from src.db.main import Session
 from src.db.models.team_year import TeamYear, TeamYearORM
 
 
-def get_team_year(team_num: int, year: int) -> Optional[TeamYear]:
+def get_team_year(team: int, year: int) -> Optional[TeamYear]:
     def callback(session: SessionType):
         data = session.query(TeamYearORM).filter(  # type: ignore
-            TeamYearORM.team == team_num, TeamYearORM.year == year
+            TeamYearORM.team == team, TeamYearORM.year == year
         )
         out_data: Optional[TeamYearORM] = data.first()
         if out_data is None:

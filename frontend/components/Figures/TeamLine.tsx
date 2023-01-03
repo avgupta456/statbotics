@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
-import { TeamMatch } from "../types/api";
+import { APITeamMatch } from "../types/api";
 import LineChart from "./Line";
 
 const TeamLineChart = ({
@@ -13,7 +13,7 @@ const TeamLineChart = ({
 }: {
   teamNum: number;
   year: number;
-  data: TeamMatch[];
+  data: APITeamMatch[];
 }) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
   const [splitEvents, setSplitEvents] = useState(false);
@@ -22,14 +22,14 @@ const TeamLineChart = ({
 
   let arr = data.map((teamMatch: any, i: number) => ({
     x: i,
-    event: teamMatch.label.split("_")[0],
-    label: data[i - 1]?.label || "Start",
+    event: teamMatch.match.split("_")[0],
+    label: data[i - 1]?.match || "Start",
     y: teamMatch[yAxis.value],
   }));
 
   // TODO: fix this to the actual post-match EPA
   const lastEPA = data[data.length - 1]?.[yAxis.value];
-  const lastEvent = data[data.length - 1]?.label.split("_")[0];
+  const lastEvent = data[data.length - 1]?.match.split("_")[0];
   arr.push({ x: data.length, event: lastEvent, label: "End", y: lastEPA });
 
   let teamData = [

@@ -7,6 +7,11 @@ from src.api.models.main import APIModel
 class APITeamEvent(APIModel):
     num: int
     team: str
+    event: str
+    event_name: str
+    week: int
+    time: int
+    num_teams: int
     # For simulation initial conditions
     start_total_epa: float
     start_rp_1_epa: float

@@ -14,6 +14,11 @@ def unpack_team_event(
     return APITeamEvent(
         num=team_event.team,
         team=team_event.team_name or str(team_event.team),
+        event=team_event.event,
+        event_name=team_event.event_name or "",
+        week=team_event.week or -1,
+        time=team_event.time,
+        num_teams=team_event.num_teams or -1,
         start_total_epa=team_event.epa_start or 0,
         start_rp_1_epa=team_event.rp_1_epa_start or 0,
         start_rp_2_epa=team_event.rp_2_epa_start or 0,
@@ -48,4 +53,4 @@ async def get_team_events(
         epa_to_norm_epa = get_epa_to_norm_epa_func(year)
 
     team_events = [unpack_team_event(epa_to_norm_epa, x) for x in team_event_objs]
-    return (True, sorted(team_events, key=lambda x: x.rank))  # type: ignore
+    return (True, sorted(team_events, key=lambda x: x.time))  # type: ignore

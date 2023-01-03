@@ -13,6 +13,13 @@ class APITeamYear(APIModel):
     country: Optional[str]
     district: Optional[str]
     epa_rank: int
+    epa_count: int
+    state_epa_rank: int
+    state_epa_count: int
+    country_epa_rank: int
+    country_epa_count: int
+    district_epa_rank: int
+    district_epa_count: int
     norm_epa: float
     total_epa: float
     auto_epa: float

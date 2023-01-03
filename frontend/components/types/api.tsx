@@ -59,6 +59,13 @@ export type APITeamYear = {
   country?: string;
   district?: string;
   epa_rank: number;
+  epa_count: number;
+  state_epa_rank: number;
+  state_epa_count: number;
+  country_epa_rank: number;
+  country_epa_count: number;
+  district_epa_rank: number;
+  district_epa_count: number;
   norm_epa: number;
   total_epa: number;
   auto_epa: number;
@@ -81,6 +88,11 @@ export type APIEvent = {
 export type APITeamEvent = {
   num: number;
   team: string;
+  event: string;
+  event_name: string;
+  week: number;
+  time: number;
+  num_teams: number;
   start_total_epa: number;
   start_rp_1_epa: number;
   start_rp_2_epa: number;
