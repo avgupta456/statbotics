@@ -2,10 +2,11 @@ from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation.year import get_year_stats
+from src.api.aggregation.year import get_year
 from src.api.db.event import get_event
 from src.api.db.match import get_match
-from src.api.db.team_match import get_team_matches
+
+# from src.api.db.team_match import get_team_matches
 from src.db.models.match import Match
 from src.utils.decorators import async_fail_gracefully
 from src.utils.utils import get_match_name

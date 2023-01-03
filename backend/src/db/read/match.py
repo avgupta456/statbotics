@@ -23,7 +23,7 @@ def get_match(match_id: str) -> Optional[Match]:
 def get_matches(
     year: Optional[int] = None,
     week: Optional[int] = None,
-    event_id: Optional[int] = None,
+    event_id: Optional[str] = None,
     team: Optional[int] = None,
 ) -> List[Match]:
     def callback(session: SessionType):

@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 from fastapi import APIRouter, Response
 
 from src.api.aggregation.team_match import get_team_matches
-from src.api.aggregation.year import get_year_stats
+from src.api.aggregation.year import get_year
 from src.api.db.team_year import get_team_years
 from src.db.models.team_year import TeamYear
 from src.utils.decorators import async_fail_gracefully
@@ -45,7 +45,7 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
         if x.count > 0
     ]
 
-    year_stats = await get_year_stats(year)
+    year_stats = await get_year(year)
 
     out = {
         "team_years": team_years,
@@ -60,4 +60,5 @@ async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
 async def read_team_matches(
     response: Response, year: int, team: int
 ) -> List[Dict[str, Any]]:
-    return await get_team_matches(year=year, team=team)
+    team_matches = await get_team_matches(year=year, team=team)
+    return [x.to_dict() for x in team_matches]

@@ -1,0 +1,26 @@
+import attr
+
+from src.api.models.main import APIModel
+
+
+@attr.s(auto_attribs=True, slots=True)
+class APITeamEvent(APIModel):
+    num: int
+    team: str
+    # For simulation initial conditions
+    start_total_epa: float
+    start_rp_1_epa: float
+    start_rp_2_epa: float
+    # For tables and figures
+    total_epa: float
+    norm_epa: float
+    auto_epa: float
+    teleop_epa: float
+    endgame_epa: float
+    rp_1_epa: float
+    rp_2_epa: float
+    wins: int
+    losses: int
+    ties: int
+    count: int
+    rank: int

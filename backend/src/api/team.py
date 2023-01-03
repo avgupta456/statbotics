@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Response
 
 from src.api.aggregation.team_match import get_team_matches
-from src.api.aggregation.year import get_year_stats
+from src.api.aggregation.year import get_year
 from src.api.db.team import get_team, get_teams
 from src.api.db.team_year import get_team_year
 from src.api.db.team_event import get_team_events
@@ -56,7 +56,7 @@ async def read_team_year(
 ) -> Dict[str, Any]:
     epa_to_norm_epa = get_epa_to_norm_epa_func(year)
 
-    foul_rate = (await get_year_stats(year))["foul_rate"]
+    foul_rate = (await get_year(year)).foul_rate
     team_year: Optional[TeamYear] = await get_team_year(team_num, year)
 
     if team_year is None or team_year.offseason:

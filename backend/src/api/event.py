@@ -2,17 +2,16 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation.year import get_year_stats
-from src.api.db.match import get_matches
-from src.api.db.event import get_event
-from src.api.db.team_event import get_team_events
-from src.api.db.team_match import get_team_matches
-from src.api.utils import unpack_match
+from src.api.aggregation.year import get_year
+from src.api.aggregation.match import get_matches
+from src.api.aggregation.event import get_event
+from src.api.aggregation.team_event import get_team_events
+from src.api.aggregation.team_match import get_team_matches
+from src.api.models.event import APIEvent
+from src.api.models.team_event import APITeamEvent
+from src.api.models.team_match import APITeamMatch
+from src.api.models.match import APIMatch
 from src.data.nepa import get_epa_to_norm_epa_func
-from src.db.models.event import Event
-from src.db.models.team_event import TeamEvent
-from src.db.models.team_match import TeamMatch
-from src.db.models.match import Match
 from src.utils.decorators import async_fail_gracefully
 from src.utils.utils import get_match_number
 
@@ -27,7 +26,7 @@ async def read_root():
 @router.get("/event/{event_id}")
 @async_fail_gracefully
 async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
-    event: Optional[Event] = await get_event(event_id)
+    event: Optional[APIEvent] = await get_event(event_id)
 
     if event is None:
         raise Exception("Event not found")
