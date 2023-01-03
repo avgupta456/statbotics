@@ -11,6 +11,9 @@ class APIEvent(APIModel):
     name: str
     year: int
     week: int
+    start_date: str
+    end_date: str
     country: Optional[str]
     state: Optional[str]
     district: Optional[str]
+    status: str

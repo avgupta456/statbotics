@@ -13,9 +13,12 @@ def unpack_event(event: Event) -> APIEvent:
         name=event.name,
         year=event.year,
         week=event.week,
+        start_date=event.start_date,
+        end_date=event.end_date,
         country=event.country,
         state=event.state,
         district=event.district,
+        status=event.status,
     )
 
 

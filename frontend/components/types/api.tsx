@@ -84,9 +84,13 @@ export type APIEvent = {
   key: string;
   name: string;
   year: number;
+  week: number;
+  start_date: string;
+  end_date: string;
   country?: string;
   state?: string;
   district?: string;
+  status: string;
 };
 
 export type APITeamEvent = {
