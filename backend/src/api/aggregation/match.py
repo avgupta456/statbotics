@@ -28,10 +28,10 @@ def unpack_match(match: Match) -> APIMatch:
         blue_rp_2=match.blue_rp_2 or 0,
         red_epa_pred=match.red_epa_sum or 0,
         blue_epa_pred=match.blue_epa_sum or 0,
-        red_rp_1_pred=match.red_rp_1_epa_sum or 0,
-        red_rp_2_pred=match.red_rp_2_epa_sum or 0,
         epa_win_prob=match.epa_win_prob or 0,
         pred_winner=match.epa_winner or "",
+        red_rp_1_pred=match.red_rp_1_epa_sum or 0,
+        red_rp_2_pred=match.red_rp_2_epa_sum or 0,
         blue_rp_1_pred=match.blue_rp_1_epa_sum or 0,
         blue_rp_2_pred=match.blue_rp_2_epa_sum or 0,
         # for simulation

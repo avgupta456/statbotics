@@ -64,10 +64,10 @@ const MatchSection = ({ quals, data }: { quals: boolean; data: Data }) => {
         </div>
       )}
       <MatchTable
-        year={data.year}
+        year={data.event.year}
         teamNum={null}
         matches={matches}
-        foulRate={data.year_stats.foul_rate}
+        foulRate={data.year.foul_rate}
       />
     </div>
   );

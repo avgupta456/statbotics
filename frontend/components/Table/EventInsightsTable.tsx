@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import { classnames } from "../../utils";
-import { PercentileStats, YearStats } from "../types/api";
+import { APIYear, PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
 import Table from "./Table";
 import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
@@ -58,7 +58,7 @@ const EventInsightsTable = ({
   disableHighlight,
 }: {
   data: TeamEventInsights[];
-  stats: YearStats;
+  stats: APIYear;
   disableHighlight: boolean;
 }) => {
   const columns = useMemo<any>(
@@ -76,27 +76,27 @@ const EventInsightsTable = ({
         header: "Rank",
       }),
       columnHelper.accessor("epa", {
-        cell: (info) => formatCell(stats.total, info, disableHighlight),
+        cell: (info) => formatCell(stats.total_stats, info, disableHighlight),
         header: "EPA",
       }),
       columnHelper.accessor("auto_epa", {
-        cell: (info) => formatCell(stats.auto, info, disableHighlight),
+        cell: (info) => formatCell(stats.auto_stats, info, disableHighlight),
         header: "Auto EPA",
       }),
       columnHelper.accessor("teleop_epa", {
-        cell: (info) => formatCell(stats.teleop, info, disableHighlight),
+        cell: (info) => formatCell(stats.teleop_stats, info, disableHighlight),
         header: "Teleop EPA",
       }),
       columnHelper.accessor("endgame_epa", {
-        cell: (info) => formatCell(stats.endgame, info, disableHighlight),
+        cell: (info) => formatCell(stats.endgame_stats, info, disableHighlight),
         header: "Endgame EPA",
       }),
       columnHelper.accessor("rp_1_epa", {
-        cell: (info) => formatCell(stats.rp_1, info, disableHighlight),
+        cell: (info) => formatCell(stats.rp_1_stats, info, disableHighlight),
         header: "RP1 EPA",
       }),
       columnHelper.accessor("rp_2_epa", {
-        cell: (info) => formatCell(stats.rp_2, info, disableHighlight),
+        cell: (info) => formatCell(stats.rp_2_stats, info, disableHighlight),
         header: "RP2 EPA",
       }),
     ],

@@ -5,11 +5,12 @@ from src.api.models.main import APIModel
 
 @attr.s(auto_attribs=True, slots=True)
 class APITeamMatch(APIModel):
-    match: int
-    label: str
+    num: int
+    alliance: str
+    match_num: int
+    match: str
     time: int
     playoff: bool
-    norm_epa: float
     total_epa: float
     auto_epa: float
     teleop_epa: float

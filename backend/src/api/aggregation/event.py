@@ -15,12 +15,12 @@ def unpack_event(event: Event) -> APIEvent:
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_event(event_id: str, no_cache: bool = False) -> Optional[APIEvent]:
-    event = _get_event(event_id)
+async def get_event(event: str, no_cache: bool = False) -> Optional[APIEvent]:
+    event_obj = _get_event(event)
 
     # If invalid, do not cache
-    if event is None:
+    if event_obj is None:
         return (False, None)  # type: ignore
 
     # If valid, cache
-    return (True, unpack_event(event))  # type: ignore
+    return (True, unpack_event(event_obj))  # type: ignore

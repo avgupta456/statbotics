@@ -5,7 +5,7 @@ import React from "react";
 import { ResponsiveLine } from "@nivo/line";
 
 import { round } from "../../utils";
-import { LineData } from "../types/figures";
+import { LineData } from "./shared";
 
 const LineChart = ({
   data,

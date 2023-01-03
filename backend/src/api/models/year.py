@@ -4,7 +4,7 @@ from src.api.models.main import APIModel
 
 
 @attr.s(auto_attribs=True, slots=True)
-class PercentileStats:
+class PercentileStats(APIModel):
     p99: float
     p95: float
     p90: float

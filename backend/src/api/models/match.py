@@ -26,10 +26,10 @@ class APIMatch(APIModel):
     blue_rp_2: int
     red_epa_pred: float
     blue_epa_pred: float
-    red_rp_1_pred: float
-    red_rp_2_pred: float
     epa_win_prob: float
     pred_winner: str
+    red_rp_1_pred: float
+    red_rp_2_pred: float
     blue_rp_1_pred: float
     blue_rp_2_pred: float
     # for simulation

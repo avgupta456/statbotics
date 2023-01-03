@@ -1,9 +1,9 @@
-import { Match, TeamMatch } from "../../../../components/types/api";
+import { APIMatch, APITeamMatch } from "../../../../components/types/api";
 import { Data } from "./types";
 
 const ctx: Worker = self as unknown as Worker;
 
-const getTiebreakers = (year: number, match: Match) => {
+const getTiebreakers = (year: number, match: APIMatch) => {
   if (year === 2016) {
     return [match.red_1, match.blue_1];
   } else if (year === 2017) {
@@ -22,7 +22,7 @@ const getTiebreakers = (year: number, match: Match) => {
 };
 
 async function indexSim(data: Data, index: number, simCount: number) {
-  const TOTAL_SD = data.year_stats.total.sd;
+  const TOTAL_SD = data.year.total_stats.sd;
 
   const qualMatches = data.matches
     .filter((match) => !match.playoff)
@@ -37,7 +37,7 @@ async function indexSim(data: Data, index: number, simCount: number) {
   const currRPs = {};
   const currTiebreakers = {};
 
-  const teamMatchesMap: { [key: string]: TeamMatch[] } = {};
+  const teamMatchesMap: { [key: string]: APITeamMatch[] } = {};
   for (let i = 0; i < qualTeamMatches.length; i++) {
     const teamMatch = qualTeamMatches[i];
     if (!teamMatchesMap[teamMatch.match]) {
@@ -64,12 +64,12 @@ async function indexSim(data: Data, index: number, simCount: number) {
     const match = qualMatches[i];
     const redRPs = match.red_rp_1 + match.red_rp_2 + redResultToRPs[match.winner];
     const blueRPs = match.blue_rp_1 + match.blue_rp_2 + blueResultToRPs[match.winner];
-    const [redTiebreaker, blueTiebreaker] = getTiebreakers(data.year, match);
+    const [redTiebreaker, blueTiebreaker] = getTiebreakers(data.event.year, match);
 
     const teamMatches = teamMatchesMap[match.key];
     for (let j = 0; j < teamMatches.length; j++) {
       const teamMatch = teamMatches[j];
-      const team = teamMatch.team;
+      const team = teamMatch.num;
       currEPAs[team] = teamMatch.total_epa;
       currRP1EPAs[team] = teamMatch.rp_1_epa;
       currRP2EPAs[team] = teamMatch.rp_2_epa;
@@ -125,7 +125,7 @@ async function indexSim(data: Data, index: number, simCount: number) {
       const teamMatches = teamMatchesMap[match.key];
       for (let k = 0; k < teamMatches.length; k++) {
         const teamMatch = teamMatches[k];
-        const team = teamMatch.team;
+        const team = teamMatch.num;
         if (teamMatch.alliance === "red") {
           redEPA += currSimEPAs[team];
           redRP1EPA += currSimRP1EPAs[team];
@@ -158,7 +158,7 @@ async function indexSim(data: Data, index: number, simCount: number) {
 
       for (let k = 0; k < teamMatches.length; k++) {
         const teamMatch = teamMatches[k];
-        const team = teamMatch.team;
+        const team = teamMatch.num;
         if (teamMatch.alliance === "red") {
           currSimRPs[team] += redRPs;
         } else {

@@ -106,17 +106,13 @@ const EventLineChart = ({
     year >= 2016
       ? [
           { value: "total_epa", label: "Total EPA" },
-          { value: "norm_epa", label: "Norm EPA" },
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
           { value: "rp_1_epa", label: "RP 1 EPA" },
           { value: "rp_2_epa", label: "RP 2 EPA" },
         ]
-      : [
-          { value: "total_epa", label: "EPA" },
-          { value: "norm_epa", label: "Norm EPA" },
-        ];
+      : [{ value: "total_epa", label: "EPA" }];
 
   return (
     <div className="w-full flex flex-col">

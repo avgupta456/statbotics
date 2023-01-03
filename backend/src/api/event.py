@@ -36,7 +36,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
 
     epa_to_norm_epa = get_epa_to_norm_epa_func(event.year)
     team_events: List[APITeamEvent] = await get_team_events(
-        event_id=event_id, epa_to_norm_epa=epa_to_norm_epa
+        event=event_id, epa_to_norm_epa=epa_to_norm_epa
     )
     matches: List[APIMatch] = await get_matches(event=event_id)
     team_matches: List[APITeamMatch] = await get_team_matches(event=event_id)

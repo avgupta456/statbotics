@@ -1,10 +1,15 @@
-import { Match, TeamEvent, TeamMatch, YearStats } from "../../../../components/types/api";
+import {
+  APIEvent,
+  APIMatch,
+  APITeamEvent,
+  APITeamMatch,
+  APIYear,
+} from "../../../../components/types/api";
 
 export type Data = {
-  event_name: string;
-  year: number;
-  team_events: TeamEvent[];
-  matches: Match[];
-  team_matches: TeamMatch[];
-  year_stats: YearStats;
+  event: APIEvent;
+  matches: APIMatch[];
+  team_events: APITeamEvent[];
+  team_matches: APITeamMatch[];
+  year: APIYear;
 };
