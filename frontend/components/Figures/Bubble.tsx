@@ -31,9 +31,8 @@ const BubbleChart = ({
   columnOptions: string[];
   filterOptions: string[];
 }) => {
-  const [filters, setFilters] = useState(
-    filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {})
-  );
+  const defaultFilters = filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
+  const [filters, setFilters] = useState(defaultFilters);
   const [columns, setColumns] = useState({
     x: "Teleop",
     y: "Auto + Endgame",
@@ -165,7 +164,7 @@ const BubbleChart = ({
         {filterOptions.length > 0 && (
           <>
             <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-            <FilterBar filters={filters} setFilters={setFilters} />
+            <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
           </>
         )}
       </div>
