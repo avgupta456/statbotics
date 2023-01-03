@@ -1,9 +1,9 @@
 from datetime import timedelta
-from typing import Optional
+from typing import List, Optional
 
 from src.api.models import APIEvent
 from src.db.models import Event
-from src.db.read import get_event as _get_event
+from src.db.read import get_event as _get_event, get_events as _get_events
 from src.utils.alru_cache import alru_cache
 
 
@@ -24,3 +24,13 @@ async def get_event(event: str, no_cache: bool = False) -> Optional[APIEvent]:
 
     # If valid, cache
     return (True, unpack_event(event_obj))  # type: ignore
+
+
+@alru_cache(ttl=timedelta(minutes=5))
+async def get_events(
+    year: Optional[int] = None, no_cache: bool = False
+) -> List[APIEvent]:
+    event_objs: List[Event] = _get_events(year=year)
+
+    events = [unpack_event(event) for event in event_objs]
+    return (True, events)  # type: ignore

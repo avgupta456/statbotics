@@ -4,6 +4,7 @@ from fastapi import APIRouter, Response
 
 from src.api.aggregation import (
     get_event,
+    get_events,
     get_matches,
     get_team_events,
     get_team_matches,
@@ -19,6 +20,13 @@ router = APIRouter()
 @router.get("/")
 async def read_root():
     return {"name": "Event Router"}
+
+
+@router.get("/events/{year}")
+@async_fail_gracefully
+async def read_events(response: Response, year: int) -> List[Dict[str, Any]]:
+    events: List[APIEvent] = await get_events(year=year)
+    return [x.to_dict() for x in events]
 
 
 @router.get("/event/{event_id}")

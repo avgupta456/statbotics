@@ -6,7 +6,7 @@ import { BACKEND_URL, CURR_YEAR } from "../../constants";
 import { round } from "../../utils";
 import { getWithExpiry, setWithExpiry } from "../localStorage";
 import { AppContext } from "./context";
-import { TeamYearData } from "./types";
+import { EventData, TeamYearData } from "./types";
 
 async function getTeamYearData(year: number) {
   const cacheData = getWithExpiry(`team_years_${year}`);
@@ -28,22 +28,60 @@ async function getTeamYearData(year: number) {
   return data;
 }
 
+async function getEventData(year: number) {
+  const cacheData = getWithExpiry(`events_${year}`);
+  if (cacheData && cacheData?.events?.length > 10) {
+    console.log("Used Local Storage: " + year);
+    return cacheData;
+  }
+
+  const start = performance.now();
+  const res = await fetch(`${BACKEND_URL}/events/${year}`);
+  console.log(`/events/${year} took ${round(performance.now() - start, 0)}ms`);
+
+  if (!res.ok) {
+    return undefined;
+  }
+  const data = (await res.json())?.data;
+  const expiry = year === CURR_YEAR ? 60 : 60 * 60; // 1 minute / 1 hour
+  setWithExpiry(`events_${year}`, data, expiry);
+  return data;
+}
+
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [dataDict, setDataDict] = useState<{ [key: number]: TeamYearData }>({});
+  const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: TeamYearData }>({});
+  const [eventDataDict, setEventDataDict] = useState<{ [key: number]: EventData }>({});
   const [year, setYear] = useState(2022);
 
   useEffect(() => {
     const getDataForYear = async (year: number) => {
-      if (dataDict[year]) {
+      if (teamYearDataDict[year]) {
         return;
       }
 
       const data: TeamYearData = await getTeamYearData(year);
-      setDataDict((prev) => ({ ...prev, [year]: data }));
+      setTeamYearDataDict((prev) => ({ ...prev, [year]: data }));
     };
 
     getDataForYear(year);
-  }, [dataDict, year]);
+  }, [teamYearDataDict, year]);
 
-  return <AppContext.Provider value={{ dataDict, year, setYear }}>{children}</AppContext.Provider>;
+  useEffect(() => {
+    const getDataForYear = async (year: number) => {
+      if (eventDataDict[year]) {
+        return;
+      }
+
+      const data: EventData = await getEventData(year);
+      setEventDataDict((prev) => ({ ...prev, [year]: data }));
+    };
+
+    getDataForYear(year);
+  }, [eventDataDict, year]);
+
+  return (
+    <AppContext.Provider value={{ teamYearDataDict, eventDataDict, year, setYear }}>
+      {children}
+    </AppContext.Provider>
+  );
 }

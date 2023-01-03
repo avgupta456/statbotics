@@ -65,8 +65,11 @@ const Navbar = () => {
         />
         Statbotics
       </Link>
-      <div className="flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
+      <div className="flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
         <Link href="/teams">Teams</Link>
+      </div>
+      <div className="flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
+        <Link href="/events">Events</Link>
       </div>
       <div className="flex-grow" />
       <div className="flex items-center gap-2 font-thin text-gray-800">
