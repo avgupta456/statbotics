@@ -120,15 +120,23 @@ const SimulationSection = ({ data }: { data: Data }) => {
               setFinalIndex(values[0]);
             }}
             renderTrack={({ props, children }) => (
-              <div {...props} className="w-full h-[2px] pr-2 my-4 bg-gray-200 rounded-md">
+              <div
+                key="slider-track"
+                {...props}
+                className="w-full h-[2px] pr-2 my-4 bg-gray-200 rounded-md"
+              >
                 {children}
               </div>
             )}
             renderThumb={({ props }) => (
-              <div {...props} className="w-4 h-4 bg-blue-800 rounded-full" />
+              <div key="slider-thumb" {...props} className="w-4 h-4 bg-blue-800 rounded-full" />
             )}
             renderMark={({ props }) => (
-              <div {...props} className="w-[2px] h-[2px] bg-blue-500 rounded-full" />
+              <div
+                key={`slider-mark-${props.key}`}
+                {...props}
+                className="w-[2px] h-[2px] bg-blue-500 rounded-full"
+              />
             )}
           />
         </div>

@@ -14,7 +14,7 @@ export type TeamEventInsights = {
   num: number;
   team: string;
   rank: number | string;
-  epa: number | string;
+  total_epa: number | string;
   auto_epa: number | string;
   teleop_epa: number | string;
   endgame_epa: number | string;
@@ -75,7 +75,7 @@ const EventInsightsTable = ({
         cell: (info) => info.getValue(),
         header: "Rank",
       }),
-      columnHelper.accessor("epa", {
+      columnHelper.accessor("total_epa", {
         cell: (info) => formatCell(stats.total_stats, info, disableHighlight),
         header: "EPA",
       }),

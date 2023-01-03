@@ -81,8 +81,17 @@ export type APITeamYear = {
 };
 
 export type APIEvent = {
-  event_name: string;
+  key: string;
+  name: string;
   year: number;
+  week: number;
+  start_date: string;
+  end_date: string;
+  country?: string;
+  state?: string;
+  district?: string;
+  offseason: boolean;
+  status: string;
 };
 
 export type APITeamEvent = {

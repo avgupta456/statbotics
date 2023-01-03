@@ -15,7 +15,7 @@ export type TeamYearInsights = {
   team: string;
   epa_rank: number;
   norm_epa: number;
-  epa: number; // used for sorting
+  total_epa: number; // used for sorting
   auto_epa: number | string;
   teleop_epa: number | string;
   endgame_epa: number | string;
@@ -84,7 +84,7 @@ const TeamInsightsTable = ({
           cell: (info) => info.getValue(),
           header: "Norm EPA",
         }),
-      columnHelper.accessor("epa", {
+      columnHelper.accessor("total_epa", {
         cell: (info) => formatCell(stats.total_stats, info, disableHighlight),
         header: "EPA",
       }),

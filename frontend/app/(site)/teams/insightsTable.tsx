@@ -7,16 +7,19 @@ import { DebounceInput } from "react-debounce-input";
 import YearInsightsTable, { TeamYearInsights } from "../../../components/Table/YearInsightsTable";
 import { TableKey } from "../../../components/Table/shared";
 import { FilterBar, filterData } from "../../../components/filter";
+import { APITeamYear } from "../../../components/types/api";
 import { round, truncate } from "../../../utils";
 import { TeamYearData } from "../types";
 
+const defaultFilters = {
+  country: "",
+  state: "",
+  district: "",
+};
+
 const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
-  const [filters, setFilters] = useState({
-    country: "",
-    state: "",
-    district: "",
-  });
+  const [filters, setFilters] = useState(defaultFilters);
   const [search, setSearch] = useState("");
 
   const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
@@ -25,13 +28,13 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         teamYear.team?.toLowerCase().includes(search.toLowerCase()) ||
         teamYear.num.toString().includes(search.toLowerCase())
     )
-    .map((teamYear) => {
+    .map((teamYear: APITeamYear) => {
       return {
         num: teamYear.num ?? -1,
         team: teamYear.team ? truncate(teamYear.team, 30) : "N/A",
         epa_rank: teamYear.epa_rank ?? -1,
         norm_epa: round(teamYear.norm_epa, 0) ?? 0,
-        epa: round(teamYear.total_epa, 1) ?? "N/A",
+        total_epa: round(teamYear.total_epa, 1) ?? 0,
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamYear.endgame_epa, 1) ?? "N/A",
@@ -59,7 +62,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
           {disableHighlight ? "Enable" : "Disable"} Color
         </button>
         <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-        <FilterBar filters={filters} setFilters={setFilters} />
+        <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
         <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
         <DebounceInput
           minLength={2}

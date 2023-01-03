@@ -99,6 +99,7 @@ EVENT_BLACKLIST = [
     "2005va",
     "2007ga",
     "2016cafc2",  # "" team
+    "2022zhha",  # no matches
 ]
 
 MATCH_BLACKLIST = [

@@ -29,7 +29,7 @@ async function Page({ params }: { params: { match_id: string } }) {
     return <div>Match not found</div>;
   }
 
-  let truncatedEventName = truncate(data.event.event_name, 30);
+  let truncatedEventName = truncate(data.event.name, 30);
 
   return (
     <div className="w-full h-full p-4">
