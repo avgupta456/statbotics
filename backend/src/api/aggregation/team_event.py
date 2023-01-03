@@ -1,10 +1,10 @@
 from datetime import timedelta
 from typing import Callable, List, Optional
 
-from src.api.models.team_event import APITeamEvent
-from src.db.models.team_event import TeamEvent
+from src.api.models import APITeamEvent
+from src.db.models import TeamEvent
 from src.data.nepa import get_epa_to_norm_epa_func
-from src.db.read.team_event import get_team_events as _get_team_events
+from src.db.read import get_team_events as _get_team_events
 from src.utils.alru_cache import alru_cache
 
 

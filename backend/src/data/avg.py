@@ -1,9 +1,7 @@
 import statistics
 from typing import List
 
-from src.db.models.event import Event
-from src.db.models.match import Match
-from src.db.models.year import Year
+from src.db.models import Event, Match, Year
 
 
 def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:

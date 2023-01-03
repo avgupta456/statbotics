@@ -1,9 +1,9 @@
 from datetime import timedelta
 from typing import Optional
 
-from src.api.models.event import APIEvent
-from src.db.models.event import Event
-from src.db.read.event import get_event as _get_event
+from src.api.models import APIEvent
+from src.db.models import Event
+from src.db.read import get_event as _get_event
 from src.utils.alru_cache import alru_cache
 
 

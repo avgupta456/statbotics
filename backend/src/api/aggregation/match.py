@@ -1,9 +1,9 @@
 from datetime import timedelta
 from typing import List, Optional
 
-from src.api.models.match import APIMatch
-from src.db.models.match import Match
-from src.db.read.match import get_match as _get_match, get_matches as _get_matches
+from src.api.models import APIMatch
+from src.db.models import Match
+from src.db.read import get_match as _get_match, get_matches as _get_matches
 from src.utils.alru_cache import alru_cache
 from src.utils.utils import get_match_name
 

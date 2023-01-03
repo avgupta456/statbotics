@@ -4,7 +4,7 @@ from typing import Callable, List
 
 from scipy.interpolate import interp1d  # type: ignore
 
-from src.db.read.team_year import get_team_years as get_team_years_db
+from src.db.read import get_team_years as get_team_years_db
 
 
 @lru_cache()

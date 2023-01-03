@@ -1,10 +1,10 @@
 from datetime import timedelta
 from typing import Optional
 
-from src.db.models.year import Year
-from src.db.read.year import get_year as _get_year
+from src.db.models import Year
+from src.db.read import get_year as _get_year
 from src.utils.alru_cache import alru_cache
-from src.api.models.year import APIYear, PercentileStats
+from src.api.models import APIYear, PercentileStats
 
 
 def unpack_year(year: Year) -> APIYear:

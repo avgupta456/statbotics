@@ -1,9 +1,9 @@
 from datetime import timedelta
 from typing import List
 
-from src.api.models.team import APITeam
-from src.db.models.team import Team
-from src.db.read.team import get_team as _get_team, get_teams as _get_teams
+from src.api.models import APITeam
+from src.db.models import Team
+from src.db.read import get_team as _get_team, get_teams as _get_teams
 from src.utils.alru_cache import alru_cache
 
 

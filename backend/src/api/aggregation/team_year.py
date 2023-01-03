@@ -1,9 +1,9 @@
 from datetime import timedelta
 from typing import List, Optional
 
-from src.api.models.team_year import APITeamYear
-from src.db.models.team_year import TeamYear
-from src.db.read.team_year import (
+from src.api.models import APITeamYear
+from src.db.models import TeamYear
+from src.db.read import (
     get_team_year as _get_team_year,
     get_team_years as _get_team_years,
 )

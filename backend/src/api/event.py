@@ -2,16 +2,14 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation.year import get_year
-from src.api.aggregation.match import get_matches
-from src.api.aggregation.event import get_event
-from src.api.aggregation.team_event import get_team_events
-from src.api.aggregation.team_match import get_team_matches
-from src.api.models.event import APIEvent
-from src.api.models.team_event import APITeamEvent
-from src.api.models.team_match import APITeamMatch
-from src.api.models.match import APIMatch
-from src.api.models.year import APIYear
+from src.api.aggregation import (
+    get_year,
+    get_matches,
+    get_event,
+    get_team_events,
+    get_team_matches,
+)
+from src.api.models import APIEvent, APITeamEvent, APITeamMatch, APIMatch, APIYear
 from src.data.nepa import get_epa_to_norm_epa_func
 from src.utils.decorators import async_fail_gracefully
 

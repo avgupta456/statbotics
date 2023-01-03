@@ -12,13 +12,7 @@ from src.db.models.create import (
     create_team_year_obj,
     create_year_obj,
 )
-from src.db.models.etag import ETag
-from src.db.models.event import Event
-from src.db.models.match import Match
-from src.db.models.team import Team
-from src.db.models.team_event import TeamEvent
-from src.db.models.team_match import TeamMatch
-from src.db.models.team_year import TeamYear
+from src.db.models import ETag, Event, Match, Team, TeamEvent, TeamMatch, TeamYear
 from src.tba.constants import YEAR_BLACKLIST
 from src.tba.read_tba import (
     get_event_rankings as get_event_rankings_tba,

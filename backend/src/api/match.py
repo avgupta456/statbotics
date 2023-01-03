@@ -2,14 +2,8 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation.year import get_year
-from src.api.aggregation.event import get_event
-from src.api.aggregation.match import get_match
-from src.api.aggregation.team_match import get_team_matches
-from src.api.models.match import APIMatch
-from src.api.models.team_match import APITeamMatch
-from src.api.models.event import APIEvent
-from src.api.models.year import APIYear
+from src.api.aggregation import get_year, get_event, get_match, get_team_matches
+from src.api.models import APIMatch, APITeamMatch, APIEvent, APIYear
 from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
