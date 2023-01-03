@@ -10,6 +10,7 @@ class APIEvent(APIModel):
     key: str
     name: str
     year: int
+    week: int
     country: Optional[str]
     state: Optional[str]
     district: Optional[str]

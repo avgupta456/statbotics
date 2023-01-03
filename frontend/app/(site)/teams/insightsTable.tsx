@@ -11,13 +11,15 @@ import { APITeamYear } from "../../../components/types/api";
 import { round, truncate } from "../../../utils";
 import { TeamYearData } from "../types";
 
+const defaultFilters = {
+  country: "",
+  state: "",
+  district: "",
+};
+
 const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
-  const [filters, setFilters] = useState({
-    country: "",
-    state: "",
-    district: "",
-  });
+  const [filters, setFilters] = useState(defaultFilters);
   const [search, setSearch] = useState("");
 
   const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
@@ -60,7 +62,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
           {disableHighlight ? "Enable" : "Disable"} Color
         </button>
         <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-        <FilterBar filters={filters} setFilters={setFilters} />
+        <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
         <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
         <DebounceInput
           minLength={2}

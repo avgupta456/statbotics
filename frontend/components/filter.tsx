@@ -6,6 +6,7 @@ import {
   countryOptions,
   districtOptions,
   usaOptions,
+  weekOptions,
   yearOptions,
 } from "./filterConstants";
 
@@ -17,14 +18,22 @@ export const filterData = (data: any[] | undefined, filter: any) => {
   let filteredData = data;
   Object.keys(filter).forEach((key) => {
     const value = filter[key];
-    if (value) {
+    if (value !== "") {
       filteredData = filteredData.filter((datum) => datum[key] === value);
     }
   });
   return filteredData;
 };
 
-export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: any }) => {
+export const FilterBar = ({
+  defaultFilters,
+  filters,
+  setFilters,
+}: {
+  defaultFilters: { [key: string]: any };
+  filters: { [key: string]: any };
+  setFilters: any;
+}) => {
   const filterKeys = Object.keys(filters);
   const stateOptions = filters?.country === "Canada" ? canadaOptions : usaOptions;
   const stateLabel = filters?.country === "Canada" ? "Province" : "State";
@@ -34,14 +43,15 @@ export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: a
     if (value === "") {
       return setFilters({ ...filters, [key]: "" });
     }
-
-    if (key === "country") {
-      return setFilters({ country: value, state: "", district: "" });
+    if (key === "week") {
+      return setFilters({ ...filters, [key]: value });
+    } else if (key === "country") {
+      return setFilters({ ...filters, country: value, state: "", district: "" });
     } else if (key === "state") {
       const country = usaOptions.map((x) => x.value).includes(value) ? "USA" : "Canada";
-      setFilters({ country, state: value, district: "" });
+      return setFilters({ ...filters, country, state: value, district: "" });
     } else if (key === "district") {
-      return setFilters({ country: "", state: "", district: value });
+      return setFilters({ ...filters, country: "", state: "", district: value });
     }
   };
 
@@ -50,19 +60,21 @@ export const FilterBar = ({ filters, setFilters }: { filters: any; setFilters: a
       <button
         id="clear-filters"
         className="filter_button w-32"
-        onClick={() => setFilters({ country: "", state: "", district: "" })}
+        onClick={() => setFilters(defaultFilters)}
       >
         Clear Filters
       </button>
       {[
         { key: "year", label: "Year", options: yearOptions },
+        { key: "week", label: "Week", options: weekOptions },
         { key: "country", label: "Country", options: countryOptions },
         { key: "state", label: stateLabel, options: stateOptions },
         { key: "district", label: "District", options: districtOptions },
       ].map((filter) => {
         if (filterKeys.includes(filter.key)) {
           const currValue = filters[filter.key];
-          let currLabel = filter.options.find((option) => option.value === currValue)?.label;
+          let currOptions: any[] = filter.options; // value is number | string
+          let currLabel = currOptions.find((option) => option.value === currValue)?.label;
           let placeholder = currLabel === "All";
           if (placeholder) {
             currLabel = `${filter.label}`;
