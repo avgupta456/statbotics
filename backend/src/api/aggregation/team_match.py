@@ -12,10 +12,10 @@ def unpack_team_match(team_match: TeamMatch) -> APITeamMatch:
     return APITeamMatch(
         num=team_match.team,
         alliance=team_match.alliance,
-        match_num=get_match_number(team_match.match),
         match=team_match.match,
         time=team_match.time,
         playoff=team_match.playoff,
+        match_number=get_match_number(team_match.match),
         total_epa=team_match.epa or 0,
         auto_epa=team_match.auto_epa or 0,
         teleop_epa=team_match.teleop_epa or 0,

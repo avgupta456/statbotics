@@ -5,7 +5,7 @@ import React, { useMemo, useState } from "react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import { classnames } from "../../utils";
-import { PercentileStats, YearStats } from "../types/api";
+import { APIYear, PercentileStats } from "../types/api";
 import Table from "./Table";
 import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 
@@ -24,7 +24,7 @@ export type Component = {
 };
 
 const formatCell = (
-  stats: YearStats,
+  stats: APIYear,
   info: CellContext<Component, number | string>,
   multiplier: number = 1
 ) => {
@@ -37,16 +37,16 @@ const formatCell = (
   } else {
     const percentileStats: PercentileStats =
       row === "Auto"
-        ? stats.auto
+        ? stats.auto_stats
         : row === "Teleop"
-        ? stats.teleop
+        ? stats.teleop_stats
         : row === "Endgame"
-        ? stats.endgame
+        ? stats.endgame_stats
         : row === "RP1"
-        ? stats.rp_1
+        ? stats.rp_1_stats
         : row === "RP2"
-        ? stats.rp_2
-        : stats.total;
+        ? stats.rp_2_stats
+        : stats.total_stats;
 
     if (row.includes("RP")) {
       color = getRPColor(value);
@@ -66,30 +66,30 @@ const formatCell = (
 
 const columnHelper = createColumnHelper<Component>();
 
-const MatchTable = ({
+const MatchBreakdown = ({
   data,
   teams,
   stats,
 }: {
   data: Component[];
-  teams: string[];
-  stats: YearStats;
+  teams: number[];
+  stats: APIYear;
 }) => {
   const columns = useMemo<any>(
     () => [
       columnHelper.accessor("red1", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[0], num: parseInt(teams[0]) }),
+        header: () => TeamLink({ team: teams[0], num: teams[0] }),
         enableSorting: false,
       }),
       columnHelper.accessor("red2", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[1], num: parseInt(teams[1]) }),
+        header: () => TeamLink({ team: teams[1], num: teams[1] }),
         enableSorting: false,
       }),
       columnHelper.accessor("red3", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[2], num: parseInt(teams[2]) }),
+        header: () => TeamLink({ team: teams[2], num: teams[2] }),
         enableSorting: false,
       }),
       columnHelper.accessor("redTotal", {
@@ -119,17 +119,17 @@ const MatchTable = ({
       }),
       columnHelper.accessor("blue3", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[5], num: parseInt(teams[5]) }),
+        header: () => TeamLink({ team: teams[5], num: teams[5] }),
         enableSorting: false,
       }),
       columnHelper.accessor("blue2", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[4], num: parseInt(teams[4]) }),
+        header: () => TeamLink({ team: teams[4], num: teams[4] }),
         enableSorting: false,
       }),
       columnHelper.accessor("blue1", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[3], num: parseInt(teams[3]) }),
+        header: () => TeamLink({ team: teams[3], num: teams[3] }),
         enableSorting: false,
       }),
     ],
@@ -173,4 +173,4 @@ const MatchTable = ({
   );
 };
 
-export default MatchTable;
+export default MatchBreakdown;

@@ -29,13 +29,13 @@ async function Page({ params }: { params: { match_id: string } }) {
     return <div>Match not found</div>;
   }
 
-  let truncatedEventName = truncate(data.event_name, 30);
+  let truncatedEventName = truncate(data.event.event_name, 30);
 
   return (
     <div className="w-full h-full p-4">
       <div className="container mx-auto">
         <div className="w-full flex flex-row items-end justify-center mb-4">
-          <p className="text-3xl lg:text-4xl">{data.match_name}</p>
+          <p className="text-3xl lg:text-4xl">{data.match.match_name}</p>
           <Link href={`/event/${data.match.event}`} className="lg:text-2xl ml-2 text_link">
             {truncatedEventName}
           </Link>

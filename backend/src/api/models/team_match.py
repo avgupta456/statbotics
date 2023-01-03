@@ -7,10 +7,10 @@ from src.api.models.main import APIModel
 class APITeamMatch(APIModel):
     num: int
     alliance: str
-    match_num: int
     match: str
     time: int
     playoff: bool
+    match_number: int  # quals only
     total_epa: float
     auto_epa: float
     teleop_epa: float

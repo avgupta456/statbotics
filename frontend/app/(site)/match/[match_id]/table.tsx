@@ -1,35 +1,35 @@
 import React from "react";
 
-import MatchTable from "../../../../components/Table/MatchBreakdown";
+import MatchBreakdown from "../../../../components/Table/MatchBreakdown";
 import { TableKey } from "../../../../components/Table/shared";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
 const PageMatchTable = ({ data }: { data: Data }) => {
   const red1 = data.match.red[0];
-  const red1Data = data.team_matches[red1];
+  const red1Data = data.team_matches.find((teamMatch) => teamMatch.num === red1);
   const red2 = data.match.red[1];
-  const red2Data = data.team_matches[red2];
+  const red2Data = data.team_matches.find((teamMatch) => teamMatch.num === red2);
   const red3 = data.match.red[2];
-  const red3Data = data.team_matches[red3];
+  const red3Data = data.team_matches.find((teamMatch) => teamMatch.num === red3);
   const blue1 = data.match.blue[0];
-  const blue1Data = data.team_matches[blue1];
+  const blue1Data = data.team_matches.find((teamMatch) => teamMatch.num === blue1);
   const blue2 = data.match.blue[1];
-  const blue2Data = data.team_matches[blue2];
+  const blue2Data = data.team_matches.find((teamMatch) => teamMatch.num === blue2);
   const blue3 = data.match.blue[2];
-  const blue3Data = data.team_matches[blue3];
+  const blue3Data = data.team_matches.find((teamMatch) => teamMatch.num === blue3);
 
   const autoComponent = {
     name: "Auto",
     red1: red1Data.auto_epa,
     red2: red2Data.auto_epa,
     red3: red3Data.auto_epa,
-    redTotal: data.match.red_auto_epa_sum,
+    redTotal: data.match.red_auto_epa_pred,
     redActual: data.match.red_auto,
     blue1: blue1Data.auto_epa,
     blue2: blue2Data.auto_epa,
     blue3: blue3Data.auto_epa,
-    blueTotal: data.match.blue_auto_epa_sum,
+    blueTotal: data.match.blue_auto_epa_pred,
     blueActual: data.match.blue_auto,
   };
 
@@ -38,12 +38,12 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: red1Data.teleop_epa,
     red2: red2Data.teleop_epa,
     red3: red3Data.teleop_epa,
-    redTotal: data.match.red_teleop_epa_sum,
+    redTotal: data.match.red_teleop_epa_pred,
     redActual: data.match.red_teleop,
     blue1: blue1Data.teleop_epa,
     blue2: blue2Data.teleop_epa,
     blue3: blue3Data.teleop_epa,
-    blueTotal: data.match.blue_teleop_epa_sum,
+    blueTotal: data.match.blue_teleop_epa_pred,
     blueActual: data.match.blue_teleop,
   };
 
@@ -52,12 +52,12 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: red1Data.endgame_epa,
     red2: red2Data.endgame_epa,
     red3: red3Data.endgame_epa,
-    redTotal: data.match.red_endgame_epa_sum,
+    redTotal: data.match.red_endgame_epa_pred,
     redActual: data.match.red_endgame,
     blue1: blue1Data.endgame_epa,
     blue2: blue2Data.endgame_epa,
     blue3: blue3Data.endgame_epa,
-    blueTotal: data.match.blue_endgame_epa_sum,
+    blueTotal: data.match.blue_endgame_epa_pred,
     blueActual: data.match.blue_endgame,
   };
 
@@ -66,12 +66,12 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: null,
     red2: null,
     red3: null,
-    redTotal: data.match.red_epa_sum * data.year_stats.foul_rate,
+    redTotal: data.match.red_epa_pred * data.year.foul_rate,
     redActual: data.match.red_fouls,
     blue1: null,
     blue2: null,
     blue3: null,
-    blueTotal: data.match.blue_epa_sum * data.year_stats.foul_rate,
+    blueTotal: data.match.blue_epa_pred * data.year.foul_rate,
     blueActual: data.match.blue_fouls,
   };
 
@@ -80,12 +80,12 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: red1Data.rp_1_epa,
     red2: red2Data.rp_1_epa,
     red3: red3Data.rp_1_epa,
-    redTotal: data.match.red_rp_1_prob,
+    redTotal: data.match.red_rp_1_pred,
     redActual: data.match.red_rp_1,
     blue1: blue1Data.rp_1_epa,
     blue2: blue2Data.rp_1_epa,
     blue3: blue3Data.rp_1_epa,
-    blueTotal: data.match.blue_rp_1_prob,
+    blueTotal: data.match.blue_rp_1_pred,
     blueActual: data.match.blue_rp_1,
   };
 
@@ -94,26 +94,26 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: red1Data.rp_2_epa,
     red2: red2Data.rp_2_epa,
     red3: red3Data.rp_2_epa,
-    redTotal: data.match.red_rp_2_prob,
+    redTotal: data.match.red_rp_2_pred,
     redActual: data.match.red_rp_2,
     blue1: blue1Data.rp_2_epa,
     blue2: blue2Data.rp_2_epa,
     blue3: blue3Data.rp_2_epa,
-    blueTotal: data.match.blue_rp_2_prob,
+    blueTotal: data.match.blue_rp_2_pred,
     blueActual: data.match.blue_rp_2,
   };
 
   const totalComponent = {
     name: "Total",
-    red1: red1Data.epa,
-    red2: red2Data.epa,
-    red3: red3Data.epa,
-    redTotal: data.match.red_epa_sum * (1 + data.year_stats.foul_rate),
+    red1: red1Data.total_epa,
+    red2: red2Data.total_epa,
+    red3: red3Data.total_epa,
+    redTotal: data.match.red_epa_pred * (1 + data.year.foul_rate),
     redActual: data.match.red_score,
-    blue1: blue1Data.epa,
-    blue2: blue2Data.epa,
-    blue3: blue3Data.epa,
-    blueTotal: data.match.blue_epa_sum * (1 + data.year_stats.foul_rate),
+    blue1: blue1Data.total_epa,
+    blue2: blue2Data.total_epa,
+    blue3: blue3Data.total_epa,
+    blueTotal: data.match.blue_epa_pred * (1 + data.year.foul_rate),
     blueActual: data.match.blue_score,
   };
 
@@ -157,14 +157,14 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const MatchTableProps = {
     teams: [red1, red2, red3, blue1, blue2, blue3],
     data: matchData,
-    stats: data.year_stats,
+    stats: data.year,
   };
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-4">Match Breakdown</p>
       <TableKey />
-      <MatchTable {...MatchTableProps} />
+      <MatchBreakdown {...MatchTableProps} />
     </div>
   );
 };
