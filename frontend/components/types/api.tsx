@@ -81,8 +81,12 @@ export type APITeamYear = {
 };
 
 export type APIEvent = {
-  event_name: string;
+  key: string;
+  name: string;
   year: number;
+  country?: string;
+  state?: string;
+  district?: string;
 };
 
 export type APITeamEvent = {

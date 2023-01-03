@@ -9,7 +9,11 @@ import {
   yearOptions,
 } from "./filterConstants";
 
-export const filterData = (data: any, filter: any) => {
+export const filterData = (data: any[] | undefined, filter: any) => {
+  if (!data) {
+    return [];
+  }
+
   let filteredData = data;
   Object.keys(filter).forEach((key) => {
     const value = filter[key];

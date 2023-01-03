@@ -1,3 +1,5 @@
+from typing import Optional
+
 import attr
 
 from src.api.models.main import APIModel
@@ -5,5 +7,9 @@ from src.api.models.main import APIModel
 
 @attr.s(auto_attribs=True, slots=True)
 class APIEvent(APIModel):
-    event_name: str
+    key: str
+    name: str
     year: int
+    country: Optional[str]
+    state: Optional[str]
+    district: Optional[str]

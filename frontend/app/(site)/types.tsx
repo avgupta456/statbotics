@@ -10,10 +10,6 @@ export const emptyTeamYearData: TeamYearData = {
   year: emptyAPIYear,
 };
 
-export type EventData = {
-  events: APIEvent[];
-};
+export type EventData = APIEvent[];
 
-export const emptyEventData: EventData = {
-  events: [],
-};
+export const emptyEventData: EventData = [];
