@@ -15,19 +15,20 @@ def unpack_team(team: Team) -> APITeam:
         country=team.country,
         district=team.district,
         rookie_year=team.rookie_year or 2002,
+        offseason=team.offseason,
     )
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_team(team_num: int) -> APITeam:
-    team = _get_team(team_num)
+async def get_team(team: int) -> APITeam:
+    team_obj = _get_team(team=team)
 
     # If invalid, do not cache
-    if team is None:
+    if team_obj is None:
         return (False, None)  # type: ignore
 
     # If valid, cache
-    return (True, unpack_team(team))  # type: ignore
+    return (True, unpack_team(team_obj))  # type: ignore
 
 
 @alru_cache(ttl=timedelta(minutes=5))

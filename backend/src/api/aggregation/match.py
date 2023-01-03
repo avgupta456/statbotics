@@ -9,6 +9,8 @@ from src.utils.alru_cache import alru_cache
 
 def unpack_match(match: Match) -> APIMatch:
     return APIMatch(
+        year=match.year,
+        event=match.event,
         time=match.time or -1,
         key=match.key,
         comp_level=match.comp_level,
@@ -47,23 +49,23 @@ def unpack_match(match: Match) -> APIMatch:
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_match(match_id: str, no_cache: bool = False) -> Optional[APIMatch]:
-    match = _get_match(match_id)
+async def get_match(match: str, no_cache: bool = False) -> Optional[APIMatch]:
+    match_obj = _get_match(match=match)
 
     # If invalid, do not cache
-    if match is None:
+    if match_obj is None:
         return (False, None)  # type: ignore
 
     # If valid, cache
-    return (True, unpack_match(match))  # type: ignore
+    return (True, unpack_match(match_obj))  # type: ignore
 
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_matches(
     team: Optional[int] = None,
     year: Optional[int] = None,
-    event_id: Optional[str] = None,
+    event: Optional[str] = None,
     no_cache: bool = False,
 ) -> List[APIMatch]:
-    matches: List[Match] = _get_matches(team=team, year=year, event_id=event_id)
+    matches: List[Match] = _get_matches(team=team, year=year, event=event)
     return (True, [unpack_match(match) for match in matches])  # type: ignore

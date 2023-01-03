@@ -24,3 +24,4 @@ class APITeamYear(APIModel):
     losses: int
     ties: int
     count: int
+    offseason: bool

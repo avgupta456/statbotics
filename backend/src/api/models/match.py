@@ -7,6 +7,8 @@ from src.api.models.main import APIModel
 
 @attr.s(auto_attribs=True, slots=True)
 class APIMatch(APIModel):
+    year: int
+    event: str
     time: int
     key: str
     comp_level: str

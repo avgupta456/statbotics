@@ -90,7 +90,7 @@ def unpack_year(year: Year) -> APIYear:
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_year(year: int, no_cache: bool = False) -> Optional[APIYear]:
-    year_obj = _get_year(year)
+    year_obj = _get_year(year=year)
 
     # If invalid, do not cache
     if year_obj is None:

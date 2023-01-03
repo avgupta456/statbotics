@@ -35,13 +35,13 @@ def unpack_team_event(
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_events(
     year: Optional[int] = None,
-    event_id: Optional[int] = None,
+    event: Optional[int] = None,
     team: Optional[int] = None,
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
 ) -> List[TeamEvent]:
     team_event_objs: List[TeamEvent] = _get_team_events(
-        year=year, event_id=event_id, team=team
+        team=team, year=year, event=event
     )
 
     if epa_to_norm_epa is None:

@@ -13,3 +13,4 @@ class APITeam(APIModel):
     country: Optional[str]
     district: Optional[str]
     rookie_year: int
+    offseason: bool

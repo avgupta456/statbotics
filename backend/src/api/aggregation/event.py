@@ -10,6 +10,7 @@ from src.utils.alru_cache import alru_cache
 def unpack_event(event: Event) -> APIEvent:
     return APIEvent(
         event_name=event.name,
+        year=event.year,
     )
 
 

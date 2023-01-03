@@ -11,9 +11,9 @@ from src.api.models.event import APIEvent
 from src.api.models.team_event import APITeamEvent
 from src.api.models.team_match import APITeamMatch
 from src.api.models.match import APIMatch
+from src.api.models.year import APIYear
 from src.data.nepa import get_epa_to_norm_epa_func
 from src.utils.decorators import async_fail_gracefully
-from src.utils.utils import get_match_number
 
 router = APIRouter()
 
@@ -26,72 +26,27 @@ async def read_root():
 @router.get("/event/{event_id}")
 @async_fail_gracefully
 async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
-    event: Optional[APIEvent] = await get_event(event_id)
-
+    event: Optional[APIEvent] = await get_event(event=event_id)
     if event is None:
         raise Exception("Event not found")
 
+    year: Optional[APIYear] = await get_year(year=event.year)
+    if year is None:
+        raise Exception("Year not found")
+
     epa_to_norm_epa = get_epa_to_norm_epa_func(event.year)
-
-    team_event_objs: List[TeamEvent] = await get_team_events(event_id=event_id)
-
-    team_events = [
-        {
-            "num": x.team,
-            "team": x.team_name,
-            # For simulation initial conditions
-            "start_total_epa": x.epa_start,
-            "start_rp_1_epa": x.rp_1_epa_start,
-            "start_rp_2_epa": x.rp_2_epa_start,
-            # For tables and figures
-            "total_epa": x.epa_end,
-            "norm_epa": epa_to_norm_epa(x.epa_end or 0),
-            "auto_epa": x.auto_epa_end,
-            "teleop_epa": x.teleop_epa_end,
-            "endgame_epa": x.endgame_epa_end,
-            "rp_1_epa": x.rp_1_epa_end,
-            "rp_2_epa": x.rp_2_epa_end,
-            "wins": x.wins,
-            "losses": x.losses,
-            "ties": x.ties,
-            "count": x.count,
-            "rank": x.rank,
-        }
-        for x in team_event_objs
-    ]
-
-    match_objs: List[Match] = await get_matches(event_id=event_id)
-    matches = [unpack_match(m) for m in match_objs]
-    matches.sort(key=lambda x: x["time"] or 0)
-
-    team_match_objs: List[TeamMatch] = await get_team_matches(event=event_id)
-
-    team_matches = [
-        {
-            "team": x.team,
-            "match": x.match,
-            "alliance": x.alliance,
-            "match_num": get_match_number(x.match),
-            "playoff": x.playoff,
-            "total_epa": x.epa,
-            "auto_epa": x.auto_epa,
-            "teleop_epa": x.teleop_epa,
-            "endgame_epa": x.endgame_epa,
-            "rp_1_epa": x.rp_1_epa,
-            "rp_2_epa": x.rp_2_epa,
-        }
-        for x in team_match_objs
-    ]
-
-    year_stats = await get_year_stats(event.year)
+    team_events: List[APITeamEvent] = await get_team_events(
+        event_id=event_id, epa_to_norm_epa=epa_to_norm_epa
+    )
+    matches: List[APIMatch] = await get_matches(event=event_id)
+    team_matches: List[APITeamMatch] = await get_team_matches(event=event_id)
 
     out = {
-        "event_name": event.name,
-        "year": event.year,
-        "team_events": team_events,
-        "matches": matches,
-        "team_matches": team_matches,
-        "year_stats": year_stats,
+        "event": event.to_dict(),
+        "matches": [x.to_dict() for x in matches],
+        "team_events": [x.to_dict() for x in team_events],
+        "team_matches": [x.to_dict() for x in team_matches],
+        "year": year.to_dict(),
     }
 
     return out
@@ -102,23 +57,5 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
 async def read_team_matches(
     response: Response, event_id: str, team: int
 ) -> List[Dict[str, Any]]:
-    team_match_objs: List[TeamMatch] = await get_team_matches(event=event_id, team=team)
-
-    team_matches = [
-        {
-            "team": x.team,
-            "match": x.match,
-            "alliance": x.alliance,
-            "match_num": get_match_number(x.match),
-            "playoff": x.playoff,
-            "total_epa": x.epa,
-            "auto_epa": x.auto_epa,
-            "teleop_epa": x.teleop_epa,
-            "endgame_epa": x.endgame_epa,
-            "rp_1_epa": x.rp_1_epa,
-            "rp_2_epa": x.rp_2_epa,
-        }
-        for x in team_match_objs
-    ]
-
-    return team_matches
+    team_matches: List[APITeamMatch] = await get_team_matches(event=event_id, team=team)
+    return [x.to_dict() for x in team_matches]

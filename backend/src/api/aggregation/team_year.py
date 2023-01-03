@@ -29,21 +29,22 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
         losses=team_year.losses,
         ties=team_year.ties,
         count=team_year.count,
+        offseason=team_year.offseason,
     )
 
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_year(
-    team_num: Optional[int] = None, year: Optional[int] = None, no_cache: bool = False
+    team: Optional[int] = None, year: Optional[int] = None, no_cache: bool = False
 ) -> Optional[APITeamYear]:
-    team_year = _get_team_year(team_num, year)  # type: ignore
+    team_year_obj = _get_team_year(team=team, year=year)  # type: ignore
 
     # If invalid, do not cache
-    if team_year is None:
+    if team_year_obj is None:
         return (False, None)  # type: ignore
 
     # If valid, cache
-    return (True, unpack_team_year(team_year))  # type: ignore
+    return (True, unpack_team_year(team_year_obj))  # type: ignore
 
 
 @alru_cache(ttl=timedelta(minutes=5))

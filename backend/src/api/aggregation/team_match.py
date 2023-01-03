@@ -36,7 +36,7 @@ async def get_team_matches(
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
 ) -> List[APITeamMatch]:
     team_match_objs: List[TeamMatch] = _get_team_matches(
-        year=year, event=event, team=team, match=match
+        team=team, year=year, event=event, match=match
     )
 
     if epa_to_norm_epa is None:
