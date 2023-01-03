@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import { DebounceInput } from "react-debounce-input";
-import { MdCloudDownload } from "react-icons/md";
+import { MdClose, MdCloudDownload, MdColorLens, MdSearch } from "react-icons/md";
 
 import EventInsightsTable, {
   TeamEventInsights,
@@ -14,6 +14,7 @@ import { Data } from "./types";
 
 const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
 
   const eventInsightsData: TeamEventInsights[] = data.team_events
@@ -45,24 +46,43 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="flex items-end justify-center mb-4">
-        <button
-          className="filter_button w-32"
-          onClick={() => setDisableHighlight(!disableHighlight)}
-        >
-          {disableHighlight ? "Enable" : "Disable"} Color
-        </button>
-        <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-        <DebounceInput
-          minLength={2}
-          debounceTimeout={300}
-          className="w-40 p-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
-          placeholder="Search"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <CSVLink data={eventInsightsData} filename={`${eventId}_team_insights.csv`}>
-          <MdCloudDownload className="w-10 h-10 p-2 ml-4 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer" />
-        </CSVLink>
+      <div className="w-full px-4 flex items-center justify-center">
+        <div className="flex-grow">
+          {showSearch ? (
+            <div className="flex">
+              <DebounceInput
+                minLength={2}
+                debounceTimeout={300}
+                className="max-w-60 p-2 relative rounded text-sm border-[2px] border-inputBlue focus:outline-none"
+                placeholder="Search"
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <MdClose
+                className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
+                onClick={() => setShowSearch(!showSearch)}
+              />
+            </div>
+          ) : (
+            <div className="text-lg text-gray-800">Event Insights</div>
+          )}
+        </div>
+        <div className="tooltip" data-tip="Search">
+          <MdSearch
+            className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
+            onClick={() => setShowSearch(!showSearch)}
+          />
+        </div>
+        <div className="tooltip" data-tip={disableHighlight ? "Enable Color" : "Disable Color"}>
+          <MdColorLens
+            className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
+            onClick={() => setDisableHighlight(!disableHighlight)}
+          />
+        </div>
+        <div className="tooltip" data-tip="Download CSV">
+          <CSVLink data={eventInsightsData} filename={`${eventId}_team_insights.csv`}>
+            <MdCloudDownload className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer" />
+          </CSVLink>
+        </div>
       </div>
       <EventInsightsTable {...EventInsightsTableProps} />
       <TableKey />
