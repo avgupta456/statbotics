@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import MatchTable from "../../../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
-import { Category10Colors } from "../../../../constants";
+import { Category10Colors, RPMapping } from "../../../../constants";
 import { TeamData, TeamYearData } from "./types";
 
 const epaCard = (epa: string, label: string, bg: string) => {
@@ -93,8 +93,8 @@ const OverviewSection = ({
         {epaCard(teamYear?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
         {epaCard(teamYear?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
         {epaCard(teamYear?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-        {epaCard(teamYear?.rp_1_epa?.toFixed(2), "RP 1", Category10Colors[3])}
-        {epaCard(teamYear?.rp_2_epa?.toFixed(2), "RP 2", Category10Colors[4])}
+        {epaCard(teamYear?.rp_1_epa?.toFixed(2), RPMapping[year.year][0], Category10Colors[3])}
+        {epaCard(teamYear?.rp_2_epa?.toFixed(2), RPMapping[year.year][1], Category10Colors[4])}
         {epaCard(teamYear?.total_epa?.toFixed(1), "Total", Category10Colors[5])}
       </div>
       <div className="w-full flex justify-center mb-12 gap-4">
@@ -139,8 +139,8 @@ const OverviewSection = ({
                 {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
                 {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
                 {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-                {epaCard(event?.rp_1_epa?.toFixed(2), "RP 1", Category10Colors[3])}
-                {epaCard(event?.rp_2_epa?.toFixed(2), "RP 2", Category10Colors[4])}
+                {epaCard(event?.rp_1_epa?.toFixed(2), RPMapping[year.year][0], Category10Colors[3])}
+                {epaCard(event?.rp_2_epa?.toFixed(2), RPMapping[year.year][1], Category10Colors[4])}
                 {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[5])}
               </div>
             </div>

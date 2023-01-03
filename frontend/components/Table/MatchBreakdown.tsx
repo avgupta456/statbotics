@@ -140,7 +140,7 @@ const MatchBreakdown = ({
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "w-24 py-2",
+      "w-24 p-2",
       header.id.includes("red") ? "bg-red-200" : "",
       header.id.includes("blue") ? "bg-blue-200" : "",
       header.id.includes("name") ? "bg-gray-100" : "",

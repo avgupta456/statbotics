@@ -33,7 +33,7 @@ async function Page({ params }: { params: { event_id: string } }) {
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-2xl lg:text-3xl">{truncatedEventName}</p>
         </div>
-        <Tabs eventId={event_id} data={data} />
+        <Tabs eventId={event_id} year={data.year.year} data={data} />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
+import { RPMapping } from "../../constants";
 import { APITeamMatch } from "../types/api";
 import LineChart from "./Line";
 
@@ -66,8 +67,8 @@ const TeamLineChart = ({
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: "RP 1 EPA" },
-          { value: "rp_2_epa", label: "RP 2 EPA" },
+          { value: "rp_1_epa", label: `${RPMapping[year][0]} EPA` },
+          { value: "rp_2_epa", label: `${RPMapping[year][1]} EPA` },
         ]
       : [
           { value: "total_epa", label: "EPA" },

@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
+import { RPMapping } from "../../constants";
 import { classnames } from "../../utils";
 import { APIYear, PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
@@ -93,11 +94,11 @@ const EventInsightsTable = ({
       }),
       columnHelper.accessor("rp_1_epa", {
         cell: (info) => formatCell(stats.rp_1_stats, info, disableHighlight),
-        header: "RP1 EPA",
+        header: `${RPMapping[stats.year][0]} EPA`,
       }),
       columnHelper.accessor("rp_2_epa", {
         cell: (info) => formatCell(stats.rp_2_stats, info, disableHighlight),
-        header: "RP2 EPA",
+        header: `${RPMapping[stats.year][1]} EPA`,
       }),
     ],
     [stats, disableHighlight]
@@ -107,7 +108,7 @@ const EventInsightsTable = ({
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "w-28 py-2",
+      "w-28 p-2",
       header.id === "num" ? "rounded-tl-lg" : "",
       header.id === "rp_2_epa" ? "rounded-tr-lg" : ""
     );

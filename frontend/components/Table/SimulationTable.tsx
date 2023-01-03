@@ -65,7 +65,7 @@ const SimulationTable = ({ data }: { data: SimulationRow[] }) => {
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "w-28 py-2",
+      "w-28 p-2",
       header.id === "rank" ? "rounded-tl-lg" : "",
       header.id === "RPMean" ? "rounded-tr-lg" : ""
     );

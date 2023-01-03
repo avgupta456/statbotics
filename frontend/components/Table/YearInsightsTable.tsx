@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import { CURR_YEAR } from "../../constants";
+import { CURR_YEAR, RPMapping } from "../../constants";
 import { classnames } from "../../utils";
 import { APIYear, PercentileStats } from "../types/api";
 import Table from "./Table";
@@ -82,7 +82,7 @@ const TeamInsightsTable = ({
       year < CURR_YEAR &&
         columnHelper.accessor("norm_epa", {
           cell: (info) => info.getValue(),
-          header: "Norm EPA",
+          header: "Normalized EPA",
         }),
       columnHelper.accessor("total_epa", {
         cell: (info) => formatCell(stats.total_stats, info, disableHighlight),
@@ -106,12 +106,12 @@ const TeamInsightsTable = ({
       year >= 2016 &&
         columnHelper.accessor("rp_1_epa", {
           cell: (info) => formatCell(stats.rp_1_stats, info, disableHighlight),
-          header: "RP1 EPA",
+          header: `${RPMapping[year][0]} EPA`,
         }),
       year >= 2016 &&
         columnHelper.accessor("rp_2_epa", {
           cell: (info) => formatCell(stats.rp_2_stats, info, disableHighlight),
-          header: "RP2 EPA",
+          header: `${RPMapping[year][1]} EPA`,
         }),
       columnHelper.accessor("record", {
         cell: (info) => info.getValue(),
@@ -125,7 +125,7 @@ const TeamInsightsTable = ({
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "w-28 py-2",
+      "w-28 p-2",
       header.id === "num" ? "rounded-tl-lg" : "",
       header.id === "record" ? "rounded-tr-lg" : ""
     );

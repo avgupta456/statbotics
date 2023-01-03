@@ -1,11 +1,11 @@
 import React from "react";
 
 import MatchTable from "../../../../components/MatchTable";
-import { MAX_TEAM } from "../../../../constants";
+import { MAX_TEAM, RPMapping } from "../../../../constants";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
-const MatchSection = ({ quals, data }: { quals: boolean; data: Data }) => {
+const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; data: Data }) => {
   const matches = data.matches.filter((match) => match.playoff === !quals);
 
   const N = matches.length;
@@ -55,7 +55,8 @@ const MatchSection = ({ quals, data }: { quals: boolean; data: Data }) => {
       <div>Remember, match predictions are just for fun, you control your own destiny!</div>
       <div className="mb-4">
         <strong>Accuracy: {accuracy}%</strong>
-        {quals && `| RP 1 Accuracy: ${rp1Accuracy}% | RP 2 Accuracy: ${rp2Accuracy}%`}
+        {quals &&
+          `| ${RPMapping[year][0]} Accuracy: ${rp1Accuracy}% | ${RPMapping[year][1]} Accuracy: ${rp2Accuracy}%`}
       </div>
       {hasOffseasonTeams && (
         <div className="mb-4">

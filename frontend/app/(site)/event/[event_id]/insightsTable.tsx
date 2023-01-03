@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import { DebounceInput } from "react-debounce-input";
+import { MdCloudDownload } from "react-icons/md";
 
 import EventInsightsTable, {
   TeamEventInsights,
@@ -60,7 +61,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
           onChange={(e) => setSearch(e.target.value)}
         />
         <CSVLink data={eventInsightsData} filename={`${eventId}_team_insights.csv`}>
-          <button className="filter_button w-20 ml-2">Export</button>
+          <MdCloudDownload className="w-10 h-10 p-2 ml-4 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer" />
         </CSVLink>
       </div>
       <EventInsightsTable {...EventInsightsTableProps} />

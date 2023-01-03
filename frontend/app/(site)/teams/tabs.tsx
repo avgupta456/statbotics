@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
+import { RPMapping } from "../../../constants";
 import { classnames } from "../../../utils";
 import { TeamYearData, emptyTeamYearData } from "../types";
 import FigureSection from "./figures";
@@ -18,6 +19,7 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
   const MemoizedBubbleChart = useMemo(
     () => (
       <BubbleChart
+        year={year}
         data={data?.team_years ?? []}
         filterOptions={["country", "state", "district"]}
         columnOptions={[
@@ -27,14 +29,14 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
           "Teleop",
           "Endgame",
           "Auto + Endgame",
-          "RP 1",
-          "RP 2",
+          `${RPMapping[year][0]}`,
+          `${RPMapping[year][1]}`,
           "Wins",
           "Win Rate",
         ]}
       />
     ),
-    [data]
+    [data, year]
   );
   const MemoizedFigureSection = useMemo(
     () => <FigureSection year={year} data={data || emptyTeamYearData} />,

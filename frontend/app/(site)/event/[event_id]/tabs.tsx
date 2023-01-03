@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import BubbleChart from "../../../../components/Figures/Bubble";
+import { RPMapping } from "../../../../constants";
 import { classnames } from "../../../../utils";
 import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
@@ -10,7 +11,7 @@ import MatchSection from "./matches";
 import SimulationSection from "./simulation";
 import { Data } from "./types";
 
-const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
+const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Data }) => {
   const [tab, setTab] = useState("Insights");
 
   const MemoizedInsightsTable = useMemo(
@@ -26,6 +27,7 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
   const MemoizedBubbleChart = useMemo(
     () => (
       <BubbleChart
+        year={year}
         data={bubbleData}
         filterOptions={[]}
         columnOptions={[
@@ -35,8 +37,8 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
           "Teleop",
           "Endgame",
           "Auto + Endgame",
-          "RP 1",
-          "RP 2",
+          `${RPMapping[year][0]}`,
+          `${RPMapping[year][1]}`,
           "Rank",
           "N - Rank",
           "RPs / Match",
@@ -44,14 +46,17 @@ const Tabs = ({ eventId, data }: { eventId: string; data: Data }) => {
         ]}
       />
     ),
-    [bubbleData]
+    [bubbleData, year]
   );
 
-  const MemoizedQualMatchSection = useMemo(() => <MatchSection quals={true} data={data} />, [data]);
+  const MemoizedQualMatchSection = useMemo(
+    () => <MatchSection year={year} quals={true} data={data} />,
+    [data, year]
+  );
 
   const MemoizedElimMatchSection = useMemo(
-    () => <MatchSection quals={false} data={data} />,
-    [data]
+    () => <MatchSection year={year} quals={false} data={data} />,
+    [data, year]
   );
 
   const MemoizedFigureSection = useMemo(

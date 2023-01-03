@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
-import { BACKEND_URL } from "../../constants";
+import { BACKEND_URL, RPMapping } from "../../constants";
 import { round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
 import { APITeamMatch, APITeamYear } from "../types/api";
@@ -117,8 +117,8 @@ const YearLineChart = ({
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: "RP 1 EPA" },
-          { value: "rp_2_epa", label: "RP 2 EPA" },
+          { value: "rp_1_epa", label: `${RPMapping[year][0]} EPA` },
+          { value: "rp_2_epa", label: `${RPMapping[year][1]} EPA` },
         ]
       : [{ value: "total_epa", label: "EPA" }];
 

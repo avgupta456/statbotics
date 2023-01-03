@@ -6,7 +6,7 @@ import HC_more from "highcharts/highcharts-more";
 
 import React, { useState } from "react";
 
-import { ColumnBar, columnOptionsDict } from "../columns";
+import { ColumnBar, getColumnOptionsDict } from "../columns";
 import { FilterBar, filterData } from "../filter";
 import { formatNumber } from "../utils";
 
@@ -23,10 +23,12 @@ type ScatterData = {
 };
 
 const BubbleChart = ({
+  year,
   data,
   columnOptions,
   filterOptions,
 }: {
+  year: number;
   data: any[];
   columnOptions: string[];
   filterOptions: string[];
@@ -41,6 +43,7 @@ const BubbleChart = ({
 
   const filteredData: any[] = filterData(data, filters);
 
+  const columnOptionsDict = getColumnOptionsDict(year);
   const xAxis = columnOptionsDict[columns.x];
   const yAxis = columnOptionsDict[columns.y];
   const zAxis = columnOptionsDict[columns.z];
@@ -160,7 +163,12 @@ const BubbleChart = ({
   return (
     <div className="w-full">
       <div className="flex items-end justify-center mb-2">
-        <ColumnBar currColumnOptions={columnOptions} columns={columns} setColumns={setColumns} />
+        <ColumnBar
+          year={year}
+          currColumnOptions={columnOptions}
+          columns={columns}
+          setColumns={setColumns}
+        />
         {filterOptions.length > 0 && (
           <>
             <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
