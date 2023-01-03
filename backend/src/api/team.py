@@ -3,20 +3,20 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Response
 
 from src.api.aggregation import (
-    get_team_matches,
-    get_team,
-    get_teams,
-    get_team_year,
-    get_team_events,
     get_matches,
+    get_team,
+    get_team_events,
+    get_team_matches,
+    get_team_year,
+    get_teams,
     get_year,
 )
 from src.api.models import (
-    APITeam,
-    APITeamYear,
-    APITeamEvent,
     APIMatch,
+    APITeam,
+    APITeamEvent,
     APITeamMatch,
+    APITeamYear,
     APIYear,
 )
 from src.utils.decorators import async_fail_gracefully

@@ -4,19 +4,19 @@ from typing import Any, Callable, Dict, List, Tuple
 from src.db.functions.clear_year import clear_year
 from src.db.models import ETag, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import (
-    get_num_etags as get_num_etags_db,
     get_events as get_events_db,
-    get_num_events as get_num_events_db,
     get_matches as get_matches_db,
+    get_num_etags as get_num_etags_db,
+    get_num_events as get_num_events_db,
     get_num_matches as get_num_matches_db,
-    get_num_teams as get_num_teams_db,
     get_num_team_events as get_num_team_events_db,
-    get_team_events as get_team_events_db,
     get_num_team_matches as get_num_team_matches_db,
-    get_team_matches as get_team_matches_db,
     get_num_team_years as get_num_team_years_db,
-    get_team_years as get_team_years_db,
+    get_num_teams as get_num_teams_db,
     get_num_years as get_num_years_db,
+    get_team_events as get_team_events_db,
+    get_team_matches as get_team_matches_db,
+    get_team_years as get_team_years_db,
     get_years as get_years_db,
 )
 from src.db.write.main import (

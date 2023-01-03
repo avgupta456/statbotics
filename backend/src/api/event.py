@@ -3,13 +3,13 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Response
 
 from src.api.aggregation import (
-    get_year,
-    get_matches,
     get_event,
+    get_matches,
     get_team_events,
     get_team_matches,
+    get_year,
 )
-from src.api.models import APIEvent, APITeamEvent, APITeamMatch, APIMatch, APIYear
+from src.api.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.data.nepa import get_epa_to_norm_epa_func
 from src.utils.decorators import async_fail_gracefully
 

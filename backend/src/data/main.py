@@ -21,8 +21,8 @@ from src.db.main import clean_db
 from src.db.models import TeamYear
 from src.db.read import (
     get_etags as get_etags_db,
-    get_teams as get_teams_db,
     get_team_years as get_team_years_db,
+    get_teams as get_teams_db,
     get_years as get_years_db,
 )
 from src.db.write.main import update_teams as update_teams_db
