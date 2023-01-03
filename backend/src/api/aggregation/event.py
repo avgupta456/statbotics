@@ -18,6 +18,7 @@ def unpack_event(event: Event) -> APIEvent:
         country=event.country,
         state=event.state,
         district=event.district,
+        offseason=event.offseason,
         status=event.status,
     )
 

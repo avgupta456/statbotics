@@ -23,7 +23,7 @@ const EventCard = ({ event }: { event: APIEvent }) => {
     location = `${event.state}, ${location}`;
   }
   if (event.district) {
-    location = `${location} (${event.district})`;
+    location = `${location} (${event.district.toUpperCase()})`;
   }
   return (
     <Link href={`/event/${event.key}`}>
@@ -36,14 +36,19 @@ const EventCard = ({ event }: { event: APIEvent }) => {
 };
 
 const Summary = ({ data }: { data: EventData }) => {
+  // Currently always set to true --> No offseason events shown
+  const [filterOffseason, setFilterOffseason] = useState(true);
   const [filters, setFilters] = useState(defaultFilters);
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState("");
 
+  const cutoffN = 8;
+
   const filteredData: APIEvent[] | undefined = filterData(data, filters).filter(
     (event: APIEvent) =>
-      event.key?.toLowerCase().includes(search.toLowerCase()) ||
-      event.name?.toLowerCase().includes(search.toLowerCase())
+      (!filterOffseason || !event.offseason) &&
+      (event.key?.toLowerCase().includes(search.toLowerCase()) ||
+        event.name?.toLowerCase().includes(search.toLowerCase()))
   );
 
   const N = filteredData?.length;
@@ -51,19 +56,19 @@ const Summary = ({ data }: { data: EventData }) => {
   const ongoingEvents = filteredData
     ?.filter((event) => event.status === "Ongoing")
     .sort((a, b) => (a.end_date > b.end_date ? 1 : -1))
-    .slice(0, expanded === "ongoing" ? undefined : 4);
+    .slice(0, expanded === "ongoing" ? undefined : cutoffN);
 
   const upcomingN = filteredData?.filter((event) => event.status === "Upcoming").length;
   const upcomingEvents = filteredData
     ?.filter((event) => event.status === "Upcoming")
     .sort((a, b) => (a.end_date > b.end_date ? 1 : -1))
-    .slice(0, expanded === "upcoming" ? undefined : 4);
+    .slice(0, expanded === "upcoming" ? undefined : cutoffN);
 
   const completedN = filteredData?.filter((event) => event.status === "Completed").length;
   const completedEvents = filteredData
     ?.filter((event) => event.status === "Completed")
     .sort((a, b) => (a.end_date > b.end_date ? 1 : -1))
-    .slice(0, expanded === "completed" ? undefined : 4);
+    .slice(0, expanded === "completed" ? undefined : cutoffN);
 
   return (
     <div className="w-full h-full flex flex-col items-center">
@@ -82,7 +87,7 @@ const Summary = ({ data }: { data: EventData }) => {
         <>
           <div className="w-full flex mt-4 mb-4 items-center">
             <div className="text-2xl font-bold">{`Ongoing Events (${ongoingN})`}</div>
-            {ongoingN > 4 && (
+            {ongoingN > cutoffN && (
               <button
                 className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
                 onClick={() => setExpanded(expanded === "ongoing" ? "" : "ongoing")}
@@ -105,7 +110,7 @@ const Summary = ({ data }: { data: EventData }) => {
         <>
           <div className="w-full flex mt-4 mb-4 items-center">
             <div className="text-2xl font-bold">{`Upcoming Events (${upcomingN})`}</div>
-            {upcomingN > 4 && (
+            {upcomingN > cutoffN && (
               <button
                 className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
                 onClick={() => setExpanded(expanded === "upcoming" ? "" : "upcoming")}
@@ -128,7 +133,7 @@ const Summary = ({ data }: { data: EventData }) => {
         <>
           <div className="w-full flex mt-4 mb-4 items-center">
             <div className="text-2xl font-bold">{`Completed Events (${completedN})`}</div>
-            {completedN > 4 && (
+            {completedN > cutoffN && (
               <button
                 className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
                 onClick={() => setExpanded(expanded === "completed" ? "" : "completed")}

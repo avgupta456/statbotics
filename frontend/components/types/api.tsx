@@ -90,6 +90,7 @@ export type APIEvent = {
   country?: string;
   state?: string;
   district?: string;
+  offseason: boolean;
   status: string;
 };
 
