@@ -4,15 +4,15 @@ import React, { useMemo, useState } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
 import { classnames } from "../../../utils";
-import { Data, emptyData } from "../types";
+import { TeamYearData, emptyTeamYearData } from "../types";
 import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
 
-const Tabs = ({ year, data }: { year: number; data: Data | undefined }) => {
+const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) => {
   const [tab, setTab] = useState("Insights");
 
   const MemoizedInsightsTable = useMemo(
-    () => <InsightsTable year={year} data={data || emptyData} />,
+    () => <InsightsTable year={year} data={data || emptyTeamYearData} />,
     [year, data]
   );
   const MemoizedBubbleChart = useMemo(
@@ -37,7 +37,7 @@ const Tabs = ({ year, data }: { year: number; data: Data | undefined }) => {
     [data]
   );
   const MemoizedFigureSection = useMemo(
-    () => <FigureSection year={year} data={data || emptyData} />,
+    () => <FigureSection year={year} data={data || emptyTeamYearData} />,
     [year, data]
   );
 

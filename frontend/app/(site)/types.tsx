@@ -1,11 +1,11 @@
-import { TeamYear, YearStats, emptyYearStats } from "../../components/types/api";
+import { APITeamYear, APIYear, emptyAPIYear } from "../../components/types/api";
 
-export type Data = {
-  team_years: TeamYear[];
-  year_stats: YearStats;
+export type TeamYearData = {
+  team_years: APITeamYear[];
+  year: APIYear;
 };
 
-export const emptyData: Data = {
+export const emptyTeamYearData: TeamYearData = {
   team_years: [],
-  year_stats: emptyYearStats,
+  year: emptyAPIYear,
 };

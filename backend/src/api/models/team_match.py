@@ -17,3 +17,4 @@ class APITeamMatch(APIModel):
     endgame_epa: float
     rp_1_epa: float
     rp_2_epa: float
+    offseason: bool

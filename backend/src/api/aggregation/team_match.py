@@ -22,6 +22,7 @@ def unpack_team_match(team_match: TeamMatch) -> APITeamMatch:
         endgame_epa=team_match.endgame_epa or 0,
         rp_1_epa=team_match.rp_1_epa or 0,
         rp_2_epa=team_match.rp_2_epa or 0,
+        offseason=team_match.offseason,
     )
 
 

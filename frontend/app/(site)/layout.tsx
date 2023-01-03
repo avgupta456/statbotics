@@ -6,9 +6,9 @@ import { BACKEND_URL, CURR_YEAR } from "../../constants";
 import { round } from "../../utils";
 import { getWithExpiry, setWithExpiry } from "../localStorage";
 import { AppContext } from "./context";
-import { Data } from "./types";
+import { TeamYearData } from "./types";
 
-async function getData(year: number) {
+async function getTeamYearData(year: number) {
   const cacheData = getWithExpiry(`team_years_${year}`);
   if (cacheData && cacheData?.team_years?.length > 100) {
     console.log("Used Local Storage: " + year);
@@ -29,7 +29,7 @@ async function getData(year: number) {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [dataDict, setDataDict] = useState<{ [key: number]: Data }>({});
+  const [dataDict, setDataDict] = useState<{ [key: number]: TeamYearData }>({});
   const [year, setYear] = useState(2022);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      const data: Data = await getData(year);
+      const data: TeamYearData = await getTeamYearData(year);
       setDataDict((prev) => ({ ...prev, [year]: data }));
     };
 

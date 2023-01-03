@@ -19,6 +19,17 @@ export type PercentileStats = {
   sd: number;
 };
 
+export const emptyPercentileStats: PercentileStats = {
+  p99: 0,
+  p95: 0,
+  p90: 0,
+  p75: 0,
+  p50: 0,
+  p25: 0,
+  mean: 0,
+  sd: 0,
+};
+
 export type APIYear = {
   year: number;
   total_stats: PercentileStats;
@@ -28,6 +39,17 @@ export type APIYear = {
   rp_1_stats: PercentileStats;
   rp_2_stats: PercentileStats;
   foul_rate: number;
+};
+
+export const emptyAPIYear: APIYear = {
+  year: 0,
+  total_stats: emptyPercentileStats,
+  auto_stats: emptyPercentileStats,
+  teleop_stats: emptyPercentileStats,
+  endgame_stats: emptyPercentileStats,
+  rp_1_stats: emptyPercentileStats,
+  rp_2_stats: emptyPercentileStats,
+  foul_rate: 0,
 };
 
 export type APITeamYear = {
@@ -139,4 +161,5 @@ export type APITeamMatch = {
   endgame_epa: number;
   rp_1_epa: number;
   rp_2_epa: number;
+  offseason: boolean;
 };

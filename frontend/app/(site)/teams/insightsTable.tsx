@@ -8,9 +8,9 @@ import YearInsightsTable, { TeamYearInsights } from "../../../components/Table/Y
 import { TableKey } from "../../../components/Table/shared";
 import { FilterBar, filterData } from "../../../components/filter";
 import { round, truncate } from "../../../utils";
-import { Data } from "../types";
+import { TeamYearData } from "../types";
 
-const PageTeamInsightsTable = ({ year, data }: { year: number; data: Data }) => {
+const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [filters, setFilters] = useState({
     country: "",
@@ -44,7 +44,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: Data }) => 
 
   const YearInsightsTableProps = {
     data: yearInsightsData,
-    stats: data.year_stats,
+    stats: data.year,
     year,
     disableHighlight,
   };
