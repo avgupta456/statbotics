@@ -1,7 +1,7 @@
 import React from "react";
 
 import TeamLineChart from "../../../../components/Figures/TeamLine";
-import { TeamMatch } from "../../../../components/types/api";
+import { APITeamMatch } from "../../../../components/types/api";
 
 const FigureSection = ({
   teamNum,
@@ -10,7 +10,7 @@ const FigureSection = ({
 }: {
   teamNum: number;
   year: number;
-  matches: TeamMatch[];
+  matches: APITeamMatch[];
 }) => {
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">

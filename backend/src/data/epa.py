@@ -5,14 +5,8 @@ from typing import Dict, List, Tuple
 import numpy as np
 from scipy.stats import expon, exponnorm  # type: ignore
 
-from src.db.models.event import Event
-from src.db.models.match import Match
-from src.db.models.team_event import TeamEvent
-from src.db.models.team_match import TeamMatch
-from src.db.models.team_year import TeamYear
-from src.db.models.year import Year
-from src.db.read.team import get_teams as get_teams_db
-from src.db.read.team_year import get_team_years as get_team_years_db
+from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
 from src.db.write.main import update_teams as update_teams_db
 from src.utils.utils import get_team_event_key, get_team_match_key
 

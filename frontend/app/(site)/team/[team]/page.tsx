@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
 import { yearOptions } from "../../../../components/filterConstants";
-import { TeamMatch } from "../../../../components/types/api";
+import { APITeamMatch } from "../../../../components/types/api";
 import { BACKEND_URL } from "../../../../constants";
 import { round } from "../../../../utils";
 import Tabs from "./tabs";

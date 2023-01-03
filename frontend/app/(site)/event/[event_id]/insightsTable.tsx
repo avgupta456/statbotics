@@ -38,7 +38,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
 
   const EventInsightsTableProps = {
     data: eventInsightsData,
-    stats: data.year_stats,
+    stats: data.year,
     disableHighlight,
   };
 

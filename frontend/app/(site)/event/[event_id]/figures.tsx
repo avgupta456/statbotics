@@ -35,7 +35,7 @@ const FiguresSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       </div>
       <EventLineChart
         eventId={eventId}
-        year={data.year}
+        year={data.event.year}
         teamEvents={data.team_events}
         teams={lineData}
       />

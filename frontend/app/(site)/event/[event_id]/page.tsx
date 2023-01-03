@@ -25,7 +25,7 @@ async function Page({ params }: { params: { event_id: string } }) {
     return <div>Event not found</div>;
   }
 
-  let truncatedEventName = truncate(data.event_name, 30);
+  let truncatedEventName = truncate(data.event.event_name, 30);
 
   return (
     <div className="w-full h-full flex-grow flex flex-col p-4">

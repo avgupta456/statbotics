@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { CORRECT_COLOR, INCORRECT_COLOR } from "../constants";
 import { classnames, round } from "../utils";
-import { Match } from "./types/api";
+import { APIMatch } from "./types/api";
 import { formatNumber } from "./utils";
 
 const compLevelFullNames = {
@@ -35,7 +35,7 @@ const MatchTable = ({
 }: {
   year: number;
   teamNum: number;
-  matches: Match[];
+  matches: APIMatch[];
   foulRate: number;
 }) => {
   const compLevels = matches.map((match) => match.comp_level);
@@ -76,9 +76,10 @@ const MatchTable = ({
                 displayMatch = `${compLevelShortNames[compLevel]} ${match.set_number}-${match.match_number}`;
               }
 
+              const alliance = match.red.includes(teamNum) ? "red" : "blue";
+
               const _winProb = round(match.epa_win_prob * 100, 0);
               const winProb = _winProb > 50 ? _winProb : 100 - _winProb;
-
               const correctWinner = match.winner === match.pred_winner;
 
               return (
@@ -149,7 +150,7 @@ const MatchTable = ({
                     <span
                       className={classnames(
                         match.winner === "red" ? "font-bold" : "font-thin",
-                        match.alliance === "red" ? "underline" : ""
+                        alliance === "red" ? "underline" : ""
                       )}
                     >
                       {match.red_score}
@@ -164,7 +165,7 @@ const MatchTable = ({
                     <span
                       className={classnames(
                         match.winner === "blue" ? "font-bold" : "font-thin",
-                        match.alliance === "blue" ? "underline" : ""
+                        alliance === "blue" ? "underline" : ""
                       )}
                     >
                       {match.blue_score}
@@ -176,7 +177,7 @@ const MatchTable = ({
                     <span
                       className={classnames(
                         match.pred_winner === "red" ? "font-bold" : "font-thin",
-                        match.alliance === "red" ? "underline" : ""
+                        alliance === "red" ? "underline" : ""
                       )}
                     >
                       {round((1 + foulRate) * match.red_epa_pred, 0)}
@@ -188,7 +189,7 @@ const MatchTable = ({
                     <span
                       className={classnames(
                         match.pred_winner === "blue" ? "font-bold" : "font-thin",
-                        match.alliance === "blue" ? "underline" : ""
+                        alliance === "blue" ? "underline" : ""
                       )}
                     >
                       {round((1 + foulRate) * match.blue_epa_pred, 0)}

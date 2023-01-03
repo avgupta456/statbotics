@@ -1,36 +1,41 @@
-from typing import Any, Callable, Dict, List, Optional
+from datetime import timedelta
+from typing import List, Optional
 
-from src.data.nepa import get_epa_to_norm_epa_func
-from src.db.models.team_match import TeamMatch
-from src.db.read.team_match import get_team_matches as _get_team_matches
+from src.api.models import APITeamMatch
+from src.db.models import TeamMatch
+from src.db.read import get_team_matches as _get_team_matches
+from src.utils.alru_cache import alru_cache
 from src.utils.utils import get_match_number
 
 
+def unpack_team_match(team_match: TeamMatch) -> APITeamMatch:
+    return APITeamMatch(
+        num=team_match.team,
+        alliance=team_match.alliance,
+        match=team_match.match,
+        time=team_match.time,
+        playoff=team_match.playoff,
+        match_number=get_match_number(team_match.match),
+        total_epa=team_match.epa or 0,
+        auto_epa=team_match.auto_epa or 0,
+        teleop_epa=team_match.teleop_epa or 0,
+        endgame_epa=team_match.endgame_epa or 0,
+        rp_1_epa=team_match.rp_1_epa or 0,
+        rp_2_epa=team_match.rp_2_epa or 0,
+        offseason=team_match.offseason,
+    )
+
+
+@alru_cache(ttl=timedelta(minutes=5))
 async def get_team_matches(
-    team: int, year: int, epa_to_norm_epa: Optional[Callable[[float], float]] = None
-) -> List[Dict[str, Any]]:
-    team_match_objs: List[TeamMatch] = _get_team_matches(year=year, team=team)
+    year: Optional[int] = None,
+    event: Optional[str] = None,
+    team: Optional[int] = None,
+    match: Optional[str] = None,
+) -> List[APITeamMatch]:
+    team_match_objs: List[TeamMatch] = _get_team_matches(
+        team=team, year=year, event=event, match=match
+    )
 
-    if epa_to_norm_epa is None:
-        epa_to_norm_epa = get_epa_to_norm_epa_func(year)
-
-    team_matches = [
-        {
-            "match": get_match_number(x.match),
-            "label": x.match,
-            "time": x.time,
-            "playoff": x.playoff,
-            "norm_epa": epa_to_norm_epa(x.epa or 0),
-            "total_epa": x.epa,
-            "auto_epa": x.auto_epa,
-            "teleop_epa": x.teleop_epa,
-            "endgame_epa": x.endgame_epa,
-            "rp_1_epa": x.rp_1_epa,
-            "rp_2_epa": x.rp_2_epa,
-        }
-        for x in team_match_objs
-    ]
-
-    team_matches.sort(key=lambda x: x["time"] or -1)
-
-    return team_matches
+    team_matches = [unpack_team_match(x) for x in team_match_objs]
+    return (True, sorted(team_matches, key=lambda x: x.time))  # type: ignore

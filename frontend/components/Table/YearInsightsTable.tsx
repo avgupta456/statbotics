@@ -6,7 +6,7 @@ import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
 import { CURR_YEAR } from "../../constants";
 import { classnames } from "../../utils";
-import { PercentileStats, YearStats } from "../types/api";
+import { APIYear, PercentileStats } from "../types/api";
 import Table from "./Table";
 import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
 
@@ -61,7 +61,7 @@ const TeamInsightsTable = ({
   disableHighlight,
 }: {
   data: TeamYearInsights[];
-  stats: YearStats;
+  stats: APIYear;
   year: number;
   disableHighlight: boolean;
 }) => {
@@ -85,32 +85,32 @@ const TeamInsightsTable = ({
           header: "Norm EPA",
         }),
       columnHelper.accessor("epa", {
-        cell: (info) => formatCell(stats.total, info, disableHighlight),
+        cell: (info) => formatCell(stats.total_stats, info, disableHighlight),
         header: "EPA",
       }),
       year >= 2016 &&
         columnHelper.accessor("auto_epa", {
-          cell: (info) => formatCell(stats.auto, info, disableHighlight),
+          cell: (info) => formatCell(stats.auto_stats, info, disableHighlight),
           header: "Auto EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("teleop_epa", {
-          cell: (info) => formatCell(stats.teleop, info, disableHighlight),
+          cell: (info) => formatCell(stats.teleop_stats, info, disableHighlight),
           header: "Teleop EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("endgame_epa", {
-          cell: (info) => formatCell(stats.endgame, info, disableHighlight),
+          cell: (info) => formatCell(stats.endgame_stats, info, disableHighlight),
           header: "Endgame EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("rp_1_epa", {
-          cell: (info) => formatCell(stats.rp_1, info, disableHighlight),
+          cell: (info) => formatCell(stats.rp_1_stats, info, disableHighlight),
           header: "RP1 EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("rp_2_epa", {
-          cell: (info) => formatCell(stats.rp_2, info, disableHighlight),
+          cell: (info) => formatCell(stats.rp_2_stats, info, disableHighlight),
           header: "RP2 EPA",
         }),
       columnHelper.accessor("record", {

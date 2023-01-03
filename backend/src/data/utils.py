@@ -2,37 +2,21 @@ from datetime import datetime
 from typing import Any, Callable, Dict, List, Tuple
 
 from src.db.functions.clear_year import clear_year
-from src.db.models.etag import ETag
-from src.db.models.event import Event
-from src.db.models.match import Match
-from src.db.models.team_event import TeamEvent
-from src.db.models.team_match import TeamMatch
-from src.db.models.team_year import TeamYear
-from src.db.models.year import Year
-from src.db.read.etag import get_num_etags as get_num_etags_db
-from src.db.read.event import (
+from src.db.models import ETag, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.read import (
     get_events as get_events_db,
-    get_num_events as get_num_events_db,
-)
-from src.db.read.match import (
     get_matches as get_matches_db,
+    get_num_etags as get_num_etags_db,
+    get_num_events as get_num_events_db,
     get_num_matches as get_num_matches_db,
-)
-from src.db.read.team import get_num_teams as get_num_teams_db
-from src.db.read.team_event import (
     get_num_team_events as get_num_team_events_db,
-    get_team_events as get_team_events_db,
-)
-from src.db.read.team_match import (
     get_num_team_matches as get_num_team_matches_db,
-    get_team_matches as get_team_matches_db,
-)
-from src.db.read.team_year import (
     get_num_team_years as get_num_team_years_db,
-    get_team_years as get_team_years_db,
-)
-from src.db.read.year import (
+    get_num_teams as get_num_teams_db,
     get_num_years as get_num_years_db,
+    get_team_events as get_team_events_db,
+    get_team_matches as get_team_matches_db,
+    get_team_years as get_team_years_db,
     get_years as get_years_db,
 )
 from src.db.write.main import (

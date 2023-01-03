@@ -1,13 +1,13 @@
 import React, { createContext } from "react";
 
-import { Data } from "./types";
+import { TeamYearData } from "./types";
 
 export const AppContext = createContext({
   dataDict: {},
   year: 2022,
   setYear: (year: number) => {},
 } as {
-  dataDict: { [key: number]: Data };
+  dataDict: { [key: number]: TeamYearData };
   year: number;
   setYear: (year: number) => void;
 });

@@ -8,8 +8,8 @@ const Summary = ({ data }: { data: Data }) => {
   const redWinProb = winProb * 100;
   const blueWinProb = (1 - winProb) * 100;
 
-  const redPred = data.match.red_epa_sum * (1 + data.year_stats.foul_rate);
-  const bluePred = data.match.blue_epa_sum * (1 + data.year_stats.foul_rate);
+  const redPred = data.match.red_epa_pred * (1 + data.year.foul_rate);
+  const bluePred = data.match.blue_epa_pred * (1 + data.year.foul_rate);
 
   const redScore = data.match.red_score;
   const blueScore = data.match.blue_score;
@@ -33,10 +33,10 @@ const Summary = ({ data }: { data: Data }) => {
             <p
               className={classnames(
                 "ml-2",
-                data.match.epa_winner === "red" ? "text-red-500" : "text-blue-500"
+                data.match.pred_winner === "red" ? "text-red-500" : "text-blue-500"
               )}
             >
-              {data.match.epa_winner.toUpperCase()}
+              {data.match.pred_winner.toUpperCase()}
             </p>
           </div>
         </div>

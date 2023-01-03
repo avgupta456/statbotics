@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Set, Tuple
 from src.constants import MAX_TEAM
 from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
+from src.db.models import ETag, Event, Match, Team, TeamEvent, TeamMatch, TeamYear
 from src.db.models.create import (
     create_event_obj,
     create_match_obj,
@@ -12,13 +13,6 @@ from src.db.models.create import (
     create_team_year_obj,
     create_year_obj,
 )
-from src.db.models.etag import ETag
-from src.db.models.event import Event
-from src.db.models.match import Match
-from src.db.models.team import Team
-from src.db.models.team_event import TeamEvent
-from src.db.models.team_match import TeamMatch
-from src.db.models.team_year import TeamYear
 from src.tba.constants import YEAR_BLACKLIST
 from src.tba.read_tba import (
     get_event_rankings as get_event_rankings_tba,

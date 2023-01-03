@@ -1,98 +1,12 @@
-export type TeamEvent = {
+export type APITeam = {
   num: number;
   team: string;
-  // For simulation initialization
-  start_total_epa: number;
-  start_rp_1_epa: number;
-  start_rp_2_epa: number;
-  // For tables and figures
-  total_epa: number;
-  auto_epa: number;
-  teleop_epa: number;
-  endgame_epa: number;
-  rp_1_epa: number;
-  rp_2_epa: number;
-  wins: number;
-  losses: number;
-  ties: number;
-  count: number;
-  rank: number;
+  state?: string;
+  country?: string;
+  district?: string;
+  rookie_year: number;
+  offseason: boolean;
 };
-
-export type TeamYear = {
-  num: number;
-  team: string;
-  state: string;
-  country: string;
-  district: string;
-  norm_epa: number;
-  total_epa: number;
-  auto_epa: number;
-  teleop_epa: number;
-  endgame_epa: number;
-  rp_1_epa: number;
-  rp_2_epa: number;
-  wins: number;
-  losses: number;
-  ties: number;
-  count: number;
-};
-
-export type Match = {
-  key: string;
-  comp_level: string;
-  set_number: number;
-  match_number: number;
-  playoff: boolean;
-  alliance: string;
-  red: number[];
-  blue: number[];
-  red_score: number;
-  blue_score: number;
-  winner: string;
-  red_rp_1: number;
-  red_rp_2: number;
-  blue_rp_1: number;
-  blue_rp_2: number;
-  red_epa_pred: number;
-  blue_epa_pred: number;
-  epa_win_prob: number;
-  pred_winner: string;
-  red_rp_1_pred: number;
-  red_rp_2_pred: number;
-  blue_rp_1_pred: number;
-  blue_rp_2_pred: number;
-  // for simulation
-  red_auto: number;
-  red_teleop: number;
-  red_endgame: number;
-  red_1: number;
-  red_2: number;
-  blue_auto: number;
-  blue_teleop: number;
-  blue_endgame: number;
-  blue_1: number;
-  blue_2: number;
-};
-
-export type TeamMatch = {
-  team: number;
-  match: string;
-  alliance: string;
-  match_num: number;
-  label: string;
-  time: number;
-  playoff: boolean;
-  norm_epa: number;
-  total_epa: number;
-  auto_epa: number;
-  teleop_epa: number;
-  endgame_epa: number;
-  rp_1_epa: number;
-  rp_2_epa: number;
-};
-
-// Percentile/Year Stats
 
 export type PercentileStats = {
   p99: number;
@@ -116,22 +30,148 @@ export const emptyPercentileStats: PercentileStats = {
   sd: 0,
 };
 
-export type YearStats = {
-  total: PercentileStats;
-  auto: PercentileStats;
-  teleop: PercentileStats;
-  endgame: PercentileStats;
-  rp_1: PercentileStats;
-  rp_2: PercentileStats;
+export type APIYear = {
+  year: number;
+  total_stats: PercentileStats;
+  auto_stats: PercentileStats;
+  teleop_stats: PercentileStats;
+  endgame_stats: PercentileStats;
+  rp_1_stats: PercentileStats;
+  rp_2_stats: PercentileStats;
   foul_rate: number;
 };
 
-export const emptyYearStats: YearStats = {
-  total: emptyPercentileStats,
-  auto: emptyPercentileStats,
-  teleop: emptyPercentileStats,
-  endgame: emptyPercentileStats,
-  rp_1: emptyPercentileStats,
-  rp_2: emptyPercentileStats,
+export const emptyAPIYear: APIYear = {
+  year: 0,
+  total_stats: emptyPercentileStats,
+  auto_stats: emptyPercentileStats,
+  teleop_stats: emptyPercentileStats,
+  endgame_stats: emptyPercentileStats,
+  rp_1_stats: emptyPercentileStats,
+  rp_2_stats: emptyPercentileStats,
   foul_rate: 0,
+};
+
+export type APITeamYear = {
+  num: number;
+  team: string;
+  state?: string;
+  country?: string;
+  district?: string;
+  epa_rank: number;
+  epa_count: number;
+  state_epa_rank: number;
+  state_epa_count: number;
+  country_epa_rank: number;
+  country_epa_count: number;
+  district_epa_rank: number;
+  district_epa_count: number;
+  norm_epa: number;
+  total_epa: number;
+  auto_epa: number;
+  teleop_epa: number;
+  endgame_epa: number;
+  rp_1_epa: number;
+  rp_2_epa: number;
+  wins: number;
+  losses: number;
+  ties: number;
+  count: number;
+  offseason: boolean;
+};
+
+export type APIEvent = {
+  event_name: string;
+  year: number;
+};
+
+export type APITeamEvent = {
+  num: number;
+  team: string;
+  event: string;
+  event_name: string;
+  week: number;
+  time: number;
+  num_teams: number;
+  start_total_epa: number;
+  start_rp_1_epa: number;
+  start_rp_2_epa: number;
+  total_epa: number;
+  norm_epa: number;
+  auto_epa: number;
+  teleop_epa: number;
+  endgame_epa: number;
+  rp_1_epa: number;
+  rp_2_epa: number;
+  wins: number;
+  losses: number;
+  ties: number;
+  count: number;
+  rank: number;
+};
+
+export type APIMatch = {
+  year: number;
+  event: string;
+  time: number;
+  key: string;
+  match_name: string;
+  video?: string;
+  comp_level: string;
+  set_number: number;
+  match_number: number;
+  playoff: boolean;
+  red: number[];
+  blue: number[];
+
+  red_score: number;
+  red_auto: number;
+  red_teleop: number;
+  red_endgame: number;
+  red_1: number;
+  red_2: number;
+  red_fouls: number;
+  red_rp_1: number;
+  red_rp_2: number;
+  blue_score: number;
+  blue_auto: number;
+  blue_teleop: number;
+  blue_endgame: number;
+  blue_1: number;
+  blue_2: number;
+  blue_fouls: number;
+  blue_rp_1: number;
+  blue_rp_2: number;
+  winner: string;
+
+  red_epa_pred: number;
+  red_auto_epa_pred: number;
+  red_teleop_epa_pred: number;
+  red_endgame_epa_pred: number;
+  red_rp_1_pred: number;
+  red_rp_2_pred: number;
+  blue_epa_pred: number;
+  blue_auto_epa_pred: number;
+  blue_teleop_epa_pred: number;
+  blue_endgame_epa_pred: number;
+  blue_rp_1_pred: number;
+  blue_rp_2_pred: number;
+  epa_win_prob: number;
+  pred_winner: string;
+};
+
+export type APITeamMatch = {
+  num: number;
+  alliance: string;
+  match: string;
+  time: number;
+  playoff: boolean;
+  match_number: number; // quals only
+  total_epa: number;
+  auto_epa: number;
+  teleop_epa: number;
+  endgame_epa: number;
+  rp_1_epa: number;
+  rp_2_epa: number;
+  offseason: boolean;
 };

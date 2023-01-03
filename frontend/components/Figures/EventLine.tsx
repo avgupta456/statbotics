@@ -6,7 +6,7 @@ import Select from "react-select";
 import { BACKEND_URL } from "../../constants";
 import { round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
-import { TeamEvent, TeamMatch } from "../types/api";
+import { APITeamEvent, APITeamMatch } from "../types/api";
 import LineChart from "./Line";
 
 const EventLineChart = ({
@@ -17,12 +17,12 @@ const EventLineChart = ({
 }: {
   eventId: string;
   year: number;
-  teamEvents: TeamEvent[];
+  teamEvents: APITeamEvent[];
   teams: any;
 }) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
-  const [allData, setAllData] = useState<{ [key: number]: TeamMatch[] }>({});
+  const [allData, setAllData] = useState<{ [key: number]: APITeamMatch[] }>({});
 
   // FUNCTIONS
 
@@ -87,13 +87,13 @@ const EventLineChart = ({
       let teamData = {
         id: teamNum,
         data: allData[teamNum].map((teamMatch: any, i: number) => ({
-          x: allData[teamNum][i - 1]?.match_num || 0,
-          label: allData[teamNum][i - 1]?.label || "Start",
+          x: allData[teamNum][i - 1]?.match_number || 0,
+          label: allData[teamNum][i - 1]?.match || "Start",
           y: teamMatch[yAxis.value],
         })),
       };
 
-      const lastMatch = allData[teamNum][allData[teamNum].length - 1].match_num;
+      const lastMatch = allData[teamNum][allData[teamNum].length - 1].match_number;
       const lastEPA = teamEvents[teamEvents.findIndex((team) => team.num === teamNum)][yAxis.value];
       teamData.data.push({ x: lastMatch, label: "End", y: lastEPA });
 
@@ -106,17 +106,13 @@ const EventLineChart = ({
     year >= 2016
       ? [
           { value: "total_epa", label: "Total EPA" },
-          { value: "norm_epa", label: "Norm EPA" },
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
           { value: "rp_1_epa", label: "RP 1 EPA" },
           { value: "rp_2_epa", label: "RP 2 EPA" },
         ]
-      : [
-          { value: "total_epa", label: "EPA" },
-          { value: "norm_epa", label: "Norm EPA" },
-        ];
+      : [{ value: "total_epa", label: "EPA" }];
 
   return (
     <div className="w-full flex flex-col">

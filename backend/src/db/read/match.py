@@ -8,9 +8,9 @@ from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
 
 
-def get_match(match_id: str) -> Optional[Match]:
+def get_match(match: str) -> Optional[Match]:
     def callback(session: SessionType):
-        data = session.query(MatchORM).filter(MatchORM.key == match_id).first()  # type: ignore
+        data = session.query(MatchORM).filter(MatchORM.key == match).first()  # type: ignore
 
         if data is None:
             return None
@@ -23,7 +23,7 @@ def get_match(match_id: str) -> Optional[Match]:
 def get_matches(
     year: Optional[int] = None,
     week: Optional[int] = None,
-    event_id: Optional[int] = None,
+    event: Optional[str] = None,
     team: Optional[int] = None,
 ) -> List[Match]:
     def callback(session: SessionType):
@@ -32,8 +32,8 @@ def get_matches(
             data = data.filter(MatchORM.year == year)  # type: ignore
         if week is not None:
             data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
-        if event_id is not None:
-            data = data.filter(MatchORM.event == event_id)  # type: ignore
+        if event is not None:
+            data = data.filter(MatchORM.event == event)  # type: ignore
         if team is not None:
             data = data.filter(  # type: ignore
                 (MatchORM.red_1 == team)  # type: ignore

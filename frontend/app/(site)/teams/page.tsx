@@ -6,12 +6,12 @@ import Select from "react-select";
 import { yearOptions } from "../../../components/filterConstants";
 import { AppContext } from "../context";
 // store types in (site) root so layout can access them
-import { Data } from "../types";
+import { TeamYearData } from "../types";
 import Tabs from "./tabs";
 
 const Page = () => {
   const { dataDict, year, setYear } = useContext(AppContext);
-  const data: Data | undefined = dataDict[year];
+  const data: TeamYearData | undefined = dataDict[year];
 
   return (
     <div className="w-full h-full flex-grow flex flex-col p-4">
