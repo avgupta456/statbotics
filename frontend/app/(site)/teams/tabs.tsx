@@ -65,7 +65,7 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
         ))}
         <div className="flex-grow border-b-[1px] border-gray-200" />
       </div>
-      <div className="w-full flex-grow flex flex-row flex-wrap justify-center pt-4 px-4 shadow">
+      <div className="w-full flex-grow pt-4 px-4 shadow">
         {data === undefined ? (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
             <div className="text-gray-700 mt-4">Loading data, please wait...</div>

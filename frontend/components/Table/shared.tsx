@@ -83,10 +83,8 @@ export const formatCell = (
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:m-0.5 rounded lg:rounded-lg")}>
-        {info.getValue()}
-      </div>
+    <div className="w-40 h-full flex justify-center items-center">
+      <div className={classnames(color, "data w-12 px-2 py-1 rounded-lg")}>{info.getValue()}</div>
     </div>
   );
 };

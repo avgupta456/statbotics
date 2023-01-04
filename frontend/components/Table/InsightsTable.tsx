@@ -39,7 +39,7 @@ const InsightsTable = ({
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "w-28 px-4 py-2",
+      "px-4 py-2",
       header.id === leftCol ? "rounded-tl-lg" : "",
       header.id === rightCol ? "rounded-tr-lg" : ""
     );
@@ -48,13 +48,13 @@ const InsightsTable = ({
 
   const cellClassName = (cell: any) =>
     classnames(
-      cell.column.id === "team" ? "w-40 py-2 truncate" : "w-28 py-2",
+      "py-2",
       cell.row.index === data.length - 1 && cell.column.id === leftCol ? "rounded-bl-lg" : "",
       cell.row.index === data.length - 1 && cell.column.id === rightCol ? "rounded-br-lg" : ""
     );
 
   return (
-    <div className="text-sm">
+    <div className="w-full lg:w-fit lg:max-w-full text-sm">
       <div className="w-full px-2 py-1 flex items-center justify-center">
         <div className="flex-grow">
           {showSearch ? (
@@ -97,15 +97,17 @@ const InsightsTable = ({
         </div>
       </div>
       <div className="h-2" />
-      <Table
-        data={filteredData}
-        columns={columns}
-        paginate={true}
-        headerClassName={headerClassName}
-        headerCellClassName={headerCellClassName}
-        rowClassName={rowClassName}
-        cellClassName={cellClassName}
-      />
+      <div className="overflow-x-scroll">
+        <Table
+          data={filteredData}
+          columns={columns}
+          paginate={true}
+          headerClassName={headerClassName}
+          headerCellClassName={headerCellClassName}
+          rowClassName={rowClassName}
+          cellClassName={cellClassName}
+        />
+      </div>
       <TableKey />
     </div>
   );
