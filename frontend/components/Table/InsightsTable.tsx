@@ -91,7 +91,7 @@ const InsightsTable = ({
         </div>
       </div>
       <div className="h-2" />
-      <div className="overflow-x-scroll overflow-y-hidden">
+      <div className="overflow-x-scroll overflow-y-hidden scrollbar-hide">
         <Table
           data={filteredData}
           columns={columns}

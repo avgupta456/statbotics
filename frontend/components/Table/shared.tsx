@@ -91,7 +91,7 @@ export const formatPercentileCell = (
   }
 
   return (
-    <div className="w-28 h-full flex justify-center items-center">
+    <div className="w-24 h-full flex justify-center items-center">
       <div className={classnames(color, "data w-12 px-2 py-1 rounded-lg")}>{info.getValue()}</div>
     </div>
   );
