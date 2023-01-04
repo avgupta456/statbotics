@@ -24,7 +24,6 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
         filterOptions={["country", "state", "district"]}
         columnOptions={[
           "Total EPA",
-          "Norm EPA",
           "Auto",
           "Teleop",
           "Endgame",
