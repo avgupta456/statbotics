@@ -159,16 +159,16 @@ const YearLineChart = ({
         />
         <TeamSelect className="hidden md:inline-block" />
         <div className="tooltip" data-tip="Show Top 3 Teams">
-          <GiPodium className="hover_icon" onClick={() => addManyTeams(topTeams)} />
+          <GiPodium className="hover_icon ml-2" onClick={() => addManyTeams(topTeams)} />
         </div>
         {xAxis === "match" && (
           <div className="tooltip" data-tip="Show % of Season">
-            <AiOutlinePercentage className="hover_icon" onClick={() => setXAxis("season")} />
+            <AiOutlinePercentage className="hover_icon ml-2" onClick={() => setXAxis("season")} />
           </div>
         )}
         {xAxis === "season" && (
           <div className="tooltip" data-tip="Show Match Number">
-            <AiOutlineNumber className="hover_icon" onClick={() => setXAxis("match")} />
+            <AiOutlineNumber className="hover_icon ml-2" onClick={() => setXAxis("match")} />
           </div>
         )}
       </div>
