@@ -79,14 +79,16 @@ const SimulationTable = ({ data }: { data: SimulationRow[] }) => {
       cell.row.index === data.length - 1 && cell.column.id === "RPMean" ? "rounded-br-lg" : ""
     );
 
-  return Table(
-    data,
-    columns,
-    true,
-    headerClassName,
-    headerCellClassName,
-    rowClassName,
-    cellClassName
+  return (
+    <Table
+      data={data}
+      columns={columns}
+      paginate={true}
+      headerClassName={headerClassName}
+      headerCellClassName={headerCellClassName}
+      rowClassName={rowClassName}
+      cellClassName={cellClassName}
+    />
   );
 };
 

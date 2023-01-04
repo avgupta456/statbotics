@@ -1,15 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
-import { CSVLink } from "react-csv";
-import { DebounceInput } from "react-debounce-input";
+import React, { useMemo, useState } from "react";
 
-import YearInsightsTable, { TeamYearInsights } from "../../../components/Table/YearInsightsTable";
-import { TableKey } from "../../../components/Table/shared";
+import { createColumnHelper } from "@tanstack/react-table";
+
+import InsightsTable from "../../../components/Table/InsightsTable";
+import { TeamLink, formatCell } from "../../../components/Table/shared";
 import { FilterBar, filterData } from "../../../components/filter";
 import { APITeamYear } from "../../../components/types/api";
+import { CURR_YEAR, RPMapping } from "../../../constants";
 import { round, truncate } from "../../../utils";
 import { TeamYearData } from "../types";
+
+export type TeamYearInsights = {
+  num: number;
+  team: string;
+  epa_rank: number;
+  norm_epa: number;
+  total_epa: number; // used for sorting
+  auto_epa: number | string;
+  teleop_epa: number | string;
+  endgame_epa: number | string;
+  rp_1_epa: number | string;
+  rp_2_epa: number | string;
+  record: string;
+};
+
+const columnHelper = createColumnHelper<TeamYearInsights>();
 
 const defaultFilters = {
   country: "",
@@ -20,14 +37,8 @@ const defaultFilters = {
 const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [filters, setFilters] = useState(defaultFilters);
-  const [search, setSearch] = useState("");
 
   const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
-    .filter(
-      (teamYear) =>
-        teamYear.team?.toLowerCase().includes(search.toLowerCase()) ||
-        teamYear.num.toString().includes(search.toLowerCase())
-    )
     .map((teamYear: APITeamYear) => {
       return {
         num: teamYear.num ?? -1,
@@ -45,38 +56,76 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
     })
     .sort((a, b) => b.norm_epa - a.norm_epa);
 
-  const YearInsightsTableProps = {
-    data: yearInsightsData,
-    stats: data.year,
-    year,
-    disableHighlight,
-  };
+  const columns = useMemo<any>(() => {
+    const showColumns = [
+      columnHelper.accessor("num", {
+        cell: (info) => info.getValue(),
+        header: "Number",
+      }),
+      columnHelper.accessor("team", {
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        header: "Name",
+      }),
+      columnHelper.accessor("epa_rank", {
+        cell: (info) => info.getValue(),
+        header: "EPA Rank",
+      }),
+      year < CURR_YEAR &&
+        columnHelper.accessor("norm_epa", {
+          cell: (info) => info.getValue(),
+          header: "Normalized EPA",
+        }),
+      columnHelper.accessor("total_epa", {
+        cell: (info) => formatCell(data.year.total_stats, info, disableHighlight),
+        header: "EPA",
+      }),
+      year >= 2016 &&
+        columnHelper.accessor("auto_epa", {
+          cell: (info) => formatCell(data.year.auto_stats, info, disableHighlight),
+          header: "Auto EPA",
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("teleop_epa", {
+          cell: (info) => formatCell(data.year.teleop_stats, info, disableHighlight),
+          header: "Teleop EPA",
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("endgame_epa", {
+          cell: (info) => formatCell(data.year.endgame_stats, info, disableHighlight),
+          header: "Endgame EPA",
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("rp_1_epa", {
+          cell: (info) => formatCell(data.year.rp_1_stats, info, disableHighlight),
+          header: `${RPMapping[year][0]} EPA`,
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("rp_2_epa", {
+          cell: (info) => formatCell(data.year.rp_2_stats, info, disableHighlight),
+          header: `${RPMapping[year][1]} EPA`,
+        }),
+      columnHelper.accessor("record", {
+        cell: (info) => info.getValue(),
+        header: "Record",
+      }),
+    ].filter((x) => x);
+    return showColumns;
+  }, [year, data.year, disableHighlight]);
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="flex items-center justify-center mb-4">
-        <button
-          className="filter_button w-32"
-          onClick={() => setDisableHighlight(!disableHighlight)}
-        >
-          {disableHighlight ? "Enable" : "Disable"} Color
-        </button>
-        <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
         <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
-        <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-        <DebounceInput
-          minLength={2}
-          debounceTimeout={300}
-          className="w-40 p-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
-          placeholder="Search"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <CSVLink data={yearInsightsData} filename={`${year}_team_insights.csv`}>
-          <button className="filter_button w-20 ml-2">Export</button>
-        </CSVLink>
       </div>
-      <YearInsightsTable {...YearInsightsTableProps} />
-      <TableKey />
+      <InsightsTable
+        data={yearInsightsData}
+        columns={columns}
+        leftCol="num"
+        rightCol="record"
+        searchCols={["num", "team"]}
+        csvFilename={`${year}_insights.csv`}
+        toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
+      />
     </div>
   );
 };

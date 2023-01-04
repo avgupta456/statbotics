@@ -15,15 +15,23 @@ import {
 
 import { classnames } from "../../utils";
 
-const Table = (
-  data: any[],
-  columns: ColumnDef<any, any>[],
-  paginate: boolean,
-  headerClassName: () => string,
-  headerCellClassName: (header: any) => string,
-  rowClassName: (row: any) => string,
-  cellClassName: (cell: any) => string
-) => {
+const Table = ({
+  data,
+  columns,
+  paginate,
+  headerClassName,
+  headerCellClassName,
+  rowClassName,
+  cellClassName,
+}: {
+  data: any[];
+  columns: ColumnDef<any, any>[];
+  paginate: boolean;
+  headerClassName: () => string;
+  headerCellClassName: (header: any) => string;
+  rowClassName: (row: any) => string;
+  cellClassName: (cell: any) => string;
+}) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
@@ -56,7 +64,7 @@ const Table = (
   ];
 
   return (
-    <div className="p-2 text-sm">
+    <div className="text-sm">
       <table>
         <thead className={headerClassName()}>
           {table.getHeaderGroups().map((headerGroup) => (

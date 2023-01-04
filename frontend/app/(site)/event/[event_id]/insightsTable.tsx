@@ -1,28 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
-import { CSVLink } from "react-csv";
-import { DebounceInput } from "react-debounce-input";
-import { MdClose, MdCloudDownload, MdColorLens, MdSearch } from "react-icons/md";
+import React, { useMemo, useState } from "react";
 
-import EventInsightsTable, {
-  TeamEventInsights,
-} from "../../../../components/Table/EventInsightsTable";
-import { TableKey } from "../../../../components/Table/shared";
+import { createColumnHelper } from "@tanstack/react-table";
+
+import InsightsTable from "../../../../components/Table/InsightsTable";
+import { TeamLink, formatCell } from "../../../../components/Table/shared";
+import { formatNumber } from "../../../../components/utils";
+import { RPMapping } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
 import { Data } from "./types";
 
+export type TeamEventInsights = {
+  num: number;
+  team: string;
+  rank: number | string;
+  total_epa: number | string;
+  auto_epa: number | string;
+  teleop_epa: number | string;
+  endgame_epa: number | string;
+  rp_1_epa: number | string;
+  rp_2_epa: number | string;
+};
+
+const columnHelper = createColumnHelper<TeamEventInsights>();
+
 const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
-  const [search, setSearch] = useState("");
 
   const eventInsightsData: TeamEventInsights[] = data.team_events
-    .filter(
-      (teamEvent) =>
-        teamEvent.team?.toLowerCase().includes(search.toLowerCase()) ||
-        teamEvent.num.toString().includes(search.toLowerCase())
-    )
     .map((teamEvent) => {
       return {
         num: teamEvent.num ?? -1,
@@ -38,54 +44,59 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
     })
     .sort((a, b) => a.rank - b.rank);
 
-  const EventInsightsTableProps = {
-    data: eventInsightsData,
-    stats: data.year,
-    disableHighlight,
-  };
+  const columns = useMemo<any>(
+    () => [
+      columnHelper.accessor("num", {
+        cell: (info) => formatNumber(info.getValue()),
+        header: "Number",
+      }),
+      columnHelper.accessor("team", {
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        header: "Name",
+      }),
+      columnHelper.accessor("rank", {
+        cell: (info) => info.getValue(),
+        header: "Rank",
+      }),
+      columnHelper.accessor("total_epa", {
+        cell: (info) => formatCell(data.year.total_stats, info, disableHighlight),
+        header: "EPA",
+      }),
+      columnHelper.accessor("auto_epa", {
+        cell: (info) => formatCell(data.year.auto_stats, info, disableHighlight),
+        header: "Auto EPA",
+      }),
+      columnHelper.accessor("teleop_epa", {
+        cell: (info) => formatCell(data.year.teleop_stats, info, disableHighlight),
+        header: "Teleop EPA",
+      }),
+      columnHelper.accessor("endgame_epa", {
+        cell: (info) => formatCell(data.year.endgame_stats, info, disableHighlight),
+        header: "Endgame EPA",
+      }),
+      columnHelper.accessor("rp_1_epa", {
+        cell: (info) => formatCell(data.year.rp_1_stats, info, disableHighlight),
+        header: `${RPMapping[data.year.year][0]} EPA`,
+      }),
+      columnHelper.accessor("rp_2_epa", {
+        cell: (info) => formatCell(data.year.rp_2_stats, info, disableHighlight),
+        header: `${RPMapping[data.year.year][1]} EPA`,
+      }),
+    ],
+    [data, disableHighlight]
+  );
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="w-full px-4 flex items-center justify-center">
-        <div className="flex-grow">
-          {showSearch ? (
-            <div className="flex">
-              <DebounceInput
-                minLength={2}
-                debounceTimeout={300}
-                className="max-w-60 p-2 relative rounded text-sm border-[2px] border-inputBlue focus:outline-none"
-                placeholder="Search"
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <MdClose
-                className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
-                onClick={() => setShowSearch(!showSearch)}
-              />
-            </div>
-          ) : (
-            <div className="text-lg text-gray-800">Event Insights</div>
-          )}
-        </div>
-        <div className="tooltip" data-tip="Search">
-          <MdSearch
-            className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
-            onClick={() => setShowSearch(!showSearch)}
-          />
-        </div>
-        <div className="tooltip" data-tip={disableHighlight ? "Enable Color" : "Disable Color"}>
-          <MdColorLens
-            className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
-            onClick={() => setDisableHighlight(!disableHighlight)}
-          />
-        </div>
-        <div className="tooltip" data-tip="Download CSV">
-          <CSVLink data={eventInsightsData} filename={`${eventId}_team_insights.csv`}>
-            <MdCloudDownload className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer" />
-          </CSVLink>
-        </div>
-      </div>
-      <EventInsightsTable {...EventInsightsTableProps} />
-      <TableKey />
+      <InsightsTable
+        data={eventInsightsData}
+        columns={columns}
+        leftCol="num"
+        rightCol="rp_2_epa"
+        searchCols={["num", "team"]}
+        csvFilename={`${eventId}_team_insights.csv`}
+        toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
+      />
     </div>
   );
 };

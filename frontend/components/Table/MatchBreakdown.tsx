@@ -162,14 +162,16 @@ const MatchBreakdown = ({
       cell.row.original.name === "Total" && cell.column.id === "blue1" ? "rounded-br-lg" : ""
     );
 
-  return Table(
-    data,
-    columns,
-    false,
-    headerClassName,
-    headerCellClassName,
-    rowClassName,
-    cellClassName
+  return (
+    <Table
+      data={data}
+      columns={columns}
+      paginate={false}
+      headerClassName={headerClassName}
+      headerCellClassName={headerCellClassName}
+      rowClassName={rowClassName}
+      cellClassName={cellClassName}
+    />
   );
 };
 

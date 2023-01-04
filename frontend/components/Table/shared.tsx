@@ -2,6 +2,8 @@ import React from "react";
 
 import Link from "next/link";
 
+import { CellContext } from "@tanstack/react-table";
+
 import { classnames, round } from "../../utils";
 import { PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
@@ -59,6 +61,34 @@ export const getRPColor = (value: number) => {
     color = CONDITIONAL_COLORS[4];
   }
   return color;
+};
+
+export const formatCell = (
+  percentileStats: PercentileStats,
+  info: CellContext<any, number | string>,
+  disableHighlight: boolean
+) => {
+  const column = info.column.id;
+  const value = info.getValue();
+
+  let color = "";
+  if (disableHighlight) {
+    color = "";
+  } else if (typeof value === "string") {
+    color = CONDITIONAL_COLORS[1];
+  } else if (column == "rp_1_epa" || column == "rp_2_epa") {
+    color = getRPColor(value);
+  } else {
+    color = getColor(value, percentileStats);
+  }
+
+  return (
+    <div className="w-full h-full flex justify-center items-center">
+      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:m-0.5 rounded lg:rounded-lg")}>
+        {info.getValue()}
+      </div>
+    </div>
+  );
 };
 
 export const TableKey = () => (
