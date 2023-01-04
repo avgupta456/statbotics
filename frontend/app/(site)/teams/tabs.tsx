@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
 import { RPMapping } from "../../../constants";
-import { classnames } from "../../../utils";
 import TabsSection from "../shared/tabs";
 import { TeamYearData, emptyTeamYearData } from "../types";
 import FigureSection from "./figures";

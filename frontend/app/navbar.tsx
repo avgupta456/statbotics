@@ -114,10 +114,10 @@ const Navbar = () => {
         )}
       >
         <div className="h-2" />
-        <Link href="/teams" className="ml-4">
+        <Link href="/teams" className="ml-4" onClick={() => setToggle(false)}>
           Teams
         </Link>
-        <Link href="/events" className="ml-4">
+        <Link href="/events" className="ml-4" onClick={() => setToggle(false)}>
           Events
         </Link>
         <div className="my-2 h-[1px] bg-gray-600" />
