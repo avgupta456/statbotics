@@ -67,7 +67,7 @@ const InsightsTable = ({
                 onChange={(e) => setSearch(e.target.value)}
               />
               <MdClose
-                className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
+                className="hover_icon"
                 onClick={() => {
                   setSearch("");
                   setShowSearch(!showSearch);
@@ -79,20 +79,14 @@ const InsightsTable = ({
           )}
         </div>
         <div className="tooltip" data-tip="Search">
-          <MdSearch
-            className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
-            onClick={() => setShowSearch(!showSearch)}
-          />
+          <MdSearch className="hover_icon" onClick={() => setShowSearch(!showSearch)} />
         </div>
         <div className="tooltip" data-tip="Toggle Highlight">
-          <MdColorLens
-            className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
-            onClick={toggleDisableHighlight}
-          />
+          <MdColorLens className="hover_icon" onClick={toggleDisableHighlight} />
         </div>
         <div className="tooltip" data-tip="Download CSV">
           <CSVLink data={data} filename={csvFilename}>
-            <MdCloudDownload className="w-10 h-10 p-2 ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer" />
+            <MdCloudDownload className="hover_icon" />
           </CSVLink>
         </div>
       </div>

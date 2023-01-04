@@ -39,8 +39,14 @@ const BubbleChart = ({
   useEffect(() => {
     const updateWidth = () => setWidth(window.innerWidth);
     window.addEventListener("resize", updateWidth);
+    window.addEventListener("orientationchange", updateWidth);
+    window.addEventListener("load", updateWidth);
     updateWidth();
-    return () => window.removeEventListener("resize", updateWidth);
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+      window.removeEventListener("orientationchange", updateWidth);
+      window.removeEventListener("load", updateWidth);
+    }
   }, []);
 
   const defaultFilters = filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});

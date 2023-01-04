@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { AiOutlineNumber, AiOutlinePercentage } from "react-icons/ai";
+import { GiPodium } from "react-icons/gi";
 import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
 import { BACKEND_URL, RPMapping } from "../../constants";
-import { round } from "../../utils";
+import { classnames, round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
 import { APITeamMatch, APITeamYear } from "../types/api";
 import LineChart from "./Line";
@@ -122,9 +124,29 @@ const YearLineChart = ({
         ]
       : [{ value: "total_epa", label: "EPA" }];
 
+  const TeamSelect = ({ className }) => (
+    <WindowedSelect
+      isMulti
+      instanceId={"team-select"}
+      className={classnames("flex-grow text-sm mr-2", className)}
+      styles={multiSelectStyles((value) => {
+        let index = 0;
+        if (selectedTeams.length > 0) {
+          index = selectedTeams.findIndex((team) => team?.value === value);
+        }
+        return index;
+      })}
+      options={teams}
+      onChange={addTeam}
+      value={selectedTeams}
+      filterOption={createFilter({ ignoreAccents: false })}
+      windowThreshold={100}
+    />
+  );
+
   return (
     <div className="w-full flex flex-col">
-      <div className="w-4/5 mx-auto flex flex-row justify-center">
+      <div className="md:w-4/5 mx-auto flex flex-row justify-center mb-4">
         <Select
           instanceId={"y-axis-select"}
           className="flex-shrink-0 w-36 h-10 text-sm mr-2"
@@ -135,32 +157,23 @@ const YearLineChart = ({
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
         />
-        <WindowedSelect
-          isMulti
-          instanceId={"team-select"}
-          className="flex-grow text-sm mr-2"
-          styles={multiSelectStyles((value) => {
-            let index = 0;
-            if (selectedTeams.length > 0) {
-              index = selectedTeams.findIndex((team) => team?.value === value);
-            }
-            return index;
-          })}
-          options={teams}
-          onChange={addTeam}
-          value={selectedTeams}
-          filterOption={createFilter({ ignoreAccents: false })}
-          windowThreshold={100}
-        />
-        <button className="flex-shrink-0 filter_button w-36" onClick={() => addManyTeams(topTeams)}>
-          Show Top 3 Teams
-        </button>
-        <button
-          className="flex-shrink-0 filter_button w-36"
-          onClick={() => setXAxis(xAxis === "match" ? "season" : "match")}
-        >
-          {xAxis === "match" ? "Show % of Season" : "Show Match Num"}
-        </button>
+        <TeamSelect className="hidden md:inline-block" />
+        <div className="tooltip" data-tip="Show Top 3 Teams">
+          <GiPodium className="hover_icon" onClick={() => addManyTeams(topTeams)} />
+        </div>
+        {xAxis === "match" && (
+          <div className="tooltip" data-tip="Show % of Season">
+            <AiOutlinePercentage className="hover_icon" onClick={() => setXAxis("season")} />
+          </div>
+        )}
+        {xAxis === "season" && (
+          <div className="tooltip" data-tip="Show Match Number">
+            <AiOutlineNumber className="hover_icon" onClick={() => setXAxis("match")} />
+          </div>
+        )}
+      </div>
+      <div className="md:hidden w-4/5 mx-auto flex flex-row justify-center">
+        <TeamSelect className="" />
       </div>
       <div className="flex">
         <LineChart
