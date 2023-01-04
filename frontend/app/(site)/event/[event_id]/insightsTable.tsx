@@ -5,7 +5,7 @@ import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
-import { TeamLink, formatCell } from "../../../../components/Table/shared";
+import { TeamLink, formatCell, formatPercentileCell } from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
 import { RPMapping } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
@@ -55,31 +55,31 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         header: "Name",
       }),
       columnHelper.accessor("rank", {
-        cell: (info) => info.getValue(),
+        cell: (info) => formatCell(info),
         header: "Rank",
       }),
       columnHelper.accessor("total_epa", {
-        cell: (info) => formatCell(data.year.total_stats, info, disableHighlight),
+        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
         header: "EPA",
       }),
       columnHelper.accessor("auto_epa", {
-        cell: (info) => formatCell(data.year.auto_stats, info, disableHighlight),
+        cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
         header: "Auto EPA",
       }),
       columnHelper.accessor("teleop_epa", {
-        cell: (info) => formatCell(data.year.teleop_stats, info, disableHighlight),
+        cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
         header: "Teleop EPA",
       }),
       columnHelper.accessor("endgame_epa", {
-        cell: (info) => formatCell(data.year.endgame_stats, info, disableHighlight),
+        cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
         header: "Endgame EPA",
       }),
       columnHelper.accessor("rp_1_epa", {
-        cell: (info) => formatCell(data.year.rp_1_stats, info, disableHighlight),
+        cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
         header: `${RPMapping[data.year.year][0]} EPA`,
       }),
       columnHelper.accessor("rp_2_epa", {
-        cell: (info) => formatCell(data.year.rp_2_stats, info, disableHighlight),
+        cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
         header: `${RPMapping[data.year.year][1]} EPA`,
       }),
     ],

@@ -62,7 +62,7 @@ const InsightsTable = ({
               <DebounceInput
                 minLength={2}
                 debounceTimeout={300}
-                className="max-w-60 p-2 relative rounded text-sm border-[2px] border-inputBlue focus:outline-none"
+                className="w-36 md:w-60 p-2 relative rounded text-sm border-[2px] border-inputBlue focus:outline-none"
                 placeholder="Search"
                 onChange={(e) => setSearch(e.target.value)}
               />

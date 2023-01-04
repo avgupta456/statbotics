@@ -5,9 +5,10 @@ import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
-import { TeamLink, formatCell } from "../../../components/Table/shared";
+import { TeamLink, formatCell, formatPercentileCell } from "../../../components/Table/shared";
 import { FilterBar, filterData } from "../../../components/filter";
 import { APITeamYear } from "../../../components/types/api";
+import { formatNumber } from "../../../components/utils";
 import { CURR_YEAR, RPMapping } from "../../../constants";
 import { round, truncate } from "../../../utils";
 import { TeamYearData } from "../types";
@@ -59,7 +60,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
   const columns = useMemo<any>(() => {
     const showColumns = [
       columnHelper.accessor("num", {
-        cell: (info) => info.getValue(),
+        cell: (info) => formatNumber(info.getValue()),
         header: "Number",
       }),
       columnHelper.accessor("team", {
@@ -67,45 +68,45 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         header: "Name",
       }),
       columnHelper.accessor("epa_rank", {
-        cell: (info) => info.getValue(),
+        cell: (info) => formatCell(info),
         header: "EPA Rank",
       }),
       year < CURR_YEAR &&
         columnHelper.accessor("norm_epa", {
-          cell: (info) => info.getValue(),
+          cell: (info) => formatCell(info),
           header: "Normalized EPA",
         }),
       columnHelper.accessor("total_epa", {
-        cell: (info) => formatCell(data.year.total_stats, info, disableHighlight),
+        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
         header: "EPA",
       }),
       year >= 2016 &&
         columnHelper.accessor("auto_epa", {
-          cell: (info) => formatCell(data.year.auto_stats, info, disableHighlight),
+          cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
           header: "Auto EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("teleop_epa", {
-          cell: (info) => formatCell(data.year.teleop_stats, info, disableHighlight),
+          cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
           header: "Teleop EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("endgame_epa", {
-          cell: (info) => formatCell(data.year.endgame_stats, info, disableHighlight),
+          cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
           header: "Endgame EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("rp_1_epa", {
-          cell: (info) => formatCell(data.year.rp_1_stats, info, disableHighlight),
+          cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
           header: `${RPMapping[year][0]} EPA`,
         }),
       year >= 2016 &&
         columnHelper.accessor("rp_2_epa", {
-          cell: (info) => formatCell(data.year.rp_2_stats, info, disableHighlight),
+          cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
           header: `${RPMapping[year][1]} EPA`,
         }),
       columnHelper.accessor("record", {
-        cell: (info) => info.getValue(),
+        cell: (info) => formatCell(info),
         header: "Record",
       }),
     ].filter((x) => x);

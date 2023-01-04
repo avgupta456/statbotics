@@ -23,6 +23,7 @@ export type Component = {
   blueActual: number | string;
 };
 
+// TODO: consolidate with Table/shared.tsx
 const formatCell = (
   stats: APIYear,
   info: CellContext<Component, number | string>,

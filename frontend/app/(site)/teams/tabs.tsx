@@ -44,7 +44,7 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
 
   return (
     <div className="w-full flex-grow flex flex-col">
-      <div className="w-full flex flex-row">
+      <div className="w-full flex flex-row text-sm md:text-base">
         {["Insights", "Bubble Chart", "Figures"].map((_tab) => (
           <div
             key={`tab-${_tab}`}
