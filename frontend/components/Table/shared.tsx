@@ -13,9 +13,9 @@ export const TeamLink = ({ team, num }: { team: string | number; num: number }) 
     return formatNumber(num);
   } else {
     return (
-      <div className="w-40 h-full flex justify-center items-center text-sm md:text-base">
+      <div className="w-32 h-full flex justify-center items-center text-sm md:text-base">
         <Link href={`/team/${num}`} className="text_link">
-          {truncate(team.toString(), 25)}
+          {truncate(team.toString(), 30)}
         </Link>
       </div>
     );

@@ -14,7 +14,7 @@ const Page = () => {
   const data: TeamYearData | undefined = teamYearDataDict[year];
 
   return (
-    <div className="w-full h-full flex-grow flex flex-col py-4 md:py-8 px-4">
+    <div className="w-full h-full flex-grow flex flex-col pt-4 md:pt-8 md:pb-4 md:px-4">
       <div className="w-full h-full flex-grow flex flex-col">
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <Select

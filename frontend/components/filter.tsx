@@ -58,7 +58,7 @@ export const FilterBar = ({
 
   return (
     <div className="flex flex-row items-center justify-center">
-      <div className="tooltip" data-id="Clear filters">
+      <div className="tooltip" data-tip="Clear filters">
         <BiShow
           className="w-10 h-10 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
           onClick={() => setFilters(defaultFilters)}
