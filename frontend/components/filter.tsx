@@ -1,4 +1,5 @@
 import React from "react";
+import { BiShow } from "react-icons/bi";
 import Select from "react-select";
 
 import {
@@ -56,14 +57,13 @@ export const FilterBar = ({
   };
 
   return (
-    <div className="flex flex-row items-end justify-center">
-      <button
-        id="clear-filters"
-        className="filter_button w-32"
-        onClick={() => setFilters(defaultFilters)}
-      >
-        Clear Filters
-      </button>
+    <div className="flex flex-row items-center justify-center">
+      <div className="tooltip" data-id="Clear filters">
+        <BiShow
+          className="w-10 h-10 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer"
+          onClick={() => setFilters(defaultFilters)}
+        />
+      </div>
       {[
         { key: "year", label: "Year", options: yearOptions },
         { key: "week", label: "Week", options: weekOptions },
@@ -80,25 +80,24 @@ export const FilterBar = ({
             currLabel = `${filter.label}`;
           }
           return (
-            <div key={filter.key} className="flex flex-col items-center justify-center">
-              <Select
-                instanceId={"filter-select" + filter.key}
-                className={"w-36 h-10 text-sm mr-2 text-gray-800"}
-                styles={{
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: placeholder ? "#a0aec0" : "#2d3748",
-                  }),
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-                options={filter.options.map((option) => ({
-                  value: option.value,
-                  label: option.label,
-                }))}
-                onChange={(e) => smartSetFilters(filter.key, e?.value)}
-                value={{ value: currValue, label: currLabel }}
-              />
-            </div>
+            <Select
+              key={filter.key}
+              instanceId={"filter-select" + filter.key}
+              className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 text-gray-800"}
+              styles={{
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: placeholder ? "#a0aec0" : "#2d3748",
+                }),
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              options={filter.options.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+              onChange={(e) => smartSetFilters(filter.key, e?.value)}
+              value={{ value: currValue, label: currLabel }}
+            />
           );
         }
       })}
