@@ -17,7 +17,7 @@ const Summary = ({ data }: { data: Data }) => {
   return (
     <div className="w-full flex flex-col items-center">
       <p className="text-3xl lg:text-3xl mt-8 mb-4">Summary</p>
-      <div className="w-full flex flex-row justify-center gap-16">
+      <div className="w-full flex flex-col md:flex-row justify-center gap-4 md:gap-16">
         <div className="flex flex-col items-center">
           <div className="flex text-3xl">
             <p className={classnames("data text-red-500", redPred > bluePred ? "font-bold" : "")}>

@@ -2,12 +2,15 @@
 
 import React, { useMemo, useState } from "react";
 
+import Link from "next/link";
+
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import { classnames } from "../../utils";
+import { classnames, truncate } from "../../utils";
 import { APIYear, PercentileStats } from "../types/api";
+import { formatNumber } from "../utils";
 import Table from "./Table";
-import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
+import { CONDITIONAL_COLORS, getColor, getRPColor } from "./shared";
 
 export type Component = {
   name: string;
@@ -23,7 +26,24 @@ export type Component = {
   blueActual: number | string;
 };
 
-// TODO: consolidate with Table/shared.tsx
+const columnHelper = createColumnHelper<Component>();
+
+// Copied from ./shared.tsx with minor changes
+
+const TeamLink = ({ team, num }: { team: string | number; num: number }) => {
+  if (num > 100000) {
+    return formatNumber(num);
+  } else {
+    return (
+      <div className="w-24 h-full flex justify-center items-center">
+        <Link href={`/team/${num}`} className="text_link">
+          {truncate(team.toString(), 30)}
+        </Link>
+      </div>
+    );
+  }
+};
+
 const formatCell = (
   stats: APIYear,
   info: CellContext<Component, number | string>,
@@ -57,15 +77,11 @@ const formatCell = (
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:p-1 rounded lg:rounded-lg")}>
-        {info.getValue()}
-      </div>
+    <div className="w-22 h-full flex justify-center items-center">
+      <div className={classnames(color, "data w-12 px-2 py-1 rounded-lg")}>{info.getValue()}</div>
     </div>
   );
 };
-
-const columnHelper = createColumnHelper<Component>();
 
 const MatchBreakdown = ({
   data,
