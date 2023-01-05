@@ -15,7 +15,7 @@ const TabsSection = ({
 
   return (
     <div className="w-full flex-grow flex flex-col">
-      <div className="w-full flex flex-row text-sm md:text-base">
+      <div className="w-full flex flex-row text-sm md:text-base overflow-x-scroll md:overflow-x-auto">
         {tabs.map((tab, index) => (
           <div
             key={`tab-${tab.title}`}
@@ -23,7 +23,7 @@ const TabsSection = ({
           >
             <button
               className={classnames(
-                "border-t-[1px] border-x-[1px] py-2 px-4 rounded-t",
+                "w-28 border-t-[1px] border-x-[1px] py-2 rounded-t",
                 activeTab === index
                   ? "text-gray-800 border-gray-200"
                   : "text-blue-500 hover:text-blue-600 border-white hover:border-gray-200"

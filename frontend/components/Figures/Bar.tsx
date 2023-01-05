@@ -4,53 +4,59 @@ import React from "react";
 
 import { ResponsiveBar } from "@nivo/bar";
 
-const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
+const DelayedTooltip = ({ id, data, value, color }) => {
+  const hashId = `bar-tooltip-${data["team"]}-${id}`;
+  setTimeout(() => {
+    const tooltip = document.getElementById(hashId);
+    if (tooltip) {
+      tooltip.classList.remove("invisible");
+    }
+  }, 200);
+  return (
+    <div id={hashId} className="invisible bg-white rounded shadow p-2" style={{ color }}>
+      <div className="text-sm font-bold">{`Team ${data["team"]}`}</div>
+      <div className="text-sm">{`${id}: ${value}`}</div>
+    </div>
+  );
+};
+
+const sharedConfig: any = {
+  motionConfig: "gentle",
+  indexBy: "team",
+  padding: 0.1,
+  tooltip: DelayedTooltip,
+  groupMode: "stacked",
+  colors: { scheme: "category10" },
+  borderColor: { from: "color", modifiers: [["darker", 1.6]] },
+  axisTop: null,
+  axisRight: null,
+  axisBottom: {
+    tickSize: 5,
+    tickPadding: 5,
+    tickRotation: 0,
+    legend: "Team",
+    legendPosition: "middle",
+    legendOffset: 32,
+  },
+  axisLeft: {
+    tickSize: 5,
+    tickPadding: 5,
+    tickRotation: 0,
+    legend: "EPA",
+    legendPosition: "middle",
+    legendOffset: -40,
+  },
+  enableLabel: false,
+};
+
+export const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveBar
-        motionConfig={"gentle"}
+        {...sharedConfig}
         data={data}
         keys={keys}
-        indexBy="team"
         margin={{ top: 20, right: 130, bottom: 50, left: 60 }}
-        padding={0.1}
-        groupMode="stacked"
-        colors={{ scheme: "category10" }}
-        tooltip={({ id, data, value, color }) => {
-          const hashId = `bar-tooltip-${data["team"]}-${id}`;
-          setTimeout(() => {
-            const tooltip = document.getElementById(hashId);
-            if (tooltip) {
-              tooltip.classList.remove("invisible");
-            }
-          }, 200);
-          return (
-            <div id={hashId} className="invisible bg-white rounded shadow p-2" style={{ color }}>
-              <div className="text-sm font-bold">{`Team ${data["team"]}`}</div>
-              <div className="text-sm">{`${id}: ${value}`}</div>
-            </div>
-          );
-        }}
-        borderColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: "Team",
-          legendPosition: "middle",
-          legendOffset: 32,
-        }}
-        axisLeft={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: "EPA",
-          legendPosition: "middle",
-          legendOffset: -40,
-        }}
-        enableLabel={false}
         legends={[
           {
             dataFrom: "keys",
@@ -80,4 +86,15 @@ const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
   );
 };
 
-export default BarChart;
+export const BarChartNoLegend = ({ data, keys }: { data: any[]; keys: any[] }) => {
+  return (
+    <div className="w-full h-[500px] flex">
+      <ResponsiveBar
+        {...sharedConfig}
+        data={data}
+        keys={keys}
+        margin={{ top: 20, right: 0, bottom: 50, left: 60 }}
+      />
+    </div>
+  );
+};

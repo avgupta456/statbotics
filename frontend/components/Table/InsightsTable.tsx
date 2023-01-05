@@ -26,7 +26,7 @@ const InsightsTable = ({
   rightCol: string;
   searchCols: string[];
   csvFilename: string;
-  toggleDisableHighlight: () => void;
+  toggleDisableHighlight?: () => void;
 }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
@@ -81,9 +81,11 @@ const InsightsTable = ({
         <div className="tooltip" data-tip="Search">
           <MdSearch className="hover_icon ml-2" onClick={() => setShowSearch(!showSearch)} />
         </div>
-        <div className="tooltip" data-tip="Toggle Highlight">
-          <MdColorLens className="hover_icon ml-2" onClick={toggleDisableHighlight} />
-        </div>
+        {toggleDisableHighlight && (
+          <div className="tooltip" data-tip="Toggle Highlight">
+            <MdColorLens className="hover_icon ml-2" onClick={toggleDisableHighlight} />
+          </div>
+        )}
         <div className="tooltip" data-tip="Download CSV">
           <CSVLink data={data} filename={csvFilename}>
             <MdCloudDownload className="hover_icon ml-2" />

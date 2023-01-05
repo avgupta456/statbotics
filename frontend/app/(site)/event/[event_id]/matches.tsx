@@ -64,12 +64,14 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
           a result, prediction accuracy may be lower than expected.
         </div>
       )}
-      <MatchTable
-        year={data.event.year}
-        teamNum={null}
-        matches={matches}
-        foulRate={data.year.foul_rate}
-      />
+      <div className="w-full overflow-x-scroll">
+        <MatchTable
+          year={data.event.year}
+          teamNum={null}
+          matches={matches}
+          foulRate={data.year.foul_rate}
+        />
+      </div>
     </div>
   );
 };

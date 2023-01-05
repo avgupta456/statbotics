@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Range } from "react-range";
 
-import SimulationTable from "../../../../components/Table/SimulationTable";
+import { createColumnHelper } from "@tanstack/react-table";
+
+import InsightsTable from "../../../../components/Table/InsightsTable";
+import { TeamLink, formatCell } from "../../../../components/Table/shared";
+import { formatNumber } from "../../../../components/utils";
 import { Data } from "./types";
 
 type SimResults = {
@@ -12,7 +16,20 @@ type SimResults = {
   simRPs: Record<number, number>;
 };
 
-const SimulationSection = ({ data }: { data: Data }) => {
+type SimulationRow = {
+  rank: number;
+  num: number;
+  team: string;
+  rankMean: number;
+  rank5: number;
+  rank50: number;
+  rank95: number;
+  RPMean: number;
+};
+
+const columnHelper = createColumnHelper<SimulationRow>();
+
+const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const [index, setIndex] = useState(0);
   const [finalIndex, setFinalIndex] = useState(0);
 
@@ -95,6 +112,44 @@ const SimulationSection = ({ data }: { data: Data }) => {
 
   const qualsN = data.matches.filter((m) => !m.playoff).length;
 
+  const columns = useMemo<any>(
+    () => [
+      columnHelper.accessor("rank", {
+        cell: (info) => formatCell(info),
+        header: "Predicted Rank",
+      }),
+      columnHelper.accessor("num", {
+        cell: (info) => formatNumber(info.getValue()),
+        header: "Number",
+      }),
+      columnHelper.accessor("team", {
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        header: "Team",
+      }),
+      columnHelper.accessor("rankMean", {
+        cell: (info) => formatCell(info),
+        header: "Mean Rank",
+      }),
+      columnHelper.accessor("rank5", {
+        cell: (info) => formatCell(info),
+        header: "5% Rank",
+      }),
+      columnHelper.accessor("rank50", {
+        cell: (info) => formatCell(info),
+        header: "Median Rank",
+      }),
+      columnHelper.accessor("rank95", {
+        cell: (info) => formatCell(info),
+        header: "95% Rank",
+      }),
+      columnHelper.accessor("RPMean", {
+        cell: (info) => formatCell(info),
+        header: "Mean RPs",
+      }),
+    ],
+    []
+  );
+
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="w-full text-2xl font-bold mb-4">Simulation</div>
@@ -109,7 +164,7 @@ const SimulationSection = ({ data }: { data: Data }) => {
           Simulate from:{" "}
           <strong>{index === 0 ? "Schedule Release" : "Qualification Match " + index}</strong>
         </div>
-        <div className="px-16">
+        <div className="px-4 md:px-16">
           <Range
             step={1}
             min={0}
@@ -123,7 +178,7 @@ const SimulationSection = ({ data }: { data: Data }) => {
               <div
                 {...props}
                 key="slider-track"
-                className="w-full h-[2px] pr-2 my-4 bg-gray-200 rounded-md"
+                className="w-full h-[5px] pr-2 my-4 bg-gray-200 rounded-md"
               >
                 {children}
               </div>
@@ -135,13 +190,20 @@ const SimulationSection = ({ data }: { data: Data }) => {
               <div
                 {...props}
                 key={`slider-mark-${props.key}`}
-                className="w-[2px] h-[2px] bg-blue-500 rounded-full"
+                className="w-[2px] h-[5px] bg-blue-500 rounded-full"
               />
             )}
           />
         </div>
       </div>
-      <SimulationTable data={simulationData} />
+      <InsightsTable
+        data={simulationData}
+        columns={columns}
+        leftCol="rank"
+        rightCol="RPMean"
+        searchCols={["num", "team"]}
+        csvFilename={`${eventId}_simulation.csv`}
+      />
     </div>
   );
 };

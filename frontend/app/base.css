@@ -21,13 +21,8 @@
   display: contents;
 }
 
-@import url("https://fonts.googleapis.com/css?family=Josefin+Sans");
 @import url("https://fonts.googleapis.com/css?family=Roboto");
 
 body {
   font-family: "Roboto", sans-serif;
-}
-
-.data {
-  font-family: "Josefin Sans", cursive;
 }
