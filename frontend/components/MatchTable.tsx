@@ -76,7 +76,8 @@ const MatchTable = ({
                 displayMatch = `${compLevelShortNames[compLevel]} ${match.set_number}-${match.match_number}`;
               }
 
-              const alliance = match.red.includes(teamNum) ? "red" : "blue";
+              let alliance = match.red.includes(teamNum) ? "red" : "";
+              alliance = match.blue.includes(teamNum) ? "blue" : alliance;
 
               const _winProb = round(match.epa_win_prob * 100, 0);
               const winProb = _winProb > 50 ? _winProb : 100 - _winProb;

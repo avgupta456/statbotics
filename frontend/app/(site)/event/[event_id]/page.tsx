@@ -2,6 +2,7 @@ import React from "react";
 
 import { BACKEND_URL } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
+import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 import { Data } from "./types";
 
@@ -22,7 +23,7 @@ async function Page({ params }: { params: { event_id: string } }) {
   const data: Data = await getData(event_id);
 
   if (!data) {
-    return <div>Event not found</div>;
+    return <NotFound type="Event" />;
   }
 
   let truncatedEventName = truncate(data.event.name, 30);
