@@ -1,22 +1,28 @@
-.filter_button {
-  @apply border-2 border-gray-300 bg-gray-200 hover:bg-gray-300 cursor-pointer h-10 px-2 mr-2 rounded text-sm flex items-center justify-center;
-}
-
 .text_link {
   @apply text-blue-500 hover:text-blue-600 cursor-pointer underline;
+}
+
+.hover_icon {
+  @apply w-10 h-10 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer;
+}
+
+/* For Chrome */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 [data-nextjs-scroll-focus-boundary] {
   display: contents;
 }
 
-@import url("https://fonts.googleapis.com/css?family=Josefin+Sans");
 @import url("https://fonts.googleapis.com/css?family=Roboto");
 
 body {
   font-family: "Roboto", sans-serif;
-}
-
-.data {
-  font-family: "Josefin Sans", cursive;
 }

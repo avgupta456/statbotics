@@ -117,6 +117,7 @@ export type APITeamEvent = {
   ties: number;
   count: number;
   rank: number;
+  offseason: boolean;
 };
 
 export type APIMatch = {

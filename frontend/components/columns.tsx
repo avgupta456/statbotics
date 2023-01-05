@@ -1,9 +1,10 @@
 import React from "react";
 import Select from "react-select";
 
+import { RPMapping } from "../constants";
 import { round } from "../utils";
 
-export const columnOptions = [
+export const getColumnOptions = (year: number) => [
   { label: "Constant", accessor: (datum) => 1 },
   { label: "Total EPA", accessor: (datum) => round(datum.total_epa) },
   { label: "Norm EPA", accessor: (datum) => round(datum.norm_epa, 0) },
@@ -14,8 +15,8 @@ export const columnOptions = [
     label: "Auto + Endgame",
     accessor: (datum) => round(datum.auto_epa + datum.endgame_epa),
   },
-  { label: "RP 1", accessor: (datum) => round(datum.rp_1_epa, 3) },
-  { label: "RP 2", accessor: (datum) => round(datum.rp_2_epa, 3) },
+  { label: `${RPMapping[year][0]}`, accessor: (datum) => round(datum.rp_1_epa, 3) },
+  { label: `${RPMapping[year][1]}`, accessor: (datum) => round(datum.rp_2_epa, 3) },
 
   { label: "Wins", accessor: (datum) => datum.wins },
   {
@@ -28,16 +29,19 @@ export const columnOptions = [
   { label: "RPs / Match", accessor: (datum) => round(datum.rps / datum.matches, 3) },
 ];
 
-export const columnOptionsDict = columnOptions.reduce((acc, curr) => {
-  acc[curr.label] = curr;
-  return acc;
-}, {});
+export const getColumnOptionsDict = (year: number) =>
+  getColumnOptions(year).reduce((acc, curr) => {
+    acc[curr.label] = curr;
+    return acc;
+  }, {});
 
 export const ColumnBar = ({
+  year,
   currColumnOptions,
   columns,
   setColumns,
 }: {
+  year: number;
   currColumnOptions: string[];
   columns: any;
   setColumns: any;
@@ -56,11 +60,11 @@ export const ColumnBar = ({
           <p className="w-full pl-1 text-sm text-gray-500 capitalize">{key}-axis</p>
           <Select
             instanceId={"column-select-" + key}
-            className="w-36 h-10 text-sm mr-2"
+            className="w-28 md:w-36 h-10 text-sm mr-2"
             styles={{
               menu: (provided) => ({ ...provided, zIndex: 9999 }),
             }}
-            options={columnOptions
+            options={getColumnOptions(year)
               .filter(
                 (option) =>
                   currColumnOptions.includes(option.label) ||

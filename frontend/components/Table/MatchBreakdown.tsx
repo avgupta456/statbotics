@@ -2,12 +2,15 @@
 
 import React, { useMemo, useState } from "react";
 
+import Link from "next/link";
+
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import { classnames } from "../../utils";
+import { classnames, truncate } from "../../utils";
 import { APIYear, PercentileStats } from "../types/api";
+import { formatNumber } from "../utils";
 import Table from "./Table";
-import { CONDITIONAL_COLORS, TeamLink, getColor, getRPColor } from "./shared";
+import { CONDITIONAL_COLORS, getColor, getRPColor } from "./shared";
 
 export type Component = {
   name: string;
@@ -21,6 +24,24 @@ export type Component = {
   blue3: number | string;
   blueTotal: number | string;
   blueActual: number | string;
+};
+
+const columnHelper = createColumnHelper<Component>();
+
+// Copied from ./shared.tsx with minor changes
+
+const TeamLink = ({ team, num }: { team: string | number; num: number }) => {
+  if (num > 100000) {
+    return formatNumber(num);
+  } else {
+    return (
+      <div className="w-24 h-full flex justify-center items-center">
+        <Link href={`/team/${num}`} className="text_link">
+          {truncate(team.toString(), 30)}
+        </Link>
+      </div>
+    );
+  }
 };
 
 const formatCell = (
@@ -56,15 +77,11 @@ const formatCell = (
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className={classnames(color, "data w-6 lg:w-12 p-0.5 lg:p-1 rounded lg:rounded-lg")}>
-        {info.getValue()}
-      </div>
+    <div className="w-22 h-full flex justify-center items-center">
+      <div className={classnames(color, "data w-12 px-2 py-1 rounded-lg")}>{info.getValue()}</div>
     </div>
   );
 };
-
-const columnHelper = createColumnHelper<Component>();
 
 const MatchBreakdown = ({
   data,
@@ -140,7 +157,7 @@ const MatchBreakdown = ({
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "w-24 py-2",
+      "w-24 p-2",
       header.id.includes("red") ? "bg-red-200" : "",
       header.id.includes("blue") ? "bg-blue-200" : "",
       header.id.includes("name") ? "bg-gray-100" : "",
@@ -162,14 +179,16 @@ const MatchBreakdown = ({
       cell.row.original.name === "Total" && cell.column.id === "blue1" ? "rounded-br-lg" : ""
     );
 
-  return Table(
-    data,
-    columns,
-    false,
-    headerClassName,
-    headerCellClassName,
-    rowClassName,
-    cellClassName
+  return (
+    <Table
+      data={data}
+      columns={columns}
+      paginate={false}
+      headerClassName={headerClassName}
+      headerCellClassName={headerCellClassName}
+      rowClassName={rowClassName}
+      cellClassName={cellClassName}
+    />
   );
 };
 

@@ -15,15 +15,23 @@ import {
 
 import { classnames } from "../../utils";
 
-const Table = (
-  data: any[],
-  columns: ColumnDef<any, any>[],
-  paginate: boolean,
-  headerClassName: () => string,
-  headerCellClassName: (header: any) => string,
-  rowClassName: (row: any) => string,
-  cellClassName: (cell: any) => string
-) => {
+const Table = ({
+  data,
+  columns,
+  paginate,
+  headerClassName,
+  headerCellClassName,
+  rowClassName,
+  cellClassName,
+}: {
+  data: any[];
+  columns: ColumnDef<any, any>[];
+  paginate: boolean;
+  headerClassName: () => string;
+  headerCellClassName: (header: any) => string;
+  rowClassName: (row: any) => string;
+  cellClassName: (cell: any) => string;
+}) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
@@ -56,7 +64,7 @@ const Table = (
   ];
 
   return (
-    <div className="p-2 text-sm">
+    <div className="text-sm">
       <table>
         <thead className={headerClassName()}>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -101,13 +109,13 @@ const Table = (
         </tbody>
       </table>
       {paginate && (
-        <div className="w-full h-10 flex items-center justify-center gap-4 mt-4">
+        <div className="w-full h-10 flex items-center justify-center gap-2 mt-4 text-xs">
           <div className="flex gap-2">
-            <div className="flex items-center">Rows per page:</div>
+            <div className="flex items-center">Rows / Page:</div>
             <Select
               instanceId="paginate-select"
               menuPlacement="top"
-              className="w-20 mr-2"
+              className="w-20"
               styles={{
                 menu: (provided) => ({ ...provided, zIndex: 9999 }),
               }}

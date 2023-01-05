@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { TbArrowsJoin, TbArrowsSplit } from "react-icons/tb";
 import Select from "react-select";
 
+import { RPMapping } from "../../constants";
 import { APITeamMatch } from "../types/api";
 import LineChart from "./Line";
 
@@ -62,17 +64,13 @@ const TeamLineChart = ({
     year >= 2016
       ? [
           { value: "total_epa", label: "Total EPA" },
-          { value: "norm_epa", label: "Norm EPA" },
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: "RP 1 EPA" },
-          { value: "rp_2_epa", label: "RP 2 EPA" },
+          { value: "rp_1_epa", label: `${RPMapping[year][0]} EPA` },
+          { value: "rp_2_epa", label: `${RPMapping[year][1]} EPA` },
         ]
-      : [
-          { value: "total_epa", label: "EPA" },
-          { value: "norm_epa", label: "Norm EPA" },
-        ];
+      : [{ value: "total_epa", label: "EPA" }];
 
   return (
     <div className="w-full flex flex-col">
@@ -87,12 +85,16 @@ const TeamLineChart = ({
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
         />
-        <button
-          className="flex-shrink-0 filter_button w-36"
-          onClick={() => setSplitEvents(!splitEvents)}
-        >
-          {splitEvents ? "Combine Events" : "Split Events"}
-        </button>
+        {splitEvents && (
+          <div className="tooltip" data-tip="Combine Events">
+            <TbArrowsJoin className="hover_icon" onClick={() => setSplitEvents(false)} />
+          </div>
+        )}
+        {!splitEvents && (
+          <div className="tooltip" data-tip="Split Events">
+            <TbArrowsSplit className="hover_icon" onClick={() => setSplitEvents(true)} />
+          </div>
+        )}
       </div>
       <div className="flex">
         <LineChart

@@ -15,6 +15,7 @@ const defaultFilters = {
   country: "",
   state: "",
   district: "",
+  search: "",
 };
 
 const EventCard = ({ event }: { event: APIEvent }) => {
@@ -39,10 +40,11 @@ const Summary = ({ data }: { data: EventData }) => {
   // Currently always set to true --> No offseason events shown
   const [filterOffseason, setFilterOffseason] = useState(true);
   const [filters, setFilters] = useState(defaultFilters);
-  const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState("");
 
-  const cutoffN = 8;
+  const search = filters?.["search"] || "";
+
+  const cutoffN = 4;
 
   const filteredData: APIEvent[] | undefined = filterData(data, filters).filter(
     (event: APIEvent) =>
@@ -72,85 +74,42 @@ const Summary = ({ data }: { data: EventData }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      <div className="flex items-end justify-center mb-4">
+      <div className="flex justify-center">
         <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
-        <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-        <DebounceInput
-          minLength={2}
-          debounceTimeout={300}
-          className="w-40 p-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
-          placeholder="Search"
-          onChange={(e) => setSearch(e.target.value)}
-        />
       </div>
-      {ongoingN > 0 && (
-        <>
-          <div className="w-full flex mt-4 mb-4 items-center">
-            <div className="text-2xl font-bold">{`Ongoing Events (${ongoingN})`}</div>
-            {ongoingN > cutoffN && (
-              <button
-                className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
-                onClick={() => setExpanded(expanded === "ongoing" ? "" : "ongoing")}
-              >
-                {expanded === "ongoing" ? "Show Less" : "Show More"}
-              </button>
-            )}
-          </div>
-          <div className="w-full flex flex-wrap justify-center items-center">
-            {ongoingEvents.map((event) => (
-              <div key={event.key} className="w-1/4">
-                <EventCard event={event} />
-              </div>
-            ))}
-          </div>
-          <div className="w-full h-1 bg-gray-200 my-8" />
-        </>
-      )}
-      {upcomingN > 0 && (
-        <>
-          <div className="w-full flex mt-4 mb-4 items-center">
-            <div className="text-2xl font-bold">{`Upcoming Events (${upcomingN})`}</div>
-            {upcomingN > cutoffN && (
-              <button
-                className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
-                onClick={() => setExpanded(expanded === "upcoming" ? "" : "upcoming")}
-              >
-                {expanded === "upcoming" ? "Show Less" : "Show More"}
-              </button>
-            )}
-          </div>
-          <div className="w-full flex flex-wrap justify-center items-center">
-            {upcomingEvents.map((event) => (
-              <div key={event.key} className="w-1/4">
-                <EventCard event={event} />
-              </div>
-            ))}
-          </div>
-          <div className="w-full h-1 bg-gray-200 my-8" />
-        </>
-      )}
-      {completedN > 0 && (
-        <>
-          <div className="w-full flex mt-4 mb-4 items-center">
-            <div className="text-2xl font-bold">{`Completed Events (${completedN})`}</div>
-            {completedN > cutoffN && (
-              <button
-                className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
-                onClick={() => setExpanded(expanded === "completed" ? "" : "completed")}
-              >
-                {expanded === "completed" ? "Show Less" : "Show More"}
-              </button>
-            )}
-          </div>
-          <div className="w-full flex flex-wrap justify-center items-center">
-            {completedEvents.map((event) => (
-              <div key={event.key} className="w-1/4">
-                <EventCard event={event} />
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+      {[
+        { count: ongoingN, events: ongoingEvents, name: "Ongoing" },
+        { count: upcomingN, events: upcomingEvents, name: "Upcoming" },
+        { count: completedN, events: completedEvents, name: "Completed" },
+      ].map(({ count, events, name }) => {
+        if (count === 0) {
+          return null;
+        }
+        return (
+          <>
+            <div className="w-full flex mt-4 mb-4 items-center">
+              <div className="text-xl md:text-2xl font-bold">{`${name} Events (${count})`}</div>
+              {count > cutoffN && (
+                <button
+                  className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
+                  onClick={() =>
+                    setExpanded(expanded === name.toLowerCase() ? "" : name.toLowerCase())
+                  }
+                >
+                  {expanded === name.toLowerCase() ? "Show Less" : "Show More"}
+                </button>
+              )}
+            </div>
+            <div className="w-full flex flex-wrap justify-center items-center mb-4">
+              {events.map((event) => (
+                <div key={event.key} className="w-full md:w-1/2 lg:w-1/4">
+                  <EventCard event={event} />
+                </div>
+              ))}
+            </div>
+          </>
+        );
+      })}
       {N === 0 && (
         <div className="w-full h-full flex justify-center items-center">
           <div>No Events Found</div>

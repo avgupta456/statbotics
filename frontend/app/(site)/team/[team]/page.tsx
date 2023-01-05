@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Select from "react-select";
 
-import { yearOptions } from "../../../../components/filterConstants";
-import { APITeamMatch } from "../../../../components/types/api";
 import { BACKEND_URL } from "../../../../constants";
 import { round } from "../../../../utils";
+import PageLayout from "../../shared/layout";
 import Tabs from "./tabs";
 import { TeamData, TeamYearData } from "./types";
 
@@ -86,35 +84,16 @@ const Page = ({ params }: { params: { team: number } }) => {
   const rookieYear = teamData?.rookie_year ?? 2002;
 
   return (
-    <div className="w-full h-full p-4">
-      <div className="container mx-auto">
-        <div className="w-full flex flex-row items-end justify-center mb-4">
-          <Select
-            instanceId={"year-select"}
-            className="w-28"
-            styles={{
-              menu: (provided) => ({ ...provided, zIndex: 9999 }),
-            }}
-            options={yearOptions.filter((y) => parseInt(y.value) >= rookieYear)}
-            onChange={(e) => setYear((e?.value ?? 2023) as number)}
-            value={{
-              value: year.toString(),
-              label: year.toString(),
-            }}
-          />
-          <p className="text-2xl lg:text-3xl ml-3">
-            Team {team} - {teamData?.team}
-          </p>
-        </div>
-        <Tabs
-          teamNum={team}
-          year={year}
-          teamData={teamData}
-          teamYearData={teamYearData}
-          fallbackTeamYearData={fallbackTeamYearData}
-        />
-      </div>
-    </div>
+    <PageLayout title={`Team ${team}`} year={year} setYear={setYear} minYear={rookieYear}>
+      <div className="w-full text-center text-2xl lg:text-3xl mb-4">{teamData?.team}</div>
+      <Tabs
+        teamNum={team}
+        year={year}
+        teamData={teamData}
+        teamYearData={teamYearData}
+        fallbackTeamYearData={fallbackTeamYearData}
+      />
+    </PageLayout>
   );
 };
 

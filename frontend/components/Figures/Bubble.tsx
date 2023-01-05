@@ -4,9 +4,9 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HC_more from "highcharts/highcharts-more";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { ColumnBar, columnOptionsDict } from "../columns";
+import { ColumnBar, getColumnOptionsDict } from "../columns";
 import { FilterBar, filterData } from "../filter";
 import { formatNumber } from "../utils";
 
@@ -23,14 +23,32 @@ type ScatterData = {
 };
 
 const BubbleChart = ({
+  year,
   data,
   columnOptions,
   filterOptions,
 }: {
+  year: number;
   data: any[];
   columnOptions: string[];
   filterOptions: string[];
 }) => {
+  const [width, setWidth] = useState(0);
+
+  // update width on resize
+  useEffect(() => {
+    const updateWidth = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", updateWidth);
+    window.addEventListener("orientationchange", updateWidth);
+    window.addEventListener("load", updateWidth);
+    updateWidth();
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+      window.removeEventListener("orientationchange", updateWidth);
+      window.removeEventListener("load", updateWidth);
+    }
+  }, []);
+
   const defaultFilters = filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
   const [filters, setFilters] = useState(defaultFilters);
   const [columns, setColumns] = useState({
@@ -41,6 +59,7 @@ const BubbleChart = ({
 
   const filteredData: any[] = filterData(data, filters);
 
+  const columnOptionsDict = getColumnOptionsDict(year);
   const xAxis = columnOptionsDict[columns.x];
   const yAxis = columnOptionsDict[columns.y];
   const zAxis = columnOptionsDict[columns.z];
@@ -101,7 +120,8 @@ const BubbleChart = ({
     },
     chart: {
       reflow: true,
-      width: 1000,
+      // responsive width
+      width: 0.9 * width,
       height: (9 / 16) * 100 + "%", // 16:9 ratio
       backgroundColor: "transparent",
       type: "bubble",
@@ -159,14 +179,20 @@ const BubbleChart = ({
 
   return (
     <div className="w-full">
-      <div className="flex items-end justify-center mb-2">
-        <ColumnBar currColumnOptions={columnOptions} columns={columns} setColumns={setColumns} />
+      <div className="w-full flex flex-wrap items-end justify-center gap-4">
         {filterOptions.length > 0 && (
-          <>
-            <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
+          <div className="flex items-center justify-center mb-4">
             <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
-          </>
+          </div>
         )}
+        <div className="flex items-center justify-center mb-4">
+          <ColumnBar
+            year={year}
+            currColumnOptions={columnOptions}
+            columns={columns}
+            setColumns={setColumns}
+          />
+        </div>
       </div>
       <div className="w-full flex justify-center">
         <HighchartsReact highcharts={Highcharts} options={options} />

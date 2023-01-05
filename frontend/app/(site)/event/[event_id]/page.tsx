@@ -28,12 +28,12 @@ async function Page({ params }: { params: { event_id: string } }) {
   let truncatedEventName = truncate(data.event.name, 30);
 
   return (
-    <div className="w-full h-full flex-grow flex flex-col p-4">
-      <div className="h-full container mx-auto flex-grow flex flex-col">
+    <div className="w-full h-full flex-grow flex flex-col pt-4 md:pt-8 md:pb-4 md:px-4">
+      <div className="h-full h-full flex-grow flex flex-col">
         <div className="w-full flex flex-row items-end justify-center mb-4">
           <p className="text-2xl lg:text-3xl">{truncatedEventName}</p>
         </div>
-        <Tabs eventId={event_id} data={data} />
+        <Tabs eventId={event_id} year={data.year.year} data={data} />
       </div>
     </div>
   );

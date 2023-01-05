@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { GiHamburgerMenu as HamburgerIcon } from "react-icons/gi";
 import WindowedSelect, { createFilter } from "react-windowed-select";
 
 import Image from "next/image";
@@ -9,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 import { Option } from "../components/multiSelect";
 import { BACKEND_URL } from "../constants";
-import { round } from "../utils";
+import { classnames, round } from "../utils";
 import { getWithExpiry, setWithExpiry } from "./localStorage";
 
 const loaderProp = ({ src }) => {
@@ -38,6 +39,8 @@ async function getData() {
 const Navbar = () => {
   const router = useRouter();
 
+  const [toggle, setToggle] = useState(false);
+
   const [teams, setTeams] = React.useState([]);
 
   useEffect(() => {
@@ -49,49 +52,79 @@ const Navbar = () => {
     label: `${team.num} | ${team.team}`,
   }));
 
+  const TeamSelect = () => {
+    return (
+      <WindowedSelect
+        instanceId={"team-select"}
+        className="w-60 text-xs mr-2"
+        styles={{
+          menu: (provided) => ({ ...provided, zIndex: 9999 }),
+        }}
+        options={teamOptions}
+        onChange={(e: any) => {
+          if (e) {
+            router.push(`/team/${e.value}`);
+          }
+        }}
+        placeholder="Search Teams and Events"
+        filterOption={createFilter({ ignoreAccents: false })}
+        windowThreshold={50}
+        components={{
+          Option: Option,
+        }}
+      />
+    );
+  };
+
   return (
-    <div
-      className="text-gray-100 shadow-md body-font sticky top-0 z-50 px-4 py-3 flex"
-      style={{ background: "#343A40" }}
-    >
-      <Link href="/" className="flex items-center gap-2 text-xl font-thin mr-8">
-        <Image
-          src="/circ_favicon.ico"
-          alt="logo"
-          width={30}
-          height={30}
-          loader={loaderProp}
-          unoptimized
-        />
-        Statbotics
-      </Link>
-      <div className="flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
-        <Link href="/teams">Teams</Link>
+    <div className="w-full flex flex-col shadow-md text-gray-100" style={{ background: "#343A40" }}>
+      <div className="body-font sticky top-0 z-50 px-4 py-3 flex">
+        <Link href="/" className="flex items-center gap-2 text-xl font-thin mr-8">
+          <Image
+            src="/circ_favicon.ico"
+            alt="logo"
+            width={30}
+            height={30}
+            loader={loaderProp}
+            unoptimized
+          />
+          Statbotics
+        </Link>
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
+          <Link href="/teams">Teams</Link>
+        </div>
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
+          <Link href="/events">Events</Link>
+        </div>
+        <div className="flex-grow" />
+        <div className="hidden md:flex items-center gap-2 font-thin text-gray-800">
+          <TeamSelect />
+        </div>
+        <div className="md:hidden flex ml-auto items-center">
+          <button type="button" className="outline-none" onClick={() => setToggle(!toggle)}>
+            <HamburgerIcon className="w-6 h-6" />
+          </button>
+        </div>
       </div>
-      <div className="flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
-        <Link href="/events">Events</Link>
-      </div>
-      <div className="flex-grow" />
-      <div className="flex items-center gap-2 font-thin text-gray-800">
-        <WindowedSelect
-          instanceId={"team-select"}
-          className="w-60 text-xs mr-2"
-          styles={{
-            menu: (provided) => ({ ...provided, zIndex: 9999 }),
-          }}
-          options={teamOptions}
-          onChange={(e: any) => {
-            if (e) {
-              router.push(`/team/${e.value}`);
-            }
-          }}
-          placeholder="Search Teams and Events"
-          filterOption={createFilter({ ignoreAccents: false })}
-          windowThreshold={50}
-          components={{
-            Option: Option,
-          }}
-        />
+      <div
+        className={classnames(
+          "pt-0 border-t-[1px] border-gray-500 w-full flex flex-col gap-2",
+          "md:hidden", // Hide on desktop
+          !toggle && "hidden"
+        )}
+      >
+        <div className="h-2" />
+        <Link href="/teams" className="ml-4" onClick={() => setToggle(false)}>
+          Teams
+        </Link>
+        <Link href="/events" className="ml-4" onClick={() => setToggle(false)}>
+          Events
+        </Link>
+        <div className="my-2 h-[1px] bg-gray-600" />
+        <div className="mx-auto">
+          <TeamSelect />
+        </div>
+        <div className="h-2" />
       </div>
     </div>
   );

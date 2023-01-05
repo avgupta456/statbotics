@@ -1,26 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
-import { CSVLink } from "react-csv";
-import { DebounceInput } from "react-debounce-input";
+import React, { useMemo, useState } from "react";
 
-import EventInsightsTable, {
-  TeamEventInsights,
-} from "../../../../components/Table/EventInsightsTable";
-import { TableKey } from "../../../../components/Table/shared";
+import { createColumnHelper } from "@tanstack/react-table";
+
+import InsightsTable from "../../../../components/Table/InsightsTable";
+import { TeamLink, formatCell, formatPercentileCell } from "../../../../components/Table/shared";
+import { formatNumber } from "../../../../components/utils";
+import { RPMapping } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
 import { Data } from "./types";
 
+export type TeamEventInsights = {
+  num: number;
+  team: string;
+  rank: number | string;
+  total_epa: number | string;
+  auto_epa: number | string;
+  teleop_epa: number | string;
+  endgame_epa: number | string;
+  rp_1_epa: number | string;
+  rp_2_epa: number | string;
+};
+
+const columnHelper = createColumnHelper<TeamEventInsights>();
+
 const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
-  const [search, setSearch] = useState("");
 
   const eventInsightsData: TeamEventInsights[] = data.team_events
-    .filter(
-      (teamEvent) =>
-        teamEvent.team?.toLowerCase().includes(search.toLowerCase()) ||
-        teamEvent.num.toString().includes(search.toLowerCase())
-    )
     .map((teamEvent) => {
       return {
         num: teamEvent.num ?? -1,
@@ -36,35 +44,59 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
     })
     .sort((a, b) => a.rank - b.rank);
 
-  const EventInsightsTableProps = {
-    data: eventInsightsData,
-    stats: data.year,
-    disableHighlight,
-  };
+  const columns = useMemo<any>(
+    () => [
+      columnHelper.accessor("num", {
+        cell: (info) => formatNumber(info.getValue()),
+        header: "Number",
+      }),
+      columnHelper.accessor("team", {
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        header: "Name",
+      }),
+      columnHelper.accessor("rank", {
+        cell: (info) => formatCell(info),
+        header: "Rank",
+      }),
+      columnHelper.accessor("total_epa", {
+        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+        header: "EPA",
+      }),
+      columnHelper.accessor("auto_epa", {
+        cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+        header: "Auto EPA",
+      }),
+      columnHelper.accessor("teleop_epa", {
+        cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+        header: "Teleop EPA",
+      }),
+      columnHelper.accessor("endgame_epa", {
+        cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+        header: "Endgame EPA",
+      }),
+      columnHelper.accessor("rp_1_epa", {
+        cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+        header: `${RPMapping[data.year.year][0]} EPA`,
+      }),
+      columnHelper.accessor("rp_2_epa", {
+        cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+        header: `${RPMapping[data.year.year][1]} EPA`,
+      }),
+    ],
+    [data, disableHighlight]
+  );
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="flex items-end justify-center mb-4">
-        <button
-          className="filter_button w-32"
-          onClick={() => setDisableHighlight(!disableHighlight)}
-        >
-          {disableHighlight ? "Enable" : "Disable"} Color
-        </button>
-        <div className="w-0.5 h-10 ml-2 mr-4 bg-gray-500 rounded" />
-        <DebounceInput
-          minLength={2}
-          debounceTimeout={300}
-          className="w-40 p-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
-          placeholder="Search"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <CSVLink data={eventInsightsData} filename={`${eventId}_team_insights.csv`}>
-          <button className="filter_button w-20 ml-2">Export</button>
-        </CSVLink>
-      </div>
-      <EventInsightsTable {...EventInsightsTableProps} />
-      <TableKey />
+      <InsightsTable
+        data={eventInsightsData}
+        columns={columns}
+        leftCol="num"
+        rightCol="rp_2_epa"
+        searchCols={["num", "team"]}
+        csvFilename={`${eventId}_team_insights.csv`}
+        toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
+      />
     </div>
   );
 };

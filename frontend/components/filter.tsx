@@ -1,4 +1,6 @@
 import React from "react";
+import { DebounceInput } from "react-debounce-input";
+import { BiShow } from "react-icons/bi";
 import Select from "react-select";
 
 import {
@@ -53,17 +55,17 @@ export const FilterBar = ({
     } else if (key === "district") {
       return setFilters({ ...filters, country: "", state: "", district: value });
     }
+
+    if (key === "search") {
+      return setFilters({ ...filters, search: value });
+    }
   };
 
   return (
-    <div className="flex flex-row items-end justify-center">
-      <button
-        id="clear-filters"
-        className="filter_button w-32"
-        onClick={() => setFilters(defaultFilters)}
-      >
-        Clear Filters
-      </button>
+    <div className="flex flex-row flex-wrap items-center justify-center">
+      <div className="tooltip" data-tip="Clear filters">
+        <BiShow className="hover_icon mb-2" onClick={() => setFilters(defaultFilters)} />
+      </div>
       {[
         { key: "year", label: "Year", options: yearOptions },
         { key: "week", label: "Week", options: weekOptions },
@@ -80,28 +82,39 @@ export const FilterBar = ({
             currLabel = `${filter.label}`;
           }
           return (
-            <div key={filter.key} className="flex flex-col items-center justify-center">
-              <Select
-                instanceId={"filter-select" + filter.key}
-                className={"w-36 h-10 text-sm mr-2 text-gray-800"}
-                styles={{
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: placeholder ? "#a0aec0" : "#2d3748",
-                  }),
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-                options={filter.options.map((option) => ({
-                  value: option.value,
-                  label: option.label,
-                }))}
-                onChange={(e) => smartSetFilters(filter.key, e?.value)}
-                value={{ value: currValue, label: currLabel }}
-              />
-            </div>
+            <Select
+              key={filter.key}
+              instanceId={"filter-select" + filter.key}
+              className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 mb-2 text-gray-800"}
+              styles={{
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: placeholder ? "#a0aec0" : "#2d3748",
+                }),
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              options={filter.options.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+              onChange={(e) => smartSetFilters(filter.key, e?.value)}
+              value={{ value: currValue, label: currLabel }}
+            />
           );
         }
       })}
+      {filterKeys.includes("search") && (
+        <>
+          <div className="w-0.5 h-10 ml-2 mr-2 mb-2 bg-gray-500 rounded" />
+          <DebounceInput
+            minLength={2}
+            debounceTimeout={300}
+            className="w-40 p-2 mb-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
+            placeholder="Search"
+            onChange={(e) => smartSetFilters("search", e.target.value)}
+          />
+        </>
+      )}
     </div>
   );
 };
