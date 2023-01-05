@@ -23,7 +23,7 @@ const TabsSection = ({
           >
             <button
               className={classnames(
-                "w-28 border-t-[1px] border-x-[1px] py-2 rounded-t",
+                "w-32 border-t-[1px] border-x-[1px] py-2 rounded-t",
                 activeTab === index
                   ? "text-gray-800 border-gray-200"
                   : "text-blue-500 hover:text-blue-600 border-white hover:border-gray-200"
