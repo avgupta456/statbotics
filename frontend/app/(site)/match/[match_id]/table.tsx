@@ -5,6 +5,8 @@ import { TableKey } from "../../../../components/Table/shared";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
+const RPSigmoid = (x: number) => 1 / (1 + Math.exp(-4 * (x - 0.5)));
+
 const PageMatchTable = ({ data }: { data: Data }) => {
   const red1 = data.match.red[0];
   const red1Data = data.team_matches.find((teamMatch) => teamMatch.num === red1);
@@ -80,12 +82,12 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: red1Data.rp_1_epa,
     red2: red2Data.rp_1_epa,
     red3: red3Data.rp_1_epa,
-    redTotal: data.match.red_rp_1_pred,
+    redTotal: RPSigmoid(data.match.red_rp_1_pred),
     redActual: data.match.red_rp_1,
     blue1: blue1Data.rp_1_epa,
     blue2: blue2Data.rp_1_epa,
     blue3: blue3Data.rp_1_epa,
-    blueTotal: data.match.blue_rp_1_pred,
+    blueTotal: RPSigmoid(data.match.blue_rp_1_pred),
     blueActual: data.match.blue_rp_1,
   };
 
@@ -94,12 +96,12 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: red1Data.rp_2_epa,
     red2: red2Data.rp_2_epa,
     red3: red3Data.rp_2_epa,
-    redTotal: data.match.red_rp_2_pred,
+    redTotal: RPSigmoid(data.match.red_rp_2_pred),
     redActual: data.match.red_rp_2,
     blue1: blue1Data.rp_2_epa,
     blue2: blue2Data.rp_2_epa,
     blue3: blue3Data.rp_2_epa,
-    blueTotal: data.match.blue_rp_2_pred,
+    blueTotal: RPSigmoid(data.match.blue_rp_2_pred),
     blueActual: data.match.blue_rp_2,
   };
 
@@ -163,7 +165,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-4">Match Breakdown</p>
-      <div className="w-full overflow-x-scroll">
+      <div className="w-full overflow-x-scroll md:overflow-x-auto md:flex md:justify-center">
         <MatchBreakdown {...MatchTableProps} />
       </div>
       <TableKey />

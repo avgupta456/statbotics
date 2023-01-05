@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { TbArrowsJoin, TbArrowsSplit } from "react-icons/tb";
 import Select from "react-select";
 
 import { RPMapping } from "../../constants";
@@ -84,12 +85,16 @@ const TeamLineChart = ({
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
         />
-        <button
-          className="flex-shrink-0 filter_button w-36"
-          onClick={() => setSplitEvents(!splitEvents)}
-        >
-          {splitEvents ? "Combine Events" : "Split Events"}
-        </button>
+        {splitEvents && (
+          <div className="tooltip" data-tip="Combine Events">
+            <TbArrowsJoin className="hover_icon" onClick={() => setSplitEvents(false)} />
+          </div>
+        )}
+        {!splitEvents && (
+          <div className="tooltip" data-tip="Split Events">
+            <TbArrowsSplit className="hover_icon" onClick={() => setSplitEvents(true)} />
+          </div>
+        )}
       </div>
       <div className="flex">
         <LineChart
