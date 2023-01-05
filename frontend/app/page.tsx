@@ -1,12 +1,14 @@
+import Image from "next/image";
+
 export default function Home() {
   return (
-    <div className="bg-blue-100">
-      <p className="text-green-500">
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </p>
-      <p className="description">
-        Get started by editing <code>pages/index.js</code>
-      </p>
+    <div className="w-full flex">
+      <div className="w-1/2 h-full">test</div>
+      <div className="w-1/2 h-screen">
+        <div className="w-full h-[500px] relative">
+          <Image src="/spline.png" alt="Summary" fill quality={100} className="object-contain" />
+        </div>
+      </div>
     </div>
   );
 }

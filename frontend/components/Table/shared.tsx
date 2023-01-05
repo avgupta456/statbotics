@@ -68,7 +68,7 @@ export const getRPColor = (value: number) => {
 export const formatCell = (info: CellContext<any, number | string>) => {
   const value = info.getValue();
 
-  return <div className="w-28 h-full flex justify-center items-center">{value}</div>;
+  return <div className="w-24 h-full flex justify-center items-center">{value}</div>;
 };
 
 export const formatPercentileCell = (
