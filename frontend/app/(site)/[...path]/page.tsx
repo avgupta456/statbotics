@@ -4,6 +4,8 @@ import React from "react";
 
 import { notFound, useRouter } from "next/navigation";
 
+import NotFound from "../shared/notFound";
+
 const Page = ({ params }: { params: { path: string[] } }) => {
   const router = useRouter();
   const { path } = params;
@@ -22,6 +24,8 @@ const Page = ({ params }: { params: { path: string[] } }) => {
   } else {
     router.push(`/event/${firstPath}`);
   }
+
+  return <NotFound type="Page" />;
 };
 
 export default Page;
