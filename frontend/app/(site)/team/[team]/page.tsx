@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../../../constants";
 import { round } from "../../../../utils";
 import PageLayout from "../../shared/layout";
+import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 import { TeamData, TeamYearData } from "./types";
 
@@ -77,6 +78,10 @@ const Page = ({ params }: { params: { team: number } }) => {
 
     getTeamYearDataForYear(team, year);
   }, [team, year, teamYearDataDict]);
+
+  if (!teamData) {
+    return <NotFound type="Team" />;
+  }
 
   const teamYearData = teamYearDataDict[year];
   const fallbackTeamYearData = teamYearDataDict[prevYear];

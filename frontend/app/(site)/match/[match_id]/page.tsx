@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { BACKEND_URL } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
+import NotFound from "../../shared/notFound";
 import Summary from "./summary";
 import MatchTable from "./table";
 import { Data } from "./types";
@@ -26,7 +27,7 @@ async function Page({ params }: { params: { match_id: string } }) {
   const data: Data = await getData(match_id);
 
   if (!data) {
-    return <div>Match not found</div>;
+    return <NotFound type="Match" />;
   }
 
   let truncatedEventName = truncate(data.event.name, 40);
