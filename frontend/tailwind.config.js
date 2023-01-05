@@ -12,6 +12,8 @@ module.exports = {
       },
       colors: {
         inputBlue: "#2684FF",
+        gradientBlue: "#0D37F1",
+        gradientRed: "#F50608",
       },
       width: {
         "1/14": "7.142857142857143%",
