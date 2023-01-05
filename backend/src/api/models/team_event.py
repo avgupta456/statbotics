@@ -29,3 +29,4 @@ class APITeamEvent(APIModel):
     ties: int
     count: int
     rank: int
+    offseason: bool

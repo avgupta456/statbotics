@@ -34,6 +34,7 @@ def unpack_team_event(
         ties=team_event.ties,
         count=team_event.count,
         rank=team_event.rank or -1,
+        offseason=team_event.offseason,
     )
 
 

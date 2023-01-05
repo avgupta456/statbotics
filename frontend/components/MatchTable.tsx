@@ -45,7 +45,7 @@ const MatchTable = ({
 
   return (
     <div
-      className="w-full flex flex-col border-2 border-gray-300"
+      className="min-w-[667px] flex flex-col border-2 border-gray-300"
       key={`match-table-${matches?.[0]?.key ?? ""}`}
     >
       <div
