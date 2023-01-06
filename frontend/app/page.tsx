@@ -5,7 +5,7 @@ import { classnames } from "../utils";
 
 export default function Home() {
   return (
-    <div className="w-full container mx-auto flex-grow p-4 sm:p-8 flex flex-wrap items-center">
+    <div className="w-full container mx-auto flex-grow p-4 flex flex-wrap items-center">
       <div className="w-1/2 h-[400px] hidden lg:block relative">
         <Image src="/spline.png" alt="Summary" fill quality={100} className="object-contain" />
       </div>

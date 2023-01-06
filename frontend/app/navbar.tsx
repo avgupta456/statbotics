@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { BsThreeDots } from "react-icons/bs";
 import { GiHamburgerMenu as HamburgerIcon } from "react-icons/gi";
 import WindowedSelect, { createFilter } from "react-windowed-select";
 
@@ -97,6 +98,34 @@ const Navbar = () => {
           <Link href="/events">Events</Link>
         </div>
         <div className="flex-grow" />
+        <div className="dropdown dropdown-end dropdown-hover" tabIndex={0}>
+          <BsThreeDots className="no_hover_icon mr-4 text-gray-300 hover:text-gray-100" />
+          <ul
+            tabIndex={0}
+            className="h-auto w-40 dropdown-content p-2 rounded shadow-lg bg-white text-gray-800"
+          >
+            <li>
+              <Link
+                href="https://statbotics.canny.io/feature-requests"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="w-36 py-1 text-sm text-center border-t-[1px] border-b-[1px]">
+                  Give Feedback
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="https://github.com/avgupta456/statbotics"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="w-36 py-1 text-sm text-center border-b-[1px]">View GitHub</div>
+              </Link>
+            </li>
+          </ul>
+        </div>
         <div className="hidden md:flex items-center gap-2 font-thin text-gray-800">
           <TeamSelect />
         </div>
