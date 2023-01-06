@@ -5,7 +5,7 @@ const ctx: Worker = self as unknown as Worker;
 
 const getTiebreakers = (year: number, match: APIMatch) => {
   if (year === 2016) {
-    return [match.red_1, match.blue_1];
+    return [-match.blue_fouls, -match.red_fouls];
   } else if (year === 2017) {
     return [match.red_auto, match.blue_auto];
   } else if (year === 2018) {

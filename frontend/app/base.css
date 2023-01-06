@@ -6,6 +6,10 @@
   @apply w-10 h-10 p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600 text-2xl cursor-pointer;
 }
 
+.no_hover_icon {
+  @apply w-10 h-10 p-2 rounded-lg text-gray-500 text-2xl cursor-pointer;
+}
+
 /* For Chrome */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
