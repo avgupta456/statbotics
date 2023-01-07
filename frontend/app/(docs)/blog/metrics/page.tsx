@@ -11,6 +11,8 @@ const SeasonTable = () => {
   const [methods, setMethods] = useState(orderedMethods);
   const [metrics, setMetrics] = useState(orderedMetrics);
   const [champs, setChamps] = useState(false);
+  const [startYear, setStartYear] = useState(2002);
+  const [endYear, setEndYear] = useState(2022);
 
   const methodToName = {
     wins: "Wins Baseline",
@@ -27,7 +29,7 @@ const SeasonTable = () => {
     brier: "Brier Score",
   };
 
-  const data = champs ? champsData : seasonData;
+  const data: any[] = champs ? champsData : seasonData;
 
   const totalAcc = methods.map((method) => {
     let correct = 0;
@@ -36,7 +38,7 @@ const SeasonTable = () => {
       correct += (season[method]?.acc || 0) * season.n;
       total += season.n;
     });
-    return correct / total;
+    return correct / Math.max(1, total);
   });
 
   const maxTotalAcc = Math.max(...totalAcc);
@@ -48,7 +50,7 @@ const SeasonTable = () => {
       brier += (season[method]?.brier || 1) * season.n;
       total += season.n;
     });
-    return brier / total;
+    return brier / Math.max(1, total);
   });
 
   const minTotalBrier = Math.min(...totalBrier);
@@ -56,13 +58,15 @@ const SeasonTable = () => {
   const recentAcc = methods.map((method) => {
     let correct = 0;
     let total = 0;
-    data.forEach((season) => {
-      if (season.year >= 2016) {
-        correct += (season[method]?.acc || 0) * season.n;
-        total += season.n;
-      }
-    });
-    return correct / total;
+    data
+      .filter((season) => season.year >= startYear && season.year <= endYear)
+      .forEach((season) => {
+        if (season.year >= 2016) {
+          correct += (season[method]?.acc || 0) * season.n;
+          total += season.n;
+        }
+      });
+    return correct / Math.max(1, total);
   });
 
   const maxRecentAcc = Math.max(...recentAcc);
@@ -70,13 +74,15 @@ const SeasonTable = () => {
   const recentBrier = methods.map((method) => {
     let brier = 0;
     let total = 0;
-    data.forEach((season) => {
-      if (season.year >= 2016) {
-        brier += (season[method]?.brier || 0) * season.n;
-        total += season.n;
-      }
-    });
-    return brier / total;
+    data
+      .filter((season) => season.year >= startYear && season.year <= endYear)
+      .forEach((season) => {
+        if (season.year >= 2016) {
+          brier += (season[method]?.brier || 0) * season.n;
+          total += season.n;
+        }
+      });
+    return brier / Math.max(1, total);
   });
 
   const minRecentBrier = Math.min(...recentBrier);
@@ -166,6 +172,28 @@ const SeasonTable = () => {
           <label className="cursor-pointer">Entire Season</label>
         </div>
       </div>
+      <div className="flex flex-row">
+        <div className="font-bold">Start Year: </div>
+        <input
+          type="number"
+          className="ml-1 w-16"
+          value={startYear}
+          onChange={(e) =>
+            setStartYear(Math.min(2022, Math.max(2002, parseInt(e.target.value) || 2002)))
+          }
+        />
+      </div>
+      <div className="flex flex-row">
+        <div className="font-bold">End Year: </div>
+        <input
+          type="number"
+          className="ml-1 w-16"
+          value={endYear}
+          onChange={(e) =>
+            setEndYear(Math.min(2022, Math.max(2002, parseInt(e.target.value) || 2022)))
+          }
+        />
+      </div>
       <table className="text-center">
         <thead>
           <tr>
@@ -190,49 +218,57 @@ const SeasonTable = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((season) => {
-            const currMethods = [
-              methods.includes("wins") ? season?.wins : null,
-              methods.includes("opr") ? season?.opr : null,
-              methods.includes("elo") ? season?.elo : null,
-              methods.includes("combined") ? season?.combined : null,
-              methods.includes("tba") ? season?.tba : null,
-              methods.includes("sykes") ? season?.sykes : null,
-              methods.includes("epa") ? season?.epa : null,
-            ].filter((currMethod) => currMethod !== null);
+          {data
+            .filter((season) => season.year >= startYear && season.year <= endYear)
+            .map((season) => {
+              const currMethods = [
+                methods.includes("wins") ? season?.wins : null,
+                methods.includes("opr") ? season?.opr : null,
+                methods.includes("elo") ? season?.elo : null,
+                methods.includes("combined") ? season?.combined : null,
+                methods.includes("tba") ? season?.tba : null,
+                methods.includes("sykes") ? season?.sykes : null,
+                methods.includes("epa") ? season?.epa : null,
+              ].filter((currMethod) => currMethod !== null);
 
-            const maxAcc = Math.max(...currMethods.map((currMethod) => currMethod?.acc || 0));
-            const minBrier = Math.min(...currMethods.map((currMethod) => currMethod?.brier || 1));
+              const maxAcc = Math.max(...currMethods.map((currMethod) => currMethod?.acc || 0));
+              const minBrier = Math.min(...currMethods.map((currMethod) => currMethod?.brier || 1));
 
-            return (
-              <tr key={season.year}>
-                <td>{season.year}</td>
-                <td>{season.n}</td>
-                {currMethods.map((currMethod) => {
-                  let dispAcc = formatAcc(currMethod?.acc);
-                  let dispBrier = formatBrier(currMethod?.brier);
+              return (
+                <tr key={season.year}>
+                  <td>{season.year}</td>
+                  <td>{season.n}</td>
+                  {currMethods.map((currMethod) => {
+                    let dispAcc = formatAcc(currMethod?.acc);
+                    let dispBrier = formatBrier(currMethod?.brier);
 
-                  return (
-                    <>
-                      {metrics.includes("acc") && (
-                        <td className="border-l-[1px] border-gray-500">
-                          {currMethod?.acc >= maxAcc ? <strong>{dispAcc}</strong> : dispAcc}
-                        </td>
-                      )}
-                      {metrics.includes("brier") && (
-                        <td>
-                          {currMethod?.brier <= minBrier ? <strong>{dispBrier}</strong> : dispBrier}
-                        </td>
-                      )}
-                    </>
-                  );
-                })}
-              </tr>
-            );
-          })}
+                    return (
+                      <>
+                        {metrics.includes("acc") && (
+                          <td className="border-l-[1px] border-gray-500">
+                            {currMethod?.acc >= maxAcc ? <strong>{dispAcc}</strong> : dispAcc}
+                          </td>
+                        )}
+                        {metrics.includes("brier") && (
+                          <td>
+                            {currMethod?.brier <= minBrier ? (
+                              <strong>{dispBrier}</strong>
+                            ) : (
+                              dispBrier
+                            )}
+                          </td>
+                        )}
+                      </>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           <tr className="bg-blue-100 border-double border-t-4 border-gray-500">
             <td colSpan={2}>
-              <strong>2002 - 2022</strong>
+              <strong>
+                {startYear} - {endYear}
+              </strong>
             </td>
             {methods.map((method, i) => {
               const dispAcc = method === "tba" ? "-" : formatAcc(totalAcc[i]);
@@ -254,29 +290,35 @@ const SeasonTable = () => {
               );
             })}
           </tr>
-          <tr className="bg-blue-100">
-            <td colSpan={2}>
-              <strong>2016 - 2022</strong>
-            </td>
-            {methods.map((method, i) => {
-              const dispAcc = formatAcc(recentAcc[i]);
-              const dispBrier = formatBrier(recentBrier[i]);
-              return (
-                <>
-                  {metrics.includes("acc") && (
-                    <td className="border-l-[1px] border-gray-500">
-                      {recentAcc[i] >= maxRecentAcc ? <strong>{dispAcc}</strong> : dispAcc}
-                    </td>
-                  )}
-                  {metrics.includes("brier") && (
-                    <td>
-                      {recentBrier[i] <= minRecentBrier ? <strong>{dispBrier}</strong> : dispBrier}
-                    </td>
-                  )}
-                </>
-              );
-            })}
-          </tr>
+          {endYear > 2015 && (
+            <tr className="bg-blue-100">
+              <td colSpan={2}>
+                <strong>2016 - {endYear}</strong>
+              </td>
+              {methods.map((method, i) => {
+                const dispAcc = formatAcc(recentAcc[i]);
+                const dispBrier = formatBrier(recentBrier[i]);
+                return (
+                  <>
+                    {metrics.includes("acc") && (
+                      <td className="border-l-[1px] border-gray-500">
+                        {recentAcc[i] >= maxRecentAcc ? <strong>{dispAcc}</strong> : dispAcc}
+                      </td>
+                    )}
+                    {metrics.includes("brier") && (
+                      <td>
+                        {recentBrier[i] <= minRecentBrier ? (
+                          <strong>{dispBrier}</strong>
+                        ) : (
+                          dispBrier
+                        )}
+                      </td>
+                    )}
+                  </>
+                );
+              })}
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
