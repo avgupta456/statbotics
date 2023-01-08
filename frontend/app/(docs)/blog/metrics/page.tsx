@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Select from "react-select";
 
+import Link from "next/link";
+
 import { yearOptions } from "../../../../components/filterConstants";
 import { classnames } from "../../../../utils";
 import { champsData, seasonData } from "./data";
@@ -11,7 +13,7 @@ const SeasonTable = () => {
   const orderedMethods = ["wins", "opr", "elo", "combined", "tba", "sykes", "epa"];
   const orderedMetrics = ["acc", "brier"];
 
-  const [methods, setMethods] = useState(["wins", "opr", "tba", "sykes", "epa"]);
+  const [methods, setMethods] = useState(["wins", "opr", "sykes", "epa"]);
   const [metrics, setMetrics] = useState(["acc"]);
   const [champs, setChamps] = useState(false);
   const [startYear, setStartYear] = useState(2016);
@@ -111,12 +113,12 @@ const SeasonTable = () => {
   };
 
   return (
-    <div className="overflow-x-scroll">
+    <div className="overflow-x-scroll scrollbar-hide">
       <h3 className="w-full text-center mb-8">
         Comparison of Historical Prediction Performance (2002 - Present)
       </h3>
       <div className="not-prose mb-4">
-        <table className="text-center table-fixed mx-auto">
+        <table className="text-center table-fixed mx-auto text-sm">
           <thead>
             <tr key="header_1">
               <th colSpan={2}>
@@ -308,7 +310,7 @@ const SeasonTable = () => {
             </div>
           ))}
         </div>
-        <div className="flex hover:bg-gray-100 px-4 py-2">
+        <div className="flex items-center hover:bg-gray-100 px-4 py-2">
           <div className="font-bold">Include metrics: </div>
           {["acc", "brier"].map((metric) => (
             <div
@@ -393,19 +395,56 @@ const SeasonTable = () => {
 
 const Page = () => {
   return (
-    <div className="w-full flex-grow p-8">
-      <div className="w-full h-full prose max-w-none">
-        <h3>Evaluating the EPA Metric</h3>
-        <h4>What is EPA</h4>
-        Expected Points Added, or EPA for short, attempts to quantify a team&apos;s average point
-        contribution to an FRC match. EPA builds upon concepts from the Elo rating system, but the
-        output can be interpreted more analogously to a team&apos;s OPR (Offensive Power Rating).
-        EPA is highly predictive, separates into components that can be interpreted individually,
-        and is intuitive to understand. Statbotics provides realtime and historical EPA data and
-        analysis tools to help teams understand and predict robot performance. You can read more
-        about the EPA metric here. <br />
-        In this article, we will evaluate the predictive power of EPA on historical data. We will
-        compare EPA to other metrics, including OPR, Elo, ranking points, and random baselines.
+    <div className="w-4/5 mx-auto flex-grow">
+      <div className="w-full h-full py-16 prose prose-slate max-w-none">
+        <h2 className="w-full text-center">Evaluating FRC Rating Models</h2>
+        <p className="lead">
+          How do you choose between FRC rating models? We compare several models on three
+          characteristics: predictive power, interpretability, and accessibility. Expected Points
+          Added (EPA) is a new metric deployed on Statbotics that excels in all three categories.
+        </p>
+        <h3>Summarizing the Options</h3>
+        <p>
+          Given the importance of match strategy and alliance selection, several models have been
+          developed that attempt to quantify an FRC team&apos;s contribution to match outcomes. We
+          consider a wins baseline, the popular OPR and Elo rating systems, and the new Expected
+          Points Added (EPA) model deployed on Statbotics. A brief summary of each model is included
+          below.
+        </p>
+        <ul>
+          <li>
+            <strong>Wins Baseline</strong>: This simple model only considers a team&apos;s record.
+            The alliance with the most wins that year is predicted to win. This model is roughly how
+            a human would intuitively predict the outcome of a match, and is a good baseline for
+            evaluating more complex models.
+          </li>
+          <li>
+            <strong>OPR</strong>: OPR attempts to calculate a team&aspos;s contribution to their
+            alliance&aspos;s final score. OPR uses linear algebra to minimize the sum of squared
+            errors between the predicted and actual scores. We evaluate a variant of OPR called
+            ixOPR that incorporates a prior during ongoing events. TBA Insights and Statbotics both
+            incorporate ixOPR.
+          </li>
+          <li>
+            <strong>Elo</strong>: The Elo rating system is a well-known model for predicting the
+            outcome of chess matches. Elo iteratively updates a team&apos;s rating based on the
+            difference between the predicted and observed winning margin. Caleb Sykes modified Elo
+            for FRC, and we include both his original mode and the Statbotics implementation.
+          </li>
+          <li>
+            <strong>EPA</strong>: EPA attempts to quantify a team&apos;s average point contribution
+            to an FRC match. EPA builds upon concepts from the Elo rating system, but the output can
+            be interpreted more analogously to a team&apos;s OPR (Offensive Power Rating). EPA is
+            highly predictive, separates into components that can be interpreted individually, and
+            is intuitive to understand. More details are available{" "}
+            <Link href="/blog/epa" className="text_link">
+              here
+            </Link>
+            .
+          </li>
+        </ul>
+        <h3>Evaluating models</h3>
+        <p></p>
         <SeasonTable />
       </div>
     </div>
