@@ -26,7 +26,7 @@ export const getColumnOptions = (year: number) => [
   // For events
   { label: "Rank", accessor: (datum) => datum.rank },
   { label: "N - Rank", accessor: (datum) => datum.numTeams - datum.rank },
-  { label: "RPs / Match", accessor: (datum) => round(datum.rps / datum.matches, 3) },
+  { label: "RPs / Match", accessor: (datum) => round(datum.rps_per_match, 3) },
 ];
 
 export const getColumnOptionsDict = (year: number) =>

@@ -9,7 +9,7 @@ import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import Link from "next/link";
 
-import PageLayout from "../shared/layout";
+import PageLayout from "../shared/pageLayout";
 import SeasonTable from "../table";
 
 const renderMath = (str: string) => {

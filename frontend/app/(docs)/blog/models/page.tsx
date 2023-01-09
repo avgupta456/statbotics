@@ -2,7 +2,7 @@ import React from "react";
 
 import Link from "next/link";
 
-import PageLayout from "../shared/layout";
+import PageLayout from "../shared/pageLayout";
 import SeasonTable from "../table";
 
 const Page = () => {

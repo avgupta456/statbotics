@@ -29,4 +29,5 @@ class APITeamEvent(APIModel):
     ties: int
     count: int
     rank: int
+    rps_per_match: float
     offseason: bool

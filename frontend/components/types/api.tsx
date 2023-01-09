@@ -117,6 +117,7 @@ export type APITeamEvent = {
   ties: number;
   count: number;
   rank: number;
+  rps_per_match: number;
   offseason: boolean;
 };
 
