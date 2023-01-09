@@ -601,6 +601,7 @@ def process_year(
         event_team_events[team_event.event].append(team_event)
         team_team_events[team_event.team].append(team_event)
 
+        # Default if no matches played
         upcoming_epas = [(team_epas[team_event.team], False)]
         epas = [obj[0] for obj in team_events_dict.get(key, upcoming_epas)]
         qual_epas = [obj[0] for obj in team_events_dict.get(key, upcoming_epas) if not obj[1]]  # type: ignore
@@ -614,9 +615,26 @@ def process_year(
         team_event.epa_pre_playoffs = round(epa_pre_playoffs, 2)
 
         if USE_COMPONENTS:
-            component_epas = [obj[0:5] for obj in component_team_events_dict[key]]
+            # Default if no matches played
+            upcoming_component_epas = [
+                (
+                    team_auto_epas[team_event.team],
+                    team_teleop_epas[team_event.team],
+                    team_endgame_epas[team_event.team],
+                    team_rp_1_epas[team_event.team],
+                    team_rp_2_epas[team_event.team],
+                    False,
+                )
+            ]
+
+            component_epas = [
+                obj[0:5]
+                for obj in component_team_events_dict.get(key, upcoming_component_epas)
+            ]
             qual_component_epas = [
-                obj[0:5] for obj in component_team_events_dict[key] if not obj[-1]  # type: ignore
+                obj[0:5]
+                for obj in component_team_events_dict.get(key, upcoming_component_epas)
+                if not obj[-1]
             ]
 
             auto_epas = [obj[0] for obj in component_epas]

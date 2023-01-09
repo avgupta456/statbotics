@@ -123,6 +123,17 @@ def get_events(
     return out, new_etag
 
 
+def get_event_teams(
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[int], Optional[str]]:
+    query_str = "event/" + str(event) + "/teams/simple"
+    data, new_etag = get_tba(query_str, etag=etag, cache=cache)
+    if type(data) is bool:
+        return [], new_etag
+    out = [int(x["team_number"]) for x in data]
+    return out, new_etag
+
+
 def get_event_rankings(
     event: str, etag: Optional[str] = None, cache: bool = True
 ) -> Tuple[Dict[int, int], Optional[str]]:

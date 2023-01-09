@@ -15,6 +15,10 @@ def create_team_obj(data: Dict[str, Any]) -> Team:
     data["losses"] = 0
     data["ties"] = 0
     data["count"] = 0
+    data["full_wins"] = 0
+    data["full_losses"] = 0
+    data["full_ties"] = 0
+    data["full_count"] = 0
     return Team.from_dict(data)
 
 
@@ -27,6 +31,10 @@ def create_team_year_obj(data: Dict[str, Any]) -> TeamYear:
     data["losses"] = 0
     data["ties"] = 0
     data["count"] = 0
+    data["full_wins"] = 0
+    data["full_losses"] = 0
+    data["full_ties"] = 0
+    data["full_count"] = 0
     return TeamYear.from_dict(data)
 
 
@@ -40,6 +48,10 @@ def create_team_event_obj(data: Dict[str, Any]) -> TeamEvent:
     data["losses"] = 0
     data["ties"] = 0
     data["count"] = 0
+    data["qual_wins"] = 0
+    data["qual_losses"] = 0
+    data["qual_ties"] = 0
+    data["qual_count"] = 0
     return TeamEvent.from_dict(data)
 
 
