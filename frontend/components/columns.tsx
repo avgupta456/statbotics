@@ -26,7 +26,7 @@ export const getColumnOptions = (year: number) => [
   // For events
   { label: "Rank", accessor: (datum) => datum.rank },
   { label: "N - Rank", accessor: (datum) => datum.numTeams - datum.rank },
-  { label: "RPs / Match", accessor: (datum) => round(datum.rps / datum.matches, 3) },
+  { label: "RPs / Match", accessor: (datum) => round(datum.rps_per_match, 3) },
 ];
 
 export const getColumnOptionsDict = (year: number) =>
@@ -60,7 +60,7 @@ export const ColumnBar = ({
           <p className="w-full pl-1 text-sm text-gray-500 capitalize">{key}-axis</p>
           <Select
             instanceId={"column-select-" + key}
-            className="w-28 md:w-36 h-10 text-sm mr-2"
+            className="w-28 md:w-36 text-sm mr-2"
             styles={{
               menu: (provided) => ({ ...provided, zIndex: 9999 }),
             }}
