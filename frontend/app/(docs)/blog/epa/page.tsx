@@ -9,6 +9,8 @@ import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import Link from "next/link";
 
+import SeasonTable from "../table";
+
 const renderMath = (str: string) => {
   return (
     <ReactMarkdown
@@ -160,10 +162,10 @@ const Page = () => {
         <h4>Introducing the Margin parameter</h4>
         <p>Substituting in the expressions for predicted score margin and actual score margin,</p>
         {renderMathBlock(
-          "\\Delta EPA = \\frac{72}{250} \\times (\\text{Red Score} - \\text{Blue Score} - (\\text{Red EPA} - \\text{Blue EPA}))"
+          "\\Delta EPA = K \\times (\\text{Red Score} - \\text{Blue Score} - (\\text{Red EPA} - \\text{Blue EPA}))"
         )}
         {renderMathBlock(
-          "\\Delta EPA = \\frac{72}{250} \\times ((\\text{Red Score} - \\text{Red EPA}) - (\\text{Blue Score} - \\text{Blue EPA}))"
+          "\\Delta EPA = K \\times ((\\text{Red Score} - \\text{Red EPA}) - (\\text{Blue Score} - \\text{Blue EPA}))"
         )}
         <p>Where {renderMath("N")} be the number of qualification matches played.</p>
         <p>
@@ -175,7 +177,7 @@ const Page = () => {
           scaling factor to weigh the two contributions differently.
         </p>
         {renderMathBlock(
-          "\\Delta EPA = \\frac{72}{250} \\times \\frac{1}{1+M} \\times ((\\text{Red Score} - \\text{Red EPA}) - M \\times (\\text{Blue Score} - \\text{Blue EPA}))"
+          "\\Delta EPA = K \\times \\frac{1}{1+M} \\times ((\\text{Red Score} - \\text{Red EPA}) - M \\times (\\text{Blue Score} - \\text{Blue EPA}))"
         )}
         <p>
           The margin parameter {renderMath("M")} is a constant that controls the relative weight of
@@ -202,10 +204,10 @@ const Page = () => {
           with a margin parameter of 0.
         </p>
         {renderMathBlock(
-          "\\Delta\\text{Auto EPA} = \\frac{72}{250} \\times (\\text{Auto Score} - \\text{Auto EPA})"
+          "\\Delta\\text{Auto EPA} = K \\times (\\text{Auto Score} - \\text{Auto EPA})"
         )}
         {renderMathBlock(
-          "\\Delta\\text{Endgame EPA} = \\frac{72}{250} \\times (\\text{Endgame Score} - \\text{Endgame EPA})"
+          "\\Delta\\text{Endgame EPA} = K \\times (\\text{Endgame Score} - \\text{Endgame EPA})"
         )}
         <p>
           Calculating the teleop EPA is more complicated, since it involves alliance interaction.
@@ -264,8 +266,33 @@ const Page = () => {
         <p>
           Given the methodology, the year normalized EPA is only available at the end of the season.
         </p>
+        <p>
+          To date, the most dominant single season in FRC history is 1114 is 2008 (and it&apos;s not
+          particularly close). More detailed write-up on year-normalized EPA coming soon!
+        </p>
         <h3>Results</h3>
+        Detailed results and discussion are available on a separate post{" "}
+        <Link className="text_link" rel="noopener noreferrer" target="_blank" href="/blog/models">
+          here
+        </Link>
+        . The main prediction accuracy results are summarized in the table below. EPA significantly
+        outperforms the Elo and OPR models.
+        <SeasonTable />
         <h3>Reproducibility</h3>
+        <p>
+          Statbotics is open-source, and the code responsible for calculating EPA ratings is
+          available{" "}
+          <Link
+            className="text_link"
+            rel="noopener noreferrer"
+            target="_blank"
+            href="https://github.com/avgupta456/statbotics/blob/master/backend/src/data/epa.py"
+          >
+            here
+          </Link>
+          . I am working on a standalone Jupyter Notebook that will allow for easier experimentation
+          and reproduction. Please reach out or create/upvote a Canny issue to prioritize.
+        </p>
       </div>
     </div>
   );
