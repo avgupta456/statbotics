@@ -62,9 +62,9 @@ export const FilterBar = ({
   };
 
   return (
-    <div className="flex flex-row flex-wrap items-center justify-center">
+    <div className="flex flex-row flex-wrap items-end justify-center">
       <div className="tooltip" data-tip="Clear filters">
-        <BiShow className="hover_icon mb-2" onClick={() => setFilters(defaultFilters)} />
+        <BiShow className="hover_icon" onClick={() => setFilters(defaultFilters)} />
       </div>
       {[
         { key: "year", label: "Year", options: yearOptions },
@@ -85,7 +85,7 @@ export const FilterBar = ({
             <Select
               key={filter.key}
               instanceId={"filter-select" + filter.key}
-              className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 mb-2 text-gray-800"}
+              className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 text-gray-800"}
               styles={{
                 singleValue: (provided) => ({
                   ...provided,
@@ -105,11 +105,11 @@ export const FilterBar = ({
       })}
       {filterKeys.includes("search") && (
         <>
-          <div className="w-0.5 h-10 ml-2 mr-2 mb-2 bg-gray-500 rounded" />
+          <div className="w-0.5 h-10 ml-2 mr-2 bg-gray-500 rounded" />
           <DebounceInput
             minLength={2}
             debounceTimeout={300}
-            className="w-40 p-2 mb-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
+            className="w-40 p-2 relative rounded text-sm border-[1px] border-gray-200 focus:outline-inputBlue"
             placeholder="Search"
             onChange={(e) => smartSetFilters("search", e.target.value)}
           />
