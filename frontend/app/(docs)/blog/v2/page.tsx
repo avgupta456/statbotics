@@ -6,8 +6,6 @@ import Link from "next/link";
 import PageLayout from "../shared/layout";
 import SeasonTable from "../table";
 
-// TODO: blog root page
-
 const Page = () => {
   return (
     <PageLayout
@@ -54,7 +52,7 @@ const Page = () => {
         The new backend infrastructure better interfaces with the TBA API and is designed to support
         realtime data analysis. During the competition season,{" "}
         <strong>match results will be updated every minute</strong>, compared to every couple hours
-        last year. The website has been rewritten to reduce latency and provide a stronger
+        last year. The website has been rewritten to reduce loading time and provide a stronger
         foundation upon which to continue building. Already, some new features have been added, such
         as bubble plots, match breakdowns, and a revamped team page.
       </p>

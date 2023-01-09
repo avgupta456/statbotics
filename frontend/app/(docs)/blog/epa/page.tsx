@@ -39,9 +39,7 @@ const Page = () => {
   return (
     <PageLayout
       title="The EPA Model"
-      lead="The Expected Points Added (EPA) model builds upon the Elo rating system, and provides
-          improved prediction accuracy, interpretability, and accessibility. Let's dive into
-          the details!"
+      lead="The Expected Points Added (EPA) model builds upon the Elo rating system, but transforms ratings to point units and makes several modifications"
     >
       <h3>Motivation</h3>
       <p>

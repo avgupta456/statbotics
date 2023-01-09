@@ -35,7 +35,7 @@ export default function Home() {
             href="/blog"
             className="text-sm sm:text-base py-2 px-4 sm:px-6 ml-4 rounded-sm bg-gray-100 hover:bg-gray-200 text-gray-800"
           >
-            Read Docs
+            Read Blog
           </Link>
         </div>
       </div>

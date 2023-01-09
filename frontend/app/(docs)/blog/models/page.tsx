@@ -10,8 +10,7 @@ const Page = () => {
     <PageLayout
       title="Evaluating FRC Rating Models"
       lead="How do you choose between FRC rating models? We compare several models on three
-          characteristics: predictive power, interpretability, and accessibility. Expected Points
-          Added (EPA) is a new metric deployed on Statbotics that excels in all three categories."
+          characteristics: predictive power, interpretability, and accessibility."
     >
       <h3>Summarizing the Options</h3>
       <p>

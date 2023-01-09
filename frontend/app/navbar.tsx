@@ -98,6 +98,9 @@ const Navbar = () => {
           <Link href="/events">Events</Link>
         </div>
         <div className="flex-grow" />
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
+          <Link href="/blog">Blog</Link>
+        </div>
         <div className="dropdown dropdown-end dropdown-hover" tabIndex={0}>
           <BsThreeDots className="no_hover_icon mr-4 text-gray-300 hover:text-gray-100" />
           <ul
