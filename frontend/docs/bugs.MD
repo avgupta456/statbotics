@@ -5,3 +5,4 @@
 - Back button in dev mode does not work, instead causing the website to be downloaded as a file. This does not seem to occur in production, so we can likely ignore this.
 - Switched from Turbopack to Webpack to facilitate wasm-pack. Ended up not using wasm-pack, but Webpack handles TailwindCSS better right now so we will keep it. If we can later update to NextJS 13.1 or higher, we can switch back to Turbopack.
 - Does not scroll to top of page after navigating to a new page. Relatively new NextJS issue, tracking here: https://github.com/vercel/next.js/issues/42492
+- Markdown LaTeX renders slowly in development mode, causing a hydration error. This is not a problem in production and does not interfere with local testing, so no workaround is implemented.
