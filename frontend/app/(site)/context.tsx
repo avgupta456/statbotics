@@ -1,11 +1,12 @@
 import React, { createContext } from "react";
 
+import { CURR_YEAR } from "../../constants";
 import { EventData, TeamYearData } from "./types";
 
 export const AppContext = createContext({
   teamYearDataDict: {},
   eventDataDict: {},
-  year: 2022,
+  year: CURR_YEAR,
   setYear: (year: number) => {},
 } as {
   teamYearDataDict: { [key: number]: TeamYearData };

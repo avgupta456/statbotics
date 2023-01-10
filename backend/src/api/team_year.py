@@ -5,6 +5,7 @@ from fastapi import APIRouter, Response
 from src.api.aggregation import get_team_matches, get_team_years, get_year
 from src.api.models import APITeamMatch, APITeamYear, APIYear
 from src.utils.decorators import async_fail_gracefully
+from src.constants import CURR_YEAR
 
 router = APIRouter()
 
@@ -18,7 +19,7 @@ async def read_root():
 @async_fail_gracefully
 async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
     team_years: List[APITeamYear] = await get_team_years(year=year)
-    team_years = [x for x in team_years if x.count > 0]
+    team_years = [x for x in team_years if x.count > 0 or year == CURR_YEAR]
 
     year_obj: Optional[APIYear] = await get_year(year=year)
     if year_obj is None:

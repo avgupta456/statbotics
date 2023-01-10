@@ -14,8 +14,8 @@ import { Data } from "./types";
 export type TeamEventInsights = {
   num: number;
   team: string;
-  rank: number | string;
-  total_epa: number | string;
+  rank: number;
+  total_epa: number;
   auto_epa: number | string;
   teleop_epa: number | string;
   endgame_epa: number | string;
@@ -33,7 +33,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
       return {
         num: teamEvent.num ?? -1,
         team: teamEvent.team ? truncate(teamEvent.team, 30) : "N/A",
-        total_epa: round(teamEvent.total_epa, 1) ?? "N/A",
+        total_epa: round(teamEvent.total_epa, 1) ?? 0,
         auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamEvent.endgame_epa, 1) ?? "N/A",
@@ -42,48 +42,52 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         rank: teamEvent.rank ?? -1,
       };
     })
-    .sort((a, b) => a.rank - b.rank);
+    .sort((a, b) => a.rank - b.rank || b.total_epa - a.total_epa);
+
+  const maxRank = Math.max(...eventInsightsData.map((team) => team.rank));
 
   const columns = useMemo<any>(
-    () => [
-      columnHelper.accessor("num", {
-        cell: (info) => formatNumber(info.getValue()),
-        header: "Number",
-      }),
-      columnHelper.accessor("team", {
-        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
-        header: "Name",
-      }),
-      columnHelper.accessor("rank", {
-        cell: (info) => formatCell(info),
-        header: "Rank",
-      }),
-      columnHelper.accessor("total_epa", {
-        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
-        header: "EPA",
-      }),
-      columnHelper.accessor("auto_epa", {
-        cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
-        header: "Auto EPA",
-      }),
-      columnHelper.accessor("teleop_epa", {
-        cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
-        header: "Teleop EPA",
-      }),
-      columnHelper.accessor("endgame_epa", {
-        cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
-        header: "Endgame EPA",
-      }),
-      columnHelper.accessor("rp_1_epa", {
-        cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
-        header: `${RPMapping[data.year.year][0]} EPA`,
-      }),
-      columnHelper.accessor("rp_2_epa", {
-        cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
-        header: `${RPMapping[data.year.year][1]} EPA`,
-      }),
-    ],
-    [data, disableHighlight]
+    () =>
+      [
+        columnHelper.accessor("num", {
+          cell: (info) => formatNumber(info.getValue()),
+          header: "Number",
+        }),
+        columnHelper.accessor("team", {
+          cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+          header: "Name",
+        }),
+        maxRank > 0 &&
+          columnHelper.accessor("rank", {
+            cell: (info) => formatCell(info),
+            header: "Rank",
+          }),
+        columnHelper.accessor("total_epa", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "EPA",
+        }),
+        columnHelper.accessor("auto_epa", {
+          cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+          header: "Auto EPA",
+        }),
+        columnHelper.accessor("teleop_epa", {
+          cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+          header: "Teleop EPA",
+        }),
+        columnHelper.accessor("endgame_epa", {
+          cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+          header: "Endgame EPA",
+        }),
+        columnHelper.accessor("rp_1_epa", {
+          cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+          header: `${RPMapping[data.year.year][0]} EPA`,
+        }),
+        columnHelper.accessor("rp_2_epa", {
+          cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+          header: `${RPMapping[data.year.year][1]} EPA`,
+        }),
+      ].filter(Boolean),
+    [data, maxRank, disableHighlight]
   );
 
   return (

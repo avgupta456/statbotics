@@ -90,7 +90,7 @@ def reset_curr_year(curr_year: int):
 
     # NOTE: True normally False
     objs, new_etags = time_func(
-        str(curr_year) + " TBA", process_year_tba, curr_year, curr_year, teams, etags, False  # type: ignore
+        str(curr_year) + " TBA", process_year_tba, curr_year, curr_year, teams, etags, True  # type: ignore
     )
     year = time_func(
         str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore

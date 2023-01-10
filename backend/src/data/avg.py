@@ -2,6 +2,7 @@ import statistics
 from typing import List
 
 from src.db.models import Event, Match, Year
+from src.constants import CURR_YEAR
 
 
 def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
@@ -29,7 +30,7 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         rp_1s.extend([match.red_rp_1 or 0, match.blue_rp_1 or 0])
         rp_2s.extend([match.red_rp_2 or 0, match.blue_rp_2 or 0])
 
-    if year.year == 2023:
+    if year.year == CURR_YEAR:
         year.score_mean = 30
         year.score_sd = 10
         year.auto_mean = 10

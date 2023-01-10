@@ -2,14 +2,13 @@ from datetime import timedelta
 from typing import Callable, List, Optional
 
 from src.api.models import APITeamEvent
-from src.data.nepa import get_epa_to_norm_epa_func
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
 from src.utils.alru_cache import alru_cache
 
 
 def unpack_team_event(
-    epa_to_norm_epa: Callable[[float], float], team_event: TeamEvent
+    team_event: TeamEvent
 ) -> APITeamEvent:
     return APITeamEvent(
         num=team_event.team,
@@ -23,7 +22,6 @@ def unpack_team_event(
         start_rp_1_epa=team_event.rp_1_epa_start or 0,
         start_rp_2_epa=team_event.rp_2_epa_start or 0,
         total_epa=team_event.epa_end or 0,
-        norm_epa=epa_to_norm_epa(team_event.epa_end or 0),
         auto_epa=team_event.auto_epa_end or 0,
         teleop_epa=team_event.teleop_epa_end or 0,
         endgame_epa=team_event.endgame_epa_end or 0,
@@ -51,8 +49,5 @@ async def get_team_events(
         team=team, year=year, event=event
     )
 
-    if epa_to_norm_epa is None:
-        epa_to_norm_epa = get_epa_to_norm_epa_func(year)
-
-    team_events = [unpack_team_event(epa_to_norm_epa, x) for x in team_event_objs]
+    team_events = [unpack_team_event(x) for x in team_event_objs]
     return (True, sorted(team_events, key=lambda x: x.time))  # type: ignore

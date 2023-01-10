@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Set, Tuple
 
 from src.constants import MAX_TEAM
@@ -16,6 +17,7 @@ from src.db.models.create import (
 from src.tba.constants import YEAR_BLACKLIST
 from src.tba.read_tba import (
     get_event_rankings as get_event_rankings_tba,
+    get_event_teams as get_event_teams_tba,
     get_events as get_events_tba,
     get_matches as get_matches_tba,
     get_teams as get_teams_tba,
@@ -35,6 +37,10 @@ def get_event_status(matches: List[Dict[str, Any]], curr_year: bool) -> str:
     for match in matches:
         if match["status"] == "Upcoming":
             num_upcoming_matches += 1
+
+    # TODO: Some 2022 offseason matches are marked Ongoing
+    # Incorporate start/end date to move these to invalid
+    # Not a problem until offseason matches displayed on frontend
 
     event_status = "Completed"
     if curr_year:
@@ -63,6 +69,7 @@ def process_year(
     team_event_objs: List[TeamEvent] = []
     match_objs: List[Match] = []
     team_match_objs: List[TeamMatch] = []
+    new_etags: List[ETag] = []
 
     # TODO: Handle 2021 offseason events (low priority)
     if year_num in YEAR_BLACKLIST:
@@ -75,12 +82,11 @@ def process_year(
                 match_objs,
                 team_match_objs,
             ),
-            [],
+            new_etags,
         )
 
     etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
-    new_etags: List[ETag] = []
 
     default_team = create_team_obj(
         {"name": None, "team": None, "state": None, "country": None, "district": None}
@@ -94,8 +100,6 @@ def process_year(
     events, _ = get_events_tba(year_num, cache=cache)
 
     for event in events:
-        event_teams: Set[int] = set()
-
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
 
@@ -106,33 +110,38 @@ def process_year(
         if new_etag != prev_etag and new_etag is not None:
             new_etags.append(ETag(year_num, event_key + "/matches", new_etag))
 
-        # Hack: remove "Upcoming" matches once finals finished
-        finals = [m["status"] for m in matches if m["comp_level"] == "f"]
-        if len(finals) >= 2 and set(finals) == {"Completed"}:
-            matches = [m for m in matches if m["status"] == "Completed"]
+        current_match = 0 if len(matches) > 0 else -1
+        qual_matches = 0 if len(matches) > 0 else -1
 
         # "Completed", "Upcoming", "Ongoing", or "Invalid"
         event_status = get_event_status(matches, year_num == end_year)
-        if event_status == "Invalid":
-            continue
         event_obj.status = event_status
 
-        rankings, _ = get_event_rankings_tba(event_key, cache=cache)
+        event_teams: Set[int] = set()
+        rankings: Dict[int, int] = defaultdict(int)
+        if event_status == "Invalid":
+            continue
+        elif event_status == "Upcoming":
+            temp_event_teams, _ = get_event_teams_tba(event_key, cache=cache)
+            for team in temp_event_teams:
+                event_teams.add(team)
+                year_teams.add(team)
+        elif event_status in ["Ongoing", "Completed"]:
+            for match in matches:
+                match["year"] = year_num
+                match["offseason"] = event_obj.offseason
+                match_obj, curr_team_match_objs = create_match_obj(match)
+                current_match += match_obj.status == "Completed"
+                qual_matches += not match_obj.playoff
+                match_objs.append(match_obj)
+                team_match_objs.extend(curr_team_match_objs)
+                for team_match in curr_team_match_objs:
+                    event_teams.add(team_match.team)
+                    year_teams.add(team_match.team)
 
-        current_match = 0 if len(matches) > 0 else -1
-        qual_matches = 0 if len(matches) > 0 else -1
-        for match in matches:
-            match["year"] = year_num
-            match["offseason"] = event_obj.offseason
-            match_obj, curr_team_match_objs = create_match_obj(match)
-            current_match += match_obj.status == "Completed"
-            qual_matches += not match_obj.playoff
-            match_objs.append(match_obj)
-            team_match_objs.extend(curr_team_match_objs)
-            for team_match in curr_team_match_objs:
-                event_teams.add(team_match.team)
-                year_teams.add(team_match.team)
+            rankings, _ = get_event_rankings_tba(event_key, cache=cache)
 
+        # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
             team_obj = teams_dict[team]
             team_event_objs.append(
@@ -203,6 +212,14 @@ def process_year_partial(
         if event_obj.status == "Completed":
             continue
 
+        start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
+        if start_date - timedelta(days=1) > datetime.now():
+            continue
+
+        if end_date + timedelta(days=1) < datetime.now():
+            continue
+
         # Load matches, if same as before then skip event
         prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
         matches, new_etag = get_matches_tba(
@@ -211,39 +228,41 @@ def process_year_partial(
         if new_etag == prev_etag and new_etag is not None:
             continue
 
-        # Hack: remove "Upcoming" matches once finals start
-        finals = [m["status"] for m in matches if m["comp_level"] == "f"]
-        if len(finals) >= 2 and set(finals) == {"Completed"}:
-            matches = [m for m in matches if m["status"] == "Completed"]
+        current_match = 0 if len(matches) > 0 else -1
+        qual_matches = 0 if len(matches) > 0 else -1
 
         # "Completed", "Upcoming", "Ongoing", or "Invalid"
         event_status = get_event_status(matches, True)
-        if event_status == "Invalid":
-            continue
         event_obj.status = event_status
 
-        event_match_keys = [m.key for m in match_objs if m.event == event_obj.key]
-        current_match = 0 if len(matches) > 0 else -1
-        qual_matches = 0 if len(matches) > 0 else -1
-        for match in matches:
-            match["year"] = year_num
-            match["offseason"] = event_obj.offseason
-            match_obj, curr_team_match_objs = create_match_obj(match)
-            current_match += match_obj.status == "Completed"
-            qual_matches += not match_obj.playoff
-            if match_obj.key not in event_match_keys:
-                match_objs.append(match_obj)
-                team_match_objs.extend(curr_team_match_objs)
+        if event_status == "Invalid":
+            continue
+        elif event_status == "Upcoming":
+            # Only update ongoing/recently completed events in partial update
+            # Load new events every hour in full update
+            continue
+        elif event_status in ["Ongoing", "Completed"]:
+            # Update event_obj, accumulate match_obj, team_match_objs
+            event_match_keys = [m.key for m in match_objs if m.event == event_obj.key]
+            for match in matches:
+                match["year"] = year_num
+                match["offseason"] = event_obj.offseason
+                match_obj, curr_team_match_objs = create_match_obj(match)
+                current_match += match_obj.status == "Completed"
+                qual_matches += not match_obj.playoff
+                if match_obj.key not in event_match_keys:
+                    match_objs.append(match_obj)
+                    team_match_objs.extend(curr_team_match_objs)
+            event_obj.current_match = current_match
+            event_obj.qual_matches = qual_matches
 
-        rankings, new_etag = get_event_rankings_tba(event_obj.key, None, False)
-        for team_event_obj in team_event_objs:
-            if team_event_obj.event == event_obj.key:
-                team_event_obj.status = event_status
-                team_event_obj.rank = rankings.get(team_event_obj.team, -1)
-                team_event_obj.num_teams = len(rankings)
-
-        event_obj.current_match = current_match
-        event_obj.qual_matches = qual_matches
+            # Update team_event_objs
+            rankings, new_etag = get_event_rankings_tba(event_obj.key, None, False)
+            for team_event_obj in team_event_objs:
+                if team_event_obj.event == event_obj.key:
+                    team_event_obj.status = event_status
+                    team_event_obj.rank = rankings.get(team_event_obj.team, -1)
+                    team_event_obj.num_teams = len(rankings)
 
     return (
         (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs),

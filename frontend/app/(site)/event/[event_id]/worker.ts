@@ -16,6 +16,8 @@ const getTiebreakers = (year: number, match: APIMatch) => {
     return [match.red_auto, match.blue_auto];
   } else if (year === 2022) {
     return [match.red_score, match.blue_score];
+  } else if (year === 2023) {
+    return [-match.blue_fouls, -match.red_fouls];
   } else {
     return [match.red_score, match.blue_score];
   }

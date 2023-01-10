@@ -51,7 +51,7 @@ async function getEventData(year: number) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: TeamYearData }>({});
   const [eventDataDict, setEventDataDict] = useState<{ [key: number]: EventData }>({});
-  const [year, setYear] = useState(2022);
+  const [year, setYear] = useState(CURR_YEAR);
 
   useEffect(() => {
     const getDataForYear = async (year: number) => {
