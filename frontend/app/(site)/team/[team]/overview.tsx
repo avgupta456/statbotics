@@ -53,7 +53,6 @@ const OverviewSection = ({
   const teamYear = teamYearData.team_year;
   const teamEvents = teamYearData.team_events;
   const matches = teamYearData.matches;
-  const winrate = ((teamYear.wins + teamYear.ties / 2) / teamYear.count) * 100;
 
   let state = teamData.state;
   usaOptions.forEach((option) => {
@@ -86,7 +85,7 @@ const OverviewSection = ({
         <strong>
           {teamYear.wins}-{teamYear.losses}-{teamYear.ties}
         </strong>{" "}
-        ({winrate.toFixed(1)}% winrate) in {year.year}.
+        in {year.year}.
       </div>
       <div className="w-full mb-8 md:mb-12 flex flex-wrap items-center">
         EPA Breakdown:

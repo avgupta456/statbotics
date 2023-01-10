@@ -18,7 +18,6 @@ class APITeamEvent(APIModel):
     start_rp_2_epa: float
     # For tables and figures
     total_epa: float
-    norm_epa: float
     auto_epa: float
     teleop_epa: float
     endgame_epa: float

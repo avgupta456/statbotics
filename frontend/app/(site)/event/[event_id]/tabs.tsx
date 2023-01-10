@@ -79,7 +79,9 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
       ? { title: "Elim Matches", content: MemoizedElimMatchSection }
       : { title: "", content: "" },
     { title: "Figures", content: MemoizedFigureSection },
-    { title: "Simulation", content: MemoizedSimulationSection },
+    qualsN > 0
+      ? { title: "Simulation", content: MemoizedSimulationSection }
+      : { title: "", content: "" },
   ].filter((tab) => tab.title !== "");
 
   return <TabsSection tabs={tabs} loading={data === undefined} />;

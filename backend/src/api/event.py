@@ -11,7 +11,6 @@ from src.api.aggregation import (
     get_year,
 )
 from src.api.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
-from src.data.nepa import get_epa_to_norm_epa_func
 from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
@@ -40,10 +39,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     if year is None:
         raise Exception("Year not found")
 
-    epa_to_norm_epa = get_epa_to_norm_epa_func(event.year)
-    team_events: List[APITeamEvent] = await get_team_events(
-        event=event_id, epa_to_norm_epa=epa_to_norm_epa
-    )
+    team_events: List[APITeamEvent] = await get_team_events(event=event_id)
     matches: List[APIMatch] = await get_matches(event=event_id)
     team_matches: List[APITeamMatch] = await get_team_matches(event=event_id)
 

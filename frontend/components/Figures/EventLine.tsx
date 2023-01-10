@@ -94,9 +94,12 @@ const EventLineChart = ({
         })),
       };
 
-      const lastMatch = allData[teamNum][allData[teamNum].length - 1].match_number;
-      const lastEPA = teamEvents[teamEvents.findIndex((team) => team.num === teamNum)][yAxis.value];
-      teamData.data.push({ x: lastMatch, label: "End", y: lastEPA });
+      if (teamData.data.length > 0) {
+        const lastMatch = allData[teamNum][allData[teamNum].length - 1].match_number;
+        const lastEPA =
+          teamEvents[teamEvents.findIndex((team) => team.num === teamNum)][yAxis.value];
+        teamData.data.push({ x: lastMatch, label: "End", y: lastEPA });
+      }
 
       return teamData;
     });
