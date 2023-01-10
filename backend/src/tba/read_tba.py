@@ -47,7 +47,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
 
 
 def get_events(
-    year: int, etag: Optional[str] = None, cache: bool = True
+    year: int, etag: Optional[str] = None, mock: bool = False, cache: bool = True
 ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
     out: List[Dict[str, Any]] = []
     data, new_etag = get_tba("events/" + str(year), etag=etag, cache=cache)
@@ -124,7 +124,7 @@ def get_events(
 
 
 def get_event_teams(
-    event: str, etag: Optional[str] = None, cache: bool = True
+    event: str, etag: Optional[str] = None, mock: bool = False, cache: bool = True
 ) -> Tuple[List[int], Optional[str]]:
     query_str = "event/" + str(event) + "/teams/simple"
     data, new_etag = get_tba(query_str, etag=etag, cache=cache)
@@ -135,7 +135,11 @@ def get_event_teams(
 
 
 def get_event_rankings(
-    event: str, etag: Optional[str] = None, cache: bool = True
+    event: str,
+    etag: Optional[str] = None,
+    mock: bool = False,
+    mock_index: int = 0,
+    cache: bool = True,
 ) -> Tuple[Dict[int, int], Optional[str]]:
     out: Dict[int, int] = {}
     new_etag: Optional[str] = None
@@ -160,6 +164,8 @@ def get_matches(
     event: str,
     event_time: int,
     etag: Optional[str] = None,
+    mock: bool = False,
+    mock_index: int = 0,
     cache: bool = True,
 ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
     m_type = List[Dict[str, Any]]

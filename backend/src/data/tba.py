@@ -61,6 +61,7 @@ def process_year(
     end_year: int,
     teams: List[Team],
     etags: List[ETag],
+    mock: bool = False,
     cache: bool = True,
 ) -> Tuple[objs_type, List[ETag]]:
     year_obj = create_year_obj({"year": year_num})
@@ -97,14 +98,14 @@ def process_year(
 
     year_teams: Set[int] = set()
 
-    events, _ = get_events_tba(year_num, cache=cache)
+    events, _ = get_events_tba(year_num, mock=mock, cache=cache)
 
     for event in events:
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
 
         matches, new_etag = get_matches_tba(
-            year_num, event_key, event_time, cache=cache
+            year_num, event_key, event_time, mock=mock, cache=cache
         )
         prev_etag = etags_dict.get(event_key + "/matches", default_etag).etag
         if new_etag != prev_etag and new_etag is not None:
@@ -122,7 +123,7 @@ def process_year(
         if event_status == "Invalid":
             continue
         elif event_status == "Upcoming":
-            temp_event_teams, _ = get_event_teams_tba(event_key, cache=cache)
+            temp_event_teams, _ = get_event_teams_tba(event_key, mock=mock, cache=cache)
             for team in temp_event_teams:
                 event_teams.add(team)
                 year_teams.add(team)
@@ -139,7 +140,7 @@ def process_year(
                     event_teams.add(team_match.team)
                     year_teams.add(team_match.team)
 
-            rankings, _ = get_event_rankings_tba(event_key, cache=cache)
+            rankings, _ = get_event_rankings_tba(event_key, mock=mock, cache=cache)
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
@@ -200,7 +201,11 @@ def process_year(
 
 
 def process_year_partial(
-    year_num: int, objs: objs_type, etags: List[ETag]
+    year_num: int,
+    objs: objs_type,
+    etags: List[ETag],
+    mock: bool = False,
+    mock_index: int = 0,
 ) -> Tuple[objs_type, List[ETag]]:
     (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs) = objs
 
@@ -223,7 +228,13 @@ def process_year_partial(
         # Load matches, if same as before then skip event
         prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
         matches, new_etag = get_matches_tba(
-            year_num, event_obj.key, event_obj.time, prev_etag, False
+            year_num,
+            event_obj.key,
+            event_obj.time,
+            prev_etag,
+            mock=mock,
+            mock_index=mock_index,
+            cache=False,
         )
         if new_etag == prev_etag and new_etag is not None:
             continue
@@ -257,7 +268,9 @@ def process_year_partial(
             event_obj.qual_matches = qual_matches
 
             # Update team_event_objs
-            rankings, new_etag = get_event_rankings_tba(event_obj.key, None, False)
+            rankings, new_etag = get_event_rankings_tba(
+                event_obj.key, None, mock=mock, mock_index=mock_index, cache=False
+            )
             for team_event_obj in team_event_objs:
                 if team_event_obj.event == event_obj.key:
                     team_event_obj.status = event_status
