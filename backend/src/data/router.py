@@ -17,8 +17,8 @@ async def read_root():
 
 @router.get("/reset_all_years")
 async def reset_all_years_endpoint():
-    # return {"status": "skipped"}
-    reset_all_years(start_year=2022, end_year=CURR_YEAR)
+    return {"status": "skipped"}
+    reset_all_years(start_year=2002, end_year=CURR_YEAR)
     return {"status": "success"}
 
 

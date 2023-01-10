@@ -136,6 +136,59 @@ def _get_breakdown(score: int) -> Dict[str, Optional[int]]:
     }
 
 
+def _create_match(
+    event: str,
+    event_time: int,
+    teams: List[int],
+    i: int,
+    completed: bool,
+    key: str,
+    comp_level: str,
+    set_number: int,
+    match_number: int,
+) -> Dict[str, Any]:
+    red_score = 0
+    blue_score = 0
+    if completed:
+        red_score = random.randint(10, 100)
+        blue_score = random.randint(10, 100)
+
+    red_breakdown = _get_breakdown(red_score)
+    blue_breakdown = _get_breakdown(blue_score)
+
+    winner = (
+        "red"
+        if red_score > blue_score
+        else ("blue" if blue_score > red_score else "draw")
+    )
+
+    return {
+        "event": event,
+        "key": key,
+        "comp_level": comp_level,
+        "set_number": set_number,
+        "match_number": match_number,
+        "status": "Completed" if completed else "Upcoming",
+        "video": None,
+        "red_1": teams[(7 * i + 0) % len(teams)],
+        "red_2": teams[(7 * i + 1) % len(teams)],
+        "red_3": teams[(7 * i + 2) % len(teams)],
+        "blue_1": teams[(7 * i + 3) % len(teams)],
+        "blue_2": teams[(7 * i + 4) % len(teams)],
+        "blue_3": teams[(7 * i + 5) % len(teams)],
+        "red_dq": "",
+        "blue_dq": "",
+        "red_surrogate": "",
+        "blue_surrogate": "",
+        "winner": winner,
+        "time": event_time + i + 1,
+        "red_score": red_score,
+        "blue_score": blue_score,
+        "red_score_breakdown": red_breakdown,
+        "blue_score_breakdown": blue_breakdown,
+    }
+
+
 def get_event_rankings(event: str, mock_index: int) -> Dict[int, int]:
     teams = _get_event_teams(event)
     rankings: Dict[int, int] = {}
@@ -148,52 +201,76 @@ def get_matches(
     year: int, event: str, event_time: int, mock_index: int
 ) -> List[Dict[str, Any]]:
     teams = _get_event_teams(event)
+
+    """QUALS"""
+
     N = len(teams) * 2  # 12 matches per team (6 teams per match)
-    n = N if event in completed_mock_events else round(N * mock_index / 5)
+    n = N if event in completed_mock_events else round(N * max(1, mock_index / 5))
 
     match_data: List[Dict[str, Any]] = []
     for i in range(N):
-        red_score = 0
-        blue_score = 0
-        if i < n:
-            red_score = random.randint(10, 100)
-            blue_score = random.randint(10, 100)
-
-        red_breakdown = _get_breakdown(red_score)
-        blue_breakdown = _get_breakdown(blue_score)
-
-        winner = (
-            "red"
-            if red_score > blue_score
-            else ("blue" if blue_score > red_score else "draw")
-        )
-
         match_data.append(
-            {
-                "event": event,
-                "key": f"{event}_qm{i+1}",
-                "comp_level": "qm",
-                "set_number": 1,
-                "match_number": i + 1,
-                "status": "Completed" if i < n else "Upcoming",
-                "video": None,
-                "red_1": teams[(7 * i + 0) % len(teams)],
-                "red_2": teams[(7 * i + 1) % len(teams)],
-                "red_3": teams[(7 * i + 2) % len(teams)],
-                "blue_1": teams[(7 * i + 3) % len(teams)],
-                "blue_2": teams[(7 * i + 4) % len(teams)],
-                "blue_3": teams[(7 * i + 5) % len(teams)],
-                "red_dq": "",
-                "blue_dq": "",
-                "red_surrogate": "",
-                "blue_surrogate": "",
-                "winner": winner,
-                "time": event_time + i + 1,
-                "red_score": red_score,
-                "blue_score": blue_score,
-                "red_score_breakdown": red_breakdown,
-                "blue_score_breakdown": blue_breakdown,
-            }
+            _create_match(
+                event, event_time, teams, i, i < n, f"{event}_qm{i+1}", "qm", 1, i + 1
+            )
         )
+
+    """ELIMS"""
+
+    # Quarters
+    completed_quarters = event in completed_mock_events or mock_index >= 6
+    if event in completed_mock_events or mock_index >= 5:
+        for i in range(4):
+            for j in range(2):
+                match_data.append(
+                    _create_match(
+                        event,
+                        event_time,
+                        teams,
+                        300 + 10 * (i + 1) + j + 1,
+                        completed_quarters,
+                        f"{event}_qf{i + 1}m{j + 1}",
+                        "qf",
+                        i + 1,
+                        j + 1,
+                    )
+                )
+
+    # Semis
+    completed_semis = event in completed_mock_events or mock_index >= 6
+    if event in completed_mock_events or mock_index >= 6:
+        for i in range(2):
+            for j in range(2):
+                match_data.append(
+                    _create_match(
+                        event,
+                        event_time,
+                        teams,
+                        400 + 10 * (i + 1) + j + 1,
+                        completed_semis,
+                        f"{event}_sf{i + 1}m{j + 1}",
+                        "sf",
+                        i + 1,
+                        j + 1,
+                    )
+                )
+
+    # Finals
+    completed_finals = event in completed_mock_events or mock_index >= 7
+    if event in completed_mock_events or mock_index >= 6:
+        for i in range(2):
+            match_data.append(
+                _create_match(
+                    event,
+                    event_time,
+                    teams,
+                    500 + i,
+                    completed_finals,
+                    f"{event}_f1m{i + 1}",
+                    "f",
+                    1,
+                    i + 1,
+                )
+            )
 
     return match_data
