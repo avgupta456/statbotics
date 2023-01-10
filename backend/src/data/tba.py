@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Set, Tuple
 
 from src.constants import MAX_TEAM
@@ -209,6 +210,14 @@ def process_year_partial(
 
     for event_obj in event_objs:
         if event_obj.status == "Completed":
+            continue
+
+        start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
+        if start_date - timedelta(days=1) > datetime.now():
+            continue
+
+        if end_date + timedelta(days=1) < datetime.now():
             continue
 
         # Load matches, if same as before then skip event
