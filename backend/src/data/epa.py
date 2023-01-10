@@ -320,23 +320,15 @@ def process_year(
                 if team_event_key not in team_events_dict:
                     team_events_dict[team_event_key] = [(epa_dict[t], match.playoff)]
                     if USE_COMPONENTS:
-                        (
-                            auto_epa,
-                            teleop_epa,
-                            endgame_epa,
-                            rp_1_epa,
-                            rp_2_epa,
-                        ) = component_team_match_ids[get_team_match_key(t, match.key)]
-                        component_team_events_dict[team_event_key] = [
-                            (
-                                auto_epa,
-                                teleop_epa,
-                                endgame_epa,
-                                rp_1_epa,
-                                rp_2_epa,
-                                match.playoff,
-                            )
+                        temp_epas = component_team_match_ids[
+                            get_team_match_key(t, match.key)
                         ]
+                        component_team_events_dict[team_event_key] = [
+                            (*temp_epas, match.playoff)
+                        ]
+
+        if match.status != "Upcoming":
+            continue
 
         winner = match.winner or "red"  # in practice, never None
         red_mapping = {"red": 0, "blue": 1, "draw": 2}
