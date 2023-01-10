@@ -27,5 +27,5 @@ export const RPMapping = {
   2019: ["Rocket RP", "HAB RP"],
   2020: ["Generator RP", "Hang RP"],
   2022: ["Cargo RP", "Hanger RP"],
-  2023: ["RP 1", "RP 2"],
+  2023: ["Links RP", "Activation RP"],
 };

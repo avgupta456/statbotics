@@ -168,4 +168,4 @@ class TeamEvent(Model):
     """SUPER FUNCTIONS"""
 
     def sort(self) -> Tuple[int, int]:
-        return self.team, self.time
+        return (self.team, self.time)

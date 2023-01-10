@@ -187,4 +187,4 @@ class TeamYear(Model):
     """SUPER FUNCTIONS"""
 
     def sort(self) -> Tuple[int, int]:
-        return self.team, self.year
+        return (self.team, self.year)

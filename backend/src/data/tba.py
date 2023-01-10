@@ -68,6 +68,7 @@ def process_year(
     team_event_objs: List[TeamEvent] = []
     match_objs: List[Match] = []
     team_match_objs: List[TeamMatch] = []
+    new_etags: List[ETag] = []
 
     # TODO: Handle 2021 offseason events (low priority)
     if year_num in YEAR_BLACKLIST:
@@ -80,12 +81,11 @@ def process_year(
                 match_objs,
                 team_match_objs,
             ),
-            [],
+            new_etags,
         )
 
     etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
-    new_etags: List[ETag] = []
 
     default_team = create_team_obj(
         {"name": None, "team": None, "state": None, "country": None, "district": None}

@@ -9,6 +9,7 @@ from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
 from src.db.write.main import update_teams as update_teams_db
 from src.utils.utils import get_team_event_key, get_team_match_key
+from src.constants import CURR_YEAR
 
 # HELPER FUNCTIONS
 
@@ -756,8 +757,11 @@ def process_year(
     for team in team_years_dict:
         curr_team_epas = team_matches_dict[team]
         if curr_team_epas == []:
-            to_remove.append(team)
-            continue
+            if year.year == CURR_YEAR:
+                curr_team_epas = [team_epas[team]]
+            else:
+                to_remove.append(team)
+                continue
 
         # Use end of season epa
         end_epa = curr_team_epas[-1]
@@ -771,14 +775,6 @@ def process_year(
             state_year_epas[team_year_obj.state].append(round(end_epa, 2))
         if team_year_obj.district is not None:
             district_year_epas[team_year_obj.district].append(round(end_epa, 2))
-
-        if USE_COMPONENTS:
-            curr_component_team_epas = component_team_matches_dict[team]
-            year_auto_epas.append(round(curr_component_team_epas[-1][0], 2))
-            year_teleop_epas.append(round(curr_component_team_epas[-1][1], 2))
-            year_endgame_epas.append(round(curr_component_team_epas[-1][2], 2))
-            year_rp_1_epas.append(round(curr_component_team_epas[-1][3], 4))
-            year_rp_2_epas.append(round(curr_component_team_epas[-1][4], 4))
 
     for team in to_remove:
         team_years_dict.pop(team)
@@ -812,7 +808,21 @@ def process_year(
     for team in team_years_dict:
         obj = team_years_dict[team]
         curr_team_epas = team_matches_dict[team]
+        if curr_team_epas == []:
+            curr_team_epas = [team_epas[team]]
+
         curr_component_team_epas = component_team_matches_dict[team]
+        if curr_component_team_epas == []:
+            curr_component_team_epas = [
+                [
+                    team_auto_epas[team],
+                    team_teleop_epas[team],
+                    team_endgame_epas[team],
+                    team_rp_1_epas[team],
+                    team_rp_2_epas[team],
+                ]
+            ]
+
         curr_auto_team_epas = [x[0] for x in curr_component_team_epas]
         curr_teleop_team_epas = [x[1] for x in curr_component_team_epas]
         curr_endgame_team_epas = [x[2] for x in curr_component_team_epas]
@@ -825,26 +835,32 @@ def process_year(
         obj.epa_end = round(team_epas[team], 2)
         obj.epa_diff = round(obj.epa_end - (obj.epa_start or 0), 2)
 
-        epa_index = year_epas.index(obj.epa_end)
-        obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 2)
+        if year.year != CURR_YEAR:
+            epa_index = year_epas.index(obj.epa_end)
+            obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 2)
 
         if USE_COMPONENTS:
+            year_auto_epas.append(round(curr_auto_team_epas[-1], 2))
             obj.auto_epa_max = round(max(curr_auto_team_epas[min(n - 1, 8) :]), 2)
             obj.auto_epa_mean = round(sum(curr_auto_team_epas) / n, 2)
             obj.auto_epa_end = round(team_auto_epas[team], 2)
 
+            year_teleop_epas.append(round(curr_teleop_team_epas[-1], 2))
             obj.teleop_epa_max = round(max(curr_teleop_team_epas[min(n - 1, 8) :]), 2)
             obj.teleop_epa_mean = round(sum(curr_teleop_team_epas) / n, 2)
             obj.teleop_epa_end = round(team_teleop_epas[team], 2)
 
+            year_endgame_epas.append(round(curr_endgame_team_epas[-1], 2))
             obj.endgame_epa_max = round(max(curr_endgame_team_epas[min(n - 1, 8) :]), 2)
             obj.endgame_epa_mean = round(sum(curr_endgame_team_epas) / n, 2)
             obj.endgame_epa_end = round(team_endgame_epas[team], 2)
 
+            year_rp_1_epas.append(round(curr_rp_1_team_epas[-1], 4))
             obj.rp_1_epa_max = round(max(curr_rp_1_team_epas[min(n - 1, 8) :]), 4)
             obj.rp_1_epa_mean = round(sum(curr_rp_1_team_epas) / n, 4)
             obj.rp_1_epa_end = round(team_rp_1_epas[team], 4)
 
+            year_rp_2_epas.append(round(curr_rp_2_team_epas[-1], 4))
             obj.rp_2_epa_max = round(max(curr_rp_2_team_epas[min(n - 1, 8) :]), 4)
             obj.rp_2_epa_mean = round(sum(curr_rp_2_team_epas) / n, 4)
             obj.rp_2_epa_end = round(team_rp_2_epas[team], 4)

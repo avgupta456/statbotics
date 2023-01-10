@@ -52,6 +52,8 @@ async def get_team_events(
     )
 
     if epa_to_norm_epa is None:
+        if year is None:
+            raise ValueError("Requires year")
         epa_to_norm_epa = get_epa_to_norm_epa_func(year)
 
     team_events = [unpack_team_event(epa_to_norm_epa, x) for x in team_event_objs]

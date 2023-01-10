@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { BACKEND_URL } from "../../../../constants";
+import { BACKEND_URL, CURR_YEAR } from "../../../../constants";
 import { round } from "../../../../utils";
 import PageLayout from "../../shared/layout";
 import NotFound from "../../shared/notFound";
@@ -36,8 +36,8 @@ async function getTeamYearData(team: number, year: number) {
 
 const Page = ({ params }: { params: { team: number } }) => {
   const { team } = params;
-  const [prevYear, _setPrevYear] = useState(2022);
-  const [year, _setYear] = useState(2022);
+  const [prevYear, _setPrevYear] = useState(CURR_YEAR);
+  const [year, _setYear] = useState(CURR_YEAR);
 
   const setYear = (newYear: number) => {
     _setPrevYear(year);

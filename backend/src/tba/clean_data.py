@@ -201,6 +201,10 @@ def get_breakdown(
         a, b, c = int(out["teleop_2_1"]), int(out["teleop_2_2"]), int(out["teleop_2"])  # type: ignore
         if a + b != c:
             out["teleop_2_1" if a > b else "teleop_2_2"] = c - min(a, b)
+    elif year == 2023:
+        raise NotImplementedError("2023 not yet implemented")
+    else:
+        raise ValueError("Invalid year: " + str(year))
 
     out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
     out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
