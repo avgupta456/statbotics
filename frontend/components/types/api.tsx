@@ -58,6 +58,9 @@ export type APITeamYear = {
   state?: string;
   country?: string;
   district?: string;
+  next_event_key?: string;
+  next_event_name?: string;
+  next_event_week?: number;
   epa_rank: number;
   epa_count: number;
   state_epa_rank: number;

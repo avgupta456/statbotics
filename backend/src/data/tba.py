@@ -89,12 +89,13 @@ def process_year(
     etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
 
+    teams_dict: Dict[int, Team] = {team.team: team for team in teams}
     default_team = create_team_obj(
         {"name": None, "team": None, "state": None, "country": None, "district": None}
     )
-    teams_dict: Dict[int, Team] = defaultdict(lambda: default_team)
-    for team in teams:
-        teams_dict[team.team] = team
+
+    team_next_event_dict: Dict[int, Tuple[str, str, int]] = {}
+    default_next_event = (None, None, None)
 
     year_teams: Set[int] = set()
 
@@ -120,13 +121,27 @@ def process_year(
 
         event_teams: Set[int] = set()
         rankings: Dict[int, int] = defaultdict(int)
+
+        def add_team_event(team: int):
+            event_teams.add(team)
+            year_teams.add(team)
+            # Store closest upcoming/ongoing event
+            if event_obj.status != "Completed" and (
+                team not in team_next_event_dict
+                or team_next_event_dict[team][2] > event_obj.week
+            ):
+                team_next_event_dict[team] = (
+                    event_obj.key,
+                    event_obj.name,
+                    event_obj.week,
+                )
+
         if event_status == "Invalid":
             continue
         elif event_status == "Upcoming":
             temp_event_teams, _ = get_event_teams_tba(event_key, mock=mock, cache=cache)
             for team in temp_event_teams:
-                event_teams.add(team)
-                year_teams.add(team)
+                add_team_event(team)
         elif event_status in ["Ongoing", "Completed"]:
             for match in matches:
                 match["year"] = year_num
@@ -137,14 +152,13 @@ def process_year(
                 match_objs.append(match_obj)
                 team_match_objs.extend(curr_team_match_objs)
                 for team_match in curr_team_match_objs:
-                    event_teams.add(team_match.team)
-                    year_teams.add(team_match.team)
+                    add_team_event(team_match.team)
 
             rankings, _ = get_event_rankings_tba(event_key, mock=mock, cache=cache)
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
-            team_obj = teams_dict[team]
+            team_obj = teams_dict.get(team, default_team)
             team_event_objs.append(
                 create_team_event_obj(
                     {
@@ -172,7 +186,8 @@ def process_year(
         event_objs.append(event_obj)
 
     for team in year_teams:
-        team_obj = teams_dict[team]
+        team_obj = teams_dict.get(team, default_team)
+        next_event = team_next_event_dict.get(team, default_next_event)
         team_year_objs.append(
             create_team_year_obj(
                 {
@@ -183,6 +198,9 @@ def process_year(
                     "state": team_obj.state,
                     "country": team_obj.country,
                     "district": team_obj.district,
+                    "next_event_key": next_event[0],
+                    "next_event_name": next_event[1],
+                    "next_event_week": next_event[2],
                 }
             )
         )

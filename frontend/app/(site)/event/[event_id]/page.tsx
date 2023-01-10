@@ -8,7 +8,7 @@ import { Data } from "./types";
 
 async function getData(event_id: string) {
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/event/` + event_id);
+  const res = await fetch(`${BACKEND_URL}/event/` + event_id, { next: { revalidate: 60 } });
   console.log(`/event/${event_id} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {

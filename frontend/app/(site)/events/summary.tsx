@@ -74,7 +74,7 @@ const Summary = ({ data }: { data: EventData }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      <div className="flex justify-center">
+      <div className="flex justify-center mb-8">
         <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
       </div>
       {[

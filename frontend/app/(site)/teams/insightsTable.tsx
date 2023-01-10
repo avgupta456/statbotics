@@ -5,7 +5,12 @@ import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
-import { TeamLink, formatCell, formatPercentileCell } from "../../../components/Table/shared";
+import {
+  EventLink,
+  TeamLink,
+  formatCell,
+  formatPercentileCell,
+} from "../../../components/Table/shared";
 import { FilterBar, filterData } from "../../../components/filter";
 import { APITeamYear } from "../../../components/types/api";
 import { formatNumber } from "../../../components/utils";
@@ -24,18 +29,25 @@ export type TeamYearInsights = {
   endgame_epa: number | string;
   rp_1_epa: number | string;
   rp_2_epa: number | string;
+  next_event_key?: string;
+  next_event_name?: string;
+  next_event_week?: number | string;
   record: string;
 };
 
 const columnHelper = createColumnHelper<TeamYearInsights>();
 
-const defaultFilters = {
-  country: "",
-  state: "",
-  district: "",
-};
-
 const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
+  let defaultFilters = {
+    country: "",
+    state: "",
+    district: "",
+  };
+
+  if (year === CURR_YEAR) {
+    defaultFilters["competing"] = "";
+  }
+
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [showProjections, setShowProjections] = useState(true);
   const [filters, setFilters] = useState(defaultFilters);
@@ -58,6 +70,10 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         endgame_epa: round(teamYear.endgame_epa, 1) ?? "N/A",
         rp_1_epa: round(teamYear.rp_1_epa, 2) ?? "N/A",
         rp_2_epa: round(teamYear.rp_2_epa, 2) ?? "N/A",
+        next_event_key: teamYear.next_event_key ?? "N/A",
+
+        next_event_name: teamYear.next_event_name ?? "N/A",
+        next_event_week: teamYear.next_event_week ?? "N/A",
         record: `${teamYear.wins}-${teamYear.losses}-${teamYear.ties}` ?? "N/A",
       };
     })
@@ -102,14 +118,22 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
           header: "Endgame EPA",
         }),
       year >= 2016 &&
+        year !== CURR_YEAR &&
         columnHelper.accessor("rp_1_epa", {
           cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
           header: `${RPMapping[year][0]} EPA`,
         }),
       year >= 2016 &&
+        year !== CURR_YEAR &&
         columnHelper.accessor("rp_2_epa", {
           cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
           header: `${RPMapping[year][1]} EPA`,
+        }),
+      year == CURR_YEAR &&
+        columnHelper.accessor("next_event_name", {
+          cell: (info) =>
+            EventLink({ key: info.row.original.next_event_key, event: info.getValue() }),
+          header: "Next Event",
         }),
       columnHelper.accessor("record", {
         cell: (info) => formatCell(info),

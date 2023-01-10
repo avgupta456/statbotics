@@ -22,6 +22,16 @@ export const TeamLink = ({ team, num }: { team: string | number; num: number }) 
   }
 };
 
+export const EventLink = ({ key, event }: { key: string; event: string }) => {
+  return (
+    <div className="w-32 h-full flex justify-center items-center text-sm">
+      <Link href={`/event/${key}`} className="text_link">
+        {truncate(event.toString(), 30)}
+      </Link>
+    </div>
+  );
+};
+
 export const CONDITIONAL_COLORS = [
   "text-red-700 bg-red-100",
   "text-gray-800",

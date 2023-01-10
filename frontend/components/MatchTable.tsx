@@ -38,6 +38,10 @@ const MatchTable = ({
   matches: APIMatch[];
   foulRate: number;
 }) => {
+  if (matches.length === 0) {
+    return <div className="w-full text-center">Schedule not released yet.</div>;
+  }
+
   const compLevels = matches.map((match) => match.comp_level);
   const uniqueCompLevels = compLevels
     .filter((v, i, a) => a.indexOf(v) === i)

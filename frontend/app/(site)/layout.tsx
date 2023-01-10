@@ -16,7 +16,7 @@ async function getTeamYearData(year: number) {
   }
 
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/team_years/` + year);
+  const res = await fetch(`${BACKEND_URL}/team_years/` + year, { next: { revalidate: 60 } });
   console.log(`/team_years/${year} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
@@ -36,7 +36,7 @@ async function getEventData(year: number) {
   }
 
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/events/${year}`);
+  const res = await fetch(`${BACKEND_URL}/events/${year}`, { next: { revalidate: 60 } });
   console.log(`/events/${year} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {

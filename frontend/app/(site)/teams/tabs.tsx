@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
-import { RPMapping } from "../../../constants";
+import { CURR_YEAR, RPMapping } from "../../../constants";
 import TabsSection from "../shared/tabs";
 import { TeamYearData, emptyTeamYearData } from "../types";
 import FigureSection from "./figures";
@@ -20,7 +20,9 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
       <BubbleChart
         year={year}
         data={data?.team_years ?? []}
-        filterOptions={["country", "state", "district"]}
+        filterOptions={["country", "state", "district", year === CURR_YEAR && "competing"].filter(
+          Boolean
+        )}
         columnOptions={[
           "Total EPA",
           "Auto",

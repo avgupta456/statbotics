@@ -153,7 +153,7 @@ const OverviewSection = ({
                   {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[5])}
                 </div>
               </div>
-              <div className="w-full lg:w-3/4 h-full overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
+              <div className="w-full lg:w-3/4 h-full pl-4 overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
                 <MatchTable
                   year={year.year}
                   teamNum={teamData.num}

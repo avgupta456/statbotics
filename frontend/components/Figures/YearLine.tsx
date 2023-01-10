@@ -35,7 +35,9 @@ const YearLineChart = ({
 
   const fetchData = async (teamNum: number) => {
     const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`);
+    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`, {
+      next: { revalidate: 60 },
+    });
     console.log(
       `/team_year/${year}/${teamNum}/matches took ${round(performance.now() - start, 0)} ms`
     );
