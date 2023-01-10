@@ -19,6 +19,7 @@ const InsightsTable = ({
   searchCols,
   csvFilename,
   toggleDisableHighlight,
+  includeKey = true,
 }: {
   data: any[];
   columns: ColumnDef<any, any>[];
@@ -27,6 +28,7 @@ const InsightsTable = ({
   searchCols: string[];
   csvFilename: string;
   toggleDisableHighlight?: () => void;
+  includeKey?: boolean;
 }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
@@ -58,7 +60,7 @@ const InsightsTable = ({
     );
 
   return (
-    <div className="w-full lg:w-fit lg:max-w-full text-sm">
+    <div className="w-full lg:w-fit lg:max-w-full text-sm mb-4">
       <div className="w-full px-2 py-1 flex items-center justify-center">
         <div className="flex-grow">
           {showSearch ? (
@@ -108,7 +110,7 @@ const InsightsTable = ({
           cellClassName={cellClassName}
         />
       </div>
-      <TableKey />
+      {includeKey && <TableKey />}
     </div>
   );
 };

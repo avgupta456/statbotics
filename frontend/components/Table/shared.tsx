@@ -98,7 +98,7 @@ export const formatPercentileCell = (
 };
 
 export const TableKey = () => (
-  <div className="w-full flex flex-wrap justify-center items-center text-xs my-4">
+  <div className="w-full flex flex-wrap justify-center items-center text-xs mt-4">
     <p className="text-sm">Key (Percentile):</p>
     <div className="flex">
       {[

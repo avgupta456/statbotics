@@ -327,7 +327,7 @@ def process_year(
                             (*temp_epas, match.playoff)
                         ]
 
-        if match.status != "Upcoming":
+        if match.status != "Completed":
             continue
 
         winner = match.winner or "red"  # in practice, never None

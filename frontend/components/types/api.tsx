@@ -126,6 +126,7 @@ export type APIMatch = {
   time: number;
   key: string;
   match_name: string;
+  status: string;
   video?: string;
   comp_level: string;
   set_number: number;

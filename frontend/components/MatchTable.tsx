@@ -150,11 +150,13 @@ const MatchTable = ({
                   >
                     <span
                       className={classnames(
-                        match.winner === "red" ? "font-bold" : "font-thin",
-                        alliance === "red" ? "underline" : ""
+                        match.status === "Completed" && match.winner === "red"
+                          ? "font-bold"
+                          : "font-thin",
+                        match.status === "Completed" && alliance === "red" ? "underline" : ""
                       )}
                     >
-                      {match.red_score}
+                      {match.status === "Completed" ? match.red_score : "-"}
                     </span>
                     {year >= 2016 && match.red_rp_1 > 0.5 && <sup>●</sup>}
                     {year >= 2016 && match.red_rp_2 > 0.5 && <sup>●</sup>}
@@ -165,11 +167,13 @@ const MatchTable = ({
                   >
                     <span
                       className={classnames(
-                        match.winner === "blue" ? "font-bold" : "font-thin",
-                        alliance === "blue" ? "underline" : ""
+                        match.status === "Completed" && match.winner === "blue"
+                          ? "font-bold"
+                          : "font-thin",
+                        match.status === "Completed" && alliance === "blue" ? "underline" : ""
                       )}
                     >
-                      {match.blue_score}
+                      {match.status === "Completed" ? match.blue_score : "-"}
                     </span>
                     {year >= 2016 && match.blue_rp_1 > 0.5 && <sup>●</sup>}
                     {year >= 2016 && match.blue_rp_2 > 0.5 && <sup>●</sup>}
@@ -202,7 +206,14 @@ const MatchTable = ({
                     {match.pred_winner === "red" ? "Red" : "Blue"}
                   </div>
                   <div
-                    style={{ backgroundColor: correctWinner ? CORRECT_COLOR : INCORRECT_COLOR }}
+                    style={{
+                      backgroundColor:
+                        match.status === "Completed"
+                          ? correctWinner
+                            ? CORRECT_COLOR
+                            : INCORRECT_COLOR
+                          : "#FFF",
+                    }}
                     className="w-1/14 flex justify-center items-center"
                   >
                     {winProb}%
