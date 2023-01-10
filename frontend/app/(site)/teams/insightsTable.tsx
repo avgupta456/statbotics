@@ -37,9 +37,15 @@ const defaultFilters = {
 
 const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
+  const [showProjections, setShowProjections] = useState(true);
   const [filters, setFilters] = useState(defaultFilters);
 
+  const numProjections = filterData(data.team_years, filters).filter(
+    (teamYear: APITeamYear) => teamYear.count === 0
+  ).length;
+
   const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
+    .filter((teamYear: APITeamYear) => showProjections || teamYear.count > 0)
     .map((teamYear: APITeamYear) => {
       return {
         num: teamYear.num ?? -1,
@@ -117,7 +123,21 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
     <div className="w-full flex flex-col justify-center items-center">
       <div className="flex items-center justify-center mb-4">
         <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
+        {numProjections > 0 && (
+          <div
+            className="ml-2 h-10 p-2 rounded bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200"
+            onClick={() => setShowProjections(!showProjections)}
+          >
+            {showProjections ? "Hide" : "Show"} Projections
+          </div>
+        )}
       </div>
+      {numProjections > 0 && showProjections && (
+        <div className="text-sm">
+          <strong>Note</strong>: Yellow highlighted teams have not played yet. Their EPA rating is
+          only a projection.
+        </div>
+      )}
       <InsightsTable
         data={yearInsightsData}
         columns={columns}

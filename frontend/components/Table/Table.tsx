@@ -39,7 +39,7 @@ const Table = ({
     columns,
     initialState: {
       pagination: {
-        pageSize: 25,
+        pageSize: 10,
       },
     },
     state: {
