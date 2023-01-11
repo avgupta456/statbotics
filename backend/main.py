@@ -20,6 +20,7 @@ origins = [
     "http://localhost:3000",
     "https://statbotics.io",
     "https://www.statbotics.io",
+    "https://v2.statbotics.io",
 ]
 
 app.add_middleware(

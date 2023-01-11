@@ -15,6 +15,7 @@ from src.db.models.create import (
     create_year_obj,
 )
 from src.tba.constants import YEAR_BLACKLIST
+from src.tba.mock import all_mock_events
 from src.tba.read_tba import (
     get_event_rankings as get_event_rankings_tba,
     get_event_teams as get_event_teams_tba,
@@ -22,7 +23,6 @@ from src.tba.read_tba import (
     get_matches as get_matches_tba,
     get_teams as get_teams_tba,
 )
-from src.tba.mock import all_mock_events
 
 
 def load_teams(cache: bool = True) -> List[Team]:

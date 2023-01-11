@@ -25,7 +25,7 @@ else:
         + CRDB_PWD
         + "@"
         + CRDB_HOST
-        + "/statbotics?sslmode=verify-full&sslrootcert=root.crt&options=--cluster%3D"
+        + "/statbotics2?sslmode=verify-full&sslrootcert=root.crt&options=--cluster%3D"
         + CRDB_CLUSTER,
     )
 

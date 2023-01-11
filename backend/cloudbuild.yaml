@@ -1,0 +1,17 @@
+steps:
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["install"]
+    dir: "backend"
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["run", "create-env"]
+    dir: "backend"
+    env:
+      - "CRDB_USER=abhijit"
+      - "CRDB_PWD=${_CRDB_PWD}"
+      - "CRDB_HOST=free-tier.gcp-us-central1.cockroachlabs.cloud:26257"
+      - "CRDB_CLUSTER=statbotics-5256"
+  - name: "gcr.io/cloud-builders/gcloud"
+    args: ["app", "deploy", "--appyaml", "./app.yaml"]
+    dir: "backend"

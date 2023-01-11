@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "poetry run uvicorn src.main:app --reload --port=8000",
+    "start": "poetry run uvicorn main:app --reload --port=8000",
     "set-reqs": "poetry lock && poetry export -f requirements.txt --output requirements.txt --without-hashes",
-    "create-env": "printenv > .env",
-    "isort": "poetry run isort . --src-path=./src --multi-line=3 --trailing-comma --line-length=88 --combine-as --ensure-newline-before-comments"
+    "isort": "poetry run isort . --src-path=./src --multi-line=3 --trailing-comma --line-length=88 --combine-as --ensure-newline-before-comments",
+    "create-env": "printenv > .env"
   }
 }

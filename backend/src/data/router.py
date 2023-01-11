@@ -1,11 +1,7 @@
 from fastapi import APIRouter
 
-from src.data.main import (
-    reset_all_years,
-    reset_curr_year,
-    update_curr_year,
-)
 from src.constants import CURR_YEAR
+from src.data.main import reset_all_years, reset_curr_year, update_curr_year
 
 router = APIRouter()
 

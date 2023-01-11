@@ -1,8 +1,8 @@
 import statistics
 from typing import List
 
-from src.db.models import Event, Match, Year
 from src.constants import CURR_YEAR
+from src.db.models import Event, Match, Year
 
 
 def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
