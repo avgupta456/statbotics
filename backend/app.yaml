@@ -5,7 +5,7 @@ entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornWorker main:app
 instance_class: F1
 
 # exactly one instance
-basic_scaling:
+automatic_scaling:
   max_instances: 2
 
 #set to minimums
