@@ -213,3 +213,7 @@ class Match(Model):
         out["red"] = self.get_red()
         out["blue"] = self.get_blue()
         return out
+
+    def __str__(self: "Match"):
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}"

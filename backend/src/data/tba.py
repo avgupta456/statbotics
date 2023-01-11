@@ -22,6 +22,7 @@ from src.tba.read_tba import (
     get_matches as get_matches_tba,
     get_teams as get_teams_tba,
 )
+from src.tba.mock import all_mock_events
 
 
 def load_teams(cache: bool = True) -> List[Team]:
@@ -193,7 +194,7 @@ def process_year(
                 {
                     "year": year_num,
                     "team": team,
-                    "offseason": team >= MAX_TEAM,
+                    "offseason": team > MAX_TEAM,
                     "name": team_obj.name,
                     "state": team_obj.state,
                     "country": team_obj.country,
@@ -226,6 +227,8 @@ def process_year_partial(
     mock_index: int = 0,
 ) -> Tuple[objs_type, List[ETag]]:
     (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs) = objs
+    match_objs_dict = {x.key: x for x in match_objs}
+    team_match_objs_dict = {(x.team, x.match): x for x in team_match_objs}
 
     etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
@@ -235,7 +238,10 @@ def process_year_partial(
         if event_obj.status == "Completed":
             continue
 
-        if not mock:
+        if mock:
+            if event_obj.key not in all_mock_events:
+                continue
+        else:
             start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
             end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
             if start_date - timedelta(days=1) > datetime.now():
@@ -273,16 +279,18 @@ def process_year_partial(
             continue
         elif event_status in ["Ongoing", "Completed"]:
             # Update event_obj, accumulate match_obj, team_match_objs
-            event_match_keys = [m.key for m in match_objs if m.event == event_obj.key]
             for match in matches:
                 match["year"] = year_num
                 match["offseason"] = event_obj.offseason
                 match_obj, curr_team_match_objs = create_match_obj(match)
                 current_match += match_obj.status == "Completed"
                 qual_matches += not match_obj.playoff
-                if match_obj.key not in event_match_keys:
-                    match_objs.append(match_obj)
-                    team_match_objs.extend(curr_team_match_objs)
+                # Replace even if present, since may be Upcoming -> Completed
+                match_objs_dict[match_obj.key] = match_obj
+                for team_match_obj in curr_team_match_objs:
+                    team_match_objs_dict[
+                        (team_match_obj.team, team_match_obj.match)
+                    ] = team_match_obj
             event_obj.current_match = current_match
             event_obj.qual_matches = qual_matches
 
@@ -296,6 +304,8 @@ def process_year_partial(
                     team_event_obj.rank = rankings.get(team_event_obj.team, -1)
                     team_event_obj.num_teams = len(rankings)
 
+    match_objs = list(match_objs_dict.values())
+    team_match_objs = list(team_match_objs_dict.values())
     return (
         (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs),
         new_etags,

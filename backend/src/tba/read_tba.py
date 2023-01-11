@@ -45,7 +45,7 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
                 "team": num,
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
-                "offseason": num >= MAX_TEAM,
+                "offseason": num > MAX_TEAM,
                 "state": clean_state(data_team["state_prov"]),
                 "district": clean_district(get_district(num)),
                 "country": data_team["country"],

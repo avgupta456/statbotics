@@ -98,3 +98,7 @@ class Event(Model):
     def from_dict(cls, dict: Dict[str, Any]) -> "Event":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Event(**dict)
+
+    def __str__(self: "Event"):
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.key}_{self.status}_{self.current_match}_{self.qual_matches}"

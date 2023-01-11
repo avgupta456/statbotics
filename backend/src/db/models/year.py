@@ -220,3 +220,7 @@ class Year(Model):
     def from_dict(cls, dict: Dict[str, Any]) -> "Year":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Year(**dict)
+
+    def __str__(self: "Year"):
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.year}_{self.count}"
