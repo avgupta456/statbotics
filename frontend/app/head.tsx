@@ -5,8 +5,17 @@ export default function Head() {
     <>
       <title>Statbotics</title>
       <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+      <meta name="title" content="Statbotics" />
       <meta name="description" content="Modernizing FRC Data Analytics" />
+      <meta name="og:type" content="website" />
+      <meta name="og:url" content="https://www.v2.statbotics.io" />
+      <meta name="og:title" content="Statbotics" />
+      <meta name="og:description" content="Modernizing FRC Data Analytics" />
+      <meta name="og:image" content="https://www.v2.statbotics.io/spline.png" />
+
       <link rel="icon" href="/favicon.ico" />
+
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145490100-3" />
       <script
         id="gtag"
