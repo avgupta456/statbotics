@@ -100,6 +100,7 @@ EVENT_BLACKLIST = [
     "2007ga",
     "2008cal",  # very incomplete
     "2016cafc2",  # "" team
+    "2019lafwbb3",  # too long key, can add back later
     "2022zhha",  # no matches
 ]
 

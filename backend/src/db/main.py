@@ -1,33 +1,12 @@
-import os
 from typing import Any
 
 from sqlalchemy import create_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-CRDB_USER = os.getenv("CRDB_USER", "")
-CRDB_PWD = os.getenv("CRDB_PWD", "")
-CRDB_HOST = os.getenv("CRDB_HOST", "")
-CRDB_CLUSTER = os.getenv("CRDB_CLUSTER", "")
-LOCAL_DB = os.getenv("LOCAL_DB", "True") == "True"
+from src.constants import CONN_STR
 
-print(LOCAL_DB)
-
-if LOCAL_DB:
-    engine = create_engine(
-        "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
-    )
-else:
-    engine = create_engine(
-        "cockroachdb://"
-        + CRDB_USER
-        + ":"
-        + CRDB_PWD
-        + "@"
-        + CRDB_HOST
-        + "/statbotics2?sslmode=verify-full&sslrootcert=root.crt&options=--cluster%3D"
-        + CRDB_CLUSTER,
-    )
+engine = create_engine(CONN_STR)
 
 Session = sessionmaker(bind=engine)
 

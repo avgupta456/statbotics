@@ -7,7 +7,7 @@ load_dotenv()
 
 # flake8: noqa E402
 from src.api.router import router as api_router
-from src.constants import PROD
+from src.constants import CONN_STR, PROD
 from src.data.router import router as data_router
 
 """
@@ -20,7 +20,6 @@ origins = [
     "http://localhost:3000",
     "https://statbotics.io",
     "https://www.statbotics.io",
-    "https://v2.statbotics.io",
 ]
 
 app.add_middleware(
@@ -39,7 +38,7 @@ async def read_root():
 
 @app.get("/info")
 def get_info():
-    return {"PROD": PROD}
+    return {"PROD": PROD, "CONN_STR": "REDACTED" if PROD else CONN_STR}
 
 
 app.include_router(api_router, prefix="/api")
