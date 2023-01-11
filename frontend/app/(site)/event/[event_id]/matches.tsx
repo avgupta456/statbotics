@@ -8,16 +8,14 @@ import { Data } from "./types";
 const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; data: Data }) => {
   const matches = data.matches.filter((match) => match.playoff === !quals);
 
-  const N = matches.length;
-  const qualsN = matches.filter((match) => !match.playoff).length;
-
+  const N = matches.filter((match) => match.status === "Completed").length;
   const correctPreds = matches.reduce((acc, match) => {
     if (match.pred_winner === match.winner) {
       return acc + 1;
     }
     return acc;
   }, 0);
-  const accuracy = round((correctPreds / N) * 100, 1);
+  const accuracy = round((correctPreds / Math.max(N, 1)) * 100, 1);
 
   const rp1CorrectPreds = matches
     .filter((match) => !match.playoff)
@@ -30,7 +28,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
       }
       return acc;
     }, 0);
-  const rp1Accuracy = round((rp1CorrectPreds / (2 * Math.max(qualsN, 1))) * 100, 1);
+  const rp1Accuracy = round((rp1CorrectPreds / (2 * Math.max(N, 1))) * 100, 1);
 
   const rp2CorrectPreds = matches
     .filter((match) => !match.playoff)
@@ -43,7 +41,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
       }
       return acc;
     }, 0);
-  const rp2Accuracy = round((rp2CorrectPreds / (2 * Math.max(qualsN, 1))) * 100, 1);
+  const rp2Accuracy = round((rp2CorrectPreds / (2 * Math.max(N, 1))) * 100, 1);
 
   const hasOffseasonTeams = matches.some(
     (match) => Math.max(...match.red, ...match.blue) > MAX_TEAM
@@ -53,18 +51,20 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
     <div className="flex flex-col">
       <div className="w-full text-2xl font-bold mb-4">Match Predictions</div>
       <div>Remember, match predictions are just for fun, you control your own destiny!</div>
-      <div className="mb-4">
-        <strong>Accuracy: {accuracy}%</strong>
-        {quals &&
-          `| ${RPMapping[year][0]} Accuracy: ${rp1Accuracy}% | ${RPMapping[year][1]} Accuracy: ${rp2Accuracy}%`}
-      </div>
+      {N > 0 && (
+        <div>
+          <strong>Accuracy: {accuracy}%</strong>
+          {quals &&
+            `| ${RPMapping[year][0]} Accuracy: ${rp1Accuracy}% | ${RPMapping[year][1]} Accuracy: ${rp2Accuracy}%`}
+        </div>
+      )}
       {hasOffseasonTeams && (
         <div className="mb-4">
           This event has <strong>offseason teams</strong> which are assigned a default EPA value. As
           a result, prediction accuracy may be lower than expected.
         </div>
       )}
-      <div className="w-full mb-4 overflow-x-scroll scrollbar-hide">
+      <div className="w-full my-4 overflow-x-scroll scrollbar-hide">
         <MatchTable
           year={data.event.year}
           teamNum={null}

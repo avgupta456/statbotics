@@ -18,3 +18,4 @@ class APIEvent(APIModel):
     district: Optional[str]
     offseason: bool
     status: str
+    status_str: str

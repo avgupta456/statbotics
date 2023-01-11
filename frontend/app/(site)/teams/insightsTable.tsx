@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { createColumnHelper } from "@tanstack/react-table";
 
@@ -37,20 +37,24 @@ export type TeamYearInsights = {
 
 const columnHelper = createColumnHelper<TeamYearInsights>();
 
+const defaultFilters = {
+  country: "",
+  state: "",
+  district: "",
+};
+
 const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
-  let defaultFilters = {
-    country: "",
-    state: "",
-    district: "",
-  };
-
-  if (year === CURR_YEAR) {
-    defaultFilters["competing"] = "";
-  }
-
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [showProjections, setShowProjections] = useState(true);
-  const [filters, setFilters] = useState(defaultFilters);
+  const [filters, setFilters] = useState({});
+
+  useEffect(() => {
+    if (year === CURR_YEAR) {
+      setFilters({ ...defaultFilters, competing: "" });
+    } else {
+      setFilters(defaultFilters);
+    }
+  }, [year]);
 
   const numProjections = filterData(data.team_years, filters).filter(
     (teamYear: APITeamYear) => teamYear.count === 0
@@ -116,18 +120,6 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         columnHelper.accessor("endgame_epa", {
           cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
           header: "Endgame EPA",
-        }),
-      year >= 2016 &&
-        year !== CURR_YEAR &&
-        columnHelper.accessor("rp_1_epa", {
-          cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
-          header: `${RPMapping[year][0]} EPA`,
-        }),
-      year >= 2016 &&
-        year !== CURR_YEAR &&
-        columnHelper.accessor("rp_2_epa", {
-          cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
-          header: `${RPMapping[year][1]} EPA`,
         }),
       year == CURR_YEAR &&
         columnHelper.accessor("next_event_name", {

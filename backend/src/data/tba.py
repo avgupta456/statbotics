@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Set, Tuple
 
-from src.constants import MAX_TEAM
+from src.constants import CURR_WEEK, MAX_TEAM
 from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
 from src.db.models import ETag, Event, Match, Team, TeamEvent, TeamMatch, TeamYear
@@ -126,7 +126,7 @@ def process_year(
             event_teams.add(team)
             year_teams.add(team)
             # Store closest upcoming/ongoing event
-            if event_obj.status != "Completed" and (
+            if event_obj.week >= CURR_WEEK and (
                 team not in team_next_event_dict
                 or team_next_event_dict[team][2] > event_obj.week
             ):

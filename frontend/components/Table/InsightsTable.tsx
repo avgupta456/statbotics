@@ -93,7 +93,7 @@ const InsightsTable = ({
           </div>
         )}
         <div className="tooltip" data-tip="Download CSV">
-          <CSVLink data={data} filename={csvFilename}>
+          <CSVLink data={filteredData} filename={csvFilename}>
             <MdCloudDownload className="hover_icon ml-2" />
           </CSVLink>
         </div>

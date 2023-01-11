@@ -20,9 +20,7 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
       <BubbleChart
         year={year}
         data={data?.team_years ?? []}
-        filterOptions={["country", "state", "district", year === CURR_YEAR && "competing"].filter(
-          Boolean
-        )}
+        filterOptions={["country", "state", "district"]}
         columnOptions={[
           "Total EPA",
           "Auto",

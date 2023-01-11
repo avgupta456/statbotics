@@ -95,6 +95,7 @@ export type APIEvent = {
   district?: string;
   offseason: boolean;
   status: string;
+  status_str: string;
 };
 
 export type APITeamEvent = {

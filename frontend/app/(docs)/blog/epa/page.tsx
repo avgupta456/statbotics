@@ -132,7 +132,7 @@ const Page = () => {
       )}
       <p>
         So far, the EPA model is identical to the Elo model, with the only modification being a unit
-        conversion.{" "}
+        conversion. Interestingly, this new update step is just an exponential moving average.
       </p>
       <h3>Modifications</h3>
       <h4>No longer zero-sum</h4>

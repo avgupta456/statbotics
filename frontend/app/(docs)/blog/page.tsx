@@ -31,7 +31,7 @@ const Page = () => {
         <div className="grid lg:grid-cols-2 p-8">
           {posts.map((post) => (
             <div key={`post_${post.url}`} className="w-full p-2">
-              <Link rel="noreferer noopener" target="_blank" href={post.url}>
+              <Link href={post.url}>
                 <div className="w-full h-full p-8 rounded-lg bg-gray-100 hover:bg-blue-100">
                   <div className="w-full text-2xl">{post.title}</div>
                   <div className="w-full text-sm text-gray-500 mb-4">{post.date}</div>

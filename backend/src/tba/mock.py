@@ -205,7 +205,7 @@ def get_matches(
     """QUALS"""
 
     N = len(teams) * 2  # 12 matches per team (6 teams per match)
-    n = N if event in completed_mock_events else round(N * max(1, mock_index / 5))
+    n = N if event in completed_mock_events else round(N * min(1, mock_index / 5))
 
     match_data: List[Dict[str, Any]] = []
     for i in range(N):
