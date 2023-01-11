@@ -10,7 +10,7 @@ export default function Head() {
       <meta name="og:url" content="https://www.statbotics.io" />
       <meta name="og:title" content="Statbotics" />
       <meta name="og:description" content="Modernizing FRC Data Analytics" />
-      <meta name="og:image" content="https://www.statbotics.io/spline.png" />
+      <meta name="og:image" content="https://www.statbotics.io/og_spline.png" />
 
       <link rel="icon" href="/favicon.ico" />
     </>
