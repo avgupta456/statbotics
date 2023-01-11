@@ -5,6 +5,9 @@ const nextConfig = {
     // Required:
     appDir: true,
   },
+  env: {
+    PROD: process.env.PROD,
+  },
 };
 
 module.exports = nextConfig;
