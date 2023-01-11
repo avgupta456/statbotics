@@ -9,14 +9,13 @@ from src.tba.clean_data import (
     get_breakdown,
     get_match_time,
 )
-from src.tba.mock import (
-    get_event_rankings as get_event_rankings_mock,
-    get_matches as get_matches_mock,
-    all_mock_events,
-)
 from src.tba.constants import EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
-
+from src.tba.mock import (
+    all_mock_events,
+    get_event_rankings as get_event_rankings_mock,
+    get_matches as get_matches_mock,
+)
 
 m_type = List[Dict[str, Any]]
 
