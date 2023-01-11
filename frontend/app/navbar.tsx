@@ -26,7 +26,7 @@ async function getData() {
   }
 
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/teams/all`);
+  const res = await fetch(`${BACKEND_URL}/teams/all`, { next: { revalidate: 60 } });
   console.log(`/teams/all took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {

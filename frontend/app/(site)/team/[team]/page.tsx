@@ -11,7 +11,7 @@ import { TeamData, TeamYearData } from "./types";
 
 async function getTeamData(team: number) {
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/team/${team}`);
+  const res = await fetch(`${BACKEND_URL}/team/${team}`, { next: { revalidate: 60 } });
   console.log(`/team/${team} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
@@ -24,7 +24,7 @@ async function getTeamData(team: number) {
 
 async function getTeamYearData(team: number, year: number) {
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/team/${team}/${year}`);
+  const res = await fetch(`${BACKEND_URL}/team/${team}/${year}`, { next: { revalidate: 60 } });
   console.log(`/team/${team}/${year} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {

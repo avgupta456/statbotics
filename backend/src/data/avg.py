@@ -21,6 +21,9 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
 
     # TODO: investigate discrepancy between scores and fouls + no_fouls
     for match in week_one_matches:
+        if match.status != "Completed":
+            continue
+
         scores.extend([match.red_score or 0, match.blue_score or 0])
         autos.extend([match.red_auto or 0, match.blue_auto or 0])
         teleops.extend([match.red_teleop or 0, match.blue_teleop or 0])
@@ -41,7 +44,7 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         year.rp_1_mean = 0.2
         year.rp_2_mean = 0.1
 
-    if len(scores) > 0:
+    if len(scores) > 100:
         year.score_mean = round(sum(scores) / len(scores), 2)
         year.score_sd = round(statistics.pstdev(scores), 2)
         year.auto_mean = round(sum(autos) / len(autos), 2)

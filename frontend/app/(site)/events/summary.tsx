@@ -28,9 +28,12 @@ const EventCard = ({ event }: { event: APIEvent }) => {
   }
   return (
     <Link href={`/event/${event.key}`}>
-      <div className="h-32 m-2 p-4 rounded border-[1px] shadow hover:bg-blue-100 cursor-pointer">
-        <div className="w-full text-xl font-bold mb-4">{truncate(event.name, 35)}</div>
-        {location} - Week {event.week}
+      <div className="h-40 m-2 p-4 rounded flex flex-col border-[1px] shadow hover:bg-blue-100 cursor-pointer">
+        <div className="w-full flex-grow text-lg font-bold mb-4">{truncate(event.name, 45)}</div>
+        <div className="w-full mb-2">
+          {location} - Week {event.week}
+        </div>
+        {event.status === "Ongoing" && <div className="w-full">{event.status_str}</div>}
       </div>
     </Link>
   );
@@ -74,7 +77,7 @@ const Summary = ({ data }: { data: EventData }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      <div className="flex justify-center">
+      <div className="flex justify-center mb-8">
         <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
       </div>
       {[

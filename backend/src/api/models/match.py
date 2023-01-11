@@ -12,6 +12,7 @@ class APIMatch(APIModel):
     time: int
     key: str
     match_name: str
+    status: str
     video: Optional[str]
     comp_level: str
     set_number: int

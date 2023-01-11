@@ -15,6 +15,7 @@ def unpack_match(match: Match) -> APIMatch:
         time=match.time or -1,
         key=match.key,
         match_name=get_match_name(match.key),
+        status=match.status,
         video=match.video,
         comp_level=match.comp_level,
         set_number=match.set_number,

@@ -169,3 +169,7 @@ class TeamEvent(Model):
 
     def sort(self) -> Tuple[int, int]:
         return (self.team, self.time)
+
+    def __str__(self: "TeamEvent"):
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.team}_{self.event}_{self.status}_{self.count}_{self.rank}"

@@ -29,6 +29,11 @@ class TeamYearORM(Base, ModelORM):
     country = Column(String(30))
     district = Column(String(10))
 
+    """PRE JOINS (FOR FRONTEND LOAD TIME)"""
+    next_event_key = Column(String(10))
+    next_event_name = Column(String(100))
+    next_event_week = Column(Integer)
+
     """EPA"""
     epa_start = Column(Float)
     epa_pre_champs = Column(Float)
@@ -112,6 +117,10 @@ class TeamYear(Model):
     country: Optional[str] = None
     district: Optional[str] = None
 
+    next_event_key: Optional[str] = None
+    next_event_name: Optional[str] = None
+    next_event_week: Optional[int] = None
+
     epa_start: Optional[float] = None
     epa_pre_champs: Optional[float] = None
     epa_end: Optional[float] = None
@@ -188,3 +197,7 @@ class TeamYear(Model):
 
     def sort(self) -> Tuple[int, int]:
         return (self.team, self.year)
+
+    def __str__(self: "TeamYear"):
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.team}_{self.year}_{self.count}"

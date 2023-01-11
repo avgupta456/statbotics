@@ -7,6 +7,22 @@ from src.db.read import get_event as _get_event, get_events as _get_events
 from src.utils.alru_cache import alru_cache
 
 
+def get_event_status_str(event: Event) -> str:
+    if event.status != "Ongoing":
+        return event.status
+
+    if event.qual_matches == 0:
+        return "Scheduled Unreleased"
+    elif event.current_match == 0:
+        return "Schedule Released"
+    elif event.current_match < event.qual_matches:
+        return "Qual " + str(event.current_match)
+    elif event.current_match == event.qual_matches:
+        return "Quals Over"
+    else:
+        return "Elims Ongoing"
+
+
 def unpack_event(event: Event) -> APIEvent:
     return APIEvent(
         key=event.key,
@@ -20,6 +36,7 @@ def unpack_event(event: Event) -> APIEvent:
         district=event.district,
         offseason=event.offseason,
         status=event.status,
+        status_str=get_event_status_str(event),
     )
 
 

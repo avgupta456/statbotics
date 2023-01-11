@@ -19,6 +19,7 @@ const InsightsTable = ({
   searchCols,
   csvFilename,
   toggleDisableHighlight,
+  includeKey = true,
 }: {
   data: any[];
   columns: ColumnDef<any, any>[];
@@ -27,6 +28,7 @@ const InsightsTable = ({
   searchCols: string[];
   csvFilename: string;
   toggleDisableHighlight?: () => void;
+  includeKey?: boolean;
 }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
@@ -46,8 +48,8 @@ const InsightsTable = ({
 
   const rowClassName = (row: any) =>
     classnames(
-      "text-center h-full",
-      row?.original?.record === "0-0-0" ? "bg-yellow-50" : "hover:bg-blue-100"
+      "text-center h-full hover:bg-blue-100",
+      row?.original?.record === "0-0-0" ? "bg-yellow-50" : ""
     );
 
   const cellClassName = (cell: any) =>
@@ -58,7 +60,7 @@ const InsightsTable = ({
     );
 
   return (
-    <div className="w-full lg:w-fit lg:max-w-full text-sm">
+    <div className="w-full lg:w-fit lg:max-w-full text-sm mb-4">
       <div className="w-full px-2 py-1 flex items-center justify-center">
         <div className="flex-grow">
           {showSearch ? (
@@ -91,7 +93,7 @@ const InsightsTable = ({
           </div>
         )}
         <div className="tooltip" data-tip="Download CSV">
-          <CSVLink data={data} filename={csvFilename}>
+          <CSVLink data={filteredData} filename={csvFilename}>
             <MdCloudDownload className="hover_icon ml-2" />
           </CSVLink>
         </div>
@@ -108,7 +110,7 @@ const InsightsTable = ({
           cellClassName={cellClassName}
         />
       </div>
-      <TableKey />
+      {includeKey && <TableKey />}
     </div>
   );
 };

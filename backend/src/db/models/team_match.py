@@ -82,3 +82,7 @@ class TeamMatch(Model):
 
     def to_dict(self) -> Dict[str, Any]:
         return {k: getattr(self, k) for k in self.__slots__}  # type: ignore
+
+    def __str__(self: "TeamMatch"):
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.team}_{self.match}_{self.status}"

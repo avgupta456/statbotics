@@ -13,13 +13,23 @@ export const TeamLink = ({ team, num }: { team: string | number; num: number }) 
     return formatNumber(num);
   } else {
     return (
-      <div className="w-32 h-full flex justify-center items-center text-sm">
+      <div className="w-32 h-10 h-full flex justify-center items-center text-sm">
         <Link href={`/team/${num}`} className="text_link">
           {truncate(team.toString(), 30)}
         </Link>
       </div>
     );
   }
+};
+
+export const EventLink = ({ key, event }: { key: string; event: string }) => {
+  return (
+    <div className="w-40 h-full flex justify-center items-center text-sm">
+      <Link href={`/event/${key}`} className="text_link">
+        {truncate(event.toString(), 40)}
+      </Link>
+    </div>
+  );
 };
 
 export const CONDITIONAL_COLORS = [
@@ -98,7 +108,7 @@ export const formatPercentileCell = (
 };
 
 export const TableKey = () => (
-  <div className="w-full flex flex-wrap justify-center items-center text-xs my-4">
+  <div className="w-full flex flex-wrap justify-center items-center text-xs mt-4">
     <p className="text-sm">Key (Percentile):</p>
     <div className="flex">
       {[

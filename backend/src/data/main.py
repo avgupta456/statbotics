@@ -47,8 +47,9 @@ def reset_all_years(start_year: int, end_year: int):
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     for year_num in range(start_year, end_year + 1):
+        # NOTE: normally year_num < end_year
         objs, new_etags = time_func(
-            str(year_num) + " TBA", process_year_tba, year_num, end_year, teams, [], year_num <= end_year  # type: ignore
+            str(year_num) + " TBA", process_year_tba, year_num, end_year, teams, [], False, year_num <= end_year  # type: ignore
         )
         year = time_func(
             str(year_num) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -71,7 +72,7 @@ def reset_all_years(start_year: int, end_year: int):
     # print_table_stats()
 
 
-def reset_curr_year(curr_year: int):
+def reset_curr_year(curr_year: int, mock: bool = False):
     teams = time_func("Load Teams", get_teams_db)
     etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
 
@@ -90,7 +91,7 @@ def reset_curr_year(curr_year: int):
 
     # NOTE: True normally False
     objs, new_etags = time_func(
-        str(curr_year) + " TBA", process_year_tba, curr_year, curr_year, teams, etags, True  # type: ignore
+        str(curr_year) + " TBA", process_year_tba, curr_year, curr_year, teams, etags, mock, True  # type: ignore
     )
     year = time_func(
         str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -106,7 +107,7 @@ def reset_curr_year(curr_year: int):
     time_func("Post EPA", lambda: post_process_epa(curr_year))
 
 
-def update_curr_year(curr_year: int):
+def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
     # teams = time_func("Load Teams", get_teams_db)
     objs: objs_type = time_func("Load Objs", read_objs, curr_year)  # type: ignore
     etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
@@ -133,7 +134,7 @@ def update_curr_year(curr_year: int):
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     objs, new_etags = time_func(
-        str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags  # type: ignore
+        str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags, mock, mock_index  # type: ignore
     )
     year = time_func(
         str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -156,5 +157,7 @@ def update_curr_year(curr_year: int):
     curr_dict = {str(x.team) + "_" + x.match: x for x in objs[5]}
     tm_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[5].get(k, "")]
     new_objs = (year_obj, ty_objs, e_objs, te_objs, m_objs, tm_objs)
+
+    # print(len(ty_objs), len(e_objs), len(te_objs), len(m_objs), len(tm_objs))
 
     time_func("Write", write_objs, curr_year, *new_objs, new_etags, curr_year, False)  # type: ignore

@@ -12,7 +12,7 @@ import Video from "./video";
 
 async function getData(match_id: string) {
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/match/` + match_id);
+  const res = await fetch(`${BACKEND_URL}/match/` + match_id, { next: { revalidate: 60 } });
   console.log(`/match/${match_id} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {

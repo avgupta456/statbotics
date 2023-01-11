@@ -20,6 +20,9 @@ const Tabs = ({
   teamYearData: TeamYearData | undefined;
   fallbackTeamYearData: TeamYearData | undefined;
 }) => {
+  const matches = teamYearData?.matches || fallbackTeamYearData?.matches || [];
+  const numCompletedMatches = matches.filter((match) => match.status === "Completed").length;
+
   const MemoizedOverviewSection = useMemo(
     () => <OverviewSection teamData={teamData} teamYearData={teamYearData} />,
     [teamData, teamYearData]
@@ -39,8 +42,8 @@ const Tabs = ({
 
   const tabs = [
     { title: "Overview", content: MemoizedOverviewSection },
-    { title: "Figures", content: MemoizedFigureSection },
-  ];
+    numCompletedMatches > 0 && { title: "Figures", content: MemoizedFigureSection },
+  ].filter(Boolean);
 
   return <TabsSection tabs={tabs} loading={teamData === undefined || teamYearData === undefined} />;
 };

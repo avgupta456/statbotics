@@ -29,7 +29,9 @@ const EventLineChart = ({
 
   const fetchData = async (teamNum: number) => {
     const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/event/${eventId}/team_matches/${teamNum}`);
+    const res = await fetch(`${BACKEND_URL}/event/${eventId}/team_matches/${teamNum}`, {
+      next: { revalidate: 60 },
+    });
     console.log(
       `/event/${eventId}/team_matches/${teamNum} took ${round(performance.now() - start, 0)} ms`
     );

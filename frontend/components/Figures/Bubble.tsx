@@ -46,7 +46,7 @@ const BubbleChart = ({
       window.removeEventListener("resize", updateWidth);
       window.removeEventListener("orientationchange", updateWidth);
       window.removeEventListener("load", updateWidth);
-    }
+    };
   }, []);
 
   const defaultFilters = filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
@@ -57,7 +57,9 @@ const BubbleChart = ({
     z: "Constant",
   });
 
-  const filteredData: any[] = filterData(data, filters);
+  let filteredData: any[] = filterData(data, filters);
+  const numRemoved = filteredData.filter((datum) => datum?.count === 0).length;
+  filteredData = filteredData.filter((datum) => datum?.count > 0);
 
   const columnOptionsDict = getColumnOptionsDict(year);
   const xAxis = columnOptionsDict[columns.x];
@@ -194,6 +196,11 @@ const BubbleChart = ({
           />
         </div>
       </div>
+      {numRemoved > 0 && (
+        <div className="w-full text-center text-sm">
+          <strong>Note</strong>: {numRemoved} teams have not played yet, and are not shown.
+        </div>
+      )}
       <div className="w-full flex justify-center">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>

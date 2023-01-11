@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
-import { RPMapping } from "../../../constants";
+import { CURR_YEAR, RPMapping } from "../../../constants";
 import TabsSection from "../shared/tabs";
 import { TeamYearData, emptyTeamYearData } from "../types";
 import FigureSection from "./figures";

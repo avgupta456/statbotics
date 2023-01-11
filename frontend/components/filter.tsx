@@ -5,6 +5,7 @@ import Select from "react-select";
 
 import {
   canadaOptions,
+  competingOptions,
   countryOptions,
   districtOptions,
   usaOptions,
@@ -20,8 +21,9 @@ export const filterData = (data: any[] | undefined, filter: any) => {
   let filteredData = data;
   Object.keys(filter).forEach((key) => {
     const value = filter[key];
+    const datumKey = key === "competing" ? "next_event_week" : key;
     if (value !== "") {
-      filteredData = filteredData.filter((datum) => datum[key] === value);
+      filteredData = filteredData.filter((datum) => datum[datumKey] === value);
     }
   });
   return filteredData;
@@ -45,7 +47,7 @@ export const FilterBar = ({
     if (value === "") {
       return setFilters({ ...filters, [key]: "" });
     }
-    if (key === "week") {
+    if (["week", "competing", "search"].includes(key)) {
       return setFilters({ ...filters, [key]: value });
     } else if (key === "country") {
       return setFilters({ ...filters, country: value, state: "", district: "" });
@@ -54,10 +56,6 @@ export const FilterBar = ({
       return setFilters({ ...filters, country, state: value, district: "" });
     } else if (key === "district") {
       return setFilters({ ...filters, country: "", state: "", district: value });
-    }
-
-    if (key === "search") {
-      return setFilters({ ...filters, search: value });
     }
   };
 
@@ -72,12 +70,13 @@ export const FilterBar = ({
         { key: "country", label: "Country", options: countryOptions },
         { key: "state", label: stateLabel, options: stateOptions },
         { key: "district", label: "District", options: districtOptions },
+        { key: "competing", label: "Competing", options: competingOptions },
       ].map((filter) => {
         if (filterKeys.includes(filter.key)) {
           const currValue = filters[filter.key];
           let currOptions: any[] = filter.options; // value is number | string
           let currLabel = currOptions.find((option) => option.value === currValue)?.label;
-          let placeholder = currLabel === "All";
+          let placeholder = currValue === "";
           if (placeholder) {
             currLabel = `${filter.label}`;
           }

@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Set, Tuple
 
-from src.constants import MAX_TEAM
+from src.constants import CURR_WEEK, MAX_TEAM
 from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
 from src.db.models import ETag, Event, Match, Team, TeamEvent, TeamMatch, TeamYear
@@ -22,6 +22,7 @@ from src.tba.read_tba import (
     get_matches as get_matches_tba,
     get_teams as get_teams_tba,
 )
+from src.tba.mock import all_mock_events
 
 
 def load_teams(cache: bool = True) -> List[Team]:
@@ -61,6 +62,7 @@ def process_year(
     end_year: int,
     teams: List[Team],
     etags: List[ETag],
+    mock: bool = False,
     cache: bool = True,
 ) -> Tuple[objs_type, List[ETag]]:
     year_obj = create_year_obj({"year": year_num})
@@ -88,23 +90,24 @@ def process_year(
     etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
 
+    teams_dict: Dict[int, Team] = {team.team: team for team in teams}
     default_team = create_team_obj(
         {"name": None, "team": None, "state": None, "country": None, "district": None}
     )
-    teams_dict: Dict[int, Team] = defaultdict(lambda: default_team)
-    for team in teams:
-        teams_dict[team.team] = team
+
+    team_next_event_dict: Dict[int, Tuple[str, str, int]] = {}
+    default_next_event = (None, None, None)
 
     year_teams: Set[int] = set()
 
-    events, _ = get_events_tba(year_num, cache=cache)
+    events, _ = get_events_tba(year_num, mock=mock, cache=cache)
 
     for event in events:
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
 
         matches, new_etag = get_matches_tba(
-            year_num, event_key, event_time, cache=cache
+            year_num, event_key, event_time, mock=mock, cache=cache
         )
         prev_etag = etags_dict.get(event_key + "/matches", default_etag).etag
         if new_etag != prev_etag and new_etag is not None:
@@ -119,13 +122,27 @@ def process_year(
 
         event_teams: Set[int] = set()
         rankings: Dict[int, int] = defaultdict(int)
+
+        def add_team_event(team: int):
+            event_teams.add(team)
+            year_teams.add(team)
+            # Store closest upcoming/ongoing event
+            if event_obj.week >= CURR_WEEK and (
+                team not in team_next_event_dict
+                or team_next_event_dict[team][2] > event_obj.week
+            ):
+                team_next_event_dict[team] = (
+                    event_obj.key,
+                    event_obj.name,
+                    event_obj.week,
+                )
+
         if event_status == "Invalid":
             continue
         elif event_status == "Upcoming":
-            temp_event_teams, _ = get_event_teams_tba(event_key, cache=cache)
+            temp_event_teams, _ = get_event_teams_tba(event_key, mock=mock, cache=cache)
             for team in temp_event_teams:
-                event_teams.add(team)
-                year_teams.add(team)
+                add_team_event(team)
         elif event_status in ["Ongoing", "Completed"]:
             for match in matches:
                 match["year"] = year_num
@@ -136,14 +153,13 @@ def process_year(
                 match_objs.append(match_obj)
                 team_match_objs.extend(curr_team_match_objs)
                 for team_match in curr_team_match_objs:
-                    event_teams.add(team_match.team)
-                    year_teams.add(team_match.team)
+                    add_team_event(team_match.team)
 
-            rankings, _ = get_event_rankings_tba(event_key, cache=cache)
+            rankings, _ = get_event_rankings_tba(event_key, mock=mock, cache=cache)
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
-            team_obj = teams_dict[team]
+            team_obj = teams_dict.get(team, default_team)
             team_event_objs.append(
                 create_team_event_obj(
                     {
@@ -171,17 +187,21 @@ def process_year(
         event_objs.append(event_obj)
 
     for team in year_teams:
-        team_obj = teams_dict[team]
+        team_obj = teams_dict.get(team, default_team)
+        next_event = team_next_event_dict.get(team, default_next_event)
         team_year_objs.append(
             create_team_year_obj(
                 {
                     "year": year_num,
                     "team": team,
-                    "offseason": team >= MAX_TEAM,
+                    "offseason": team > MAX_TEAM,
                     "name": team_obj.name,
                     "state": team_obj.state,
                     "country": team_obj.country,
                     "district": team_obj.district,
+                    "next_event_key": next_event[0],
+                    "next_event_name": next_event[1],
+                    "next_event_week": next_event[2],
                 }
             )
         )
@@ -200,9 +220,15 @@ def process_year(
 
 
 def process_year_partial(
-    year_num: int, objs: objs_type, etags: List[ETag]
+    year_num: int,
+    objs: objs_type,
+    etags: List[ETag],
+    mock: bool = False,
+    mock_index: int = 0,
 ) -> Tuple[objs_type, List[ETag]]:
     (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs) = objs
+    match_objs_dict = {x.key: x for x in match_objs}
+    team_match_objs_dict = {(x.team, x.match): x for x in team_match_objs}
 
     etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
@@ -212,18 +238,28 @@ def process_year_partial(
         if event_obj.status == "Completed":
             continue
 
-        start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
-        end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
-        if start_date - timedelta(days=1) > datetime.now():
-            continue
+        if mock:
+            if event_obj.key not in all_mock_events:
+                continue
+        else:
+            start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
+            end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
+            if start_date - timedelta(days=1) > datetime.now():
+                continue
 
-        if end_date + timedelta(days=1) < datetime.now():
-            continue
+            if end_date + timedelta(days=1) < datetime.now():
+                continue
 
         # Load matches, if same as before then skip event
         prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
         matches, new_etag = get_matches_tba(
-            year_num, event_obj.key, event_obj.time, prev_etag, False
+            year_num,
+            event_obj.key,
+            event_obj.time,
+            prev_etag,
+            mock=mock,
+            mock_index=mock_index,
+            cache=False,
         )
         if new_etag == prev_etag and new_etag is not None:
             continue
@@ -243,27 +279,33 @@ def process_year_partial(
             continue
         elif event_status in ["Ongoing", "Completed"]:
             # Update event_obj, accumulate match_obj, team_match_objs
-            event_match_keys = [m.key for m in match_objs if m.event == event_obj.key]
             for match in matches:
                 match["year"] = year_num
                 match["offseason"] = event_obj.offseason
                 match_obj, curr_team_match_objs = create_match_obj(match)
                 current_match += match_obj.status == "Completed"
                 qual_matches += not match_obj.playoff
-                if match_obj.key not in event_match_keys:
-                    match_objs.append(match_obj)
-                    team_match_objs.extend(curr_team_match_objs)
+                # Replace even if present, since may be Upcoming -> Completed
+                match_objs_dict[match_obj.key] = match_obj
+                for team_match_obj in curr_team_match_objs:
+                    team_match_objs_dict[
+                        (team_match_obj.team, team_match_obj.match)
+                    ] = team_match_obj
             event_obj.current_match = current_match
             event_obj.qual_matches = qual_matches
 
             # Update team_event_objs
-            rankings, new_etag = get_event_rankings_tba(event_obj.key, None, False)
+            rankings, new_etag = get_event_rankings_tba(
+                event_obj.key, None, mock=mock, mock_index=mock_index, cache=False
+            )
             for team_event_obj in team_event_objs:
                 if team_event_obj.event == event_obj.key:
                     team_event_obj.status = event_status
                     team_event_obj.rank = rankings.get(team_event_obj.team, -1)
                     team_event_obj.num_teams = len(rankings)
 
+    match_objs = list(match_objs_dict.values())
+    team_match_objs = list(team_match_objs_dict.values())
     return (
         (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs),
         new_etags,

@@ -58,6 +58,9 @@ export type APITeamYear = {
   state?: string;
   country?: string;
   district?: string;
+  next_event_key?: string;
+  next_event_name?: string;
+  next_event_week?: number;
   epa_rank: number;
   epa_count: number;
   state_epa_rank: number;
@@ -92,6 +95,7 @@ export type APIEvent = {
   district?: string;
   offseason: boolean;
   status: string;
+  status_str: string;
 };
 
 export type APITeamEvent = {
@@ -126,6 +130,7 @@ export type APIMatch = {
   time: number;
   key: string;
   match_name: string;
+  status: string;
   video?: string;
   comp_level: string;
   set_number: number;

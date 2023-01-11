@@ -110,7 +110,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       RPMean: RPMean[teamEvent.num],
     }));
 
-  const qualsN = data.matches.filter((m) => !m.playoff).length;
+  const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
 
   const columns = useMemo<any>(
     () => [
@@ -164,37 +164,39 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
           Simulate from:{" "}
           <strong>{index === 0 ? "Schedule Release" : "Qualification Match " + index}</strong>
         </div>
-        <div className="px-4 md:px-16">
-          <Range
-            step={1}
-            min={0}
-            max={qualsN}
-            values={[index]}
-            onChange={(values) => setIndex(values[0])}
-            onFinalChange={(values) => {
-              setFinalIndex(values[0]);
-            }}
-            renderTrack={({ props, children }) => (
-              <div
-                {...props}
-                key="slider-track"
-                className="w-full h-[5px] pr-2 my-4 bg-gray-200 rounded-md"
-              >
-                {children}
-              </div>
-            )}
-            renderThumb={({ props }) => (
-              <div {...props} key="slider-thumb" className="w-4 h-4 bg-blue-800 rounded-full" />
-            )}
-            renderMark={({ props }) => (
-              <div
-                {...props}
-                key={`slider-mark-${props.key}`}
-                className="w-[2px] h-[5px] bg-blue-500 rounded-full"
-              />
-            )}
-          />
-        </div>
+        {qualsN > 0 && (
+          <div className="px-4 md:px-16">
+            <Range
+              step={1}
+              min={0}
+              max={qualsN}
+              values={[index]}
+              onChange={(values) => setIndex(values[0])}
+              onFinalChange={(values) => {
+                setFinalIndex(values[0]);
+              }}
+              renderTrack={({ props, children }) => (
+                <div
+                  {...props}
+                  key="slider-track"
+                  className="w-full h-[5px] pr-2 my-4 bg-gray-200 rounded-md"
+                >
+                  {children}
+                </div>
+              )}
+              renderThumb={({ props }) => (
+                <div {...props} key="slider-thumb" className="w-4 h-4 bg-blue-800 rounded-full" />
+              )}
+              renderMark={({ props }) => (
+                <div
+                  {...props}
+                  key={`slider-mark-${props.key}`}
+                  className="w-[2px] h-[5px] bg-blue-500 rounded-full"
+                />
+              )}
+            />
+          </div>
+        )}
       </div>
       <InsightsTable
         data={simulationData}
@@ -203,6 +205,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         rightCol="RPMean"
         searchCols={["num", "team"]}
         csvFilename={`${eventId}_simulation.csv`}
+        includeKey={false}
       />
     </div>
   );
