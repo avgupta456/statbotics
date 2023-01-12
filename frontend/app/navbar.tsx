@@ -18,7 +18,7 @@ const loaderProp = ({ src }) => {
   return src;
 };
 
-async function getData() {
+async function getTeamData() {
   const cacheData = getWithExpiry("full_team_list");
   if (cacheData && cacheData?.length > 1000) {
     console.log("Used Local Storage: Full Team List");
@@ -37,21 +37,52 @@ async function getData() {
   return data;
 }
 
+async function getEventData() {
+  const cacheData = getWithExpiry("full_event_list");
+  if (cacheData && cacheData?.length > 1000) {
+    console.log("Used Local Storage: Full Event List");
+    return cacheData;
+  }
+
+  const start = performance.now();
+  const res = await fetch(`${BACKEND_URL}/events/all`, { next: { revalidate: 60 } });
+  console.log(`events/all took ${round(performance.now() - start, 0)}ms`);
+
+  if (!res.ok) {
+    return undefined;
+  }
+  const data = (await res.json())?.data;
+  setWithExpiry("full_event_list", data, 60 * 60 * 24 * 7); // 1 week expiry
+  return data;
+}
+
 const Navbar = () => {
   const router = useRouter();
 
   const [toggle, setToggle] = useState(false);
 
-  const [teams, setTeams] = React.useState([]);
+  const [teams, setTeams] = useState([]);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    getData().then((data) => setTeams(data));
+    getTeamData().then((data) => setTeams(data));
+  }, []);
+
+  useEffect(() => {
+    getEventData().then((data) => setEvents(data));
   }, []);
 
   const teamOptions = teams?.map((team: any) => ({
-    value: team.num,
+    value: `/team/${team.num}`,
     label: `${team.num} | ${team.team}`,
   }));
+
+  const eventOptions = events?.map((event: any) => ({
+    value: `/event/${event.key}`,
+    label: `${event.key.slice(0, 4)} ${event.name}`,
+  }));
+
+  const allOptions = [...teamOptions, ...eventOptions];
 
   const TeamSelect = () => {
     return (
@@ -61,10 +92,10 @@ const Navbar = () => {
         styles={{
           menu: (provided) => ({ ...provided, zIndex: 9999 }),
         }}
-        options={teamOptions}
+        options={allOptions}
         onChange={(e: any) => {
           if (e) {
-            router.push(`/team/${e.value}`);
+            router.push(e.value);
           }
         }}
         placeholder="Search Teams and Events"
