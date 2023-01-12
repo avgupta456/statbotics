@@ -109,6 +109,15 @@ const Navbar = () => {
           >
             <li>
               <Link
+                href="https://github.com/avgupta456/statbotics"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="w-36 py-1 text-sm text-center border-b-[1px]">View GitHub</div>
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="https://statbotics.canny.io/feature-requests"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -118,11 +127,11 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                href="https://github.com/avgupta456/statbotics"
+                href="https://www.buymeacoffee.com/statbotics"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div className="w-36 py-1 text-sm text-center">View GitHub</div>
+                <div className="w-36 py-1 text-sm text-center">Buy Me a Coffee</div>
               </Link>
             </li>
           </ul>
