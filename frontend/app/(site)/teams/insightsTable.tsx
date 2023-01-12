@@ -148,7 +148,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         />
       </div>
       {numProjections > 0 && showProjections && (
-        <div className="text-sm">
+        <div className="text-sm mb-4">
           <strong>Note</strong>: Yellow highlighted teams have not played yet. Their EPA rating is
           only a projection.
         </div>
