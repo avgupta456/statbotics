@@ -48,7 +48,7 @@ const Navbar = () => {
     getData().then((data) => setTeams(data));
   }, []);
 
-  const teamOptions = teams.map((team: any) => ({
+  const teamOptions = teams?.map((team: any) => ({
     value: team.num,
     label: `${team.num} | ${team.team}`,
   }));

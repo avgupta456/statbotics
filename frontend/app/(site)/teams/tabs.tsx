@@ -9,7 +9,15 @@ import { TeamYearData, emptyTeamYearData } from "../types";
 import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
 
-const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) => {
+const Tabs = ({
+  year,
+  data,
+  error,
+}: {
+  year: number;
+  data: TeamYearData | undefined;
+  error: boolean;
+}) => {
   const MemoizedInsightsTable = useMemo(
     () => <InsightsTable year={year} data={data || emptyTeamYearData} />,
     [year, data]
@@ -48,7 +56,7 @@ const Tabs = ({ year, data }: { year: number; data: TeamYearData | undefined }) 
     { title: "Figures", content: MemoizedFigureSection },
   ];
 
-  return <TabsSection loading={data === undefined} tabs={tabs} />;
+  return <TabsSection loading={data === undefined} error={error} tabs={tabs} />;
 };
 
 export default Tabs;

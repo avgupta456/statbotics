@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <div className="min-h-screen flex flex-col text-gray-800">
+        <div className="min-h-screen flex flex-col bg-white text-gray-800">
           <Navbar />
           {children}
         </div>

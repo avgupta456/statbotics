@@ -45,7 +45,13 @@ const Tabs = ({
     numCompletedMatches > 0 && { title: "Figures", content: MemoizedFigureSection },
   ].filter(Boolean);
 
-  return <TabsSection tabs={tabs} loading={teamData === undefined || teamYearData === undefined} />;
+  return (
+    <TabsSection
+      loading={teamData === undefined || teamYearData === undefined}
+      error={false}
+      tabs={tabs}
+    />
+  );
 };
 
 export default Tabs;
