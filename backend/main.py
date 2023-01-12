@@ -4,11 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
-
+# flake8: noqa E402
 from src.constants import CONN_STR, PROD
 from src.data.router import router as data_router
-
-# flake8: noqa E402
 from src.site.router import router as site_router
 
 """
