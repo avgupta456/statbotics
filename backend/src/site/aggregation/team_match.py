@@ -1,9 +1,9 @@
 from datetime import timedelta
 from typing import List, Optional
 
-from src.api.models import APITeamMatch
 from src.db.models import TeamMatch
 from src.db.read import get_team_matches as _get_team_matches
+from src.site.models import APITeamMatch
 from src.utils.alru_cache import alru_cache
 from src.utils.utils import get_match_number
 

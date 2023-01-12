@@ -1,14 +1,15 @@
 from dotenv import load_dotenv  # type: ignore
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
 
-# flake8: noqa E402
-from src.api.router import router as api_router
 from src.constants import CONN_STR, PROD
 from src.data.router import router as data_router
+
+# flake8: noqa E402
+from src.site.router import router as site_router
 
 """
 SETUP
@@ -31,15 +32,19 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+router = APIRouter()
+
+
+@router.get("/")
 async def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/info")
+@router.get("/info")
 def get_info():
     return {"PROD": PROD, "CONN_STR": "REDACTED" if PROD else CONN_STR}
 
 
-app.include_router(api_router, prefix="/api")
-app.include_router(data_router, prefix="/data", tags=["data"])
+app.include_router(router, prefix="", include_in_schema=False)
+app.include_router(site_router, prefix="/site", include_in_schema=False)
+app.include_router(data_router, prefix="/data", include_in_schema=False)

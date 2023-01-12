@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import attr
 
-from src.api.models.main import APIModel
+from src.site.models.main import APIModel
 
 
 @attr.s(auto_attribs=True, slots=True)

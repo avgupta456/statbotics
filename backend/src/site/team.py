@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation import (
+from src.site.aggregation import (
     get_matches,
     get_team,
     get_team_events,
@@ -11,7 +11,7 @@ from src.api.aggregation import (
     get_teams,
     get_year,
 )
-from src.api.models import (
+from src.site.models import (
     APIMatch,
     APITeam,
     APITeamEvent,

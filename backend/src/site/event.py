@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation import (
+from src.site.aggregation import (
     get_event,
     get_events,
     get_matches,
@@ -10,7 +10,7 @@ from src.api.aggregation import (
     get_team_matches,
     get_year,
 )
-from src.api.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
+from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
