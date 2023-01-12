@@ -29,17 +29,19 @@ const Tabs = ({
         year={year}
         data={data?.team_years ?? []}
         filterOptions={["country", "state", "district"]}
-        columnOptions={[
-          "Total EPA",
-          "Auto",
-          "Teleop",
-          "Endgame",
-          "Auto + Endgame",
-          `${RPMapping[year][0]}`,
-          `${RPMapping[year][1]}`,
-          "Wins",
-          "Win Rate",
-        ]}
+        columnOptions={
+          [
+            "Total EPA",
+            "Auto",
+            "Teleop",
+            "Endgame",
+            "Auto + Endgame",
+            year >= 2016 && `${RPMapping?.[year]?.[0]}`,
+            year >= 2016 && `${RPMapping?.[year]?.[1]}`,
+            "Wins",
+            "Win Rate",
+          ].filter(Boolean) as string[]
+        }
       />
     ),
     [data, year]

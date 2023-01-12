@@ -6,27 +6,27 @@ import { round } from "../utils";
 
 export const getColumnOptions = (year: number) => [
   { label: "Constant", accessor: (datum) => 1 },
-  { label: "Total EPA", accessor: (datum) => round(datum.total_epa) },
-  { label: "Norm EPA", accessor: (datum) => round(datum.norm_epa, 0) },
-  { label: "Auto", accessor: (datum) => round(datum.auto_epa) },
-  { label: "Teleop", accessor: (datum) => round(datum.teleop_epa) },
-  { label: "Endgame", accessor: (datum) => round(datum.endgame_epa) },
+  { label: "Total EPA", accessor: (datum) => round(datum?.total_epa) },
+  { label: "Norm EPA", accessor: (datum) => round(datum?.norm_epa, 0) },
+  { label: "Auto", accessor: (datum) => round(datum?.auto_epa) },
+  { label: "Teleop", accessor: (datum) => round(datum?.teleop_epa) },
+  { label: "Endgame", accessor: (datum) => round(datum?.endgame_epa) },
   {
     label: "Auto + Endgame",
-    accessor: (datum) => round(datum.auto_epa + datum.endgame_epa),
+    accessor: (datum) => round(datum?.auto_epa + datum?.endgame_epa),
   },
-  { label: `${RPMapping[year][0]}`, accessor: (datum) => round(datum.rp_1_epa, 3) },
-  { label: `${RPMapping[year][1]}`, accessor: (datum) => round(datum.rp_2_epa, 3) },
+  { label: `${RPMapping?.[year]?.[0]}`, accessor: (datum) => round(datum?.rp_1_epa, 3) },
+  { label: `${RPMapping?.[year]?.[1]}`, accessor: (datum) => round(datum?.rp_2_epa, 3) },
 
-  { label: "Wins", accessor: (datum) => datum.wins },
+  { label: "Wins", accessor: (datum) => datum?.wins },
   {
     label: "Win Rate",
-    accessor: (datum) => round(datum.wins / (datum.wins + datum.losses + datum.ties), 3),
+    accessor: (datum) => round(datum?.wins / (datum?.wins + datum?.losses + datum?.ties), 3),
   },
   // For events
-  { label: "Rank", accessor: (datum) => datum.rank },
-  { label: "N - Rank", accessor: (datum) => datum.numTeams - datum.rank },
-  { label: "RPs / Match", accessor: (datum) => round(datum.rps_per_match, 3) },
+  { label: "Rank", accessor: (datum) => datum?.rank },
+  { label: "N - Rank", accessor: (datum) => datum?.numTeams - datum?.rank },
+  { label: "RPs / Match", accessor: (datum) => round(datum?.rps_per_match, 3) },
 ];
 
 export const getColumnOptionsDict = (year: number) =>
