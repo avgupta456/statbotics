@@ -181,13 +181,13 @@ const BubbleChart = ({
 
   return (
     <div className="w-full">
-      <div className="w-full flex flex-wrap items-end justify-center gap-4">
+      <div className="w-full flex flex-wrap items-end justify-center">
         {filterOptions.length > 0 && (
-          <div className="flex items-center justify-center mb-4">
+          <div className="flex items-center justify-center mr-4">
             <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
           </div>
         )}
-        <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center justify-center">
           <ColumnBar
             year={year}
             currColumnOptions={columnOptions}
