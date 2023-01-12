@@ -1,0 +1,3 @@
+[submodule "statbotics-csvs"]
+	path = csvs
+	url = https://github.com/avgupta456/statbotics-csvs.git
