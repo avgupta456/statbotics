@@ -77,7 +77,7 @@ const Summary = ({ data }: { data: EventData }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center mb-4">
         <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
       </div>
       {[
@@ -89,7 +89,7 @@ const Summary = ({ data }: { data: EventData }) => {
           return null;
         }
         return (
-          <>
+          <div key={`${name}_section`}>
             <div className="w-full flex mt-4 mb-4 items-center">
               <div className="text-xl md:text-2xl font-bold">{`${name} Events (${count})`}</div>
               {count > cutoffN && (
@@ -110,7 +110,7 @@ const Summary = ({ data }: { data: EventData }) => {
                 </div>
               ))}
             </div>
-          </>
+          </div>
         );
       })}
       {N === 0 && (
