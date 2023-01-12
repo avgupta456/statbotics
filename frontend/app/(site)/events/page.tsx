@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
-import { round } from "../../../utils";
+import { log, round } from "../../../utils";
 import { getWithExpiry, setWithExpiry } from "../../localStorage";
 import { AppContext } from "../context";
 import PageLayout from "../shared/layout";
@@ -13,13 +13,13 @@ import Tabs from "./tabs";
 async function getEventData(year: number) {
   const cacheData = getWithExpiry(`events_${year}`);
   if (cacheData && cacheData?.events?.length > 10) {
-    console.log("Used Local Storage: " + year);
+    log("Used Local Storage: " + year);
     return cacheData;
   }
 
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/events/${year}`, { next: { revalidate: 60 } });
-  console.log(`/events/${year} took ${round(performance.now() - start, 0)}ms`);
+  log(`/events/${year} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
     return undefined;

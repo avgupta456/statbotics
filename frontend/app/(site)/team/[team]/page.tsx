@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import { BACKEND_URL, CURR_YEAR } from "../../../../constants";
-import { round } from "../../../../utils";
+import { log, round } from "../../../../utils";
 import PageLayout from "../../shared/layout";
 import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
@@ -12,7 +12,7 @@ import { TeamData, TeamYearData } from "./types";
 async function getTeamData(team: number) {
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/team/${team}`, { next: { revalidate: 60 } });
-  console.log(`/team/${team} took ${round(performance.now() - start, 0)}ms`);
+  log(`/team/${team} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
     return undefined;
@@ -25,7 +25,7 @@ async function getTeamData(team: number) {
 async function getTeamYearData(team: number, year: number) {
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/team/${team}/${year}`, { next: { revalidate: 60 } });
-  console.log(`/team/${team}/${year} took ${round(performance.now() - start, 0)}ms`);
+  log(`/team/${team}/${year} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
     return undefined;

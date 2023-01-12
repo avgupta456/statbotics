@@ -1,3 +1,5 @@
+import { log } from "../utils";
+
 function setWithExpiry(key, value, ttl) {
   const now = new Date();
 
@@ -23,7 +25,7 @@ function setWithExpiry(key, value, ttl) {
           JSON.stringify({ value: fullTeamList, expiry: 60 * 60 * 24 * 7 })
         ); // 1 week expiry
       } catch (e) {
-        console.log("Error clearing localStorage");
+        log("Error clearing localStorage");
       }
     } else {
       throw e;

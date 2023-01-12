@@ -5,7 +5,7 @@ import { GiPodium } from "react-icons/gi";
 import Select from "react-select";
 
 import { BACKEND_URL, RPMapping } from "../../constants";
-import { classnames, round } from "../../utils";
+import { classnames, log, round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
 import { APITeamEvent, APITeamMatch } from "../types/api";
 import LineChart from "./Line";
@@ -32,9 +32,7 @@ const EventLineChart = ({
     const res = await fetch(`${BACKEND_URL}/event/${eventId}/team_matches/${teamNum}`, {
       next: { revalidate: 60 },
     });
-    console.log(
-      `/event/${eventId}/team_matches/${teamNum} took ${round(performance.now() - start, 0)} ms`
-    );
+    log(`/event/${eventId}/team_matches/${teamNum} took ${round(performance.now() - start, 0)} ms`);
 
     if (!res.ok) {
       return undefined;
@@ -42,7 +40,7 @@ const EventLineChart = ({
 
     const data = await res.json();
     if (!data) {
-      console.log("No data found for team " + teamNum);
+      log("No data found for team " + teamNum);
       return undefined;
     }
 

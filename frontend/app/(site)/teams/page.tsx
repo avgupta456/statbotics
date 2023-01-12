@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
-import { round } from "../../../utils";
+import { log, round } from "../../../utils";
 import { getWithExpiry, setWithExpiry } from "../../localStorage";
 import { AppContext } from "../context";
 import PageLayout from "../shared/layout";
@@ -13,13 +13,13 @@ import Tabs from "./tabs";
 async function getTeamYearData(year: number) {
   const cacheData = getWithExpiry(`team_years_${year}`);
   if (cacheData && cacheData?.team_years?.length > 100) {
-    console.log("Used Local Storage: " + year);
+    log("Used Local Storage: " + year);
     return cacheData;
   }
 
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/team_years/` + year, { next: { revalidate: 60 } });
-  console.log(`/team_years/${year} took ${round(performance.now() - start, 0)}ms`);
+  log(`/team_years/${year} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
     return undefined;

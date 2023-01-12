@@ -1,7 +1,7 @@
 import React from "react";
 
 import { BACKEND_URL } from "../../../../constants";
-import { round, truncate } from "../../../../utils";
+import { log, round, truncate } from "../../../../utils";
 import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 import { Data } from "./types";
@@ -9,7 +9,7 @@ import { Data } from "./types";
 async function getData(event_id: string) {
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/event/` + event_id, { next: { revalidate: 60 } });
-  console.log(`/event/${event_id} took ${round(performance.now() - start, 0)}ms`);
+  log(`/event/${event_id} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
     return undefined;
