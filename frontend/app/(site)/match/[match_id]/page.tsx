@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 
 import { BACKEND_URL } from "../../../../constants";
-import { round, truncate } from "../../../../utils";
+import { log, round, truncate } from "../../../../utils";
 import NotFound from "../../shared/notFound";
 import Summary from "./summary";
 import MatchTable from "./table";
@@ -13,7 +13,7 @@ import Video from "./video";
 async function getData(match_id: string) {
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/match/` + match_id, { next: { revalidate: 60 } });
-  console.log(`/match/${match_id} took ${round(performance.now() - start, 0)}ms`);
+  log(`/match/${match_id} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
     return undefined;

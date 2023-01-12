@@ -7,7 +7,7 @@ import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
 import { BACKEND_URL, RPMapping } from "../../constants";
-import { classnames, round } from "../../utils";
+import { classnames, log, round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
 import { APITeamMatch, APITeamYear } from "../types/api";
 import LineChart from "./Line";
@@ -38,9 +38,7 @@ const YearLineChart = ({
     const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`, {
       next: { revalidate: 60 },
     });
-    console.log(
-      `/team_year/${year}/${teamNum}/matches took ${round(performance.now() - start, 0)} ms`
-    );
+    log(`/team_year/${year}/${teamNum}/matches took ${round(performance.now() - start, 0)} ms`);
 
     if (!res.ok) {
       return undefined;
@@ -48,7 +46,7 @@ const YearLineChart = ({
 
     const data = await res.json();
     if (!data) {
-      console.log("No data found for team " + teamNum);
+      log("No data found for team " + teamNum);
       return undefined;
     }
 

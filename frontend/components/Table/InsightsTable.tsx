@@ -48,7 +48,7 @@ const InsightsTable = ({
 
   const rowClassName = (row: any) =>
     classnames(
-      "text-center h-full hover:bg-blue-100",
+      "text-center h-full md:hover:bg-blue-100",
       row?.original?.record === "0-0-0" ? "bg-yellow-50" : ""
     );
 

@@ -1,3 +1,5 @@
+import { PROD } from "./constants";
+
 export const classnames = (...args: string[]) => args.join(" ");
 
 export const round = (num: number, digits: number = 1) => {
@@ -10,4 +12,10 @@ export const truncate = (str: string, length: number) => {
     return str.substring(0, length - 3) + "...";
   }
   return str;
+};
+
+export const log = (...args: any[]) => {
+  if (!PROD) {
+    console.log(...args);
+  }
 };

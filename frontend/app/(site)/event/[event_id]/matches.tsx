@@ -57,7 +57,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
         <div>
           <strong>Accuracy: {accuracy}%</strong>
           {quals &&
-            `| ${RPMapping[year][0]} Accuracy: ${rp1Accuracy}% | ${RPMapping[year][1]} Accuracy: ${rp2Accuracy}%`}
+            ` | ${RPMapping[year][0]} Accuracy: ${rp1Accuracy}% | ${RPMapping[year][1]} Accuracy: ${rp2Accuracy}%`}
         </div>
       )}
       {hasOffseasonTeams && (

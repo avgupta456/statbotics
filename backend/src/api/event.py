@@ -21,6 +21,13 @@ async def read_root():
     return {"name": "Event Router"}
 
 
+@router.get("/events/all")
+@async_fail_gracefully
+async def read_all_events(response: Response) -> List[Dict[str, Any]]:
+    events: List[APIEvent] = await get_events()
+    return [{"key": event.key, "name": event.name} for event in events]
+
+
 @router.get("/events/{year}")
 @async_fail_gracefully
 async def read_events(response: Response, year: int) -> List[Dict[str, Any]]:
