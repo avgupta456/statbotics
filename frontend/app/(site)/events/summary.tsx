@@ -89,7 +89,7 @@ const Summary = ({ data }: { data: EventData }) => {
           return null;
         }
         return (
-          <div key={`${name}_section`}>
+          <div key={`${name}_section`} className="w-full">
             <div className="w-full flex mt-4 mb-4 items-center">
               <div className="text-xl md:text-2xl font-bold">{`${name} Events (${count})`}</div>
               {count > cutoffN && (

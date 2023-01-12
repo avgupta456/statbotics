@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Set, Tuple
 
-from src.constants import CURR_WEEK, MAX_TEAM
+from src.constants import CURR_WEEK, CURR_YEAR, MAX_TEAM
 from src.data.utils import objs_type
 from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
 from src.db.models import ETag, Event, Match, Team, TeamEvent, TeamMatch, TeamYear
@@ -31,7 +31,7 @@ def load_teams(cache: bool = True) -> List[Team]:
     return team_objs
 
 
-def get_event_status(matches: List[Dict[str, Any]], curr_year: bool) -> str:
+def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
     num_matches = len(matches)
     num_qual_matches = len([m for m in matches if m["comp_level"] == "qm"])
     num_upcoming_matches = 0
@@ -39,12 +39,8 @@ def get_event_status(matches: List[Dict[str, Any]], curr_year: bool) -> str:
         if match["status"] == "Upcoming":
             num_upcoming_matches += 1
 
-    # TODO: Some 2022 offseason matches are marked Ongoing
-    # Incorporate start/end date to move these to invalid
-    # Not a problem until offseason matches displayed on frontend
-
     event_status = "Completed"
-    if curr_year:
+    if year == CURR_YEAR:
         if num_matches == 0:
             event_status = "Upcoming"
         elif num_upcoming_matches > 0 or num_matches == num_qual_matches:
@@ -117,7 +113,7 @@ def process_year(
         qual_matches = 0 if len(matches) > 0 else -1
 
         # "Completed", "Upcoming", "Ongoing", or "Invalid"
-        event_status = get_event_status(matches, year_num == end_year)
+        event_status = get_event_status(matches, year_num)
         event_obj.status = event_status
 
         event_teams: Set[int] = set()
@@ -268,7 +264,7 @@ def process_year_partial(
         qual_matches = 0 if len(matches) > 0 else -1
 
         # "Completed", "Upcoming", "Ongoing", or "Invalid"
-        event_status = get_event_status(matches, True)
+        event_status = get_event_status(matches, year_num)
         event_obj.status = event_status
 
         if event_status == "Invalid":

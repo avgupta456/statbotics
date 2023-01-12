@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import MatchTable from "../../../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
-import { Category10Colors, RPMapping } from "../../../../constants";
+import { CURR_YEAR, Category10Colors, RPMapping } from "../../../../constants";
 import { TeamData, TeamYearData } from "./types";
 
 const epaCard = (epa: string, label: string, bg: string) => {
@@ -53,6 +53,14 @@ const OverviewSection = ({
   const teamYear = teamYearData.team_year;
   const teamEvents = teamYearData.team_events;
   const matches = teamYearData.matches;
+
+  if (year.year !== CURR_YEAR && matches.length === 0) {
+    return (
+      <div className="w-full h-auto flex flex-col justify-center items-center px-2">
+        No matches played.
+      </div>
+    );
+  }
 
   let state = teamData.state;
   usaOptions.forEach((option) => {

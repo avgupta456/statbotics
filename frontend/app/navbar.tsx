@@ -113,9 +113,7 @@ const Navbar = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div className="w-36 py-1 text-sm text-center border-t-[1px] border-b-[1px]">
-                  Give Feedback
-                </div>
+                <div className="w-36 py-1 text-sm text-center border-b-[1px]">Give Feedback</div>
               </Link>
             </li>
             <li>
@@ -124,7 +122,7 @@ const Navbar = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div className="w-36 py-1 text-sm text-center border-b-[1px]">View GitHub</div>
+                <div className="w-36 py-1 text-sm text-center">View GitHub</div>
               </Link>
             </li>
           </ul>
@@ -151,6 +149,9 @@ const Navbar = () => {
         </Link>
         <Link href="/events" className="ml-4" onClick={() => setToggle(false)}>
           Events
+        </Link>
+        <Link href="/blog" className="ml-4" onClick={() => setToggle(false)}>
+          Blog
         </Link>
         <div className="my-2 h-[1px] bg-gray-600" />
         <div className="mx-auto">
