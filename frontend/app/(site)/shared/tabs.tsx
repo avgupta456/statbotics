@@ -7,9 +7,11 @@ import { classnames } from "../../../utils";
 const TabsSection = ({
   tabs,
   loading,
+  error,
 }: {
   tabs: { title: string; content: React.ReactNode }[];
   loading: boolean;
+  error: boolean;
 }) => {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -37,7 +39,11 @@ const TabsSection = ({
         <div className="flex-grow border-b-[1px] border-gray-200" />
       </div>
       <div className="w-full flex-grow pt-4 px-4 shadow">
-        {loading ? (
+        {error ? (
+          <div className="w-full flex-grow flex flex-col items-center justify-center">
+            <div className="text-gray-700 mt-4">An error occurred, please try again later.</div>
+          </div>
+        ) : loading ? (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
             <div className="text-gray-700 mt-4">Loading data, please wait...</div>
           </div>

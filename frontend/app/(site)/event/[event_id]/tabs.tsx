@@ -84,7 +84,7 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
       : { title: "", content: "" },
   ].filter((tab) => tab.title !== "");
 
-  return <TabsSection tabs={tabs} loading={data === undefined} />;
+  return <TabsSection loading={data === undefined} error={false} tabs={tabs} />;
 };
 
 export default Tabs;
