@@ -138,15 +138,14 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="flex items-center justify-center mb-4">
-        <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
-        {numProjections > 0 && (
-          <div
-            className="ml-2 h-10 p-2 rounded bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200"
-            onClick={() => setShowProjections(!showProjections)}
-          >
-            {showProjections ? "Hide" : "Show"} Projections
-          </div>
-        )}
+        <FilterBar
+          defaultFilters={defaultFilters}
+          filters={filters}
+          setFilters={setFilters}
+          includeProjections={numProjections > 0}
+          showProjections={showProjections}
+          setShowProjections={setShowProjections}
+        />
       </div>
       {numProjections > 0 && showProjections && (
         <div className="text-sm">

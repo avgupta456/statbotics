@@ -33,10 +33,16 @@ export const FilterBar = ({
   defaultFilters,
   filters,
   setFilters,
+  includeProjections = false,
+  showProjections = false,
+  setShowProjections = () => {},
 }: {
   defaultFilters: { [key: string]: any };
   filters: { [key: string]: any };
   setFilters: any;
+  includeProjections?: boolean;
+  showProjections?: boolean;
+  setShowProjections?: any;
 }) => {
   const filterKeys = Object.keys(filters);
   const stateOptions = filters?.country === "Canada" ? canadaOptions : usaOptions;
@@ -112,6 +118,17 @@ export const FilterBar = ({
             placeholder="Search"
             onChange={(e) => smartSetFilters("search", e.target.value)}
           />
+        </>
+      )}
+      {includeProjections && (
+        <>
+          <div className="w-0.5 h-10 ml-2 mr-2 mb-4 bg-gray-500 rounded" />
+          <div
+            className="h-10 p-2 mb-4 rounded bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200"
+            onClick={() => setShowProjections(!showProjections)}
+          >
+            {showProjections ? "Hide" : "Show"} Projections
+          </div>
         </>
       )}
     </div>
