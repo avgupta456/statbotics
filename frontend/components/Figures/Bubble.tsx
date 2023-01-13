@@ -52,8 +52,8 @@ const BubbleChart = ({
   const defaultFilters = filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
   const [filters, setFilters] = useState(defaultFilters);
   const [columns, setColumns] = useState({
-    x: "Teleop",
-    y: "Auto + Endgame",
+    x: year >= 2016 ? "Teleop" : "Total EPA",
+    y: year >= 2016 ? "Auto + Endgame" : "Wins",
     z: "Constant",
   });
 

@@ -66,26 +66,31 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
           cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
           header: "EPA",
         }),
-        columnHelper.accessor("auto_epa", {
-          cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
-          header: "Auto EPA",
-        }),
-        columnHelper.accessor("teleop_epa", {
-          cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
-          header: "Teleop EPA",
-        }),
-        columnHelper.accessor("endgame_epa", {
-          cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
-          header: "Endgame EPA",
-        }),
-        columnHelper.accessor("rp_1_epa", {
-          cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
-          header: `${RPMapping[data.year.year][0]} EPA`,
-        }),
-        columnHelper.accessor("rp_2_epa", {
-          cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
-          header: `${RPMapping[data.year.year][1]} EPA`,
-        }),
+        data.year.year >= 2016 &&
+          columnHelper.accessor("auto_epa", {
+            cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+            header: "Auto EPA",
+          }),
+        data.year.year >= 2016 &&
+          columnHelper.accessor("teleop_epa", {
+            cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+            header: "Teleop EPA",
+          }),
+        data.year.year >= 2016 &&
+          columnHelper.accessor("endgame_epa", {
+            cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+            header: "Endgame EPA",
+          }),
+        data.year.year >= 2016 &&
+          columnHelper.accessor("rp_1_epa", {
+            cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+            header: `${RPMapping?.[data.year.year]?.[0]} EPA`,
+          }),
+        data.year.year >= 2016 &&
+          columnHelper.accessor("rp_2_epa", {
+            cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+            header: `${RPMapping?.[data.year.year]?.[1]} EPA`,
+          }),
       ].filter(Boolean),
     [data, maxRank, disableHighlight]
   );
