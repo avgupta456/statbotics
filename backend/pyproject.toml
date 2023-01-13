@@ -16,6 +16,7 @@ sqlalchemy-cockroachdb = "^1.4.3"
 psycopg2 = "^2.9.3"
 attrs = "^22.1.0"
 scipy = "^1.9.1"
+CacheControl = "^0.12.11"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"

@@ -29,8 +29,27 @@ async def get_matches_cached(
     team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
+    week: Optional[int] = None,
+    elims: Optional[bool] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[Match]:
-    return (True, get_matches(team=team, year=year, event=event))  # type: ignore
+    return (
+        True,  # type: ignore
+        get_matches(
+            team=team,
+            year=year,
+            event=event,
+            week=week,
+            elims=elims,
+            metric=metric,
+            ascending=ascending,
+            limit=limit,
+            offset=offset,
+        ),
+    )
 
 
 @router.get(
@@ -81,4 +100,36 @@ async def read_matches_team_event(
     response: Response, team: int, event: str
 ) -> List[Dict[str, Any]]:
     matches: List[Match] = await get_matches_cached(team=team, event=event)
+    return [match.as_dict() for match in matches]
+
+
+@router.get(
+    "/matches",
+    description="Get a list of Matches with optional filters",
+    response_description="A list of Match objects. See /match/{match} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_matches(
+    response: Response,
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    event: Optional[str] = None,
+    week: Optional[int] = None,
+    elims: Optional[bool] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    matches: List[Match] = await get_matches_cached(
+        team=team,
+        year=year,
+        event=event,
+        week=week,
+        elims=elims,
+        metric=metric,
+        ascending=ascending,
+        limit=limit,
+        offset=offset,
+    )
     return [match.as_dict() for match in matches]

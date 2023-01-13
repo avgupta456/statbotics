@@ -25,8 +25,16 @@ async def get_year_cached(year: int) -> Optional[Year]:
 
 
 @alru_cache(ttl=timedelta(hours=1))
-async def get_years_cached() -> List[Year]:
-    return (True, get_years())  # type: ignore
+async def get_years_cached(
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> List[Year]:
+    return (  # type: ignore
+        True,
+        get_years(metric=metric, ascending=ascending, limit=limit, offset=offset),
+    )
 
 
 @router.get(
@@ -54,6 +62,12 @@ async def read_year(
 @async_fail_gracefully_api_plural
 async def read_years(
     response: Response,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
-    years: List[Year] = await get_years_cached()
+    years: List[Year] = await get_years_cached(
+        metric=metric, ascending=ascending, limit=limit, offset=offset
+    )
     return [year.as_dict() for year in years]

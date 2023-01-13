@@ -21,19 +21,19 @@ def get_match(match: str) -> Optional[Match]:
 
 
 def get_matches(
-    year: Optional[int] = None,
-    week: Optional[int] = None,
-    event: Optional[str] = None,
     team: Optional[int] = None,
+    year: Optional[int] = None,
+    event: Optional[str] = None,
+    week: Optional[int] = None,
+    elims: Optional[bool] = None,
+    offseason: Optional[bool] = False,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[Match]:
     def callback(session: SessionType):
         data = session.query(MatchORM)
-        if year is not None:
-            data = data.filter(MatchORM.year == year)  # type: ignore
-        if week is not None:
-            data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
-        if event is not None:
-            data = data.filter(MatchORM.event == event)  # type: ignore
         if team is not None:
             data = data.filter(  # type: ignore
                 (MatchORM.red_1 == team)  # type: ignore
@@ -43,6 +43,26 @@ def get_matches(
                 | (MatchORM.blue_2 == team)
                 | (MatchORM.blue_3 == team)
             )
+        if year is not None:
+            data = data.filter(MatchORM.year == year)  # type: ignore
+        if event is not None:
+            data = data.filter(MatchORM.event == event)  # type: ignore
+        if week is not None:
+            data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
+        if elims is not None:
+            data = data.filter(MatchORM.elims == elims)  # type: ignore
+        if offseason is not None:
+            data = data.filter(MatchORM.offseason == offseason)  # type: ignore
+        if metric is not None:
+            data = data.filter(MatchORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
+            if ascending is not None and ascending:
+                data = data.order_by(MatchORM.__dict__[metric].asc())  # type: ignore
+            else:
+                data = data.order_by(MatchORM.__dict__[metric].desc())  # type: ignore
+        if limit is not None:
+            data = data.limit(limit)  # type: ignore
+        if offset is not None:
+            data = data.offset(offset)  # type: ignore
         out_data: List[MatchORM] = data.all()
 
         return [Match.from_dict(x.__dict__) for x in out_data]

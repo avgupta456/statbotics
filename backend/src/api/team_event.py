@@ -28,10 +28,34 @@ async def get_team_event_cached(team: int, event: str) -> Optional[TeamEvent]:
 async def get_team_events_cached(
     team: Optional[int] = None,
     year: Optional[int] = None,
+    event: Optional[str] = None,
+    country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
+    type: Optional[int] = None,
+    week: Optional[int] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[TeamEvent]:
-    return (True, get_team_events(team=team, year=year, district=district, state=state))  # type: ignore
+    return (  # type: ignore
+        True,
+        get_team_events(
+            team=team,
+            year=year,
+            event=event,
+            country=country,
+            district=district,
+            state=state,
+            type=type,
+            week=week,
+            metric=metric,
+            ascending=ascending,
+            limit=limit,
+            offset=offset,
+        ),
+    )
 
 
 @router.get(
@@ -112,4 +136,42 @@ async def read_team_events_year_state(
     response: Response, year: int, state: str
 ) -> List[Dict[str, Any]]:
     team_events: List[TeamEvent] = await get_team_events_cached(year=year, state=state)
+    return [team_event.as_dict() for team_event in team_events]
+
+
+@router.get(
+    "/team_events",
+    description="Get a list of all Team Event objects with optional filters.",
+    response_description="A list of Team Event objects. See /team_event/{team}/{event} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_team_events(
+    response: Response,
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    event: Optional[str] = None,
+    country: Optional[str] = None,
+    district: Optional[str] = None,
+    state: Optional[str] = None,
+    type: Optional[int] = None,
+    week: Optional[int] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    team_events: List[TeamEvent] = await get_team_events_cached(
+        team=team,
+        year=year,
+        event=event,
+        country=country,
+        district=district,
+        state=state,
+        type=type,
+        week=week,
+        metric=metric,
+        ascending=ascending,
+        limit=limit,
+        offset=offset,
+    )
     return [team_event.as_dict() for team_event in team_events]

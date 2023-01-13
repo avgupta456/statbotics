@@ -12,6 +12,7 @@
     "--max-line-length=88"
   ],
 
+  "python.defaultInterpreterPath": ".\\backend\\.venv\\Scripts\\python.exe",
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.diagnosticMode": "workspace",
 
