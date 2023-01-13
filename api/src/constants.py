@@ -129,6 +129,30 @@ team_metrics = [
     "winrate",
 ]
 
+year_metrics = [
+    "year",
+    "quals_count",
+    "elims_count",
+    "champs_count",
+    "count",
+    "epa_quals_acc",
+    "epa_quals_mse",
+    "epa_elims_acc",
+    "epa_elims_mse",
+    "epa_champs_acc",
+    "epa_champs_mse",
+    "epa_acc",
+    "epa_mse",
+    "rp_1_acc",
+    "rp_1_mse",
+    "rp_1_champs_acc",
+    "rp_1_champs_mse",
+    "rp_2_acc",
+    "rp_2_mse",
+    "rp_2_champs_acc",
+    "rp_2_champs_mse",
+]
+
 team_year_metrics = [
     "elo_start",
     "-elo_start",

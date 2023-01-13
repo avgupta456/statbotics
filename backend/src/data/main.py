@@ -23,7 +23,7 @@ from src.db.read import (
     get_etags as get_etags_db,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
-    get_years as get_years_db,
+    get_year as get_year_db,
 )
 from src.db.write.main import update_teams as update_teams_db
 
@@ -40,10 +40,10 @@ def reset_all_years(start_year: int, end_year: int):
         team_years_dict[year] = teams_dict
 
         year_epa_stats[year] = (0, 0)
-        year_objs = get_years_db(year)
-        if len(year_objs) > 0:
+        year_obj = get_year_db(year)
+        if year_obj is not None:
             num_teams = 2 if year <= 2004 else 3
-            mean, sd = year_objs[0].score_mean, year_objs[0].score_sd
+            mean, sd = year_obj.score_mean, year_obj.score_sd
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     for year_num in range(start_year, end_year + 1):
@@ -83,10 +83,10 @@ def reset_curr_year(curr_year: int, mock: bool = False):
         team_years_dict[year] = teams_dict
 
         year_epa_stats[year] = (0, 0)
-        year_objs = get_years_db(year)
-        if len(year_objs) > 0:
+        year_obj = get_year_db(year)
+        if year_obj is not None:
             num_teams = 2 if year <= 2004 else 3
-            mean, sd = year_objs[0].score_mean, year_objs[0].score_sd
+            mean, sd = year_obj.score_mean, year_obj.score_sd
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     # NOTE: True normally False
@@ -127,10 +127,10 @@ def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
         team_years_dict[year] = teams_dict
 
         year_epa_stats[year] = (0, 0)
-        year_objs = get_years_db(year)
-        if len(year_objs) > 0:
+        year_obj = get_year_db(year)
+        if year_obj is not None:
             num_teams = 2 if year <= 2004 else 3
-            mean, sd = year_objs[0].score_mean, year_objs[0].score_sd
+            mean, sd = year_obj.score_mean, year_obj.score_sd
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     objs, new_etags = time_func(

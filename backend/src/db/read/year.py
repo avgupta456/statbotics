@@ -17,11 +17,24 @@ def get_year(year: int) -> Optional[Year]:
     return run_transaction(Session, callback)  # type: ignore
 
 
-def get_years(year: Optional[int] = None) -> List[Year]:
+def get_years(
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> List[Year]:
     def callback(session: SessionType):
         data = session.query(YearORM)
-        if year is not None:
-            data = data.filter(YearORM.year == year)  # type: ignore
+        if metric is not None:
+            data = data.filter(YearORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
+            if ascending is not None and ascending:
+                data = data.order_by(YearORM.__dict__[metric].asc())  # type: ignore
+            else:
+                data = data.order_by(YearORM.__dict__[metric].desc())  # type: ignore
+        if limit is not None:
+            data = data.limit(limit)  # type: ignore
+        if offset is not None:
+            data = data.offset(offset)  # type: ignore
         out_data: List[YearORM] = data.all()
         return [Year.from_dict(x.__dict__) for x in out_data]
 

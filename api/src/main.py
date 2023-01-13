@@ -4,7 +4,7 @@ import requests
 from cachecontrol import CacheControl  # type: ignore
 
 from .validate import check_type, get_locations
-from .constants import team_metrics
+from .constants import team_metrics, year_metrics
 
 
 class Statbotics:
@@ -73,11 +73,6 @@ class Statbotics:
 
         return self._filter_plural(data, fields)
 
-    def _negate(self, string: str) -> str:
-        if len(string) == 0:
-            return string
-        return string[1:] if string[0] == "-" else "-" + string
-
     def get_team(self, team: int, fields: List[str] = ["all"]) -> Dict[str, Any]:
         """
         Function to retrieve information on an individual team\n
@@ -136,6 +131,50 @@ class Statbotics:
             raise ValueError("Invalid metric")
         if ascending is None:
             ascending = True if metric in ["team", "losses"] else False
+        url += "&metric=" + metric + "&ascending=" + str(ascending)
+
+        return self._get_plural(url, fields)
+
+    def get_year(self, year: int, fields: List[str] = ["all"]) -> Dict[str, Any]:
+        """
+        Function to retrieve information for a specific year\n
+        :param year: Year, integer\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the year, match prediction statistics, and RP prediction statistics\n
+        """
+
+        check_type(year, "int", "year")
+        check_type(fields, "list", "fields")
+        return self._get_singular("/year/" + str(year), fields)
+
+    def get_years(
+        self,
+        metric: str = "year",
+        ascending: Optional[bool] = None,
+        limit: int = 1000,
+        offset: int = 0,
+        fields: List[str] = ["all"],
+    ) -> List[Dict[str, Any]]:
+        """
+        Function to retrieve information on multiple years\n
+        :param metric: Order output by field. (Ex: "elo_acc", "-opr_mse", etc). Default "year"\n
+        :param ascending: Order output ascending or descending. Default varies by metric.\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the year and match/RP prediction statistics\n
+        """
+
+        check_type(metric, "str", "metric")
+        check_type(limit, "int", "limit")
+        check_type(offset, "int", "offset")
+        check_type(fields, "list", "fields")
+        url = "/years?limit=" + str(limit) + "&offset=" + str(offset)
+
+        if metric not in year_metrics:
+            raise ValueError("Invalid metric")
+        if ascending is None:
+            ascending = True if metric in ["year"] else False
         url += "&metric=" + metric + "&ascending=" + str(ascending)
 
         return self._get_plural(url, fields)

@@ -17,7 +17,7 @@ from src.db.read import (
     get_team_events as get_team_events_db,
     get_team_matches as get_team_matches_db,
     get_team_years as get_team_years_db,
-    get_years as get_years_db,
+    get_year as get_year_db,
 )
 from src.db.write.main import (
     update_etags as update_etags_db,
@@ -40,7 +40,10 @@ objs_type = Tuple[
 
 
 def read_objs(year: int) -> objs_type:
-    year_obj = get_years_db(year)[0]
+    year_obj = get_year_db(year)
+    if year_obj is None:
+        raise Exception("Year not found")
+
     team_year_objs: List[TeamYear] = get_team_years_db(year)
     event_objs: List[Event] = get_events_db(year)
     team_event_objs: List[TeamEvent] = get_team_events_db(year)
