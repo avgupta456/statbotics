@@ -44,3 +44,13 @@ print(
     )
 )
 print()
+
+print(sb.get_team_event(team=5511, event="2019ncwak"))
+print()
+
+print(
+    sb.get_team_events(
+        team=5511, metric="winrate", limit=10, fields=["event", "winrate"]
+    )
+)
+print()

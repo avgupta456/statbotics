@@ -21,24 +21,50 @@ def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
 
 
 def get_team_events(
+    team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[int] = None,
-    team: Optional[int] = None,
+    country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
+    type: Optional[int] = None,
+    week: Optional[int] = None,
+    offseason: Optional[bool] = False,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[TeamEvent]:
     def callback(session: SessionType):
         data = session.query(TeamEventORM)
+        if team is not None:
+            data = data.filter(TeamEventORM.team == team)  # type: ignore
         if year is not None:
             data = data.filter(TeamEventORM.year == year)  # type: ignore
         if event is not None:
             data = data.filter(TeamEventORM.event == event)  # type: ignore
-        if team is not None:
-            data = data.filter(TeamEventORM.team == team)  # type: ignore
+        if country is not None:
+            data = data.filter(TeamEventORM.country == country)  # type: ignore
         if district is not None:
             data = data.filter(TeamEventORM.district == district)  # type: ignore
         if state is not None:
             data = data.filter(TeamEventORM.state == state)  # type: ignore
+        if type is not None:
+            data = data.filter(TeamEventORM.type == type)  # type: ignore
+        if week is not None:
+            data = data.filter(TeamEventORM.week == week)  # type: ignore
+        if offseason is not None:
+            data = data.filter(TeamEventORM.offseason == offseason)  # type: ignore
+        if metric is not None:
+            data = data.filter(TeamEventORM.__dict__[metric] != None)  # type: ignore
+            if ascending is not None and ascending:
+                data = data.order_by(TeamEventORM.__dict__[metric].asc())  # type: ignore
+            else:
+                data = data.order_by(TeamEventORM.__dict__[metric].desc())  # type: ignore
+        if limit is not None:
+            data = data.limit(limit)  # type: ignore
+        if offset is not None:
+            data = data.offset(offset)  # type: ignore
         out_data: List[TeamEventORM] = data.all()
         return [TeamEvent.from_dict(x.__dict__) for x in out_data]
 

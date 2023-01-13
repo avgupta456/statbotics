@@ -86,6 +86,7 @@ class TeamEventORM(Base, ModelORM):
     qual_losses = Column(Integer)
     qual_ties = Column(Integer)
     qual_count = Column(Integer)
+    # qual_winrate = Column(Float)  # TODO: Add column to DB
     rps = Column(Integer)
     rps_per_match = Column(Float)
     rank = Column(Integer)
@@ -155,6 +156,7 @@ class TeamEvent(Model):
     qual_losses: int = 0
     qual_ties: int = 0
     qual_count: int = 0
+    # qual_winrate: float = 0  # TODO: Add column to DB
     rps: int = 0
     rps_per_match: float = 0
     rank: Optional[int] = None
