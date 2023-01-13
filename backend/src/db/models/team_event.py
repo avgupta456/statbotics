@@ -165,6 +165,14 @@ class TeamEvent(Model):
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return TeamEvent(**dict)
 
+    def as_dict(self: "TeamEvent") -> Dict[str, Any]:
+        return attr.asdict(
+            self,  # type: ignore
+            filter=attr.filters.exclude(
+                attr.fields(TeamEvent).id, attr.fields(TeamEvent).time  # type: ignore
+            ),
+        )
+
     """SUPER FUNCTIONS"""
 
     def sort(self) -> Tuple[int, int]:

@@ -55,7 +55,7 @@ async def read_team_year(
 
 
 @router.get(
-    "/team_years/{team}",
+    "/team_years/team/{team}",
     description="Get a list of TeamYear objects for a single team. Specify team number, ex: 254, 1114",
     response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
 )
@@ -69,7 +69,7 @@ async def read_team_years_team(
 
 
 @router.get(
-    "/team_years/{year}/district/{district}",
+    "/team_years/year/{year}/district/{district}",
     description="Get a list of TeamYear objects from a single district. Specify lowercase district abbreviation, ex: fnc, fim",
     response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
 )
@@ -86,7 +86,7 @@ async def read_team_years_district(
 
 
 @router.get(
-    "/team_years/{year}/state/{state}",
+    "/team_years/year/{year}/state/{state}",
     description="Get a list of TeamYear objects from a single state. Specify lowercase state abbreviation, ex: ca, tx",
     response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
 )

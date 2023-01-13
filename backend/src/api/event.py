@@ -48,7 +48,7 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
 
 
 @router.get(
-    "/events/{year}",
+    "/events/year/{year}",
     description="Get a list of Event objects for a single year. Specify year, ex: 2019, 2020",
     response_description="A list of Event objects. See /event/{event} for more information.",
 )
@@ -59,7 +59,7 @@ async def read_events_year(response: Response, year: int) -> List[Dict[str, Any]
 
 
 @router.get(
-    "/events/{year}/district/{district}",
+    "/events/year/{year}/district/{district}",
     description="Get a list of Event objects for a single (year, district) pair. Specify year as four-digit number, district as lowercase abbreviation.",
     response_description="A list of Event objects. See /event/{event} for more information.",
 )
@@ -72,7 +72,7 @@ async def read_events_year_district(
 
 
 @router.get(
-    "/events/{year}/state/{state}",
+    "/events/year/{year}/state/{state}",
     description="Get a list of Event objects for a single (year, state) pair. Specify year as four-digit number, state as uppercase two-letter abbreviation.",
     response_description="A list of Event objects. See /event/{event} for more information.",
 )
