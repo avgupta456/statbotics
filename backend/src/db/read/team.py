@@ -16,14 +16,36 @@ def get_team(team: int) -> Optional[Team]:
 
 
 def get_teams(
-    district: Optional[str] = None, state: Optional[str] = None
+    country: Optional[str] = None,
+    district: Optional[str] = None,
+    state: Optional[str] = None,
+    active: Optional[bool] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[Team]:
     def callback(session: SessionType):
         data = session.query(TeamORM)
+        if country is not None:
+            data = data.filter(TeamORM.country == country)  # type: ignore
         if district is not None:
             data = data.filter(TeamORM.district == district)  # type: ignore
         if state is not None:
             data = data.filter(TeamORM.state == state)  # type: ignore
+        if active is not None:
+            data = data.filter(TeamORM.active == active)  # type: ignore
+        if metric is not None:
+            data = data.filter(TeamORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
+            if ascending is not None and ascending:
+                data = data.order_by(TeamORM.__dict__[metric].asc())  # type: ignore
+            else:
+                data = data.order_by(TeamORM.__dict__[metric].desc())  # type: ignore
+        if limit is not None:
+            data = data.limit(limit)  # type: ignore
+        if offset is not None:
+            data = data.offset(offset)  # type: ignore
+
         out_data: List[TeamORM] = data.all()
         return [Team.from_dict(x.__dict__) for x in out_data]
 

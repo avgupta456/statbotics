@@ -26,9 +26,16 @@ async def get_team_cached(team: str) -> Optional[Team]:
 
 @alru_cache(ttl=timedelta(hours=1))
 async def get_teams_cached(
-    district: Optional[str] = None, state: Optional[str] = None
+    country: Optional[str] = None,
+    district: Optional[str] = None,
+    state: Optional[str] = None,
+    active: Optional[bool] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[Team]:
-    return (True, get_teams(district=district, state=state))  # type: ignore
+    return (True, get_teams(country=country, district=district, state=state, active=active, metric=metric, ascending=ascending, limit=limit, offset=offset))  # type: ignore
 
 
 @router.get(
@@ -73,4 +80,34 @@ async def read_teams_state(
     state: str,
 ) -> List[Dict[str, Any]]:
     teams: List[Team] = await get_teams_cached(state=state)
+    return [team.as_dict() for team in teams]
+
+
+@router.get(
+    "/teams",
+    description="Get a list of Team objects with optional filters.",
+    response_description="A list of Team objects. See /team/{team} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_teams(
+    response: Response,
+    country: Optional[str] = None,
+    district: Optional[str] = None,
+    state: Optional[str] = None,
+    active: Optional[bool] = None,
+    metric: str = "team",
+    ascending: bool = True,
+    limit: int = 100,
+    offset: int = 0,
+) -> List[Dict[str, Any]]:
+    teams: List[Team] = await get_teams_cached(
+        country=country,
+        district=district,
+        state=state,
+        active=active,
+        metric=metric,
+        ascending=ascending,
+        limit=limit,
+        offset=offset,
+    )
     return [team.as_dict() for team in teams]
