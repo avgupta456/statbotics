@@ -35,7 +35,19 @@ async def get_teams_cached(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Team]:
-    return (True, get_teams(country=country, district=district, state=state, active=active, metric=metric, ascending=ascending, limit=limit, offset=offset))  # type: ignore
+    return (  # type: ignore
+        True,
+        get_teams(
+            country=country,
+            district=district,
+            state=state,
+            active=active,
+            metric=metric,
+            ascending=ascending,
+            limit=limit,
+            offset=offset,
+        ),
+    )
 
 
 @router.get(

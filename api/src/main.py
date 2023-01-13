@@ -4,7 +4,7 @@ import requests
 from cachecontrol import CacheControl  # type: ignore
 
 from .validate import check_type, get_locations
-from .constants import team_metrics, year_metrics
+from .constants import team_metrics, year_metrics, team_year_metrics
 
 
 class Statbotics:
@@ -93,7 +93,7 @@ class Statbotics:
         active: Optional[bool] = True,
         metric: str = "team",
         ascending: Optional[bool] = None,
-        limit: int = 1000,
+        limit: int = 100,
         offset: int = 0,
         fields: List[str] = ["all"],
     ) -> List[Dict[str, Any]]:
@@ -151,7 +151,7 @@ class Statbotics:
         self,
         metric: str = "year",
         ascending: Optional[bool] = None,
-        limit: int = 1000,
+        limit: int = 100,
         offset: int = 0,
         fields: List[str] = ["all"],
     ) -> List[Dict[str, Any]]:
@@ -175,6 +175,82 @@ class Statbotics:
             raise ValueError("Invalid metric")
         if ascending is None:
             ascending = True if metric in ["year"] else False
+        url += "&metric=" + metric + "&ascending=" + str(ascending)
+
+        return self._get_plural(url, fields)
+
+    def get_team_year(
+        self, team: int, year: int, fields: List[str] = ["all"]
+    ) -> Dict[str, Any]:
+        """
+        Function to retrieve information for a specific team's performance in a specific year\n
+        :param team: Team number, integer\n
+        :param year: Year, integer\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the team, year, and Elo/OPR statistics\n
+        """
+
+        check_type(team, "int", "team")
+        check_type(year, "int", "year")
+        check_type(fields, "list", "fields")
+        url = "/team_year/" + str(team) + "/" + str(year)
+        return self._get_singular(url, fields)
+
+    def get_team_years(
+        self,
+        team: Optional[int] = None,
+        year: Optional[int] = None,
+        country: Optional[str] = None,
+        state: Optional[str] = None,
+        district: Optional[str] = None,
+        metric: str = "team",
+        ascending: Optional[bool] = None,
+        limit: int = 100,
+        offset: int = 0,
+        fields: List[str] = ["all"],
+    ) -> List[Dict[str, Any]]:
+        """
+        Function to retrieve information on multiple (team, year) pairs\n
+        :param team: Restrict based on a specific team number\n
+        :param country: Restrict based on country (select countries included)\n
+        :param state: US States and Canada provinces only. Can infer country.\n
+        :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
+        :param metric: Order output by field. (Ex: "epa_end", "team", etc). Default "team"\n
+        :param ascending: Order output ascending or descending. Default varies by metric.\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the team, year, and OPR/Elo statistics\n
+        """
+
+        url = "/team_years"
+
+        check_type(team, "int", "team")
+        check_type(year, "int", "year")
+        check_type(metric, "str", "metric")
+        check_type(limit, "int", "limit")
+        check_type(offset, "int", "offset")
+        check_type(fields, "list", "fields")
+
+        if limit > 10000:
+            raise ValueError("Please reduce 'limit', max is 10,000.")
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
+
+        if team and year:
+            raise UserWarning("Use get_team_year() instead")
+        if team:
+            url += "&team=" + str(team)
+        if year:
+            url += "&year=" + str(year)
+
+        if team and (country or state or district):
+            raise UserWarning("Conflicting location input")
+        url += get_locations(country, state, district)
+
+        if metric not in team_year_metrics:
+            raise ValueError("Invalid metric")
+        if ascending is None:
+            ascending = True if metric in ["team", "year"] else False
         url += "&metric=" + metric + "&ascending=" + str(ascending)
 
         return self._get_plural(url, fields)

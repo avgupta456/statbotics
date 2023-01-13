@@ -28,10 +28,28 @@ async def get_team_year_cached(team: str, year: int) -> Optional[TeamYear]:
 async def get_team_years_cached(
     team: Optional[int] = None,
     year: Optional[int] = None,
+    country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[TeamYear]:
-    return (True, get_team_years(team=team, year=year, district=district, state=state))  # type: ignore
+    return (  # type: ignore
+        True,
+        get_team_years(
+            team=team,
+            year=year,
+            country=country,
+            district=district,
+            state=state,
+            metric=metric,
+            ascending=ascending,
+            limit=limit,
+            offset=offset,
+        ),
+    )
 
 
 @router.get(
@@ -95,4 +113,36 @@ async def read_team_years_state(
     state: str,
 ) -> List[Dict[str, Any]]:
     team_years: List[TeamYear] = await get_team_years_cached(year=year, state=state)
+    return [team_year.as_dict() for team_year in team_years]
+
+
+@router.get(
+    "/team_years",
+    description="Get a list of TeamYear objects with optional filters.",
+    response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_team_years(
+    response: Response,
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    country: Optional[str] = None,
+    district: Optional[str] = None,
+    state: Optional[str] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    team_years: List[TeamYear] = await get_team_years_cached(
+        team=team,
+        year=year,
+        country=country,
+        district=district,
+        state=state,
+        metric=metric,
+        ascending=ascending,
+        limit=limit,
+        offset=offset,
+    )
     return [team_year.as_dict() for team_year in team_years]

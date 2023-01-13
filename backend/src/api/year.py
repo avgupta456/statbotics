@@ -31,7 +31,10 @@ async def get_years_cached(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Year]:
-    return (True, get_years(metric=metric, ascending=ascending, limit=limit, offset=offset))  # type: ignore
+    return (  # type: ignore
+        True,
+        get_years(metric=metric, ascending=ascending, limit=limit, offset=offset),
+    )
 
 
 @router.get(
