@@ -61,7 +61,7 @@ async def get_team_year(
 async def get_team_years(
     year: Optional[int] = None, no_cache: bool = False
 ) -> List[APITeamYear]:
-    team_year_objs: List[TeamYear] = _get_team_years(year)  # type: ignore
+    team_year_objs: List[TeamYear] = _get_team_years(year=year)  # type: ignore
 
     team_years = [unpack_team_year(x) for x in team_year_objs]
     return (True, sorted(team_years, key=lambda x: x.epa_rank))  # type: ignore
