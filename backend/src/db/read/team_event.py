@@ -23,7 +23,7 @@ def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
 def get_team_events(
     team: Optional[int] = None,
     year: Optional[int] = None,
-    event: Optional[int] = None,
+    event: Optional[str] = None,
     country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
@@ -56,7 +56,7 @@ def get_team_events(
         if offseason is not None:
             data = data.filter(TeamEventORM.offseason == offseason)  # type: ignore
         if metric is not None:
-            data = data.filter(TeamEventORM.__dict__[metric] != None)  # type: ignore
+            data = data.filter(TeamEventORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
             if ascending is not None and ascending:
                 data = data.order_by(TeamEventORM.__dict__[metric].asc())  # type: ignore
             else:
