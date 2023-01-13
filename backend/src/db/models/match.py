@@ -194,6 +194,29 @@ class Match(Model):
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Match(**dict)
 
+    def as_dict(self: "Match") -> Dict[str, Any]:
+        return attr.asdict(
+            self,  # type: ignore
+            filter=attr.filters.exclude(
+                attr.fields(Match).red_auto_1,  # type: ignore
+                attr.fields(Match).red_auto_2,  # type: ignore
+                attr.fields(Match).red_auto_2_1,  # type: ignore
+                attr.fields(Match).red_auto_2_2,  # type: ignore
+                attr.fields(Match).red_teleop_1,  # type: ignore
+                attr.fields(Match).red_teleop_2,  # type: ignore
+                attr.fields(Match).red_teleop_2_1,  # type: ignore
+                attr.fields(Match).red_teleop_2_2,  # type: ignore
+                attr.fields(Match).blue_auto_1,  # type: ignore
+                attr.fields(Match).blue_auto_2,  # type: ignore
+                attr.fields(Match).blue_auto_2_1,  # type: ignore
+                attr.fields(Match).blue_auto_2_2,  # type: ignore
+                attr.fields(Match).blue_teleop_1,  # type: ignore
+                attr.fields(Match).blue_teleop_2,  # type: ignore
+                attr.fields(Match).blue_teleop_2_1,  # type: ignore
+                attr.fields(Match).blue_teleop_2_2,  # type: ignore
+            ),
+        )
+
     """SUPER FUNCTIONS"""
 
     def sort(self) -> int:

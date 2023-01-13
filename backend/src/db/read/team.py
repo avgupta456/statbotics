@@ -15,9 +15,16 @@ def get_team(team: int) -> Optional[Team]:
     return run_transaction(Session, callback)  # type: ignore
 
 
-def get_teams() -> List[Team]:
+def get_teams(
+    district: Optional[str] = None, state: Optional[str] = None
+) -> List[Team]:
     def callback(session: SessionType):
-        out_data = session.query(TeamORM).all()
+        data = session.query(TeamORM)
+        if district is not None:
+            data = data.filter(TeamORM.district == district)  # type: ignore
+        if state is not None:
+            data = data.filter(TeamORM.state == state)  # type: ignore
+        out_data: List[TeamORM] = data.all()
         return [Team.from_dict(x.__dict__) for x in out_data]
 
     return run_transaction(Session, callback)  # type: ignore

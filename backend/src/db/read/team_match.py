@@ -7,6 +7,19 @@ from src.db.main import Session
 from src.db.models.team_match import TeamMatch, TeamMatchORM
 
 
+def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
+    def callback(session: SessionType):
+        data = session.query(TeamMatchORM).filter(  # type: ignore
+            TeamMatchORM.team == team, TeamMatchORM.match == match
+        )
+        out_data: Optional[TeamMatchORM] = data.first()
+        if out_data is None:
+            return None
+        return TeamMatch.from_dict(out_data.__dict__)
+
+    return run_transaction(Session, callback)  # type: ignore
+
+
 def get_team_matches(
     year: Optional[int] = None,
     event: Optional[str] = None,

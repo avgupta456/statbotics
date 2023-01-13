@@ -75,6 +75,12 @@ class TeamMatch(Model):
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return TeamMatch(**dict)
 
+    def as_dict(self: "TeamMatch") -> Dict[str, Any]:
+        return attr.asdict(
+            self,  # type: ignore
+            filter=attr.filters.exclude(attr.fields(TeamMatch).id),  # type: ignore
+        )
+
     """SUPER FUNCTIONS"""
 
     def sort(self) -> int:

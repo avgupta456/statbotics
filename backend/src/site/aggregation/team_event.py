@@ -1,15 +1,13 @@
 from datetime import timedelta
 from typing import Callable, List, Optional
 
-from src.api.models import APITeamEvent
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
+from src.site.models import APITeamEvent
 from src.utils.alru_cache import alru_cache
 
 
-def unpack_team_event(
-    team_event: TeamEvent
-) -> APITeamEvent:
+def unpack_team_event(team_event: TeamEvent) -> APITeamEvent:
     return APITeamEvent(
         num=team_event.team,
         team=team_event.team_name or str(team_event.team),

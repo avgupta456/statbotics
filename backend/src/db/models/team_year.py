@@ -193,6 +193,17 @@ class TeamYear(Model):
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return TeamYear(**dict)
 
+    def as_dict(self: "TeamYear") -> Dict[str, Any]:
+        return attr.asdict(
+            self,  # type: ignore
+            filter=attr.filters.exclude(
+                attr.fields(TeamYear).id,  # type: ignore
+                attr.fields(TeamYear).next_event_key,  # type: ignore
+                attr.fields(TeamYear).next_event_name,  # type: ignore
+                attr.fields(TeamYear).next_event_week,  # type: ignore
+            ),
+        )
+
     """SUPER FUNCTIONS"""
 
     def sort(self) -> Tuple[int, int]:

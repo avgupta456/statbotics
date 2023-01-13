@@ -1,10 +1,15 @@
+from datetime import timedelta
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation import get_event, get_match, get_team_matches, get_year
-from src.api.models import APIEvent, APIMatch, APITeamMatch, APIYear
-from src.utils.decorators import async_fail_gracefully
+from src.db.models import Match
+from src.db.read import get_match, get_matches
+from src.utils.alru_cache import alru_cache
+from src.utils.decorators import (
+    async_fail_gracefully_api_singular,
+    async_fail_gracefully_api_plural,
+)
 
 router = APIRouter()
 
@@ -14,28 +19,66 @@ async def read_root():
     return {"name": "Match Router"}
 
 
-@router.get("/match/{match_id}")
-@async_fail_gracefully
-async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
-    match: Optional[APIMatch] = await get_match(match=match_id)
-    if match is None:
+@alru_cache(ttl=timedelta(hours=1))
+async def get_match_cached(match: str) -> Optional[Match]:
+    return (True, get_match(match=match))  # type: ignore
+
+
+@alru_cache(ttl=timedelta(hours=1))
+async def get_matches_cached(
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    event: Optional[str] = None,
+) -> List[Match]:
+    return (True, get_matches(team=team, year=year, event=event))  # type: ignore
+
+
+@router.get(
+    "/match/{match}",
+    description="Get a single Match object containing teams, score prediction, and actual results. Specify match key ex: 2019ncwak_f1m1",
+    response_description="A Match object.",
+)
+@async_fail_gracefully_api_singular
+async def read_match(response: Response, match: str) -> Dict[str, Any]:
+    match_obj: Optional[Match] = await get_match_cached(match=match)
+    if match_obj is None:
         raise Exception("Match not found")
 
-    event: Optional[APIEvent] = await get_event(event=match.event)
-    if event is None:
-        raise Exception("Event not found")
+    return match_obj.as_dict()
 
-    year: Optional[APIYear] = await get_year(year=match.year)
-    if year is None:
-        raise Exception("Year not found")
 
-    team_matches: List[APITeamMatch] = await get_team_matches(match=match_id)
+@router.get(
+    "/matches/event/{event}",
+    description="Get a list of Match objects for a single event. Specify event key ex: 2019ncwak, 2022cmptx",
+    response_description="A list of Match objects. See /match/{match} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_matches_event(response: Response, event: str) -> List[Dict[str, Any]]:
+    matches: List[Match] = await get_matches_cached(event=event)
+    return [match.as_dict() for match in matches]
 
-    out = {
-        "match": match.to_dict(),
-        "event": event.to_dict(),
-        "year": year.to_dict(),
-        "team_matches": [x.to_dict() for x in team_matches],
-    }
 
-    return out
+@router.get(
+    "/matches/team/{team}/year/{year}",
+    description="Get a list of Match objects for a single team in a single year. Specify team number and year, ex: 254, 2019",
+    response_description="A list of Match objects. See /match/{match} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_matches_team_year(
+    response: Response, team: int, year: int
+) -> List[Dict[str, Any]]:
+    matches: List[Match] = await get_matches_cached(team=team, year=year)
+    return [match.as_dict() for match in matches]
+
+
+@router.get(
+    "/matches/team/{team}/event/{event}",
+    description="Get a list of Match objects for a single team in a single event. Specify team number and event key, ex: 5511, 2019ncwak",
+    response_description="A list of Match objects. See /match/{match} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_matches_team_event(
+    response: Response, team: int, event: str
+) -> List[Dict[str, Any]]:
+    matches: List[Match] = await get_matches_cached(team=team, event=event)
+    return [match.as_dict() for match in matches]

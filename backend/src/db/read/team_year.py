@@ -21,12 +21,22 @@ def get_team_year(team: int, year: int) -> Optional[TeamYear]:
 
 
 def get_team_years(
-    year: Optional[int] = None, offseason: Optional[bool] = False
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    district: Optional[int] = None,
+    state: Optional[int] = None,
+    offseason: Optional[bool] = False,
 ) -> List[TeamYear]:
     def callback(session: SessionType):
         data = session.query(TeamYearORM)
+        if team is not None:
+            data = data.filter(TeamYearORM.team == team)  # type: ignore
         if year is not None:
             data = data.filter(TeamYearORM.year == year)  # type: ignore
+        if district is not None:
+            data = data.filter(TeamYearORM.district == district)  # type: ignore
+        if state is not None:
+            data = data.filter(TeamYearORM.state == state)  # type: ignore
         if offseason is not None:
             data = data.filter(TeamYearORM.offseason == offseason)  # type: ignore
         out_data: List[TeamYearORM] = data.all()

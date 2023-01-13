@@ -78,6 +78,9 @@ class Team(Model):
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Team(**dict)
 
+    def as_dict(self: "Team") -> Dict[str, Any]:
+        return attr.asdict(self)  # type: ignore
+
     def __str__(self: "Team"):
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.count}"

@@ -1,9 +1,9 @@
 from datetime import timedelta
 from typing import Optional
 
-from src.api.models import APIYear, PercentileStats
 from src.db.models import Year
 from src.db.read import get_year as _get_year
+from src.site.models import APIYear, PercentileStats
 from src.utils.alru_cache import alru_cache
 
 

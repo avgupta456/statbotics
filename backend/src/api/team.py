@@ -1,25 +1,15 @@
+from datetime import timedelta
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.aggregation import (
-    get_matches,
-    get_team,
-    get_team_events,
-    get_team_matches,
-    get_team_year,
-    get_teams,
-    get_year,
+from src.db.models import Team
+from src.db.read import get_team, get_teams
+from src.utils.alru_cache import alru_cache
+from src.utils.decorators import (
+    async_fail_gracefully_api_singular,
+    async_fail_gracefully_api_plural,
 )
-from src.api.models import (
-    APIMatch,
-    APITeam,
-    APITeamEvent,
-    APITeamMatch,
-    APITeamYear,
-    APIYear,
-)
-from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
 
@@ -29,46 +19,58 @@ async def read_root():
     return {"name": "Team Router"}
 
 
-@router.get("/teams/all")
-@async_fail_gracefully
-async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
-    teams: List[APITeam] = await get_teams()
-    return [{"num": x.num, "team": x.team} for x in teams if not x.offseason]
+@alru_cache(ttl=timedelta(hours=1))
+async def get_team_cached(team: str) -> Optional[Team]:
+    return (True, get_team(team=team))  # type: ignore
 
 
-@router.get("/team/{team_num}")
-@async_fail_gracefully
-async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
-    team: Optional[APITeam] = await get_team(team=team_num)
-    if team is None or team.offseason:
+@alru_cache(ttl=timedelta(hours=1))
+async def get_teams_cached(
+    district: Optional[str] = None, state: Optional[str] = None
+) -> List[Team]:
+    return (True, get_teams(district=district, state=state))  # type: ignore
+
+
+@router.get(
+    "/team/{team}",
+    description="Get a single Team object containing team name, location, normalized EPA statistics, and winrate.",
+    response_description="A Team object.",
+)
+@async_fail_gracefully_api_singular
+async def read_team(
+    response: Response,
+    team: str,
+) -> Dict[str, Any]:
+    team_obj: Optional[Team] = await get_team_cached(team=team)
+    if team_obj is None:
         raise Exception("Team not found")
 
-    return team.to_dict()
+    return team_obj.as_dict()
 
 
-@router.get("/team/{team_num}/{year}")
-@async_fail_gracefully
-async def read_team_year(
-    response: Response, team_num: int, year: int
-) -> Dict[str, Any]:
-    year_obj: Optional[APIYear] = await get_year(year=year)
-    if year_obj is None:
-        raise Exception("Year not found")
+@router.get(
+    "/teams/district/{district}",
+    description="Get a list of Team objects from a single district. Specify lowercase district abbreviation, ex: fnc, fim",
+    response_description="A list of Team objects. See /team/{team} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_teams_district(
+    response: Response,
+    district: str,
+) -> List[Dict[str, Any]]:
+    teams: List[Team] = await get_teams_cached(district=district)
+    return [team.as_dict() for team in teams]
 
-    team_year: Optional[APITeamYear] = await get_team_year(team=team_num, year=year)
-    if team_year is None or team_year.offseason:
-        raise Exception("TeamYear not found")
 
-    team_events: List[APITeamEvent] = await get_team_events(team=team_num, year=year)
-    matches: List[APIMatch] = await get_matches(team=team_num, year=year)
-    team_matches: List[APITeamMatch] = await get_team_matches(team=team_num, year=year)
-
-    out = {
-        "year": year_obj.to_dict(),
-        "team_year": team_year.to_dict(),
-        "team_events": [x.to_dict() for x in team_events],
-        "matches": [x.to_dict() for x in matches],
-        "team_matches": [x.to_dict() for x in team_matches],
-    }
-
-    return out
+@router.get(
+    "/teams/state/{state}",
+    description="Get a list of Team objects from a single state. Specify uppercase state abbreviation, ex: NC, CA",
+    response_description="A list of Team objects. See /team/{team} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_teams_state(
+    response: Response,
+    state: str,
+) -> List[Dict[str, Any]]:
+    teams: List[Team] = await get_teams_cached(state=state)
+    return [team.as_dict() for team in teams]

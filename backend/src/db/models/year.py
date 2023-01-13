@@ -108,8 +108,8 @@ class YearORM(Base, ModelORM):
     score_sd = Column(Float)
     auto_mean = Column(Float)
     teleop_mean = Column(Float)
-    one_mean = Column(Float)
-    two_mean = Column(Float)
+    one_mean = Column(Float)  # TODO: delete eventually, unused now
+    two_mean = Column(Float)  # TODO: delete eventually, unused now
     endgame_mean = Column(Float)
     fouls_mean = Column(Float)
     no_fouls_mean = Column(Float)
@@ -220,6 +220,14 @@ class Year(Model):
     def from_dict(cls, dict: Dict[str, Any]) -> "Year":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Year(**dict)
+
+    def as_dict(self: "Year") -> Dict[str, Any]:
+        return attr.asdict(
+            self,  # type: ignore
+            filter=attr.filters.exclude(
+                attr.fields(Year).one_mean, attr.fields(Year).two_mean  # type: ignore
+            ),
+        )
 
     def __str__(self: "Year"):
         # Only refresh DB if these change (during 1 min partial update)
