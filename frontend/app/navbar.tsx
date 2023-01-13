@@ -130,6 +130,9 @@ const Navbar = () => {
         </div>
         <div className="flex-grow" />
         <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
+          <Link href="/api">API</Link>
+        </div>
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
           <Link href="/blog">Blog</Link>
         </div>
         <div className="dropdown dropdown-end dropdown-hover" tabIndex={0}>
@@ -189,6 +192,9 @@ const Navbar = () => {
         </Link>
         <Link href="/events" className="ml-4" onClick={() => setToggle(false)}>
           Events
+        </Link>
+        <Link href="/api" className="ml-4" onClick={() => setToggle(false)}>
+          API
         </Link>
         <Link href="/blog" className="ml-4" onClick={() => setToggle(false)}>
           Blog

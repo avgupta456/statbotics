@@ -14,9 +14,7 @@ from src.utils.decorators import (
 router = APIRouter()
 
 
-router.get("/")
-
-
+@router.get("/")
 async def read_root():
     return {"name": "Team Year Router"}
 
