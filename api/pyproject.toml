@@ -24,7 +24,7 @@ license = "MIT License"
 
 readme = 'README.md'  # Markdown files are supported
 
-repository = "https://github.com/statbotics/statbotics"
+repository = "https://github.com/avgupta456/statbotics"
 homepage = "https://statbotics.io"
 
 keywords = ['FIRST', 'robotics', 'data', 'analysis', 'ranking']

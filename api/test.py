@@ -1,8 +1,8 @@
-from src.main import Statbotics
+from statbotics.main import Statbotics
 
 sb = Statbotics()
 
-print(sb.get_team(5511))
+print(sb.get_team(254))
 print()
 
 print(

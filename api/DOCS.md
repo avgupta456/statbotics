@@ -9,6 +9,15 @@ pip install pytest
 pytest tests/
 ```
 
+## Documentation
+
+```
+pip install sphinx
+pip install sphinx_rtd_theme
+cd docs
+make html
+```
+
 ## Deployment
 
 1. Update `version` in `pyproject.toml`
