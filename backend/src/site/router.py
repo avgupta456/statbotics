@@ -14,4 +14,4 @@ router.include_router(team_router, tags=["team"])
 
 @router.get("/")
 async def read_root():
-    return {"name": "API Router"}
+    return {"name": "Site Router"}
