@@ -6,6 +6,7 @@ from cachecontrol import CacheControl  # type: ignore
 from .validate import check_type, get_locations, get_type
 from .constants import (
     event_metrics,
+    match_metrics,
     team_event_metrics,
     team_metrics,
     team_year_metrics,
@@ -130,8 +131,8 @@ class Statbotics:
 
         url += get_locations(country, state, district)
 
-        if active:
-            url += "&active=True"
+        if active is not None:
+            url += "&active=" + str(active)
 
         if metric not in team_metrics:
             raise ValueError("Invalid metric")
@@ -163,7 +164,7 @@ class Statbotics:
     ) -> List[Dict[str, Any]]:
         """
         Function to retrieve information on multiple years\n
-        :param metric: Order output by field. (Ex: "elo_acc", "-opr_mse", etc). Default "year"\n
+        :param metric: Order output by field. (Ex: "epa_acc", "epa_mse", etc). Default "year"\n
         :param ascending: Order output ascending or descending. Default varies by metric.\n
         :param limit: Limits the output length to speed up queries. Max 10,000\n
         :param offset: Skips the first (offset) items when returning\n
@@ -193,7 +194,7 @@ class Statbotics:
         :param team: Team number, integer\n
         :param year: Year, integer\n
         :param fields: List of fields to return. The default is ["all"]\n
-        :return: a dictionary with the team, year, and Elo/OPR statistics\n
+        :return: a dictionary with the team, year, and EPA statistics\n
         """
 
         check_type(team, "int", "team")
@@ -226,7 +227,7 @@ class Statbotics:
         :param limit: Limits the output length to speed up queries. Max 10,000\n
         :param offset: Skips the first (offset) items when returning\n
         :param fields: List of fields to return. Default is ["all"]\n
-        :return: A list of dictionaries, each dictionary including the team, year, and OPR/Elo statistics\n
+        :return: A list of dictionaries, each dictionary including the team, year, and EPA statistics\n
         """
 
         url = "/team_years"
@@ -244,9 +245,9 @@ class Statbotics:
 
         if team and year:
             raise UserWarning("Use get_team_year() instead")
-        if team:
+        if team is not None:
             url += "&team=" + str(team)
-        if year:
+        if year is not None:
             url += "&year=" + str(year)
 
         if team and (country or state or district):
@@ -296,7 +297,7 @@ class Statbotics:
         :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
         :param type: 0=regional, 1=district, 2=district champ, 3=champs, 4=einstein\n
         :param week: Week of play, generally between 0 and 8\n
-        :param metric: Order output bu field. (Ex: "elo_pre_playoffs", "-opr_end", etc). Default "year"\n
+        :param metric: Order output bu field. (Ex: "epa_pre_playoffs", "epa_end", etc). Default "year"\n
         :param ascending: Order output ascending or descending. Default varies by metric.\n
         :param limit: Limits the output length to speed up queries. Max 10,000\n
         :param offset: Skips the first (offset) items when returning\n
@@ -318,7 +319,7 @@ class Statbotics:
             raise ValueError("Please reduce 'limit', max is 10,000.")
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
-        if year:
+        if year is not None:
             url += "&year=" + str(year)
 
         url += get_locations(country, state, district)
@@ -379,12 +380,12 @@ class Statbotics:
         :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
         :param type: 0=regional, 1=district, 2=district champ, 3=champs, 4=einstein\n
         :param week: Week of play, generally between 0 and 8\n
-        :param metric: Order output by field. (Ex: "elo_pre_playoffs", "-opr_end", etc). Default "year"\n
+        :param metric: Order output by field. (Ex: "epa_pre_playoffs", "epa_end", etc). Default "year"\n
         :param ascending: Order output ascending or descending. Default varies by metric.\n
         :param limit: Limits the output length to speed up queries. Max 10,000\n
         :param offset: Skips the first (offset) items when returning\n
         :param fields: List of fields to return. Default is ["all"]\n
-        :return: A list of dictionaries, each dictionary including the team, event and Elo/OPR statistics\n
+        :return: A list of dictionaries, each dictionary including the team, event and EPA statistics\n
         """
 
         url = "/team_events"
@@ -404,9 +405,9 @@ class Statbotics:
 
         if team and event:
             raise UserWarning("Use get_team_event() instead")
-        if team:
+        if team is not None:
             url += "&team=" + str(team)
-        if year:
+        if year is not None:
             url += "&year=" + str(year)
 
         if event and (year or type or week):
@@ -415,7 +416,7 @@ class Statbotics:
 
         if (team or event) and (country or state or district):
             raise UserWarning("Conflicting location input")
-        if event:
+        if event is not None:
             url += "&event=" + event
 
         if type is not None:
@@ -428,6 +429,86 @@ class Statbotics:
             raise ValueError("Invalid metric")
         if ascending is None:
             ascending = True if metric in ["year", "week"] else False
+        url += "&metric=" + metric + "&ascending=" + str(ascending)
+
+        return self._get_plural(url, fields)
+
+    def get_match(self, match: str, fields: List[str] = ["all"]) -> Dict[str, Any]:
+        """
+        Function to retrieve information for a specific match\n
+        :param match: Match key, string (ex: "2019cur_qm1", "2019cmptx_f1m3")\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the match, score breakdowns, and predictions\n
+        """
+
+        check_type(match, "str", "match")
+        check_type(fields, "list", "fields")
+        return self._get_singular("/match/" + match, fields)
+
+    def get_matches(
+        self,
+        team: Optional[int] = None,
+        year: Optional[int] = None,
+        event: Optional[str] = None,
+        week: Optional[int] = None,
+        elims: Optional[bool] = None,
+        metric: str = "time",
+        ascending: Optional[bool] = None,
+        limit: int = 200,
+        offset: int = 0,
+        fields: List[str] = ["all"],
+    ) -> List[Dict[str, Any]]:
+        """
+        Function to retrieve information on multiple matches\n
+        :param team: Restrict by team number, integer\n
+        :param year: Restrict by specific year, integer\n
+        :param event: Restrict by specific event key, string\n
+        :param week: Week of play, generally between 0 and 8\n
+        :param elims: Restrict to only elimination matches, default False\n
+        :param metric: Order output by field. (Ex: "time", "epa_pre_playoffs", "epa_end", etc). Default "time"\n
+        :param ascending: Order output ascending or descending. Default varies by metric.\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the match, score breakdowns, and predictions\n
+        """
+
+        url = "/matches"
+
+        check_type(team, "int", "team")
+        check_type(year, "int", "year")
+        check_type(event, "str", "event")
+        check_type(week, "int", "week")
+        check_type(elims, "bool", "elims")
+        check_type(limit, "int", "limit")
+        check_type(offset, "int", "offset")
+        check_type(fields, "list", "fields")
+
+        if limit > 10000:
+            raise ValueError("Please reduce 'limit', max is 10,000.")
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
+
+        if not event and not year and not team:
+            raise UserWarning("Query too large, be more specific (event)")
+
+        if year and event:
+            raise UserWarning("Year input will be ignored")
+
+        if team is not None:
+            url += "&team=" + str(team)
+        if year is not None:
+            url += "&year=" + str(year)
+        if event is not None:
+            url += "&event=" + event
+        if week is not None:
+            url += "&week=" + str(week)
+        if elims is not None:
+            url += "&playoff=" + str(elims)
+
+        if metric not in match_metrics:
+            raise ValueError("Invalid metric")
+        if ascending is None:
+            ascending = True if metric in ["time"] else False
         url += "&metric=" + metric + "&ascending=" + str(ascending)
 
         return self._get_plural(url, fields)

@@ -54,3 +54,27 @@ print(
     )
 )
 print()
+
+print(sb.get_match("2019ncwak_f1m1"))
+print()
+
+print(
+    sb.get_matches(
+        year=2022,
+        metric="red_epa_sum",  # or blue_epa_sum
+        ascending=False,
+        limit=10,
+        fields=[
+            "key",
+            "red_1",
+            "red_2",
+            "red_3",
+            "blue_1",
+            "blue_2",
+            "blue_3",
+            "red_epa_sum",
+            "blue_epa_sum",
+        ],
+    )
+)
+print()

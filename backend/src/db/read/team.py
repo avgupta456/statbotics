@@ -20,6 +20,7 @@ def get_teams(
     district: Optional[str] = None,
     state: Optional[str] = None,
     active: Optional[bool] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -35,6 +36,8 @@ def get_teams(
             data = data.filter(TeamORM.state == state)  # type: ignore
         if active is not None:
             data = data.filter(TeamORM.active == active)  # type: ignore
+        if offseason is not None:
+            data = data.filter(TeamORM.offseason == offseason)  # type: ignore
         if metric is not None:
             data = data.filter(TeamORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
             if ascending is not None and ascending:

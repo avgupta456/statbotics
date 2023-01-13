@@ -38,7 +38,7 @@ def unpack_team_event(team_event: TeamEvent) -> APITeamEvent:
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_events(
     year: Optional[int] = None,
-    event: Optional[int] = None,
+    event: Optional[str] = None,
     team: Optional[int] = None,
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
