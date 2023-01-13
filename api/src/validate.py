@@ -76,7 +76,7 @@ def get_locations(
     return url
 
 
-def get_type(type: str) -> Optional[int]:
+def get_type(type: Optional[Union[int, str]]) -> Optional[int]:
     if type is None:
         return None
     if isinstance(type, int):

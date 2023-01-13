@@ -34,3 +34,13 @@ print(
     )
 )
 print()
+
+print(sb.get_event("2022carv"))
+print()
+
+print(
+    sb.get_events(
+        year=2022, type=3, metric="epa_acc", fields=["key", "epa_acc", "epa_mse"]
+    )
+)
+print()

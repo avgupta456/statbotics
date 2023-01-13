@@ -27,10 +27,31 @@ async def get_event_cached(event: str) -> Optional[Event]:
 @alru_cache(ttl=timedelta(hours=1))
 async def get_events_cached(
     year: Optional[int] = None,
+    country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
+    type: Optional[int] = None,
+    week: Optional[int] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[Event]:
-    return (True, get_events(year=year, district=district, state=state))  # type: ignore
+    return (  # type: ignore
+        True,
+        get_events(
+            year=year,
+            country=country,
+            district=district,
+            state=state,
+            type=type,
+            week=week,
+            metric=metric,
+            ascending=ascending,
+            limit=limit,
+            offset=offset,
+        ),
+    )
 
 
 @router.get(
@@ -105,4 +126,38 @@ async def read_events_district(
 @async_fail_gracefully_api_plural
 async def read_events_state(response: Response, state: str) -> List[Dict[str, Any]]:
     events: List[Event] = await get_events_cached(state=state)
+    return [event.as_dict() for event in events]
+
+
+@router.get(
+    "/events",
+    description="Get a list of all Event objects with optional filters.",
+    response_description="A list of Event objects. See /event/{event} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_events(
+    response: Response,
+    year: Optional[int] = None,
+    country: Optional[str] = None,
+    district: Optional[str] = None,
+    state: Optional[str] = None,
+    type: Optional[int] = None,
+    week: Optional[int] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    events: List[Event] = await get_events_cached(
+        year=year,
+        country=country,
+        district=district,
+        state=state,
+        type=type,
+        week=week,
+        metric=metric,
+        ascending=ascending,
+        limit=limit,
+        offset=offset,
+    )
     return [event.as_dict() for event in events]

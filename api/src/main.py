@@ -1,10 +1,10 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from cachecontrol import CacheControl  # type: ignore
 
-from .validate import check_type, get_locations
-from .constants import team_metrics, year_metrics, team_year_metrics
+from .validate import check_type, get_locations, get_type
+from .constants import event_metrics, team_metrics, year_metrics, team_year_metrics
 
 
 class Statbotics:
@@ -251,6 +251,82 @@ class Statbotics:
             raise ValueError("Invalid metric")
         if ascending is None:
             ascending = True if metric in ["team", "year"] else False
+        url += "&metric=" + metric + "&ascending=" + str(ascending)
+
+        return self._get_plural(url, fields)
+
+    def get_event(self, event: str, fields: List[str] = ["all"]) -> Dict[str, Any]:
+        """
+        Function to retrieve information for a specific event\n
+        :param event: Event key, string (ex: "2019cur")\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the event and EPA statistics\n
+        """
+
+        check_type(event, "str", "event")
+        check_type(fields, "list", "fields")
+        url = "/event/" + event
+        return self._get_singular(url, fields)
+
+    def get_events(
+        self,
+        year: Optional[int] = None,
+        country: Optional[str] = None,
+        state: Optional[str] = None,
+        district: Optional[str] = None,
+        type: Optional[Union[int, str]] = None,
+        week: Optional[int] = None,
+        metric: str = "year",
+        ascending: Optional[bool] = None,
+        limit: int = 100,
+        offset: int = 0,
+        fields: List[str] = ["all"],
+    ) -> List[Dict[str, Any]]:
+        """
+        Function to retrieve information on multiple events\n
+        :param year: Restrict by specific year, integer\n
+        :param country: Restrict based on country (select countries included)\n
+        :param state: US States and Canada provinces only. Can infer country.\n
+        :param district: Use 2 or 3-letter key (ex: FIM, NE, etc)\n
+        :param type: 0=regional, 1=district, 2=district champ, 3=champs, 4=einstein\n
+        :param week: Week of play, generally between 0 and 8\n
+        :param metric: Order output bu field. (Ex: "elo_pre_playoffs", "-opr_end", etc). Default "year"\n
+        :param ascending: Order output ascending or descending. Default varies by metric.\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the team, event and EPA statistics\n
+        """
+
+        url = "/events"
+
+        check_type(year, "int", "year")
+        check_type(metric, "str", "metric")
+        type = get_type(type)
+        check_type(week, "int", "week")
+        check_type(limit, "int", "limit")
+        check_type(offset, "int", "offset")
+        check_type(fields, "list", "fields")
+
+        if limit > 10000:
+            raise ValueError("Please reduce 'limit', max is 10,000.")
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
+
+        if year:
+            url += "&year=" + str(year)
+
+        url += get_locations(country, state, district)
+
+        if type is not None:
+            url += "&type=" + str(type)
+
+        if week is not None:
+            url += "&week=" + str(week)
+
+        if metric not in event_metrics:
+            raise ValueError("Invalid metric")
+        if ascending is None:
+            ascending = True if metric in ["year", "week"] else False
         url += "&metric=" + metric + "&ascending=" + str(ascending)
 
         return self._get_plural(url, fields)
