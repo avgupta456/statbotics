@@ -97,11 +97,23 @@ const OverviewSection = ({
       </div>
       <div className="w-full mb-8 md:mb-12 flex flex-wrap items-center">
         EPA Breakdown:
-        {epaCard(teamYear?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
-        {epaCard(teamYear?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
-        {epaCard(teamYear?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-        {epaCard(teamYear?.rp_1_epa?.toFixed(2), RPMapping[year.year][0], Category10Colors[3])}
-        {epaCard(teamYear?.rp_2_epa?.toFixed(2), RPMapping[year.year][1], Category10Colors[4])}
+        {year.year >= 2016 && (
+          <>
+            {epaCard(teamYear?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
+            {epaCard(teamYear?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
+            {epaCard(teamYear?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
+            {epaCard(
+              teamYear?.rp_1_epa?.toFixed(2),
+              RPMapping?.[year.year]?.[0],
+              Category10Colors[3]
+            )}
+            {epaCard(
+              teamYear?.rp_2_epa?.toFixed(2),
+              RPMapping?.[year.year]?.[1],
+              Category10Colors[4]
+            )}
+          </>
+        )}
         {epaCard(teamYear?.total_epa?.toFixed(1), "Total", Category10Colors[5])}
       </div>
       <div className="w-full mb-8 md:mb-12 flex justify-center gap-2 md:gap-4">
@@ -145,18 +157,22 @@ const OverviewSection = ({
                   )}
                 </div>
                 <div className="flex flex-row flex-wrap mb-2">
-                  {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
-                  {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
-                  {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-                  {epaCard(
-                    event?.rp_1_epa?.toFixed(2),
-                    RPMapping[year.year][0],
-                    Category10Colors[3]
-                  )}
-                  {epaCard(
-                    event?.rp_2_epa?.toFixed(2),
-                    RPMapping[year.year][1],
-                    Category10Colors[4]
+                  {year.year >= 2016 && (
+                    <>
+                      {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
+                      {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
+                      {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
+                      {epaCard(
+                        event?.rp_1_epa?.toFixed(2),
+                        RPMapping?.[year.year]?.[0],
+                        Category10Colors[3]
+                      )}
+                      {epaCard(
+                        event?.rp_2_epa?.toFixed(2),
+                        RPMapping?.[year.year]?.[1],
+                        Category10Colors[4]
+                      )}
+                    </>
                   )}
                   {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[5])}
                 </div>

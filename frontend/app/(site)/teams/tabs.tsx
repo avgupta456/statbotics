@@ -32,10 +32,10 @@ const Tabs = ({
         columnOptions={
           [
             "Total EPA",
-            "Auto",
-            "Teleop",
-            "Endgame",
-            "Auto + Endgame",
+            year >= 2016 && "Auto",
+            year >= 2016 && "Teleop",
+            year >= 2016 && "Endgame",
+            year >= 2016 && "Auto + Endgame",
             year >= 2016 && `${RPMapping?.[year]?.[0]}`,
             year >= 2016 && `${RPMapping?.[year]?.[1]}`,
             "Wins",

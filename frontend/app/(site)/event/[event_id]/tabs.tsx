@@ -28,19 +28,21 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
         year={year}
         data={bubbleData}
         filterOptions={[]}
-        columnOptions={[
-          "Total EPA",
-          "Auto",
-          "Teleop",
-          "Endgame",
-          "Auto + Endgame",
-          `${RPMapping[year][0]}`,
-          `${RPMapping[year][1]}`,
-          "Rank",
-          "N - Rank",
-          "RPs / Match",
-          "Wins",
-        ]}
+        columnOptions={
+          [
+            "Total EPA",
+            year >= 2016 && "Auto",
+            year >= 2016 && "Teleop",
+            year >= 2016 && "Endgame",
+            year >= 2016 && "Auto + Endgame",
+            year >= 2016 && `${RPMapping?.[year]?.[0]}`,
+            year >= 2016 && `${RPMapping?.[year]?.[1]}`,
+            "Rank",
+            "N - Rank",
+            "RPs / Match",
+            "Wins",
+          ].filter(Boolean) as string[]
+        }
       />
     ),
     [bubbleData, year]
@@ -57,8 +59,8 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
   );
 
   const MemoizedFigureSection = useMemo(
-    () => <FiguresSection eventId={eventId} data={data} />,
-    [eventId, data]
+    () => <FiguresSection year={year} eventId={eventId} data={data} />,
+    [year, eventId, data]
   );
 
   const MemoizedSimulationSection = useMemo(
@@ -79,7 +81,7 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
       ? { title: "Elim Matches", content: MemoizedElimMatchSection }
       : { title: "", content: "" },
     { title: "Figures", content: MemoizedFigureSection },
-    qualsN > 0
+    qualsN > 0 && year !== 2015
       ? { title: "Simulation", content: MemoizedSimulationSection }
       : { title: "", content: "" },
   ].filter((tab) => tab.title !== "");

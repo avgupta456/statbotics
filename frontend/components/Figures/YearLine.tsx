@@ -119,8 +119,8 @@ const YearLineChart = ({
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: `${RPMapping[year][0]} EPA` },
-          { value: "rp_2_epa", label: `${RPMapping[year][1]} EPA` },
+          { value: "rp_1_epa", label: `${RPMapping?.[year]?.[0]} EPA` },
+          { value: "rp_2_epa", label: `${RPMapping?.[year]?.[1]} EPA` },
         ]
       : [{ value: "total_epa", label: "EPA" }];
 
