@@ -304,3 +304,15 @@ match_metrics = [
     "blue_no_fouls",
     "blue_fouls",
 ]
+
+team_match_metrics = [
+    "time",
+    "year",
+    "team",
+    "epa",
+    "auto_epa",
+    "teleop_epa",
+    "endgame_epa",
+    "rp_1_epa",
+    "rp_2_epa",
+]

@@ -8,6 +8,7 @@ from .constants import (
     event_metrics,
     match_metrics,
     team_event_metrics,
+    team_match_metrics,
     team_metrics,
     team_year_metrics,
     year_metrics,
@@ -506,6 +507,103 @@ class Statbotics:
             url += "&playoff=" + str(elims)
 
         if metric not in match_metrics:
+            raise ValueError("Invalid metric")
+        if ascending is None:
+            ascending = True if metric in ["time"] else False
+        url += "&metric=" + metric + "&ascending=" + str(ascending)
+
+        return self._get_plural(url, fields)
+
+    def get_team_match(
+        self, team: int, match: str, fields: List[str] = ["all"]
+    ) -> Dict[str, Any]:
+        """
+        Function to retrieve information for a specific (team, match) pair\n
+        :param team: Team number, integer\n
+        :param match: Match key, string (ex: "2019cur_qm1", "2019cmptx_f1m3")\n
+        :param fields: List of fields to return. The default is ["all"]\n
+        :return: a dictionary with the team, match, alliance, and EPA statistics\n
+        """
+
+        check_type(team, "int", "team")
+        check_type(match, "str", "match")
+        check_type(fields, "list", "fields")
+        url = "/team_match/" + str(team) + "/" + str(match)
+        return self._get_singular(url, fields)
+
+    def get_team_matches(
+        self,
+        team: Optional[int] = None,
+        year: Optional[int] = None,
+        event: Optional[str] = None,
+        week: Optional[int] = None,
+        match: Optional[str] = None,
+        elims: Optional[bool] = None,
+        metric: str = "time",
+        ascending: Optional[bool] = None,
+        limit: int = 100,
+        offset: int = 0,
+        fields: List[str] = ["all"],
+    ) -> List[Dict[str, Any]]:
+        """
+        Function to retrieve information on multiple (team, match) pairs\n
+        :param team: Restrict by team number, integer\n
+        :param year: Restrict by specific year, integer\n
+        :param event: Restrict by specific event key, string\n
+        :param week: Week of play, generally between 0 and 8\n
+        :param elims: Restrict to only elimination matches, default False\n
+        :param metric: Order output by field. (Ex: "time", "auto_epa", etc). Default "time"\n
+        :param ascending: Order output ascending or descending. Default varies by metric.\n
+        :param limit: Limits the output length to speed up queries. Max 10,000\n
+        :param offset: Skips the first (offset) items when returning\n
+        :param fields: List of fields to return. Default is ["all"]\n
+        :return: A list of dictionaries, each dictionary including the team, match, alliance, and then elo\n
+        """
+
+        url = "/team_matches"
+
+        check_type(team, "int", "team")
+        check_type(year, "int", "year")
+        check_type(event, "str", "event")
+        check_type(week, "int", "week")
+        check_type(match, "str", "match")
+        check_type(elims, "bool", "elims")
+        check_type(limit, "int", "limit")
+        check_type(offset, "int", "offset")
+        check_type(fields, "list", "fields")
+
+        if limit > 10000:
+            raise ValueError("Please reduce 'limit', max is 10,000.")
+        url += "?limit=" + str(limit) + "&offset=" + str(offset)
+
+        if not year and not event and not match and not week:
+            raise UserWarning(
+                "Query too large, be more specific (year, week, event, or match)"
+            )
+
+        if (
+            (year and event)
+            or (year and match)
+            or (event and match)
+            or (event and week)
+            or (match and week)
+        ):
+            raise UserWarning("Only specify one of (year, week, event, match)")
+
+        if team is not None:
+            url += "&team=" + str(team)
+        if year is not None:
+            url += "&year=" + str(year)
+        if event is not None:
+            url += "&event=" + event
+        if week is not None:
+            url += "&week=" + str(week)
+        if match is not None:
+            url += "&match=" + match
+        if elims is not None:
+            url += "&playoff=" + str(elims)
+
+        if metric not in team_match_metrics:
             raise ValueError("Invalid metric")
         if ascending is None:
             ascending = True if metric in ["time"] else False

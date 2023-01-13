@@ -29,9 +29,29 @@ async def get_team_matches_cached(
     team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
+    week: Optional[int] = None,
     match: Optional[str] = None,
+    elims: Optional[bool] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[TeamMatch]:
-    return (True, get_team_matches(team=team, year=year, event=event, match=match))  # type: ignore
+    return (  # type: ignore
+        True,
+        get_team_matches(
+            team=team,
+            year=year,
+            event=event,
+            week=week,
+            match=match,
+            elims=elims,
+            metric=metric,
+            ascending=ascending,
+            limit=limit,
+            offset=offset,
+        ),
+    )
 
 
 @router.get(
@@ -88,4 +108,38 @@ async def read_team_matches_event(
     response: Response, event: str
 ) -> List[Dict[str, Any]]:
     team_matches: List[TeamMatch] = await get_team_matches_cached(event=event)
+    return [team_match.as_dict() for team_match in team_matches]
+
+
+@router.get(
+    "/team_matches",
+    description="Get a list of Team Match objects with optional filters",
+    response_description="A list of Team Match objects. See /team_match/{team}/{match} for more information.",
+)
+@async_fail_gracefully_api_plural
+async def read_team_matches(
+    response: Response,
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    event: Optional[str] = None,
+    week: Optional[int] = None,
+    match: Optional[str] = None,
+    elims: Optional[bool] = None,
+    metric: Optional[str] = None,
+    ascending: Optional[bool] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    team_matches: List[TeamMatch] = await get_team_matches_cached(
+        team=team,
+        year=year,
+        event=event,
+        week=week,
+        match=match,
+        elims=elims,
+        metric=metric,
+        ascending=ascending,
+        limit=limit,
+        offset=offset,
+    )
     return [team_match.as_dict() for team_match in team_matches]

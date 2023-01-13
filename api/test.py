@@ -78,3 +78,11 @@ print(
     )
 )
 print()
+
+print(sb.get_team_match(team=5511, match="2019ncwak_f1m1"))
+print()
+
+print(sb.get_team_matches(team=5511, year=2022, fields=["match", "time", "epa"]))
+print()
+
+print("Done!")
