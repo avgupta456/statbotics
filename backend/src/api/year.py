@@ -48,8 +48,8 @@ async def read_year(
 
 @router.get(
     "/years",
-    description="Get a list of Year objects from 2002 to 2023. See /year/{year} for more information.",
-    response_description="A list of Year objects.",
+    description="Get a list of Year objects from 2002 to 2023. Specify a four-digit year, ex: 2019",
+    response_description="A list of Year objects. See /year/{year} for more information.",
 )
 @async_fail_gracefully_api_plural
 async def read_years(
