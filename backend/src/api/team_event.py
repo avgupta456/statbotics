@@ -36,7 +36,7 @@ async def get_team_events_cached(
 
 @router.get(
     "/team_event/{team}/{event}",
-    description="Get a single Team Event object containing TODO. Specify team number and event key ex: 5511, 2019ncwak",
+    description="Get a single Team Event object containing event metadata, EPA statistics, and winrate. Specify team number and event key ex: 5511, 2019ncwak",
     response_description="A Team Event object.",
 )
 @async_fail_gracefully_api_singular
