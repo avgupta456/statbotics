@@ -9,7 +9,7 @@ from src.db.read import get_team_years as get_team_years_db
 
 @lru_cache()
 def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
-    team_years = get_team_years_db(year)
+    team_years = get_team_years_db(year=year)
     if len(team_years) == 0:
         raise ValueError("No team years found for year " + str(year))
 
