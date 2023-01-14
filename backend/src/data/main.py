@@ -1,5 +1,6 @@
 from typing import Dict, Tuple
 
+from src.constants import CURR_YEAR
 from src.data.avg import process_year as process_year_avg
 from src.data.epa import (
     post_process as post_process_epa,
@@ -36,11 +37,11 @@ def reset_all_years(start_year: int, end_year: int):
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
     year_epa_stats: Dict[int, Tuple[float, float]] = {}
     for year in range(max(2002, start_year - 4), start_year):
-        teams_dict = {t.team: t for t in get_team_years_db(year)}
+        teams_dict = {t.team: t for t in get_team_years_db(year=year)}
         team_years_dict[year] = teams_dict
 
         year_epa_stats[year] = (0, 0)
-        year_obj = get_year_db(year)
+        year_obj = get_year_db(year=year)
         if year_obj is not None:
             num_teams = 2 if year <= 2004 else 3
             mean, sd = year_obj.score_mean, year_obj.score_sd
@@ -79,11 +80,11 @@ def reset_curr_year(curr_year: int, mock: bool = False):
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
     year_epa_stats: Dict[int, Tuple[float, float]] = {}
     for year in range(max(2002, curr_year - 4), curr_year):
-        teams_dict = {t.team: t for t in get_team_years_db(year)}
+        teams_dict = {t.team: t for t in get_team_years_db(year=year)}
         team_years_dict[year] = teams_dict
 
         year_epa_stats[year] = (0, 0)
-        year_obj = get_year_db(year)
+        year_obj = get_year_db(year=year)
         if year_obj is not None:
             num_teams = 2 if year <= 2004 else 3
             mean, sd = year_obj.score_mean, year_obj.score_sd
@@ -103,8 +104,10 @@ def reset_curr_year(curr_year: int, mock: bool = False):
     objs = out[1:]
 
     time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, True)  # type: ignore
-    time_func("Post TBA", post_process_tba)
-    time_func("Post EPA", lambda: post_process_epa(curr_year))
+
+    if curr_year == CURR_YEAR:
+        time_func("Post TBA", post_process_tba)
+        time_func("Post EPA", lambda: post_process_epa(curr_year))
 
 
 def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
@@ -123,11 +126,11 @@ def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
     team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
     year_epa_stats: Dict[int, Tuple[float, float]] = {}
     for year in range(max(2002, curr_year - 4), curr_year):
-        teams_dict = {t.team: t for t in get_team_years_db(year)}
+        teams_dict = {t.team: t for t in get_team_years_db(year=year)}
         team_years_dict[year] = teams_dict
 
         year_epa_stats[year] = (0, 0)
-        year_obj = get_year_db(year)
+        year_obj = get_year_db(year=year)
         if year_obj is not None:
             num_teams = 2 if year <= 2004 else 3
             mean, sd = year_obj.score_mean, year_obj.score_sd
