@@ -1,6 +1,0 @@
-*.pyc
-
-.env
-.venv
-node_modules
-cache
