@@ -4,12 +4,16 @@ The Statbotics Python API queries the Statbotics backend and returns data in a J
 
 ## Testing
 
+Requires Python 3.8+.
+
 ```
 pip install pytest
 pytest tests/
 ```
 
 ## Documentation
+
+Requires Python 3.8+. Production builds are triggered directly on the Read the Docs website.
 
 ```
 pip install sphinx
@@ -19,6 +23,8 @@ make html
 ```
 
 ## Deployment
+
+Requires Python 3.8+. Requires a PyPI account.
 
 1. Update `version` in `pyproject.toml`
 2. Delete old distributions in `/dist`
