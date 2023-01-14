@@ -21,8 +21,8 @@ class Statbotics:
     """
 
     def __init__(self):
-        # self.BASE_URL = "https://api.statbotics.io/v2"
-        self.BASE_URL = "http://localhost:8000/v2"
+        self.BASE_URL = "https://api.statbotics.io/v2"
+        # self.BASE_URL = "http://localhost:8000/v2"
         self.session = CacheControl(requests.Session())
 
     def _filter_singular(

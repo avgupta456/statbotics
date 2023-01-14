@@ -9,7 +9,7 @@ Visit https://statbotics.io for more content!
 With Python>=3.8 and pip installed, run
 
 ```
-pip install statbotics
+pip install statbotics==2.0.1
 ```
 
 Then in a Python file, create a Statbotics object and get started!
