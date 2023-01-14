@@ -1,6 +1,6 @@
 # Statbotics
 
-Statbotics is an open-source data analytics platform for the FIRST Robotics Competition (FRC). We have created the Expected Points Added (EPA) rating system, which predicts a team's average scoring contribution to a match. EPA builds upon the Elo rating system, but is directly in point units, separates into additional components, and has additional modifications that improve accuracy and calibration. Statbotics computes both historical and realtime EPA results, and exposes data through a CSV export, REST API, Python package, and website ([statbotics.io](https://www.statbotics.io)). The website includes interactive tables, visualizations, event simulation, and more. The major components are summarized below, with more detailed documentation in each subdirectory.
+Statbotics is an open-source data analytics platform for the FIRST Robotics Competition (FRC). We have created the Expected Points Added (EPA) rating system, which predicts a team's average scoring contribution to a match. EPA builds upon the Elo rating system, but is directly in point units, separates into additional components, and has additional modifications that improve accuracy and calibration. Statbotics computes both historical and realtime EPA results, and exposes data through a CSV export, REST API, Python package, and website ([statbotics.io](https://www.statbotics.io)). The website includes interactive tables, visualizations, event simulation, and more. The major components are summarized below, with more detailed development documentation in each subdirectory.
 
 <p width="100%" align="center">
   <img src="https://user-images.githubusercontent.com/16708871/212447884-68af251c-0813-4542-a81f-1a63c1388a69.png" width=400 />
@@ -54,4 +54,3 @@ If you are interested in contributing, please reach out to me directly through a
 I (Abhijit Gupta) currently front the cloud hosting costs for Statbotics. If you are able and interested, feel free to pitch in using [this link](https://www.buymeacoffee.com/statbotics).
 
 Thanks for your interest!
-
