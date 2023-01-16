@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
+import Link from "next/link";
+
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
@@ -22,8 +24,9 @@ export type TeamYearInsights = {
   num: number;
   team: string;
   epa_rank: number;
-  norm_epa: number;
   total_epa: number; // used for sorting
+  norm_epa: number; // used for historical years
+  unitless_epa: number; // used for current year
   auto_epa: number | string;
   teleop_epa: number | string;
   endgame_epa: number | string;
@@ -60,6 +63,9 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
     (teamYear: APITeamYear) => teamYear.count === 0
   ).length;
 
+  const scoreMean = data.year.score_mean;
+  const scoreSd = data.year.score_sd;
+
   const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
     .filter((teamYear: APITeamYear) => showProjections || teamYear.count > 0)
     .map((teamYear: APITeamYear) => {
@@ -67,8 +73,10 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         num: teamYear.num ?? -1,
         team: teamYear.team ? truncate(teamYear.team, 30) : "N/A",
         epa_rank: teamYear.epa_rank ?? -1,
-        norm_epa: round(teamYear.norm_epa, 0) ?? 0,
         total_epa: round(teamYear.total_epa, 1) ?? 0,
+        norm_epa: round(teamYear.norm_epa, 0) ?? 0,
+        unitless_epa:
+          round(1500 + (250 * ((teamYear.total_epa ?? 0) - scoreMean / 3)) / scoreSd, 0) ?? 0,
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamYear.endgame_epa, 1) ?? "N/A",
@@ -101,6 +109,11 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         columnHelper.accessor("norm_epa", {
           cell: (info) => formatCell(info),
           header: "Normalized EPA",
+        }),
+      year >= CURR_YEAR &&
+        columnHelper.accessor("unitless_epa", {
+          cell: (info) => formatCell(info),
+          header: "Unitless EPA*",
         }),
       columnHelper.accessor("total_epa", {
         cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
@@ -137,7 +150,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <div className="flex items-center justify-center mb-4">
+      <div className="flex items-center justify-center">
         <FilterBar
           defaultFilters={defaultFilters}
           filters={filters}
@@ -147,12 +160,6 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
           setShowProjections={setShowProjections}
         />
       </div>
-      {numProjections > 0 && showProjections && (
-        <div className="text-sm mb-4">
-          <strong>Note</strong>: Yellow highlighted teams have not played yet. Their EPA rating is
-          only a projection.
-        </div>
-      )}
       <InsightsTable
         data={yearInsightsData}
         columns={columns}
@@ -162,6 +169,24 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         csvFilename={`${year}_insights.csv`}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
+      <div className="w-full px-4 border-t-[1px] border-gray-200">
+        {numProjections > 0 && showProjections && (
+          <div className="w-full text-xs mt-4">
+            <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
+            only a projection.
+          </div>
+        )}
+        {year >= CURR_YEAR && (
+          <div className="w-full text-xs mb-4">
+            <strong>2.</strong> Unitless EPA is a linear function mapping EPA into Elo units. This
+            is not the same as Year Normalized EPA for past seasons. See{" "}
+            <Link href="/blog/epa" className="text_link">
+              blog
+            </Link>{" "}
+            for more details.
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -17,7 +17,7 @@ const TabsSection = ({
 
   return (
     <div className="w-full flex-grow flex flex-col">
-      <div className="w-full flex flex-row text-sm md:text-base overflow-x-scroll md:overflow-x-auto">
+      <div className="w-full flex flex-row text-sm md:text-base overflow-x-scroll md:overflow-x-auto scrollbar-hide">
         {tabs.map((tab, index) => (
           <div
             key={`tab-${tab.title}`}

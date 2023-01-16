@@ -13,7 +13,7 @@ export const TeamLink = ({ team, num }: { team: string | number; num: number }) 
     return formatNumber(num);
   } else {
     return (
-      <div className="w-24 md:w-32 h-10 h-full flex justify-center items-center text-sm">
+      <div className="w-24 md:w-32 mx-auto h-10 h-full flex justify-center items-center text-sm">
         <Link href={`/team/${num}`} className="text_link">
           {truncate(team.toString(), 30)}
         </Link>
@@ -24,7 +24,7 @@ export const TeamLink = ({ team, num }: { team: string | number; num: number }) 
 
 export const EventLink = ({ key, event }: { key: string; event: string }) => {
   return (
-    <div className="w-32 md:w-40 h-full flex justify-center items-center text-sm">
+    <div className="w-32 md:w-40 mx-auto h-full flex justify-center items-center text-sm">
       <Link href={`/event/${key}`} className="text_link">
         {truncate(event.toString(), 40)}
       </Link>
@@ -78,7 +78,9 @@ export const getRPColor = (value: number) => {
 export const formatCell = (info: CellContext<any, number | string>) => {
   const value = info.getValue();
 
-  return <div className="w-16 md:w-24 h-full flex justify-center items-center">{value}</div>;
+  return (
+    <div className="w-16 md:w-24 mx-auto h-full flex justify-center items-center">{value}</div>
+  );
 };
 
 export const formatPercentileCell = (
@@ -101,7 +103,7 @@ export const formatPercentileCell = (
   }
 
   return (
-    <div className="w-20 md:w-28 h-full flex justify-center items-center">
+    <div className="w-20 md:w-28 mx-auto h-full flex justify-center items-center">
       <div className={classnames(color, "w-12 px-2 py-1 rounded-lg")}>{info.getValue()}</div>
     </div>
   );
