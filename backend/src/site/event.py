@@ -46,7 +46,12 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     if year is None:
         raise Exception("Year not found")
 
-    team_events: List[APITeamEvent] = await get_team_events(event=event_id)
+    team_events: List[APITeamEvent] = await get_team_events(
+        year=year.year,
+        score_mean=year.score_mean,
+        score_sd=year.score_sd,
+        event=event_id,
+    )
     matches: List[APIMatch] = await get_matches(event=event_id)
     team_matches: List[APITeamMatch] = await get_team_matches(event=event_id)
 

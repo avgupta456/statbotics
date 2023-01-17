@@ -7,7 +7,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import InsightsTable from "../../../../components/Table/InsightsTable";
 import { TeamLink, formatCell, formatPercentileCell } from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
-import { RPMapping } from "../../../../constants";
+import { CURR_YEAR, RPMapping } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
 import { Data } from "./types";
 
@@ -15,6 +15,8 @@ export type TeamEventInsights = {
   num: number;
   team: string;
   rank: number;
+  unitless_epa: number | string;
+  norm_epa: number | string;
   total_epa: number;
   auto_epa: number | string;
   teleop_epa: number | string;
@@ -33,6 +35,8 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
       return {
         num: teamEvent.num ?? -1,
         team: teamEvent.team ? truncate(teamEvent.team, 30) : "N/A",
+        unitless_epa: round(teamEvent.unitless_epa, 0) ?? "N/A",
+        norm_epa: round(teamEvent.norm_epa, 0) ?? "N/A",
         total_epa: round(teamEvent.total_epa, 1) ?? 0,
         auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
@@ -61,6 +65,16 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
           columnHelper.accessor("rank", {
             cell: (info) => formatCell(info),
             header: "Rank",
+          }),
+        data.year.year >= CURR_YEAR &&
+          columnHelper.accessor("unitless_epa", {
+            cell: (info) => formatCell(info),
+            header: "Unitless EPA",
+          }),
+        data.year.year < CURR_YEAR &&
+          columnHelper.accessor("norm_epa", {
+            cell: (info) => formatCell(info),
+            header: "Norm EPA",
           }),
         columnHelper.accessor("total_epa", {
           cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),

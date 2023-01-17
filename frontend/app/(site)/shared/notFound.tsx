@@ -11,7 +11,7 @@ const NotFound = ({ type }: { type: string }) => {
   useEffect(() => {
     setTimeout(() => {
       setRender(true);
-    }, 1000);
+    }, 5000);
   }, []);
 
   if (!render) {

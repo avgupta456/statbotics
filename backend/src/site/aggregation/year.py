@@ -78,6 +78,8 @@ def unpack_year(year: Year) -> APIYear:
 
     return APIYear(
         year=year.year,
+        score_mean=year.score_mean or 0,
+        score_sd=year.score_sd or 0,
         total_stats=total_stats,
         auto_stats=auto_stats,
         teleop_stats=teleop_stats,

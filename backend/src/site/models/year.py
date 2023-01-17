@@ -18,6 +18,8 @@ class PercentileStats(APIModel):
 @attr.s(auto_attribs=True, slots=True)
 class APIYear(APIModel):
     year: int
+    score_mean: float
+    score_sd: float
     total_stats: PercentileStats
     auto_stats: PercentileStats
     teleop_stats: PercentileStats

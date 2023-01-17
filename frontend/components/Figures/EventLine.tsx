@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { GiPodium } from "react-icons/gi";
 import Select from "react-select";
 
-import { BACKEND_URL, RPMapping } from "../../constants";
+import { BACKEND_URL, CURR_YEAR, RPMapping } from "../../constants";
 import { classnames, log, round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
 import { APITeamEvent, APITeamMatch } from "../types/api";
@@ -110,12 +110,13 @@ const EventLineChart = ({
     year >= 2016
       ? [
           { value: "total_epa", label: "Total EPA" },
+          year >= CURR_YEAR && { value: "unitless_epa", label: "Unitless EPA" },
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
           { value: "rp_1_epa", label: `${RPMapping?.[year]?.[0]} EPA` },
           { value: "rp_2_epa", label: `${RPMapping?.[year]?.[1]} EPA` },
-        ]
+        ].filter(Boolean)
       : [{ value: "total_epa", label: "EPA" }];
 
   const TeamSelect = ({ className }) => (

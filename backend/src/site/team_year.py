@@ -18,12 +18,14 @@ async def read_root():
 @router.get("/team_years/{year}")
 @async_fail_gracefully
 async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
-    team_years: List[APITeamYear] = await get_team_years(year=year)
-    team_years = [x for x in team_years if x.count > 0 or year == CURR_YEAR]
-
     year_obj: Optional[APIYear] = await get_year(year=year)
     if year_obj is None:
         raise Exception("Year not found")
+
+    team_years: List[APITeamYear] = await get_team_years(
+        year=year, score_mean=year_obj.score_mean, score_sd=year_obj.score_sd
+    )
+    team_years = [x for x in team_years if x.count > 0 or year == CURR_YEAR]
 
     out = {
         "team_years": [x.to_dict() for x in team_years],

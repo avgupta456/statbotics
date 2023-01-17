@@ -229,22 +229,35 @@ const Page = () => {
         ). To reduce user confusion and allow for future modifications, we label the RP predictions
         as RP EPAs, but they are currently equivalent to the ILS model.
       </p>
-      <h3>Year Normalized EPA</h3>
+      <h3>Unitless and Year Normalized EPA</h3>
       <p>
-        One advantage of the arbitrary unit Elo model compared to the point-based OPR and EPA models
-        is the ability to compare teams across seasons. Therefore, we seek a year normalized EPA
-        that allows for comparison across seasons. For simplicity and consistency, we use the same
-        units as the Elo model, where 1500 is roughly average, 1800 is the top 1%, and 2000 is an
-        all-time great season. Top Elo ratings tend to vary year-to-year depending on game
-        characteristics, an undesirable feature we attempt to correct for in the year normalized
-        EPA.
+        Two advantage of the arbitrary unit Elo model compared to the point-based OPR and EPA models
+        is the ability to compare teams across seasons and the ability to quickly understand a
+        team&apos;s strength independent of the game. We seek to replicate these advantages in the
+        EPA model. For simplicity and consistency, we use the same units as the Elo model, where
+        1500 is roughly average, 1800 is the top 1%, and 2000 is an all-time great season.
       </p>
+      <h4>Unitless EPA</h4>
       <p>
-        The central idea behind year normalized EPA is to fit a statistical distribution to the end
-        of season EPA ratings, and then use the inverse cumulative distribution function to map a
-        team&apos;s EPA rating to a year normalized EPA rating. While traditionally the normal
-        distribution is used, we use an exponential normal distribution, which skews right and
-        better fits the FRC team distribution.
+        One interpretation of the Elo model is that the difference in Elo ratings between two teams
+        is proportional to the probability of the higher rated team winning a match. For example, a
+        250 Elo point difference corresponds to a 75% chance of winning. Reversing the equations
+        above, we can apply a linear transformation to the EPA model to create a
+        &quot;unitless&quot; EPA model where a 250 point difference also corresponds to a 75% chance
+        of winning.
+      </p>
+      {renderMathBlock(
+        "\\text{Unitless EPA} = 1500 + 250 \\times \\frac{\\text{EPA} - \\text{Week 1 Mean Score} / 3}{\\text{Week 1 Standard Deviation}}"
+      )}
+      <h4>Year Normalized EPA</h4>
+      <p>
+        Top Elo ratings tend to vary year-to-year depending on game characteristics, an undesirable
+        feature we attempt to correct for in the year normalized EPA. The central idea behind year
+        normalized EPA is to fit a statistical distribution to the end of season EPA ratings, and
+        then use the inverse cumulative distribution function to map a team&apos;s EPA rating to a
+        year normalized EPA rating. While traditionally the normal distribution is used, we use an
+        exponential normal distribution, which skews right and better fits the FRC team
+        distribution.
       </p>
       <div className="w-full h-[400px] relative not-prose">
         <Image src="/exponnorm.png" alt="Summary" fill quality={100} className="object-contain" />

@@ -32,6 +32,8 @@ export const emptyPercentileStats: PercentileStats = {
 
 export type APIYear = {
   year: number;
+  score_mean: number;
+  score_sd: number;
   total_stats: PercentileStats;
   auto_stats: PercentileStats;
   teleop_stats: PercentileStats;
@@ -43,6 +45,8 @@ export type APIYear = {
 
 export const emptyAPIYear: APIYear = {
   year: 0,
+  score_mean: 0,
+  score_sd: 1,
   total_stats: emptyPercentileStats,
   auto_stats: emptyPercentileStats,
   teleop_stats: emptyPercentileStats,
@@ -69,8 +73,9 @@ export type APITeamYear = {
   country_epa_count: number;
   district_epa_rank: number;
   district_epa_count: number;
-  norm_epa: number;
   total_epa: number;
+  unitless_epa: number;
+  norm_epa: number;
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;
@@ -110,6 +115,8 @@ export type APITeamEvent = {
   start_rp_1_epa: number;
   start_rp_2_epa: number;
   total_epa: number;
+  unitless_epa: number;
+  norm_epa: number;
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;
