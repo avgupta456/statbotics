@@ -6,6 +6,7 @@ import { BACKEND_URL, CURR_YEAR } from "../../../../constants";
 import { log, round } from "../../../../utils";
 import PageLayout from "../../shared/layout";
 import NotFound from "../../shared/notFound";
+import SummaryTabs from "./summaryTabs";
 import Tabs from "./tabs";
 import { TeamData, TeamYearData } from "./types";
 
@@ -35,9 +36,11 @@ async function getTeamYearData(team: number, year: number) {
 }
 
 const Page = ({ params }: { params: { team: number } }) => {
-  const { team } = params;
-  const [prevYear, _setPrevYear] = useState(CURR_YEAR);
-  const [year, _setYear] = useState(CURR_YEAR);
+  const team = params.team?.[0];
+  const paramYear = params.team?.[1] ?? -1;
+
+  const [prevYear, _setPrevYear] = useState(paramYear);
+  const [year, _setYear] = useState(paramYear);
 
   const setYear = (newYear: number) => {
     _setPrevYear(year);
@@ -76,28 +79,40 @@ const Page = ({ params }: { params: { team: number } }) => {
       setTeamYearDataDict((prev) => ({ ...prev, [year]: data }));
     };
 
-    getTeamYearDataForYear(team, year);
+    if (year >= 2002 && year <= CURR_YEAR) {
+      getTeamYearDataForYear(team, year);
+    }
   }, [team, year, teamYearDataDict]);
 
   if (!teamData) {
     return <NotFound type="Team" />;
   }
 
-  const teamYearData = teamYearDataDict[year];
-  const fallbackTeamYearData = teamYearDataDict[prevYear];
+  const teamYearData = teamYearDataDict?.[year];
+  const fallbackTeamYearData = teamYearDataDict?.[prevYear];
 
   const rookieYear = teamData?.rookie_year ?? 2002;
 
   return (
-    <PageLayout title={`Team ${team}`} year={year} setYear={setYear} minYear={rookieYear}>
+    <PageLayout
+      title={`Team ${team}`}
+      year={year}
+      setYear={setYear}
+      minYear={rookieYear}
+      includeSummary
+    >
       <div className="w-full text-center text-2xl lg:text-3xl mb-4">{teamData?.team}</div>
-      <Tabs
-        teamNum={team}
-        year={year}
-        teamData={teamData}
-        teamYearData={teamYearData}
-        fallbackTeamYearData={fallbackTeamYearData}
-      />
+      {year >= 2002 && year <= CURR_YEAR ? (
+        <Tabs
+          teamNum={team}
+          year={year}
+          teamData={teamData}
+          teamYearData={teamYearData}
+          fallbackTeamYearData={fallbackTeamYearData}
+        />
+      ) : (
+        <SummaryTabs teamNum={team} teamData={teamData} teamYearsData={undefined} />
+      )}
     </PageLayout>
   );
 };
