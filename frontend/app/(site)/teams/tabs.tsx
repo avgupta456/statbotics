@@ -32,6 +32,7 @@ const Tabs = ({
         columnOptions={
           [
             "Total EPA",
+            year >= CURR_YEAR && "Unitless EPA",
             year >= 2016 && "Auto",
             year >= 2016 && "Teleop",
             year >= 2016 && "Endgame",

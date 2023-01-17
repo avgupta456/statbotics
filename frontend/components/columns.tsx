@@ -7,6 +7,7 @@ import { round } from "../utils";
 export const getColumnOptions = (year: number) => [
   { label: "Constant", accessor: (datum) => 1 },
   { label: "Total EPA", accessor: (datum) => round(datum?.total_epa) },
+  { label: "Unitless EPA", accessor: (datum) => round(datum?.unitless_epa, 0) },
   { label: "Norm EPA", accessor: (datum) => round(datum?.norm_epa, 0) },
   { label: "Auto", accessor: (datum) => round(datum?.auto_epa) },
   { label: "Teleop", accessor: (datum) => round(datum?.teleop_epa) },

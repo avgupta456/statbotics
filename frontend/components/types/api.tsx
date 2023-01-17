@@ -73,8 +73,9 @@ export type APITeamYear = {
   country_epa_count: number;
   district_epa_rank: number;
   district_epa_count: number;
-  norm_epa: number;
   total_epa: number;
+  unitless_epa: number;
+  norm_epa: number;
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;
@@ -114,6 +115,8 @@ export type APITeamEvent = {
   start_rp_1_epa: number;
   start_rp_2_epa: number;
   total_epa: number;
+  unitless_epa: number;
+  norm_epa: number;
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;

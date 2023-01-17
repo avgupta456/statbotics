@@ -75,8 +75,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         epa_rank: teamYear.epa_rank ?? -1,
         total_epa: round(teamYear.total_epa, 1) ?? 0,
         norm_epa: round(teamYear.norm_epa, 0) ?? 0,
-        unitless_epa:
-          round(1500 + (250 * ((teamYear.total_epa ?? 0) - scoreMean / 3)) / scoreSd, 0) ?? 0,
+        unitless_epa: round(teamYear.unitless_epa, 0) ?? 0,
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamYear.endgame_epa, 1) ?? "N/A",

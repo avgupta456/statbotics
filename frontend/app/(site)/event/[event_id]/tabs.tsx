@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 
 import BubbleChart from "../../../../components/Figures/Bubble";
-import { RPMapping } from "../../../../constants";
+import { CURR_YEAR, RPMapping } from "../../../../constants";
 import TabsSection from "../../shared/tabs";
 import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
@@ -31,6 +31,7 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
         columnOptions={
           [
             "Total EPA",
+            year >= CURR_YEAR && "Unitless EPA",
             year >= 2016 && "Auto",
             year >= 2016 && "Teleop",
             year >= 2016 && "Endgame",
