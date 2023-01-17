@@ -32,10 +32,15 @@ def alru_cache(max_size: int = 128, ttl: timedelta = timedelta(minutes=1)):
 
             # remove oldest key if cache is full
             if len(keys) > max_size:
-                del cache[keys.pop(0)]
+                try:
+                    # Should not raise KeyError, but just in case
+                    del cache[keys.pop(0)]
+                except KeyError:
+                    # Already deleted by another thread
+                    pass
 
             # return value from cache
-            return cache[key][1]
+            return value  # equal to cache[key][1]
 
         @wraps(func)
         async def wrapper(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
