@@ -4,11 +4,19 @@ from typing import Callable, List
 
 from scipy.interpolate import interp1d  # type: ignore
 
+from src.constants import CURR_YEAR
 from src.db.read import get_team_years as get_team_years_db
+
+
+def epa_to_unitless_epa(epa: float, mean: float, sd: float) -> float:
+    return 1500 + 250 * (epa - mean / 3) / sd
 
 
 @lru_cache()
 def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
+    if year == CURR_YEAR:
+        return lambda epa: epa
+
     team_years = get_team_years_db(year=year)
     if len(team_years) == 0:
         raise ValueError("No team years found for year " + str(year))

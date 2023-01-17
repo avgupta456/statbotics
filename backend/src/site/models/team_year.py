@@ -23,8 +23,9 @@ class APITeamYear(APIModel):
     country_epa_count: int
     district_epa_rank: int
     district_epa_count: int
-    norm_epa: float
     total_epa: float
+    unitless_epa: float
+    norm_epa: float
     auto_epa: float
     teleop_epa: float
     endgame_epa: float

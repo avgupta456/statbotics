@@ -1,13 +1,21 @@
 from datetime import timedelta
 from typing import Callable, List, Optional
 
+from src.data.nepa import (
+    epa_to_unitless_epa as _epa_to_unitless_epa,
+    get_epa_to_norm_epa_func,
+)
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
 from src.site.models import APITeamEvent
 from src.utils.alru_cache import alru_cache
 
 
-def unpack_team_event(team_event: TeamEvent) -> APITeamEvent:
+def unpack_team_event(
+    team_event: TeamEvent,
+    epa_to_unitless_epa: Callable[[float], float],
+    epa_to_norm_epa: Callable[[float], float],
+) -> APITeamEvent:
     return APITeamEvent(
         num=team_event.team,
         team=team_event.team_name or str(team_event.team),
@@ -20,6 +28,8 @@ def unpack_team_event(team_event: TeamEvent) -> APITeamEvent:
         start_rp_1_epa=team_event.rp_1_epa_start or 0,
         start_rp_2_epa=team_event.rp_2_epa_start or 0,
         total_epa=team_event.epa_end or 0,
+        unitless_epa=epa_to_unitless_epa(team_event.epa_end or 0),
+        norm_epa=epa_to_norm_epa(team_event.epa_end or 0),
         auto_epa=team_event.auto_epa_end or 0,
         teleop_epa=team_event.teleop_epa_end or 0,
         endgame_epa=team_event.endgame_epa_end or 0,
@@ -37,15 +47,26 @@ def unpack_team_event(team_event: TeamEvent) -> APITeamEvent:
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_events(
-    year: Optional[int] = None,
+    year: int,
+    score_mean: float,
+    score_sd: float,
     event: Optional[str] = None,
     team: Optional[int] = None,
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
-) -> List[TeamEvent]:
+) -> List[APITeamEvent]:
     team_event_objs: List[TeamEvent] = _get_team_events(
-        team=team, year=year, event=event
+        year=year, team=team, event=event
     )
 
-    team_events = [unpack_team_event(x) for x in team_event_objs]
+    if epa_to_norm_epa is None:
+        epa_to_norm_epa = get_epa_to_norm_epa_func(year)
+
+    def epa_to_unitless_epa(epa: float) -> float:
+        return _epa_to_unitless_epa(epa, score_mean, score_sd)
+
+    team_events = [
+        unpack_team_event(x, epa_to_unitless_epa, epa_to_norm_epa)
+        for x in team_event_objs
+    ]
     return (True, sorted(team_events, key=lambda x: x.time))  # type: ignore
