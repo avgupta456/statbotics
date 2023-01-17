@@ -16,11 +16,6 @@ from src.utils.decorators import async_fail_gracefully
 router = APIRouter()
 
 
-@router.get("/")
-async def read_root():
-    return {"name": "Event Router"}
-
-
 @router.get("/events/all")
 @async_fail_gracefully
 async def read_all_events(response: Response) -> List[Dict[str, Any]]:

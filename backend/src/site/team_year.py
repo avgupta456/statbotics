@@ -10,11 +10,6 @@ from src.utils.decorators import async_fail_gracefully
 router = APIRouter()
 
 
-@router.get("/")
-async def read_root():
-    return {"name": "Team Year Router"}
-
-
 @router.get("/team_years/{year}")
 @async_fail_gracefully
 async def read_team_years(response: Response, year: int) -> Dict[str, Any]:

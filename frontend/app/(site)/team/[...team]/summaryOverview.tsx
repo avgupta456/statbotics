@@ -15,6 +15,8 @@ const SummaryOverviewSection = ({
     );
   }
 
+  console.log(teamYearsData);
+
   return <div className="w-full h-auto flex flex-col justify-center items-center px-2">TODO</div>;
 };
 

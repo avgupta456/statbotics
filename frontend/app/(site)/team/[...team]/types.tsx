@@ -17,4 +17,9 @@ export type TeamYearData = {
   team_matches: APITeamMatch[];
 };
 
-export type TeamYearsData = any;
+export type TeamYearsData = {
+  team: number;
+  year: number;
+  epa_rank: number;
+  epa_count: number;
+}[];
