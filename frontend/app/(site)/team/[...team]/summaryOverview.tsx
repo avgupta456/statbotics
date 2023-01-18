@@ -33,14 +33,6 @@ const SummaryOverviewSection = ({
 
   let lineData = [
     {
-      id: teamData.num.toString(),
-      data: filteredTeamYearsData.map((teamYear) => ({
-        x: teamYear.year,
-        y: round(teamYear.norm_epa, 0),
-        label: teamYear.year.toString(),
-      })),
-    },
-    {
       id: "Baseline",
       data: [
         {
@@ -54,6 +46,14 @@ const SummaryOverviewSection = ({
           label: xMax.toString(),
         },
       ],
+    },
+    {
+      id: teamData.num.toString(),
+      data: filteredTeamYearsData.map((teamYear) => ({
+        x: teamYear.year,
+        y: round(teamYear.norm_epa, 0),
+        label: teamYear.year.toString(),
+      })),
     },
   ];
 
