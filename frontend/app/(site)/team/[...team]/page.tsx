@@ -97,6 +97,12 @@ const Page = ({ params }: { params: { team: number } }) => {
       setTeamYearDataDict((prev) => ({ ...prev, [year]: data }));
     };
 
+    if (year >= 2002 && year <= CURR_YEAR) {
+      _getTeamYearDataForYear(team, year);
+    }
+  }, [team, year, teamYearDataDict]);
+
+  useEffect(() => {
     const _getTeamYearsData = async (team: number) => {
       if (teamYearsData) {
         return;
@@ -106,12 +112,16 @@ const Page = ({ params }: { params: { team: number } }) => {
       setTeamYearsData(data);
     };
 
-    if (year >= 2002 && year <= CURR_YEAR) {
-      _getTeamYearDataForYear(team, year);
-    } else {
-      _getTeamYearsData(team);
+    _getTeamYearsData(team);
+  }, [team, teamYearsData]);
+
+  useEffect(() => {
+    const maxYear = Math.max(...(teamYearsData?.map((x) => x.year) ?? [CURR_YEAR]));
+    if (year > maxYear) {
+      _setPrevYear(-1);
+      _setYear(-1);
     }
-  }, [team, year, teamYearDataDict, teamYearsData]);
+  }, [teamYearsData, year]);
 
   if (!teamData) {
     return <NotFound type="Team" />;
@@ -122,12 +132,21 @@ const Page = ({ params }: { params: { team: number } }) => {
 
   const rookieYear = teamData?.rookie_year ?? 2002;
 
+  let yearOptions = Array.from(
+    { length: CURR_YEAR - rookieYear + 1 },
+    (_, i) => rookieYear + i
+  ).reverse();
+
+  if (teamYearsData) {
+    yearOptions = teamYearsData.map((year) => year.year);
+  }
+
   return (
     <PageLayout
       title={`Team ${team}`}
       year={year}
       setYear={setYear}
-      minYear={rookieYear}
+      years={yearOptions}
       includeSummary
     >
       <div className="w-full text-center text-2xl lg:text-3xl mb-4">{teamData?.team}</div>

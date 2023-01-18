@@ -9,19 +9,21 @@ const PageLayout = ({
   title,
   year,
   setYear,
-  minYear,
+  years,
   includeSummary,
   children,
 }: {
   title: string;
   year: number;
   setYear: (year: number) => void;
-  minYear?: number;
+  years?: number[];
   includeSummary?: boolean;
   children: React.ReactNode;
 }) => {
-  let filteredYearOptions = yearOptions.filter(
-    (option) => parseInt(option.value) >= (minYear ?? 2002)
+  const finalYears = years ? years : yearOptions.map((option) => parseInt(option.value));
+
+  let filteredYearOptions = yearOptions.filter((option) =>
+    finalYears.includes(parseInt(option.value))
   );
 
   if (includeSummary) {
