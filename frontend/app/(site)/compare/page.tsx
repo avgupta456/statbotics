@@ -147,7 +147,7 @@ const Page = () => {
               if (selectedTeams.length > 0) {
                 index = selectedTeams.findIndex((x) => x?.value === value);
               }
-              return index;
+              return index + 1;
             })}
             options={teamOptions || []}
             onChange={addTeam}
