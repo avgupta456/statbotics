@@ -118,7 +118,7 @@ const Page = () => {
       data:
         allData[teamNum]?.map((x) => ({
           x: x.year,
-          y: x.norm_epa,
+          y: round(x.norm_epa, 0),
           label: x.year.toString(),
         })) || [],
     }));
