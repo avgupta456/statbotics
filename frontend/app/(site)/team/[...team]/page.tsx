@@ -49,7 +49,7 @@ async function getTeamYearsData(team: number) {
 
 const Page = ({ params }: { params: { team: number } }) => {
   const team = params.team?.[0];
-  let paramYear = params.team?.[1] ?? CURR_YEAR;
+  let paramYear = parseInt(params.team?.[1]) || CURR_YEAR;
 
   if (paramYear !== -1) {
     paramYear = Math.max(paramYear, 2002);
