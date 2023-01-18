@@ -128,6 +128,21 @@ const Navbar = () => {
         <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
           <Link href="/events">Events</Link>
         </div>
+        <div className="hidden md:inline dropdown dropdown-end dropdown-hover" tabIndex={0}>
+          <div className="h-10 flex items-center ml-4 cursor-pointer">
+            <p className="h-auto text-base text-gray-300 hover:text-gray-100 font-thin">Misc</p>
+          </div>
+          <ul
+            tabIndex={0}
+            className="h-auto w-40 dropdown-content p-2 rounded shadow-lg bg-white text-gray-800"
+          >
+            <li>
+              <Link href="/compare">
+                <div className="w-36 py-1 text-sm text-center">Compare Teams</div>
+              </Link>
+            </li>
+          </ul>
+        </div>
         <div className="flex-grow" />
         <div className="hidden md:inline dropdown dropdown-end dropdown-hover" tabIndex={0}>
           <div className="h-10 flex items-center mr-4 cursor-pointer">
