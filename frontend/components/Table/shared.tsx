@@ -8,15 +8,7 @@ import { classnames, round, truncate } from "../../utils";
 import { PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
 
-export const TeamLink = ({
-  team,
-  num,
-  year,
-}: {
-  team: string | number;
-  num: number;
-  year: number;
-}) => {
+export const w = ({ team, num, year }: { team: string | number; num: number; year: number }) => {
   if (num > 100000) {
     return formatNumber(num);
   } else {
