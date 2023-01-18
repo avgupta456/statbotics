@@ -29,6 +29,7 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origins_regex="https://statbotics-.*.vercel.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
