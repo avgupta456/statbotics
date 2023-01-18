@@ -57,6 +57,7 @@ export const emptyAPIYear: APIYear = {
 };
 
 export type APITeamYear = {
+  year: number;
   num: number;
   team: string;
   state?: string;

@@ -8,6 +8,7 @@ from src.site.aggregation import (
     get_team_events,
     get_team_matches,
     get_team_year,
+    get_team_years,
     get_teams,
     get_year,
 )
@@ -22,11 +23,6 @@ from src.site.models import (
 from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
-
-
-@router.get("/")
-async def read_root():
-    return {"name": "Team Router"}
 
 
 @router.get("/teams/all")
@@ -44,6 +40,40 @@ async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
         raise Exception("Team not found")
 
     return team.to_dict()
+
+
+@router.get("/team/{team_num}/years")
+@async_fail_gracefully
+async def read_team_years(response: Response, team_num: int) -> List[Dict[str, Any]]:
+    team_years: List[APITeamYear] = await get_team_years(team=team_num)
+    return [
+        {
+            "year": x.year,
+            "team": x.team,
+            "norm_epa": x.norm_epa,
+            "epa_rank": x.epa_rank if x.epa_count > 0 else None,
+            "epa_percentile": x.epa_rank / x.epa_count if x.epa_count > 0 else None,
+            "country_epa_rank": x.country_epa_rank if x.country_epa_count > 0 else None,
+            "country_epa_percentile": (
+                x.country_epa_rank / x.country_epa_count
+                if x.country_epa_count > 0
+                else None
+            ),
+            "district_epa_rank": x.district_epa_rank
+            if x.district_epa_count > 0
+            else None,
+            "district_epa_percentile": (
+                x.district_epa_rank / x.district_epa_count
+                if x.district_epa_count > 0
+                else None
+            ),
+            "state_epa_rank": x.state_epa_rank if x.state_epa_count > 0 else None,
+            "state_epa_percentile": (
+                x.state_epa_rank / x.state_epa_count if x.state_epa_count > 0 else None
+            ),
+        }
+        for x in team_years
+    ]
 
 
 @router.get("/team/{team_num}/{year}")

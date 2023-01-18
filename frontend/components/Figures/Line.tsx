@@ -11,12 +11,20 @@ const LineChart = ({
   data,
   xAxis,
   yAxis,
-  isRP,
+  enableArea,
+  xMin,
+  xMax,
+  yMin,
+  yMax,
 }: {
   data: LineData[];
   xAxis: string;
   yAxis: string;
-  isRP: boolean;
+  enableArea?: boolean;
+  xMin?: number;
+  xMax?: number;
+  yMin?: number | "auto";
+  yMax?: number | "auto";
 }) => {
   const xLabels = data.reduce((acc, curr) => {
     const xToLabel = curr.data.reduce((acc, curr) => {
@@ -27,16 +35,30 @@ const LineChart = ({
     return acc;
   }, {});
 
-  const yMin = yAxis.includes("RP") ? -1 / 3 : yAxis.includes("Norm") ? 1200 : 0;
-  const enableArea = !(yAxis.includes("RP") || yAxis.includes("Norm"));
+  const finalXMin = xMin ? xMin : 0;
+  const finalXMax = xMax ? xMax : data.length === 0 ? 1 : "auto";
+
+  const finalYMin = yMin
+    ? yMin
+    : yAxis.toLowerCase().includes("rp")
+    ? -1 / 3
+    : yAxis.includes("Norm")
+    ? 1200
+    : 0;
+  const finalYMax = yMax ? yMax : data.length === 0 ? 1 : "auto";
+
+  const finalEnableArea =
+    enableArea !== undefined
+      ? enableArea
+      : !(yAxis.toLowerCase().includes("rp") || yAxis.includes("Norm"));
 
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveLine
         data={data}
         margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
-        xScale={{ type: "linear", min: 0, max: data.length === 0 ? 1 : "auto" }}
-        yScale={{ type: "linear", min: yMin, max: data.length === 0 ? 1 : "auto" }}
+        xScale={{ type: "linear", min: finalXMin, max: finalXMax }}
+        yScale={{ type: "linear", min: finalYMin, max: finalYMax }}
         curve="monotoneX"
         axisBottom={{
           tickSize: 5,
@@ -56,7 +78,7 @@ const LineChart = ({
         }}
         colors={{ scheme: "category10" }}
         pointSize={5}
-        enableArea={enableArea && data.length <= 1}
+        enableArea={finalEnableArea && data.length <= 1}
         areaOpacity={0.1}
         pointLabel="y"
         pointLabelYOffset={-12}

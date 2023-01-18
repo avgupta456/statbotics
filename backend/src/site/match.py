@@ -9,11 +9,6 @@ from src.utils.decorators import async_fail_gracefully
 router = APIRouter()
 
 
-@router.get("/")
-async def read_root():
-    return {"name": "Match Router"}
-
-
 @router.get("/match/{match_id}")
 @async_fail_gracefully
 async def read_match(response: Response, match_id: str) -> Dict[str, Any]:

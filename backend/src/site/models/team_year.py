@@ -7,6 +7,7 @@ from src.site.models.main import APIModel
 
 @attr.s(auto_attribs=True, slots=True)
 class APITeamYear(APIModel):
+    year: int
     num: int
     team: str
     state: Optional[str]

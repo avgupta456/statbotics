@@ -109,7 +109,7 @@ const MatchTable = ({
                         </div>
                       ) : (
                         <Link
-                          href={`/team/${team}`}
+                          href={`/team/${team}/${year}`}
                           className={classnames(
                             "w-1/3",
                             match.winner === "red" ? "font-bold" : "font-thin",
@@ -134,7 +134,7 @@ const MatchTable = ({
                         </div>
                       ) : (
                         <Link
-                          href={`/team/${team}`}
+                          href={`/team/${team}/${year}`}
                           className={classnames(
                             "w-1/3",
                             match.winner === "blue" ? "font-bold" : "font-thin",

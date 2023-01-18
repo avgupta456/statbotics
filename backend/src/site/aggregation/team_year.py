@@ -15,6 +15,7 @@ def unpack_team_year(
     team_year: TeamYear, epa_to_unitless_epa: Callable[[float], float]
 ) -> APITeamYear:
     return APITeamYear(
+        year=team_year.year,
         num=team_year.team,
         team=team_year.name or str(team_year.team),
         state=team_year.state,
@@ -66,11 +67,17 @@ async def get_team_year(
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_years(
-    year: int, score_mean: float, score_sd: float, no_cache: bool = False
+    team: Optional[int] = None,
+    year: Optional[int] = None,
+    score_mean: Optional[float] = None,
+    score_sd: Optional[float] = None,
+    no_cache: bool = False,
 ) -> List[APITeamYear]:
-    team_year_objs: List[TeamYear] = _get_team_years(year=year)  # type: ignore
+    team_year_objs: List[TeamYear] = _get_team_years(team=team, year=year)  # type: ignore
 
     def epa_to_unitless_epa(epa: float) -> float:
+        if score_mean is None or score_sd is None:
+            return epa
         return _epa_to_unitless_epa(epa, score_mean, score_sd)
 
     team_years = [unpack_team_year(x, epa_to_unitless_epa) for x in team_year_objs]

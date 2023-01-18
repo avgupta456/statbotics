@@ -97,7 +97,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         header: "Number",
       }),
       columnHelper.accessor("team", {
-        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
         header: "Name",
       }),
       columnHelper.accessor("epa_rank", {
