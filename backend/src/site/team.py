@@ -50,6 +50,7 @@ async def read_team_years(response: Response, team_num: int) -> List[Dict[str, A
         {
             "year": x.year,
             "team": x.team,
+            "norm_epa": x.norm_epa,
             "epa_rank": x.epa_rank,
             "epa_count": x.epa_count,
         }

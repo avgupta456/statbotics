@@ -20,6 +20,7 @@ export type TeamYearData = {
 export type TeamYearsData = {
   team: number;
   year: number;
+  norm_epa: number;
   epa_rank: number;
   epa_count: number;
 }[];

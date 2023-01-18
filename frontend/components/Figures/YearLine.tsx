@@ -181,7 +181,6 @@ const YearLineChart = ({
           data={lineData}
           xAxis={xAxis === "match" ? "Match Num" : "Season %"}
           yAxis={yAxis.label}
-          isRP={yAxis.value.includes("rp_")}
         />
       </div>
     </div>

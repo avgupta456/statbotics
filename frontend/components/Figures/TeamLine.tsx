@@ -97,12 +97,7 @@ const TeamLineChart = ({
         )}
       </div>
       <div className="flex">
-        <LineChart
-          data={teamData}
-          xAxis="Match"
-          yAxis={yAxis.label}
-          isRP={yAxis.value.includes("rp_")}
-        />
+        <LineChart data={teamData} xAxis="Match" yAxis={yAxis.label} />
       </div>
     </div>
   );
