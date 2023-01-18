@@ -30,13 +30,13 @@ const columnHelper = createColumnHelper<Component>();
 
 // Copied from ./shared.tsx with minor changes
 
-const TeamLink = ({ team, num }: { team: string | number; num: number }) => {
+const TeamLink = ({ team, num, year }: { team: string | number; num: number; year: number }) => {
   if (num > 100000) {
     return formatNumber(num);
   } else {
     return (
       <div className="w-24 h-full flex justify-center items-center">
-        <Link href={`/team/${num}`} className="text_link">
+        <Link href={`/team/${num}/${year}`} className="text_link">
           {truncate(team.toString(), 30)}
         </Link>
       </div>
@@ -96,17 +96,17 @@ const MatchBreakdown = ({
     () => [
       columnHelper.accessor("red1", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[0], num: teams[0] }),
+        header: () => TeamLink({ team: teams[0], num: teams[0], year: stats.year }),
         enableSorting: false,
       }),
       columnHelper.accessor("red2", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[1], num: teams[1] }),
+        header: () => TeamLink({ team: teams[1], num: teams[1], year: stats.year }),
         enableSorting: false,
       }),
       columnHelper.accessor("red3", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[2], num: teams[2] }),
+        header: () => TeamLink({ team: teams[2], num: teams[2], year: stats.year }),
         enableSorting: false,
       }),
       columnHelper.accessor("redTotal", {
@@ -136,17 +136,17 @@ const MatchBreakdown = ({
       }),
       columnHelper.accessor("blue3", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[5], num: teams[5] }),
+        header: () => TeamLink({ team: teams[5], num: teams[5], year: stats.year }),
         enableSorting: false,
       }),
       columnHelper.accessor("blue2", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[4], num: teams[4] }),
+        header: () => TeamLink({ team: teams[4], num: teams[4], year: stats.year }),
         enableSorting: false,
       }),
       columnHelper.accessor("blue1", {
         cell: (info) => formatCell(stats, info),
-        header: () => TeamLink({ team: teams[3], num: teams[3] }),
+        header: () => TeamLink({ team: teams[3], num: teams[3], year: stats.year }),
         enableSorting: false,
       }),
     ],

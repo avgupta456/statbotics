@@ -112,6 +112,8 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
 
   const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
 
+  const year = data.event.year;
+
   const columns = useMemo<any>(
     () => [
       columnHelper.accessor("rank", {
@@ -123,7 +125,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         header: "Number",
       }),
       columnHelper.accessor("team", {
-        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
         header: "Team",
       }),
       columnHelper.accessor("rankMean", {
@@ -147,7 +149,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         header: "Mean RPs",
       }),
     ],
-    []
+    [year]
   );
 
   return (

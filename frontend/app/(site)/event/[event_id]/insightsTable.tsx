@@ -50,6 +50,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
 
   const maxRank = Math.max(...eventInsightsData.map((team) => team.rank));
 
+  const year = data.year.year;
   const columns = useMemo<any>(
     () =>
       [
@@ -58,7 +59,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
           header: "Number",
         }),
         columnHelper.accessor("team", {
-          cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num }),
+          cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
           header: "Name",
         }),
         maxRank > 0 &&
@@ -66,12 +67,12 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
             cell: (info) => formatCell(info),
             header: "Rank",
           }),
-        data.year.year >= CURR_YEAR &&
+        year >= CURR_YEAR &&
           columnHelper.accessor("unitless_epa", {
             cell: (info) => formatCell(info),
             header: "Unitless EPA",
           }),
-        data.year.year < CURR_YEAR &&
+        year < CURR_YEAR &&
           columnHelper.accessor("norm_epa", {
             cell: (info) => formatCell(info),
             header: "Norm EPA",
@@ -80,33 +81,33 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
           cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
           header: "EPA",
         }),
-        data.year.year >= 2016 &&
+        year >= 2016 &&
           columnHelper.accessor("auto_epa", {
             cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
             header: "Auto EPA",
           }),
-        data.year.year >= 2016 &&
+        year >= 2016 &&
           columnHelper.accessor("teleop_epa", {
             cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
             header: "Teleop EPA",
           }),
-        data.year.year >= 2016 &&
+        year >= 2016 &&
           columnHelper.accessor("endgame_epa", {
             cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
             header: "Endgame EPA",
           }),
-        data.year.year >= 2016 &&
+        year >= 2016 &&
           columnHelper.accessor("rp_1_epa", {
             cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
             header: `${RPMapping?.[data.year.year]?.[0]} EPA`,
           }),
-        data.year.year >= 2016 &&
+        year >= 2016 &&
           columnHelper.accessor("rp_2_epa", {
             cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
             header: `${RPMapping?.[data.year.year]?.[1]} EPA`,
           }),
       ].filter(Boolean),
-    [data, maxRank, disableHighlight]
+    [year, data, maxRank, disableHighlight]
   );
 
   return (

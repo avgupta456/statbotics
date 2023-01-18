@@ -8,13 +8,21 @@ import { classnames, round, truncate } from "../../utils";
 import { PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
 
-export const TeamLink = ({ team, num }: { team: string | number; num: number }) => {
+export const TeamLink = ({
+  team,
+  num,
+  year,
+}: {
+  team: string | number;
+  num: number;
+  year: number;
+}) => {
   if (num > 100000) {
     return formatNumber(num);
   } else {
     return (
       <div className="w-24 md:w-32 mx-auto h-10 h-full flex justify-center items-center text-sm">
-        <Link href={`/team/${num}`} className="text_link">
+        <Link href={`/team/${num}/${year}`} className="text_link">
           {truncate(team.toString(), 30)}
         </Link>
       </div>
