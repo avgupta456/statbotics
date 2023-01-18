@@ -116,8 +116,7 @@ const Page = ({ params }: { params: { team: number } }) => {
   }, [team, teamYearsData]);
 
   useEffect(() => {
-    const maxYear = Math.max(...(teamYearsData?.map((x) => x.year) ?? [CURR_YEAR]));
-    if (year > maxYear) {
+    if (teamYearsData && year !== -1 && !teamYearsData.map((x) => x.year).includes(year)) {
       _setPrevYear(-1);
       _setYear(-1);
     }
