@@ -72,7 +72,7 @@ async function indexSim(data: Data, index: number, simCount: number) {
     for (let j = 0; j < teamMatches.length; j++) {
       const teamMatch = teamMatches[j];
       const team = teamMatch.num;
-      currEPAs[team] = teamMatch.total_epa;
+      currEPAs[team] = teamMatch.post_epa ?? teamMatch.total_epa;
       currRP1EPAs[team] = teamMatch.rp_1_epa;
       currRP2EPAs[team] = teamMatch.rp_2_epa;
       currMatches[team] += 1;

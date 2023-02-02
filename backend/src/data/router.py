@@ -24,6 +24,12 @@ async def reset_curr_year_endpoint():
     return {"status": "success"}
 
 
+@router.get("/update_year/{year}")
+async def update_year_endpoint(year: int):
+    update_curr_year(curr_year=year)
+    return {"status": "success"}
+
+
 @router.get("/update_curr_year")
 async def update_curr_year_endpoint():
     update_curr_year(curr_year=CURR_YEAR)

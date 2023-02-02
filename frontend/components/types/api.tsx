@@ -196,5 +196,6 @@ export type APITeamMatch = {
   endgame_epa: number;
   rp_1_epa: number;
   rp_2_epa: number;
+  post_epa?: number;
   offseason: boolean;
 };

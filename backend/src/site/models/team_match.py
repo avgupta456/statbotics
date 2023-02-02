@@ -1,3 +1,5 @@
+from typing import Optional
+
 import attr
 
 from src.site.models.main import APIModel
@@ -17,4 +19,5 @@ class APITeamMatch(APIModel):
     endgame_epa: float
     rp_1_epa: float
     rp_2_epa: float
+    post_epa: Optional[float]
     offseason: bool

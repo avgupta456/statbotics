@@ -131,23 +131,21 @@ def process_year(
 
     team_years_dict: Dict[int, TeamYear] = {}
     team_events_dict: Dict[str, List[Tuple[float, bool]]] = {}
-    team_matches_dict: Dict[int, List[float]] = {}
+    team_matches_dict: Dict[int, List[float]] = defaultdict(list)
     team_match_ids: Dict[str, float] = {}
+    team_match_ids_post: Dict[str, float] = {}
     component_team_events_dict: Dict[
         str, List[Tuple[float, float, float, float, float, bool]]
     ] = {}
     component_team_matches_dict: Dict[
         int, List[Tuple[float, float, float, float, float]]
-    ] = {}
+    ] = defaultdict(list)
     component_team_match_ids: Dict[str, Tuple[float, float, float, float, float]] = {}
 
     # INITIALIZE
     for team_year in team_years:
         num = team_year.team
         team_years_dict[num] = team_year
-        team_matches_dict[num] = []
-        component_team_matches_dict[num] = []
-
         epa_1yr, epa_2yr = None, None
         if year_num in [2022, 2023]:
             # For 2022 and 2023, use past two years team competed (up to 4 years)
@@ -412,6 +410,7 @@ def process_year(
                 team_event_key = get_team_event_key(t, event_key)
                 team_events_dict[team_event_key].append((new_epa, match.playoff))
                 team_matches_dict[t].append(new_epa)
+                team_match_ids_post[get_team_match_key(t, match.key)] = new_epa
 
                 if not offseason_event:
                     team_year_stats[t][mapping[winner]] += 1
@@ -578,6 +577,7 @@ def process_year(
     for team_match in completed_team_matches:
         match_key = get_team_match_key(team_match.team, team_match.match)
         team_match.epa = round(team_match_ids[match_key], 2)
+        team_match.post_epa = round(team_match_ids_post[match_key], 2)
         if USE_COMPONENTS:
             auto, teleop, endgame, rp_1, rp_2 = component_team_match_ids[match_key]
             team_match.auto_epa = round(auto, 2)
