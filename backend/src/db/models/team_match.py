@@ -45,6 +45,8 @@ class TeamMatchORM(Base, ModelORM):
     rp_1_epa = Column(Float)
     rp_2_epa = Column(Float)
 
+    post_epa = Column(Float)
+
 
 @attr.s(auto_attribs=True, slots=True)
 class TeamMatch(Model):
@@ -70,6 +72,8 @@ class TeamMatch(Model):
     rp_1_epa: Optional[float] = None
     rp_2_epa: Optional[float] = None
 
+    post_epa: Optional[float] = None
+
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamMatch":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
@@ -91,4 +95,4 @@ class TeamMatch(Model):
 
     def __str__(self: "TeamMatch"):
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.team}_{self.match}_{self.status}"
+        return f"{self.team}_{self.match}_{self.status}_{self.epa}_{self.post_epa}"

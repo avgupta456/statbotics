@@ -24,7 +24,7 @@ const getTiebreakers = (year: number, match: APIMatch) => {
 };
 
 async function indexSim(data: Data, index: number, simCount: number) {
-  const TOTAL_SD = data.year.total_stats.sd;
+  const TOTAL_SD = data.year.score_sd;
 
   const qualMatches = data.matches
     .filter((match) => !match.playoff)
@@ -72,7 +72,7 @@ async function indexSim(data: Data, index: number, simCount: number) {
     for (let j = 0; j < teamMatches.length; j++) {
       const teamMatch = teamMatches[j];
       const team = teamMatch.num;
-      currEPAs[team] = teamMatch.total_epa;
+      currEPAs[team] = teamMatch.post_epa ?? teamMatch.total_epa;
       currRP1EPAs[team] = teamMatch.rp_1_epa;
       currRP2EPAs[team] = teamMatch.rp_2_epa;
       currMatches[team] += 1;
@@ -97,19 +97,7 @@ async function indexSim(data: Data, index: number, simCount: number) {
     simRPs[teamEvent.num] = [];
   }
 
-  const jitterPercent = 0.4;
   for (let i = 0; i < simCount; i++) {
-    // Jitter EPAs by plus or minus 20%
-    const currSimEPAs = {};
-    const currSimRP1EPAs = {};
-    const currSimRP2EPAs = {};
-    for (let j = 0; j < data.team_events.length; j++) {
-      const team = data.team_events[j].num;
-      currSimEPAs[team] = currEPAs[team] * (1 + jitterPercent * (Math.random() - 0.5));
-      currSimRP1EPAs[team] = currRP1EPAs[team] * (1 + jitterPercent * (Math.random() - 0.5));
-      currSimRP2EPAs[team] = currRP2EPAs[team] * (1 + jitterPercent * (Math.random() - 0.5));
-    }
-
     const currSimRPs = {};
     for (let j = 0; j < data.team_events.length; j++) {
       const teamEvent = data.team_events[j];
@@ -129,18 +117,17 @@ async function indexSim(data: Data, index: number, simCount: number) {
         const teamMatch = teamMatches[k];
         const team = teamMatch.num;
         if (teamMatch.alliance === "red") {
-          redEPA += currSimEPAs[team];
-          redRP1EPA += currSimRP1EPAs[team];
-          redRP2EPA += currSimRP2EPAs[team];
+          redEPA += currEPAs[team];
+          redRP1EPA += currRP1EPAs[team];
+          redRP2EPA += currRP2EPAs[team];
         } else {
-          blueEPA += currSimEPAs[team];
-          blueRP1EPA += currSimRP1EPAs[team];
-          blueRP2EPA += currSimRP2EPAs[team];
+          blueEPA += currEPAs[team];
+          blueRP1EPA += currRP1EPAs[team];
+          blueRP2EPA += currRP2EPAs[team];
         }
       }
 
-      // Normally K=-5/8, but we use -5/12 since simulating multiple matches ahead
-      const winProb = 1 / (1 + Math.pow(10, ((-5 / 12) * (redEPA - blueEPA)) / TOTAL_SD));
+      const winProb = 1 / (1 + Math.pow(10, ((-5 / 8) * (redEPA - blueEPA)) / TOTAL_SD));
       const redWin = Math.random() < winProb;
 
       const redRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP1EPA - 0.5)));

@@ -45,9 +45,9 @@ def read_objs(year: int) -> objs_type:
         raise Exception("Year not found")
 
     team_year_objs: List[TeamYear] = get_team_years_db(year=year)
-    event_objs: List[Event] = get_events_db(year)
+    event_objs: List[Event] = get_events_db(year=year)
     team_event_objs: List[TeamEvent] = get_team_events_db(year=year)
-    match_objs: List[Match] = get_matches_db(year)
+    match_objs: List[Match] = get_matches_db(year=year)
     team_match_objs: List[TeamMatch] = get_team_matches_db(year=year)
     original_objs: objs_type = (
         year_obj,
