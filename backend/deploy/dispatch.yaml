@@ -1,0 +1,6 @@
+dispatch:
+  - url: "/data/.*"
+    service: data
+
+  - url: "*/.*"
+    service: default

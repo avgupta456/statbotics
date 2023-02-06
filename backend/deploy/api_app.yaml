@@ -1,9 +1,10 @@
+service: default
 runtime: python38
 entrypoint: gunicorn -w 1 -t 600 -k uvicorn.workers.UvicornWorker main:app
 
 instance_class: F1
 
-# exactly one instance
+# up to 2 instance
 automatic_scaling:
   max_instances: 2
 
