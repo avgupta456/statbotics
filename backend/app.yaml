@@ -1,5 +1,5 @@
 runtime: python38
-entrypoint: gunicorn -w 1 -k uvicorn.workers.UvicornWorker main:app
+entrypoint: gunicorn -w 1 -t 600 -k uvicorn.workers.UvicornWorker main:app
 
 instance_class: F1
 
