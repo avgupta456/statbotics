@@ -55,7 +55,6 @@ def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
 
 def process_year(
     year_num: int,
-    end_year: int,
     teams: List[Team],
     etags: List[ETag],
     mock: bool = False,
