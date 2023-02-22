@@ -141,14 +141,6 @@ async function preSim(data: Data, simCount: number) {
       const redRPs = redRP1 + redRP2 + (redWin ? 2 : 0);
       const blueRPs = blueRP1 + blueRP2 + (redWin ? 0 : 2);
 
-      if (i % 100 === 0 && j === 0) {
-        console.log(match);
-        console.log(red, blue);
-        console.log(redEPA, blueEPA);
-        console.log(redRP1EPA, blueRP1EPA);
-        console.log(redRP2EPA, blueRP2EPA);
-      }
-
       red.forEach((team) => {
         currSimRPs[team] += redRPs;
       });
@@ -164,12 +156,6 @@ async function preSim(data: Data, simCount: number) {
       }
       return currSimRPs[b] - currSimRPs[a];
     });
-
-    if (i % 100 === 0) {
-      console.log(simRanksArr);
-      console.log(currSimRPs);
-      console.log();
-    }
 
     for (let j = 0; j < data.team_events.length; j++) {
       const teamEvent = data.team_events[j];

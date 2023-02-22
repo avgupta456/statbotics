@@ -45,10 +45,6 @@ const Page = () => {
     label: `${team.num} | ${team.team}`,
   }));
 
-  console.log("teams", teams);
-  console.log("selectedTeams", selectedTeams);
-  console.log("allData", allData);
-
   const fetchData = async (teamNum: number) => {
     const start = performance.now();
     const res = await fetch(`${BACKEND_URL}/team/${teamNum}/years`, {
