@@ -3,6 +3,14 @@ import { Data } from "./types";
 
 const ctx: Worker = self as unknown as Worker;
 
+const shuffle = (a) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
 const getTiebreakers = (year: number, match: APIMatch) => {
   if (year === 2016) {
     return [-match.blue_fouls, -match.red_fouls];
@@ -22,6 +30,156 @@ const getTiebreakers = (year: number, match: APIMatch) => {
     return [match.red_score, match.blue_score];
   }
 };
+
+const getSchedule = async (numTeams: number, numMatches: number) => {
+  // TODO: remove this once we have pre-generated schedules for 100+ teams
+  if (numTeams > 100) {
+    const schedule1 = await getSchedule(100, numMatches);
+    let schedule2 = await getSchedule(numTeams - 100, numMatches);
+    schedule2 = schedule2.map((match) => {
+      return {
+        red: match.red.map((team) => team + 100),
+        blue: match.blue.map((team) => team + 100),
+      };
+    });
+    return schedule1.concat(schedule2);
+  }
+
+  // load csv from external URL using fetch
+  return await fetch(
+    `https://raw.githubusercontent.com/Team254/cheesy-arena/main/schedules/${numTeams}_${numMatches}.csv`
+  )
+    .then((response) => response.text())
+    .then((data) => {
+      const lines = data.split("\n");
+      const schedule = [];
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const match = line.split(",");
+        if (match.length < 12) {
+          continue;
+        }
+        const red = [parseInt(match[0]), parseInt(match[2]), parseInt(match[4])];
+        const blue = [parseInt(match[6]), parseInt(match[8]), parseInt(match[10])];
+        schedule.push({ red, blue });
+      }
+      return schedule;
+    });
+};
+
+async function preSim(data: Data, simCount: number) {
+  const TOTAL_SD = data.year.score_sd;
+
+  const teamsN = data.team_events.length;
+  const schedule = await getSchedule(teamsN, 12);
+
+  const currEPAs = {};
+  const currRP1EPAs = {};
+  const currRP2EPAs = {};
+
+  // Initialize EPAs
+
+  for (let i = 0; i < data.team_events.length; i++) {
+    const teamEvent = data.team_events[i];
+    currEPAs[teamEvent.num] = teamEvent.start_total_epa;
+    currRP1EPAs[teamEvent.num] = teamEvent.start_rp_1_epa;
+    currRP2EPAs[teamEvent.num] = teamEvent.start_rp_2_epa;
+  }
+
+  // Simulate
+
+  const simRanks = {};
+  const simRPs = {};
+
+  for (let i = 0; i < data.team_events.length; i++) {
+    const teamEvent = data.team_events[i];
+    simRanks[teamEvent.num] = [];
+    simRPs[teamEvent.num] = [];
+  }
+
+  for (let i = 0; i < simCount; i++) {
+    const currSimRPs = {};
+    const indexToTeam = {};
+    const randArr = shuffle(
+      Array(teamsN)
+        .fill(0)
+        .map((_, i) => i + 1)
+    );
+    for (let j = 0; j < data.team_events.length; j++) {
+      const teamEvent = data.team_events[j];
+      indexToTeam[randArr[j]] = teamEvent.num;
+      currSimRPs[teamEvent.num] = 0;
+    }
+
+    for (let j = 0; j < schedule.length; j++) {
+      const match = schedule[j];
+      const red = match.red.map((index) => indexToTeam[index]);
+      const blue = match.blue.map((index) => indexToTeam[index]);
+
+      let redEPA = currEPAs[red[0]] + currEPAs[red[1]] + currEPAs[red[2]];
+      let redRP1EPA = currRP1EPAs[red[0]] + currRP1EPAs[red[1]] + currRP1EPAs[red[2]];
+      let redRP2EPA = currRP2EPAs[red[0]] + currRP2EPAs[red[1]] + currRP2EPAs[red[2]];
+      let blueEPA = currEPAs[blue[0]] + currEPAs[blue[1]] + currEPAs[blue[2]];
+      let blueRP1EPA = currRP1EPAs[blue[0]] + currRP1EPAs[blue[1]] + currRP1EPAs[blue[2]];
+      let blueRP2EPA = currRP2EPAs[blue[0]] + currRP2EPAs[blue[1]] + currRP2EPAs[blue[2]];
+
+      const winProb = 1 / (1 + Math.pow(10, ((-5 / 8) * (redEPA - blueEPA)) / TOTAL_SD));
+      const redWin = Math.random() < winProb ? 1 : 0;
+
+      const redRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP1EPA - 0.5)));
+      const redRP1 = Math.random() < redRP1Prob ? 1 : 0;
+
+      const redRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP2EPA - 0.5)));
+      const redRP2 = Math.random() < redRP2Prob ? 1 : 0;
+
+      const blueRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP1EPA - 0.5)));
+      const blueRP1 = Math.random() < blueRP1Prob ? 1 : 0;
+
+      const blueRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP2EPA - 0.5)));
+      const blueRP2 = Math.random() < blueRP2Prob ? 1 : 0;
+
+      const redRPs = redRP1 + redRP2 + (redWin ? 2 : 0);
+      const blueRPs = blueRP1 + blueRP2 + (redWin ? 0 : 2);
+
+      if (i % 100 === 0 && j === 0) {
+        console.log(match);
+        console.log(red, blue);
+        console.log(redEPA, blueEPA);
+        console.log(redRP1EPA, blueRP1EPA);
+        console.log(redRP2EPA, blueRP2EPA);
+      }
+
+      red.forEach((team) => {
+        currSimRPs[team] += redRPs;
+      });
+
+      blue.forEach((team) => {
+        currSimRPs[team] += blueRPs;
+      });
+    }
+
+    const simRanksArr = Object.keys(currSimRPs).sort((a, b) => {
+      if (currSimRPs[a] === currSimRPs[b]) {
+        return Math.random() - 0.5;
+      }
+      return currSimRPs[b] - currSimRPs[a];
+    });
+
+    if (i % 100 === 0) {
+      console.log(simRanksArr);
+      console.log(currSimRPs);
+      console.log();
+    }
+
+    for (let j = 0; j < data.team_events.length; j++) {
+      const teamEvent = data.team_events[j];
+      simRanks[teamEvent.num].push(simRanksArr.indexOf(teamEvent.num.toString()) + 1);
+      simRPs[teamEvent.num].push(currSimRPs[teamEvent.num]);
+    }
+  }
+
+  ctx.postMessage({ simRanks, simRPs });
+}
 
 async function indexSim(data: Data, index: number, simCount: number) {
   const TOTAL_SD = data.year.score_sd;
@@ -178,6 +336,9 @@ async function indexSim(data: Data, index: number, simCount: number) {
 
 ctx.addEventListener("message", (evt) => {
   switch (evt.data.type) {
+    case "preSim":
+      preSim(evt.data.data, evt.data.simCount);
+      return;
     case "indexSim":
       indexSim(evt.data.data, evt.data.index, evt.data.simCount);
       return;
