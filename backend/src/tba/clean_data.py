@@ -202,7 +202,6 @@ def get_breakdown(
         if a + b != c:
             out["teleop_2_1" if a > b else "teleop_2_2"] = c - min(a, b)
     elif year == 2023:
-        print(breakdown)
         out = {
             "auto": breakdown.get("autoPoints", 0),
             "auto_movement": breakdown.get("autoMobilityPoints", 0),
