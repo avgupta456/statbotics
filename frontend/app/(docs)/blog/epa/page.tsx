@@ -164,7 +164,7 @@ const Page = () => {
       {renderMathBlock(
         "\\Delta EPA = K \\times ((\\text{Red Score} - \\text{Red EPA}) - (\\text{Blue Score} - \\text{Blue EPA}))"
       )}
-      <p>Where {renderMath("N")} be the number of qualification matches played.</p>
+      <p>Where {renderMath("N")} is the number of qualification matches played.</p>
       <p>
         The initial explanation of the update function is that it updates by the surprise factor of
         the margin of victory. This equation suggests a second interpretation: updating positively
