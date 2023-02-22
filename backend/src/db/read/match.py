@@ -54,7 +54,7 @@ def get_matches(
         if week is not None:
             data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
         if elims is not None:
-            data = data.filter(MatchORM.elims == elims)  # type: ignore
+            data = data.filter(MatchORM.playoff == elims)  # type: ignore
         if offseason is not None:
             data = data.filter(MatchORM.offseason == offseason)  # type: ignore
         if metric is not None:

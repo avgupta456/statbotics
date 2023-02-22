@@ -17,7 +17,7 @@ exclude = '''
 
 [tool.poetry]
 name = "statbotics"
-version = "2.0.1"
+version = "2.0.2"
 description = "Modernizing FRC Data Analytics"
 authors = ["Abhijit Gupta <avgupta456@gmail.com>"]
 license = "MIT License"

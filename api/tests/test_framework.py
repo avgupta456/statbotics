@@ -1,7 +1,7 @@
 import unittest
 import warnings
 
-from src import main
+from statbotics import main
 
 
 class TestFramework(unittest.TestCase):

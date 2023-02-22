@@ -41,12 +41,10 @@ def get_team_matches(
             data = data.filter(TeamMatchORM.year == year)  # type: ignore
         if event is not None:
             data = data.filter(TeamMatchORM.event == event)  # type: ignore
-        if week is not None:
-            data = data.filter(TeamMatchORM.week == week)  # type: ignore
         if match is not None:
             data = data.filter(TeamMatchORM.match == match)  # type: ignore
         if elims is not None:
-            data = data.filter(TeamMatchORM.elims == elims)  # type: ignore
+            data = data.filter(TeamMatchORM.playoff == elims)  # type: ignore
         if offseason is not None:
             data = data.filter(TeamMatchORM.offseason == offseason)  # type: ignore
         if metric is not None:
