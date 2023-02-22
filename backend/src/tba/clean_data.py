@@ -202,7 +202,23 @@ def get_breakdown(
         if a + b != c:
             out["teleop_2_1" if a > b else "teleop_2_2"] = c - min(a, b)
     elif year == 2023:
-        raise NotImplementedError("2023 not yet implemented")
+        out = {
+            "auto": breakdown.get("autoPoints", 0),
+            "auto_movement": breakdown.get("autoMobilityPoints", 0),
+            "auto_1": breakdown.get("autoChargeStationPoints", 0),
+            "auto_2": breakdown.get("autoGamePiecePoints", 0),
+            "auto_2_1": breakdown.get("autoGamePiecePoints", 0),
+            "auto_2_2": 0,
+            "teleop_1": 0,
+            "teleop_2": breakdown.get("teleopGamePiecePoints", 0)
+            + breakdown.get("linkPoints", 0),
+            "teleop_2_1": breakdown.get("teleopGamePiecePoints"),
+            "teleop_2_2": breakdown.get("linkPoints"),
+            "endgame": breakdown.get("endGameChargeStationPoints", 0)
+            + breakdown.get("endGameParkPoints", 0),
+            "rp1": int(breakdown.get("sustainabilityBonusAchieved", 0)),
+            "rp2": int(breakdown.get("activationBonusAchieved", 0)),
+        }
     else:
         raise ValueError("Invalid year: " + str(year))
 

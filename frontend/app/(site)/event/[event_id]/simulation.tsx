@@ -30,8 +30,8 @@ type SimulationRow = {
 const columnHelper = createColumnHelper<SimulationRow>();
 
 const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
-  const [index, setIndex] = useState(0);
-  const [finalIndex, setFinalIndex] = useState(0);
+  const [index, setIndex] = useState(-1);
+  const [finalIndex, setFinalIndex] = useState(-1);
 
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SimResults[]>([]);
@@ -55,12 +55,20 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
 
     setWorkerMessages([]);
 
-    workerRef.current.postMessage({
-      type: "indexSim",
-      data,
-      index: finalIndex,
-      simCount: 1000,
-    });
+    if (finalIndex < 0) {
+      workerRef.current.postMessage({
+        type: "preSim",
+        data,
+        simCount: 1000,
+      });
+    } else {
+      workerRef.current.postMessage({
+        type: "indexSim",
+        data,
+        index: finalIndex,
+        simCount: 1000,
+      });
+    }
   }, [data, finalIndex]);
 
   const simRanks = {};
@@ -164,13 +172,19 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       <div className="w-full mb-4 flex flex-col">
         <div>
           Simulate from:{" "}
-          <strong>{index === 0 ? "Schedule Release" : "Qualification Match " + index}</strong>
+          <strong>
+            {index === -1
+              ? "Before Schedule Release"
+              : index === 0
+              ? "Schedule Release"
+              : "Qualification Match " + index}
+          </strong>
         </div>
         {qualsN > 0 && (
           <div className="px-4 md:px-16">
             <Range
               step={1}
-              min={0}
+              min={-1}
               max={qualsN}
               values={[index]}
               onChange={(values) => setIndex(values[0])}
