@@ -536,7 +536,6 @@ class Statbotics:
         team: Optional[int] = None,
         year: Optional[int] = None,
         event: Optional[str] = None,
-        week: Optional[int] = None,
         match: Optional[str] = None,
         elims: Optional[bool] = None,
         metric: str = "time",
@@ -565,7 +564,6 @@ class Statbotics:
         check_type(team, "int", "team")
         check_type(year, "int", "year")
         check_type(event, "str", "event")
-        check_type(week, "int", "week")
         check_type(match, "str", "match")
         check_type(elims, "bool", "elims")
         check_type(limit, "int", "limit")
@@ -576,18 +574,12 @@ class Statbotics:
             raise ValueError("Please reduce 'limit', max is 10,000.")
         url += "?limit=" + str(limit) + "&offset=" + str(offset)
 
-        if not year and not event and not match and not week:
+        if not year and not event and not match:
             raise UserWarning(
                 "Query too large, be more specific (year, week, event, or match)"
             )
 
-        if (
-            (year and event)
-            or (year and match)
-            or (event and match)
-            or (event and week)
-            or (match and week)
-        ):
+        if (year and event) or (year and match) or (event and match):
             raise UserWarning("Only specify one of (year, week, event, match)")
 
         if team is not None:
@@ -596,8 +588,6 @@ class Statbotics:
             url += "&year=" + str(year)
         if event is not None:
             url += "&event=" + event
-        if week is not None:
-            url += "&week=" + str(week)
         if match is not None:
             url += "&match=" + match
         if elims is not None:
