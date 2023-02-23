@@ -40,6 +40,50 @@ The Statbotics database includes the following tables:
 - **Match**: Table with match metadata, EPA statistics, and prediction accuracy for each match.
 - **TeamMatch**: Table with team's EPA and match statistics during a given match.
 
+### Standardizing Year-Specific Data
+
+Before diving into the tables, I want to clarify the data methodology for storing results from multiple years. Although the game changes year to year, since 2016 a consistent set of components have been used: Auto, Teleop, Endgame, Fouls, RP1, and RP2.
+
+#### 2002-2015
+
+Component and RP columns are left empty and data is stored in the `total` column.
+
+#### 2016
+
+The auto component represents points scored in the autonomous period. Teleop includes both crossing and boulder points. Endgame includes challenge and scale. RP1 is for breaching the outer works and RP2 is for capturing the tower.
+
+#### 2017
+
+The auto component represents points scored in the autonomous period. Teleop includes both rotor and fuel points. Endgame includes takeoff points. RP1 is for the rotor ranking point, and RP2 is for the kPa ranking point.
+
+#### 2018
+
+The auto component represents points scored in the autonomous period. Teleop includes switch and scale ownership and valut points. Endgame includes climb points. RP1 is for the auto quest ranking point, and RP2 is for the Face the Boss ranking point.
+
+#### 2019
+
+The auto component represents points scored in the autonomous period. Teleop includes hatch and cargo points on the rocket and cargo ship. Endgame includes HAB climb points. RP1 is for completing the rocket and RP2 is for the HAB docking ranking point.
+
+#### 2020
+
+The auto component represents points scored in the autonomous period. Teleop includes cell points in the lower, outer, and inner goals. Endgame includes climb points. RP1 is the Shield Energized ranking point and RP2 is the Shield Operational ranking point.
+
+#### 2021
+
+No data is stored for 2021.
+
+#### 2022
+
+The auto component represents points scored in the autonomous period. Teleop includes cargo in the upper and lower goals. Endgame includes climb points. RP1 is the Cargo Bonus ranking point and RP2 is the Hanger Bonus ranking point.
+
+#### 2023
+
+The auto component represents points scored in the autonomous period. Teleop includes game piece and link points. Endgame includes park and charge station points. RP1 is the Sustainability Bonus ranking point and RP2 is the Activation Bonus ranking point.
+
+#### Future Years
+
+I will update this section as new years are added. The breakdown is implemented in the `backend/src/tba/clean_data.py` file (`get_breakdown()` function).
+
 ### Year
 
 | Column             | Type  | Description                                                     |
