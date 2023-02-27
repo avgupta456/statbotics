@@ -38,14 +38,14 @@ const EventLineChart = ({
       return undefined;
     }
 
-    const data = await res.json();
+    const data: { data: APITeamMatch[] } | undefined = await res.json();
     if (!data) {
       log("No data found for team " + teamNum);
       return undefined;
     }
 
     const sortedData = data.data
-      .filter((teamMatch: any) => !teamMatch.playoff)
+      .filter((teamMatch: any) => !teamMatch.playoff && teamMatch.status === "Completed")
       .sort((a: any, b: any) => a.match_num - b.match_num);
 
     return sortedData;
@@ -110,7 +110,6 @@ const EventLineChart = ({
     year >= 2016
       ? [
           { value: "total_epa", label: "Total EPA" },
-          year >= CURR_YEAR && { value: "unitless_epa", label: "Unitless EPA" },
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },

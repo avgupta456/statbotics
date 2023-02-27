@@ -24,6 +24,7 @@ def unpack_team_match(team_match: TeamMatch) -> APITeamMatch:
         rp_2_epa=team_match.rp_2_epa or 0,
         post_epa=team_match.post_epa,
         offseason=team_match.offseason,
+        status=team_match.status,
     )
 
 

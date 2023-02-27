@@ -51,7 +51,7 @@ const YearLineChart = ({
     }
 
     const sortedData: APITeamMatch[] = data.data
-      // .filter((teamYear: any) => !teamYear.playoff)
+      .filter((teamMatch: any) => teamMatch.status === "Completed")
       .sort((a: any, b: any) => a.time - b.time);
 
     return sortedData;

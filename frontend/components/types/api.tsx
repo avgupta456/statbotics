@@ -102,6 +102,8 @@ export type APIEvent = {
   offseason: boolean;
   status: string;
   status_str: string;
+  qual_matches: number;
+  current_match: number;
 };
 
 export type APITeamEvent = {
@@ -198,4 +200,5 @@ export type APITeamMatch = {
   rp_2_epa: number;
   post_epa?: number;
   offseason: boolean;
+  status: string;
 };
