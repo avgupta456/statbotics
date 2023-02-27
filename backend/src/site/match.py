@@ -2,8 +2,14 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.site.aggregation import get_event, get_match, get_team_matches, get_year
-from src.site.models import APIEvent, APIMatch, APITeamMatch, APIYear
+from src.site.aggregation import (
+    get_event,
+    get_match,
+    get_team_events,
+    get_team_matches,
+    get_year,
+)
+from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
@@ -25,11 +31,21 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
         raise Exception("Year not found")
 
     team_matches: List[APITeamMatch] = await get_team_matches(match=match_id)
+    team_nums = [x.num for x in team_matches]
+
+    team_events: List[APITeamEvent] = await get_team_events(
+        year=year.year,
+        score_mean=year.score_mean,
+        score_sd=year.score_sd,
+        event=match.event,
+    )
+    team_events = [x for x in team_events if x.num in team_nums]
 
     out = {
-        "match": match.to_dict(),
-        "event": event.to_dict(),
         "year": year.to_dict(),
+        "event": event.to_dict(),
+        "team_events": [x.to_dict() for x in team_events],
+        "match": match.to_dict(),
         "team_matches": [x.to_dict() for x in team_matches],
     }
 

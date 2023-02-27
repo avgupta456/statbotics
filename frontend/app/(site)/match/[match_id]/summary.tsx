@@ -14,6 +14,8 @@ const Summary = ({ data }: { data: Data }) => {
   const redScore = data.match.red_score;
   const blueScore = data.match.blue_score;
 
+  const completed = data.match.status === "Completed";
+
   return (
     <div className="w-full flex flex-col items-center">
       <p className="text-3xl lg:text-3xl mt-8 mb-4">Summary</p>
@@ -55,13 +57,13 @@ const Summary = ({ data }: { data: Data }) => {
         <div className="flex flex-col items-center">
           <div className="flex text-3xl">
             <p className={classnames("data text-red-500", redScore > blueScore ? "font-bold" : "")}>
-              {Math.round(redScore)}
+              {completed ? Math.round(redScore) : ""}
             </p>
             <p className="mx-2">-</p>
             <p
               className={classnames("data text-blue-500", blueScore > redScore ? "font-bold" : "")}
             >
-              {Math.round(blueScore)}
+              {completed ? Math.round(blueScore) : ""}
             </p>
           </div>
           <div className="mt-4 text-lg flex">
@@ -69,10 +71,10 @@ const Summary = ({ data }: { data: Data }) => {
             <p
               className={classnames(
                 "ml-2",
-                data.match.winner === "red" ? "text-red-500" : "text-blue-500"
+                completed ? (data.match.winner === "red" ? "text-red-500" : "text-blue-500") : ""
               )}
             >
-              {data.match.winner.toUpperCase()}
+              {completed ? data.match.winner.toUpperCase() : "N/A"}
             </p>
           </div>
         </div>
