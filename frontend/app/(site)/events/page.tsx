@@ -30,6 +30,9 @@ async function getEventData(year: number) {
   return data;
 }
 
+// cache this page for 1 hour
+export const revalidate = 60 * 60;
+
 const Page = () => {
   const { eventDataDict, setEventDataDict, year, setYear } = useContext(AppContext);
   const data: EventData | undefined = eventDataDict[year];

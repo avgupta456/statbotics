@@ -45,7 +45,7 @@ def unpack_team_event(
     )
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_team_events(
     year: int,
     score_mean: float,
