@@ -18,6 +18,9 @@ async function getData(event_id: string) {
   return data?.data;
 }
 
+// do not cache this page
+export const revalidate = 0;
+
 async function Page({ params }: { params: { event_id: string } }) {
   const { event_id } = params;
   const data: Data = await getData(event_id);

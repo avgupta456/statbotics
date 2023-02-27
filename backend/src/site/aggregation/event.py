@@ -40,7 +40,7 @@ def unpack_event(event: Event) -> APIEvent:
     )
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_event(event: str, no_cache: bool = False) -> Optional[APIEvent]:
     event_obj = _get_event(event_id=event)
 
@@ -52,7 +52,7 @@ async def get_event(event: str, no_cache: bool = False) -> Optional[APIEvent]:
     return (True, unpack_event(event_obj))  # type: ignore
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_events(
     year: Optional[int] = None, no_cache: bool = False
 ) -> List[APIEvent]:

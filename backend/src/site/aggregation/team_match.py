@@ -27,7 +27,7 @@ def unpack_team_match(team_match: TeamMatch) -> APITeamMatch:
     )
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_team_matches(
     year: Optional[int] = None,
     event: Optional[str] = None,

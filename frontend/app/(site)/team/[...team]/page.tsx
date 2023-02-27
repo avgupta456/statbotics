@@ -47,6 +47,9 @@ async function getTeamYearsData(team: number) {
   return data?.data;
 }
 
+// do not cache this page
+export const revalidate = 0;
+
 const Page = ({ params }: { params: { team: number } }) => {
   const team = params.team?.[0];
   let paramYear = parseInt(params.team?.[1]) || CURR_YEAR;

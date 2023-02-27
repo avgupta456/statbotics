@@ -22,6 +22,9 @@ async function getData(match_id: string) {
   return data?.data;
 }
 
+// do not cache this page
+export const revalidate = 0;
+
 async function Page({ params }: { params: { match_id: string } }) {
   const { match_id } = params;
   const data: Data = await getData(match_id);

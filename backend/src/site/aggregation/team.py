@@ -19,7 +19,7 @@ def unpack_team(team: Team) -> APITeam:
     )
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_team(team: int) -> APITeam:
     team_obj = _get_team(team=team)
 

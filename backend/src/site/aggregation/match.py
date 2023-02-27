@@ -59,7 +59,7 @@ def unpack_match(match: Match) -> APIMatch:
     )
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_match(match: str, no_cache: bool = False) -> Optional[APIMatch]:
     match_obj = _get_match(match=match)
 
@@ -71,7 +71,7 @@ async def get_match(match: str, no_cache: bool = False) -> Optional[APIMatch]:
     return (True, unpack_match(match_obj))  # type: ignore
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_matches(
     team: Optional[int] = None,
     year: Optional[int] = None,

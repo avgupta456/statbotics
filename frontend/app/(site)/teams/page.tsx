@@ -30,6 +30,9 @@ async function getTeamYearData(year: number) {
   return data;
 }
 
+// cache this page for 5 minutes
+export const revalidate = 60 * 5;
+
 const Page = () => {
   const { teamYearDataDict, setTeamYearDataDict, year, setYear } = useContext(AppContext);
   const data: TeamYearData | undefined = teamYearDataDict[year];
