@@ -29,49 +29,64 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const blue2EventData = data.team_events.find((teamEvent) => teamEvent.num === blue2);
   const blue3EventData = data.team_events.find((teamEvent) => teamEvent.num === blue3);
 
+  const redEventAuto = red1EventData.auto_epa + red2EventData.auto_epa + red3EventData.auto_epa;
+  const blueEventAuto = blue1EventData.auto_epa + blue2EventData.auto_epa + blue3EventData.auto_epa;
+  const redEventTeleop =
+    red1EventData.teleop_epa + red2EventData.teleop_epa + red3EventData.teleop_epa;
+  const blueEventTeleop =
+    blue1EventData.teleop_epa + blue2EventData.teleop_epa + blue3EventData.teleop_epa;
+  const redEventEndgame =
+    red1EventData.endgame_epa + red2EventData.endgame_epa + red3EventData.endgame_epa;
+  const blueEventEndgame =
+    blue1EventData.endgame_epa + blue2EventData.endgame_epa + blue3EventData.endgame_epa;
+  const redEventRP1 = red1EventData.rp_1_epa + red2EventData.rp_1_epa + red3EventData.rp_1_epa;
+  const blueEventRP1 = blue1EventData.rp_1_epa + blue2EventData.rp_1_epa + blue3EventData.rp_1_epa;
+  const redEventRP2 = red1EventData.rp_2_epa + red2EventData.rp_2_epa + red3EventData.rp_2_epa;
+  const blueEventRP2 = blue1EventData.rp_2_epa + blue2EventData.rp_2_epa + blue3EventData.rp_2_epa;
+  const redEventTotal = redEventAuto + redEventTeleop + redEventEndgame + data.match.red_fouls;
+  const blueEventTotal = blueEventAuto + blueEventTeleop + blueEventEndgame + data.match.blue_fouls;
+
   const completed = data.match.status === "Completed";
 
   const autoComponent = {
     name: "Auto",
-    red1: red1Data.auto_epa || red1EventData.auto_epa,
-    red2: red2Data.auto_epa || red2EventData.auto_epa,
-    red3: red3Data.auto_epa || red3EventData.auto_epa,
-    redTotal: data.match.red_auto_epa_pred,
+    red1: completed ? red1Data.auto_epa : red1EventData.auto_epa,
+    red2: completed ? red2Data.auto_epa : red2EventData.auto_epa,
+    red3: completed ? red3Data.auto_epa : red3EventData.auto_epa,
+    redTotal: completed ? data.match.red_auto_epa_pred : redEventAuto,
     redActual: completed ? data.match.red_auto : null,
-    blue1: blue1Data.auto_epa || blue1EventData.auto_epa,
-    blue2: blue2Data.auto_epa || blue2EventData.auto_epa,
-    blue3: blue3Data.auto_epa || blue3EventData.auto_epa,
-    blueTotal: data.match.blue_auto_epa_pred,
+    blue1: completed ? blue1Data.auto_epa : blue1EventData.auto_epa,
+    blue2: completed ? blue2Data.auto_epa : blue2EventData.auto_epa,
+    blue3: completed ? blue3Data.auto_epa : blue3EventData.auto_epa,
+    blueTotal: completed ? data.match.blue_auto_epa_pred : blueEventAuto,
     blueActual: completed ? data.match.blue_auto : null,
   };
 
-  console.log(autoComponent);
-
   const teleopComponent = {
     name: "Teleop",
-    red1: red1Data.teleop_epa || red1EventData.teleop_epa,
-    red2: red2Data.teleop_epa || red2EventData.teleop_epa,
-    red3: red3Data.teleop_epa || red3EventData.teleop_epa,
-    redTotal: data.match.red_teleop_epa_pred,
+    red1: completed ? red1Data.teleop_epa : red1EventData.teleop_epa,
+    red2: completed ? red2Data.teleop_epa : red2EventData.teleop_epa,
+    red3: completed ? red3Data.teleop_epa : red3EventData.teleop_epa,
+    redTotal: completed ? data.match.red_teleop_epa_pred : redEventTeleop,
     redActual: completed ? data.match.red_teleop : null,
-    blue1: blue1Data.teleop_epa || blue1EventData.teleop_epa,
-    blue2: blue2Data.teleop_epa || blue2EventData.teleop_epa,
-    blue3: blue3Data.teleop_epa || blue3EventData.teleop_epa,
-    blueTotal: data.match.blue_teleop_epa_pred,
+    blue1: completed ? blue1Data.teleop_epa : blue1EventData.teleop_epa,
+    blue2: completed ? blue2Data.teleop_epa : blue2EventData.teleop_epa,
+    blue3: completed ? blue3Data.teleop_epa : blue3EventData.teleop_epa,
+    blueTotal: completed ? data.match.blue_teleop_epa_pred : blueEventTeleop,
     blueActual: completed ? data.match.blue_teleop : null,
   };
 
   const endgameComponent = {
     name: "Endgame",
-    red1: red1Data.endgame_epa || red1EventData.endgame_epa,
-    red2: red2Data.endgame_epa || red2EventData.endgame_epa,
-    red3: red3Data.endgame_epa || red3EventData.endgame_epa,
-    redTotal: data.match.red_endgame_epa_pred,
+    red1: completed ? red1Data.endgame_epa : red1EventData.endgame_epa,
+    red2: completed ? red2Data.endgame_epa : red2EventData.endgame_epa,
+    red3: completed ? red3Data.endgame_epa : red3EventData.endgame_epa,
+    redTotal: completed ? data.match.red_endgame_epa_pred : redEventEndgame,
     redActual: completed ? data.match.red_endgame : null,
-    blue1: blue1Data.endgame_epa || blue1EventData.endgame_epa,
-    blue2: blue2Data.endgame_epa || blue2EventData.endgame_epa,
-    blue3: blue3Data.endgame_epa || blue3EventData.endgame_epa,
-    blueTotal: data.match.blue_endgame_epa_pred,
+    blue1: completed ? blue1Data.endgame_epa : blue1EventData.endgame_epa,
+    blue2: completed ? blue2Data.endgame_epa : blue2EventData.endgame_epa,
+    blue3: completed ? blue3Data.endgame_epa : blue3EventData.endgame_epa,
+    blueTotal: completed ? data.match.blue_endgame_epa_pred : blueEventEndgame,
     blueActual: completed ? data.match.blue_endgame : null,
   };
 
@@ -91,43 +106,43 @@ const PageMatchTable = ({ data }: { data: Data }) => {
 
   const rp1Component = {
     name: "RP1",
-    red1: red1Data.rp_1_epa || red1EventData.rp_1_epa,
-    red2: red2Data.rp_1_epa || red2EventData.rp_1_epa,
-    red3: red3Data.rp_1_epa || red3EventData.rp_1_epa,
-    redTotal: RPSigmoid(data.match.red_rp_1_pred),
+    red1: completed ? red1Data.rp_1_epa : red1EventData.rp_1_epa,
+    red2: completed ? red2Data.rp_1_epa : red2EventData.rp_1_epa,
+    red3: completed ? red3Data.rp_1_epa : red3EventData.rp_1_epa,
+    redTotal: completed ? RPSigmoid(data.match.red_rp_1_pred) : RPSigmoid(redEventRP1),
     redActual: completed ? data.match.red_rp_1 : null,
-    blue1: blue1Data.rp_1_epa || blue1EventData.rp_1_epa,
-    blue2: blue2Data.rp_1_epa || blue2EventData.rp_1_epa,
-    blue3: blue3Data.rp_1_epa || blue3EventData.rp_1_epa,
-    blueTotal: RPSigmoid(data.match.blue_rp_1_pred),
+    blue1: completed ? blue1Data.rp_1_epa : blue1EventData.rp_1_epa,
+    blue2: completed ? blue2Data.rp_1_epa : blue2EventData.rp_1_epa,
+    blue3: completed ? blue3Data.rp_1_epa : blue3EventData.rp_1_epa,
+    blueTotal: completed ? RPSigmoid(data.match.blue_rp_1_pred) : RPSigmoid(blueEventRP1),
     blueActual: completed ? data.match.blue_rp_1 : null,
   };
 
   const rp2Component = {
     name: "RP2",
-    red1: red1Data.rp_2_epa || red1EventData.rp_2_epa,
-    red2: red2Data.rp_2_epa || red2EventData.rp_2_epa,
-    red3: red3Data.rp_2_epa || red3EventData.rp_2_epa,
-    redTotal: RPSigmoid(data.match.red_rp_2_pred),
+    red1: completed ? red1Data.rp_2_epa : red1EventData.rp_2_epa,
+    red2: completed ? red2Data.rp_2_epa : red2EventData.rp_2_epa,
+    red3: completed ? red3Data.rp_2_epa : red3EventData.rp_2_epa,
+    redTotal: completed ? RPSigmoid(data.match.red_rp_2_pred) : RPSigmoid(redEventRP2),
     redActual: completed ? data.match.red_rp_2 : null,
-    blue1: blue1Data.rp_2_epa || blue1EventData.rp_2_epa,
-    blue2: blue2Data.rp_2_epa || blue2EventData.rp_2_epa,
-    blue3: blue3Data.rp_2_epa || blue3EventData.rp_2_epa,
-    blueTotal: RPSigmoid(data.match.blue_rp_2_pred),
+    blue1: completed ? blue1Data.rp_2_epa : blue1EventData.rp_2_epa,
+    blue2: completed ? blue2Data.rp_2_epa : blue2EventData.rp_2_epa,
+    blue3: completed ? blue3Data.rp_2_epa : blue3EventData.rp_2_epa,
+    blueTotal: completed ? RPSigmoid(data.match.blue_rp_2_pred) : RPSigmoid(blueEventRP2),
     blueActual: completed ? data.match.blue_rp_2 : null,
   };
 
   const totalComponent = {
     name: "Total",
-    red1: red1Data.total_epa || red1EventData.total_epa,
-    red2: red2Data.total_epa || red2EventData.total_epa,
-    red3: red3Data.total_epa || red3EventData.total_epa,
-    redTotal: data.match.red_epa_pred * (1 + data.year.foul_rate),
+    red1: completed ? red1Data.total_epa : red1EventData.total_epa,
+    red2: completed ? red2Data.total_epa : red2EventData.total_epa,
+    red3: completed ? red3Data.total_epa : red3EventData.total_epa,
+    redTotal: completed ? data.match.red_epa_pred * (1 + data.year.foul_rate) : redEventTotal,
     redActual: completed ? data.match.red_score : null,
-    blue1: blue1Data.total_epa || blue1EventData.total_epa,
-    blue2: blue2Data.total_epa || blue2EventData.total_epa,
-    blue3: blue3Data.total_epa || blue3EventData.total_epa,
-    blueTotal: data.match.blue_epa_pred * (1 + data.year.foul_rate),
+    blue1: completed ? blue1Data.total_epa : blue1EventData.total_epa,
+    blue2: completed ? blue2Data.total_epa : blue2EventData.total_epa,
+    blue3: completed ? blue3Data.total_epa : blue3EventData.total_epa,
+    blueTotal: completed ? data.match.blue_epa_pred * (1 + data.year.foul_rate) : blueEventTotal,
     blueActual: completed ? data.match.blue_score : null,
   };
 
