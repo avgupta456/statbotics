@@ -198,21 +198,24 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
                 <div
                   {...props}
                   key="slider-track"
-                  className="w-full h-[5px] pr-2 my-4 bg-gray-200 rounded-md"
+                  className="w-full h-[10px] pr-2 my-4 bg-gray-100 rounded-full"
                 >
                   {children}
                 </div>
               )}
               renderThumb={({ props }) => (
-                <div {...props} key="slider-thumb" className="w-4 h-4 bg-blue-800 rounded-full" />
+                <div {...props} key="slider-thumb" className="w-6 h-6 bg-blue-800 rounded-full" />
               )}
-              renderMark={({ props }) => (
-                <div
-                  {...props}
-                  key={`slider-mark-${props.key}`}
-                  className="w-[2px] h-[5px] bg-blue-500 rounded-full"
-                />
-              )}
+              renderMark={({ props, index }) =>
+                index > 0 &&
+                index !== qualsN + 1 && (
+                  <div
+                    {...props}
+                    key={`slider-mark-${props.key}`}
+                    className="w-[2px] h-[8px] bg-blue-500 rounded-full"
+                  />
+                )
+              }
             />
           </div>
         )}
