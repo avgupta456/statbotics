@@ -21,3 +21,4 @@ class APITeamMatch(APIModel):
     rp_2_epa: float
     post_epa: Optional[float]
     offseason: bool
+    status: str

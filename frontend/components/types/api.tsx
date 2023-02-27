@@ -200,4 +200,5 @@ export type APITeamMatch = {
   rp_2_epa: number;
   post_epa?: number;
   offseason: boolean;
+  status: string;
 };

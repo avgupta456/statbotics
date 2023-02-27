@@ -22,12 +22,14 @@ const TeamLineChart = ({
 
   // VARIABLES
 
-  let arr = data.map((teamMatch: any, i: number) => ({
-    x: i,
-    event: teamMatch.match.split("_")[0],
-    label: data[i - 1]?.match || "Start",
-    y: teamMatch[yAxis.value],
-  }));
+  let arr = data
+    .filter((teamMatch: APITeamMatch) => teamMatch.status === "Completed")
+    .map((teamMatch: APITeamMatch, i: number) => ({
+      x: i,
+      event: teamMatch.match.split("_")[0],
+      label: data[i - 1]?.match || "Start",
+      y: teamMatch[yAxis.value],
+    }));
 
   // TODO: fix this to the actual post-match EPA
   const lastEPA = data[data.length - 1]?.[yAxis.value];
