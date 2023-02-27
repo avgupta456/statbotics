@@ -34,7 +34,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
   const currMatch = data.event.current_match;
 
   const [index, setIndex] = useState(eventOngoing ? currMatch : -1);
-  const [finalIndex, setFinalIndex] = useState(-1);
+  const [finalIndex, setFinalIndex] = useState(eventOngoing ? currMatch : -1);
 
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SimResults[]>([]);
