@@ -19,3 +19,5 @@ class APIEvent(APIModel):
     offseason: bool
     status: str
     status_str: str
+    qual_matches: int
+    current_match: int

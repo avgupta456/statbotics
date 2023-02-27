@@ -37,6 +37,8 @@ def unpack_event(event: Event) -> APIEvent:
         offseason=event.offseason,
         status=event.status,
         status_str=get_event_status_str(event),
+        qual_matches=event.qual_matches,
+        current_match=event.current_match,
     )
 
 

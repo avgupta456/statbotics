@@ -30,7 +30,10 @@ type SimulationRow = {
 const columnHelper = createColumnHelper<SimulationRow>();
 
 const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
-  const [index, setIndex] = useState(-1);
+  const eventOngoing = data.event.status === "Ongoing";
+  const currMatch = data.event.current_match;
+
+  const [index, setIndex] = useState(eventOngoing ? currMatch : -1);
   const [finalIndex, setFinalIndex] = useState(-1);
 
   const workerRef = useRef<Worker | null>();
