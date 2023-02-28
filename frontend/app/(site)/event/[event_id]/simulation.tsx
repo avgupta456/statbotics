@@ -30,11 +30,11 @@ type SimulationRow = {
 const columnHelper = createColumnHelper<SimulationRow>();
 
 const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
+  const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
   const eventOngoing = data.event.status === "Ongoing";
-  const currMatch = data.event.current_match;
 
-  const [index, setIndex] = useState(eventOngoing ? currMatch : -1);
-  const [finalIndex, setFinalIndex] = useState(eventOngoing ? currMatch : -1);
+  const [index, setIndex] = useState(eventOngoing ? qualsN : -1);
+  const [finalIndex, setFinalIndex] = useState(eventOngoing ? qualsN : -1);
 
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SimResults[]>([]);
@@ -120,8 +120,6 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       rank95: rank95[teamEvent.num],
       RPMean: RPMean[teamEvent.num],
     }));
-
-  const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
 
   const year = data.event.year;
 
