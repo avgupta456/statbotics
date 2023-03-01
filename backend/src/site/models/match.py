@@ -10,6 +10,7 @@ class APIMatch(APIModel):
     year: int
     event: str
     time: int
+    predicted_time: int
     key: str
     match_name: str
     status: str

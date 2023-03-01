@@ -27,6 +27,15 @@ const lightRed = "#FFEEEE";
 const lightBlue = "#EEEEFF";
 const lightGray = "#F0F0F0";
 
+const timestampToString = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayOfWeek = daysOfWeek[date.getDay()];
+  const options: any = { hour: "numeric", minute: "numeric", hour12: true };
+  const formattedDate = `${dayOfWeek}, ${date.toLocaleString(undefined, options)}`;
+  return formattedDate;
+};
+
 const MatchTable = ({
   year,
   teamNum,
@@ -148,40 +157,48 @@ const MatchTable = ({
                       )
                     )}
                   </div>
-                  <div
-                    style={{ backgroundColor: lightRed }}
-                    className="w-1/14 flex justify-center items-center"
-                  >
-                    <span
-                      className={classnames(
-                        match.status === "Completed" && match.winner === "red"
-                          ? "font-bold"
-                          : "font-thin",
-                        match.status === "Completed" && alliance === "red" ? "underline" : ""
+                  {match.status === "Completed" ? (
+                    <>
+                      <div
+                        style={{ backgroundColor: lightRed }}
+                        className="w-1/14 flex justify-center items-center"
+                      >
+                        <span
+                          className={classnames(
+                            match.winner === "red" ? "font-bold" : "font-thin",
+                            alliance === "red" ? "underline" : ""
+                          )}
+                        >
+                          {match.red_score}
+                        </span>
+                        {year >= 2016 && match.red_rp_1 > 0.5 && <sup>●</sup>}
+                        {year >= 2016 && match.red_rp_2 > 0.5 && <sup>●</sup>}
+                      </div>
+                      <div
+                        style={{ backgroundColor: lightBlue }}
+                        className="w-1/14 flex justify-center items-center"
+                      >
+                        <span
+                          className={classnames(
+                            match.winner === "blue" ? "font-bold" : "font-thin",
+                            alliance === "blue" ? "underline" : ""
+                          )}
+                        >
+                          {match.blue_score}
+                        </span>
+                        {year >= 2016 && match.blue_rp_1 > 0.5 && <sup>●</sup>}
+                        {year >= 2016 && match.blue_rp_2 > 0.5 && <sup>●</sup>}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-1/7 flex justify-center items-center">
+                      {match.predicted_time ? (
+                        <span className="italic">{timestampToString(match.predicted_time)}</span>
+                      ) : (
+                        <span className="font-thin">-</span>
                       )}
-                    >
-                      {match.status === "Completed" ? match.red_score : "-"}
-                    </span>
-                    {year >= 2016 && match.red_rp_1 > 0.5 && <sup>●</sup>}
-                    {year >= 2016 && match.red_rp_2 > 0.5 && <sup>●</sup>}
-                  </div>
-                  <div
-                    style={{ backgroundColor: lightBlue }}
-                    className="w-1/14 flex justify-center items-center"
-                  >
-                    <span
-                      className={classnames(
-                        match.status === "Completed" && match.winner === "blue"
-                          ? "font-bold"
-                          : "font-thin",
-                        match.status === "Completed" && alliance === "blue" ? "underline" : ""
-                      )}
-                    >
-                      {match.status === "Completed" ? match.blue_score : "-"}
-                    </span>
-                    {year >= 2016 && match.blue_rp_1 > 0.5 && <sup>●</sup>}
-                    {year >= 2016 && match.blue_rp_2 > 0.5 && <sup>●</sup>}
-                  </div>
+                    </div>
+                  )}
                   <div className="w-1/14 border-double border-l-4 border-gray-300 flex justify-center items-center">
                     <span
                       className={classnames(

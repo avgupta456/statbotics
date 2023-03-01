@@ -59,14 +59,19 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
     }
   }, [year]);
 
-  const numProjections = filterData(data.team_years, filters).filter(
+  const allTeamYears = data.team_years.map((teamYear: APITeamYear, i) => {
+    return {
+      ...teamYear,
+      // overwrite epa_rank with index (since we lazy update epa_rank)
+      epa_rank: i + 1,
+    };
+  });
+
+  const numProjections = filterData(allTeamYears, filters).filter(
     (teamYear: APITeamYear) => teamYear.count === 0
   ).length;
 
-  const scoreMean = data.year.score_mean;
-  const scoreSd = data.year.score_sd;
-
-  const yearInsightsData: TeamYearInsights[] = filterData(data.team_years, filters)
+  const yearInsightsData: TeamYearInsights[] = filterData(allTeamYears, filters)
     .filter((teamYear: APITeamYear) => showProjections || teamYear.count > 0)
     .map((teamYear: APITeamYear) => {
       return {
@@ -82,7 +87,6 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         rp_1_epa: round(teamYear.rp_1_epa, 2) ?? "N/A",
         rp_2_epa: round(teamYear.rp_2_epa, 2) ?? "N/A",
         next_event_key: teamYear.next_event_key ?? "N/A",
-
         next_event_name: teamYear.next_event_name ?? "N/A",
         next_event_week: teamYear.next_event_week ?? "N/A",
         record: `${teamYear.wins}-${teamYear.losses}-${teamYear.ties}` ?? "N/A",

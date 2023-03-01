@@ -44,8 +44,7 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         year.no_fouls_mean = 60
         year.rp_1_mean = 0.05
         year.rp_2_mean = 0.4
-
-    if len(scores) > 100:
+    elif len(scores) > 0:
         year.score_mean = round(sum(scores) / len(scores), 2)
         year.score_sd = round(statistics.pstdev(scores), 2)
         year.auto_mean = round(sum(autos) / len(autos), 2)

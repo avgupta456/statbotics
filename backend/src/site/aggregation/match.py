@@ -13,6 +13,7 @@ def unpack_match(match: Match) -> APIMatch:
         year=match.year,
         event=match.event,
         time=match.time or -1,
+        predicted_time=match.predicted_time or -1,
         key=match.key,
         match_name=get_match_name(match.key),
         status=match.status,
