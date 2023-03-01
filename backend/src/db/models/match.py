@@ -64,7 +64,8 @@ class MatchORM(Base, ModelORM):
     blue_rp_2_prob = Column(Float)
 
     playoff = Column(Boolean)
-    time = Column(Integer)
+    time = Column(Integer)  # Enforces ordering
+    predicted_time = Column(Integer)  # For display
 
     red_score = Column(Integer)
     blue_score = Column(Integer)
@@ -151,6 +152,7 @@ class Match(Model):
 
     playoff: bool = False
     time: Optional[int] = None
+    predicted_time: Optional[int] = None
 
     red_score: Optional[int] = None
     blue_score: Optional[int] = None

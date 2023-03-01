@@ -138,6 +138,7 @@ export type APIMatch = {
   year: number;
   event: string;
   time: number;
+  predicted_time: number;
   key: string;
   match_name: string;
   status: string;

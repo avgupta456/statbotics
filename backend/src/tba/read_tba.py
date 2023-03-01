@@ -262,7 +262,8 @@ def get_matches(
                 [str(format_team(t)) for t in blue_surrogate_teams]
             ),
             "winner": winner,
-            "time": get_match_time(match, event_time),
+            "time": match["time"] or get_match_time(match, event_time),
+            "predicted_time": match["predicted_time"],
             "red_score": red_score,
             "blue_score": blue_score,
             "red_score_breakdown": red_breakdown,
