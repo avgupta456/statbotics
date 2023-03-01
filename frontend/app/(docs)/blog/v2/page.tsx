@@ -31,7 +31,14 @@ const Page = () => {
       </p>
       <div className="not-prose w-4/5 mx-auto p-8">
         <div className="w-full h-[400px] relative">
-          <Image src="/spline.png" alt="Summary" fill quality={100} className="object-contain" />
+          <Image
+            src="/spline.png"
+            alt="Summary"
+            fill
+            quality={100}
+            priority
+            className="object-contain"
+          />
         </div>
       </div>
       <p>

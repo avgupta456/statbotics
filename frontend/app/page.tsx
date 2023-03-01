@@ -7,7 +7,14 @@ export default function Home() {
   return (
     <div className="w-full container mx-auto flex-grow p-4 flex flex-wrap items-center">
       <div className="w-1/2 h-[400px] hidden lg:block relative">
-        <Image src="/spline.png" alt="Summary" fill quality={100} className="object-contain" />
+        <Image
+          src="/spline.png"
+          alt="Summary"
+          fill
+          quality={100}
+          priority
+          className="object-contain"
+        />
       </div>
       <div className="w-full lg:w-1/2 lg:h-[400px] p-4 pb-12 flex flex-col justify-center items-center text-gray-800">
         <div
@@ -40,7 +47,14 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full h-[400px] lg:hidden relative">
-        <Image src="/spline.png" alt="Summary" fill quality={100} className="object-contain" />
+        <Image
+          src="/spline.png"
+          alt="Summary"
+          fill
+          quality={100}
+          priority
+          className="object-contain"
+        />
       </div>
     </div>
   );
