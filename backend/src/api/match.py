@@ -7,8 +7,8 @@ from src.db.models import Match
 from src.db.read import get_match, get_matches
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_singular,
     async_fail_gracefully_api_plural,
+    async_fail_gracefully_api_singular,
 )
 
 router = APIRouter()
