@@ -9,7 +9,7 @@ from src.tba.clean_data import (
     get_breakdown,
     get_match_time,
 )
-from src.tba.constants import EVENT_BLACKLIST, MATCH_BLACKLIST
+from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
 from src.tba.mock import (
     all_mock_events,
@@ -69,6 +69,9 @@ def get_events(
 
         if event["district"] is not None:
             event["district"] = event["district"]["abbreviation"]
+
+        if event["key"] in DISTRICT_OVERRIDES:
+            event["district"] = DISTRICT_OVERRIDES[event["key"]]
 
         # renames district divisions to district championship
         # renames festival of championships to einsteins
