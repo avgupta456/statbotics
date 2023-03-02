@@ -83,6 +83,23 @@ export const getRPColor = (value: number) => {
   return color;
 };
 
+export const getProbColor = (value: number) => {
+  let color = "";
+  if (value < 0.05) {
+    color = CONDITIONAL_COLORS[1];
+  } else if (value < 0.1) {
+    color = CONDITIONAL_COLORS[2];
+  } else if (value < 0.25) {
+    color = CONDITIONAL_COLORS[3];
+  } else if (value < 0.5) {
+    color = "text-green-800 bg-green-200";
+  } else if (value >= 0.5) {
+    color = CONDITIONAL_COLORS[4];
+  }
+
+  return color;
+};
+
 export const formatCell = (info: CellContext<any, number | string>) => {
   const value = info.getValue();
 
@@ -113,6 +130,20 @@ export const formatPercentileCell = (
   return (
     <div className="w-20 md:w-28 mx-auto h-full flex justify-center items-center">
       <div className={classnames(color, "w-12 px-2 py-1 rounded-lg")}>{info.getValue()}</div>
+    </div>
+  );
+};
+
+export const formatProbCell = (info: CellContext<any, number>) => {
+  const value = info.getValue();
+
+  const color = getProbColor(value);
+
+  return (
+    <div className="w-16 mx-auto h-full flex justify-center items-center">
+      <div className={classnames(color, "w-12 px-2 py-1 rounded-lg")}>
+        {value ? value.toFixed(2) : "."}
+      </div>
     </div>
   );
 };
