@@ -55,8 +55,9 @@ const getRandomTiebreaker = (year: number, currArr: number[]) => {
     }
   } else {
     // Use local MEAN and SD
-    const mean = currArr.reduce((a, b) => a + b, 0) / currArr.length;
-    const std = Math.sqrt(currArr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / currArr.length);
+    const arr = currArr.map((a) => a % 10000); // Do not predict any tech fouls
+    const mean = arr.map((a) => a % 10000).reduce((a, b) => a + b, 0) / arr.length;
+    const std = Math.sqrt(arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length);
     return Math.round(mean + 5 * (Math.random() - 0.5) * std);
   }
 };
