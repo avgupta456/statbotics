@@ -208,10 +208,10 @@ def get_matches(
         if match["key"] in MATCH_BLACKLIST:
             continue
 
-        if year <= 2004 and (len(red_teams) < 2 or len(blue_teams) < 2):
+        if year <= 2004 and (len(set(red_teams)) < 2 or len(set(blue_teams)) < 2):
             continue
 
-        if year > 2004 and (len(red_teams) < 3 or len(blue_teams) < 3):
+        if year > 2004 and (len(set(red_teams)) < 3 or len(set(blue_teams)) < 3):
             continue
 
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
