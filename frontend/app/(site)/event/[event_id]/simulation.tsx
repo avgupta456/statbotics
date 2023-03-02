@@ -242,7 +242,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
               : "Qualification Match " + index}
           </strong>
         </div>
-        {qualsN > 0 && (
+        {qualsN >= 0 && (
           <div className="px-4 md:px-16">
             <Range
               step={1}
