@@ -12,6 +12,7 @@ const shuffle = (a) => {
 };
 
 const getTiebreakers = (year: number, match: APIMatch) => {
+  // # TODO: remove this once we have stored tiebreakers pre 2023
   if (year === 2016) {
     return [-match.blue_fouls, -match.red_fouls];
   } else if (year === 2017) {
@@ -25,7 +26,7 @@ const getTiebreakers = (year: number, match: APIMatch) => {
   } else if (year === 2022) {
     return [match.red_score, match.blue_score];
   } else if (year === 2023) {
-    return [-match.blue_fouls, -match.red_fouls];
+    return [match.red_tiebreaker, match.blue_tiebreaker];
   } else {
     return [match.red_score, match.blue_score];
   }
@@ -36,7 +37,7 @@ const getRandomTiebreaker = (year: number, currArr: number[]) => {
   if (currArr.length < 5) {
     // Use global MEAN and SD
     if (year === 2016) {
-      return Math.round(Math.random() * 10);
+      return -Math.round(Math.random() * 10);
     } else if (year === 2017) {
       return 14 + Math.round(Math.random() * 64);
     } else if (year === 2018) {
@@ -48,7 +49,7 @@ const getRandomTiebreaker = (year: number, currArr: number[]) => {
     } else if (year === 2022) {
       return 26 + Math.round(Math.random() * 60);
     } else if (year === 2023) {
-      return Math.round(Math.random() * 15);
+      return (Math.random() > 0.9 ? 10000 : 0) + 10 + Math.round(Math.random() * 20);
     } else {
       return 0;
     }

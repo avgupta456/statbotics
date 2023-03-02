@@ -86,6 +86,7 @@ class MatchORM(Base, ModelORM):
     red_fouls = Column(Integer)
     red_rp_1 = Column(Integer)
     red_rp_2 = Column(Integer)
+    red_tiebreaker = Column(Integer)
 
     blue_auto = Column(Integer)
     blue_auto_movement = Column(Integer)
@@ -103,6 +104,7 @@ class MatchORM(Base, ModelORM):
     blue_fouls = Column(Integer)
     blue_rp_1 = Column(Integer)
     blue_rp_2 = Column(Integer)
+    blue_tiebreaker = Column(Integer)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -173,6 +175,7 @@ class Match(Model):
     red_fouls: Optional[int] = None
     red_rp_1: Optional[int] = None
     red_rp_2: Optional[int] = None
+    red_tiebreaker: Optional[int] = None
 
     blue_auto: Optional[int] = None
     blue_auto_movement: Optional[int] = None
@@ -190,6 +193,7 @@ class Match(Model):
     blue_fouls: Optional[int] = None
     blue_rp_1: Optional[int] = None
     blue_rp_2: Optional[int] = None
+    blue_tiebreaker: Optional[int] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Match":
@@ -262,4 +266,4 @@ class Match(Model):
     def __str__(self: "Match"):
         # Only refresh DB if these change (during 1 min partial update)
         # Includes EPA to update when predictions change
-        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_epa_sum}_{self.blue_epa_sum}"
+        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"

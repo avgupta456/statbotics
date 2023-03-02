@@ -142,7 +142,7 @@ export const formatProbCell = (info: CellContext<any, number>) => {
   return (
     <div className="w-16 mx-auto h-full flex justify-center items-center">
       <div className={classnames(color, "w-12 px-2 py-1 rounded-lg")}>
-        {value ? value.toFixed(2) : "."}
+        {value ? value.toFixed(2) : ""}
       </div>
     </div>
   );

@@ -227,8 +227,12 @@ def get_matches(
         blue_teams = [format_team(team) for team in blue_teams]
 
         breakdown: Dict[str, Any] = match.get("score_breakdown", {}) or {}
-        red_breakdown = get_breakdown(year, breakdown.get("red", None))
-        blue_breakdown = get_breakdown(year, breakdown.get("blue", None))
+        red_breakdown = get_breakdown(
+            year, breakdown.get("red", None), breakdown.get("blue", None)
+        )
+        blue_breakdown = get_breakdown(
+            year, breakdown.get("blue", None), breakdown.get("red", None)
+        )
 
         video = None
         if "videos" in match:
