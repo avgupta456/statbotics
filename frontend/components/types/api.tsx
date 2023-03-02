@@ -149,6 +149,10 @@ export type APIMatch = {
   playoff: boolean;
   red: number[];
   blue: number[];
+  red_surrogates: number[];
+  blue_surrogates: number[];
+  red_dqs: number[];
+  blue_dqs: number[];
 
   red_score: number;
   red_auto: number;

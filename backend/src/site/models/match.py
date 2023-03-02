@@ -21,6 +21,10 @@ class APIMatch(APIModel):
     playoff: bool
     red: List[int]
     blue: List[int]
+    red_surrogates: List[int]
+    blue_surrogates: List[int]
+    red_dqs: List[int]
+    blue_dqs: List[int]
 
     # Actual
     red_score: int

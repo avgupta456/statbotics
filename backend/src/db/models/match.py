@@ -230,6 +230,26 @@ class Match(Model):
     def get_blue(self) -> List[int]:
         return [x for x in [self.blue_1, self.blue_2, self.blue_3] if x is not None]
 
+    def get_red_surrogates(self) -> List[int]:
+        if self.red_surrogate is None:
+            return []
+        return [int(x) for x in self.red_surrogate.split(",") if x != ""]
+
+    def get_blue_surrogates(self) -> List[int]:
+        if self.blue_surrogate is None:
+            return []
+        return [int(x) for x in self.blue_surrogate.split(",") if x != ""]
+
+    def get_red_dqs(self) -> List[int]:
+        if self.red_dq is None:
+            return []
+        return [int(x) for x in self.red_dq.split(",") if x != ""]
+
+    def get_blue_dqs(self) -> List[int]:
+        if self.blue_dq is None:
+            return []
+        return [int(x) for x in self.blue_dq.split(",") if x != ""]
+
     def get_teams(self) -> List[List[int]]:
         return [self.get_red(), self.get_blue()]
 

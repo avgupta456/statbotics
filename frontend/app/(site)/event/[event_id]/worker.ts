@@ -249,8 +249,15 @@ async function indexSim(data: Data, index: number, simCount: number) {
       currRP1EPAs[team] = teamMatch.rp_1_epa;
       currRP2EPAs[team] = teamMatch.rp_2_epa;
       currMatches[team] += 1;
-      currRPs[team] += teamMatch.alliance === "red" ? redRPs : blueRPs;
-      currTiebreakers[team].push(teamMatch.alliance === "red" ? redTiebreaker : blueTiebreaker);
+      if (
+        !match.red_surrogates.includes(team) &&
+        !match.blue_surrogates.includes(team) &&
+        !match.red_dqs.includes(team) &&
+        !match.blue_dqs.includes(team)
+      ) {
+        currRPs[team] += teamMatch.alliance === "red" ? redRPs : blueRPs;
+        currTiebreakers[team].push(teamMatch.alliance === "red" ? redTiebreaker : blueTiebreaker);
+      }
     }
   }
 
@@ -318,14 +325,12 @@ async function indexSim(data: Data, index: number, simCount: number) {
       for (let k = 0; k < teamMatches.length; k++) {
         const teamMatch = teamMatches[k];
         const team = teamMatch.num;
-        if (teamMatch.alliance === "red") {
-          currSimRPs[team] += redRPs;
-        } else {
-          currSimRPs[team] += blueRPs;
+        if (!match.red_surrogates.includes(team) && !match.blue_surrogates.includes(team)) {
+          currSimRPs[team] += teamMatch.alliance === "red" ? redRPs : blueRPs;
+          currSimTiebreakers[team].push(
+            getRandomTiebreaker(data.year.year, currSimTiebreakers[team])
+          );
         }
-        currSimTiebreakers[team].push(
-          getRandomTiebreaker(data.year.year, currSimTiebreakers[team])
-        );
       }
     }
 
