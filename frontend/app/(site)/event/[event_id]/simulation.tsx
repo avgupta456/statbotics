@@ -280,8 +280,10 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         )}
       </div>
       <InsightsTable
-        data={detailedSimData}
-        columns={detailedColumns}
+        data={simulationData}
+        columns={columns}
+        detailedData={detailedSimData}
+        detailedColumns={detailedColumns}
         leftCol="rank"
         rightCol="RPMean"
         searchCols={["num", "team"]}
