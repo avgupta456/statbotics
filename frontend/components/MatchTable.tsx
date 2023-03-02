@@ -32,7 +32,8 @@ const timestampToString = (timestamp: number) => {
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const dayOfWeek = daysOfWeek[date.getDay()];
   const options: any = { hour: "numeric", minute: "numeric", hour12: true };
-  const formattedDate = `${dayOfWeek}, ${date.toLocaleString(undefined, options)}`;
+  const _formattedDate = `${dayOfWeek}, ${date.toLocaleString(undefined, options)}`;
+  const formattedDate = _formattedDate === "Wed, 6:59 PM" ? "-" : _formattedDate;
   return formattedDate;
 };
 
