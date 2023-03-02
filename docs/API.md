@@ -401,7 +401,8 @@ I will update this section as new years are added. The breakdown is implemented 
 | blue_rp_1_prob       | float | Predicted probability of blue alliance earning RP1       |
 | blue_rp_2_prob       | float | Predicted probability of blue alliance earning RP2       |
 | playoff              | bool  | Whether the match is a playoff match                     |
-| time                 | int   | Match time in seconds (NOTE: currently incorrect)        |
+| time                 | int   | Match time in seconds                                    |
+| predicted_time       | int   | Predicted match time in seconds (from TBA)               |
 | red_score            | int   | Actual red score                                         |
 | blue_score           | int   | Actual blue score                                        |
 | red_auto             | int   | Red auto score                                           |
