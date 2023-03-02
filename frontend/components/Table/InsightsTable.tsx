@@ -108,7 +108,7 @@ const InsightsTable = ({
           </CSVLink>
         </div>
         {expandable && (
-          <div className="tooltip" data-tip="Expand">
+          <div className="tooltip" data-tip={expanded ? "Shrink" : "Expand"}>
             <MdAdd
               className="hover_icon ml-2"
               onClick={() => setExpanded(!expanded)}

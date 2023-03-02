@@ -192,7 +192,7 @@ const MatchTable = ({
                       </div>
                     </>
                   ) : (
-                    <div className="w-1/7 flex justify-center items-center">
+                    <div className="w-1/7 flex justify-center items-center text-xs lg:text-base">
                       {match.predicted_time ? (
                         <span className="italic">{timestampToString(match.predicted_time)}</span>
                       ) : (

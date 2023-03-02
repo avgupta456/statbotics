@@ -46,7 +46,17 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         rank: teamEvent.rank ?? -1,
       };
     })
-    .sort((a, b) => a.rank - b.rank || b.total_epa - a.total_epa);
+    .sort((a, b) => {
+      if (a.rank === -1 && b.rank === -1) {
+        return b.total_epa - a.total_epa;
+      } else if (a.rank === -1) {
+        return 1;
+      } else if (b.rank === -1) {
+        return -1;
+      } else {
+        return a.rank - b.rank || b.total_epa - a.total_epa;
+      }
+    });
 
   const maxRank = Math.max(...eventInsightsData.map((team) => team.rank));
 

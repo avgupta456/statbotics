@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { CellContext } from "@tanstack/react-table";
 
-import { classnames, round, truncate } from "../../utils";
+import { classnames, truncate } from "../../utils";
 import { PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
 
