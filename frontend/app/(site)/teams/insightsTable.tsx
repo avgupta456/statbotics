@@ -40,6 +40,8 @@ export type TeamYearInsights = {
 
 const columnHelper = createColumnHelper<TeamYearInsights>();
 
+const detailedColumnHelper = createColumnHelper<any>();
+
 const defaultFilters = {
   country: "",
   state: "",
@@ -74,6 +76,9 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
   const yearInsightsData: TeamYearInsights[] = filterData(allTeamYears, filters)
     .filter((teamYear: APITeamYear) => showProjections || teamYear.count > 0)
     .map((teamYear: APITeamYear) => {
+      const wins = teamYear.wins ?? 0;
+      const losses = teamYear.losses ?? 0;
+      const ties = teamYear.ties ?? 0;
       return {
         num: teamYear.num ?? -1,
         team: teamYear.team ? truncate(teamYear.team, 30) : "N/A",
@@ -89,7 +94,8 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         next_event_key: teamYear.next_event_key ?? "N/A",
         next_event_name: teamYear.next_event_name ?? "N/A",
         next_event_week: teamYear.next_event_week ?? "N/A",
-        record: `${teamYear.wins}-${teamYear.losses}-${teamYear.ties}` ?? "N/A",
+        record: `${wins}-${losses}-${ties}`,
+        winrate: round((wins + ties / 2) / Math.max(wins + losses + ties, 1), 3),
       };
     })
     .sort((a, b) => b.norm_epa - a.norm_epa);
@@ -151,6 +157,77 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
     return showColumns;
   }, [year, data.year, disableHighlight]);
 
+  const detailedColumns = useMemo<any>(() => {
+    const showColumns = [
+      detailedColumnHelper.accessor("num", {
+        cell: (info) => formatNumber(info.getValue()),
+        header: "Number",
+      }),
+      detailedColumnHelper.accessor("team", {
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
+        header: "Name",
+      }),
+      detailedColumnHelper.accessor("epa_rank", {
+        cell: (info) => formatCell(info),
+        header: "EPA Rank",
+      }),
+      year < CURR_YEAR &&
+        detailedColumnHelper.accessor("norm_epa", {
+          cell: (info) => formatCell(info),
+          header: "Normalized EPA",
+        }),
+      year >= CURR_YEAR &&
+        detailedColumnHelper.accessor("unitless_epa", {
+          cell: (info) => formatCell(info),
+          header: "Unitless EPA*",
+        }),
+      detailedColumnHelper.accessor("total_epa", {
+        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+        header: "EPA",
+      }),
+      year >= 2016 &&
+        detailedColumnHelper.accessor("auto_epa", {
+          cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+          header: "Auto EPA",
+        }),
+      year >= 2016 &&
+        detailedColumnHelper.accessor("teleop_epa", {
+          cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+          header: "Teleop EPA",
+        }),
+      year >= 2016 &&
+        detailedColumnHelper.accessor("endgame_epa", {
+          cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+          header: "Endgame EPA",
+        }),
+      year >= 2016 &&
+        detailedColumnHelper.accessor("rp_1_epa", {
+          cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+          header: RPMapping[year][0],
+        }),
+      year >= 2016 &&
+        detailedColumnHelper.accessor("rp_2_epa", {
+          cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+          header: RPMapping[year][1],
+        }),
+      year == CURR_YEAR &&
+        detailedColumnHelper.accessor("next_event_name", {
+          cell: (info) =>
+            EventLink({ key: info.row.original.next_event_key, event: info.getValue() }),
+          header: "Next Event",
+        }),
+      detailedColumnHelper.accessor("record", {
+        cell: (info) => formatCell(info),
+        header: "Record",
+      }),
+      detailedColumnHelper.accessor("winrate", {
+        cell: (info) => formatCell(info),
+        header: "Winrate",
+      }),
+    ].filter((x) => x);
+    return showColumns;
+  }, [year, data.year, disableHighlight]);
+
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="flex items-center justify-center">
@@ -166,6 +243,8 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
       <InsightsTable
         data={yearInsightsData}
         columns={columns}
+        detailedData={yearInsightsData}
+        detailedColumns={detailedColumns}
         leftCol="num"
         rightCol="record"
         searchCols={["num", "team"]}

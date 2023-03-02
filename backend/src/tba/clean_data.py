@@ -39,10 +39,12 @@ def get_match_time(match: Dict[str, Any], event_time: int) -> int:
 
 
 def get_breakdown(
-    year: int, breakdown: Optional[Dict[str, Any]] = None
+    year: int,
+    breakdown: Optional[Dict[str, Any]] = None,
+    opp_breakdown: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Optional[int]]:
     out: Dict[str, Optional[int]] = {}
-    if breakdown is None or year < 2016:
+    if breakdown is None or opp_breakdown is None or year < 2016:
         return {
             "auto": None,
             "auto_movement": None,
@@ -62,6 +64,7 @@ def get_breakdown(
             "fouls": None,
             "rp1": None,
             "rp2": None,
+            "tiebreaker": None,
         }
 
     if year == 2016:
@@ -80,6 +83,7 @@ def get_breakdown(
             + breakdown.get("teleopScalePoints", 0),
             "rp1": int(breakdown.get("teleopDefensesBreached", 0)),
             "rp2": int(breakdown.get("teleopTowerCaptured", 0)),
+            "tiebreaker": -opp_breakdown.get("foulPoints", 0),
         }
     elif year == 2017:
         out = {
@@ -96,6 +100,7 @@ def get_breakdown(
             "endgame": breakdown.get("teleopTakeoffPoints", 0),
             "rp1": int(breakdown.get("rotorRankingPointAchieved", 0)),
             "rp2": int(breakdown.get("kPaRankingPointAchieved", 0)),
+            "tiebreaker": breakdown.get("autoPoints", 0),
         }
 
         # Correct some off-by-one edge cases
@@ -124,6 +129,7 @@ def get_breakdown(
             "endgame": breakdown.get("endgamePoints", 0),
             "rp1": int(breakdown.get("autoQuestRankingPoint", 0)),
             "rp2": int(breakdown.get("faceTheBossRankingPoint", 0)),
+            "tiebreaker": breakdown.get("endgamePoints", 0),
         }
     elif year == 2019:
         out = {
@@ -140,6 +146,7 @@ def get_breakdown(
             "endgame": breakdown.get("habClimbPoints", 0),
             "rp1": int(breakdown.get("completeRocketRankingPoint", 0)),
             "rp2": int(breakdown.get("habDockingRankingPoint", 0)),
+            "tiebreaker": breakdown.get("cargoPoints", 0),
         }
     elif year == 2020:
         out = {
@@ -158,6 +165,7 @@ def get_breakdown(
             "endgame": breakdown.get("endgamePoints", 0),
             "rp1": int(breakdown.get("shieldEnergizedRankingPoint", 0)),
             "rp2": int(breakdown.get("shieldOperationalRankingPoint", 0)),
+            "tiebreaker": breakdown.get("autoPoints", 0),
         }
     elif year == 2021:
         return {}
@@ -191,6 +199,10 @@ def get_breakdown(
             "endgame": breakdown.get("endgamePoints", 0),
             "rp1": int(breakdown.get("cargoBonusRankingPoint", 0)),
             "rp2": int(breakdown.get("hangarBonusRankingPoint", 0)),
+            "tiebreaker": breakdown.get("autoPoints", 0)
+            + breakdown.get("teleopCargoPoints", 0)
+            + breakdown.get("endgamePoints", 0)
+            + breakdown.get("foulPoints", 0),
         }
 
         # Correct some edge cases (sensor issues, etc.)
@@ -218,6 +230,9 @@ def get_breakdown(
             + breakdown.get("endGameParkPoints", 0),
             "rp1": int(breakdown.get("sustainabilityBonusAchieved", 0)),
             "rp2": int(breakdown.get("activationBonusAchieved", 0)),
+            # first tiebreaker is tech foul count, second is charge station points
+            "tiebreaker": 10000 * breakdown.get("techFoulCount", 0)
+            + breakdown.get("totalChargeStationPoints", 0),
         }
     else:
         raise ValueError("Invalid year: " + str(year))

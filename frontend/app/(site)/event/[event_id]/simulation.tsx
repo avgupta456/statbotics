@@ -6,7 +6,7 @@ import { Range } from "react-range";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
-import { TeamLink, formatCell } from "../../../../components/Table/shared";
+import { TeamLink, formatCell, formatProbCell } from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
 import { Data } from "./types";
 
@@ -28,6 +28,7 @@ type SimulationRow = {
 };
 
 const columnHelper = createColumnHelper<SimulationRow>();
+const detailedColumnHelper = createColumnHelper<any>();
 
 const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
@@ -97,6 +98,11 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
   const rank5 = {};
   const rank50 = {};
   const rank95 = {};
+  const rankProbs = {};
+
+  const year = data.event.year;
+  const N = data.team_events.length;
+  const emptyArr = Array(N).fill(0);
 
   for (const teamNum of Object.keys(simRanks)) {
     RPMean[teamNum] = simRPs[teamNum].reduce((a, b) => a + b, 0) / simRPs[teamNum].length;
@@ -106,6 +112,12 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
     rank5[teamNum] = sortedRanks[Math.floor(sortedRanks.length * 0.05)];
     rank50[teamNum] = sortedRanks[Math.floor(sortedRanks.length * 0.5)];
     rank95[teamNum] = sortedRanks[Math.floor(sortedRanks.length * 0.95)];
+
+    rankProbs[teamNum] = emptyArr.slice();
+    for (let i = 0; i < N; i++) {
+      rankProbs[teamNum][i] =
+        sortedRanks.filter((rank) => rank === i + 1).length / sortedRanks.length;
+    }
   }
 
   const simulationData = data.team_events
@@ -121,7 +133,22 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       RPMean: RPMean[teamEvent.num],
     }));
 
-  const year = data.event.year;
+  const detailedSimData = data.team_events
+    .sort((a, b) => rankMean[a.num] - rankMean[b.num])
+    .map((teamEvent, i) => {
+      const probsObj = {};
+      for (let i = 0; i < N; i++) {
+        probsObj[`prob${i + 1}`] = rankProbs[teamEvent.num]?.[i];
+      }
+
+      return {
+        num: teamEvent.num,
+        team: teamEvent.team,
+        rankMean: rankMean[teamEvent.num],
+        RPMean: RPMean[teamEvent.num],
+        ...probsObj,
+      };
+    });
 
   const columns = useMemo<any>(
     () => [
@@ -161,6 +188,40 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
     [year]
   );
 
+  const detailedColumns = useMemo<any>(
+    () => [
+      detailedColumnHelper.accessor("num", {
+        cell: (info) => formatNumber(info.getValue()),
+        header: "Number",
+      }),
+      detailedColumnHelper.accessor("team", {
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
+        header: "Team",
+      }),
+      detailedColumnHelper.accessor("rankMean", {
+        cell: (info) => formatCell(info),
+        header: "Mean Rank",
+      }),
+      detailedColumnHelper.accessor("RPMean", {
+        cell: (info) => formatCell(info),
+        header: "Mean RPs",
+      }),
+      ...emptyArr
+        .slice()
+        .map((_, i) => i + 1)
+        .map((i) =>
+          detailedColumnHelper.accessor("prob" + i, {
+            cell: (info) => formatProbCell(info),
+            header: "P(" + i + ")",
+          })
+        ),
+    ],
+    [year, emptyArr]
+  );
+
+  // TODO: UI to switch between simple and detailed
+  // TODO: detailed cumulative vs singular probs
+
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="w-full text-2xl font-bold mb-4">Simulation</div>
@@ -181,7 +242,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
               : "Qualification Match " + index}
           </strong>
         </div>
-        {qualsN > 0 && (
+        {qualsN >= 0 && (
           <div className="px-4 md:px-16">
             <Range
               step={1}
@@ -221,6 +282,8 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       <InsightsTable
         data={simulationData}
         columns={columns}
+        detailedData={detailedSimData}
+        detailedColumns={detailedColumns}
         leftCol="rank"
         rightCol="RPMean"
         searchCols={["num", "team"]}

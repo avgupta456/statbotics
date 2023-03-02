@@ -149,6 +149,10 @@ export type APIMatch = {
   playoff: boolean;
   red: number[];
   blue: number[];
+  red_surrogates: number[];
+  blue_surrogates: number[];
+  red_dqs: number[];
+  blue_dqs: number[];
 
   red_score: number;
   red_auto: number;
@@ -159,6 +163,7 @@ export type APIMatch = {
   red_fouls: number;
   red_rp_1: number;
   red_rp_2: number;
+  red_tiebreaker: number;
   blue_score: number;
   blue_auto: number;
   blue_teleop: number;
@@ -168,6 +173,7 @@ export type APIMatch = {
   blue_fouls: number;
   blue_rp_1: number;
   blue_rp_2: number;
+  blue_tiebreaker: number;
   winner: string;
 
   red_epa_pred: number;

@@ -12,6 +12,7 @@ const shuffle = (a) => {
 };
 
 const getTiebreakers = (year: number, match: APIMatch) => {
+  // # TODO: remove this once we have stored tiebreakers pre 2023
   if (year === 2016) {
     return [-match.blue_fouls, -match.red_fouls];
   } else if (year === 2017) {
@@ -25,9 +26,39 @@ const getTiebreakers = (year: number, match: APIMatch) => {
   } else if (year === 2022) {
     return [match.red_score, match.blue_score];
   } else if (year === 2023) {
-    return [-match.blue_fouls, -match.red_fouls];
+    return [match.red_tiebreaker, match.blue_tiebreaker];
   } else {
     return [match.red_score, match.blue_score];
+  }
+};
+
+const getRandomTiebreaker = (year: number, currArr: number[]) => {
+  // roughly MEAN +/- 1 SD
+  if (currArr.length < 5) {
+    // Use global MEAN and SD
+    if (year === 2016) {
+      return -Math.round(Math.random() * 10);
+    } else if (year === 2017) {
+      return 14 + Math.round(Math.random() * 64);
+    } else if (year === 2018) {
+      return 23 + Math.round(Math.random() * 46);
+    } else if (year === 2019) {
+      return 9 + Math.round(Math.random() * 20);
+    } else if (year === 2020) {
+      return 8 + Math.round(Math.random() * 8);
+    } else if (year === 2022) {
+      return 26 + Math.round(Math.random() * 60);
+    } else if (year === 2023) {
+      return (Math.random() > 0.9 ? 10000 : 0) + 10 + Math.round(Math.random() * 20);
+    } else {
+      return 0;
+    }
+  } else {
+    // Use local MEAN and SD
+    const arr = currArr.map((a) => a % 10000); // Do not predict any tech fouls
+    const mean = arr.map((a) => a % 10000).reduce((a, b) => a + b, 0) / arr.length;
+    const std = Math.sqrt(arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length);
+    return Math.round(mean + 5 * (Math.random() - 0.5) * std);
   }
 };
 
@@ -201,7 +232,7 @@ async function indexSim(data: Data, index: number, simCount: number) {
     currRP2EPAs[teamEvent.num] = teamEvent.start_rp_2_epa;
     currMatches[teamEvent.num] = 0;
     currRPs[teamEvent.num] = 0;
-    currTiebreakers[teamEvent.num] = 0;
+    currTiebreakers[teamEvent.num] = [];
   }
 
   const redResultToRPs = { red: 2, draw: 1, blue: 0 };
@@ -220,14 +251,16 @@ async function indexSim(data: Data, index: number, simCount: number) {
       currRP1EPAs[team] = teamMatch.rp_1_epa;
       currRP2EPAs[team] = teamMatch.rp_2_epa;
       currMatches[team] += 1;
-      currRPs[team] += teamMatch.alliance === "red" ? redRPs : blueRPs;
-      currTiebreakers[team] += teamMatch.alliance === "red" ? redTiebreaker : blueTiebreaker;
+      if (
+        !match.red_surrogates.includes(team) &&
+        !match.blue_surrogates.includes(team) &&
+        !match.red_dqs.includes(team) &&
+        !match.blue_dqs.includes(team)
+      ) {
+        currRPs[team] += teamMatch.alliance === "red" ? redRPs : blueRPs;
+        currTiebreakers[team].push(teamMatch.alliance === "red" ? redTiebreaker : blueTiebreaker);
+      }
     }
-  }
-
-  for (let i = 0; i < data.team_events.length; i++) {
-    const num = data.team_events[i].num;
-    currTiebreakers[num] /= currMatches[num];
   }
 
   // Simulate
@@ -243,9 +276,11 @@ async function indexSim(data: Data, index: number, simCount: number) {
 
   for (let i = 0; i < simCount; i++) {
     const currSimRPs = {};
+    const currSimTiebreakers = {};
     for (let j = 0; j < data.team_events.length; j++) {
       const teamEvent = data.team_events[j];
       currSimRPs[teamEvent.num] = currRPs[teamEvent.num];
+      currSimTiebreakers[teamEvent.num] = [...currTiebreakers[teamEvent.num]];
     }
 
     for (let j = index; j < qualN; j++) {
@@ -292,20 +327,23 @@ async function indexSim(data: Data, index: number, simCount: number) {
       for (let k = 0; k < teamMatches.length; k++) {
         const teamMatch = teamMatches[k];
         const team = teamMatch.num;
-        if (teamMatch.alliance === "red") {
-          currSimRPs[team] += redRPs;
-        } else {
-          currSimRPs[team] += blueRPs;
+        if (!match.red_surrogates.includes(team) && !match.blue_surrogates.includes(team)) {
+          currSimRPs[team] += teamMatch.alliance === "red" ? redRPs : blueRPs;
+          currSimTiebreakers[team].push(
+            getRandomTiebreaker(data.year.year, currSimTiebreakers[team])
+          );
         }
       }
     }
 
     const simRanksArr = Object.keys(currSimRPs).sort((a, b) => {
       if (currSimRPs[a] === currSimRPs[b]) {
-        if (currTiebreakers[a] === currTiebreakers[b]) {
+        const tiebreakerA = currSimTiebreakers[a].reduce((x, y) => x + y, 0);
+        const tiebreakerB = currSimTiebreakers[b].reduce((x, y) => x + y, 0);
+        if (tiebreakerA === tiebreakerB) {
           return Math.random() - 0.5;
         }
-        return currTiebreakers[b] - currTiebreakers[a];
+        return tiebreakerB - tiebreakerA;
       }
       return currSimRPs[b] - currSimRPs[a];
     });

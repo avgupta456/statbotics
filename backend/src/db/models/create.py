@@ -73,6 +73,7 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["red_fouls"] = data["red_score_breakdown"]["fouls"]
     data["red_rp_1"] = data["red_score_breakdown"]["rp1"]
     data["red_rp_2"] = data["red_score_breakdown"]["rp2"]
+    data["red_tiebreaker"] = data["red_score_breakdown"]["tiebreaker"]
     data["blue_auto"] = data["blue_score_breakdown"]["auto"]
     data["blue_auto_movement"] = data["blue_score_breakdown"]["auto_movement"]
     data["blue_auto_1"] = data["blue_score_breakdown"]["auto_1"]
@@ -89,6 +90,7 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
     data["blue_fouls"] = data["blue_score_breakdown"]["fouls"]
     data["blue_rp_1"] = data["blue_score_breakdown"]["rp1"]
     data["blue_rp_2"] = data["blue_score_breakdown"]["rp2"]
+    data["blue_tiebreaker"] = data["blue_score_breakdown"]["tiebreaker"]
     match = Match.from_dict(data)
 
     team_matches: List[TeamMatch] = []
