@@ -34,6 +34,11 @@ def load_teams(cache: bool = True) -> List[Team]:
 def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
     num_matches = len(matches)
     num_qual_matches = len([m for m in matches if m["comp_level"] == "qm"])
+    finals_matches = [m for m in matches if m["comp_level"] == "f"]
+    red_final_match_wins = len([m for m in finals_matches if m["winner"] == "red"])
+    blue_final_match_wins = len([m for m in finals_matches if m["winner"] == "blue"])
+    max_finals_winner = max(red_final_match_wins, blue_final_match_wins)
+
     num_upcoming_matches = 0
     for match in matches:
         if match["status"] == "Upcoming":
@@ -43,7 +48,9 @@ def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
     if year == CURR_YEAR:
         if num_matches == 0:
             event_status = "Upcoming"
-        elif num_upcoming_matches > 0 or num_matches == num_qual_matches:
+        elif (
+            num_upcoming_matches > 0 and max_finals_winner < 2
+        ) or num_matches == num_qual_matches:
             event_status = "Ongoing"
         else:
             event_status = "Completed"

@@ -1,7 +1,6 @@
 import statistics
 from typing import List
 
-from src.constants import CURR_YEAR
 from src.db.models import Event, Match, Year
 
 
@@ -33,18 +32,7 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         rp_1s.extend([match.red_rp_1 or 0, match.blue_rp_1 or 0])
         rp_2s.extend([match.red_rp_2 or 0, match.blue_rp_2 or 0])
 
-    # 2023 Week 0 event stats
-    if year.year == CURR_YEAR:
-        year.score_mean = 65
-        year.score_sd = 26
-        year.auto_mean = 13
-        year.teleop_mean = 27
-        year.endgame_mean = 20
-        year.fouls_mean = 5
-        year.no_fouls_mean = 60
-        year.rp_1_mean = 0.05
-        year.rp_2_mean = 0.4
-    elif len(scores) > 0:
+    if len(scores) > 0:
         year.score_mean = round(sum(scores) / len(scores), 2)
         year.score_sd = round(statistics.pstdev(scores), 2)
         year.auto_mean = round(sum(autos) / len(autos), 2)
