@@ -4,7 +4,7 @@ export const PROD = process.env.PROD === "True";
 export const BACKEND_URL = PROD ? "https://api.statbotics.io/site" : "http://127.0.0.1:8000/site";
 
 export const CURR_YEAR = 2023;
-export const CURR_WEEK = 1;
+export const CURR_WEEK = 2;
 
 export const MAX_TEAM = 9311; // above is offseason
 
