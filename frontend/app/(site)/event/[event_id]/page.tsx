@@ -40,7 +40,7 @@ async function Page({ params }: { params: { event_id: string } }) {
     <div className="w-full h-full flex-grow flex flex-col pt-4 md:pt-8 md:pb-4 md:px-4">
       <div className="h-full h-full flex-grow flex flex-col">
         <div className="w-full flex items-center justify-center mb-4">
-          <p className="text-2xl lg:text-3xl mr-6">
+          <p className="text-2xl lg:text-3xl">
             {data.year.year} {truncatedEventName}
           </p>
 
@@ -48,8 +48,9 @@ async function Page({ params }: { params: { event_id: string } }) {
             href={"https://www.thebluealliance.com/event/" + event_id}
             rel="noopener noreferrer"
             target="_blank"
+            className="ml-4"
           >
-            <Image src="/tba.png" alt="TBA" height={24} width={24} />
+            <Image src="/tba.png" alt="TBA" height={28} width={28} />
           </Link>
           {status === "Ongoing" && (
             <Link
@@ -57,9 +58,9 @@ async function Page({ params }: { params: { event_id: string } }) {
               rel="noopener noreferrer"
               target="_blank"
               className="ml-2 text-sm"
-              style={{ color: "#6441a5" }}
+              style={{ color: "#9146FD" }}
             >
-              <BsTwitch className="text-2xl" />
+              <BsTwitch className="text-2xl" size={28} />
             </Link>
           )}
         </div>
