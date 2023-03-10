@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 
+import Image from "next/image";
+import Link from "next/link";
+
 import { BACKEND_URL, CURR_YEAR } from "../../../../constants";
 import { log, round } from "../../../../utils";
 import PageLayout from "../../shared/layout";
@@ -151,7 +154,17 @@ const Page = ({ params }: { params: { team: number } }) => {
       years={yearOptions}
       includeSummary
     >
-      <div className="w-full text-center text-2xl lg:text-3xl mb-4">{teamData?.team}</div>
+      <div className="w-full flex items-center justify-center mb-4">
+        <div className="text-2xl lg:text-3xl">{teamData?.team}</div>
+        <Link
+          href={`https://www.thebluealliance.com/team/${team}`}
+          rel="noopener noreferrer"
+          target="_blank"
+          className="ml-4"
+        >
+          <Image src="/tba.png" alt="TBA" width={28} height={28} />
+        </Link>
+      </div>
       {year >= 2002 && year <= CURR_YEAR ? (
         <Tabs
           teamNum={team}
