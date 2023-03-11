@@ -21,6 +21,8 @@ export type TeamEventInsights = {
   auto_epa: number | string;
   teleop_epa: number | string;
   endgame_epa: number | string;
+  rp_1_epa: number | string;
+  rp_2_epa: number | string;
 };
 
 export type DetailedTeamEventInsights = {
@@ -69,6 +71,8 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamEvent.endgame_epa, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent.rp_1_epa, 1) ?? "N/A",
+        rp_2_epa: round(teamEvent.rp_2_epa, 1) ?? "N/A",
         rank: teamEvent.rank ?? -1,
       };
     })
@@ -142,6 +146,16 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
           columnHelper.accessor("endgame_epa", {
             cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
             header: "Endgame EPA",
+          }),
+        year >= 2016 &&
+          columnHelper.accessor("rp_1_epa", {
+            cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+            header: `${RPMapping?.[data.year.year]?.[0]} EPA`,
+          }),
+        year >= 2016 &&
+          columnHelper.accessor("rp_2_epa", {
+            cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+            header: `${RPMapping?.[data.year.year]?.[1]} EPA`,
           }),
       ].filter(Boolean),
     [year, data, maxRank, disableHighlight]
