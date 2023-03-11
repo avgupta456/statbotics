@@ -71,8 +71,8 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamEvent.endgame_epa, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent.rp_1_epa, 1) ?? "N/A",
-        rp_2_epa: round(teamEvent.rp_2_epa, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent.rp_1_epa, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent.rp_2_epa, 2) ?? "N/A",
         rank: teamEvent.rank ?? -1,
       };
     })
@@ -89,8 +89,8 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamEvent.endgame_epa, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent.rp_1_epa, 1) ?? "N/A",
-        rp_2_epa: round(teamEvent.rp_2_epa, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent.rp_1_epa, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent.rp_2_epa, 2) ?? "N/A",
         rank: teamEvent.rank ?? -1,
         rps: teamEvent.rps ?? 0,
         rps_per_match: teamEvent.rps_per_match.toFixed(2),
