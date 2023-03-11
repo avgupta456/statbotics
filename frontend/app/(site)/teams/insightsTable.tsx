@@ -95,7 +95,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         next_event_name: teamYear.next_event_name ?? "N/A",
         next_event_week: teamYear.next_event_week ?? "N/A",
         record: `${wins}-${losses}-${ties}`,
-        winrate: round((wins + ties / 2) / Math.max(wins + losses + ties, 1), 3),
+        winrate: ((wins + ties / 2) / Math.max(wins + losses + ties, 1)).toFixed(3),
       };
     })
     .sort((a, b) => b.norm_epa - a.norm_epa);

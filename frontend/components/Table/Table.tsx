@@ -126,7 +126,7 @@ const Table = ({
               }}
             />
           </div>
-          <span className="flex items-center gap-1">
+          <span className="w-24 flex items-center gap-1">
             <div>{`${pageIndex * pageSize + 1} - ${Math.min(
               (pageIndex + 1) * pageSize,
               numRows
