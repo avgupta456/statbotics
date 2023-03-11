@@ -88,7 +88,7 @@ const Navbar = () => {
     return (
       <WindowedSelect
         instanceId={"team-select"}
-        className="w-60 text-xs mr-2"
+        className="w-60 text-xs mr-2 text-gray-800"
         styles={{
           menu: (provided) => ({ ...provided, zIndex: 9999 }),
         }}
@@ -96,6 +96,7 @@ const Navbar = () => {
         onChange={(e: any) => {
           if (e) {
             router.push(e.value);
+            setToggle(false);
           }
         }}
         placeholder="Search Teams and Events"
