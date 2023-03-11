@@ -104,7 +104,7 @@ export const formatCell = (info: CellContext<any, number | string>) => {
   const value = info.getValue();
 
   return (
-    <div className="w-16 md:w-24 mx-auto h-full flex justify-center items-center">{value}</div>
+    <div className="w-16 md:w-20 mx-auto h-full flex justify-center items-center">{value}</div>
   );
 };
 
@@ -128,7 +128,7 @@ export const formatPercentileCell = (
   }
 
   return (
-    <div className="w-20 md:w-28 mx-auto h-full flex justify-center items-center">
+    <div className="w-16 md:w-20 mx-auto h-full flex justify-center items-center">
       <div className={classnames(color, "w-12 px-2 py-1 rounded-lg")}>{info.getValue()}</div>
     </div>
   );

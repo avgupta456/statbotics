@@ -51,7 +51,7 @@ const InsightsTable = ({
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "px-4 py-2",
+      "px-1 md:px-2 py-2",
       header.id === leftCol ? "rounded-tl-lg" : "",
       header.id === rightCol ? "rounded-tr-lg" : ""
     );
