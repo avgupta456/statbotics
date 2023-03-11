@@ -129,7 +129,12 @@ export type APITeamEvent = {
   losses: number;
   ties: number;
   count: number;
+  qual_wins: number;
+  qual_losses: number;
+  qual_ties: number;
+  qual_count: number;
   rank: number;
+  rps: number;
   rps_per_match: number;
   offseason: boolean;
 };

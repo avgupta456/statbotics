@@ -39,7 +39,12 @@ def unpack_team_event(
         losses=team_event.losses,
         ties=team_event.ties,
         count=team_event.count,
+        qual_wins=team_event.qual_wins,
+        qual_losses=team_event.qual_losses,
+        qual_ties=team_event.qual_ties,
+        qual_count=team_event.qual_count,
         rank=team_event.rank or -1,
+        rps=team_event.rps or 0,
         rps_per_match=team_event.rps_per_match or 0,
         offseason=team_event.offseason,
     )

@@ -51,14 +51,14 @@ const InsightsTable = ({
 
   const headerCellClassName = (header: any) =>
     classnames(
-      "px-4 py-2",
+      "px-1 md:px-2 py-2",
       header.id === leftCol ? "rounded-tl-lg" : "",
       header.id === rightCol ? "rounded-tr-lg" : ""
     );
 
   const rowClassName = (row: any) =>
     classnames(
-      "text-center h-full md:hover:bg-blue-100",
+      "text-center h-14 md:hover:bg-blue-100",
       row?.original?.record === "0-0-0" ? "bg-yellow-50" : ""
     );
 
