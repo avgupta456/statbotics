@@ -62,7 +62,7 @@ const Page = () => {
 
   return (
     <PageLayout title="Events" year={year} setYear={setYear}>
-      <Tabs data={data} error={error} />
+      <Tabs year={year} data={data} error={error} />
     </PageLayout>
   );
 };
