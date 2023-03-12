@@ -4,6 +4,7 @@ import React, { FC, useState } from "react";
 
 import { FilterBar, filterData } from "../../../components/filter";
 import { APIEvent } from "../../../components/types/api";
+import { CURR_WEEK } from "../../../constants";
 import { EventData } from "../types";
 
 const defaultFilters = {
@@ -37,18 +38,18 @@ const EventsLayout = ({
   const N = filteredData?.length;
   const ongoingN = filteredData?.filter((event) => event.status === "Ongoing").length;
   const ongoingEvents = filteredData
-    ?.filter((event) => event.status === "Ongoing")
-    .sort((a, b) => (a.end_date > b.end_date ? 1 : -1));
+    ?.filter((event) => event.status === "Ongoing" && event.week === CURR_WEEK)
+    .sort((a, b) => (b.epa_mean > a.epa_mean ? 1 : -1));
 
   const upcomingN = filteredData?.filter((event) => event.status === "Upcoming").length;
   const upcomingEvents = filteredData
-    ?.filter((event) => event.status === "Upcoming")
-    .sort((a, b) => (a.end_date > b.end_date ? 1 : -1));
+    ?.filter((event) => event.status === "Upcoming" && event.week >= CURR_WEEK)
+    .sort((a, b) => (a.week === b.week ? (b.epa_mean > a.epa_mean ? 1 : -1) : a.week - b.week));
 
   const completedN = filteredData?.filter((event) => event.status === "Completed").length;
   const completedEvents = filteredData
-    ?.filter((event) => event.status === "Completed")
-    .sort((a, b) => (a.end_date > b.end_date ? 1 : -1));
+    ?.filter((event) => event.status === "Completed" && event.week <= CURR_WEEK)
+    .sort((a, b) => (a.week === b.week ? (b.epa_mean > a.epa_mean ? 1 : -1) : a.week - b.week));
 
   return (
     <div className="w-full h-full flex flex-col items-center">
