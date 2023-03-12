@@ -90,6 +90,59 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
           cell: (info) => formatCell(info),
           header: "Week",
         }),
+        name === "Ongoing" &&
+          columnHelper.accessor("status_str", {
+            cell: (info) => formatCell(info),
+            header: "Status",
+          }),
+        columnHelper.accessor("epa_max", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Max EPA",
+        }),
+        columnHelper.accessor("epa_top8", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Top 8 EPA",
+        }),
+        columnHelper.accessor("epa_top24", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Top 24 EPA",
+        }),
+        columnHelper.accessor("epa_mean", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Mean EPA",
+        }),
+      ].filter(Boolean),
+    [data, name, disableHighlight]
+  );
+
+  const detailedColumns = useMemo<any>(
+    () =>
+      [
+        name === "Ongoing" &&
+          columnHelper.accessor("video", {
+            cell: (info) => (
+              <div className="w-16 md:w-20 mx-auto h-full flex justify-center items-center">
+                <Link
+                  href={info.getValue()}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="text-sm"
+                  style={{ color: "#9146FD" }}
+                >
+                  <BsTwitch size={20} />
+                </Link>
+              </div>
+            ),
+            header: "Video",
+          }),
+        columnHelper.accessor("name", {
+          cell: (info) => EventLink({ key: info.row.original.event_key, event: info.getValue() }),
+          header: "Name",
+        }),
+        columnHelper.accessor("week", {
+          cell: (info) => formatCell(info),
+          header: "Week",
+        }),
         columnHelper.accessor("date", {
           cell: (info) => (
             <div className="w-24 mx-auto h-full flex justify-center items-center">
@@ -155,6 +208,8 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
       title={"Event Insights"}
       data={eventInsightsData}
       columns={columns}
+      detailedData={eventInsightsData}
+      detailedColumns={detailedColumns}
       searchCols={["name"]}
       csvFilename={`${data.year.year}_event_insights.csv`}
       toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}

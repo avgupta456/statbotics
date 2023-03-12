@@ -107,7 +107,7 @@ const Table = ({
           ))}
         </tbody>
       </table>
-      {paginate && (
+      {paginate && numRows > 10 && (
         <div className="w-full h-10 flex items-center justify-center gap-2 mt-4 text-xs">
           <div className="flex gap-2">
             <div className="flex items-center">Rows / Page:</div>
