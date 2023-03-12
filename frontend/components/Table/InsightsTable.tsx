@@ -58,7 +58,7 @@ const InsightsTable = ({
   const cellClassName = (cell: any) => classnames("py-2");
 
   return (
-    <div className="w-full lg:w-fit lg:max-w-full text-sm mb-4">
+    <div className="w-full md:w-fit md:max-w-full text-sm mb-4">
       <div className="w-full px-2 py-1 flex items-center justify-center">
         <div className="flex-grow">
           {showSearch ? (
