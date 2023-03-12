@@ -3,6 +3,9 @@ from typing import List, Optional
 
 from src.db.models import Match
 from src.db.read import get_match as _get_match, get_matches as _get_matches
+from src.db.functions.upcoming_matches import (
+    get_upcoming_matches as _get_upcoming_matches,
+)
 from src.site.models import APIMatch
 from src.utils.alru_cache import alru_cache
 from src.utils.utils import get_match_name
@@ -86,5 +89,12 @@ async def get_matches(
     no_cache: bool = False,
 ) -> List[APIMatch]:
     match_objs: List[Match] = _get_matches(team=team, year=year, event=event)
+    matches = [unpack_match(match) for match in match_objs]
+    return (True, sorted(matches, key=lambda x: x.time))  # type: ignore
+
+
+@alru_cache(ttl=timedelta(minutes=1))
+async def get_upcoming_matches(no_cache: bool = False) -> List[APIMatch]:
+    match_objs: List[Match] = _get_upcoming_matches()
     matches = [unpack_match(match) for match in match_objs]
     return (True, sorted(matches, key=lambda x: x.time))  # type: ignore

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Response
 from src.site.aggregation import (
     get_event,
     get_match,
+    get_upcoming_matches,
     get_team_events,
     get_team_matches,
     get_year,
@@ -50,3 +51,10 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
     }
 
     return out
+
+
+@router.get("/upcoming_matches")
+@async_fail_gracefully
+async def read_upcoming_matches(response: Response) -> List[Dict[str, Any]]:
+    matches: List[APIMatch] = await get_upcoming_matches()
+    return [x.to_dict() for x in matches]
