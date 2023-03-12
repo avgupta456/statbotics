@@ -57,7 +57,7 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
 @router.get("/matches/{year}")
 @async_fail_gracefully
 async def read_upcoming_matches(response: Response, year: int) -> Dict[str, Any]:
-    upcoming_matches: List[Tuple[APIMatch, str]] = []
+    upcoming_matches: List[Tuple[APIMatch, str, Dict[int, float]]] = []
     if year == CURR_YEAR:
         upcoming_matches = await get_upcoming_matches()
 
@@ -66,7 +66,8 @@ async def read_upcoming_matches(response: Response, year: int) -> Dict[str, Any]
             {
                 "match": match.to_dict(),
                 "event_name": event_name,
+                "team_matches": team_matches,
             }
-            for (match, event_name) in upcoming_matches
+            for (match, event_name, team_matches) in upcoming_matches
         ],
     }

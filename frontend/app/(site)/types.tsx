@@ -21,7 +21,11 @@ export const emptyEventData: EventData = {
 };
 
 export type MatchData = {
-  upcoming_matches: { match: APIMatch; event_name: string }[];
+  upcoming_matches: {
+    match: APIMatch;
+    event_name: string;
+    team_matches: { [key: number]: number };
+  }[];
 };
 
 export const emptyMatchData: MatchData = {
