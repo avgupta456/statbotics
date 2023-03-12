@@ -98,7 +98,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         winrate: ((wins + ties / 2) / Math.max(wins + losses + ties, 1)).toFixed(3),
       };
     })
-    .sort((a, b) => b.norm_epa - a.norm_epa);
+    .sort((a, b) => b.total_epa - a.total_epa);
 
   const columns = useMemo<any>(() => {
     const showColumns = [
