@@ -15,13 +15,11 @@ const defaultFilters = {
 };
 
 const EventsLayout = ({
-  year,
   data,
   SectionComponent,
 }: {
-  year: number;
   data: EventData;
-  SectionComponent: FC<{ name: string; year: number; data: EventData }>;
+  SectionComponent: FC<{ name: string; data: EventData }>;
 }) => {
   // Currently always set to true --> No offseason events shown
   const [filterOffseason, setFilterOffseason] = useState(true);
@@ -29,7 +27,7 @@ const EventsLayout = ({
 
   const search = filters?.["search"] || "";
 
-  const filteredData: APIEvent[] | undefined = filterData(data, filters).filter(
+  const filteredData: APIEvent[] | undefined = filterData(data.events, filters).filter(
     (event: APIEvent) =>
       (!filterOffseason || !event.offseason) &&
       (event.key?.toLowerCase().includes(search.toLowerCase()) ||
@@ -65,7 +63,7 @@ const EventsLayout = ({
         if (count === 0) {
           return null;
         }
-        return <SectionComponent key={name} name={name} year={year} data={events} />;
+        return <SectionComponent key={name} name={name} data={{ year: data.year, events }} />;
       })}
       {N === 0 && (
         <div className="w-full h-full flex justify-center items-center">

@@ -39,6 +39,12 @@ def unpack_event(event: Event) -> APIEvent:
         status_str=get_event_status_str(event),
         qual_matches=event.qual_matches,
         current_match=event.current_match,
+        epa_acc=event.epa_acc,
+        epa_mse=event.epa_mse,
+        epa_max=event.epa_max,
+        epa_top8=event.epa_top8,
+        epa_top24=event.epa_top24,
+        epa_mean=event.epa_mean,
     )
 
 

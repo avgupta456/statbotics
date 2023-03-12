@@ -30,17 +30,16 @@ const EventCard = ({ event }: { event: APIEvent }) => {
   );
 };
 
-const Summary = ({ year, data }: { year: number; data: EventData }) => {
+const Summary = ({ data }: { data: EventData }) => {
   const [expanded, setExpanded] = useState("");
   const cutoffN = 4;
 
   return (
     <EventsLayout
-      year={year}
       data={data}
-      SectionComponent={({ name, data: events }) => {
-        const count = events.length;
-        const showEvents = events.slice(0, expanded === name ? undefined : cutoffN);
+      SectionComponent={({ name, data }) => {
+        const count = data?.events?.length || 0;
+        const showEvents = data?.events?.slice(0, expanded === name ? undefined : cutoffN) || [];
 
         return (
           <div className="w-full">

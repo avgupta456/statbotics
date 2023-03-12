@@ -280,12 +280,11 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         )}
       </div>
       <InsightsTable
+        title={"Simulation"}
         data={simulationData}
         columns={columns}
         detailedData={detailedSimData}
         detailedColumns={detailedColumns}
-        leftCol="rank"
-        rightCol="RPMean"
         searchCols={["num", "team"]}
         csvFilename={`${eventId}_simulation.csv`}
         includeKey={false}

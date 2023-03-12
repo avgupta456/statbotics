@@ -104,6 +104,12 @@ export type APIEvent = {
   status_str: string;
   qual_matches: number;
   current_match: number;
+  epa_acc?: number;
+  epa_mse?: number;
+  epa_max?: number;
+  epa_top8?: number;
+  epa_top24?: number;
+  epa_mean?: number;
 };
 
 export type APITeamEvent = {

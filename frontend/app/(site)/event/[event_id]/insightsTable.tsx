@@ -238,12 +238,11 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <InsightsTable
+        title={"Team Insights"}
         data={eventInsightsData}
         columns={columns}
         detailedData={detailedEventInsightsData}
         detailedColumns={detailedColumns}
-        leftCol="num"
-        rightCol="rp_2_epa"
         searchCols={["num", "team"]}
         csvFilename={`${eventId}_team_insights.csv`}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}

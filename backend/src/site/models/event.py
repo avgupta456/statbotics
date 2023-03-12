@@ -21,3 +21,9 @@ class APIEvent(APIModel):
     status_str: str
     qual_matches: int
     current_match: int
+    epa_acc: Optional[float]
+    epa_mse: Optional[float]
+    epa_max: Optional[float]
+    epa_top8: Optional[float]
+    epa_top24: Optional[float]
+    epa_mean: Optional[float]

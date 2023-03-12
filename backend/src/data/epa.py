@@ -702,8 +702,7 @@ def process_year(
         team_event.qual_count = qual_event_count
 
     # EVENTS
-    filtered_events = [e for e in events if e.status != "Upcoming"]
-    for event in filtered_events:
+    for event in events:
         event_key = event.key
 
         event_epas: List[float] = []
@@ -716,7 +715,12 @@ def process_year(
             event.epa_top8 = None if len(event_epas) < 8 else round(event_epas[7], 2)
             event.epa_top24 = None if len(event_epas) < 24 else round(event_epas[23], 2)
             event.epa_mean = round(sum(event_epas) / len(event_epas), 2)
-            event.epa_sd = round(stdev(event_epas), 2)
+
+            if len(event_epas) > 1:
+                event.epa_sd = round(stdev(event_epas), 2)
+
+        if event.status == "Upcoming":
+            continue
 
         event_acc, event_mse, event_count = event_stats[event_key]
         event.epa_acc = None if event_count == 0 else round(event_acc / event_count, 4)
