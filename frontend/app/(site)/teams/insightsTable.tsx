@@ -61,13 +61,13 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
     }
   }, [year]);
 
-  const allTeamYears = data.team_years.map((teamYear: APITeamYear, i) => {
-    return {
+  const allTeamYears = data.team_years
+    .sort((a, b) => b.total_epa - a.total_epa)
+    .map((teamYear: APITeamYear, i) => ({
       ...teamYear,
       // overwrite epa_rank with index (since we lazy update epa_rank)
       epa_rank: i + 1,
-    };
-  });
+    }));
 
   const numProjections = filterData(allTeamYears, filters).filter(
     (teamYear: APITeamYear) => teamYear.count === 0
@@ -97,8 +97,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         record: `${wins}-${losses}-${ties}`,
         winrate: ((wins + ties / 2) / Math.max(wins + losses + ties, 1)).toFixed(3),
       };
-    })
-    .sort((a, b) => b.total_epa - a.total_epa);
+    });
 
   const columns = useMemo<any>(() => {
     const showColumns = [
