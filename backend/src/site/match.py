@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
@@ -12,6 +12,7 @@ from src.site.aggregation import (
 )
 from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.utils.decorators import async_fail_gracefully
+from src.constants import CURR_YEAR
 
 router = APIRouter()
 
@@ -53,8 +54,19 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
     return out
 
 
-@router.get("/upcoming_matches")
+@router.get("/matches/{year}")
 @async_fail_gracefully
-async def read_upcoming_matches(response: Response) -> List[Dict[str, Any]]:
-    matches: List[APIMatch] = await get_upcoming_matches()
-    return [x.to_dict() for x in matches]
+async def read_upcoming_matches(response: Response, year: int) -> Dict[str, Any]:
+    upcoming_matches: List[Tuple[APIMatch, str]] = []
+    if year == CURR_YEAR:
+        upcoming_matches = await get_upcoming_matches()
+
+    return {
+        "upcoming_matches": [
+            {
+                "match": match.to_dict(),
+                "event_name": event_name,
+            }
+            for (match, event_name) in upcoming_matches
+        ],
+    }

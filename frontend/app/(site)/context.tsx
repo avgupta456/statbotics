@@ -1,7 +1,7 @@
 import React, { createContext } from "react";
 
 import { CURR_YEAR } from "../../constants";
-import { EventData, TeamYearData } from "./types";
+import { EventData, MatchData, TeamYearData } from "./types";
 
 export const AppContext = createContext({
   teamYearMiniDataDict: {},
@@ -10,6 +10,8 @@ export const AppContext = createContext({
   setTeamYearDataDict: (teamYearDataDict: { [key: number]: TeamYearData }) => {},
   eventDataDict: {},
   setEventDataDict: (eventDataDict: { [key: number]: EventData }) => {},
+  matchDataDict: {},
+  setMatchDataDict: (matchDataDict: { [key: number]: MatchData }) => {},
   year: CURR_YEAR,
   setYear: (year: number) => {},
 } as {
@@ -19,6 +21,8 @@ export const AppContext = createContext({
   setTeamYearDataDict: any;
   eventDataDict: { [key: number]: EventData };
   setEventDataDict: any;
+  matchDataDict: { [key: number]: MatchData };
+  setMatchDataDict: any;
   year: number;
   setYear: (year: number) => void;
 });

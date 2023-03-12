@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from src.db.models import Match
 from src.db.read import get_match as _get_match, get_matches as _get_matches
@@ -94,7 +94,8 @@ async def get_matches(
 
 
 @alru_cache(ttl=timedelta(minutes=1))
-async def get_upcoming_matches(no_cache: bool = False) -> List[APIMatch]:
-    match_objs: List[Match] = _get_upcoming_matches()
-    matches = [unpack_match(match) for match in match_objs]
-    return (True, sorted(matches, key=lambda x: x.time))  # type: ignore
+async def get_upcoming_matches(no_cache: bool = False) -> List[Tuple[Match, str]]:
+    match_objs: List[Tuple[Match, str]] = _get_upcoming_matches()
+    matches = [(unpack_match(match), event_name) for (match, event_name) in match_objs]
+
+    return (True, sorted(matches, key=lambda x: x[0].time))  # type: ignore
