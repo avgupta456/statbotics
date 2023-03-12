@@ -71,9 +71,13 @@ async def get_team_years(
     year: Optional[int] = None,
     score_mean: Optional[float] = None,
     score_sd: Optional[float] = None,
+    limit: Optional[int] = None,
+    metric: Optional[str] = None,
     no_cache: bool = False,
 ) -> List[APITeamYear]:
-    team_year_objs: List[TeamYear] = _get_team_years(team=team, year=year)  # type: ignore
+    team_year_objs: List[TeamYear] = _get_team_years(
+        team=team, year=year, limit=limit, metric=metric
+    )
 
     def epa_to_unitless_epa(epa: float) -> float:
         if score_mean is None or score_sd is None:

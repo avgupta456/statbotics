@@ -12,13 +12,22 @@ router = APIRouter()
 
 @router.get("/team_years/{year}")
 @async_fail_gracefully
-async def read_team_years(response: Response, year: int) -> Dict[str, Any]:
+async def read_team_years(
+    response: Response,
+    year: int,
+    limit: Optional[int] = None,
+    metric: Optional[str] = None,
+) -> Dict[str, Any]:
     year_obj: Optional[APIYear] = await get_year(year=year)
     if year_obj is None:
         raise Exception("Year not found")
 
     team_years: List[APITeamYear] = await get_team_years(
-        year=year, score_mean=year_obj.score_mean, score_sd=year_obj.score_sd
+        year=year,
+        score_mean=year_obj.score_mean,
+        score_sd=year_obj.score_sd,
+        limit=limit,
+        metric=metric,
     )
     team_years = [x for x in team_years if x.count > 0 or year == CURR_YEAR]
 
