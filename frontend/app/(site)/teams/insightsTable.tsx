@@ -241,12 +241,11 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         />
       </div>
       <InsightsTable
+        title={"Team Insights"}
         data={yearInsightsData}
         columns={columns}
         detailedData={yearInsightsData}
         detailedColumns={detailedColumns}
-        leftCol="num"
-        rightCol="record"
         searchCols={["num", "team"]}
         csvFilename={`${year}_insights.csv`}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}

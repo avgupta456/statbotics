@@ -21,20 +21,19 @@ const TeamLineChart = ({
   const [splitEvents, setSplitEvents] = useState(false);
 
   // VARIABLES
+  let filteredData = data.filter((teamMatch: APITeamMatch) => teamMatch.status === "Completed");
 
-  let arr = data
-    .filter((teamMatch: APITeamMatch) => teamMatch.status === "Completed")
-    .map((teamMatch: APITeamMatch, i: number) => ({
-      x: i,
-      event: teamMatch.match.split("_")[0],
-      label: data[i - 1]?.match || "Start",
-      y: teamMatch[yAxis.value],
-    }));
+  let arr = filteredData.map((teamMatch: APITeamMatch, i: number) => ({
+    x: i,
+    event: teamMatch.match.split("_")[0],
+    label: data[i - 1]?.match || "Start",
+    y: teamMatch[yAxis.value],
+  }));
 
   // TODO: fix this to the actual post-match EPA
-  const lastEPA = data[data.length - 1]?.[yAxis.value];
-  const lastEvent = data[data.length - 1]?.match.split("_")[0];
-  arr.push({ x: data.length, event: lastEvent, label: "End", y: lastEPA });
+  const lastEPA = filteredData[filteredData.length - 1]?.[yAxis.value];
+  const lastEvent = filteredData[filteredData.length - 1]?.match.split("_")[0];
+  arr.push({ x: filteredData.length, event: lastEvent, label: "End", y: lastEPA });
 
   let teamData = [
     {

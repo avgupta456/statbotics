@@ -1,22 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { DebounceInput } from "react-debounce-input";
 
 import Link from "next/link";
 
-import { FilterBar, filterData } from "../../../components/filter";
 import { APIEvent } from "../../../components/types/api";
 import { truncate } from "../../../utils";
 import { EventData } from "../types";
-
-const defaultFilters = {
-  week: "",
-  country: "",
-  state: "",
-  district: "",
-  search: "",
-};
+import EventsLayout from "./shared";
 
 const EventCard = ({ event }: { event: APIEvent }) => {
   let location = event.country;
@@ -40,71 +31,31 @@ const EventCard = ({ event }: { event: APIEvent }) => {
 };
 
 const Summary = ({ data }: { data: EventData }) => {
-  // Currently always set to true --> No offseason events shown
-  const [filterOffseason, setFilterOffseason] = useState(true);
-  const [filters, setFilters] = useState(defaultFilters);
   const [expanded, setExpanded] = useState("");
-
-  const search = filters?.["search"] || "";
-
   const cutoffN = 4;
 
-  const filteredData: APIEvent[] | undefined = filterData(data, filters).filter(
-    (event: APIEvent) =>
-      (!filterOffseason || !event.offseason) &&
-      (event.key?.toLowerCase().includes(search.toLowerCase()) ||
-        event.name?.toLowerCase().includes(search.toLowerCase()))
-  );
-
-  const N = filteredData?.length;
-  const ongoingN = filteredData?.filter((event) => event.status === "Ongoing").length;
-  const ongoingEvents = filteredData
-    ?.filter((event) => event.status === "Ongoing")
-    .sort((a, b) => (a.end_date > b.end_date ? 1 : -1))
-    .slice(0, expanded === "ongoing" ? undefined : cutoffN);
-
-  const upcomingN = filteredData?.filter((event) => event.status === "Upcoming").length;
-  const upcomingEvents = filteredData
-    ?.filter((event) => event.status === "Upcoming")
-    .sort((a, b) => (a.end_date > b.end_date ? 1 : -1))
-    .slice(0, expanded === "upcoming" ? undefined : cutoffN);
-
-  const completedN = filteredData?.filter((event) => event.status === "Completed").length;
-  const completedEvents = filteredData
-    ?.filter((event) => event.status === "Completed")
-    .sort((a, b) => (a.end_date > b.end_date ? 1 : -1))
-    .slice(0, expanded === "completed" ? undefined : cutoffN);
-
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <div className="flex justify-center mb-4">
-        <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
-      </div>
-      {[
-        { count: ongoingN, events: ongoingEvents, name: "Ongoing" },
-        { count: upcomingN, events: upcomingEvents, name: "Upcoming" },
-        { count: completedN, events: completedEvents, name: "Completed" },
-      ].map(({ count, events, name }) => {
-        if (count === 0) {
-          return null;
-        }
+    <EventsLayout
+      data={data}
+      SectionComponent={({ name, data }) => {
+        const count = data?.events?.length || 0;
+        const showEvents = data?.events?.slice(0, expanded === name ? undefined : cutoffN) || [];
+
         return (
-          <div key={`${name}_section`} className="w-full">
+          <div className="w-full">
             <div className="w-full flex mt-4 mb-4 items-center">
               <div className="text-xl md:text-2xl font-bold">{`${name} Events (${count})`}</div>
               {count > cutoffN && (
                 <button
                   className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
-                  onClick={() =>
-                    setExpanded(expanded === name.toLowerCase() ? "" : name.toLowerCase())
-                  }
+                  onClick={() => setExpanded(expanded === name ? "" : name)}
                 >
-                  {expanded === name.toLowerCase() ? "Show Less" : "Show More"}
+                  {expanded === name ? "Show Less" : "Show More"}
                 </button>
               )}
             </div>
             <div className="w-full flex flex-wrap justify-center items-center mb-4">
-              {events.map((event) => (
+              {showEvents.map((event) => (
                 <div key={event.key} className="w-full md:w-1/2 lg:w-1/4">
                   <EventCard event={event} />
                 </div>
@@ -112,14 +63,8 @@ const Summary = ({ data }: { data: EventData }) => {
             </div>
           </div>
         );
-      })}
-      {N === 0 && (
-        <div className="w-full h-full flex justify-center items-center">
-          <div>No Events Found</div>
-        </div>
-      )}
-      <div className="h-4" />
-    </div>
+      }}
+    />
   );
 };
 

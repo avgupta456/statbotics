@@ -25,9 +25,13 @@ async def read_all_events(response: Response) -> List[Dict[str, Any]]:
 
 @router.get("/events/{year}")
 @async_fail_gracefully
-async def read_events(response: Response, year: int) -> List[Dict[str, Any]]:
+async def read_events(response: Response, year: int) -> Dict[str, Any]:
+    year_obj: Optional[APIYear] = await get_year(year=year)
+    if year_obj is None:
+        raise Exception("Year not found")
+
     events: List[APIEvent] = await get_events(year=year)
-    return [x.to_dict() for x in events]
+    return {"year": year_obj.to_dict(), "events": [x.to_dict() for x in events]}
 
 
 @router.get("/event/{event_id}")

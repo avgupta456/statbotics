@@ -12,23 +12,21 @@ import Table from "./Table";
 import { TableKey } from "./shared";
 
 const InsightsTable = ({
+  title,
   data,
   columns,
   detailedData = [],
   detailedColumns = [],
-  leftCol,
-  rightCol,
   searchCols,
   csvFilename,
   toggleDisableHighlight,
   includeKey = true,
 }: {
+  title: string;
   data: any[];
   columns: ColumnDef<any, any>[];
   detailedData?: any[];
   detailedColumns?: ColumnDef<any, any>[];
-  leftCol: string;
-  rightCol: string;
   searchCols: string[];
   csvFilename: string;
   toggleDisableHighlight?: () => void;
@@ -49,12 +47,7 @@ const InsightsTable = ({
 
   const headerClassName = () => "border-b-2 border-gray-800";
 
-  const headerCellClassName = (header: any) =>
-    classnames(
-      "px-1 md:px-2 py-2",
-      header.id === leftCol ? "rounded-tl-lg" : "",
-      header.id === rightCol ? "rounded-tr-lg" : ""
-    );
+  const headerCellClassName = (header: any) => classnames("px-1 md:px-2 py-2");
 
   const rowClassName = (row: any) =>
     classnames(
@@ -62,12 +55,7 @@ const InsightsTable = ({
       row?.original?.record === "0-0-0" ? "bg-yellow-50" : ""
     );
 
-  const cellClassName = (cell: any) =>
-    classnames(
-      "py-2",
-      cell.row.index === data.length - 1 && cell.column.id === leftCol ? "rounded-bl-lg" : "",
-      cell.row.index === data.length - 1 && cell.column.id === rightCol ? "rounded-br-lg" : ""
-    );
+  const cellClassName = (cell: any) => classnames("py-2");
 
   return (
     <div className="w-full lg:w-fit lg:max-w-full text-sm mb-4">
@@ -91,7 +79,7 @@ const InsightsTable = ({
               />
             </div>
           ) : (
-            <div className="text-lg text-gray-800">Team Insights</div>
+            <div className="text-lg text-gray-800">{title}</div>
           )}
         </div>
         <div className="tooltip" data-tip="Search">
