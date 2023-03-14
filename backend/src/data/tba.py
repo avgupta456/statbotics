@@ -129,9 +129,13 @@ def process_year(
             event_teams.add(team)
             year_teams.add(team)
             # Store closest upcoming/ongoing event
-            if event_obj.week >= CURR_WEEK and (
-                team not in team_next_event_dict
-                or team_next_event_dict[team][2] > event_obj.week
+            if (
+                event_obj.week >= CURR_WEEK
+                and event_obj.status != "Completed"
+                and (
+                    team not in team_next_event_dict
+                    or team_next_event_dict[team][2] > event_obj.week
+                )
             ):
                 team_next_event_dict[team] = (
                     event_obj.key,
