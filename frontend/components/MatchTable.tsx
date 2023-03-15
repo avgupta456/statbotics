@@ -29,6 +29,7 @@ const MatchRow = ({
   compLevel,
   match,
   showVideo,
+  rawTitle,
   stacked,
 }: {
   year: number;
@@ -37,6 +38,7 @@ const MatchRow = ({
   compLevel: string;
   match: APIMatch;
   showVideo: boolean;
+  rawTitle: boolean;
   stacked: boolean;
 }) => {
   let alliance = match.red.includes(teamNum) ? "red" : "";
@@ -66,10 +68,15 @@ const MatchRow = ({
       href={`/match/${match.key}`}
       className={classnames(
         "h-full flex justify-center items-center text-blue-600 hover:text-blue-700 cursor-pointer border-r border-b border-gray-300",
-        stacked ? "w-2/9" : "w-1/7"
+        stacked ? "w-2/9" : "w-1/7",
+        rawTitle && "text-xs lg:text-sm"
       )}
     >
-      {formatMatch(compLevel, match.match_number, match.set_number)}
+      {rawTitle
+        ? `${match.event} - ${match.comp_level}${
+            match.comp_level === "qm" ? "" : match.set_number + "-"
+          }${match.match_number}`
+        : formatMatch(compLevel, match.match_number, match.set_number)}
     </Link>
   );
 
@@ -281,7 +288,9 @@ const MatchTable = ({
   foulRate,
   showHeaders = true,
   showSubHeaders = true,
+  sorted = true,
   showVideo = true,
+  rawTitle = false,
   stacked = false,
 }: {
   year: number;
@@ -290,7 +299,9 @@ const MatchTable = ({
   foulRate: number;
   showHeaders?: boolean;
   showSubHeaders?: boolean;
+  sorted?: boolean;
   showVideo?: boolean;
+  rawTitle?: boolean;
   stacked?: boolean;
 }) => {
   if (matches.length === 0) {
@@ -337,38 +348,55 @@ const MatchTable = ({
           </div>
         </div>
       )}
-      {uniqueCompLevels.map((compLevel) => (
-        <div key={`section-${compLevel}`}>
-          {showSubHeaders && (
-            <div
-              style={{ backgroundColor: lightGray }}
-              className={classnames(
-                "w-full text-center border-t-2 border-b-2 border-gray-300",
-                stacked ? "h-16" : "h-8"
+      {sorted
+        ? uniqueCompLevels.map((compLevel) => (
+            <div key={`section-${compLevel}`}>
+              {showSubHeaders && (
+                <div
+                  style={{ backgroundColor: lightGray }}
+                  className={classnames(
+                    "w-full text-center border-t-2 border-b-2 border-gray-300",
+                    stacked ? "h-16" : "h-8"
+                  )}
+                  key={`header-${compLevel}`}
+                >
+                  {compLevelFullNames[compLevel]}
+                </div>
               )}
-              key={`header-${compLevel}`}
-            >
-              {compLevelFullNames[compLevel]}
+              {matches
+                .filter((match) => match.comp_level === compLevel)
+                .map((match) => {
+                  return (
+                    <MatchRow
+                      key={match.key}
+                      year={year}
+                      foulRate={foulRate}
+                      teamNum={teamNum}
+                      compLevel={compLevel}
+                      match={match}
+                      showVideo={showVideo}
+                      rawTitle={rawTitle}
+                      stacked={stacked}
+                    />
+                  );
+                })}
             </div>
-          )}
-          {matches
-            .filter((match) => match.comp_level === compLevel)
-            .map((match) => {
-              return (
-                <MatchRow
-                  key={match.key}
-                  year={year}
-                  foulRate={foulRate}
-                  teamNum={teamNum}
-                  compLevel={compLevel}
-                  match={match}
-                  showVideo={showVideo}
-                  stacked={stacked}
-                />
-              );
-            })}
-        </div>
-      ))}
+          ))
+        : matches.map((match) => {
+            return (
+              <MatchRow
+                key={match.key}
+                year={year}
+                foulRate={foulRate}
+                teamNum={teamNum}
+                compLevel={match.comp_level}
+                match={match}
+                showVideo={showVideo}
+                rawTitle={rawTitle}
+                stacked={stacked}
+              />
+            );
+          })}
     </div>
   );
 };

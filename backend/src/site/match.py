@@ -2,12 +2,14 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
+from src.constants import CURR_YEAR
 from src.site.aggregation import (
     get_event,
     get_match,
-    get_upcoming_matches,
+    get_noteworthy_matches,
     get_team_events,
     get_team_matches,
+    get_upcoming_matches,
     get_year,
 )
 from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
@@ -64,8 +66,8 @@ async def read_upcoming_matches(
     minutes: int = -1,
     limit: int = 100,
     metric: str = "predicted_time",
-) -> List[Dict[str, Any]]:
-    upcoming_matches: List[Tuple[APIMatch, str, Dict[int, float]]] = []
+) -> Dict[str, Any]:
+    upcoming_matches: List[Tuple[APIMatch, str]] = []
     upcoming_matches = await get_upcoming_matches(
         country=country,
         state=state,
@@ -76,11 +78,52 @@ async def read_upcoming_matches(
         metric=metric,
     )
 
-    return [
-        {
-            "match": match.to_dict(),
-            "event_name": event_name,
-            "team_matches": team_matches,
-        }
-        for (match, event_name, team_matches) in upcoming_matches
-    ]
+    year_obj = await get_year(year=CURR_YEAR)
+    if year_obj is None:
+        raise Exception("Year not found")
+
+    foul_rate = year_obj.foul_rate
+
+    return {
+        "matches": [
+            {
+                "match": match.to_dict(),
+                "event_name": event_name,
+            }
+            for (match, event_name) in upcoming_matches
+        ],
+        "foul_rate": foul_rate,
+    }
+
+
+@router.get("/noteworthy_matches/{year}")
+@async_fail_gracefully
+async def read_noteworthy_matches(
+    response: Response,
+    year: int,
+    country: Optional[str] = None,
+    state: Optional[str] = None,
+    district: Optional[str] = None,
+    playoff: Optional[str] = None,
+    week: Optional[int] = None,
+) -> Dict[str, Any]:
+    noteworthy_matches: Dict[str, List[APIMatch]] = {}
+    noteworthy_matches = await get_noteworthy_matches(
+        year=year,
+        country=country,
+        state=state,
+        district=district,
+        playoff={None: None, "quals": False, "elims": True}[playoff],
+        week=week,
+    )
+
+    year_obj = await get_year(year=year)
+    if year_obj is None:
+        raise Exception("Year not found")
+
+    foul_rate = year_obj.foul_rate
+
+    return {
+        "matches": {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()},
+        "foul_rate": foul_rate,
+    }

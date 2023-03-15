@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Set, Tuple
 
 from src.constants import CURR_WEEK, CURR_YEAR, MAX_TEAM
 from src.data.utils import objs_type
-from src.db.functions.remove_teams_no_events import remove_teams_with_no_events
+from src.db.functions import remove_teams_with_no_events
 from src.db.models import ETag, Event, Match, Team, TeamEvent, TeamMatch, TeamYear
 from src.db.models.create import (
     create_event_obj,

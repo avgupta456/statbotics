@@ -27,9 +27,9 @@ export default function Home() {
           <div className="mb-4">Data Analytics</div>
         </div>
         <div className="text-sm sm:text-base sm:p-4 xl:w-2/3 text-center mb-4">
-          Our novel <strong>Expected Points Added (EPA)</strong> metric is a highly predictive
-          measure of team performance. Use our live-updating data to find actionable insights or
-          analyze historical trends.
+          The <strong>Expected Points Added (EPA)</strong> metric is a highly predictive measure of
+          team performance. Use our live-updating data to find actionable insights or analyze
+          historical trends.
         </div>
         <div className="flex flex-row justify-center items-center">
           <Link

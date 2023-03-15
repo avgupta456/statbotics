@@ -1,11 +1,14 @@
 from datetime import timedelta
 from typing import Dict, List, Optional, Tuple
 
-from src.db.models import Match
-from src.db.read import get_match as _get_match, get_matches as _get_matches
+from src.db.functions.noteworthy_matches import (
+    get_noteworthy_matches as _get_noteworthy_matches,
+)
 from src.db.functions.upcoming_matches import (
     get_upcoming_matches as _get_upcoming_matches,
 )
+from src.db.models import Match
+from src.db.read import get_match as _get_match, get_matches as _get_matches
 from src.site.models import APIMatch
 from src.utils.alru_cache import alru_cache
 from src.utils.utils import get_match_name
@@ -103,8 +106,8 @@ async def get_upcoming_matches(
     limit: int,
     metric: str,
     no_cache: bool = False,
-) -> List[Tuple[Match, str, Dict[int, float]]]:
-    match_objs: List[Tuple[Match, str, Dict[int, float]]] = _get_upcoming_matches(
+) -> List[Tuple[Match, str]]:
+    match_objs: List[Tuple[Match, str]] = _get_upcoming_matches(
         country=country,
         state=state,
         district=district,
@@ -114,9 +117,29 @@ async def get_upcoming_matches(
         metric=metric,
     )
 
-    matches = [
-        (unpack_match(match), event_name, team_matches)
-        for (match, event_name, team_matches) in match_objs
-    ]
+    matches = [(unpack_match(match), event_name) for (match, event_name) in match_objs]
+
+    return (True, matches)  # type: ignore
+
+
+@alru_cache(ttl=timedelta(minutes=1))
+async def get_noteworthy_matches(
+    year: int,
+    country: Optional[str],
+    state: Optional[str],
+    district: Optional[str],
+    playoff: Optional[bool],
+    week: Optional[int],
+) -> Dict[str, List[Match]]:
+    match_objs = _get_noteworthy_matches(
+        year=year,
+        country=country,
+        state=state,
+        district=district,
+        playoff=playoff,
+        week=week,
+    )
+
+    matches = {k: [unpack_match(match) for match in v] for k, v in match_objs.items()}
 
     return (True, matches)  # type: ignore

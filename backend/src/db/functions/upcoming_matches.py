@@ -1,17 +1,16 @@
 # type: ignore
 
 from datetime import datetime
-from typing import Dict, List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 from sqlalchemy import func, text
 from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction
 
-from src.constants import CURR_YEAR, CURR_WEEK
+from src.constants import CURR_YEAR
 from src.db.main import Session
 from src.db.models.event import EventORM
-from src.db.models.match import MatchORM, Match
-from src.db.models.team_event import TeamEventORM
+from src.db.models.match import Match, MatchORM
 
 
 def get_upcoming_matches(
@@ -22,7 +21,7 @@ def get_upcoming_matches(
     minutes: int,
     limit: int,
     metric: str,
-) -> List[Tuple[Match, str, Dict[int, float]]]:
+) -> List[Tuple[Match, str]]:
     curr_timestamp = int(datetime.now().timestamp()) - 60 * 5  # 5 minutes
 
     if minutes == -1:
@@ -70,47 +69,8 @@ def get_upcoming_matches(
 
         matches = matches.limit(limit).all()
 
-        match_teams: List[List[int]] = [
-            [
-                match.red_1,
-                match.red_2,
-                match.red_3,
-                match.blue_1,
-                match.blue_2,
-                match.blue_3,
-            ]
-            for (match, *args) in matches
-        ]
-        match_teams = set([team for team_list in match_teams for team in team_list])
-
-        team_events = (
-            session.query(TeamEventORM.team, TeamEventORM.epa_end)
-            .filter(
-                (TeamEventORM.year == CURR_YEAR)
-                & (TeamEventORM.week == CURR_WEEK)
-                & (TeamEventORM.team.in_(match_teams))
-            )
-            .all()
-        )
-
-        team_events_dict = {team: epa for (team, epa) in team_events}
-
         return [
-            (
-                Match.from_dict(match.__dict__),
-                event_name,
-                {
-                    team: team_events_dict.get(team, 0)
-                    for team in [
-                        match.red_1,
-                        match.red_2,
-                        match.red_3,
-                        match.blue_1,
-                        match.blue_2,
-                        match.blue_3,
-                    ]
-                },
-            )
+            (Match.from_dict(match.__dict__), event_name)
             for (match, event_name, *args) in matches
         ]
 

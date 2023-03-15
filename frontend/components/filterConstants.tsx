@@ -137,8 +137,8 @@ export const competingOptions = [
 
 export const playoffOptions = [
   { value: "", label: "All" },
-  { value: "quals", label: "Quals" },
-  { value: "elims", label: "Elims" },
+  { value: "quals", label: "Quals Only" },
+  { value: "elims", label: "Elims Only" },
 ];
 
 export const filterMatchesOptions = [
@@ -146,11 +146,11 @@ export const filterMatchesOptions = [
   { value: 30, label: "30 Minutes" },
   { value: 60, label: "1 Hour" },
   { value: 120, label: "2 Hours" },
-  { value: -1, label: "All Matches" },
+  { value: "", label: "All Matches" },
 ];
 
 export const sortMatchesOptions = [
-  { value: "predicted_time", label: "Time" },
+  { value: "predicted_time", label: "Sort by Time" },
   { value: "max_epa", label: "Max EPA" },
   { value: "sum_epa", label: "Sum EPA" },
   { value: "diff_epa", label: "Diff EPA" },

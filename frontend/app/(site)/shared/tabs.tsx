@@ -15,6 +15,8 @@ const TabsSection = ({
 }) => {
   const [activeTab, setActiveTab] = useState(0);
 
+  if (activeTab >= tabs.length) setActiveTab(0);
+
   return (
     <div className="w-full flex-grow flex flex-col">
       <div className="w-full flex flex-row text-sm md:text-base overflow-x-scroll md:overflow-x-auto scrollbar-hide">

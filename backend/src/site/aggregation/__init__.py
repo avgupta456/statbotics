@@ -1,5 +1,10 @@
 from src.site.aggregation.event import get_event, get_events
-from src.site.aggregation.match import get_match, get_matches, get_upcoming_matches
+from src.site.aggregation.match import (
+    get_match,
+    get_matches,
+    get_noteworthy_matches,
+    get_upcoming_matches,
+)
 from src.site.aggregation.team import get_team, get_teams
 from src.site.aggregation.team_event import get_team_events
 from src.site.aggregation.team_match import get_team_matches
@@ -12,6 +17,7 @@ __all__ = [
     "get_match",
     "get_matches",
     "get_upcoming_matches",
+    "get_noteworthy_matches",
     "get_team_events",
     "get_team_matches",
     "get_team_year",
