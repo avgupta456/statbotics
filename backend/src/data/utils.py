@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Tuple
 
-from src.db.functions.clear_year import clear_year
+from src.db.functions import clear_year
 from src.db.models import ETag, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import (
     get_events as get_events_db,

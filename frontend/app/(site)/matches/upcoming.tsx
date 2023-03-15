@@ -12,12 +12,20 @@ import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round, truncate } from "../../../utils";
 
 type MatchData = {
-  match: APIMatch;
-  event_name: string;
-  team_matches: { [key: number]: number };
+  matches: {
+    match: APIMatch;
+    event_name: string;
+  }[];
+  foul_rate: number;
 };
 
-const UpcomingMatch = ({ match }: { match: MatchData }) => {
+const UpcomingMatch = ({
+  foulRate,
+  match,
+}: {
+  foulRate: number;
+  match: { match: APIMatch; event_name: string };
+}) => {
   const eventId = match.match.event;
 
   return (
@@ -55,7 +63,7 @@ const UpcomingMatch = ({ match }: { match: MatchData }) => {
           year={CURR_YEAR}
           teamNum={0}
           matches={[match.match]}
-          foulRate={0}
+          foulRate={foulRate}
           showHeaders={true}
           showSubHeaders={false}
           showVideo={false}
@@ -71,13 +79,14 @@ const defaultFilters = {
   state: "",
   district: "",
   playoff: "",
-  filterMatches: -1,
+  filterMatches: "",
   sortMatches: "predicted_time",
 };
 
 async function getMatchData(country, state, district, playoff, filterMatches, sortMatches) {
   const start = performance.now();
-  let suffix = `?minutes=${filterMatches}&limit=20&metric=${sortMatches}`;
+  let suffix = `?limit=20&metric=${sortMatches}`;
+  if (filterMatches) suffix += `&minutes=${filterMatches}`;
   if (country) suffix += `&country=${country}`;
   if (state) suffix += `&state=${state}`;
   if (district) suffix += `&district=${district}`;
@@ -96,7 +105,7 @@ async function getMatchData(country, state, district, playoff, filterMatches, so
 const UpcomingMatches = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [data, setData] = useState<MatchData[]>([]);
+  const [data, setData] = useState<MatchData>(null);
   const [filters, setFilters] = useState(defaultFilters);
 
   useEffect(() => {
@@ -130,8 +139,10 @@ const UpcomingMatches = () => {
     <div className="flex flex-col">
       <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
       <div className="mt-8 flex flex-col gap-8">
-        {data.length > 0 && !loading ? (
-          data.map((match) => <UpcomingMatch key={match.match.key} match={match} />)
+        {data && data?.matches?.length > 0 && !loading ? (
+          data.matches.map((match) => (
+            <UpcomingMatch key={match.match.key} foulRate={data.foul_rate} match={match} />
+          ))
         ) : (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
             <div className="text-gray-700 mt-4">

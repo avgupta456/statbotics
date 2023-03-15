@@ -106,8 +106,8 @@ async def get_upcoming_matches(
     limit: int,
     metric: str,
     no_cache: bool = False,
-) -> List[Tuple[Match, str, Dict[int, float]]]:
-    match_objs: List[Tuple[Match, str, Dict[int, float]]] = _get_upcoming_matches(
+) -> List[Tuple[Match, str]]:
+    match_objs: List[Tuple[Match, str]] = _get_upcoming_matches(
         country=country,
         state=state,
         district=district,
@@ -117,10 +117,7 @@ async def get_upcoming_matches(
         metric=metric,
     )
 
-    matches = [
-        (unpack_match(match), event_name, team_matches)
-        for (match, event_name, team_matches) in match_objs
-    ]
+    matches = [(unpack_match(match), event_name) for (match, event_name) in match_objs]
 
     return (True, matches)  # type: ignore
 

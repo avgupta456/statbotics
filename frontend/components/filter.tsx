@@ -84,8 +84,8 @@ export const FilterBar = ({
         { key: "state", label: stateLabel, options: stateOptions },
         { key: "district", label: "District", options: districtOptions },
         { key: "competing", label: "Competing", options: competingOptions },
-        { key: "playoff", label: "Playoff", options: playoffOptions },
-        { key: "filterMatches", label: "Within", options: filterMatchesOptions },
+        { key: "playoff", label: "Comp Level", options: playoffOptions },
+        { key: "filterMatches", label: "Time Range", options: filterMatchesOptions },
         { key: "sortMatches", label: "Sort Matches", options: sortMatchesOptions },
       ].map((filter) => {
         if (filterKeys.includes(filter.key)) {

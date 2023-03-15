@@ -9,19 +9,24 @@ import { log, round } from "../../../utils";
 const lightGray = "#F0F0F0";
 
 type MatchData = {
-  high_score: APIMatch[];
-  combined_score: APIMatch[];
-  losing_score: APIMatch[];
+  matches: {
+    high_score: APIMatch[];
+    combined_score: APIMatch[];
+    losing_score: APIMatch[];
+  };
+  foul_rate: number;
 };
 
 const NoteworthySection = ({
   year,
+  foulRate,
   matches,
   mainHeader,
   header,
   accessor,
 }: {
   year: number;
+  foulRate: number;
   matches: APIMatch[];
   mainHeader: string;
   header: string;
@@ -52,7 +57,7 @@ const NoteworthySection = ({
             year={year}
             teamNum={0}
             matches={matches}
-            foulRate={0}
+            foulRate={foulRate}
             showHeaders={true}
             showSubHeaders={false}
             sorted={false}
@@ -136,7 +141,8 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
           <>
             <NoteworthySection
               year={year}
-              matches={data.high_score}
+              foulRate={data.foul_rate}
+              matches={data.matches.high_score}
               mainHeader="Highest Clean Scores"
               header={"Highest Score"}
               accessor={(match) =>
@@ -152,7 +158,8 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
             </div>
             <NoteworthySection
               year={year}
-              matches={data.combined_score}
+              foulRate={data.foul_rate}
+              matches={data.matches.combined_score}
               mainHeader="Highest Combined Clean Scores"
               header={"Combined Score"}
               accessor={(match) =>
@@ -167,7 +174,8 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
             <div className="mb-8" />
             <NoteworthySection
               year={year}
-              matches={data.losing_score}
+              foulRate={data.foul_rate}
+              matches={data.matches.losing_score}
               mainHeader="Highest Losing Scores"
               header={"Losing Score"}
               accessor={(match) => Math.min(match.red_score, match.blue_score)}
