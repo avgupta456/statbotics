@@ -43,7 +43,7 @@ const NoteworthySection = ({
     <div className="w-full">
       <div className="w-full text-2xl font-bold my-4">{mainHeader}</div>
       <div className="flex overflow-x-scroll scrollbar-hide">
-        <div className="min-w-[100px] flex flex-col border-2 border-gray-300">
+        <div className="min-w-[100px] md:min-w-[135px] flex flex-col border-2 border-gray-300">
           <div
             className="flex h-8 justify-center items-center text-xs md:text-sm lg:text-base"
             style={{ backgroundColor: lightGray }}
@@ -155,7 +155,7 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
               foulRate={data.foul_rate}
               matches={data?.matches?.high_score || []}
               mainHeader={year < 2016 ? "Highest Scores" : "Highest Clean Scores"}
-              header={"Highest Score"}
+              header={"Max Score"}
               accessor={(match) =>
                 year < 2016
                   ? Math.max(match.red_score, match.blue_score)
@@ -184,7 +184,7 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
               foulRate={data.foul_rate}
               matches={data?.matches?.combined_score || []}
               mainHeader={year < 2016 ? "Highest Combined Scores" : "Highest Combined Clean Scores"}
-              header={"Combined Score"}
+              header={"Sum Score"}
               accessor={(match) =>
                 year < 2016
                   ? match.red_score + match.blue_score

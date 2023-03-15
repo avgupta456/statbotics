@@ -317,7 +317,7 @@ const MatchTable = ({
     <div
       className={classnames(
         "flex flex-col border-2 border-gray-300 text-xs md:text-sm lg:text-base",
-        stacked ? "min-w-[280px]" : "min-w-[720px]"
+        stacked ? "min-w-[300px]" : "min-w-[800px]"
       )}
       key={`match-table-${matches?.[0]?.key ?? ""}`}
     >
