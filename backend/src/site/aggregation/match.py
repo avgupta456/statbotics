@@ -95,12 +95,28 @@ async def get_matches(
 
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_upcoming_matches(
+    country: Optional[str],
+    state: Optional[str],
+    district: Optional[str],
+    playoff: Optional[bool],
+    minutes: int,
+    limit: int,
+    metric: str,
     no_cache: bool = False,
 ) -> List[Tuple[Match, str, Dict[int, float]]]:
-    match_objs: List[Tuple[Match, str, Dict[int, float]]] = _get_upcoming_matches()
+    match_objs: List[Tuple[Match, str, Dict[int, float]]] = _get_upcoming_matches(
+        country=country,
+        state=state,
+        district=district,
+        playoff=playoff,
+        minutes=minutes,
+        limit=limit,
+        metric=metric,
+    )
+
     matches = [
         (unpack_match(match), event_name, team_matches)
         for (match, event_name, team_matches) in match_objs
     ]
 
-    return (True, sorted(matches, key=lambda x: x[0].time))  # type: ignore
+    return (True, matches)  # type: ignore

@@ -12,7 +12,6 @@ from src.site.aggregation import (
 )
 from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.utils.decorators import async_fail_gracefully
-from src.constants import CURR_YEAR
 
 router = APIRouter()
 
@@ -54,20 +53,34 @@ async def read_match(response: Response, match_id: str) -> Dict[str, Any]:
     return out
 
 
-@router.get("/matches/{year}")
+@router.get("/upcoming_matches")
 @async_fail_gracefully
-async def read_upcoming_matches(response: Response, year: int) -> Dict[str, Any]:
+async def read_upcoming_matches(
+    response: Response,
+    country: Optional[str] = None,
+    state: Optional[str] = None,
+    district: Optional[str] = None,
+    playoff: Optional[str] = None,
+    minutes: int = -1,
+    limit: int = 100,
+    metric: str = "predicted_time",
+) -> List[Dict[str, Any]]:
     upcoming_matches: List[Tuple[APIMatch, str, Dict[int, float]]] = []
-    if year == CURR_YEAR:
-        upcoming_matches = await get_upcoming_matches()
+    upcoming_matches = await get_upcoming_matches(
+        country=country,
+        state=state,
+        district=district,
+        playoff={None: None, "quals": False, "elims": True}[playoff],
+        minutes=minutes,
+        limit=limit,
+        metric=metric,
+    )
 
-    return {
-        "upcoming_matches": [
-            {
-                "match": match.to_dict(),
-                "event_name": event_name,
-                "team_matches": team_matches,
-            }
-            for (match, event_name, team_matches) in upcoming_matches
-        ],
-    }
+    return [
+        {
+            "match": match.to_dict(),
+            "event_name": event_name,
+            "team_matches": team_matches,
+        }
+        for (match, event_name, team_matches) in upcoming_matches
+    ]
