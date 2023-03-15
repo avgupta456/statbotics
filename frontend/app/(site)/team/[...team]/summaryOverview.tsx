@@ -144,15 +144,6 @@ const SummaryOverviewSection = ({
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">
-      <div className="w-full text-2xl font-bold mb-4">Years Summary</div>
-      <InsightsTable
-        title={"Team Insights"}
-        data={tableData}
-        columns={columns}
-        searchCols={["year"]}
-        csvFilename={`${teamData.team}_summary.csv`}
-        includeKey={false}
-      />
       <div className="w-full text-2xl font-bold mb-4">Normalized EPA over Time</div>
       <LineChart
         data={lineData}
@@ -163,6 +154,15 @@ const SummaryOverviewSection = ({
         xMax={xMax}
         yMin={roundedYMin}
         yMax={roundedYMax}
+      />
+      <div className="w-full text-2xl font-bold mt-8 mb-4">Years Summary</div>
+      <InsightsTable
+        title={"Team Insights"}
+        data={tableData}
+        columns={columns}
+        searchCols={["year"]}
+        csvFilename={`${teamData.team}_summary.csv`}
+        includeKey={false}
       />
     </div>
   );

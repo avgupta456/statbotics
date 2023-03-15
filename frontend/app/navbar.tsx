@@ -126,8 +126,11 @@ const Navbar = () => {
         <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
           <Link href="/teams">Teams</Link>
         </div>
-        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
           <Link href="/events">Events</Link>
+        </div>
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
+          <Link href="/matches">Matches</Link>
         </div>
         <div className="hidden md:inline dropdown dropdown-end dropdown-hover" tabIndex={0}>
           <div className="h-10 flex items-center ml-4 cursor-pointer">
@@ -225,6 +228,9 @@ const Navbar = () => {
         </Link>
         <Link href="/events" className="ml-4" onClick={() => setToggle(false)}>
           Events
+        </Link>
+        <Link href="/matches" className="ml-4" onClick={() => setToggle(false)}>
+          Matches
         </Link>
         <Link href="/blog" className="ml-4" onClick={() => setToggle(false)}>
           Blog
