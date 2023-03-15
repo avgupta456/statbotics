@@ -19,15 +19,3 @@ export const emptyEventData: EventData = {
   year: emptyAPIYear,
   events: [],
 };
-
-export type MatchData = {
-  upcoming_matches: {
-    match: APIMatch;
-    event_name: string;
-    team_matches: { [key: number]: number };
-  }[];
-};
-
-export const emptyMatchData: MatchData = {
-  upcoming_matches: [],
-};

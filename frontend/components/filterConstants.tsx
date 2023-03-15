@@ -133,3 +133,24 @@ export const competingOptions = [
   { value: "", label: "All Weeks" },
   { value: CURR_WEEK, label: "This Week" },
 ];
+
+export const playoffOptions = [
+  { value: "", label: "All" },
+  { value: "quals", label: "Quals" },
+  { value: "elims", label: "Elims" },
+];
+
+export const filterMatchesOptions = [
+  { value: 15, label: "15 Minutes" },
+  { value: 30, label: "30 Minutes" },
+  { value: 60, label: "1 Hour" },
+  { value: 120, label: "2 Hours" },
+  { value: -1, label: "All Matches" },
+];
+
+export const sortMatchesOptions = [
+  { value: "predicted_time", label: "Time" },
+  { value: "max_epa", label: "Max EPA" },
+  { value: "sum_epa", label: "Sum EPA" },
+  { value: "diff_epa", label: "Diff EPA" },
+];

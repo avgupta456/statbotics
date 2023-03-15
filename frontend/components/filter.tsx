@@ -8,6 +8,9 @@ import {
   competingOptions,
   countryOptions,
   districtOptions,
+  filterMatchesOptions,
+  playoffOptions,
+  sortMatchesOptions,
   usaOptions,
   weekOptions,
   yearOptions,
@@ -53,7 +56,11 @@ export const FilterBar = ({
     if (value === "") {
       return setFilters({ ...filters, [key]: "" });
     }
-    if (["week", "competing", "search"].includes(key)) {
+    if (
+      ["year", "week", "competing", "search", "playoff", "filterMatches", "sortMatches"].includes(
+        key
+      )
+    ) {
       return setFilters({ ...filters, [key]: value });
     } else if (key === "country") {
       return setFilters({ ...filters, country: value, state: "", district: "" });
@@ -77,6 +84,9 @@ export const FilterBar = ({
         { key: "state", label: stateLabel, options: stateOptions },
         { key: "district", label: "District", options: districtOptions },
         { key: "competing", label: "Competing", options: competingOptions },
+        { key: "playoff", label: "Playoff", options: playoffOptions },
+        { key: "filterMatches", label: "Within", options: filterMatchesOptions },
+        { key: "sortMatches", label: "Sort Matches", options: sortMatchesOptions },
       ].map((filter) => {
         if (filterKeys.includes(filter.key)) {
           const currValue = filters[filter.key];
@@ -87,24 +97,29 @@ export const FilterBar = ({
             currLabel = `${filter.label}`;
           }
           return (
-            <Select
-              key={filter.key}
-              instanceId={"filter-select" + filter.key}
-              className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 mb-4 text-gray-800"}
-              styles={{
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: placeholder ? "#a0aec0" : "#2d3748",
-                }),
-                menu: (provided) => ({ ...provided, zIndex: 9999 }),
-              }}
-              options={filter.options.map((option) => ({
-                value: option.value,
-                label: option.label,
-              }))}
-              onChange={(e) => smartSetFilters(filter.key, e?.value)}
-              value={{ value: currValue, label: currLabel }}
-            />
+            <>
+              {filter.key === "playoff" && (
+                <div className="w-0.5 h-10 ml-2 mb-4 bg-gray-500 rounded" />
+              )}
+              <Select
+                key={filter.key}
+                instanceId={"filter-select" + filter.key}
+                className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 mb-4 text-gray-800"}
+                styles={{
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: placeholder ? "#a0aec0" : "#2d3748",
+                  }),
+                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                }}
+                options={filter.options.map((option) => ({
+                  value: option.value,
+                  label: option.label,
+                }))}
+                onChange={(e) => smartSetFilters(filter.key, e?.value)}
+                value={{ value: currValue, label: currLabel }}
+              />
+            </>
           );
         }
       })}
