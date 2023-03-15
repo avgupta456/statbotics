@@ -132,6 +132,7 @@ export const weekOptions = [
 export const competingOptions = [
   { value: "", label: "All Weeks" },
   { value: CURR_WEEK, label: "This Week" },
+  { value: CURR_WEEK + 1, label: "Next Week" },
 ];
 
 export const playoffOptions = [

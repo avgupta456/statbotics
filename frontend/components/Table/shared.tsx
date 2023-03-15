@@ -31,6 +31,14 @@ export const TeamLink = ({
 };
 
 export const EventLink = ({ key, event }: { key: string; event: string }) => {
+  if (event === "N/A") {
+    return (
+      <div className="w-32 md:w-40 mx-auto h-full flex justify-center items-center text-sm">
+        {event}
+      </div>
+    );
+  }
+
   return (
     <div className="w-32 md:w-40 mx-auto h-full flex justify-center items-center text-sm">
       <Link href={`/event/${key}`} className="text_link">
