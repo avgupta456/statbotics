@@ -72,7 +72,6 @@ def get_noteworthy_matches(
                     "losing_score"
                 ),
             )
-            .filter((MatchORM.red_score != MatchORM.blue_score))
             .order_by(desc("losing_score"), asc("time"))
             .limit(10)
             .all()
