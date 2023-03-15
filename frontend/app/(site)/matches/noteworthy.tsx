@@ -153,7 +153,7 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
             <NoteworthySection
               year={year}
               foulRate={data.foul_rate}
-              matches={data.matches.high_score}
+              matches={data?.matches?.high_score || []}
               mainHeader={year < 2016 ? "Highest Scores" : "Highest Clean Scores"}
               header={"Highest Score"}
               accessor={(match) =>
@@ -182,7 +182,7 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
             <NoteworthySection
               year={year}
               foulRate={data.foul_rate}
-              matches={data.matches.combined_score}
+              matches={data?.matches?.combined_score || []}
               mainHeader={year < 2016 ? "Highest Combined Scores" : "Highest Combined Clean Scores"}
               header={"Combined Score"}
               accessor={(match) =>
@@ -200,7 +200,7 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
             <NoteworthySection
               year={year}
               foulRate={data.foul_rate}
-              matches={data.matches.losing_score}
+              matches={data?.matches?.losing_score || []}
               mainHeader="Highest Losing Scores"
               header={"Losing Score"}
               accessor={(match) => Math.min(match.red_score, match.blue_score)}
@@ -217,27 +217,29 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
                 <NoteworthySection
                   year={year}
                   foulRate={data.foul_rate}
-                  matches={data.matches.high_auto_score}
+                  matches={data?.matches?.high_auto_score || []}
                   mainHeader="Highest Auto Scores"
                   header={"Auto Score"}
                   accessor={(match) => Math.max(match.red_auto, match.blue_auto)}
                   redAccessor={(match) => match.red_auto}
                   blueAccessor={(match) => match.blue_auto}
                 />
+                <div className="mb-8" />
                 <NoteworthySection
                   year={year}
                   foulRate={data.foul_rate}
-                  matches={data.matches.high_teleop_score}
+                  matches={data?.matches?.high_teleop_score || []}
                   mainHeader="Highest Teleop Scores"
                   header={"Teleop Score"}
                   accessor={(match) => Math.max(match.red_teleop, match.blue_teleop)}
                   redAccessor={(match) => match.red_teleop}
                   blueAccessor={(match) => match.blue_teleop}
                 />
+                <div className="mb-8" />
                 <NoteworthySection
                   year={year}
                   foulRate={data.foul_rate}
-                  matches={data.matches.high_endgame_score}
+                  matches={data?.matches?.high_endgame_score || []}
                   mainHeader="Highest Endgame Scores"
                   header={"Endgame Score"}
                   accessor={(match) => Math.max(match.red_endgame, match.blue_endgame)}
