@@ -47,11 +47,12 @@ def get_noteworthy_matches(
         if week is not None:
             matches = matches.filter(EventORM.week == week)
 
+        red_score_col = MatchORM.red_score if year < 2016 else MatchORM.red_no_fouls
+        blue_score_col = MatchORM.blue_score if year < 2016 else MatchORM.blue_no_fouls
+
         high_score_matches = (
             matches.add_columns(
-                func.greatest(MatchORM.red_no_fouls, MatchORM.blue_no_fouls).label(
-                    "max_score"
-                ),
+                func.greatest(red_score_col, blue_score_col).label("max_score")
             )
             .order_by(desc("max_score"), asc("time"))
             .limit(10)
@@ -59,25 +60,73 @@ def get_noteworthy_matches(
         )
 
         combined_score_matches = (
-            matches.add_columns(
-                (MatchORM.red_no_fouls + MatchORM.blue_no_fouls).label("sum_score")
-            )
+            matches.add_columns((red_score_col + blue_score_col).label("sum_score"))
             .order_by(desc("sum_score"), asc("time"))
             .limit(10)
             .all()
         )
 
         high_losing_scores = (
-            matches.filter((MatchORM.red_score != MatchORM.blue_score))
-            .add_columns(
+            matches.add_columns(
                 func.least(MatchORM.red_score, MatchORM.blue_score).label(
                     "losing_score"
                 ),
             )
+            .filter((MatchORM.red_score != MatchORM.blue_score))
             .order_by(desc("losing_score"), asc("time"))
             .limit(10)
             .all()
         )
+
+        extra = {}
+        if year >= 2016:
+            high_auto_score_matches = (
+                matches.add_columns(
+                    func.greatest(MatchORM.red_auto, MatchORM.blue_auto).label(
+                        "max_auto_score"
+                    )
+                )
+                .order_by(desc("max_auto_score"), asc("time"))
+                .limit(10)
+                .all()
+            )
+
+            high_teleop_score_matches = (
+                matches.add_columns(
+                    func.greatest(MatchORM.red_teleop, MatchORM.blue_teleop).label(
+                        "max_teleop_score"
+                    )
+                )
+                .order_by(desc("max_teleop_score"), asc("time"))
+                .limit(10)
+                .all()
+            )
+
+            high_endgame_score_matches = (
+                matches.add_columns(
+                    func.greatest(MatchORM.red_endgame, MatchORM.blue_endgame).label(
+                        "max_endgame_score"
+                    )
+                )
+                .order_by(desc("max_endgame_score"), asc("time"))
+                .limit(10)
+                .all()
+            )
+
+            extra = {
+                "high_auto_score": [
+                    Match.from_dict(match.__dict__)
+                    for (match, *args) in high_auto_score_matches
+                ],
+                "high_teleop_score": [
+                    Match.from_dict(match.__dict__)
+                    for (match, *args) in high_teleop_score_matches
+                ],
+                "high_endgame_score": [
+                    Match.from_dict(match.__dict__)
+                    for (match, *args) in high_endgame_score_matches
+                ],
+            }
 
         return {
             "high_score": [
@@ -90,6 +139,7 @@ def get_noteworthy_matches(
             "losing_score": [
                 Match.from_dict(match.__dict__) for (match, *args) in high_losing_scores
             ],
+            **extra,
         }
 
     return run_transaction(Session, callback)

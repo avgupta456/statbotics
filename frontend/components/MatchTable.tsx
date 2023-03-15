@@ -68,7 +68,8 @@ const MatchRow = ({
       href={`/match/${match.key}`}
       className={classnames(
         "h-full flex justify-center items-center text-blue-600 hover:text-blue-700 cursor-pointer border-r border-b border-gray-300",
-        stacked ? "w-2/9" : "w-1/7"
+        stacked ? "w-2/9" : "w-1/7",
+        rawTitle && "text-xs lg:text-sm"
       )}
     >
       {rawTitle

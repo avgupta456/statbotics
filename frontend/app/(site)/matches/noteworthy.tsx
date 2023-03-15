@@ -4,7 +4,7 @@ import MatchTable from "../../../components/MatchTable";
 import { FilterBar } from "../../../components/filter";
 import { APIMatch } from "../../../components/types/api";
 import { BACKEND_URL } from "../../../constants";
-import { log, round } from "../../../utils";
+import { classnames, log, round } from "../../../utils";
 
 const lightGray = "#F0F0F0";
 
@@ -13,6 +13,9 @@ type MatchData = {
     high_score: APIMatch[];
     combined_score: APIMatch[];
     losing_score: APIMatch[];
+    high_auto_score?: APIMatch[];
+    high_teleop_score?: APIMatch[];
+    high_endgame_score?: APIMatch[];
   };
   foul_rate: number;
 };
@@ -24,6 +27,8 @@ const NoteworthySection = ({
   mainHeader,
   header,
   accessor,
+  redAccessor,
+  blueAccessor,
 }: {
   year: number;
   foulRate: number;
@@ -31,6 +36,8 @@ const NoteworthySection = ({
   mainHeader: string;
   header: string;
   accessor: (match: APIMatch) => number;
+  redAccessor?: (match: APIMatch) => number;
+  blueAccessor?: (match: APIMatch) => number;
 }) => {
   return (
     <div className="w-full">
@@ -45,7 +52,11 @@ const NoteworthySection = ({
           </div>
           {matches.map((match, i) => (
             <div
-              className="flex w-full h-8 justify-center items-center border-b border-gray-300 bg-green-100"
+              className={classnames(
+                "flex w-full h-8 justify-center items-center border-b border-gray-300 bg-green-100",
+                redAccessor && redAccessor(match) === accessor(match) && "text-red-500",
+                blueAccessor && blueAccessor(match) === accessor(match) && "text-blue-600"
+              )}
               key={`${match.key}-${i}`}
             >
               {i + 1}. {accessor(match).toFixed(0)}
@@ -143,32 +154,46 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
               year={year}
               foulRate={data.foul_rate}
               matches={data.matches.high_score}
-              mainHeader="Highest Clean Scores"
+              mainHeader={year < 2016 ? "Highest Scores" : "Highest Clean Scores"}
               header={"Highest Score"}
               accessor={(match) =>
-                Math.max(
-                  match.red_auto + match.red_teleop + match.red_endgame,
-                  match.blue_auto + match.blue_teleop + match.blue_endgame
-                )
+                year < 2016
+                  ? Math.max(match.red_score, match.blue_score)
+                  : Math.max(
+                      match.red_auto + match.red_teleop + match.red_endgame,
+                      match.blue_auto + match.blue_teleop + match.blue_endgame
+                    )
+              }
+              redAccessor={(match) =>
+                year < 2016
+                  ? match.red_score
+                  : match.red_auto + match.red_teleop + match.red_endgame
+              }
+              blueAccessor={(match) =>
+                year < 2016
+                  ? match.blue_score
+                  : match.blue_auto + match.blue_teleop + match.blue_endgame
               }
             />
             <div className="w-full text-sm ml-4 mt-4 mb-4">
-              <strong>1.</strong> Technically clean winning score, as we include each match only
+              <strong>1.</strong> Technically highest winning score, as we include each match only
               once.
             </div>
             <NoteworthySection
               year={year}
               foulRate={data.foul_rate}
               matches={data.matches.combined_score}
-              mainHeader="Highest Combined Clean Scores"
+              mainHeader={year < 2016 ? "Highest Combined Scores" : "Highest Combined Clean Scores"}
               header={"Combined Score"}
               accessor={(match) =>
-                match.red_auto +
-                match.red_teleop +
-                match.red_endgame +
-                match.blue_auto +
-                match.blue_teleop +
-                match.blue_endgame
+                year < 2016
+                  ? match.red_score + match.blue_score
+                  : match.red_auto +
+                    match.red_teleop +
+                    match.red_endgame +
+                    match.blue_auto +
+                    match.blue_teleop +
+                    match.blue_endgame
               }
             />
             <div className="mb-8" />
@@ -179,10 +204,48 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
               mainHeader="Highest Losing Scores"
               header={"Losing Score"}
               accessor={(match) => Math.min(match.red_score, match.blue_score)}
+              redAccessor={(match) => match.red_score}
+              blueAccessor={(match) => match.blue_score}
             />
-            <div className="w-full text-sm ml-4 mt-4 mb-4">
-              <strong>1.</strong> Includes fouls, unlike above two tables.
-            </div>
+            {year >= 2016 && (
+              <div className="w-full text-sm ml-4 mt-4 mb-4">
+                <strong>1.</strong> Includes fouls, unlike above two tables.
+              </div>
+            )}
+            {year >= 2016 && (
+              <>
+                <NoteworthySection
+                  year={year}
+                  foulRate={data.foul_rate}
+                  matches={data.matches.high_auto_score}
+                  mainHeader="Highest Auto Scores"
+                  header={"Auto Score"}
+                  accessor={(match) => Math.max(match.red_auto, match.blue_auto)}
+                  redAccessor={(match) => match.red_auto}
+                  blueAccessor={(match) => match.blue_auto}
+                />
+                <NoteworthySection
+                  year={year}
+                  foulRate={data.foul_rate}
+                  matches={data.matches.high_teleop_score}
+                  mainHeader="Highest Teleop Scores"
+                  header={"Teleop Score"}
+                  accessor={(match) => Math.max(match.red_teleop, match.blue_teleop)}
+                  redAccessor={(match) => match.red_teleop}
+                  blueAccessor={(match) => match.blue_teleop}
+                />
+                <NoteworthySection
+                  year={year}
+                  foulRate={data.foul_rate}
+                  matches={data.matches.high_endgame_score}
+                  mainHeader="Highest Endgame Scores"
+                  header={"Endgame Score"}
+                  accessor={(match) => Math.max(match.red_endgame, match.blue_endgame)}
+                  redAccessor={(match) => match.red_endgame}
+                  blueAccessor={(match) => match.blue_endgame}
+                />
+              </>
+            )}
           </>
         ) : (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
