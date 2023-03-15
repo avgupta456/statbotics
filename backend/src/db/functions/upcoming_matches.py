@@ -23,7 +23,7 @@ def get_upcoming_matches(
     limit: int,
     metric: str,
 ) -> List[Tuple[Match, str, Dict[int, float]]]:
-    curr_timestamp = int(datetime.now().timestamp()) - 100000  # 5 minutes
+    curr_timestamp = int(datetime.now().timestamp()) - 60 * 5  # 5 minutes
 
     if minutes == -1:
         minutes = 60 * 24 * 7  # 1 week
