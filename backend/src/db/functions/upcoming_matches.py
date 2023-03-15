@@ -54,7 +54,9 @@ def get_upcoming_matches(
         if state is not None:
             matches = matches.filter(EventORM.state == state)
 
-        if district is not None:
+        if district == "regionals":
+            matches = matches.filter(EventORM.district.is_(None))
+        elif district is not None:
             matches = matches.filter(EventORM.district == district)
 
         if playoff is not None:

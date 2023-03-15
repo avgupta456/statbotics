@@ -96,6 +96,7 @@ async function getMatchData(year, country, state, district, playoff, week) {
   if (country) suffix += `?country=${country}`;
   if (state) suffix += (suffix ? "&" : "?") + `state=${state}`;
   if (district) suffix += (suffix ? "&" : "?") + `district=${district}`;
+  if (district === null) suffix += (suffix ? "&" : "?") + `&district=regionals`;
   if (playoff) suffix += (suffix ? "&" : "?") + `playoff=${playoff}`;
   if (week) suffix += (suffix ? "&" : "?") + `week=${week}`;
 
