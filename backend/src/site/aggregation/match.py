@@ -1,14 +1,14 @@
 from datetime import timedelta
 from typing import Dict, List, Optional, Tuple
 
-from src.db.models import Match
-from src.db.read import get_match as _get_match, get_matches as _get_matches
-from src.db.functions.upcoming_matches import (
-    get_upcoming_matches as _get_upcoming_matches,
-)
 from src.db.functions.noteworthy_matches import (
     get_noteworthy_matches as _get_noteworthy_matches,
 )
+from src.db.functions.upcoming_matches import (
+    get_upcoming_matches as _get_upcoming_matches,
+)
+from src.db.models import Match
+from src.db.read import get_match as _get_match, get_matches as _get_matches
 from src.site.models import APIMatch
 from src.utils.alru_cache import alru_cache
 from src.utils.utils import get_match_name

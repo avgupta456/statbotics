@@ -5,10 +5,10 @@ from fastapi import APIRouter, Response
 from src.site.aggregation import (
     get_event,
     get_match,
-    get_upcoming_matches,
     get_noteworthy_matches,
     get_team_events,
     get_team_matches,
+    get_upcoming_matches,
     get_year,
 )
 from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
