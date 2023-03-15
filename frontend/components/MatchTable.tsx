@@ -29,6 +29,7 @@ const MatchRow = ({
   compLevel,
   match,
   showVideo,
+  rawTitle,
   stacked,
 }: {
   year: number;
@@ -37,6 +38,7 @@ const MatchRow = ({
   compLevel: string;
   match: APIMatch;
   showVideo: boolean;
+  rawTitle: boolean;
   stacked: boolean;
 }) => {
   let alliance = match.red.includes(teamNum) ? "red" : "";
@@ -69,7 +71,11 @@ const MatchRow = ({
         stacked ? "w-2/9" : "w-1/7"
       )}
     >
-      {match.event} {formatMatch(compLevel, match.match_number, match.set_number)}
+      {rawTitle
+        ? `${match.event} - ${match.comp_level}${
+            match.comp_level === "qm" ? "" : match.set_number + "-"
+          }${match.match_number}`
+        : formatMatch(compLevel, match.match_number, match.set_number)}
     </Link>
   );
 
@@ -283,6 +289,7 @@ const MatchTable = ({
   showSubHeaders = true,
   sorted = true,
   showVideo = true,
+  rawTitle = false,
   stacked = false,
 }: {
   year: number;
@@ -293,6 +300,7 @@ const MatchTable = ({
   showSubHeaders?: boolean;
   sorted?: boolean;
   showVideo?: boolean;
+  rawTitle?: boolean;
   stacked?: boolean;
 }) => {
   if (matches.length === 0) {
@@ -366,6 +374,7 @@ const MatchTable = ({
                       compLevel={compLevel}
                       match={match}
                       showVideo={showVideo}
+                      rawTitle={rawTitle}
                       stacked={stacked}
                     />
                   );
@@ -382,6 +391,7 @@ const MatchTable = ({
                 compLevel={match.comp_level}
                 match={match}
                 showVideo={showVideo}
+                rawTitle={rawTitle}
                 stacked={stacked}
               />
             );

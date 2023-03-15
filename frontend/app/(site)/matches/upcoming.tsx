@@ -11,7 +11,7 @@ import { formatMatch } from "../../../components/utils";
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round, truncate } from "../../../utils";
 
-export type MatchData = {
+type MatchData = {
   match: APIMatch;
   event_name: string;
   team_matches: { [key: number]: number };

@@ -6,9 +6,63 @@ import { APIMatch } from "../../../components/types/api";
 import { BACKEND_URL } from "../../../constants";
 import { log, round } from "../../../utils";
 
-export type MatchData = {
+const lightGray = "#F0F0F0";
+
+type MatchData = {
   high_epa: APIMatch[];
   high_score: APIMatch[];
+};
+
+const NoteworthySection = ({
+  year,
+  matches,
+  mainHeader,
+  header,
+  accessor,
+}: {
+  year: number;
+  matches: APIMatch[];
+  mainHeader: string;
+  header: string;
+  accessor: (match: APIMatch) => number;
+}) => {
+  return (
+    <div className="w-full">
+      <div className="w-full text-2xl font-bold my-4">{mainHeader}</div>
+      <div className="flex overflow-x-scroll scrollbar-hide">
+        <div className="w-32 flex flex-col border-2 border-gray-300">
+          <div
+            className="flex h-8 justify-center items-center"
+            style={{ backgroundColor: lightGray }}
+          >
+            {header}
+          </div>
+          {matches.map((match, i) => (
+            <div
+              className="flex w-full h-8 justify-center items-center border-b border-gray-300 bg-green-100"
+              key={`${match.key}-${i}`}
+            >
+              {i + 1}. {accessor(match).toFixed(0)}
+            </div>
+          ))}
+        </div>
+        <div className="flex-grow min-w-[720px]">
+          <MatchTable
+            year={year}
+            teamNum={0}
+            matches={matches}
+            foulRate={0}
+            showHeaders={true}
+            showSubHeaders={false}
+            sorted={false}
+            showVideo={true}
+            rawTitle={true}
+            stacked={false}
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const defaultFilters = {
@@ -76,19 +130,33 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
   return (
     <div className="flex flex-col">
       <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
-      <div className="mt-8 flex flex-col gap-8">
+      <div className="flex flex-col gap-8">
         {data !== null && !loading ? (
-          <MatchTable
-            year={year}
-            teamNum={0}
-            matches={data.high_epa}
-            foulRate={0}
-            showHeaders={true}
-            showSubHeaders={false}
-            sorted={false}
-            showVideo={true}
-            stacked={false}
-          />
+          <>
+            <NoteworthySection
+              year={year}
+              matches={data.high_score}
+              mainHeader="Highest Clean Scores"
+              header={"Highest Score"}
+              accessor={(match) =>
+                Math.max(
+                  match.red_auto + match.red_teleop + match.red_endgame,
+                  match.blue_auto + match.blue_teleop + match.blue_endgame
+                )
+              }
+            />
+            <div className="w-full text-sm ml-4">
+              <strong>1.</strong> Technically clean winning score, as we include each match only
+              once.
+            </div>
+            <NoteworthySection
+              year={year}
+              matches={data.high_epa}
+              mainHeader="Highest Predicted Scores"
+              header={"Highest EPA"}
+              accessor={(match) => Math.max(match.red_epa_pred, match.blue_epa_pred)}
+            />
+          </>
         ) : (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
             <div className="text-gray-700 mt-4">
@@ -99,8 +167,6 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
       </div>
     </div>
   );
-
-  return <div>Noteworthy Matches</div>;
 };
 
 export default NoteworthyMatches;

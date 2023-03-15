@@ -1,7 +1,7 @@
 # type: ignore
 from typing import Dict, List, Optional
 
-from sqlalchemy import desc, func
+from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction
 
@@ -28,7 +28,7 @@ def get_noteworthy_matches(
         ).filter(
             (MatchORM.year == year)
             & (MatchORM.status == "Completed")
-            & (MatchORM.offseason is False)
+            & (MatchORM.offseason == False)  # noqa: E712
             & (MatchORM.event == EventORM.key)
         )
 
@@ -53,7 +53,7 @@ def get_noteworthy_matches(
                     "max_epa"
                 ),
             )
-            .order_by(desc("max_epa"))
+            .order_by(desc("max_epa"), asc("time"))
             .limit(10)
             .all()
         )
@@ -64,7 +64,7 @@ def get_noteworthy_matches(
                     "max_score"
                 ),
             )
-            .order_by(desc("max_score"))
+            .order_by(desc("max_score"), asc("time"))
             .limit(10)
             .all()
         )
