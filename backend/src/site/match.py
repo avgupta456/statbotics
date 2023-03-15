@@ -6,6 +6,7 @@ from src.site.aggregation import (
     get_event,
     get_match,
     get_upcoming_matches,
+    get_noteworthy_matches,
     get_team_events,
     get_team_matches,
     get_year,
@@ -84,3 +85,25 @@ async def read_upcoming_matches(
         }
         for (match, event_name, team_matches) in upcoming_matches
     ]
+
+
+@router.get("/noteworthy_matches/{year}")
+@async_fail_gracefully
+async def read_noteworthy_matches(
+    response: Response,
+    year: int,
+    country: Optional[str] = None,
+    state: Optional[str] = None,
+    district: Optional[str] = None,
+    playoff: Optional[str] = None,
+) -> Dict[str, List[Any]]:
+    noteworthy_matches: Dict[str, List[APIMatch]] = {}
+    noteworthy_matches = await get_noteworthy_matches(
+        year=year,
+        country=country,
+        state=state,
+        district=district,
+        playoff={None: None, "quals": False, "elims": True}[playoff],
+    )
+
+    return {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}
