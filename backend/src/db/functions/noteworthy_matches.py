@@ -47,17 +47,6 @@ def get_noteworthy_matches(
         if week is not None:
             matches = matches.filter(EventORM.week == week)
 
-        high_epa_matches = (
-            matches.add_columns(
-                func.greatest(MatchORM.red_epa_sum, MatchORM.blue_epa_sum).label(
-                    "max_epa"
-                ),
-            )
-            .order_by(desc("max_epa"), asc("time"))
-            .limit(10)
-            .all()
-        )
-
         high_score_matches = (
             matches.add_columns(
                 func.greatest(MatchORM.red_no_fouls, MatchORM.blue_no_fouls).label(
@@ -69,12 +58,37 @@ def get_noteworthy_matches(
             .all()
         )
 
+        combined_score_matches = (
+            matches.add_columns(
+                (MatchORM.red_no_fouls + MatchORM.blue_no_fouls).label("sum_score")
+            )
+            .order_by(desc("sum_score"), asc("time"))
+            .limit(10)
+            .all()
+        )
+
+        high_losing_scores = (
+            matches.filter((MatchORM.red_score != MatchORM.blue_score))
+            .add_columns(
+                func.least(MatchORM.red_score, MatchORM.blue_score).label(
+                    "losing_score"
+                ),
+            )
+            .order_by(desc("losing_score"), asc("time"))
+            .limit(10)
+            .all()
+        )
+
         return {
-            "high_epa": [
-                Match.from_dict(match.__dict__) for (match, *args) in high_epa_matches
-            ],
             "high_score": [
                 Match.from_dict(match.__dict__) for (match, *args) in high_score_matches
+            ],
+            "combined_score": [
+                Match.from_dict(match.__dict__)
+                for (match, *args) in combined_score_matches
+            ],
+            "losing_score": [
+                Match.from_dict(match.__dict__) for (match, *args) in high_losing_scores
             ],
         }
 

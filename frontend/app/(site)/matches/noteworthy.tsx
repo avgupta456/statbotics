@@ -9,8 +9,9 @@ import { log, round } from "../../../utils";
 const lightGray = "#F0F0F0";
 
 type MatchData = {
-  high_epa: APIMatch[];
   high_score: APIMatch[];
+  combined_score: APIMatch[];
+  losing_score: APIMatch[];
 };
 
 const NoteworthySection = ({
@@ -128,9 +129,9 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mb-4">
       <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col">
         {data !== null && !loading ? (
           <>
             <NoteworthySection
@@ -145,17 +146,35 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
                 )
               }
             />
-            <div className="w-full text-sm ml-4">
+            <div className="w-full text-sm ml-4 mt-4 mb-4">
               <strong>1.</strong> Technically clean winning score, as we include each match only
               once.
             </div>
             <NoteworthySection
               year={year}
-              matches={data.high_epa}
-              mainHeader="Highest Predicted Scores"
-              header={"Highest EPA"}
-              accessor={(match) => Math.max(match.red_epa_pred, match.blue_epa_pred)}
+              matches={data.combined_score}
+              mainHeader="Highest Combined Clean Scores"
+              header={"Combined Score"}
+              accessor={(match) =>
+                match.red_auto +
+                match.red_teleop +
+                match.red_endgame +
+                match.blue_auto +
+                match.blue_teleop +
+                match.blue_endgame
+              }
             />
+            <div className="mb-8" />
+            <NoteworthySection
+              year={year}
+              matches={data.losing_score}
+              mainHeader="Highest Losing Scores"
+              header={"Losing Score"}
+              accessor={(match) => Math.min(match.red_score, match.blue_score)}
+            />
+            <div className="w-full text-sm ml-4 mt-4 mb-4">
+              <strong>1.</strong> Includes fouls, unlike above two tables.
+            </div>
           </>
         ) : (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
