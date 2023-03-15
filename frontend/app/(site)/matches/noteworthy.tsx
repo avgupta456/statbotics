@@ -43,9 +43,9 @@ const NoteworthySection = ({
     <div className="w-full">
       <div className="w-full text-2xl font-bold my-4">{mainHeader}</div>
       <div className="flex overflow-x-scroll scrollbar-hide">
-        <div className="w-32 flex flex-col border-2 border-gray-300">
+        <div className="min-w-[100px] flex flex-col border-2 border-gray-300">
           <div
-            className="flex h-8 justify-center items-center"
+            className="flex h-8 justify-center items-center text-xs md:text-sm lg:text-base"
             style={{ backgroundColor: lightGray }}
           >
             {header}
