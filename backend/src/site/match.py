@@ -96,6 +96,7 @@ async def read_noteworthy_matches(
     state: Optional[str] = None,
     district: Optional[str] = None,
     playoff: Optional[str] = None,
+    week: Optional[int] = None,
 ) -> Dict[str, List[Any]]:
     noteworthy_matches: Dict[str, List[APIMatch]] = {}
     noteworthy_matches = await get_noteworthy_matches(
@@ -104,6 +105,7 @@ async def read_noteworthy_matches(
         state=state,
         district=district,
         playoff={None: None, "quals": False, "elims": True}[playoff],
+        week=week,
     )
 
     return {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}

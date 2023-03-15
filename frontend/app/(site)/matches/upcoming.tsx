@@ -8,7 +8,7 @@ import MatchTable from "../../../components/MatchTable";
 import { FilterBar } from "../../../components/filter";
 import { APIMatch } from "../../../components/types/api";
 import { formatMatch } from "../../../components/utils";
-import { BACKEND_URL } from "../../../constants";
+import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round, truncate } from "../../../utils";
 
 export type MatchData = {
@@ -52,7 +52,7 @@ const UpcomingMatch = ({ match }: { match: MatchData }) => {
       </div>
       <div className="w-full md:w-2/3 lg:w-1/2 overflow-x-scroll scrollbar-hide mx-auto">
         <MatchTable
-          year={2023}
+          year={CURR_YEAR}
           teamNum={0}
           matches={[match.match]}
           foulRate={0}
@@ -114,8 +114,8 @@ const UpcomingMatches = () => {
       } else {
         setError(true);
       }
+      setLoading(false);
     });
-    setLoading(false);
   }, [filters]);
 
   if (error) {
@@ -130,7 +130,7 @@ const UpcomingMatches = () => {
     <div className="flex flex-col">
       <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
       <div className="mt-8 flex flex-col gap-8">
-        {data.length > 0 ? (
+        {data.length > 0 && !loading ? (
           data.map((match) => <UpcomingMatch key={match.match.key} match={match} />)
         ) : (
           <div className="w-full flex-grow flex flex-col items-center justify-center">

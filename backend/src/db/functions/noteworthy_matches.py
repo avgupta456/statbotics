@@ -16,13 +16,19 @@ def get_noteworthy_matches(
     state: Optional[str],
     district: Optional[str],
     playoff: Optional[bool],
+    week: Optional[int],
 ) -> Dict[str, List[Match]]:
     def callback(session: SessionType):
         matches = session.query(
-            MatchORM, EventORM.country, EventORM.state, EventORM.district
+            MatchORM,
+            EventORM.country,
+            EventORM.state,
+            EventORM.district,
+            EventORM.week,
         ).filter(
             (MatchORM.year == year)
             & (MatchORM.status == "Completed")
+            & (MatchORM.offseason is False)
             & (MatchORM.event == EventORM.key)
         )
 
@@ -37,6 +43,9 @@ def get_noteworthy_matches(
 
         if playoff is not None:
             matches = matches.filter(MatchORM.playoff == playoff)
+
+        if week is not None:
+            matches = matches.filter(EventORM.week == week)
 
         high_epa_matches = (
             matches.add_columns(

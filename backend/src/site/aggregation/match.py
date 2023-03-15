@@ -132,6 +132,7 @@ async def get_noteworthy_matches(
     state: Optional[str],
     district: Optional[str],
     playoff: Optional[bool],
+    week: Optional[int],
 ) -> Dict[str, List[Match]]:
     match_objs = _get_noteworthy_matches(
         year=year,
@@ -139,6 +140,7 @@ async def get_noteworthy_matches(
         state=state,
         district=district,
         playoff=playoff,
+        week=week,
     )
 
     matches = {k: [unpack_match(match) for match in v] for k, v in match_objs.items()}

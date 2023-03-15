@@ -69,7 +69,7 @@ const MatchRow = ({
         stacked ? "w-2/9" : "w-1/7"
       )}
     >
-      {formatMatch(compLevel, match.match_number, match.set_number)}
+      {match.event} {formatMatch(compLevel, match.match_number, match.set_number)}
     </Link>
   );
 
@@ -281,6 +281,7 @@ const MatchTable = ({
   foulRate,
   showHeaders = true,
   showSubHeaders = true,
+  sorted = true,
   showVideo = true,
   stacked = false,
 }: {
@@ -290,6 +291,7 @@ const MatchTable = ({
   foulRate: number;
   showHeaders?: boolean;
   showSubHeaders?: boolean;
+  sorted?: boolean;
   showVideo?: boolean;
   stacked?: boolean;
 }) => {
@@ -337,38 +339,53 @@ const MatchTable = ({
           </div>
         </div>
       )}
-      {uniqueCompLevels.map((compLevel) => (
-        <div key={`section-${compLevel}`}>
-          {showSubHeaders && (
-            <div
-              style={{ backgroundColor: lightGray }}
-              className={classnames(
-                "w-full text-center border-t-2 border-b-2 border-gray-300",
-                stacked ? "h-16" : "h-8"
+      {sorted
+        ? uniqueCompLevels.map((compLevel) => (
+            <div key={`section-${compLevel}`}>
+              {showSubHeaders && (
+                <div
+                  style={{ backgroundColor: lightGray }}
+                  className={classnames(
+                    "w-full text-center border-t-2 border-b-2 border-gray-300",
+                    stacked ? "h-16" : "h-8"
+                  )}
+                  key={`header-${compLevel}`}
+                >
+                  {compLevelFullNames[compLevel]}
+                </div>
               )}
-              key={`header-${compLevel}`}
-            >
-              {compLevelFullNames[compLevel]}
+              {matches
+                .filter((match) => match.comp_level === compLevel)
+                .map((match) => {
+                  return (
+                    <MatchRow
+                      key={match.key}
+                      year={year}
+                      foulRate={foulRate}
+                      teamNum={teamNum}
+                      compLevel={compLevel}
+                      match={match}
+                      showVideo={showVideo}
+                      stacked={stacked}
+                    />
+                  );
+                })}
             </div>
-          )}
-          {matches
-            .filter((match) => match.comp_level === compLevel)
-            .map((match) => {
-              return (
-                <MatchRow
-                  key={match.key}
-                  year={year}
-                  foulRate={foulRate}
-                  teamNum={teamNum}
-                  compLevel={compLevel}
-                  match={match}
-                  showVideo={showVideo}
-                  stacked={stacked}
-                />
-              );
-            })}
-        </div>
-      ))}
+          ))
+        : matches.map((match) => {
+            return (
+              <MatchRow
+                key={match.key}
+                year={year}
+                foulRate={foulRate}
+                teamNum={teamNum}
+                compLevel={match.comp_level}
+                match={match}
+                showVideo={showVideo}
+                stacked={stacked}
+              />
+            );
+          })}
     </div>
   );
 };
