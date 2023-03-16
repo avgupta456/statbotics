@@ -14,6 +14,7 @@ import { Data } from "./types";
 export type TeamEventInsights = {
   num: number;
   team: string;
+  first_event: boolean;
   rank: number;
   unitless_epa: number | string;
   norm_epa: number | string;
@@ -28,6 +29,7 @@ export type TeamEventInsights = {
 export type DetailedTeamEventInsights = {
   num: number;
   team: string;
+  first_event: boolean;
   rank: number;
   rps: number;
   rps_per_match: string;
@@ -65,6 +67,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
       return {
         num: teamEvent.num ?? -1,
         team: teamEvent.team ? truncate(teamEvent.team, 30) : "N/A",
+        first_event: teamEvent.first_event ?? false,
         unitless_epa: round(teamEvent.unitless_epa, 0) ?? "N/A",
         norm_epa: round(teamEvent.norm_epa, 0) ?? "N/A",
         total_epa: round(teamEvent.total_epa, 1) ?? 0,
@@ -83,6 +86,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
       return {
         num: teamEvent.num ?? -1,
         team: teamEvent.team ? truncate(teamEvent.team, 30) : "N/A",
+        first_event: teamEvent.first_event ?? false,
         unitless_epa: round(teamEvent.unitless_epa, 0) ?? "N/A",
         norm_epa: round(teamEvent.norm_epa, 0) ?? "N/A",
         total_epa: round(teamEvent.total_epa, 1) ?? 0,

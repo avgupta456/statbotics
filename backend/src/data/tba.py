@@ -172,7 +172,6 @@ def process_year(
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
             team_obj = teams_dict.get(team, default_team)
-            is_first_event = team_first_event_dict[team][0] == event_key
             team_event_objs.append(
                 create_team_event_obj(
                     {
@@ -189,7 +188,6 @@ def process_year(
                         "type": event_obj.type,
                         "week": event_obj.week,
                         "status": event_status,
-                        "first_event": is_first_event,
                         "rank": rankings.get(team, -1),
                         "num_teams": len(rankings),
                     }
@@ -199,6 +197,12 @@ def process_year(
         event_obj.current_match = current_match
         event_obj.qual_matches = qual_matches
         event_objs.append(event_obj)
+
+    # update is_first_event after iterating through all events
+    for team_event in team_event_objs:
+        team_event.first_event = (
+            team_first_event_dict[team_event.team][0] == team_event.event
+        )
 
     for team in year_teams:
         team_obj = teams_dict.get(team, default_team)
