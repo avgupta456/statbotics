@@ -19,8 +19,8 @@ const Page = () => {
 
   return (
     <PageLayout
-      title="Statbotics and the EPA Model"
-      lead="The math behind the EPA model can be a bit confusing. This page will help you understand the EPA model, how it works, and how to best use it. No math required!"
+      title="The EPA Model: A Gentle Introduction"
+      lead="The math behind EPA can be a bit confusing. This page will help you understand the EPA model, how it works, and how to best use it. No math required!"
     >
       <h3>Welcome to Statbotics</h3>
       <p>
