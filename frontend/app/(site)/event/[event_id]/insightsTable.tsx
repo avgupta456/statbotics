@@ -239,6 +239,10 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
     [year, data, maxRank, disableHighlight]
   );
 
+  const numProjections = eventInsightsData.filter(
+    (row) => row.rank === -1 && row.first_event
+  ).length;
+
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <InsightsTable
@@ -251,6 +255,14 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         csvFilename={`${eventId}_team_insights.csv`}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
+      <div className="w-full px-4 border-t-[1px] border-gray-200 mb-4">
+        {numProjections > 0 && (
+          <div className="w-full text-xs mt-4">
+            <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
+            only a projection.
+          </div>
+        )}
+      </div>
     </div>
   );
 };
