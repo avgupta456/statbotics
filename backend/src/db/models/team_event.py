@@ -39,6 +39,7 @@ class TeamEventORM(Base, ModelORM):
 
     # Choices are 'Upcoming', 'Ongoing', 'Completed'
     status = Column(String(10))
+    first_event = Column(Boolean)
 
     """EPA"""
     epa_start = Column(Float)
@@ -86,7 +87,7 @@ class TeamEventORM(Base, ModelORM):
     qual_losses = Column(Integer)
     qual_ties = Column(Integer)
     qual_count = Column(Integer)
-    # qual_winrate = Column(Float)  # TODO: Add column to DB
+    qual_winrate = Column(Float)
     rps = Column(Integer)
     rps_per_match = Column(Float)
     rank = Column(Integer)
@@ -110,7 +111,9 @@ class TeamEvent(Model):
     district: Optional[str] = None
     type: Optional[int] = None
     week: Optional[int] = None
+
     status: Optional[str] = None
+    first_event: Optional[bool] = None
 
     epa_start: Optional[float] = None
     epa_pre_playoffs: Optional[float] = None
@@ -156,7 +159,7 @@ class TeamEvent(Model):
     qual_losses: int = 0
     qual_ties: int = 0
     qual_count: int = 0
-    # qual_winrate: float = 0  # TODO: Add column to DB
+    qual_winrate: float = 0
     rps: int = 0
     rps_per_match: float = 0
     rank: Optional[int] = None

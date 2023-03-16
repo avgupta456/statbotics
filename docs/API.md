@@ -315,6 +315,7 @@ I will update this section as new years are added. The breakdown is implemented 
 | type                     | str   | Event type (see Event table)                                              |
 | week                     | int   | Week of the event (8 is champs)                                           |
 | status                   | str   | Status of the event (see Event table)                                     |
+| first_event              | bool  | Whether this is the team's first event                                    |
 | epa_start                | float | Team EPA at the start of the event                                        |
 | epa_pre_playoffs         | float | Team EPA at the start of playoffs                                         |
 | epa_end                  | float | Team EPA at the end of the event                                          |
@@ -353,6 +354,7 @@ I will update this section as new years are added. The breakdown is implemented 
 | qual_losses              | int   | Number of qualification losses at the event                               |
 | qual_ties                | int   | Number of qualification ties at the event                                 |
 | qual_count               | int   | Number of qualification matches at the event                              |
+| qual_winrate             | float | Qualification winrate at the event                                        |
 | rps                      | int   | Number of RPs at the event                                                |
 | rps_per_match            | float | RPs per match at the event                                                |
 | rank                     | int   | Rank at the event                                                         |
