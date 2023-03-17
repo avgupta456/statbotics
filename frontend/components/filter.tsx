@@ -84,11 +84,14 @@ export const FilterBar = ({
         { key: "state", label: stateLabel, options: stateOptions },
         { key: "district", label: "District", options: districtOptions },
         { key: "competing", label: "Competing", options: competingOptions },
+        { key: "vbar", label: "", options: [] },
         { key: "playoff", label: "Comp Level", options: playoffOptions },
         { key: "filterMatches", label: "Time Range", options: filterMatchesOptions },
         { key: "sortMatches", label: "Sort Matches", options: sortMatchesOptions },
       ].map((filter) => {
-        if (filterKeys.includes(filter.key)) {
+        if (filter.key === "vbar" && filterKeys.includes("vbar")) {
+          return <div key={filter.key} className="w-0.5 h-10 ml-2 mb-4 bg-gray-500 rounded" />;
+        } else if (filterKeys.includes(filter.key)) {
           const currValue = filters[filter.key];
           let currOptions: any[] = filter.options; // value is number | string
           let currLabel = currOptions.find((option) => option.value === currValue)?.label;
@@ -97,29 +100,24 @@ export const FilterBar = ({
             currLabel = `${filter.label}`;
           }
           return (
-            <>
-              {filter.key === "playoff" && (
-                <div className="w-0.5 h-10 ml-2 mb-4 bg-gray-500 rounded" />
-              )}
-              <Select
-                key={filter.key}
-                instanceId={"filter-select" + filter.key}
-                className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 mb-4 text-gray-800"}
-                styles={{
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: placeholder ? "#a0aec0" : "#2d3748",
-                  }),
-                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                }}
-                options={filter.options.map((option) => ({
-                  value: option.value,
-                  label: option.label,
-                }))}
-                onChange={(e) => smartSetFilters(filter.key, e?.value)}
-                value={{ value: currValue, label: currLabel }}
-              />
-            </>
+            <Select
+              key={filter.key}
+              instanceId={"filter-select" + filter.key}
+              className={"text-xs w-24 ml-1 md:text-sm md:w-36 md:ml-2 mb-4 text-gray-800"}
+              styles={{
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: placeholder ? "#a0aec0" : "#2d3748",
+                }),
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              options={filter.options.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+              onChange={(e) => smartSetFilters(filter.key, e?.value)}
+              value={{ value: currValue, label: currLabel }}
+            />
           );
         }
       })}

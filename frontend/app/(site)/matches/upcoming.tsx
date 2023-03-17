@@ -78,6 +78,7 @@ const defaultFilters = {
   country: "",
   state: "",
   district: "",
+  vbar: "", // draws vertical bar
   playoff: "",
   filterMatches: "",
   sortMatches: "predicted_time",
