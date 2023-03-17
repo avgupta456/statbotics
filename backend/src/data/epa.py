@@ -687,19 +687,15 @@ def process_year(
         team_event.count = event_count
         team_event.winrate = winrate
 
-        (
-            qual_wins,
-            qual_losses,
-            qual_ties,
-            qual_rps,
-            qual_event_count,
-        ) = qual_team_event_stats[key]
-        team_event.qual_wins = qual_wins
-        team_event.qual_losses = qual_losses
-        team_event.qual_ties = qual_ties
-        team_event.rps = qual_rps
-        team_event.rps_per_match = qual_rps / max(1, qual_event_count)
-        team_event.qual_count = qual_event_count
+        q_wins, q_losses, q_ties, q_rps, q_event_count = qual_team_event_stats[key]
+        q_winrate = round((q_wins + q_ties / 2) / max(1, q_event_count), 4)
+        team_event.qual_wins = q_wins
+        team_event.qual_losses = q_losses
+        team_event.qual_ties = q_ties
+        team_event.rps = q_rps
+        team_event.rps_per_match = q_rps / max(1, q_event_count)
+        team_event.qual_count = q_event_count
+        team_event.qual_winrate = q_winrate
 
     # EVENTS
     for event in events:

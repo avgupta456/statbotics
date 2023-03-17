@@ -23,6 +23,7 @@ def unpack_team_event(
         event_name=team_event.event_name or "",
         week=team_event.week or -1,
         time=team_event.time,
+        first_event=bool(team_event.first_event),
         num_teams=team_event.num_teams or -1,
         start_total_epa=team_event.epa_start or 0,
         start_rp_1_epa=team_event.rp_1_epa_start or 0,

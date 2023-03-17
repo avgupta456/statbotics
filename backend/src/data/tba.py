@@ -97,8 +97,8 @@ def process_year(
         {"name": None, "team": None, "state": None, "country": None, "district": None}
     )
 
-    team_next_event_dict: Dict[int, Tuple[str, str, int]] = {}
-    default_next_event = (None, None, None)
+    team_next_event_dict: Dict[int, Any] = defaultdict(lambda: (None, None, None))
+    team_first_event_dict: Dict[int, Any] = defaultdict(lambda: (None, None))
 
     year_teams: Set[int] = set()
 
@@ -142,6 +142,12 @@ def process_year(
                     event_obj.name,
                     event_obj.week,
                 )
+            # Store first event
+            if (
+                team not in team_first_event_dict
+                or team_first_event_dict[team][1] > event_obj.week
+            ):
+                team_first_event_dict[team] = (event_obj.key, event_obj.week)
 
         if event_status == "Invalid":
             continue
@@ -192,9 +198,15 @@ def process_year(
         event_obj.qual_matches = qual_matches
         event_objs.append(event_obj)
 
+    # update is_first_event after iterating through all events
+    for team_event in team_event_objs:
+        team_event.first_event = (
+            team_first_event_dict[team_event.team][0] == team_event.event
+        )
+
     for team in year_teams:
         team_obj = teams_dict.get(team, default_team)
-        next_event = team_next_event_dict.get(team, default_next_event)
+        next_event = team_next_event_dict[team]
         team_year_objs.append(
             create_team_year_obj(
                 {

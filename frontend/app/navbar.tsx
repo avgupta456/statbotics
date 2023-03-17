@@ -77,7 +77,7 @@ const Navbar = () => {
     label: `${team.num} | ${team.team}`,
   }));
 
-  const eventOptions = events?.map((event: any) => ({
+  const eventOptions = events?.reverse()?.map((event: any) => ({
     value: `/event/${event.key}`,
     label: `${event.key.slice(0, 4)} ${event.name}`,
   }));

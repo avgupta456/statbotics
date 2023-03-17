@@ -11,6 +11,7 @@ class APITeamEvent(APIModel):
     event_name: str
     week: int
     time: int
+    first_event: bool
     num_teams: int
     # For simulation initial conditions
     start_total_epa: float
