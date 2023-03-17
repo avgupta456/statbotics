@@ -82,6 +82,7 @@ const defaultFilters = {
   playoff: "",
   filterMatches: "",
   sortMatches: "predicted_time",
+  refresh: 0,
 };
 
 async function getMatchData(country, state, district, playoff, filterMatches, sortMatches) {
