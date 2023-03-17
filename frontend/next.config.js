@@ -5,6 +5,12 @@ const nextConfig = {
     // Required:
     appDir: true,
   },
+  images: {
+    domains: [
+      // imgur
+      "i.imgur.com",
+    ],
+  },
   env: {
     PROD: process.env.PROD,
   },
