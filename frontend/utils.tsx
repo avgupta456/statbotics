@@ -1,4 +1,4 @@
-import { PROD } from "./constants";
+import { PROD, TBA_API_KEY } from "./constants";
 
 export const classnames = (...args: string[]) => args.join(" ");
 
@@ -14,8 +14,24 @@ export const truncate = (str: string, length: number) => {
   return str;
 };
 
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 export const log = (...args: any[]) => {
   if (!PROD) {
     console.log(...args);
   }
+};
+
+export const readTBA = async (url: string) => {
+  const response = await fetch("https://www.thebluealliance.com/api/v3" + url, {
+    headers: { "X-TBA-Auth-Key": TBA_API_KEY },
+  });
+
+  if (response.status === 200) {
+    return response.json();
+  }
+
+  throw new Error("TBA Error: " + response.status);
 };

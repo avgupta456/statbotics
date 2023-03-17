@@ -4,8 +4,10 @@ import React from "react";
 
 import { ResponsiveBar } from "@nivo/bar";
 
-const DelayedTooltip = ({ id, data, value, color }) => {
-  const hashId = `bar-tooltip-${data["team"]}-${id}`;
+import { capitalize } from "../../utils";
+
+const DelayedTooltip = ({ indexBy, id, data, value, color }) => {
+  const hashId = `bar-tooltip-${data[indexBy]}-${id}`;
   setTimeout(() => {
     const tooltip = document.getElementById(hashId);
     if (tooltip) {
@@ -14,17 +16,17 @@ const DelayedTooltip = ({ id, data, value, color }) => {
   }, 200);
   return (
     <div id={hashId} className="invisible bg-white rounded shadow p-2" style={{ color }}>
-      <div className="text-sm font-bold">{`Team ${data["team"]}`}</div>
+      <div className="text-sm font-bold">{`${capitalize(indexBy)} ${data[indexBy]}`}</div>
       <div className="text-sm">{`${id}: ${value}`}</div>
     </div>
   );
 };
 
-const sharedConfig: any = {
+const sharedConfig: any = (indexBy: string) => ({
   motionConfig: "gentle",
-  indexBy: "team",
+  indexBy: indexBy,
   padding: 0.1,
-  tooltip: DelayedTooltip,
+  tooltip: (args) => DelayedTooltip({ indexBy, ...args }),
   groupMode: "stacked",
   colors: { scheme: "category10" },
   borderColor: { from: "color", modifiers: [["darker", 1.6]] },
@@ -34,7 +36,7 @@ const sharedConfig: any = {
     tickSize: 5,
     tickPadding: 5,
     tickRotation: 0,
-    legend: "Team",
+    legend: capitalize(indexBy),
     legendPosition: "middle",
     legendOffset: 32,
   },
@@ -47,13 +49,21 @@ const sharedConfig: any = {
     legendOffset: -40,
   },
   enableLabel: false,
-};
+});
 
-export const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
+export const BarChart = ({
+  data,
+  indexBy,
+  keys,
+}: {
+  data: any[];
+  indexBy: string;
+  keys: any[];
+}) => {
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveBar
-        {...sharedConfig}
+        {...sharedConfig(indexBy)}
         data={data}
         keys={keys}
         margin={{ top: 20, right: 130, bottom: 50, left: 60 }}
@@ -86,11 +96,19 @@ export const BarChart = ({ data, keys }: { data: any[]; keys: any[] }) => {
   );
 };
 
-export const BarChartNoLegend = ({ data, keys }: { data: any[]; keys: any[] }) => {
+export const BarChartNoLegend = ({
+  data,
+  indexBy,
+  keys,
+}: {
+  data: any[];
+  indexBy;
+  keys: any[];
+}) => {
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveBar
-        {...sharedConfig}
+        {...sharedConfig(indexBy)}
         data={data}
         keys={keys}
         margin={{ top: 20, right: 0, bottom: 50, left: 60 }}

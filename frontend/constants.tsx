@@ -2,6 +2,7 @@ export const PROD = process.env.PROD === "True";
 
 // undici bug requires 127.0.0.1 instead of localhost
 export const BACKEND_URL = PROD ? "https://api.statbotics.io/site" : "http://127.0.0.1:8000/site";
+export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
 
 export const CURR_YEAR = 2023;
 export const CURR_WEEK = 3;

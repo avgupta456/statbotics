@@ -12,16 +12,23 @@ export const TeamLink = ({
   team,
   num,
   year,
+  small,
 }: {
   team: string | number;
   num: number;
   year: number;
+  small?: boolean;
 }) => {
   if (num > 100000) {
     return formatNumber(num);
   } else {
     return (
-      <div className="w-24 md:w-32 mx-auto h-10 h-full flex justify-center items-center text-sm">
+      <div
+        className={classnames(
+          "mx-auto h-10 h-full flex justify-center items-center text-sm",
+          small ? "w-16 md:w-20" : "w-24 md:w-32"
+        )}
+      >
         <Link href={`/team/${num}/${year}`} className="text_link">
           {truncate(team.toString(), 30)}
         </Link>
@@ -119,7 +126,8 @@ export const formatCell = (info: CellContext<any, number | string>) => {
 export const formatPercentileCell = (
   percentileStats: PercentileStats,
   info: CellContext<any, number | string>,
-  disableHighlight: boolean
+  disableHighlight: boolean,
+  multiplier: number = 1
 ) => {
   const column = info.column.id;
   const value = info.getValue();
@@ -132,7 +140,7 @@ export const formatPercentileCell = (
   } else if (column == "rp_1_epa" || column == "rp_2_epa") {
     color = getRPColor(value);
   } else {
-    color = getColor(value, percentileStats);
+    color = getColor(value, percentileStats, multiplier);
   }
 
   return (

@@ -32,12 +32,14 @@ const FiguresSection = ({ year, eventId, data }: { year: number; eventId: string
       <div className="w-full flex md:hidden">
         <BarChartNoLegend
           data={barData}
+          indexBy="team"
           keys={year >= 2016 ? ["Auto EPA", "Teleop EPA", "Endgame EPA"] : ["Total EPA"]}
         />
       </div>
       <div className="w-full hidden md:flex">
         <BarChart
           data={barData}
+          indexBy="team"
           keys={year >= 2016 ? ["Auto EPA", "Teleop EPA", "Endgame EPA"] : ["Total EPA"]}
         />
       </div>
