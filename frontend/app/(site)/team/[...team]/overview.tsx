@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import MatchTable from "../../../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
 import { CURR_YEAR, Category10Colors, RPMapping } from "../../../../constants";
+import { classnames, readTBA } from "../../../../utils";
 import { TeamData, TeamYearData } from "./types";
+
+const getMediaUrl = async (team: number, year: number) => {
+  const data = await readTBA(`/team/frc${team}/media/${year}`);
+  const image = data.filter((item: any) => item?.preferred)?.[0];
+  return image?.direct_url ?? null;
+};
 
 const epaCard = (epa: string, label: string, bg: string) => {
   if (!epa || !label || !bg) {
@@ -27,10 +35,10 @@ const rankCard = (rank: number, count: number, label: string) => {
   return (
     <div
       style={{ backgroundColor: Category10Colors[0] }}
-      className="w-32 h-auto p-2 flex flex-col justify-center items-center rounded-lg"
+      className="w-32 h-auto p-2 flex flex-col justify-center items-center text-center rounded-lg"
     >
       <div className="text-2xl font-bold text-white">{rank}</div>
-      <div className="text-sm text-white">{label}</div>
+      <div className="text-xs md:text-sm text-white">{label}</div>
       <div className="text-xs text-white">out of {count}</div>
     </div>
   );
@@ -43,6 +51,16 @@ const OverviewSection = ({
   teamData: TeamData | undefined;
   teamYearData: TeamYearData | undefined;
 }) => {
+  const [media, setMedia] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (teamData && teamYearData) {
+      getMediaUrl(teamData.num, teamYearData.year.year).then((data) => {
+        setMedia(data);
+      });
+    }
+  }, [teamData, teamYearData]);
+
   if (!teamData || !teamYearData) {
     return (
       <div className="w-full h-auto flex flex-col justify-center items-center px-2">Loading...</div>
@@ -92,39 +110,40 @@ const OverviewSection = ({
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">
-      <div className="w-full mb-4">
-        Team {teamData.num} ({teamData.team}) had a record of{" "}
-        <strong>
-          {teamYear.wins}-{teamYear.losses}-{teamYear.ties}
-        </strong>{" "}
-        in {year.year}.
-      </div>
-      <div className="w-full mb-8 md:mb-12 flex flex-wrap items-center">
-        EPA Breakdown:
-        {year.year >= 2016 && (
-          <>
-            {epaCard(teamYear?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
-            {epaCard(teamYear?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
-            {epaCard(teamYear?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-            {epaCard(
-              teamYear?.rp_1_epa?.toFixed(2),
-              RPMapping?.[year.year]?.[0],
-              Category10Colors[3]
+      <div className="w-full flex flex-wrap">
+        <div className={classnames("w-full", media && "lg:w-auto lg:flex-grow")}>
+          <div className="w-full mb-4">
+            Team {teamData.num} ({teamData.team}) had a record of{" "}
+            <strong>
+              {teamYear.wins}-{teamYear.losses}-{teamYear.ties}
+            </strong>{" "}
+            in {year.year}.
+          </div>
+          <div className="w-full mb-8 lg:mb-12 flex flex-wrap items-center">
+            EPA Breakdown:
+            {year.year >= 2016 ? (
+              <>
+                {epaCard(teamYear?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
+                {epaCard(teamYear?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
+                {epaCard(teamYear?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
+                {epaCard(teamYear?.total_epa?.toFixed(1), "Total", Category10Colors[3])}
+              </>
+            ) : (
+              epaCard(teamYear?.total_epa?.toFixed(1), "Total", Category10Colors[0])
             )}
-            {epaCard(
-              teamYear?.rp_2_epa?.toFixed(2),
-              RPMapping?.[year.year]?.[1],
-              Category10Colors[4]
-            )}
-          </>
+          </div>
+          <div className="w-full mb-8 lg:mb-12 flex justify-center gap-2 md:gap-4">
+            {rankCard(teamYear?.epa_rank, teamYear?.epa_count, "Worldwide")}
+            {rankCard(teamYear?.country_epa_rank, teamYear?.country_epa_count, teamData?.country)}
+            {rankCard(teamYear?.district_epa_rank, teamYear?.district_epa_count, district)}
+            {rankCard(teamYear?.state_epa_rank, teamYear?.state_epa_count, state)}
+          </div>
+        </div>
+        {media && (
+          <div className="h-[250px] w-[300px] mx-auto lg:ml-8 mb-4 relative">
+            <Image src={media} alt="Image" fill className="object-contain" />
+          </div>
         )}
-        {epaCard(teamYear?.total_epa?.toFixed(1), "Total", Category10Colors[5])}
-      </div>
-      <div className="w-full mb-8 md:mb-12 flex justify-center gap-2 md:gap-4">
-        {rankCard(teamYear?.epa_rank, teamYear?.epa_count, "Worldwide")}
-        {rankCard(teamYear?.country_epa_rank, teamYear?.country_epa_count, teamData?.country)}
-        {rankCard(teamYear?.district_epa_rank, teamYear?.district_epa_count, district)}
-        {rankCard(teamYear?.state_epa_rank, teamYear?.state_epa_count, state)}
       </div>
       <div className="w-full h-1 bg-gray-300" />
       {teamEvents
@@ -161,24 +180,16 @@ const OverviewSection = ({
                   )}
                 </div>
                 <div className="flex flex-row flex-wrap mb-2">
-                  {year.year >= 2016 && (
+                  {year.year >= 2016 ? (
                     <>
                       {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
                       {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
                       {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-                      {epaCard(
-                        event?.rp_1_epa?.toFixed(2),
-                        RPMapping?.[year.year]?.[0],
-                        Category10Colors[3]
-                      )}
-                      {epaCard(
-                        event?.rp_2_epa?.toFixed(2),
-                        RPMapping?.[year.year]?.[1],
-                        Category10Colors[4]
-                      )}
+                      {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[3])}
                     </>
+                  ) : (
+                    epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[0])
                   )}
-                  {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[5])}
                 </div>
               </div>
               <div className="w-full lg:w-3/4 h-full pl-4 overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
