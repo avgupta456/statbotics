@@ -14,6 +14,10 @@ export const truncate = (str: string, length: number) => {
   return str;
 };
 
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 export const log = (...args: any[]) => {
   if (!PROD) {
     console.log(...args);

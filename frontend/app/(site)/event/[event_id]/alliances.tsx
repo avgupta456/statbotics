@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { createColumnHelper } from "@tanstack/react-table";
 
+import { BarChartNoLegend } from "../../../../components/Figures/Bar";
 import InsightsTable from "../../../../components/Table/InsightsTable";
 import { TeamLink, formatCell, formatPercentileCell } from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
@@ -20,6 +21,7 @@ const getAlliances = async (eventId: string) => {
   return alliances;
 };
 
+// Weird naming to use in the BarChart
 export type AllianceInsights = {
   rank: number;
   team1: number;
@@ -27,10 +29,10 @@ export type AllianceInsights = {
   team3: number;
   team4?: number;
   total_epa: number;
-  epa1: number;
-  epa2: number;
-  epa3: number;
-  epa4?: number;
+  "Captain EPA": number;
+  "First Pick EPA": number;
+  "Second Pick EPA": number;
+  "Third Pick EPA": number;
   record: string;
 };
 
@@ -64,16 +66,17 @@ const AlliancesSection = ({
     const epa4 = teamToEPA[alliance?.teams?.[3]] ?? 0;
 
     return {
+      team: alliance.rank,
       rank: alliance.rank,
       team1: alliance.teams?.[0],
       team2: alliance.teams?.[1],
       team3: alliance.teams?.[2],
       team4: alliance.teams?.[3],
       total_epa: round(epa1 + epa2 + Math.max(epa3, epa4), 0),
-      epa1: round(epa1, 1),
-      epa2: round(epa2, 1),
-      epa3: round(epa3, 1),
-      epa4: round(epa4, 1),
+      "Captain EPA": round(epa1, 1),
+      "First Pick EPA": round(epa2, 1),
+      "Second Pick EPA": round(epa3, 1),
+      "Third Pick EPA": round(epa4, 1),
       record: alliance.record,
     };
   });
@@ -116,19 +119,19 @@ const AlliancesSection = ({
         cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight, 2.5),
         header: "Total EPA",
       }),
-      columnHelper.accessor("epa1", {
+      columnHelper.accessor("Captain EPA", {
         cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
         header: "Captain EPA",
       }),
-      columnHelper.accessor("epa2", {
+      columnHelper.accessor("First Pick EPA", {
         cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
         header: "Pick 1 EPA",
       }),
-      columnHelper.accessor("epa3", {
+      columnHelper.accessor("Second Pick EPA", {
         cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
         header: "Pick 2 EPA",
       }),
-      columnHelper.accessor("epa4", {
+      columnHelper.accessor("Third Pick EPA", {
         cell: (info) =>
           info.getValue() === 0
             ? formatCell(info)
@@ -145,6 +148,7 @@ const AlliancesSection = ({
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">
+      <div className="w-full text-2xl font-bold mb-4">Alliance Insights</div>
       {alliances && alliances.length > 0 && (
         <InsightsTable
           title={"Alliance Insights"}
@@ -156,6 +160,14 @@ const AlliancesSection = ({
         />
       )}
       <div className="h-4" />
+      <div className="w-full text-2xl font-bold pt-8 mb-4 border-t-2 border-gray-300">
+        Alliance Bar Chart
+      </div>
+      <BarChartNoLegend
+        data={allianceInsightsData}
+        indexBy="rank"
+        keys={["Captain EPA", "First Pick EPA", "Second Pick EPA"]}
+      />
     </div>
   );
 };
