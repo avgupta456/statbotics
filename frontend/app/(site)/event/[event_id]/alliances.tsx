@@ -163,11 +163,13 @@ const AlliancesSection = ({
       <div className="w-full text-2xl font-bold pt-8 mb-4 border-t-2 border-gray-300">
         Alliance Bar Chart
       </div>
-      <BarChartNoLegend
-        data={allianceInsightsData}
-        indexBy="rank"
-        keys={["Captain EPA", "First Pick EPA", "Second Pick EPA"]}
-      />
+      {alliances && alliances.length > 0 && (
+        <BarChartNoLegend
+          data={allianceInsightsData}
+          indexBy="rank"
+          keys={["Captain EPA", "First Pick EPA", "Second Pick EPA"]}
+        />
+      )}
     </div>
   );
 };
