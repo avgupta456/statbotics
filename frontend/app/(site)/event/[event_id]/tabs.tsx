@@ -5,6 +5,7 @@ import React, { useMemo } from "react";
 import BubbleChart from "../../../../components/Figures/Bubble";
 import { CURR_YEAR, RPMapping } from "../../../../constants";
 import TabsSection from "../../shared/tabs";
+import AlliancesSection from "./alliances";
 import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
 import MatchSection from "./matches";
@@ -54,6 +55,11 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     [data, year]
   );
 
+  const MemoizedAlliancesSection = useMemo(
+    () => <AlliancesSection year={year} eventId={eventId} data={data} />,
+    [year, eventId, data]
+  );
+
   const MemoizedElimMatchSection = useMemo(
     () => <MatchSection year={year} quals={false} data={data} />,
     [data, year]
@@ -77,6 +83,9 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     { title: "Bubble Chart", content: MemoizedBubbleChart },
     qualsN > 0
       ? { title: "Qual Matches", content: MemoizedQualMatchSection }
+      : { title: "", content: "" },
+    elimsN > 0
+      ? { title: "Alliances", content: MemoizedAlliancesSection }
       : { title: "", content: "" },
     elimsN > 0
       ? { title: "Elim Matches", content: MemoizedElimMatchSection }
