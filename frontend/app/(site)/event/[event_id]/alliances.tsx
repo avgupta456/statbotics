@@ -69,7 +69,7 @@ const AlliancesSection = ({
       team2: alliance.teams?.[1],
       team3: alliance.teams?.[2],
       team4: alliance.teams?.[3],
-      total_epa: round(epa1 + epa2 + Math.max(epa3, epa4), 1),
+      total_epa: round(epa1 + epa2 + Math.max(epa3, epa4), 0),
       epa1: round(epa1, 1),
       epa2: round(epa2, 1),
       epa3: round(epa3, 1),
