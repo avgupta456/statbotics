@@ -31,6 +31,7 @@ const columnHelper = createColumnHelper<SimulationRow>();
 const detailedColumnHelper = createColumnHelper<any>();
 
 const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
+  const scheduleReleased = data.matches.length > 0;
   const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
   const eventOngoing = data.event.status === "Ongoing";
 
@@ -219,9 +220,6 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
     [year, emptyArr]
   );
 
-  // TODO: UI to switch between simple and detailed
-  // TODO: detailed cumulative vs singular probs
-
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="w-full text-2xl font-bold mb-4">Simulation</div>
@@ -242,7 +240,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
               : "Qualification Match " + index}
           </strong>
         </div>
-        {qualsN >= 0 && (
+        {scheduleReleased && (
           <div className="px-4 md:px-16">
             <Range
               step={1}
