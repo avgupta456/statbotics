@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BACKEND_URL } from "../../../../constants";
 import { log, round, truncate } from "../../../../utils";
 import NotFound from "../../shared/notFound";
+import ImageRow from "./imageRow";
 import Summary from "./summary";
 import MatchTable from "./table";
 import { Data } from "./types";
@@ -47,6 +48,7 @@ async function Page({ params }: { params: { match_id: string } }) {
         <div className="w-full flex flex-row flex-wrap justify-center">
           <Summary data={data} />
           <MatchTable data={data} />
+          <ImageRow data={data} />
           <Video video={data.match.video} />
         </div>
       </div>
