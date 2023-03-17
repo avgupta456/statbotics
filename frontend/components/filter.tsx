@@ -1,6 +1,7 @@
 import React from "react";
 import { DebounceInput } from "react-debounce-input";
 import { BiShow } from "react-icons/bi";
+import { MdRefresh } from "react-icons/md";
 import Select from "react-select";
 
 import {
@@ -53,9 +54,14 @@ export const FilterBar = ({
 
   const smartSetFilters = (key: string, value: any) => {
     // Can add more logic here if needed
+    if (key === "refresh") {
+      return setFilters({ ...filters, refresh: filters.refresh + 1 });
+    }
+
     if (value === "") {
       return setFilters({ ...filters, [key]: "" });
     }
+
     if (
       ["year", "week", "competing", "search", "playoff", "filterMatches", "sortMatches"].includes(
         key
@@ -143,6 +149,11 @@ export const FilterBar = ({
             {showProjections ? "Hide" : "Show"} Projections
           </div>
         </>
+      )}
+      {filterKeys.includes("refresh") && (
+        <div className="tooltip mb-4 ml-1 md:ml-2" data-tip="Refresh">
+          <MdRefresh className="hover_icon" onClick={(e) => smartSetFilters("refresh", e)} />
+        </div>
       )}
     </div>
   );
