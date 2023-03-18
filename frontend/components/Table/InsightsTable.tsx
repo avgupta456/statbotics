@@ -52,7 +52,7 @@ const InsightsTable = ({
   const rowClassName = (row: any) =>
     classnames(
       "text-center h-14 md:hover:bg-blue-100",
-      row?.original?.next_event && row?.original?.record === "0-0-0" && "bg-yellow-50", // teams page
+      row?.original?.next_event_key && row?.original?.record === "0-0-0" && "bg-yellow-50", // teams page
       row?.original?.first_event && row?.original?.rank === -1 && "bg-yellow-50" // event page
     );
 
