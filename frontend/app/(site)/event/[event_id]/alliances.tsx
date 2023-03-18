@@ -82,67 +82,69 @@ const AlliancesSection = ({
   });
 
   const columns = useMemo<any>(
-    () => [
-      columnHelper.accessor("rank", {
-        cell: (info) => formatNumber(info.getValue()),
-        header: "Rank",
-      }),
-      columnHelper.accessor("team1", {
-        cell: (info) =>
-          info.getValue()
-            ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
-            : "",
-        header: "Captain",
-      }),
-      columnHelper.accessor("team2", {
-        cell: (info) =>
-          info.getValue()
-            ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
-            : "",
-        header: "Pick 1",
-      }),
-      columnHelper.accessor("team3", {
-        cell: (info) =>
-          info.getValue()
-            ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
-            : "",
-        header: "Pick 2",
-      }),
-      columnHelper.accessor("team4", {
-        cell: (info) =>
-          info.getValue()
-            ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
-            : "",
-        header: "Pick 3",
-      }),
-      columnHelper.accessor("total_epa", {
-        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight, 2.5),
-        header: "Total EPA",
-      }),
-      columnHelper.accessor("Captain EPA", {
-        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
-        header: "Captain EPA",
-      }),
-      columnHelper.accessor("First Pick EPA", {
-        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
-        header: "Pick 1 EPA",
-      }),
-      columnHelper.accessor("Second Pick EPA", {
-        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
-        header: "Pick 2 EPA",
-      }),
-      columnHelper.accessor("Third Pick EPA", {
-        cell: (info) =>
-          info.getValue() === 0
-            ? formatCell(info)
-            : formatPercentileCell(data.year.total_stats, info, disableHighlight),
-        header: "Pick 3 EPA",
-      }),
-      columnHelper.accessor("record", {
-        cell: (info) => formatCell(info),
-        header: "Record",
-      }),
-    ],
+    () =>
+      [
+        columnHelper.accessor("rank", {
+          cell: (info) => formatNumber(info.getValue()),
+          header: "Rank",
+        }),
+        columnHelper.accessor("team1", {
+          cell: (info) =>
+            info.getValue()
+              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              : "",
+          header: "Captain",
+        }),
+        columnHelper.accessor("team2", {
+          cell: (info) =>
+            info.getValue()
+              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              : "",
+          header: "Pick 1",
+        }),
+        columnHelper.accessor("team3", {
+          cell: (info) =>
+            info.getValue()
+              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              : "",
+          header: "Pick 2",
+        }),
+        columnHelper.accessor("team4", {
+          cell: (info) =>
+            info.getValue()
+              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              : "",
+          header: "Pick 3",
+        }),
+        columnHelper.accessor("total_epa", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight, 2.5),
+          header: "Total EPA",
+        }),
+        columnHelper.accessor("Captain EPA", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Captain EPA",
+        }),
+        columnHelper.accessor("First Pick EPA", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Pick 1 EPA",
+        }),
+        columnHelper.accessor("Second Pick EPA", {
+          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Pick 2 EPA",
+        }),
+        columnHelper.accessor("Third Pick EPA", {
+          cell: (info) =>
+            info.getValue() === 0
+              ? formatCell(info)
+              : formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          header: "Pick 3 EPA",
+        }),
+        year !== 2015 &&
+          columnHelper.accessor("record", {
+            cell: (info) => formatCell(info),
+            header: "Record",
+          }),
+      ].filter(Boolean),
     [year, data.year, disableHighlight]
   );
 
