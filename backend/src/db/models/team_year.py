@@ -30,6 +30,7 @@ class TeamYearORM(Base, ModelORM):
     district = Column(String(10))
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
+    is_competing = Column(Boolean)
     next_event_key = Column(String(10))
     next_event_name = Column(String(100))
     next_event_week = Column(Integer)
@@ -117,6 +118,7 @@ class TeamYear(Model):
     country: Optional[str] = None
     district: Optional[str] = None
 
+    is_competing: Optional[bool] = None
     next_event_key: Optional[str] = None
     next_event_name: Optional[str] = None
     next_event_week: Optional[int] = None

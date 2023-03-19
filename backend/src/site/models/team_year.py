@@ -13,6 +13,7 @@ class APITeamYear(APIModel):
     state: Optional[str]
     country: Optional[str]
     district: Optional[str]
+    is_competing: Optional[bool]
     next_event_key: Optional[str]
     next_event_name: Optional[str]
     next_event_week: Optional[int]

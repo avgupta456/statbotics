@@ -21,6 +21,7 @@ def unpack_team_year(
         state=team_year.state,
         country=team_year.country,
         district=team_year.district,
+        is_competing=team_year.is_competing,
         next_event_key=team_year.next_event_key,
         next_event_name=team_year.next_event_name,
         next_event_week=team_year.next_event_week,

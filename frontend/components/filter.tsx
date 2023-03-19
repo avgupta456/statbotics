@@ -25,9 +25,12 @@ export const filterData = (data: any[] | undefined, filter: any) => {
   let filteredData = data;
   Object.keys(filter).forEach((key) => {
     const value = filter[key];
-    const datumKey = key === "competing" ? "next_event_week" : key;
     if (value !== "") {
-      filteredData = filteredData.filter((datum) => datum[datumKey] === value);
+      if (key === "is_competing") {
+        filteredData = filteredData.filter((datum) => datum[key]);
+      } else {
+        filteredData = filteredData.filter((datum) => datum[key] === value);
+      }
     }
   });
   return filteredData;
@@ -63,9 +66,15 @@ export const FilterBar = ({
     }
 
     if (
-      ["year", "week", "competing", "search", "playoff", "filterMatches", "sortMatches"].includes(
-        key
-      )
+      [
+        "year",
+        "week",
+        "is_competing",
+        "search",
+        "playoff",
+        "filterMatches",
+        "sortMatches",
+      ].includes(key)
     ) {
       return setFilters({ ...filters, [key]: value });
     } else if (key === "country") {
@@ -89,7 +98,7 @@ export const FilterBar = ({
         { key: "country", label: "Country", options: countryOptions },
         { key: "state", label: stateLabel, options: stateOptions },
         { key: "district", label: "District", options: districtOptions },
-        { key: "competing", label: "Competing", options: competingOptions },
+        { key: "is_competing", label: "Competing", options: competingOptions },
         { key: "vbar", label: "", options: [] },
         { key: "playoff", label: "Comp Level", options: playoffOptions },
         { key: "filterMatches", label: "Time Range", options: filterMatchesOptions },
