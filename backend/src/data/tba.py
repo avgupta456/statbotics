@@ -97,6 +97,7 @@ def process_year(
         {"name": None, "team": None, "state": None, "country": None, "district": None}
     )
 
+    team_is_competing_dict: Dict[int, bool] = defaultdict(lambda: False)
     team_next_event_dict: Dict[int, Any] = defaultdict(lambda: (None, None, None))
     team_first_event_dict: Dict[int, Any] = defaultdict(lambda: (None, None))
 
@@ -128,6 +129,9 @@ def process_year(
         def add_team_event(team: int):
             event_teams.add(team)
             year_teams.add(team)
+            # Stores whether a team is competing this week
+            if event_obj.year == CURR_YEAR and event_obj.week == CURR_WEEK:
+                team_is_competing_dict[team] = True
             # Store closest upcoming/ongoing event
             if (
                 event_obj.week >= CURR_WEEK
@@ -206,6 +210,7 @@ def process_year(
 
     for team in year_teams:
         team_obj = teams_dict.get(team, default_team)
+        is_competing = team_is_competing_dict[team]
         next_event = team_next_event_dict[team]
         team_year_objs.append(
             create_team_year_obj(
@@ -217,6 +222,7 @@ def process_year(
                     "state": team_obj.state,
                     "country": team_obj.country,
                     "district": team_obj.district,
+                    "is_competing": is_competing,
                     "next_event_key": next_event[0],
                     "next_event_name": next_event[1],
                     "next_event_week": next_event[2],

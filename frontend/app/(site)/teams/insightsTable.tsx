@@ -55,7 +55,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
 
   useEffect(() => {
     if (year === CURR_YEAR) {
-      setFilters({ ...defaultFilters, competing: "" });
+      setFilters({ ...defaultFilters, is_competing: "" });
     } else {
       setFilters(defaultFilters);
     }

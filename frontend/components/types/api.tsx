@@ -63,6 +63,7 @@ export type APITeamYear = {
   state?: string;
   country?: string;
   district?: string;
+  is_competing?: boolean;
   next_event_key?: string;
   next_event_name?: string;
   next_event_week?: number;
