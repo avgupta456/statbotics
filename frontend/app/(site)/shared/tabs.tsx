@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+
+import { useRouter } from "next/navigation";
 
 import { classnames } from "../../../utils";
 
@@ -13,9 +15,35 @@ const TabsSection = ({
   loading: boolean;
   error: boolean;
 }) => {
-  const [activeTab, setActiveTab] = useState(0);
+  const router = useRouter();
+  const [activeTab, _setActiveTab] = useState(0);
+  const [prevUrl, setPrevUrl] = useState("");
 
-  if (activeTab >= tabs.length) setActiveTab(0);
+  if (activeTab >= tabs.length) _setActiveTab(0);
+
+  const setActiveTab = (index: number) => {
+    if (index >= tabs.length) return;
+    _setActiveTab(index);
+
+    // remove anything after the last # in the path
+    const pathnameNoHash = window.location.href.replace(/#.*$/, "");
+    const newPathname = pathnameNoHash + "#" + tabs[index].title.toLowerCase().replace(/ /g, "-");
+    console.log("setActiveTab");
+    console.log("newPathname", newPathname);
+    router.push(newPathname);
+  };
+
+  const setActiveTabCallback = useCallback(setActiveTab, [router, tabs]);
+
+  useEffect(() => {
+    if (prevUrl !== "") return;
+    const hash = window.location.href.split("#")[1];
+    if (hash) {
+      const index = tabs.findIndex((tab) => tab.title.toLowerCase().replace(/ /g, "-") === hash);
+      if (index !== -1) setActiveTabCallback(index);
+      setPrevUrl(window.location.href); // prevent this from running again
+    }
+  }, [prevUrl, tabs, setActiveTabCallback]);
 
   return (
     <div className="w-full flex-grow flex flex-col">
