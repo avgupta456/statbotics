@@ -47,12 +47,11 @@ export const validateFilters = (
     year: yearOptions,
     week: weekOptions,
     is_competing: competingOptions,
-    playoff: playoffOptions,
-    filterMatches: filterMatchesOptions,
-    sortMatches: sortMatchesOptions,
   };
 
-  for (const key of ["year", "week", "is_competing", "playoff", "filterMatches", "sortMatches"]) {
+  // Note: playoff, filterMatches, sortMatches are not validated here
+
+  for (const key of ["year", "week", "is_competing"]) {
     if (validFilters.includes(key) && filters[key]) {
       outFilters[key] = keyToOptions[key].filter(
         (x) => x.value?.toLowerCase() === filters[key]?.toLowerCase()
