@@ -29,6 +29,7 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
         year={year}
         data={bubbleData}
         filterOptions={[]}
+        defaultFilters={{}}
         columnOptions={
           [
             "Total EPA",
