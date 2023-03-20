@@ -28,7 +28,7 @@ const TabsSection = ({
     // remove anything after the last # in the path
     const pathnameNoHash = window.location.href.replace(/#.*$/, "");
     const newPathname = pathnameNoHash + "#" + tabs[index].title.toLowerCase().replace(/ /g, "-");
-    router.push(newPathname);
+    router.replace(newPathname);
   };
 
   const setActiveTabCallback = useCallback(setActiveTab, [router, tabs]);
