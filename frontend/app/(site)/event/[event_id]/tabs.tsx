@@ -28,8 +28,9 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
       <BubbleChart
         year={year}
         data={bubbleData}
-        filterOptions={[]}
         defaultFilters={{}}
+        filters={{}}
+        setFilters={() => {}}
         columnOptions={
           [
             "Total EPA",

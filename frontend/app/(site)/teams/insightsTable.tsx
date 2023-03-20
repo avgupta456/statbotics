@@ -42,33 +42,31 @@ const columnHelper = createColumnHelper<TeamYearInsights>();
 
 const detailedColumnHelper = createColumnHelper<any>();
 
-const filterOptions = ["country", "state", "district"];
-
 const PageTeamInsightsTable = ({
   year,
   data,
-  defaultFilters,
+  filters,
+  setFilters,
 }: {
   year: number;
   data: TeamYearData;
-  defaultFilters;
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
 }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [showProjections, setShowProjections] = useState(true);
-  const [filters, setFilters] = useState({});
 
-  useEffect(() => {
-    const newFilters = filterOptions.reduce(
-      (acc, filter) => ({ ...acc, [filter]: defaultFilters[filter] }),
-      {}
-    );
+  const defaultFilters = {
+    country: "",
+    state: "",
+    district: "",
+    is_competing: year === CURR_YEAR && "",
+  };
 
-    if (year === CURR_YEAR) {
-      newFilters["is_competing"] = "";
-    }
-
-    setFilters(newFilters);
-  }, [defaultFilters, year]);
+  const actualFilters = Object.keys(defaultFilters).reduce(
+    (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
+    {}
+  );
 
   const allTeamYears = data.team_years
     .sort((a, b) => b.total_epa - a.total_epa)
@@ -78,11 +76,7 @@ const PageTeamInsightsTable = ({
       epa_rank: i + 1,
     }));
 
-  const numProjections = filterData(allTeamYears, filters).filter(
-    (teamYear: APITeamYear) => teamYear.count === 0
-  ).length;
-
-  const yearInsightsData: TeamYearInsights[] = filterData(allTeamYears, filters)
+  const yearInsightsData: TeamYearInsights[] = filterData(allTeamYears, actualFilters)
     .filter((teamYear: APITeamYear) => showProjections || teamYear.count > 0)
     .map((teamYear: APITeamYear) => {
       const wins = teamYear.wins ?? 0;
@@ -241,9 +235,9 @@ const PageTeamInsightsTable = ({
       <div className="flex items-center justify-center">
         <FilterBar
           defaultFilters={defaultFilters}
-          filters={filters}
+          filters={actualFilters}
           setFilters={setFilters}
-          includeProjections={numProjections > 0}
+          includeProjections={year === CURR_YEAR}
           showProjections={showProjections}
           setShowProjections={setShowProjections}
         />
@@ -259,21 +253,21 @@ const PageTeamInsightsTable = ({
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
       <div className="w-full px-4 border-t-[1px] border-gray-200">
-        {numProjections > 0 && showProjections && (
-          <div className="w-full text-xs mt-4">
-            <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
-            only a projection.
-          </div>
-        )}
         {year >= CURR_YEAR && (
-          <div className="w-full text-xs mb-4">
-            <strong>2.</strong> Unitless EPA is a linear function mapping EPA into Elo units. This
-            is not the same as Year Normalized EPA for past seasons. See{" "}
-            <Link href="/blog/epa" className="text_link">
-              blog
-            </Link>{" "}
-            for more details.
-          </div>
+          <>
+            <div className="w-full text-xs mt-4">
+              <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
+              only a projection.
+            </div>
+            <div className="w-full text-xs mb-4">
+              <strong>2.</strong> Unitless EPA is a linear function mapping EPA into Elo units. This
+              is not the same as Year Normalized EPA for past seasons. See{" "}
+              <Link href="/blog/epa" className="text_link">
+                blog
+              </Link>{" "}
+              for more details.
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -117,7 +117,7 @@ export const FilterBar = ({
 }: {
   defaultFilters: { [key: string]: any };
   filters: { [key: string]: any };
-  setFilters: any;
+  setFilters: (filters: { [key: string]: any }) => void;
   includeProjections?: boolean;
   showProjections?: boolean;
   setShowProjections?: any;

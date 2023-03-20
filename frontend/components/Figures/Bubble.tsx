@@ -26,14 +26,16 @@ const BubbleChart = ({
   year,
   data,
   columnOptions,
-  filterOptions,
   defaultFilters,
+  filters,
+  setFilters,
 }: {
   year: number;
   data: any[];
   columnOptions: string[];
-  filterOptions: string[];
   defaultFilters: { [key: string]: any };
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
 }) => {
   const [width, setWidth] = useState(0);
 
@@ -51,14 +53,18 @@ const BubbleChart = ({
     };
   }, []);
 
-  const [filters, setFilters] = useState(defaultFilters);
   const [columns, setColumns] = useState({
     x: year >= 2016 ? "Teleop" : "Total EPA",
     y: year >= 2016 ? "Auto + Endgame" : "Wins",
     z: "Constant",
   });
 
-  let filteredData: any[] = filterData(data, filters);
+  const actualFilters = Object.keys(defaultFilters).reduce(
+    (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
+    {}
+  );
+
+  let filteredData: any[] = filterData(data, actualFilters);
   const numRemoved = filteredData.filter((datum) => datum?.count === 0).length;
   filteredData = filteredData.filter((datum) => datum?.count > 0);
 
@@ -183,9 +189,13 @@ const BubbleChart = ({
   return (
     <div className="w-full">
       <div className="w-full flex flex-wrap items-end justify-center">
-        {filterOptions.length > 0 && (
+        {Object.keys(defaultFilters).length > 0 && (
           <div className="flex items-center justify-center mr-4">
-            <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
+            <FilterBar
+              defaultFilters={defaultFilters}
+              filters={actualFilters}
+              setFilters={setFilters}
+            />
           </div>
         )}
         <div className="flex items-center justify-center">
