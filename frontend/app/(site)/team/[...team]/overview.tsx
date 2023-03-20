@@ -50,10 +50,7 @@ const OverviewSection = ({
 
   useEffect(() => {
     if (teamData && teamYearData) {
-      getMediaUrl(teamData.num, teamYearData.year.year).then((data) => {
-        console.log(data);
-        setMedia(data);
-      });
+      getMediaUrl(teamData.num, teamYearData.year.year).then((data) => setMedia(data));
     }
   }, [teamData, teamYearData]);
 

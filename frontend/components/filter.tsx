@@ -25,7 +25,7 @@ export const filterData = (data: any[] | undefined, filter: any) => {
   let filteredData = data;
   Object.keys(filter).forEach((key) => {
     const value = filter[key];
-    if (value !== "") {
+    if (key !== "search" && value !== "") {
       if (key === "is_competing") {
         filteredData = filteredData.filter((datum) => datum[key]);
       } else {
@@ -133,6 +133,7 @@ export const FilterBar = ({
     }
 
     if (value === "") {
+      if (key === "country") return setFilters({ ...filters, country: "", state: "" });
       return setFilters({ ...filters, [key]: "" });
     }
 

@@ -2,6 +2,9 @@
 
 import React, { useContext, useEffect, useState } from "react";
 
+import { useSearchParams } from "next/navigation";
+
+import { validateFilters } from "../../../components/filter";
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round } from "../../../utils";
 import { getWithExpiry, setWithExpiry } from "../../localStorage";
@@ -38,6 +41,33 @@ const Page = () => {
   const data: EventData | undefined = eventDataDict[year];
   const [error, setError] = useState(false);
 
+  const searchParams = useSearchParams();
+  const paramFilters = validateFilters(
+    {
+      year: searchParams.get("year"),
+      week: searchParams.get("week"),
+      country: searchParams.get("country"),
+      state: searchParams.get("state"),
+      district: searchParams.get("district"),
+      search: searchParams.get("search"),
+    },
+    ["year", "week", "country", "state", "district", "search"],
+    [undefined, "", "", "", "", ""]
+  );
+
+  const [filters, setFilters] = useState({
+    week: paramFilters.week,
+    country: paramFilters.country,
+    state: paramFilters.state,
+    district: paramFilters.district,
+    search: paramFilters.search,
+  });
+
+  useEffect(() => {
+    const filterYear = parseInt(paramFilters.year || year);
+    if (filterYear !== year) setYear(filterYear);
+  }, [paramFilters.year, year, setYear]);
+
   useEffect(() => {
     setError(false);
   }, [year]);
@@ -62,7 +92,7 @@ const Page = () => {
 
   return (
     <PageLayout title="Events" year={year} setYear={setYear}>
-      <Tabs data={data} error={error} />
+      <Tabs data={data} error={error} filters={filters} setFilters={setFilters} />
     </PageLayout>
   );
 };

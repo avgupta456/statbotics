@@ -17,18 +17,26 @@ const defaultFilters = {
 
 const EventsLayout = ({
   data,
+  filters,
+  setFilters,
   SectionComponent,
 }: {
   data: EventData;
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
   SectionComponent: FC<{ name: string; data: EventData }>;
 }) => {
   // Currently always set to true --> No offseason events shown
-  const [filterOffseason, setFilterOffseason] = useState(true);
-  const [filters, setFilters] = useState(defaultFilters);
+  const filterOffseason = true;
 
-  const search = filters?.["search"] || "";
+  const actualFilters = Object.keys(defaultFilters).reduce(
+    (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
+    {}
+  );
 
-  const filteredData: APIEvent[] | undefined = filterData(data.events, filters).filter(
+  const search = actualFilters?.["search"] || "";
+
+  const filteredData: APIEvent[] | undefined = filterData(data.events, actualFilters).filter(
     (event: APIEvent) =>
       (!filterOffseason || !event.offseason) &&
       (event.key?.toLowerCase().includes(search.toLowerCase()) ||
@@ -64,7 +72,11 @@ const EventsLayout = ({
   return (
     <div className="w-full h-full flex flex-col items-center">
       <div className="flex justify-center mb-4">
-        <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
+        <FilterBar
+          defaultFilters={defaultFilters}
+          filters={actualFilters}
+          setFilters={setFilters}
+        />
       </div>
       {[
         { count: ongoingN, events: ongoingEvents, name: "Ongoing" },
