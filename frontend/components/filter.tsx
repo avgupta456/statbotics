@@ -36,6 +36,73 @@ export const filterData = (data: any[] | undefined, filter: any) => {
   return filteredData;
 };
 
+export const validateFilters = (
+  filters: { [key: string]: any },
+  validFilters: string[],
+  defaultFilters: string[]
+) => {
+  const outFilters: { [key: string]: any } = {};
+
+  const keyToOptions = {
+    year: yearOptions,
+    week: weekOptions,
+    is_competing: competingOptions,
+    playoff: playoffOptions,
+    filterMatches: filterMatchesOptions,
+    sortMatches: sortMatchesOptions,
+  };
+
+  for (const key of ["year", "week", "is_competing", "playoff", "filterMatches", "sortMatches"]) {
+    if (validFilters.includes(key) && filters[key]) {
+      outFilters[key] = keyToOptions[key].filter(
+        (x) => x.value?.toLowerCase() === filters[key]?.toLowerCase()
+      )?.[0]?.value;
+    }
+  }
+
+  if (validFilters.includes("country") && filters["country"]) {
+    outFilters["country"] = countryOptions.filter(
+      (x) => x.value?.toLowerCase() === filters["country"]?.toLowerCase()
+    )?.[0]?.value;
+  }
+
+  if (outFilters["country"] !== "Canada") {
+    if (validFilters.includes("state") && filters["state"]) {
+      outFilters["state"] = usaOptions.filter(
+        (x) => x.value?.toLowerCase() === filters["state"]?.toLowerCase()
+      )?.[0]?.value;
+    }
+  } else if (outFilters["country"] === "Canada") {
+    if (validFilters.includes("state") && filters["state"]) {
+      outFilters["state"] = canadaOptions.filter(
+        (x) => x.value?.toLowerCase() === filters["state"]?.toLowerCase()
+      )?.[0]?.value;
+    }
+  }
+
+  if (!outFilters["country"] && !outFilters["state"]) {
+    if (validFilters.includes("district") && filters["district"]) {
+      outFilters["district"] = districtOptions.filter(
+        (x) => x.value?.toLowerCase() === filters["district"]?.toLowerCase()
+      )?.[0]?.value;
+    }
+  }
+
+  for (const key of ["search", "refresh"]) {
+    if (validFilters.includes(key) && filters[key]) {
+      outFilters[key] = filters[key];
+    }
+  }
+
+  validFilters.forEach((key, i) => {
+    if (!outFilters[key]) {
+      outFilters[key] = defaultFilters[i];
+    }
+  });
+
+  return outFilters;
+};
+
 export const FilterBar = ({
   defaultFilters,
   filters,
