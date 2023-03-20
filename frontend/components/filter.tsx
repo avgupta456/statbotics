@@ -66,18 +66,22 @@ export const validateFilters = (
     )?.[0]?.value;
   }
 
-  if (outFilters["country"] !== "Canada") {
+  if (outFilters["country"] === "USA" || !outFilters["country"]) {
     if (validFilters.includes("state") && filters["state"]) {
       outFilters["state"] = usaOptions.filter(
         (x) => x.value?.toLowerCase() === filters["state"]?.toLowerCase()
       )?.[0]?.value;
     }
-  } else if (outFilters["country"] === "Canada") {
+    if (outFilters["state"]) outFilters["country"] = "USA";
+  }
+
+  if (outFilters["country"] === "Canada" || !outFilters["country"]) {
     if (validFilters.includes("state") && filters["state"]) {
       outFilters["state"] = canadaOptions.filter(
         (x) => x.value?.toLowerCase() === filters["state"]?.toLowerCase()
       )?.[0]?.value;
     }
+    if (outFilters["state"]) outFilters["country"] = "Canada";
   }
 
   if (!outFilters["country"] && !outFilters["state"]) {
