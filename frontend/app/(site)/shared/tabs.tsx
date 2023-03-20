@@ -28,8 +28,6 @@ const TabsSection = ({
     // remove anything after the last # in the path
     const pathnameNoHash = window.location.href.replace(/#.*$/, "");
     const newPathname = pathnameNoHash + "#" + tabs[index].title.toLowerCase().replace(/ /g, "-");
-    console.log("setActiveTab");
-    console.log("newPathname", newPathname);
     router.push(newPathname);
   };
 
