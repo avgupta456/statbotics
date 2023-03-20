@@ -40,9 +40,9 @@ export const getMediaUrl = async (team: number, year: number) => {
   const data = await readTBA(`/team/frc${team}/media/${year}`);
   const image = data.filter((item: any) => item?.preferred)?.[0];
   if (image?.type === "instagram-image") {
-    if (image?.view_url) {
-      return `https://www.thebluealliance.com/${image?.direct_url}`;
-    }
+    // if (image?.view_url) {
+    //   return `https://www.thebluealliance.com/${image?.direct_url}`;
+    // }
     return null;
   } else if (image?.type === "imgur") {
     return image?.direct_url ?? null;
