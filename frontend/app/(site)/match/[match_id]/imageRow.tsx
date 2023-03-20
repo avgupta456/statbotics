@@ -35,7 +35,7 @@ const ImageRow = ({ data }: { data: Data }) => {
             <div className="w-1/3 lg:w-1/6 p-1" key={index}>
               <div className="w-full h-40 relative">
                 {url ? (
-                  <Image src={url} alt="Team Image" fill className="object-contain" />
+                  <Image src={url} alt="Team Image" fill className="object-contain" unoptimized/>
                 ) : (
                   <div className="w-full h-40 flex justify-center items-center text-center">
                     <p>No image available</p>

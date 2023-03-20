@@ -149,7 +149,7 @@ const OverviewSection = ({
         </div>
         {media && (
           <div className="h-[250px] w-[300px] mx-auto lg:ml-8 mb-4 relative">
-            <Image src={media} alt="Image" fill className="object-contain" />
+            <Image src={media} alt="Image" fill className="object-contain" unoptimized />
           </div>
         )}
       </div>
