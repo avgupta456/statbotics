@@ -7,9 +7,37 @@ import { EventData } from "../types";
 import Table from "./insightsTable";
 import Summary from "./summary";
 
-const Tabs = ({ data, error }: { data: EventData; error: boolean }) => {
-  const MemoizedSummary = useMemo(() => <Summary data={data} />, [data]);
-  const MemoizedTable = useMemo(() => <Table data={data} />, [data]);
+const Tabs = ({
+  data,
+  error,
+  filters,
+  setFilters,
+}: {
+  data: EventData;
+  error: boolean;
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
+}) => {
+  const MemoizedSummary = useMemo(
+    () => (
+      <Summary
+        data={data}
+        filters={filters}
+        setFilters={(newFilters) => setFilters({ ...filters, ...newFilters })}
+      />
+    ),
+    [data, filters, setFilters]
+  );
+  const MemoizedTable = useMemo(
+    () => (
+      <Table
+        data={data}
+        filters={filters}
+        setFilters={(newFilters) => setFilters({ ...filters, ...newFilters })}
+      />
+    ),
+    [data, filters, setFilters]
+  );
   const tabs = [
     { title: "Summary", content: MemoizedSummary },
     { title: "Table", content: MemoizedTable },

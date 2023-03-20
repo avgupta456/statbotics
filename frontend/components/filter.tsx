@@ -25,7 +25,7 @@ export const filterData = (data: any[] | undefined, filter: any) => {
   let filteredData = data;
   Object.keys(filter).forEach((key) => {
     const value = filter[key];
-    if (value !== "") {
+    if (key !== "search" && value !== "") {
       if (key === "is_competing") {
         filteredData = filteredData.filter((datum) => datum[key]);
       } else {
@@ -47,12 +47,11 @@ export const validateFilters = (
     year: yearOptions,
     week: weekOptions,
     is_competing: competingOptions,
-    playoff: playoffOptions,
-    filterMatches: filterMatchesOptions,
-    sortMatches: sortMatchesOptions,
   };
 
-  for (const key of ["year", "week", "is_competing", "playoff", "filterMatches", "sortMatches"]) {
+  // Note: playoff, filterMatches, sortMatches are not validated here
+
+  for (const key of ["year", "week", "is_competing"]) {
     if (validFilters.includes(key) && filters[key]) {
       outFilters[key] = keyToOptions[key].filter(
         (x) => x.value?.toLowerCase() === filters[key]?.toLowerCase()
@@ -117,7 +116,7 @@ export const FilterBar = ({
 }: {
   defaultFilters: { [key: string]: any };
   filters: { [key: string]: any };
-  setFilters: any;
+  setFilters: (filters: { [key: string]: any }) => void;
   includeProjections?: boolean;
   showProjections?: boolean;
   setShowProjections?: any;
@@ -133,6 +132,7 @@ export const FilterBar = ({
     }
 
     if (value === "") {
+      if (key === "country") return setFilters({ ...filters, country: "", state: "" });
       return setFilters({ ...filters, [key]: "" });
     }
 

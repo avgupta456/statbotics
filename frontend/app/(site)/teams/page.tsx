@@ -5,13 +5,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { validateFilters } from "../../../components/filter";
-import {
-  canadaOptions,
-  countryOptions,
-  districtOptions,
-  usaOptions,
-  yearOptions,
-} from "../../../components/filterConstants";
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round } from "../../../utils";
 import { getWithExpiry, setWithExpiry } from "../../localStorage";
@@ -63,7 +56,7 @@ const Page = () => {
   const [error, setError] = useState(false);
 
   const searchParams = useSearchParams();
-  const filters = validateFilters(
+  const paramFilters = validateFilters(
     {
       year: searchParams.get("year"),
       country: searchParams.get("country"),
@@ -74,11 +67,17 @@ const Page = () => {
     [undefined, "", "", ""]
   );
 
+  const [filters, setFilters] = useState({
+    country: paramFilters.country,
+    state: paramFilters.state,
+    district: paramFilters.district,
+    is_competing: year === CURR_YEAR && "",
+  });
+
   useEffect(() => {
-    if (filters.year && filters.year !== year) {
-      setYear(filters.year);
-    }
-  }, [filters.year, year, setYear]);
+    const filterYear = parseInt(paramFilters.year || year);
+    if (filterYear !== year) setYear(filterYear);
+  }, [paramFilters.year, year, setYear]);
 
   useEffect(() => {
     setError(false);
@@ -122,7 +121,7 @@ const Page = () => {
 
   return (
     <PageLayout title="Teams" year={year} setYear={setYear}>
-      <Tabs year={year} data={data} error={error} filters={filters} />
+      <Tabs year={year} data={data} error={error} filters={filters} setFilters={setFilters} />
     </PageLayout>
   );
 };

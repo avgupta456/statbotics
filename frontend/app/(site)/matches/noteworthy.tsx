@@ -82,14 +82,6 @@ const NoteworthySection = ({
   );
 };
 
-const defaultFilters = {
-  country: "",
-  state: "",
-  district: "",
-  playoff: "",
-  week: "",
-};
-
 async function getMatchData(year, country, state, district, playoff, week) {
   const start = performance.now();
   let suffix = "";
@@ -112,30 +104,56 @@ async function getMatchData(year, country, state, district, playoff, week) {
   return (await res.json())?.data;
 }
 
-const NoteworthyMatches = ({ year }: { year: number }) => {
+const defaultFilters = {
+  country: "",
+  state: "",
+  district: "",
+  playoff: "",
+  week: "",
+};
+
+const NoteworthyMatches = ({
+  year,
+  filters,
+  setFilters,
+}: {
+  year: number;
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
+}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState<MatchData>(null);
-  const [filters, setFilters] = useState(defaultFilters);
+  const [currFilters, setCurrFilters] = useState({});
+
+  const actualFilters: { [key: string]: any } = Object.keys(defaultFilters).reduce(
+    (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
+    {}
+  );
 
   useEffect(() => {
+    if (JSON.stringify(currFilters) === JSON.stringify(actualFilters)) {
+      return;
+    }
+
     setLoading(true);
     getMatchData(
       year,
-      filters.country,
-      filters.state,
-      filters.district,
-      filters.playoff,
-      filters.week
+      actualFilters.country,
+      actualFilters.state,
+      actualFilters.district,
+      actualFilters.playoff,
+      actualFilters.week
     ).then((data) => {
       if (data) {
         setData(data);
+        setCurrFilters(actualFilters);
       } else {
         setError(true);
       }
       setLoading(false);
     });
-  }, [year, filters]);
+  }, [year, actualFilters, currFilters]);
 
   if (error) {
     return (
@@ -147,7 +165,7 @@ const NoteworthyMatches = ({ year }: { year: number }) => {
 
   return (
     <div className="flex flex-col mb-4">
-      <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
+      <FilterBar defaultFilters={defaultFilters} filters={actualFilters} setFilters={setFilters} />
       <div className="flex flex-col">
         {data !== null && !loading ? (
           <>

@@ -218,10 +218,20 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
   );
 };
 
-const EventInsightsTable = ({ data }: { data: EventData }) => {
+const EventInsightsTable = ({
+  data,
+  filters,
+  setFilters,
+}: {
+  data: EventData;
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
+}) => {
   return (
     <EventsLayout
       data={data}
+      filters={filters}
+      setFilters={setFilters}
       SectionComponent={({ name, data }) => {
         const count = data.events.length;
         return (

@@ -30,13 +30,23 @@ const EventCard = ({ event }: { event: APIEvent }) => {
   );
 };
 
-const Summary = ({ data }: { data: EventData }) => {
+const Summary = ({
+  data,
+  filters,
+  setFilters,
+}: {
+  data: EventData;
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
+}) => {
   const [expanded, setExpanded] = useState("");
   const cutoffN = 4;
 
   return (
     <EventsLayout
       data={data}
+      filters={filters}
+      setFilters={setFilters}
       SectionComponent={({ name, data }) => {
         const count = data?.events?.length || 0;
         const showEvents = data?.events?.slice(0, expanded === name ? undefined : cutoffN) || [];

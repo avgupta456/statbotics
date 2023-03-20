@@ -74,17 +74,6 @@ const UpcomingMatch = ({
   );
 };
 
-const defaultFilters = {
-  country: "",
-  state: "",
-  district: "",
-  vbar: "", // draws vertical bar
-  playoff: "",
-  filterMatches: "",
-  sortMatches: "predicted_time",
-  refresh: 0,
-};
-
 async function getMatchData(country, state, district, playoff, filterMatches, sortMatches) {
   const start = performance.now();
   let suffix = `?limit=20&metric=${sortMatches}`;
@@ -105,30 +94,57 @@ async function getMatchData(country, state, district, playoff, filterMatches, so
   return (await res.json())?.data;
 }
 
-const UpcomingMatches = () => {
+const defaultFilters = {
+  country: "",
+  state: "",
+  district: "",
+  vbar: "", // draws vertical bar
+  playoff: "",
+  filterMatches: "",
+  sortMatches: "predicted_time",
+  refresh: 0,
+};
+
+const UpcomingMatches = ({
+  filters,
+  setFilters,
+}: {
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
+}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState<MatchData>(null);
-  const [filters, setFilters] = useState(defaultFilters);
+  const [currFilters, setCurrFilters] = useState({});
+
+  const actualFilters: { [key: string]: any } = Object.keys(defaultFilters).reduce(
+    (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
+    {}
+  );
 
   useEffect(() => {
+    if (JSON.stringify(currFilters) === JSON.stringify(actualFilters)) {
+      return;
+    }
+
     setLoading(true);
     getMatchData(
-      filters.country,
-      filters.state,
-      filters.district,
-      filters.playoff,
-      filters.filterMatches,
-      filters.sortMatches
+      actualFilters.country,
+      actualFilters.state,
+      actualFilters.district,
+      actualFilters.playoff,
+      actualFilters.filterMatches,
+      actualFilters.sortMatches
     ).then((data) => {
       if (data) {
         setData(data);
+        setCurrFilters(actualFilters);
       } else {
         setError(true);
       }
       setLoading(false);
     });
-  }, [filters]);
+  }, [actualFilters, currFilters]);
 
   if (error) {
     return (
@@ -140,7 +156,7 @@ const UpcomingMatches = () => {
 
   return (
     <div className="flex flex-col">
-      <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
+      <FilterBar defaultFilters={defaultFilters} filters={actualFilters} setFilters={setFilters} />
       <div className="mt-8 flex flex-col gap-8">
         {data && data?.matches?.length > 0 && !loading ? (
           data.matches.map((match) => (
