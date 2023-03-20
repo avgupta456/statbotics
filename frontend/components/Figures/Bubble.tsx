@@ -27,11 +27,13 @@ const BubbleChart = ({
   data,
   columnOptions,
   filterOptions,
+  defaultFilters,
 }: {
   year: number;
   data: any[];
   columnOptions: string[];
   filterOptions: string[];
+  defaultFilters: { [key: string]: any };
 }) => {
   const [width, setWidth] = useState(0);
 
@@ -49,7 +51,6 @@ const BubbleChart = ({
     };
   }, []);
 
-  const defaultFilters = filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
   const [filters, setFilters] = useState(defaultFilters);
   const [columns, setColumns] = useState({
     x: year >= 2016 ? "Teleop" : "Total EPA",

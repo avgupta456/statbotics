@@ -13,14 +13,16 @@ const Tabs = ({
   year,
   data,
   error,
+  filters,
 }: {
   year: number;
   data: TeamYearData | undefined;
   error: boolean;
+  filters: { [key: string]: any };
 }) => {
   const MemoizedInsightsTable = useMemo(
-    () => <InsightsTable year={year} data={data || emptyTeamYearData} />,
-    [year, data]
+    () => <InsightsTable year={year} data={data || emptyTeamYearData} defaultFilters={filters} />,
+    [year, data, filters]
   );
 
   const MemoizedBubbleChart = useMemo(
@@ -29,6 +31,11 @@ const Tabs = ({
         year={year}
         data={data?.team_years ?? []}
         filterOptions={["country", "state", "district"]}
+        defaultFilters={{
+          country: filters.country,
+          state: filters.state,
+          district: filters.district,
+        }}
         columnOptions={
           [
             "Total EPA",
@@ -45,7 +52,7 @@ const Tabs = ({
         }
       />
     ),
-    [data, year]
+    [year, data, filters]
   );
 
   const MemoizedFigureSection = useMemo(

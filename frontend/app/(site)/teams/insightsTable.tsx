@@ -42,24 +42,33 @@ const columnHelper = createColumnHelper<TeamYearInsights>();
 
 const detailedColumnHelper = createColumnHelper<any>();
 
-const defaultFilters = {
-  country: "",
-  state: "",
-  district: "",
-};
+const filterOptions = ["country", "state", "district"];
 
-const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
+const PageTeamInsightsTable = ({
+  year,
+  data,
+  defaultFilters,
+}: {
+  year: number;
+  data: TeamYearData;
+  defaultFilters;
+}) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [showProjections, setShowProjections] = useState(true);
   const [filters, setFilters] = useState({});
 
   useEffect(() => {
+    const newFilters = filterOptions.reduce(
+      (acc, filter) => ({ ...acc, [filter]: defaultFilters[filter] }),
+      {}
+    );
+
     if (year === CURR_YEAR) {
-      setFilters({ ...defaultFilters, is_competing: "" });
-    } else {
-      setFilters(defaultFilters);
+      newFilters["is_competing"] = "";
     }
-  }, [year]);
+
+    setFilters(newFilters);
+  }, [defaultFilters, year]);
 
   const allTeamYears = data.team_years
     .sort((a, b) => b.total_epa - a.total_epa)
