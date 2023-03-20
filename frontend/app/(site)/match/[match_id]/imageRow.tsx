@@ -4,18 +4,8 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 
-import { readTBA } from "../../../../utils";
+import { getMediaUrls } from "../../../../utils";
 import { Data } from "./types";
-
-const getMediaUrls = async (teams: number[], year: number) => {
-  const urls = [];
-  for (const team of teams) {
-    const data = await readTBA(`/team/frc${team}/media/${year}`);
-    const image = data.filter((item: any) => item?.preferred)?.[0];
-    urls.push(image?.direct_url ?? null);
-  }
-  return urls;
-};
 
 const ImageRow = ({ data }: { data: Data }) => {
   const [media, setMedia] = useState<string[] | null>(null);

@@ -9,6 +9,8 @@ const nextConfig = {
     domains: [
       // imgur
       "i.imgur.com",
+      // instagram, through TBA
+      "www.thebluealliance.com",
     ],
   },
   env: {

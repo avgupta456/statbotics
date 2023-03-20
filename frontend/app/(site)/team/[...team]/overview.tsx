@@ -5,15 +5,9 @@ import Link from "next/link";
 
 import MatchTable from "../../../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
-import { CURR_YEAR, Category10Colors, RPMapping } from "../../../../constants";
-import { classnames, readTBA } from "../../../../utils";
+import { CURR_YEAR, Category10Colors } from "../../../../constants";
+import { classnames, getMediaUrl } from "../../../../utils";
 import { TeamData, TeamYearData } from "./types";
-
-const getMediaUrl = async (team: number, year: number) => {
-  const data = await readTBA(`/team/frc${team}/media/${year}`);
-  const image = data.filter((item: any) => item?.preferred)?.[0];
-  return image?.direct_url ?? null;
-};
 
 const epaCard = (epa: string, label: string, bg: string) => {
   if (!epa || !label || !bg) {
@@ -56,6 +50,7 @@ const OverviewSection = ({
   useEffect(() => {
     if (teamData && teamYearData) {
       getMediaUrl(teamData.num, teamYearData.year.year).then((data) => {
+        console.log(data);
         setMedia(data);
       });
     }
