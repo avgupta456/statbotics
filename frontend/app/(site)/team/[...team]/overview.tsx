@@ -21,20 +21,21 @@ const epaCard = (epa: string, label: string, bg: string) => {
   );
 };
 
-const rankCard = (rank: number, count: number, label: string) => {
+const rankCard = (rank: number, count: number, label: string, filter: string) => {
   if (!rank || !count || !label) {
     return null;
   }
 
   return (
-    <div
+    <Link
+      href={`/teams${filter}`}
       style={{ backgroundColor: Category10Colors[0] }}
       className="w-32 h-auto p-2 flex flex-col justify-center items-center text-center rounded-lg"
     >
       <div className="text-2xl font-bold text-white">{rank}</div>
       <div className="text-xs md:text-sm text-white">{label}</div>
       <div className="text-xs text-white">out of {count}</div>
-    </div>
+    </Link>
   );
 };
 
@@ -128,10 +129,25 @@ const OverviewSection = ({
             )}
           </div>
           <div className="w-full mb-8 lg:mb-12 flex justify-center gap-2 md:gap-4">
-            {rankCard(teamYear?.epa_rank, teamYear?.epa_count, "Worldwide")}
-            {rankCard(teamYear?.country_epa_rank, teamYear?.country_epa_count, teamData?.country)}
-            {rankCard(teamYear?.district_epa_rank, teamYear?.district_epa_count, district)}
-            {rankCard(teamYear?.state_epa_rank, teamYear?.state_epa_count, state)}
+            {rankCard(teamYear?.epa_rank, teamYear?.epa_count, "Worldwide", "")}
+            {rankCard(
+              teamYear?.country_epa_rank,
+              teamYear?.country_epa_count,
+              teamData?.country,
+              `?country=${teamData?.country}`
+            )}
+            {rankCard(
+              teamYear?.district_epa_rank,
+              teamYear?.district_epa_count,
+              district,
+              `?district=${teamData?.district}`
+            )}
+            {rankCard(
+              teamYear?.state_epa_rank,
+              teamYear?.state_epa_count,
+              state,
+              `?state=${teamData?.state}`
+            )}
           </div>
         </div>
         {media && (
