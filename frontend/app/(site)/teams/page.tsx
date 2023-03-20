@@ -2,6 +2,16 @@
 
 import React, { useContext, useEffect, useState } from "react";
 
+import { useSearchParams } from "next/navigation";
+
+import { validateFilters } from "../../../components/filter";
+import {
+  canadaOptions,
+  countryOptions,
+  districtOptions,
+  usaOptions,
+  yearOptions,
+} from "../../../components/filterConstants";
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round } from "../../../utils";
 import { getWithExpiry, setWithExpiry } from "../../localStorage";
@@ -52,6 +62,24 @@ const Page = () => {
   const data: TeamYearData | undefined = teamYearDataDict[year] || teamYearMiniDataDict[year];
   const [error, setError] = useState(false);
 
+  const searchParams = useSearchParams();
+  const filters = validateFilters(
+    {
+      year: searchParams.get("year"),
+      country: searchParams.get("country"),
+      state: searchParams.get("state"),
+      district: searchParams.get("district"),
+    },
+    ["year", "country", "state", "district"],
+    [undefined, "", "", ""]
+  );
+
+  useEffect(() => {
+    if (filters.year && filters.year !== year) {
+      setYear(filters.year);
+    }
+  }, [filters.year, year, setYear]);
+
   useEffect(() => {
     setError(false);
   }, [year]);
@@ -94,7 +122,7 @@ const Page = () => {
 
   return (
     <PageLayout title="Teams" year={year} setYear={setYear}>
-      <Tabs year={year} data={data} error={error} />
+      <Tabs year={year} data={data} error={error} filters={filters} />
     </PageLayout>
   );
 };
