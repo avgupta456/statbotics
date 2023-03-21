@@ -98,7 +98,13 @@ const getSchedule = async (numTeams: number, numMatches: number) => {
     });
 };
 
-async function preSim(data: Data, simCount: number, numMatches: number, post: boolean) {
+async function preSim(
+  data: Data,
+  simCount: number,
+  numMatches: number,
+  discrete: boolean,
+  post: boolean
+) {
   const TOTAL_SD = data.year.score_sd;
 
   const teamsN = data.team_events.length;
@@ -155,22 +161,22 @@ async function preSim(data: Data, simCount: number, numMatches: number, post: bo
       let blueRP2EPA = currRP2EPAs[blue[0]] + currRP2EPAs[blue[1]] + currRP2EPAs[blue[2]];
 
       const winProb = 1 / (1 + Math.pow(10, ((-5 / 8) * (redEPA - blueEPA)) / TOTAL_SD));
-      const redWin = Math.random() < winProb ? 1 : 0;
+      const redWin = discrete ? (Math.random() < winProb ? 1 : 0) : winProb;
 
       const redRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP1EPA - 0.5)));
-      const redRP1 = Math.random() < redRP1Prob ? 1 : 0;
+      const redRP1 = discrete ? (Math.random() < redRP1Prob ? 1 : 0) : redRP1Prob;
 
       const redRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP2EPA - 0.5)));
-      const redRP2 = Math.random() < redRP2Prob ? 1 : 0;
+      const redRP2 = discrete ? (Math.random() < redRP2Prob ? 1 : 0) : redRP2Prob;
 
       const blueRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP1EPA - 0.5)));
-      const blueRP1 = Math.random() < blueRP1Prob ? 1 : 0;
+      const blueRP1 = discrete ? (Math.random() < blueRP1Prob ? 1 : 0) : blueRP1Prob;
 
       const blueRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP2EPA - 0.5)));
-      const blueRP2 = Math.random() < blueRP2Prob ? 1 : 0;
+      const blueRP2 = discrete ? (Math.random() < blueRP2Prob ? 1 : 0) : blueRP2Prob;
 
-      const redRPs = redRP1 + redRP2 + (redWin ? 2 : 0);
-      const blueRPs = blueRP1 + blueRP2 + (redWin ? 0 : 2);
+      const redRPs = redRP1 + redRP2 + (discrete ? (redWin ? 2 : 0) : 2 * redWin);
+      const blueRPs = blueRP1 + blueRP2 + (discrete ? (redWin ? 0 : 2) : 2 * (1 - redWin));
 
       red.forEach((team) => {
         currSimRPs[team] += redRPs;
@@ -368,23 +374,118 @@ async function indexSim(data: Data, index: number, simCount: number, post: boole
 
 async function strengthOfSchedule(data: Data, simCount: number, post: boolean) {
   const N = Math.round((6 * data.event.qual_matches) / data.team_events.length);
-  const { simRanks: preSimRanks, simRPs: preSimRPs } = await preSim(data, simCount, N, false);
+  const { simRanks: preSimRanks, simRPs: preSimRPs } = await preSim(
+    data,
+    simCount,
+    N,
+    false,
+    false
+  );
   const { simRanks, simRPs } = await indexSim(data, 0, simCount, false);
+
+  const teamPartners = {};
+  const teamOpponents = {};
+  for (let i = 0; i < data.team_events.length; i++) {
+    teamPartners[data.team_events[i].num] = [];
+    teamOpponents[data.team_events[i].num] = [];
+  }
+  for (let i = 0; i < data.matches.length; i++) {
+    const match = data.matches[i];
+    if (match.playoff) continue;
+    const redTeams = match.red;
+    const blueTeams = match.blue;
+    for (let j = 0; j < redTeams.length; j++) {
+      const currPartners = [];
+      for (let k = 0; k < redTeams.length; k++) {
+        if (j == k) continue;
+        currPartners.push(redTeams[k]);
+      }
+      teamPartners[redTeams[j]].push(currPartners);
+
+      const currOpponents = [];
+      for (let k = 0; k < blueTeams.length; k++) {
+        currOpponents.push(blueTeams[k]);
+      }
+      teamOpponents[redTeams[j]].push(currOpponents);
+    }
+    for (let j = 0; j < blueTeams.length; j++) {
+      const currPartners = [];
+      for (let k = 0; k < blueTeams.length; k++) {
+        if (j == k) continue;
+        currPartners.push(blueTeams[k]);
+      }
+      teamPartners[blueTeams[j]].push(currPartners);
+
+      const currOpponents = [];
+      for (let k = 0; k < redTeams.length; k++) {
+        currOpponents.push(redTeams[k]);
+      }
+      teamOpponents[blueTeams[j]].push(currOpponents);
+    }
+  }
+
+  const flattenedTeamPartners = {};
+  const flattenedTeamOpponents = {};
+  for (let i = 0; i < data.team_events.length; i++) {
+    const teamNum = data.team_events[i].num;
+    flattenedTeamPartners[teamNum] = [];
+    flattenedTeamOpponents[teamNum] = [];
+    for (let j = 0; j < teamPartners[teamNum].length; j++) {
+      flattenedTeamPartners[teamNum].push(...teamPartners[teamNum][j]);
+      flattenedTeamOpponents[teamNum].push(...teamOpponents[teamNum][j]);
+    }
+  }
+
+  const teamEPAs = {};
+  let avgEPA = 0;
+  for (let j = 0; j < data.team_events.length; j++) {
+    const teamEvent = data.team_events[j];
+    teamEPAs[teamEvent.num] = teamEvent.total_epa;
+    avgEPA += teamEvent.total_epa;
+  }
+  avgEPA /= data.team_events.length;
 
   const sosMetrics = {};
   for (let i = 0; i < data.team_events.length; i++) {
-    const preSimAvgRank =
-      preSimRanks[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
-    const preSimAvgRP = preSimRPs[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
-    const simAvgRank = simRanks[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
-    const simAvgRP = simRPs[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
+    const teamNum = data.team_events[i].num;
+    const currPreSimRanks = preSimRanks[teamNum];
+    const preSimAvgRank = currPreSimRanks.reduce((x, y) => x + y, 0) / simCount;
+
+    const currPreSimRPs = preSimRPs[teamNum];
+    const preSimAvgRP = currPreSimRPs.reduce((x, y) => x + y, 0) / simCount;
+
+    const currSimRanks = simRanks[teamNum];
+    const simAvgRank = currSimRanks.reduce((x, y) => x + y, 0) / simCount;
+
+    const currSimRPs = simRPs[teamNum];
+    const simAvgRP = currSimRPs.reduce((x, y) => x + y, 0) / simCount;
 
     const deltaRank = simAvgRank - preSimAvgRank;
     const deltaRP = simAvgRP - preSimAvgRP;
 
+    const rankPercentile = currPreSimRanks.filter((x) => x >= simAvgRank).length / simCount;
+    const rpPercentile = currPreSimRPs.filter((x) => x <= simAvgRP).length / simCount;
+
+    const currTeamPartners = flattenedTeamPartners[teamNum];
+    const currTeamOpponents = flattenedTeamOpponents[teamNum];
+
+    const avgPartnerEPA =
+      currTeamPartners.map((x) => teamEPAs[x]).reduce((x, y) => x + y, 0) / currTeamPartners.length;
+
+    const avgOpponentEPA =
+      currTeamOpponents.map((x) => teamEPAs[x]).reduce((x, y) => x + y, 0) /
+      currTeamOpponents.length;
+
+    const deltaEPA = avgEPA + 2 * avgPartnerEPA - 3 * avgOpponentEPA;
+
     sosMetrics[data.team_events[i].num] = {
       deltaRank,
+      rankPercentile,
       deltaRP,
+      rpPercentile,
+      avgPartnerEPA,
+      avgOpponentEPA,
+      deltaEPA,
     };
   }
 
@@ -402,7 +503,7 @@ ctx.addEventListener("message", (evt) => {
       const qualMatches = evt.data.data?.event?.qual_matches;
       const teamEvents = evt.data.data?.team_events?.length;
       const N = qualMatches && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : 12;
-      out = preSim(evt.data.data, evt.data.simCount, N, true);
+      out = preSim(evt.data.data, evt.data.simCount, N, true, true);
       return;
     case "indexSim":
       out = indexSim(evt.data.data, evt.data.index, evt.data.simCount, true);
