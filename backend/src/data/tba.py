@@ -268,9 +268,6 @@ def check_year_partial(
         if new_etag == prev_etag and new_etag is not None:
             continue
 
-        print(f"New matches for {event_obj.key}!")
-        print(new_etag, prev_etag)
-
         return True  # If any event has new matches, return True
     return False  # Otherwise return False
 
