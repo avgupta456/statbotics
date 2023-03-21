@@ -18,20 +18,23 @@ const TabsSection = ({
   const router = useRouter();
 
   const hash = window?.location?.href?.split("#")?.[1];
-  const index = tabs.findIndex((tab) => tab.title.toLowerCase().replace(/ /g, "-") === hash);
-  const [activeTab, _setActiveTab] = useState(index >= 0 ? index : 0);
+  const [activeTab, _setActiveTab] = useState(hash);
 
-  if (activeTab >= tabs.length) _setActiveTab(0);
-
-  const setActiveTab = (index: number) => {
-    if (index >= tabs.length) return;
-    _setActiveTab(index);
+  const setActiveTab = (title: string) => {
+    const formattedTitle = title.toLowerCase().replace(/ /g, "-");
+    _setActiveTab(formattedTitle);
 
     // remove anything after the last # in the path
     const pathnameNoHash = window.location.href.replace(/#.*$/, "");
-    const newPathname = pathnameNoHash + "#" + tabs[index].title.toLowerCase().replace(/ /g, "-");
+    const newPathname = pathnameNoHash + "#" + formattedTitle;
     router.replace(newPathname);
   };
+
+  const rawIndex = tabs.findIndex(
+    (tab) => tab.title.toLowerCase().replace(/ /g, "-") === activeTab
+  );
+
+  const currIndex = rawIndex >= 0 ? rawIndex : 0;
 
   return (
     <div className="w-full flex-grow flex flex-col">
@@ -39,16 +42,16 @@ const TabsSection = ({
         {tabs.map((tab, index) => (
           <div
             key={`tab-${tab.title}`}
-            className={classnames(activeTab === index ? "" : "border-b-[1px] border-gray-200")}
+            className={classnames(currIndex === index ? "" : "border-b-[1px] border-gray-200")}
           >
             <button
               className={classnames(
                 "w-32 border-t-[1px] border-x-[1px] py-2 rounded-t",
-                activeTab === index
+                currIndex === index
                   ? "text-gray-800 border-gray-200"
                   : "text-blue-500 hover:text-blue-600 border-white hover:border-gray-200"
               )}
-              onClick={() => setActiveTab(index)}
+              onClick={() => setActiveTab(tab.title)}
             >
               {tab.title}
             </button>
@@ -68,7 +71,7 @@ const TabsSection = ({
         ) : (
           <>
             {tabs.map((tab, index) => (
-              <div key={`tab-${tab.title}`} className={activeTab === index ? "w-full" : "hidden"}>
+              <div key={`tab-${tab.title}`} className={currIndex === index ? "w-full" : "hidden"}>
                 {tab.content}
               </div>
             ))}
