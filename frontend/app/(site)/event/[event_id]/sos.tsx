@@ -20,6 +20,8 @@ type SosResults = Record<
     avgPartnerEPA: number;
     avgOpponentEPA: number;
     deltaEPA: number;
+    epaPercentile: number;
+    overallPercentile: number;
   }
 >;
 
@@ -30,6 +32,7 @@ type SosRow = {
   deltaRank: number;
   deltaRP: number;
   deltaEPA: number;
+  overallPercentile: number;
 };
 
 const columnHelper = createColumnHelper<SosRow>();
@@ -68,6 +71,8 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const avgPartnerEPA = {};
   const avgOpponentEPA = {};
   const deltaEPA = {};
+  const epaPercentile = {};
+  const overallPercentile = {};
 
   for (const simResult of workerMessages) {
     for (const teamNum of Object.keys(simResult)) {
@@ -78,6 +83,8 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       avgPartnerEPA[teamNum] = round(simResult[teamNum].avgPartnerEPA, 1);
       avgOpponentEPA[teamNum] = round(simResult[teamNum].avgOpponentEPA, 1);
       deltaEPA[teamNum] = round(simResult[teamNum].deltaEPA, 1);
+      epaPercentile[teamNum] = round(simResult[teamNum].epaPercentile, 2);
+      overallPercentile[teamNum] = round(simResult[teamNum].overallPercentile, 2);
     }
   }
 
@@ -96,6 +103,8 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       avgPartnerEPA: avgPartnerEPA[teamEvent.num],
       avgOpponentEPA: avgOpponentEPA[teamEvent.num],
       deltaEPA: deltaEPA[teamEvent.num],
+      epaPercentile: epaPercentile[teamEvent.num],
+      overallPercentile: overallPercentile[teamEvent.num],
     }));
 
   const columns = useMemo<any>(
@@ -123,6 +132,10 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       columnHelper.accessor("deltaEPA", {
         cell: (info) => formatCell(info),
         header: "Δ EPA",
+      }),
+      columnHelper.accessor("overallPercentile", {
+        cell: (info) => formatCell(info),
+        header: "Strength of Schedule",
       }),
     ],
     [year]
@@ -169,6 +182,14 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       detailedColumnHelper.accessor("deltaEPA", {
         cell: (info) => formatCell(info),
         header: "Δ EPA",
+      }),
+      detailedColumnHelper.accessor("epaPercentile", {
+        cell: (info) => formatCell(info),
+        header: "EPA Percentile",
+      }),
+      detailedColumnHelper.accessor("overallPercentile", {
+        cell: (info) => formatCell(info),
+        header: "Strength of Schedule",
       }),
     ],
     [year]

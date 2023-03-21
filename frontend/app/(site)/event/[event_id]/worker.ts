@@ -1,3 +1,5 @@
+import Gaussian from "gaussian";
+
 import { APIMatch, APITeamMatch } from "../../../../components/types/api";
 import { Data } from "./types";
 
@@ -437,13 +439,16 @@ async function strengthOfSchedule(data: Data, simCount: number, post: boolean) {
   }
 
   const teamEPAs = {};
-  let avgEPA = 0;
+  let epaAvg = 0;
+  let epaSd = 0;
   for (let j = 0; j < data.team_events.length; j++) {
     const teamEvent = data.team_events[j];
     teamEPAs[teamEvent.num] = teamEvent.total_epa;
-    avgEPA += teamEvent.total_epa;
+    epaAvg += teamEvent.total_epa;
+    epaSd += teamEvent.total_epa ** 2;
   }
-  avgEPA /= data.team_events.length;
+  epaAvg /= data.team_events.length;
+  epaSd = Math.sqrt(epaSd / data.team_events.length - epaAvg ** 2);
 
   const sosMetrics = {};
   for (let i = 0; i < data.team_events.length; i++) {
@@ -476,7 +481,11 @@ async function strengthOfSchedule(data: Data, simCount: number, post: boolean) {
       currTeamOpponents.map((x) => teamEPAs[x]).reduce((x, y) => x + y, 0) /
       currTeamOpponents.length;
 
-    const deltaEPA = avgEPA + 2 * avgPartnerEPA - 3 * avgOpponentEPA;
+    const deltaEPA = epaAvg + 2 * avgPartnerEPA - 3 * avgOpponentEPA;
+    const distrib = Gaussian(0, (epaSd * epaSd * 5) / N);
+    const epaPercentile = distrib.cdf(deltaEPA);
+
+    const overallPercentile = (rankPercentile + rpPercentile + epaPercentile) / 3;
 
     sosMetrics[data.team_events[i].num] = {
       deltaRank,
@@ -486,6 +495,8 @@ async function strengthOfSchedule(data: Data, simCount: number, post: boolean) {
       avgPartnerEPA,
       avgOpponentEPA,
       deltaEPA,
+      epaPercentile,
+      overallPercentile,
     };
   }
 
