@@ -98,11 +98,11 @@ const getSchedule = async (numTeams: number, numMatches: number) => {
     });
 };
 
-async function preSim(data: Data, simCount: number) {
+async function preSim(data: Data, simCount: number, numMatches: number, post: boolean) {
   const TOTAL_SD = data.year.score_sd;
 
   const teamsN = data.team_events.length;
-  const schedule = await getSchedule(teamsN, 12);
+  const schedule = await getSchedule(teamsN, numMatches);
 
   const currEPAs = {};
   const currRP1EPAs = {};
@@ -195,10 +195,14 @@ async function preSim(data: Data, simCount: number) {
     }
   }
 
-  ctx.postMessage({ simRanks, simRPs });
+  if (post) {
+    ctx.postMessage({ simRanks, simRPs });
+  }
+
+  return { simRanks, simRPs };
 }
 
-async function indexSim(data: Data, index: number, simCount: number) {
+async function indexSim(data: Data, index: number, simCount: number, post: boolean) {
   const TOTAL_SD = data.year.score_sd;
 
   const qualMatches = data.matches
@@ -355,16 +359,56 @@ async function indexSim(data: Data, index: number, simCount: number) {
     }
   }
 
-  ctx.postMessage({ index, simRanks, simRPs });
+  if (post) {
+    ctx.postMessage({ index, simRanks, simRPs });
+  }
+
+  return { index, simRanks, simRPs };
+}
+
+async function strengthOfSchedule(data: Data, simCount: number, post: boolean) {
+  const N = Math.round((6 * data.event.qual_matches) / data.team_events.length);
+  const { simRanks: preSimRanks, simRPs: preSimRPs } = await preSim(data, simCount, N, false);
+  const { simRanks, simRPs } = await indexSim(data, 0, simCount, false);
+
+  const sosMetrics = {};
+  for (let i = 0; i < data.team_events.length; i++) {
+    const preSimAvgRank =
+      preSimRanks[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
+    const preSimAvgRP = preSimRPs[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
+    const simAvgRank = simRanks[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
+    const simAvgRP = simRPs[data.team_events[i].num].reduce((x, y) => x + y, 0) / simCount;
+
+    const deltaRank = simAvgRank - preSimAvgRank;
+    const deltaRP = simAvgRP - preSimAvgRP;
+
+    sosMetrics[data.team_events[i].num] = {
+      deltaRank,
+      deltaRP,
+    };
+  }
+
+  if (post) {
+    ctx.postMessage(sosMetrics);
+  }
+
+  return sosMetrics;
 }
 
 ctx.addEventListener("message", (evt) => {
+  let out;
   switch (evt.data.type) {
     case "preSim":
-      preSim(evt.data.data, evt.data.simCount);
+      const qualMatches = evt.data.data?.event?.qual_matches;
+      const teamEvents = evt.data.data?.team_events?.length;
+      const N = qualMatches && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : 12;
+      out = preSim(evt.data.data, evt.data.simCount, N, true);
       return;
     case "indexSim":
-      indexSim(evt.data.data, evt.data.index, evt.data.simCount);
+      out = indexSim(evt.data.data, evt.data.index, evt.data.simCount, true);
+      return;
+    case "strengthOfSchedule":
+      out = strengthOfSchedule(evt.data.data, evt.data.simCount, true);
       return;
   }
 });
