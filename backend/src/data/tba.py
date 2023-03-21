@@ -243,6 +243,38 @@ def process_year(
     )
 
 
+def check_year_partial(
+    year_num: int, event_objs: List[Event], etags: List[ETag]
+) -> bool:
+    etags_dict = {etag.path: etag for etag in etags}
+    default_etag = ETag(year_num, "NA", "NA")
+
+    for event_obj in event_objs:
+        if event_obj.status == "Completed":
+            continue
+
+        start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
+        if start_date - timedelta(days=1) > datetime.now():
+            continue
+
+        if end_date + timedelta(days=1) < datetime.now():
+            continue
+
+        prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
+        _, new_etag = get_matches_tba(
+            year_num, event_obj.key, event_obj.time, prev_etag, cache=False
+        )
+        if new_etag == prev_etag and new_etag is not None:
+            continue
+
+        print(f"New matches for {event_obj.key}!")
+        print(new_etag, prev_etag)
+
+        return True  # If any event has new matches, return True
+    return False  # Otherwise return False
+
+
 def process_year_partial(
     year_num: int,
     objs: objs_type,
@@ -285,8 +317,10 @@ def process_year_partial(
             mock_index=mock_index,
             cache=False,
         )
-        if new_etag == prev_etag and new_etag is not None:
-            continue
+        if new_etag is not None:
+            if new_etag == prev_etag:
+                continue
+            new_etags.append(ETag(year_num, event_obj.key + "/matches", new_etag))
 
         current_match = 0 if len(matches) > 0 else -1
         qual_matches = 0 if len(matches) > 0 else -1
@@ -319,9 +353,12 @@ def process_year_partial(
             event_obj.qual_matches = qual_matches
 
             # Update team_event_objs
+            prev_etag = etags_dict.get(event_obj.key + "/rankings", default_etag).etag
             rankings, new_etag = get_event_rankings_tba(
                 event_obj.key, None, mock=mock, mock_index=mock_index, cache=False
             )
+            if new_etag is not None and new_etag != prev_etag:
+                new_etags.append(ETag(year_num, event_obj.key + "/rankings", new_etag))
             for team_event_obj in team_event_objs:
                 if team_event_obj.event == event_obj.key:
                     team_event_obj.status = event_status

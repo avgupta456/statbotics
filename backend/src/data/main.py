@@ -10,6 +10,7 @@ from src.data.tba import (
     load_teams as load_teams_tba,
     post_process as post_process_tba,
     process_year as process_year_tba,
+    check_year_partial as check_year_partial_tba,
     process_year_partial as process_year_partial_tba,
 )
 from src.data.utils import (  # print_table_stats,
@@ -22,6 +23,7 @@ from src.db.main import clean_db
 from src.db.models import TeamYear
 from src.db.read import (
     get_etags as get_etags_db,
+    get_events as get_events_db,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
     get_year as get_year_db,
@@ -109,9 +111,15 @@ def reset_curr_year(curr_year: int, mock: bool = False):
 
 
 def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
-    # teams = time_func("Load Teams", get_teams_db)
-    objs: objs_type = time_func("Load Objs", read_objs, curr_year)  # type: ignore
     etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
+
+    if not mock:
+        event_objs = time_func("Load Events", get_events_db, curr_year)  # type: ignore
+        is_new_data = time_func("Check TBA", check_year_partial_tba, curr_year, event_objs, etags)  # type: ignore
+        if not is_new_data:
+            return
+
+    objs: objs_type = time_func("Load Objs", read_objs, curr_year)  # type: ignore
 
     objs_dict = {}
     objs_dict[0] = str(objs[0])
@@ -158,6 +166,8 @@ def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
     curr_dict = {str(x.team) + "_" + x.match: x for x in objs[5]}
     tm_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[5].get(k, "")]
     new_objs = (year_obj, ty_objs, e_objs, te_objs, m_objs, tm_objs)
+
+    print(new_etags)
 
     # print(len(ty_objs), len(e_objs), len(te_objs), len(m_objs), len(tm_objs))
 
