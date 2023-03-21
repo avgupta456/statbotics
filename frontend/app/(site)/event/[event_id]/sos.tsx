@@ -10,20 +10,22 @@ import { formatNumber } from "../../../../components/utils";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
-type SosResults = Record<
-  number,
-  {
-    deltaRank: number;
-    rankPercentile: number;
-    deltaRP: number;
-    rpPercentile: number;
-    avgPartnerEPA: number;
-    avgOpponentEPA: number;
-    deltaEPA: number;
-    epaPercentile: number;
-    overallPercentile: number;
-  }
->;
+type SosDatum = {
+  deltaRank: number;
+  rankPercentile: number;
+  deltaRP: number;
+  rpPercentile: number;
+  avgPartnerEPA: number;
+  avgOpponentEPA: number;
+  deltaEPA: number;
+  epaPercentile: number;
+  overallPercentile: number;
+};
+
+type SosResults = {
+  preEventMetrics: Record<number, SosDatum>;
+  postEventMetrics: Record<number, SosDatum>;
+};
 
 type SosRow = {
   rank: number;
@@ -41,6 +43,7 @@ const detailedColumnHelper = createColumnHelper<any>();
 const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SosResults[]>([]);
+  const [preEvent, setPreEvent] = useState(false);
 
   useEffect(() => {
     // From https://webpack.js.org/guides/web-workers/#syntax
@@ -74,7 +77,11 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const epaPercentile = {};
   const overallPercentile = {};
 
-  for (const simResult of workerMessages) {
+  const simResult = preEvent
+    ? workerMessages[0]?.preEventMetrics
+    : workerMessages[0]?.postEventMetrics;
+
+  if (simResult) {
     for (const teamNum of Object.keys(simResult)) {
       deltaRank[teamNum] = round(simResult[teamNum].deltaRank, 2);
       rankPercentile[teamNum] = round(simResult[teamNum].rankPercentile, 2);
