@@ -89,6 +89,36 @@ const BubbleChart = ({
   const yCutoff = ys.sort((a, b) => b - a)[len];
   const zCutoff = zs.sort((a, b) => b - a)[len];
 
+  const xMin = Math.min(Math.min(...xs), 0);
+  const yMin = Math.min(Math.min(...ys), 0);
+
+  const xMax = Math.max(...xs);
+  const yMax = Math.max(...ys);
+
+  const minSum = Math.min(xMin + yMin, 0);
+  const maxSum = Math.max(xMax + yMax, 0);
+
+  const numLines = 10;
+  const values = Array.from(Array(numLines + 1).keys()).map(
+    (i) => minSum + (maxSum - minSum) * (i / numLines)
+  );
+
+  const lineSeries: any =
+    xAxis?.label === "Teleop" && yAxis?.label === "Auto + Endgame"
+      ? values.map((value) => ({
+          type: "line",
+          name: value.toString(),
+          data: [
+            [value - 2 * yMax, 2 * yMax],
+            [2 * xMax, value - 2 * xMax],
+          ],
+          enableMouseTracking: false,
+          color: "rgba(0, 0, 0, 0.15)",
+        }))
+      : [];
+
+  const showGrid = lineSeries.length === 0;
+
   const filteredDataSubset: ScatterData[] = scatterData.map((datum) => ({
     x: datum.x,
     y: datum.y,
@@ -108,13 +138,16 @@ const BubbleChart = ({
       title: {
         text: xAxis["label"],
       },
-      min: xAxis["label"].includes("RP") ? -1 / 3 : 0,
+      min: xMin - 0.01 * (xMax - xMin),
+      max: xMax + 0.05 * (xMax - xMin),
     },
     yAxis: {
       title: {
         text: yAxis["label"],
       },
-      min: yAxis["label"].includes("RP") ? -1 / 3 : 0,
+      min: yMin - 0.01 * (yMax - yMin),
+      max: yMax + 0.05 * (yMax - yMin),
+      gridLineWidth: showGrid ? 1 : 0,
     },
     tooltip: {
       useHTML: true,
@@ -171,12 +204,20 @@ const BubbleChart = ({
         maxSize: zAxis.label === "Constant" ? 10 : 15,
         color: "#3b82f6",
       },
+      line: {
+        lineWidth: 1,
+        color: "#f87171",
+        dataLabels: {
+          enabled: false,
+        },
+      },
     },
     series: [
       {
         type: "bubble",
         data: filteredDataSubset,
       },
+      ...lineSeries,
     ],
     credits: {
       enabled: false,
