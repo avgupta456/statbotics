@@ -19,7 +19,7 @@ def _get_tba(
         session.headers.update({"If-None-Match": etag})
         response = session.get(read_prefix + url)
         if response.status_code == 304:
-            return True, response.headers.get("ETag")
+            return True, etag
         elif response.status_code == 200:
             return response.json(), response.headers.get("ETag")
     else:

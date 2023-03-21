@@ -167,8 +167,6 @@ def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
     tm_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[5].get(k, "")]
     new_objs = (year_obj, ty_objs, e_objs, te_objs, m_objs, tm_objs)
 
-    print(new_etags)
-
     # print(len(ty_objs), len(e_objs), len(te_objs), len(m_objs), len(tm_objs))
 
     time_func("Write", write_objs, curr_year, *new_objs, new_etags, curr_year, False)  # type: ignore
