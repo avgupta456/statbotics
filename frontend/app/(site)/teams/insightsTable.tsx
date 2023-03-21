@@ -56,12 +56,15 @@ const PageTeamInsightsTable = ({
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [showProjections, setShowProjections] = useState(true);
 
-  const defaultFilters = {
+  let defaultFilters = {
     country: "",
     state: "",
     district: "",
-    is_competing: year === CURR_YEAR && "",
   };
+
+  if (year === CURR_YEAR) {
+    defaultFilters["is_competing"] = "";
+  }
 
   const actualFilters = Object.keys(defaultFilters).reduce(
     (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
