@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -16,8 +16,10 @@ const TabsSection = ({
   error: boolean;
 }) => {
   const router = useRouter();
-  const [activeTab, _setActiveTab] = useState(0);
-  const [prevUrl, setPrevUrl] = useState("");
+
+  const hash = window?.location?.href?.split("#")?.[1];
+  const index = tabs.findIndex((tab) => tab.title.toLowerCase().replace(/ /g, "-") === hash);
+  const [activeTab, _setActiveTab] = useState(index >= 0 ? index : 0);
 
   if (activeTab >= tabs.length) _setActiveTab(0);
 
@@ -30,18 +32,6 @@ const TabsSection = ({
     const newPathname = pathnameNoHash + "#" + tabs[index].title.toLowerCase().replace(/ /g, "-");
     router.replace(newPathname);
   };
-
-  const setActiveTabCallback = useCallback(setActiveTab, [router, tabs]);
-
-  useEffect(() => {
-    if (prevUrl !== "") return;
-    const hash = window.location.href.split("#")[1];
-    if (hash) {
-      const index = tabs.findIndex((tab) => tab.title.toLowerCase().replace(/ /g, "-") === hash);
-      if (index !== -1) setActiveTabCallback(index);
-      setPrevUrl(window.location.href); // prevent this from running again
-    }
-  }, [prevUrl, tabs, setActiveTabCallback]);
 
   return (
     <div className="w-full flex-grow flex flex-col">
