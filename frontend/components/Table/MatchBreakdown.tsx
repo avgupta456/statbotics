@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 import Link from "next/link";
 
@@ -10,7 +10,7 @@ import { classnames, truncate } from "../../utils";
 import { APIYear, PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
 import Table from "./Table";
-import { CONDITIONAL_COLORS, getColor, getRPColor } from "./shared";
+import { CONDITIONAL_COLORS, getEPAColor, getRPColor } from "./shared";
 
 export type Component = {
   name: string;
@@ -72,7 +72,7 @@ const formatCell = (
     if (row.includes("RP")) {
       color = getRPColor(value);
     } else {
-      color = getColor(value, percentileStats, multiplier);
+      color = getEPAColor(value, percentileStats, multiplier);
     }
   }
 

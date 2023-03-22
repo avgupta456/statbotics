@@ -5,7 +5,7 @@ import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
-import { TeamLink, formatCell, formatPercentileCell } from "../../../../components/Table/shared";
+import { TeamLink, formatCell, formatEPACell } from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
 import { CURR_YEAR, RPMapping } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
@@ -133,32 +133,32 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
             header: "Norm EPA",
           }),
         columnHelper.accessor("total_epa", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "EPA",
         }),
         year >= 2016 &&
           columnHelper.accessor("auto_epa", {
-            cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.auto_stats, info, disableHighlight),
             header: "Auto EPA",
           }),
         year >= 2016 &&
           columnHelper.accessor("teleop_epa", {
-            cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.teleop_stats, info, disableHighlight),
             header: "Teleop EPA",
           }),
         year >= 2016 &&
           columnHelper.accessor("endgame_epa", {
-            cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
             header: "Endgame EPA",
           }),
         year >= 2016 &&
           columnHelper.accessor("rp_1_epa", {
-            cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
             header: `${RPMapping?.[data.year.year]?.[0]} EPA`,
           }),
         year >= 2016 &&
           columnHelper.accessor("rp_2_epa", {
-            cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
             header: `${RPMapping?.[data.year.year]?.[1]} EPA`,
           }),
       ].filter(Boolean),
@@ -197,32 +197,32 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
             header: "Norm EPA",
           }),
         detailedColumnHelper.accessor("total_epa", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "EPA",
         }),
         year >= 2016 &&
           detailedColumnHelper.accessor("auto_epa", {
-            cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.auto_stats, info, disableHighlight),
             header: "Auto EPA",
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("teleop_epa", {
-            cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.teleop_stats, info, disableHighlight),
             header: "Teleop EPA",
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("endgame_epa", {
-            cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
             header: "Endgame EPA",
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("rp_1_epa", {
-            cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
             header: `${RPMapping?.[data.year.year]?.[0]} EPA`,
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("rp_2_epa", {
-            cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
             header: `${RPMapping?.[data.year.year]?.[1]} EPA`,
           }),
         maxRank > 0 &&

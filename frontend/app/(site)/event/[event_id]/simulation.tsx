@@ -136,7 +136,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
 
   const detailedSimData = data.team_events
     .sort((a, b) => rankMean[a.num] - rankMean[b.num])
-    .map((teamEvent, i) => {
+    .map((teamEvent) => {
       const probsObj = {};
       for (let i = 0; i < N; i++) {
         probsObj[`prob${i + 1}`] = rankProbs[teamEvent.num]?.[i];

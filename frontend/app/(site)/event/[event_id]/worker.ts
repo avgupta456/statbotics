@@ -1,3 +1,5 @@
+import Gaussian from "gaussian";
+
 import { APIMatch, APITeamMatch } from "../../../../components/types/api";
 import { Data } from "./types";
 
@@ -98,11 +100,17 @@ const getSchedule = async (numTeams: number, numMatches: number) => {
     });
 };
 
-async function preSim(data: Data, simCount: number) {
+async function preSim(
+  data: Data,
+  simCount: number,
+  numMatches: number,
+  postEvent: boolean,
+  postMessage: boolean
+) {
   const TOTAL_SD = data.year.score_sd;
 
   const teamsN = data.team_events.length;
-  const schedule = await getSchedule(teamsN, 12);
+  const schedule = await getSchedule(teamsN, numMatches);
 
   const currEPAs = {};
   const currRP1EPAs = {};
@@ -112,9 +120,9 @@ async function preSim(data: Data, simCount: number) {
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    currEPAs[teamEvent.num] = teamEvent.start_total_epa;
-    currRP1EPAs[teamEvent.num] = teamEvent.start_rp_1_epa;
-    currRP2EPAs[teamEvent.num] = teamEvent.start_rp_2_epa;
+    currEPAs[teamEvent.num] = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    currRP1EPAs[teamEvent.num] = postEvent ? teamEvent.rp_1_epa : teamEvent.start_rp_1_epa;
+    currRP2EPAs[teamEvent.num] = postEvent ? teamEvent.rp_2_epa : teamEvent.start_rp_2_epa;
   }
 
   // Simulate
@@ -195,10 +203,20 @@ async function preSim(data: Data, simCount: number) {
     }
   }
 
-  ctx.postMessage({ simRanks, simRPs });
+  if (postMessage) {
+    ctx.postMessage({ simRanks, simRPs });
+  }
+
+  return { simRanks, simRPs };
 }
 
-async function indexSim(data: Data, index: number, simCount: number) {
+async function indexSim(
+  data: Data,
+  index: number,
+  simCount: number,
+  postEvent: boolean,
+  postMessage: boolean
+) {
   const TOTAL_SD = data.year.score_sd;
 
   const qualMatches = data.matches
@@ -227,9 +245,9 @@ async function indexSim(data: Data, index: number, simCount: number) {
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    currEPAs[teamEvent.num] = teamEvent.start_total_epa;
-    currRP1EPAs[teamEvent.num] = teamEvent.start_rp_1_epa;
-    currRP2EPAs[teamEvent.num] = teamEvent.start_rp_2_epa;
+    currEPAs[teamEvent.num] = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    currRP1EPAs[teamEvent.num] = postEvent ? teamEvent.rp_1_epa : teamEvent.start_rp_1_epa;
+    currRP2EPAs[teamEvent.num] = postEvent ? teamEvent.rp_2_epa : teamEvent.start_rp_2_epa;
     currMatches[teamEvent.num] = 0;
     currRPs[teamEvent.num] = 0;
     currTiebreakers[teamEvent.num] = [];
@@ -247,9 +265,12 @@ async function indexSim(data: Data, index: number, simCount: number) {
     for (let j = 0; j < teamMatches.length; j++) {
       const teamMatch = teamMatches[j];
       const team = teamMatch.num;
-      currEPAs[team] = teamMatch.post_epa ?? teamMatch.total_epa;
-      currRP1EPAs[team] = teamMatch.rp_1_epa;
-      currRP2EPAs[team] = teamMatch.rp_2_epa;
+      if (!postEvent) {
+        // only update EPAs if we're simulating pre-event
+        currEPAs[team] = teamMatch.post_epa ?? teamMatch.total_epa;
+        currRP1EPAs[team] = teamMatch.rp_1_epa;
+        currRP2EPAs[team] = teamMatch.rp_2_epa;
+      }
       currMatches[team] += 1;
       if (
         !match.red_surrogates.includes(team) &&
@@ -355,16 +376,177 @@ async function indexSim(data: Data, index: number, simCount: number) {
     }
   }
 
-  ctx.postMessage({ index, simRanks, simRPs });
+  if (postMessage) {
+    ctx.postMessage({ index, simRanks, simRPs });
+  }
+
+  return { index, simRanks, simRPs };
+}
+
+async function _strengthOfSchedule(data: Data, simCount: number, postEvent: boolean) {
+  const N = Math.round((6 * data.event.qual_matches) / data.team_events.length);
+  const { simRanks: preSimRanks, simRPs: preSimRPs } = await preSim(
+    data,
+    simCount,
+    N,
+    postEvent,
+    false
+  );
+  const { simRanks, simRPs } = await indexSim(data, 0, simCount, postEvent, false);
+
+  const teamPartners = {};
+  const teamOpponents = {};
+  for (let i = 0; i < data.team_events.length; i++) {
+    teamPartners[data.team_events[i].num] = [];
+    teamOpponents[data.team_events[i].num] = [];
+  }
+  for (let i = 0; i < data.matches.length; i++) {
+    const match = data.matches[i];
+    if (match.playoff) continue;
+    const redTeams = match.red;
+    const blueTeams = match.blue;
+    for (let j = 0; j < redTeams.length; j++) {
+      const currPartners = [];
+      for (let k = 0; k < redTeams.length; k++) {
+        if (j == k) continue;
+        currPartners.push(redTeams[k]);
+      }
+      teamPartners[redTeams[j]].push(currPartners);
+
+      const currOpponents = [];
+      for (let k = 0; k < blueTeams.length; k++) {
+        currOpponents.push(blueTeams[k]);
+      }
+      teamOpponents[redTeams[j]].push(currOpponents);
+    }
+    for (let j = 0; j < blueTeams.length; j++) {
+      const currPartners = [];
+      for (let k = 0; k < blueTeams.length; k++) {
+        if (j == k) continue;
+        currPartners.push(blueTeams[k]);
+      }
+      teamPartners[blueTeams[j]].push(currPartners);
+
+      const currOpponents = [];
+      for (let k = 0; k < redTeams.length; k++) {
+        currOpponents.push(redTeams[k]);
+      }
+      teamOpponents[blueTeams[j]].push(currOpponents);
+    }
+  }
+
+  const flattenedTeamPartners = {};
+  const flattenedTeamOpponents = {};
+  for (let i = 0; i < data.team_events.length; i++) {
+    const teamNum = data.team_events[i].num;
+    flattenedTeamPartners[teamNum] = [];
+    flattenedTeamOpponents[teamNum] = [];
+    for (let j = 0; j < teamPartners[teamNum].length; j++) {
+      flattenedTeamPartners[teamNum].push(...teamPartners[teamNum][j]);
+      flattenedTeamOpponents[teamNum].push(...teamOpponents[teamNum][j]);
+    }
+  }
+
+  const teamEPAs = {};
+  let epaAvg = 0;
+  let epaSd = 0;
+  for (let j = 0; j < data.team_events.length; j++) {
+    const teamEvent = data.team_events[j];
+    teamEPAs[teamEvent.num] = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    epaAvg += teamEvent.total_epa;
+    epaSd += teamEvent.total_epa ** 2;
+  }
+  epaAvg /= data.team_events.length;
+  epaSd = Math.sqrt(epaSd / data.team_events.length - epaAvg ** 2);
+
+  const sosMetrics = {};
+  for (let i = 0; i < data.team_events.length; i++) {
+    const teamNum = data.team_events[i].num;
+    const currPreSimRanks = preSimRanks[teamNum];
+    const preSimAvgRank = currPreSimRanks.reduce((x, y) => x + y, 0) / simCount;
+
+    const currPreSimRPs = preSimRPs[teamNum];
+    const preSimAvgRP = currPreSimRPs.reduce((x, y) => x + y, 0) / simCount;
+
+    const currSimRanks = simRanks[teamNum];
+    const simAvgRank = currSimRanks.reduce((x, y) => x + y, 0) / simCount;
+
+    const currSimRPs = simRPs[teamNum];
+    const simAvgRP = currSimRPs.reduce((x, y) => x + y, 0) / simCount;
+
+    const deltaRank = simAvgRank - preSimAvgRank;
+    const deltaRP = simAvgRP - preSimAvgRP;
+
+    const rankPercentile = currPreSimRanks.filter((x) => x <= simAvgRank).length / simCount;
+    const rpPercentile = currPreSimRPs.filter((x) => x >= simAvgRP).length / simCount;
+
+    const currTeamPartners = flattenedTeamPartners[teamNum];
+    const currTeamOpponents = flattenedTeamOpponents[teamNum];
+
+    const avgPartnerEPA =
+      currTeamPartners.map((x) => teamEPAs[x]).reduce((x, y) => x + y, 0) / currTeamPartners.length;
+
+    const avgOpponentEPA =
+      currTeamOpponents.map((x) => teamEPAs[x]).reduce((x, y) => x + y, 0) /
+      currTeamOpponents.length;
+
+    const deltaEPA = epaAvg + 2 * avgPartnerEPA - 3 * avgOpponentEPA;
+    const distrib = Gaussian(0, (epaSd * epaSd * 5) / N);
+    const epaPercentile = 1 - distrib.cdf(deltaEPA);
+
+    const overallPercentile = (rankPercentile + rpPercentile + epaPercentile) / 3;
+
+    sosMetrics[data.team_events[i].num] = {
+      preSimAvgRank,
+      simAvgRank,
+      deltaRank,
+      rankPercentile,
+      preSimAvgRP,
+      simAvgRP,
+      deltaRP,
+      rpPercentile,
+      avgPartnerEPA,
+      avgOpponentEPA,
+      deltaEPA,
+      epaPercentile,
+      overallPercentile,
+    };
+  }
+
+  return sosMetrics;
+}
+
+async function strengthOfSchedule(data: Data, simCount: number, postMessage: boolean) {
+  const preEventMetrics = await _strengthOfSchedule(data, simCount, false);
+  const postEventMetrics = await _strengthOfSchedule(data, simCount, true);
+
+  if (postMessage) {
+    ctx.postMessage({
+      preEventMetrics,
+      postEventMetrics,
+    });
+  }
+
+  return {
+    preEventMetrics,
+    postEventMetrics,
+  };
 }
 
 ctx.addEventListener("message", (evt) => {
+  let out;
   switch (evt.data.type) {
     case "preSim":
-      preSim(evt.data.data, evt.data.simCount);
+      const qualMatches = evt.data.data?.event?.qual_matches;
+      const teamEvents = evt.data.data?.team_events?.length;
+      const N = qualMatches && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : 12;
+      out = preSim(evt.data.data, evt.data.simCount, N, false, true);
       return;
     case "indexSim":
-      indexSim(evt.data.data, evt.data.index, evt.data.simCount);
+      out = indexSim(evt.data.data, evt.data.index, evt.data.simCount, false, true);
+      return;
+    case "strengthOfSchedule":
+      out = strengthOfSchedule(evt.data.data, evt.data.simCount, true);
       return;
   }
 });

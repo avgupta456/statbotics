@@ -10,6 +10,7 @@ import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
 import MatchSection from "./matches";
 import SimulationSection from "./simulation";
+import SosSection from "./sos";
 import { Data } from "./types";
 
 const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Data }) => {
@@ -77,6 +78,11 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     [eventId, data]
   );
 
+  const MemoizedSosSection = useMemo(
+    () => <SosSection eventId={eventId} data={data} />,
+    [eventId, data]
+  );
+
   const qualsN = data?.matches?.filter((match) => !match.playoff)?.length || 0;
   const elimsN = data?.matches?.filter((match) => match.playoff)?.length || 0;
 
@@ -95,6 +101,9 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     { title: "Figures", content: MemoizedFigureSection },
     year !== 2015 && (qualsN > 0 || data?.event?.status === "Upcoming")
       ? { title: "Simulation", content: MemoizedSimulationSection }
+      : { title: "", content: "" },
+    year !== 2015 && qualsN > 0
+      ? { title: "SOS", content: MemoizedSosSection }
       : { title: "", content: "" },
   ].filter((tab) => tab.title !== "");
 
