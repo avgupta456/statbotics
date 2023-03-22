@@ -452,9 +452,10 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
   let epaSd = 0;
   for (let j = 0; j < data.team_events.length; j++) {
     const teamEvent = data.team_events[j];
-    teamEPAs[teamEvent.num] = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
-    epaAvg += teamEvent.total_epa;
-    epaSd += teamEvent.total_epa ** 2;
+    const currEPA = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    teamEPAs[teamEvent.num] = currEPA;
+    epaAvg += currEPA;
+    epaSd += currEPA ** 2;
   }
   epaAvg /= data.team_events.length;
   epaSd = Math.sqrt(epaSd / data.team_events.length - epaAvg ** 2);
