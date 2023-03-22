@@ -496,8 +496,6 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
 
     const overallPercentile = (rankPercentile + rpPercentile + epaPercentile) / 3;
 
-    const epaAdjust = distrib.ppf(1 - overallPercentile);
-
     sosMetrics[data.team_events[i].num] = {
       preSimAvgRank,
       simAvgRank,
@@ -512,7 +510,6 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
       deltaEPA,
       epaPercentile,
       overallPercentile,
-      epaAdjust,
     };
   }
 

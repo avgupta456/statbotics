@@ -5,12 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
-import {
-  TeamLink,
-  formatCell,
-  formatEPACell,
-  formatPercentileCell,
-} from "../../../../components/Table/shared";
+import { TeamLink, formatCell, formatPercentileCell } from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
 import { round } from "../../../../utils";
 import { Data } from "./types";
@@ -119,30 +114,24 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
 
   const sosData = data.team_events
     .sort((a, b) => a.rank - b.rank)
-    .map((teamEvent, i) => {
-      const teamEPA = preEvent ? teamEvent.start_total_epa : teamEvent.total_epa;
-
-      return {
-        rank: i + 1,
-        num: teamEvent.num,
-        team: teamEvent.team,
-        epa: round(teamEPA, 1),
-        effective_epa: round(teamEPA + (epaAdjust[teamEvent.num] || 0), 1),
-        preSimAvgRank: preSimAvgRank[teamEvent.num],
-        simAvgRank: simAvgRank[teamEvent.num],
-        deltaRank: deltaRank[teamEvent.num],
-        rankPercentile: rankPercentile[teamEvent.num],
-        preSimAvgRP: preSimAvgRP[teamEvent.num],
-        simAvgRP: simAvgRP[teamEvent.num],
-        deltaRP: deltaRP[teamEvent.num],
-        rpPercentile: rpPercentile[teamEvent.num],
-        avgPartnerEPA: avgPartnerEPA[teamEvent.num],
-        avgOpponentEPA: avgOpponentEPA[teamEvent.num],
-        deltaEPA: deltaEPA[teamEvent.num],
-        epaPercentile: epaPercentile[teamEvent.num],
-        overallPercentile: overallPercentile[teamEvent.num],
-      };
-    });
+    .map((teamEvent, i) => ({
+      rank: i + 1,
+      num: teamEvent.num,
+      team: teamEvent.team,
+      preSimAvgRank: preSimAvgRank[teamEvent.num],
+      simAvgRank: simAvgRank[teamEvent.num],
+      deltaRank: deltaRank[teamEvent.num],
+      rankPercentile: rankPercentile[teamEvent.num],
+      preSimAvgRP: preSimAvgRP[teamEvent.num],
+      simAvgRP: simAvgRP[teamEvent.num],
+      deltaRP: deltaRP[teamEvent.num],
+      rpPercentile: rpPercentile[teamEvent.num],
+      avgPartnerEPA: avgPartnerEPA[teamEvent.num],
+      avgOpponentEPA: avgOpponentEPA[teamEvent.num],
+      deltaEPA: deltaEPA[teamEvent.num],
+      epaPercentile: epaPercentile[teamEvent.num],
+      overallPercentile: overallPercentile[teamEvent.num],
+    }));
 
   const columns = useMemo<any>(
     () => [
@@ -226,11 +215,11 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       }),
       detailedColumnHelper.accessor("avgPartnerEPA", {
         cell: (info) => formatCell(info),
-        header: "Avg Partner EPA",
+        header: "Partner EPA",
       }),
       detailedColumnHelper.accessor("avgOpponentEPA", {
         cell: (info) => formatCell(info),
-        header: "Avg Opponent EPA",
+        header: "Opponent EPA",
       }),
       detailedColumnHelper.accessor("deltaEPA", {
         cell: (info) => formatCell(info),
@@ -244,16 +233,8 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         cell: (info) => formatPercentileCell(info, disableHighlight),
         header: "Overall Score",
       }),
-      detailedColumnHelper.accessor("epa", {
-        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
-        header: "EPA",
-      }),
-      detailedColumnHelper.accessor("effective_epa", {
-        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
-        header: "Effective EPA",
-      }),
     ],
-    [year, data, disableHighlight]
+    [year, disableHighlight]
   );
 
   return (
@@ -261,8 +242,25 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       <div className="w-full text-2xl font-bold mb-4">Strength of Schedule</div>
       <div className="w-full mb-4">
         Using EPA ratings and RP strengths from before the event, we estimate the impact of each
-        team&apos;s schedule on their final rank and RP.{" "}
+        team&apos;s schedule.{" "}
         <strong>The simulation happens live and takes a few seconds to load.</strong>
+      </div>
+      <div className="w-full h-8 mb-4 flex items-center text-sm md:text-base text-center">
+        <strong className="mr-2">Using EPAs from:</strong>
+        <div
+          className="mr-4 flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
+          onClick={() => setPreEvent(true)}
+        >
+          <input type="radio" className="radio-sm mr-1 cursor-pointer" checked={preEvent} />
+          <span>Before Event</span>
+        </div>
+        <div
+          className="flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
+          onClick={() => setPreEvent(false)}
+        >
+          <input type="radio" className="radio-sm mr-1 cursor-pointer" checked={!preEvent} />
+          <span>After Event</span>
+        </div>
       </div>
       <InsightsTable
         title={"Strength of Schedule"}
