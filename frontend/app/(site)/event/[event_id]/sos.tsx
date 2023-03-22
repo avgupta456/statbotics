@@ -77,7 +77,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
 
     setWorkerMessages([]);
 
-    workerRef.current.postMessage({ type: "strengthOfSchedule", data, simCount: 5000 });
+    workerRef.current.postMessage({ type: "strengthOfSchedule", data, simCount: 1000 });
   }, [data]);
 
   const preSimAvgRank = {};
