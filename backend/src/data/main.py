@@ -7,10 +7,10 @@ from src.data.epa import (
     process_year as process_year_epa,
 )
 from src.data.tba import (
+    check_year_partial as check_year_partial_tba,
     load_teams as load_teams_tba,
     post_process as post_process_tba,
     process_year as process_year_tba,
-    check_year_partial as check_year_partial_tba,
     process_year_partial as process_year_partial_tba,
 )
 from src.data.utils import (  # print_table_stats,

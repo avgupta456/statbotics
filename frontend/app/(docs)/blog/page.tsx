@@ -2,6 +2,10 @@ import React from "react";
 
 import Link from "next/link";
 
+export const metadata = {
+  title: "Blog - Statbotics",
+};
+
 const Page = () => {
   const posts = [
     {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import MatchTable from "../../../components/MatchTable";
-import { FilterBar } from "../../../components/filter";
+import { FilterBar } from "../../../components/filterBar";
 import { APIMatch } from "../../../components/types/api";
 import { BACKEND_URL } from "../../../constants";
 import { classnames, log, round } from "../../../utils";

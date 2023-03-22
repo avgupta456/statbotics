@@ -5,63 +5,15 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { BACKEND_URL, CURR_YEAR } from "../../../../constants";
-import { log, round } from "../../../../utils";
+import { CURR_YEAR } from "../../../../constants";
 import PageLayout from "../../shared/layout";
 import NotFound from "../../shared/notFound";
+import { getTeamData, getTeamYearData, getTeamYearsData } from "./shared";
 import SummaryTabs from "./summaryTabs";
 import Tabs from "./tabs";
 import { TeamData, TeamYearData, TeamYearsData } from "./types";
 
-async function getTeamData(team: number) {
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/team/${team}`, { next: { revalidate: 60 } });
-  log(`/team/${team} took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-
-  const data = await res.json();
-  return data?.data;
-}
-
-async function getTeamYearData(team: number, year: number) {
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/team/${team}/${year}`, { next: { revalidate: 60 } });
-  log(`/team/${team}/${year} took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = await res.json();
-  return data?.data;
-}
-
-async function getTeamYearsData(team: number) {
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/team/${team}/years`, { next: { revalidate: 60 } });
-  log(`/team/${team}/years took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = await res.json();
-  return data?.data;
-}
-
-// do not cache this page
-export const revalidate = 0;
-
-const Page = ({ params }: { params: { team: number } }) => {
-  const team = params.team?.[0];
-  let paramYear = parseInt(params.team?.[1]) || CURR_YEAR;
-
-  if (paramYear !== -1) {
-    paramYear = Math.max(paramYear, 2002);
-    paramYear = Math.min(paramYear, CURR_YEAR);
-  }
-
+const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) => {
   const [prevYear, _setPrevYear] = useState(paramYear);
   const [year, _setYear] = useState(paramYear);
 
@@ -180,4 +132,4 @@ const Page = ({ params }: { params: { team: number } }) => {
   );
 };
 
-export default Page;
+export default PageContent;

@@ -10,6 +10,16 @@ import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 import { Data } from "./types";
 
+export async function generateMetadata({ params }) {
+  const { event_id } = params;
+  const data: Data = await getData(event_id);
+  if (!data) {
+    return { title: "Statbotics" };
+  } else {
+    return { title: `${data.year.year} ${data.event.name} - Statbotics` };
+  }
+}
+
 async function getData(event_id: string) {
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/event/` + event_id, { next: { revalidate: 60 } });

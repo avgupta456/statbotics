@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import MatchTable from "../../../components/MatchTable";
-import { FilterBar } from "../../../components/filter";
+import { FilterBar } from "../../../components/filterBar";
 import { APIMatch } from "../../../components/types/api";
 import { formatMatch } from "../../../components/utils";
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";

@@ -8,6 +8,10 @@ import PageLayout from "../shared/pageLayout";
 import { renderMath, renderMathBlock } from "../shared/utils";
 import SeasonTable from "../table";
 
+export const metadata = {
+  title: "The EPA Model - Statbotics",
+};
+
 const Page = () => {
   return (
     <PageLayout

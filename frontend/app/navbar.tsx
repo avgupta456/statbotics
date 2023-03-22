@@ -77,10 +77,12 @@ const Navbar = () => {
     label: `${team.num} | ${team.team}`,
   }));
 
-  const eventOptions = events?.reverse()?.map((event: any) => ({
-    value: `/event/${event.key}`,
-    label: `${event.key.slice(0, 4)} ${event.name}`,
-  }));
+  const eventOptions = events
+    ?.sort((a, b) => b.year - a.year)
+    ?.map((event: any) => ({
+      value: `/event/${event.key}`,
+      label: `${event.key.slice(0, 4)} ${event.name}`,
+    }));
 
   const allOptions = [...teamOptions, ...eventOptions];
 

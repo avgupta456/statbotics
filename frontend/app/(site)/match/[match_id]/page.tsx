@@ -12,6 +12,16 @@ import MatchTable from "./table";
 import { Data } from "./types";
 import Video from "./video";
 
+export async function generateMetadata({ params }) {
+  const { match_id } = params;
+  const data: Data = await getData(match_id);
+  if (!data) {
+    return { title: "Statbotics" };
+  } else {
+    return { title: `${data.match.match_name} (${data.event.name}) - Statbotics` };
+  }
+}
+
 async function getData(match_id: string) {
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/match/` + match_id, { next: { revalidate: 60 } });
