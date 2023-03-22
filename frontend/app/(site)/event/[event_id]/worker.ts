@@ -120,9 +120,18 @@ async function preSim(
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    currEPAs[teamEvent.num] = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
-    currRP1EPAs[teamEvent.num] = postEvent ? teamEvent.rp_1_epa : teamEvent.start_rp_1_epa;
-    currRP2EPAs[teamEvent.num] = postEvent ? teamEvent.rp_2_epa : teamEvent.start_rp_2_epa;
+    let currEPA = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    if (!currEPA) currEPA = teamEvent.total_epa || 0;
+
+    let currRP1EPA = postEvent ? teamEvent.rp_1_epa : teamEvent.start_rp_1_epa;
+    if (!currRP1EPA) currRP1EPA = teamEvent.rp_1_epa || 0;
+
+    let currRP2EPA = postEvent ? teamEvent.rp_2_epa : teamEvent.start_rp_2_epa;
+    if (!currRP2EPA) currRP2EPA = teamEvent.rp_2_epa || 0;
+
+    currEPAs[teamEvent.num] = currEPA;
+    currRP1EPAs[teamEvent.num] = currRP1EPA;
+    currRP2EPAs[teamEvent.num] = currRP2EPA;
   }
 
   // Simulate
@@ -245,9 +254,18 @@ async function indexSim(
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    currEPAs[teamEvent.num] = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
-    currRP1EPAs[teamEvent.num] = postEvent ? teamEvent.rp_1_epa : teamEvent.start_rp_1_epa;
-    currRP2EPAs[teamEvent.num] = postEvent ? teamEvent.rp_2_epa : teamEvent.start_rp_2_epa;
+    let currEPA = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    if (!currEPA) currEPA = teamEvent.total_epa || 0;
+
+    let currRP1EPA = postEvent ? teamEvent.rp_1_epa : teamEvent.start_rp_1_epa;
+    if (!currRP1EPA) currRP1EPA = teamEvent.rp_1_epa || 0;
+
+    let currRP2EPA = postEvent ? teamEvent.rp_2_epa : teamEvent.start_rp_2_epa;
+    if (!currRP2EPA) currRP2EPA = teamEvent.rp_2_epa || 0;
+
+    currEPAs[teamEvent.num] = currEPA;
+    currRP1EPAs[teamEvent.num] = currRP1EPA;
+    currRP2EPAs[teamEvent.num] = currRP2EPA;
     currMatches[teamEvent.num] = 0;
     currRPs[teamEvent.num] = 0;
     currTiebreakers[teamEvent.num] = [];
@@ -452,7 +470,8 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
   let epaSd = 0;
   for (let j = 0; j < data.team_events.length; j++) {
     const teamEvent = data.team_events[j];
-    const currEPA = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    let currEPA = postEvent ? teamEvent.total_epa : teamEvent.start_total_epa;
+    if (!currEPA) currEPA = teamEvent.total_epa || 0;
     teamEPAs[teamEvent.num] = currEPA;
     epaAvg += currEPA;
     epaSd += currEPA ** 2;
@@ -540,7 +559,7 @@ ctx.addEventListener("message", (evt) => {
     case "preSim":
       const qualMatches = evt.data.data?.event?.qual_matches;
       const teamEvents = evt.data.data?.team_events?.length;
-      const N = qualMatches && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : 12;
+      const N = qualMatches > 0 && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : 12;
       out = preSim(evt.data.data, evt.data.simCount, N, false, true);
       return;
     case "indexSim":
