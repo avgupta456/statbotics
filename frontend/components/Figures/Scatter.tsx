@@ -10,7 +10,6 @@ import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 import { round } from "../../utils";
 
 const BestFitLine = ({ nodes, xScale, yScale }) => {
-  console.log(nodes, xScale, yScale);
   nodes.sort((a, b) => a.data["x"] - b.data["x"]);
   const points = nodes.map(function (x, i) {
     return [x.data["x"], x.data["y"]];
