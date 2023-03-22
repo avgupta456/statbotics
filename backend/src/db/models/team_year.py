@@ -74,6 +74,7 @@ class TeamYearORM(Base, ModelORM):
     rp_2_epa_max = Column(Float)
 
     """NORM EPA"""
+    unitless_epa_end = Column(Float)
     norm_epa_end = Column(Float)
 
     """STATS"""
@@ -160,6 +161,7 @@ class TeamYear(Model):
     rp_2_epa_mean: Optional[float] = None
     rp_2_epa_max: Optional[float] = None
 
+    unitless_epa_end: Optional[float] = None
     norm_epa_end: Optional[float] = None
 
     wins: int = 0

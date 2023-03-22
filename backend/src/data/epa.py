@@ -6,6 +6,7 @@ import numpy as np
 from scipy.stats import expon, exponnorm  # type: ignore
 
 from src.constants import CURR_YEAR
+from src.data.nepa import epa_to_unitless_epa
 from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
 from src.db.write.main import update_teams as update_teams_db
@@ -827,9 +828,11 @@ def process_year(
         obj.epa_end = round(team_epas[team], 2)
         obj.epa_diff = round(obj.epa_end - (obj.epa_start or 0), 2)
 
+        unitless_epa: float = epa_to_unitless_epa(obj.epa_end, TOTAL_MEAN, TOTAL_SD)
+        obj.unitless_epa_end = round(unitless_epa, 0)
         if year.year != CURR_YEAR:
             epa_index = year_epas.index(obj.epa_end)
-            obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 2)
+            obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 0)
 
         if USE_COMPONENTS:
             year_auto_epas.append(round(curr_auto_team_epas[-1], 2))

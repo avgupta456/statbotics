@@ -88,8 +88,6 @@ async def read_team_year(
     team_year: Optional[APITeamYear] = await get_team_year(
         team=team_num,
         year=year,
-        score_mean=year_obj.score_mean,
-        score_sd=year_obj.score_sd,
     )
     if team_year is None or team_year.offseason:
         raise Exception("TeamYear not found")

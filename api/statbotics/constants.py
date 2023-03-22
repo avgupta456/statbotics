@@ -187,6 +187,7 @@ team_year_metrics = [
     "rp_2_epa_end",
     "rp_2_epa_mean",
     "rp_2_epa_max",
+    "unitless_epa_end",
     "norm_epa_end",
     "wins",
     "losses",
