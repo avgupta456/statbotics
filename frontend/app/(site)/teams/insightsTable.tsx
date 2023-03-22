@@ -8,7 +8,8 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
 import { EventLink, TeamLink, formatCell, formatEPACell } from "../../../components/Table/shared";
-import { FilterBar, filterData } from "../../../components/filter";
+import { filterData } from "../../../components/filter";
+import { FilterBar } from "../../../components/filterBar";
 import { APITeamYear } from "../../../components/types/api";
 import { formatNumber } from "../../../components/utils";
 import { CURR_YEAR, RPMapping } from "../../../constants";

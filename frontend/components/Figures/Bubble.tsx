@@ -7,7 +7,8 @@ import HC_more from "highcharts/highcharts-more";
 import React, { useEffect, useState } from "react";
 
 import { ColumnBar, getColumnOptionsDict } from "../columns";
-import { FilterBar, filterData } from "../filter";
+import { filterData } from "../filter";
+import { FilterBar } from "../filterBar";
 import { formatNumber } from "../utils";
 
 if (typeof Highcharts === "object") {

@@ -2,7 +2,8 @@
 
 import React, { FC, useState } from "react";
 
-import { FilterBar, filterData } from "../../../components/filter";
+import { filterData } from "../../../components/filter";
+import { FilterBar } from "../../../components/filterBar";
 import { APIEvent } from "../../../components/types/api";
 import { CURR_WEEK, CURR_YEAR } from "../../../constants";
 import { EventData } from "../types";
