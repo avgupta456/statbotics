@@ -26,27 +26,26 @@ const Page = () => {
       <h3>Strength of Schedule Metrics</h3>
       <h4>Qualities of a Good SOS Metric</h4>
       <p>
-        When designing a strength of schedule metric, I ensured certain qualities were met. This is
-        not a comprehensive nor objective list, but rather a list of attributes that I found
-        important.
+        When designing a strength of schedule metric, I prioritized certain attributes. This is
+        neither a comprehensive nor objective list, but rather a list of attributes that I thought
+        were important.
         <ol>
           <li>
             <b>Explainable</b>: The metric should be easy to understand and have some real-world
-            interpretation. This is critical for building trust and promoting usage.
+            interpretation. This allows for easy communication of the metric&apos;s meaning.
           </li>
           <li>
             <b>Fair</b>: The metric should be indifferent to a team&apos;s EPA rating, allowing for
-            easy comparison between teams. A strong team should not have an &quot;easy&quot;
-            schedule just because they are projected to win more matches.
+            easy comparison between teams. A strong team does not have an &quot;easy&quot; schedule
+            just because they are projected to win more matches.
           </li>
           <li>
             <b>Percentile Based</b>: Each metric should be a percentile, denoting what percentage of
-            random schedules are easier than the team&apos;s actual schedule. A higher percentile
-            means a harder schedule, and vice versa. This also allows multiple metrics to be
-            averaged together to create a composite SOS metric.
+            random schedules are easier than the team&apos;s actual schedule. This also allows
+            multiple metrics to be averaged together to create a composite SOS metric.
           </li>
         </ol>
-        Caleb Sykes has a great post on{" "}
+        Caleb Sykes also has a great post on{" "}
         <Link
           href="https://blog.thebluealliance.com/2019/02/04/schedule-strengths-1-of-3-finding-the-best-strength-of-schedule-metric/"
           rel="noopener noreferrer"
@@ -54,8 +53,8 @@ const Page = () => {
           className="not-prose text_link text-blue-500"
         >
           strength of schedule metrics
-        </Link>{" "}
-        that contributes another perspective.
+        </Link>
+        .
       </p>
       <h4>Methodology</h4>
       <p>
@@ -71,12 +70,12 @@ const Page = () => {
         </Link>{" "}
         to generate well balanced schedules and randomly assign teams to slots. We then calculate
         some quantity of interest for each team for each schedule. We do the same for the actual
-        schedule. We can then compare the mean value of the actual schedule with the distribution of
-        the random schedules to get a percentile. This is the SOS metric.
+        schedule. We can then compare the quantity of interest from the actual schedule with its
+        distribution over the random schedules to get a percentile. This is the SOS metric.
       </p>
       <p>
         Each metric takes as input a mapping between teams and their perceived strength to compute
-        the quantity of interest. Specifically, we explore using a team&apos;s EPA rating from
+        the quantity of interest. Specifically, we explore using a team&apos;s EPA rating from both
         before the event and after the event. The SOS metrics from before the event measures the
         expected difficulty of the schedule upon release, whereas the SOS metrics from after the
         event measures the actual schedule difficulty based on how teams indivdiually performed.
@@ -85,8 +84,8 @@ const Page = () => {
       <p>
         This method is the simplest. Using the event simulator, simulate each match and compute the
         number of ranking points each team is expected to earn. The metric is the difference between
-        the actual schedule simulation and the average of random schedule simulations. The RP
-        Percentile denotes the percentage of random schedules with a lower expected ranking point
+        the simulated RPs of the actual schedule and the average of random schedule simulations. The
+        RP Percentile denotes the percentage of random schedules with a lower expected ranking point
         total than the actual schedule.
       </p>
       <h4>Metric 2: Δ Rank</h4>
@@ -187,15 +186,15 @@ const Page = () => {
         </div>
       </div>
       <p>
-        Looking at 2056&apos;s SOS of 0.31, their schedule seems somewhat average. But when we look
-        at the individual metrics, we see that their Δ EPA was 0.08 (great!) while their Δ Rank was
-        only 0.56 (not so great). Somehow, their average alliance partners were better than their
-        average opponents, but they were expected to seed slightly lower than their average random
-        schedule. This is a very interesting result, and partly explained by Qual Match 28. In this
-        match, the EPA model predicts a landslide victory for 2056, and indeed they win by 133
-        points. While this greatly benefits their Δ EPA, a win is always worth 2 ranking points, and
-        their remaining matches are all a lot closer. This exercise highlights the importance of
-        understanding the individual metrics and how they interact.
+        Looking at 2056&apos;s SOS of 0.31, their schedule seems slightly easier than average. But
+        when we look at the individual metrics, we see that their Δ EPA was 0.08 (great!) while
+        their Δ Rank was only 0.56 (pretty average). Somehow, their average alliance partners were
+        better than their average opponents, but they were expected to seed slightly lower than
+        their average random schedule. This is a very interesting result, and partly explained by
+        Qual Match 28. In this match, the EPA model predicts a landslide victory for 2056, and
+        indeed they win by 133 points. While this greatly benefits their Δ EPA, a win is always
+        worth 2 ranking points, and their remaining matches are all a lot closer. This exercise
+        highlights the importance of understanding the individual metrics and how they interact.
       </p>
       <h3>Conclusion</h3>
       <p>
