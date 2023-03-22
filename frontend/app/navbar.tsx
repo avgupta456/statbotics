@@ -78,7 +78,7 @@ const Navbar = () => {
   }));
 
   const eventOptions = events
-    ?.sort((a, b) => b.year - a.year)
+    ?.sort((a, b) => parseInt(b.key.slice(0, 4)) - parseInt(a.key.slice(0, 4)))
     ?.map((event: any) => ({
       value: `/event/${event.key}`,
       label: `${event.key.slice(0, 4)} ${event.name}`,
