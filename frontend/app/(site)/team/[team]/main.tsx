@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
@@ -50,18 +48,7 @@ async function getTeamYearsData(team: number) {
   return data?.data;
 }
 
-// do not cache this page
-export const revalidate = 0;
-
-const Page = ({ params }: { params: { team: number } }) => {
-  const team = params.team?.[0];
-  let paramYear = parseInt(params.team?.[1]) || CURR_YEAR;
-
-  if (paramYear !== -1) {
-    paramYear = Math.max(paramYear, 2002);
-    paramYear = Math.min(paramYear, CURR_YEAR);
-  }
-
+const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) => {
   const [prevYear, _setPrevYear] = useState(paramYear);
   const [year, _setYear] = useState(paramYear);
 
@@ -180,4 +167,4 @@ const Page = ({ params }: { params: { team: number } }) => {
   );
 };
 
-export default Page;
+export default PageContent;
