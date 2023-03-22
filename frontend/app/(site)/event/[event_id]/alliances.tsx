@@ -4,7 +4,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import { BarChartNoLegend } from "../../../../components/Figures/Bar";
 import InsightsTable from "../../../../components/Table/InsightsTable";
-import { TeamLink, formatCell, formatPercentileCell } from "../../../../components/Table/shared";
+import { TeamLink, formatCell, formatEPACell } from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
 import { readTBA, round } from "../../../../utils";
 import { Data } from "./types";
@@ -117,26 +117,26 @@ const AlliancesSection = ({
           header: "Pick 3",
         }),
         columnHelper.accessor("total_epa", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight, 2.5),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight, 2.5),
           header: "Total EPA",
         }),
         columnHelper.accessor("Captain EPA", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Captain EPA",
         }),
         columnHelper.accessor("First Pick EPA", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Pick 1 EPA",
         }),
         columnHelper.accessor("Second Pick EPA", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Pick 2 EPA",
         }),
         columnHelper.accessor("Third Pick EPA", {
           cell: (info) =>
             info.getValue() === 0
               ? formatCell(info)
-              : formatPercentileCell(data.year.total_stats, info, disableHighlight),
+              : formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Pick 3 EPA",
         }),
         year !== 2015 &&

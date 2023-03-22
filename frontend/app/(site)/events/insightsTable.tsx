@@ -8,7 +8,7 @@ import Link from "next/link";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
-import { EventLink, formatCell, formatPercentileCell } from "../../../components/Table/shared";
+import { EventLink, formatCell, formatEPACell } from "../../../components/Table/shared";
 import { round } from "../../../utils";
 import { EventData } from "../types";
 import EventsLayout from "./shared";
@@ -96,19 +96,19 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
             header: "Status",
           }),
         columnHelper.accessor("epa_max", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Max EPA",
         }),
         columnHelper.accessor("epa_top8", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Top 8 EPA",
         }),
         columnHelper.accessor("epa_top24", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Top 24 EPA",
         }),
         columnHelper.accessor("epa_mean", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Mean EPA",
         }),
       ].filter(Boolean),
@@ -184,19 +184,19 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
             header: "MSE",
           }),
         columnHelper.accessor("epa_max", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Max EPA",
         }),
         columnHelper.accessor("epa_top8", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Top 8 EPA",
         }),
         columnHelper.accessor("epa_top24", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Top 24 EPA",
         }),
         columnHelper.accessor("epa_mean", {
-          cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
           header: "Mean EPA",
         }),
       ].filter(Boolean),

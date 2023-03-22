@@ -5,14 +5,23 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
-import { TeamLink, formatCell } from "../../../../components/Table/shared";
+import {
+  TeamLink,
+  formatCell,
+  formatEPACell,
+  formatPercentileCell,
+} from "../../../../components/Table/shared";
 import { formatNumber } from "../../../../components/utils";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
 type SosDatum = {
+  preSimAvgRank: number;
+  simAvgRank: number;
   deltaRank: number;
   rankPercentile: number;
+  preSimAvgRP: number;
+  simAvgRP: number;
   deltaRP: number;
   rpPercentile: number;
   avgPartnerEPA: number;
@@ -31,9 +40,9 @@ type SosRow = {
   rank: number;
   num: number;
   team: string;
-  deltaRank: number;
-  deltaRP: number;
-  deltaEPA: number;
+  rankPercentile: number;
+  rpPercentile: number;
+  epaPercentile: number;
   overallPercentile: number;
 };
 
@@ -44,6 +53,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SosResults[]>([]);
   const [preEvent, setPreEvent] = useState(false);
+  const [disableHighlight, setDisableHighlight] = useState(false);
 
   useEffect(() => {
     // From https://webpack.js.org/guides/web-workers/#syntax
@@ -67,8 +77,12 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
     workerRef.current.postMessage({ type: "strengthOfSchedule", data, simCount: 1000 });
   }, [data]);
 
+  const preSimAvgRank = {};
+  const simAvgRank = {};
   const deltaRank = {};
   const rankPercentile = {};
+  const preSimAvgRP = {};
+  const simAvgRP = {};
   const deltaRP = {};
   const rpPercentile = {};
   const avgPartnerEPA = {};
@@ -76,6 +90,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const deltaEPA = {};
   const epaPercentile = {};
   const overallPercentile = {};
+  const epaAdjust = {};
 
   const simResult = preEvent
     ? workerMessages[0]?.preEventMetrics
@@ -83,8 +98,12 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
 
   if (simResult) {
     for (const teamNum of Object.keys(simResult)) {
+      preSimAvgRank[teamNum] = round(simResult[teamNum].preSimAvgRank, 2);
+      simAvgRank[teamNum] = round(simResult[teamNum].simAvgRank, 2);
       deltaRank[teamNum] = round(simResult[teamNum].deltaRank, 2);
       rankPercentile[teamNum] = round(simResult[teamNum].rankPercentile, 2);
+      preSimAvgRP[teamNum] = round(simResult[teamNum].preSimAvgRP, 2);
+      simAvgRP[teamNum] = round(simResult[teamNum].simAvgRP, 2);
       deltaRP[teamNum] = round(simResult[teamNum].deltaRP, 2);
       rpPercentile[teamNum] = round(simResult[teamNum].rpPercentile, 2);
       avgPartnerEPA[teamNum] = round(simResult[teamNum].avgPartnerEPA, 1);
@@ -92,6 +111,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       deltaEPA[teamNum] = round(simResult[teamNum].deltaEPA, 1);
       epaPercentile[teamNum] = round(simResult[teamNum].epaPercentile, 2);
       overallPercentile[teamNum] = round(simResult[teamNum].overallPercentile, 2);
+      epaAdjust[teamNum] = simResult[teamNum].epaAdjust;
     }
   }
 
@@ -99,20 +119,30 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
 
   const sosData = data.team_events
     .sort((a, b) => a.rank - b.rank)
-    .map((teamEvent, i) => ({
-      rank: i + 1,
-      num: teamEvent.num,
-      team: teamEvent.team,
-      deltaRank: deltaRank[teamEvent.num],
-      rankPercentile: rankPercentile[teamEvent.num],
-      deltaRP: deltaRP[teamEvent.num],
-      rpPercentile: rpPercentile[teamEvent.num],
-      avgPartnerEPA: avgPartnerEPA[teamEvent.num],
-      avgOpponentEPA: avgOpponentEPA[teamEvent.num],
-      deltaEPA: deltaEPA[teamEvent.num],
-      epaPercentile: epaPercentile[teamEvent.num],
-      overallPercentile: overallPercentile[teamEvent.num],
-    }));
+    .map((teamEvent, i) => {
+      const teamEPA = preEvent ? teamEvent.start_total_epa : teamEvent.total_epa;
+
+      return {
+        rank: i + 1,
+        num: teamEvent.num,
+        team: teamEvent.team,
+        epa: round(teamEPA, 1),
+        effective_epa: round(teamEPA + (epaAdjust[teamEvent.num] || 0), 1),
+        preSimAvgRank: preSimAvgRank[teamEvent.num],
+        simAvgRank: simAvgRank[teamEvent.num],
+        deltaRank: deltaRank[teamEvent.num],
+        rankPercentile: rankPercentile[teamEvent.num],
+        preSimAvgRP: preSimAvgRP[teamEvent.num],
+        simAvgRP: simAvgRP[teamEvent.num],
+        deltaRP: deltaRP[teamEvent.num],
+        rpPercentile: rpPercentile[teamEvent.num],
+        avgPartnerEPA: avgPartnerEPA[teamEvent.num],
+        avgOpponentEPA: avgOpponentEPA[teamEvent.num],
+        deltaEPA: deltaEPA[teamEvent.num],
+        epaPercentile: epaPercentile[teamEvent.num],
+        overallPercentile: overallPercentile[teamEvent.num],
+      };
+    });
 
   const columns = useMemo<any>(
     () => [
@@ -128,24 +158,24 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
         header: "Team",
       }),
-      columnHelper.accessor("deltaRank", {
-        cell: (info) => formatCell(info),
-        header: "Δ Rank",
+      columnHelper.accessor("rankPercentile", {
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "Rank Score",
       }),
-      columnHelper.accessor("deltaRP", {
-        cell: (info) => formatCell(info),
-        header: "Δ RP",
+      columnHelper.accessor("rpPercentile", {
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "RP Score",
       }),
-      columnHelper.accessor("deltaEPA", {
-        cell: (info) => formatCell(info),
-        header: "Δ EPA",
+      columnHelper.accessor("epaPercentile", {
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "EPA Score",
       }),
       columnHelper.accessor("overallPercentile", {
-        cell: (info) => formatCell(info),
-        header: "Strength of Schedule",
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "Overall Score",
       }),
     ],
-    [year]
+    [year, disableHighlight]
   );
 
   const detailedColumns = useMemo<any>(
@@ -162,21 +192,37 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
         header: "Team",
       }),
+      detailedColumnHelper.accessor("preSimAvgRank", {
+        cell: (info) => formatCell(info),
+        header: "Before Rank",
+      }),
+      detailedColumnHelper.accessor("simAvgRank", {
+        cell: (info) => formatCell(info),
+        header: "After Rank",
+      }),
       detailedColumnHelper.accessor("deltaRank", {
         cell: (info) => formatCell(info),
         header: "Δ Rank",
       }),
       detailedColumnHelper.accessor("rankPercentile", {
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "Rank Score",
+      }),
+      detailedColumnHelper.accessor("preSimAvgRP", {
         cell: (info) => formatCell(info),
-        header: "Rank Percentile",
+        header: "Before RP",
+      }),
+      detailedColumnHelper.accessor("simAvgRP", {
+        cell: (info) => formatCell(info),
+        header: "After RP",
       }),
       detailedColumnHelper.accessor("deltaRP", {
         cell: (info) => formatCell(info),
         header: "Δ RP",
       }),
       detailedColumnHelper.accessor("rpPercentile", {
-        cell: (info) => formatCell(info),
-        header: "RP Percentile",
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "RP Score",
       }),
       detailedColumnHelper.accessor("avgPartnerEPA", {
         cell: (info) => formatCell(info),
@@ -191,15 +237,23 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         header: "Δ EPA",
       }),
       detailedColumnHelper.accessor("epaPercentile", {
-        cell: (info) => formatCell(info),
-        header: "EPA Percentile",
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "EPA Score",
       }),
       detailedColumnHelper.accessor("overallPercentile", {
-        cell: (info) => formatCell(info),
-        header: "Strength of Schedule",
+        cell: (info) => formatPercentileCell(info, disableHighlight),
+        header: "Overall Score",
+      }),
+      detailedColumnHelper.accessor("epa", {
+        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+        header: "EPA",
+      }),
+      detailedColumnHelper.accessor("effective_epa", {
+        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+        header: "Effective EPA",
       }),
     ],
-    [year]
+    [year, data, disableHighlight]
   );
 
   return (
@@ -219,6 +273,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         searchCols={["num", "team"]}
         csvFilename={`${eventId}_sos.csv`}
         includeKey={false}
+        toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
     </div>
   );

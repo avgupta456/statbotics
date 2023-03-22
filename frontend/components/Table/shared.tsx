@@ -63,7 +63,7 @@ export const CONDITIONAL_COLORS = [
   "text-blue-800 bg-blue-200",
 ];
 
-export const getColor = (
+export const getEPAColor = (
   value: number,
   percentileStats: PercentileStats,
   multiplier: number = 1
@@ -98,23 +98,6 @@ export const getRPColor = (value: number) => {
   return color;
 };
 
-export const getProbColor = (value: number) => {
-  let color = "";
-  if (value < 0.05) {
-    color = CONDITIONAL_COLORS[1];
-  } else if (value < 0.1) {
-    color = CONDITIONAL_COLORS[2];
-  } else if (value < 0.25) {
-    color = CONDITIONAL_COLORS[3];
-  } else if (value < 0.5) {
-    color = "text-green-800 bg-green-200";
-  } else if (value >= 0.5) {
-    color = CONDITIONAL_COLORS[4];
-  }
-
-  return color;
-};
-
 export const formatCell = (info: CellContext<any, number | string>) => {
   const value = info.getValue();
 
@@ -123,7 +106,7 @@ export const formatCell = (info: CellContext<any, number | string>) => {
   );
 };
 
-export const formatPercentileCell = (
+export const formatEPACell = (
   percentileStats: PercentileStats,
   info: CellContext<any, number | string>,
   disableHighlight: boolean,
@@ -140,7 +123,7 @@ export const formatPercentileCell = (
   } else if (column == "rp_1_epa" || column == "rp_2_epa") {
     color = getRPColor(value);
   } else {
-    color = getColor(value, percentileStats, multiplier);
+    color = getEPAColor(value, percentileStats, multiplier);
   }
 
   return (
@@ -153,13 +136,42 @@ export const formatPercentileCell = (
 export const formatProbCell = (info: CellContext<any, number>) => {
   const value = info.getValue();
 
-  const color = getProbColor(value);
+  let color = "";
+  if (value < 0.05) {
+    color = CONDITIONAL_COLORS[1];
+  } else if (value < 0.1) {
+    color = CONDITIONAL_COLORS[2];
+  } else if (value < 0.25) {
+    color = CONDITIONAL_COLORS[3];
+  } else if (value < 0.5) {
+    color = "text-green-800 bg-green-200";
+  } else if (value >= 0.5) {
+    color = CONDITIONAL_COLORS[4];
+  }
 
   return (
     <div className="w-16 mx-auto h-full flex justify-center items-center">
       <div className={classnames(color, "w-12 px-2 py-1 rounded-lg")}>
         {value ? value.toFixed(2) : ""}
       </div>
+    </div>
+  );
+};
+
+export const formatPercentileCell = (info: CellContext<any, number>, disableHighlight: boolean) => {
+  const value = info.getValue();
+
+  let color = "";
+  if (disableHighlight) {
+  } else if (value < 0.25) {
+    color = CONDITIONAL_COLORS[3];
+  } else if (value > 0.75) {
+    color = CONDITIONAL_COLORS[0];
+  }
+
+  return (
+    <div className="w-16 mx-auto h-full flex justify-center items-center">
+      <div className={classnames(color, "w-12 px-2 py-1 rounded-lg")}>{value?.toFixed(2)}</div>
     </div>
   );
 };

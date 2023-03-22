@@ -104,7 +104,6 @@ async function preSim(
   data: Data,
   simCount: number,
   numMatches: number,
-  discrete: boolean,
   postEvent: boolean,
   postMessage: boolean
 ) {
@@ -164,22 +163,22 @@ async function preSim(
       let blueRP2EPA = currRP2EPAs[blue[0]] + currRP2EPAs[blue[1]] + currRP2EPAs[blue[2]];
 
       const winProb = 1 / (1 + Math.pow(10, ((-5 / 8) * (redEPA - blueEPA)) / TOTAL_SD));
-      const redWin = discrete ? (Math.random() < winProb ? 1 : 0) : winProb;
+      const redWin = Math.random() < winProb ? 1 : 0;
 
       const redRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP1EPA - 0.5)));
-      const redRP1 = discrete ? (Math.random() < redRP1Prob ? 1 : 0) : redRP1Prob;
+      const redRP1 = Math.random() < redRP1Prob ? 1 : 0;
 
       const redRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP2EPA - 0.5)));
-      const redRP2 = discrete ? (Math.random() < redRP2Prob ? 1 : 0) : redRP2Prob;
+      const redRP2 = Math.random() < redRP2Prob ? 1 : 0;
 
       const blueRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP1EPA - 0.5)));
-      const blueRP1 = discrete ? (Math.random() < blueRP1Prob ? 1 : 0) : blueRP1Prob;
+      const blueRP1 = Math.random() < blueRP1Prob ? 1 : 0;
 
       const blueRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP2EPA - 0.5)));
-      const blueRP2 = discrete ? (Math.random() < blueRP2Prob ? 1 : 0) : blueRP2Prob;
+      const blueRP2 = Math.random() < blueRP2Prob ? 1 : 0;
 
-      const redRPs = redRP1 + redRP2 + (discrete ? (redWin ? 2 : 0) : 2 * redWin);
-      const blueRPs = blueRP1 + blueRP2 + (discrete ? (redWin ? 0 : 2) : 2 * (1 - redWin));
+      const redRPs = redRP1 + redRP2 + (redWin ? 2 : 0);
+      const blueRPs = blueRP1 + blueRP2 + (redWin ? 0 : 2);
 
       red.forEach((team) => {
         currSimRPs[team] += redRPs;
@@ -390,7 +389,6 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
     data,
     simCount,
     N,
-    false,
     postEvent,
     false
   );
@@ -479,8 +477,8 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
     const deltaRank = simAvgRank - preSimAvgRank;
     const deltaRP = simAvgRP - preSimAvgRP;
 
-    const rankPercentile = currPreSimRanks.filter((x) => x >= simAvgRank).length / simCount;
-    const rpPercentile = currPreSimRPs.filter((x) => x <= simAvgRP).length / simCount;
+    const rankPercentile = currPreSimRanks.filter((x) => x <= simAvgRank).length / simCount;
+    const rpPercentile = currPreSimRPs.filter((x) => x >= simAvgRP).length / simCount;
 
     const currTeamPartners = flattenedTeamPartners[teamNum];
     const currTeamOpponents = flattenedTeamOpponents[teamNum];
@@ -494,13 +492,19 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
 
     const deltaEPA = epaAvg + 2 * avgPartnerEPA - 3 * avgOpponentEPA;
     const distrib = Gaussian(0, (epaSd * epaSd * 5) / N);
-    const epaPercentile = distrib.cdf(deltaEPA);
+    const epaPercentile = 1 - distrib.cdf(deltaEPA);
 
     const overallPercentile = (rankPercentile + rpPercentile + epaPercentile) / 3;
 
+    const epaAdjust = distrib.ppf(1 - overallPercentile);
+
     sosMetrics[data.team_events[i].num] = {
+      preSimAvgRank,
+      simAvgRank,
       deltaRank,
       rankPercentile,
+      preSimAvgRP,
+      simAvgRP,
       deltaRP,
       rpPercentile,
       avgPartnerEPA,
@@ -508,6 +512,7 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
       deltaEPA,
       epaPercentile,
       overallPercentile,
+      epaAdjust,
     };
   }
 
@@ -517,9 +522,6 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
 async function strengthOfSchedule(data: Data, simCount: number, postMessage: boolean) {
   const preEventMetrics = await _strengthOfSchedule(data, simCount, false);
   const postEventMetrics = await _strengthOfSchedule(data, simCount, true);
-
-  console.log(preEventMetrics);
-  console.log(postEventMetrics);
 
   if (postMessage) {
     ctx.postMessage({
@@ -541,7 +543,7 @@ ctx.addEventListener("message", (evt) => {
       const qualMatches = evt.data.data?.event?.qual_matches;
       const teamEvents = evt.data.data?.team_events?.length;
       const N = qualMatches && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : 12;
-      out = preSim(evt.data.data, evt.data.simCount, N, true, false, true);
+      out = preSim(evt.data.data, evt.data.simCount, N, false, true);
       return;
     case "indexSim":
       out = indexSim(evt.data.data, evt.data.index, evt.data.simCount, false, true);
