@@ -28,6 +28,12 @@ const Page = () => {
       url: "/blog/intro",
       date: "2023-03-16",
     },
+    {
+      title: "Strength of Schedule",
+      lead: "How can we use EPA to measure schedule luck? We propose three metrics and briefly explore some results.",
+      url: "/blog/sos",
+      date: "2023-03-23",
+    },
   ];
 
   return (
