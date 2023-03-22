@@ -163,9 +163,9 @@ export const formatPercentileCell = (info: CellContext<any, number>, disableHigh
 
   let color = "";
   if (disableHighlight) {
-  } else if (value < 0.25) {
+  } else if (value < 1 / 3) {
     color = CONDITIONAL_COLORS[3];
-  } else if (value > 0.75) {
+  } else if (value > 2 / 3) {
     color = CONDITIONAL_COLORS[0];
   }
 
