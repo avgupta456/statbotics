@@ -7,6 +7,10 @@ import Link from "next/link";
 import PageLayout from "../shared/pageLayout";
 import { renderMath, renderMathBlock } from "../shared/utils";
 
+export const metadata = {
+  title: "Strength of Schedule - Statbotics",
+};
+
 const Page = () => {
   return (
     <PageLayout

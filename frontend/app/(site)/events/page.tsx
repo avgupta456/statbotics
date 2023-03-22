@@ -13,6 +13,10 @@ import PageLayout from "../shared/layout";
 import { EventData } from "../types";
 import Tabs from "./tabs";
 
+export const metadata = {
+  title: "Events - Statbotics",
+};
+
 async function getEventData(year: number) {
   const cacheData = getWithExpiry(`events_${year}`);
   if (cacheData && cacheData?.events?.length > 10) {

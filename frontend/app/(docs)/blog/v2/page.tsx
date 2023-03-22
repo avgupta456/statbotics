@@ -6,6 +6,10 @@ import Link from "next/link";
 import PageLayout from "../shared/pageLayout";
 import SeasonTable from "../table";
 
+export const metadata = {
+  title: "Statbotics V2 - Statbotics",
+};
+
 const Page = () => {
   return (
     <PageLayout

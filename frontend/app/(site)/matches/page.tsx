@@ -12,6 +12,10 @@ import Tabs from "./tabs";
 // cache this page for 1 minute
 export const revalidate = 60;
 
+export const metadata = {
+  title: "Matches - Statbotics",
+};
+
 const Page = () => {
   const { year, setYear } = useContext(AppContext);
   const [error, setError] = useState(false);

@@ -11,6 +11,10 @@ import { classnames } from "../../../../utils";
 import PageLayout from "../shared/pageLayout";
 import SeasonTable from "../table";
 
+export const metadata = {
+  title: "The EPA Model: A Gentle Introduction - Statbotics",
+};
+
 const Page = () => {
   const [showComparison, setShowComparison] = useState(false);
   const [showFactors, setShowFactors] = useState(false);

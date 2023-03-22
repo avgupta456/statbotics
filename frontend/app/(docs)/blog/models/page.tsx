@@ -5,6 +5,10 @@ import Link from "next/link";
 import PageLayout from "../shared/pageLayout";
 import SeasonTable from "../table";
 
+export const metadata = {
+  title: "Evaluating FRC Rating Models - Statbotics",
+};
+
 const Page = () => {
   return (
     <PageLayout

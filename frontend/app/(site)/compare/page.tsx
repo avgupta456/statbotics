@@ -7,8 +7,12 @@ import WindowedSelect from "react-windowed-select";
 import LineChart from "../../../components/Figures/Line";
 import { multiSelectStyles } from "../../../components/multiSelect";
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
-import { classnames, log, round } from "../../../utils";
+import { log, round } from "../../../utils";
 import { getWithExpiry, setWithExpiry } from "../../localStorage";
+
+export const metadata = {
+  title: "Compare Teams - Statbotics",
+};
 
 // copied from navbar.tsx
 // TODO: consolidate with navbar.tsx
