@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
+import Link from "next/link";
+
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
@@ -256,9 +258,15 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
     <div className="w-full flex flex-col justify-center items-center">
       <div className="w-full text-2xl font-bold mb-4">Strength of Schedule</div>
       <div className="w-full mb-4">
-        Using EPA ratings and RP strengths from before the event, we estimate the impact of each
-        team&apos;s schedule.{" "}
-        <strong>The simulation happens live and takes a few seconds to load.</strong>
+        Using EPA ratings and RP strengths from before and after the event, we estimate the impact
+        of each team&apos;s schedule.{" "}
+        <strong>The simulation happens live and takes a few seconds to load.</strong> Generally,
+        lower scores mean easier schedules, and higher scores mean harder schedules. Read more about
+        the methodology{" "}
+        <Link href="/blog/sos" className="text_link">
+          here
+        </Link>
+        .
       </div>
       <div className="w-full h-8 mb-4 flex items-center text-sm md:text-base text-center">
         <strong className="mr-2">Using EPAs from:</strong>
