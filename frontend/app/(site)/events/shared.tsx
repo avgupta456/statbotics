@@ -47,8 +47,7 @@ const EventsLayout = ({
 
   const ongoingEvents = filteredData
     ?.filter(
-      (event) =>
-        event.status === "Ongoing" && (event.year !== CURR_YEAR || event.week === CURR_WEEK)
+      (event) => event.status === "Ongoing" && (event.year !== CURR_YEAR || event.week >= CURR_WEEK)
     )
     .sort((a, b) => (b.epa_mean > a.epa_mean ? 1 : -1));
   const ongoingN = ongoingEvents.length;
