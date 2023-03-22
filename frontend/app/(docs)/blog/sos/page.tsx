@@ -11,7 +11,7 @@ const Page = () => {
   return (
     <PageLayout
       title="Strength of Schedule"
-      lead="How can we use EPA to measure schedule luck? We propose three metrics and briefly explore some results."
+      lead="How can we use EPA to measure strength of schedule? We propose three metrics and briefly explore some results."
     >
       <h3>What is Strength of Schedule?</h3>
       <p>

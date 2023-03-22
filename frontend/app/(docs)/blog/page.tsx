@@ -30,7 +30,7 @@ const Page = () => {
     },
     {
       title: "Strength of Schedule",
-      lead: "How can we use EPA to measure schedule luck? We propose three metrics and briefly explore some results.",
+      lead: "How can we use EPA to measure strength of schedule? We propose three metrics and briefly explore some results.",
       url: "/blog/sos",
       date: "2023-03-23",
     },
