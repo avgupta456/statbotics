@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   if (!data) {
     return { title: "Statbotics" };
   } else {
-    return { title: `Team ${data.num}: ${data.team} - Statbotics` };
+    return { title: `Team ${data.num} - ${data.team} - Statbotics` };
   }
 }
 
