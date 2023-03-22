@@ -17,15 +17,25 @@ const TabsSection = ({
 }) => {
   const router = useRouter();
 
-  const hash = window?.location?.href?.split("#")?.[1];
+  let hash = "";
+  // check window is defined to prevent build errors
+  if (typeof window !== "undefined") {
+    hash = window.location.href.split("#")[1];
+  }
+
   const [activeTab, _setActiveTab] = useState(hash);
 
   const setActiveTab = (title: string) => {
     const formattedTitle = title.toLowerCase().replace(/ /g, "-");
     _setActiveTab(formattedTitle);
 
+    // check window is defined to prevent build errors
+    if (typeof window === "undefined") {
+      return;
+    }
+
     // remove anything after the last # in the path
-    const pathnameNoHash = window.location.href.replace(/#.*$/, "");
+    const pathnameNoHash = window?.location?.href?.replace(/#.*$/, "");
     const newPathname = pathnameNoHash + "#" + formattedTitle;
     router.replace(newPathname);
   };
