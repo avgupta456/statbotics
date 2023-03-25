@@ -17,6 +17,7 @@
     "@nivo/pie": "^0.80.0",
     "@nivo/scatterplot": "^0.80.0",
     "@nivo/tooltip": "^0.80.0",
+    "@sentry/nextjs": "^7.45.0",
     "@tanstack/react-table": "^8.7.9",
     "@types/node": "18.11.17",
     "@types/react": "18.0.26",
