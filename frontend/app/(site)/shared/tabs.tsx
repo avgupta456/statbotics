@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -17,33 +17,28 @@ const TabsSection = ({
 }) => {
   const router = useRouter();
 
-  let hash = "";
-  // check window is defined to prevent build errors
-  if (typeof window !== "undefined") {
-    hash = window.location.href.split("#")[1];
-  }
+  const [activeTab, _setActiveTab] = useState(undefined);
+  const [firstHash, setFirstHash] = useState("");
 
-  const [activeTab, _setActiveTab] = useState(hash);
+  useEffect(() => {
+    const updateHash = () => {
+      const newHash = window.location.href.split("#")[1];
+      setFirstHash(newHash);
+    };
+
+    updateHash();
+  }, []);
 
   const setActiveTab = (title: string) => {
     const formattedTitle = title.toLowerCase().replace(/ /g, "-");
     _setActiveTab(formattedTitle);
-
-    // check window is defined to prevent build errors
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    // remove anything after the last # in the path
-    const pathnameNoHash = window?.location?.href?.replace(/#.*$/, "");
-    const newPathname = pathnameNoHash + "#" + formattedTitle;
-    router.replace(newPathname);
+    router.replace(window.location.href.split("#")[0] + "#" + formattedTitle);
   };
 
+  const actualHash = activeTab ?? firstHash;
   const rawIndex = tabs.findIndex(
-    (tab) => tab.title.toLowerCase().replace(/ /g, "-") === activeTab
+    (tab) => tab.title.toLowerCase().replace(/ /g, "-") === actualHash
   );
-
   const currIndex = rawIndex >= 0 ? rawIndex : 0;
 
   return (
