@@ -1,13 +1,18 @@
 import React from "react";
 
-import PageContent from "./main";
+import PageLayout from "../shared/layout";
+import Tabs from "./tabs";
 
 export const metadata = {
   title: "Compare Teams - Statbotics",
 };
 
 const Page = () => {
-  return <PageContent />;
+  return (
+    <PageLayout title="Compare Teams">
+      <Tabs />
+    </PageLayout>
+  );
 };
 
 export default Page;

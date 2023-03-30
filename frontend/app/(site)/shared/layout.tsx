@@ -14,14 +14,13 @@ const PageLayout = ({
   children,
 }: {
   title: string;
-  year: number;
-  setYear: (year: number) => void;
+  year?: number;
+  setYear?: (year: number) => void;
   years?: number[];
   includeSummary?: boolean;
   children: React.ReactNode;
 }) => {
   const finalYears = years ? years : yearOptions.map((option) => parseInt(option.value));
-
   let filteredYearOptions = yearOptions.filter((option) =>
     finalYears.includes(parseInt(option.value))
   );
@@ -34,19 +33,21 @@ const PageLayout = ({
     <div className="w-full h-full flex-grow flex flex-col pt-4 md:pt-8 md:pb-4 md:px-4">
       <div className="w-full h-full flex-grow flex flex-col">
         <div className="w-full flex flex-row items-end justify-center mb-4">
-          <Select
-            instanceId="year-select"
-            className="w-28"
-            styles={{
-              menu: (provided) => ({ ...provided, zIndex: 9999 }),
-            }}
-            options={filteredYearOptions}
-            onChange={(e) => setYear((parseInt(e?.value) ?? 2023) as number)}
-            value={{
-              value: year.toString(),
-              label: year === -1 ? "Summary" : year.toString(),
-            }}
-          />
+          {year && setYear && (
+            <Select
+              instanceId="year-select"
+              className="w-28"
+              styles={{
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
+              }}
+              options={filteredYearOptions}
+              onChange={(e) => setYear((parseInt(e?.value) ?? 2023) as number)}
+              value={{
+                value: year.toString(),
+                label: year === -1 ? "Summary" : year.toString(),
+              }}
+            />
+          )}
           <p className="text-2xl lg:text-3xl ml-3">{title}</p>
         </div>
         {children}
