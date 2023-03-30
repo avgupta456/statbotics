@@ -10,6 +10,7 @@ import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 import { Data } from "./types";
 
+/*
 export async function generateMetadata({ params }) {
   const { event_id } = params;
   const data: Data = await getData(event_id);
@@ -18,6 +19,12 @@ export async function generateMetadata({ params }) {
   } else {
     return { title: `${data.year.year} ${data.event.name} - Statbotics` };
   }
+}
+*/
+
+export async function generateMetadata({ params }) {
+  const { event_id } = params;
+  return { title: `${event_id} - Statbotics` };
 }
 
 async function getData(event_id: string) {

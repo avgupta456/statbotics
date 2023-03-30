@@ -12,6 +12,7 @@ import MatchTable from "./table";
 import { Data } from "./types";
 import Video from "./video";
 
+/*
 export async function generateMetadata({ params }) {
   const { match_id } = params;
   const data: Data = await getData(match_id);
@@ -20,6 +21,11 @@ export async function generateMetadata({ params }) {
   } else {
     return { title: `${data.match.match_name} (${data.event.name}) - Statbotics` };
   }
+}*/
+
+export async function generateMetadata({ params }) {
+  const { match_id } = params;
+  return { title: `${match_id} - Statbotics` };
 }
 
 async function getData(match_id: string) {
