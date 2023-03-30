@@ -14,7 +14,11 @@ const SingleYear = ({ teams }: { teams: { [key: string]: any }[] }) => {
     }))
     .sort((a, b) => a.value - b.value);
 
-  return <YearLineChart year={CURR_YEAR} teams={lineData} />;
+  return (
+    <div className="mb-4">
+      <YearLineChart year={CURR_YEAR} teams={lineData} />
+    </div>
+  );
 };
 
 export default SingleYear;
