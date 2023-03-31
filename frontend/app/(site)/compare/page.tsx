@@ -1,6 +1,5 @@
 import React from "react";
 
-import PageLayout from "../shared/layout";
 import Tabs from "./tabs";
 
 export const metadata = {
@@ -8,11 +7,7 @@ export const metadata = {
 };
 
 const Page = () => {
-  return (
-    <PageLayout title="Compare Teams">
-      <Tabs />
-    </PageLayout>
-  );
+  return <Tabs />;
 };
 
 export default Page;

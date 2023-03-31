@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { BACKEND_URL } from "../../../constants";
 import { log, round } from "../../../utils";
 import { getWithExpiry, setWithExpiry } from "../../localStorage";
+import PageLayout from "../shared/layout";
 import TabsSection from "../shared/tabs";
 import MultiYear from "./multiYear";
 import SingleYear from "./singleYear";
@@ -45,7 +46,11 @@ const Tabs = () => {
     { title: "All Time", content: MemoizedMultiYear },
   ].filter((tab) => tab.title !== "");
 
-  return <TabsSection loading={teams?.length === 0} error={false} tabs={tabs} />;
+  return (
+    <PageLayout title="Compare Teams">
+      <TabsSection loading={teams?.length === 0} error={false} tabs={tabs} />
+    </PageLayout>
+  );
 };
 
 export default Tabs;
