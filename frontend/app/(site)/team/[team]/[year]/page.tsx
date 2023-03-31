@@ -5,9 +5,7 @@ import PageContent from "../main";
 import { getTeamData } from "../shared";
 import { TeamData } from "../types";
 
-// do not cache this page
-export const revalidate = 0;
-
+/*
 export async function generateMetadata({ params }) {
   const { team } = params;
   const data: TeamData = await getTeamData(team);
@@ -17,6 +15,15 @@ export async function generateMetadata({ params }) {
     return { title: `Team ${data.num} - ${data.team} - Statbotics` };
   }
 }
+*/
+
+export async function generateMetadata({ params }) {
+  const { team } = params;
+  return { title: `Team ${team} - Statbotics` };
+}
+
+// do not cache this page
+export const revalidate = 0;
 
 const Page = ({ params }: { params: { team: number; year: number } }) => {
   let { team, year: paramYear } = params;

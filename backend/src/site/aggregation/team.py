@@ -11,6 +11,7 @@ def unpack_team(team: Team) -> APITeam:
     return APITeam(
         num=team.team,
         team=team.name,
+        active=team.active or False,
         state=team.state,
         country=team.country,
         district=team.district,

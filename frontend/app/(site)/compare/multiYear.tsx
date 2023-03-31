@@ -1,44 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Select, { createFilter } from "react-select";
+import React, { useState } from "react";
+import { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
 import LineChart from "../../../components/Figures/Line";
 import { multiSelectStyles } from "../../../components/multiSelect";
 import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round } from "../../../utils";
-import { getWithExpiry, setWithExpiry } from "../../localStorage";
 
-// copied from navbar.tsx
-// TODO: consolidate with navbar.tsx
-async function getTeamData() {
-  const cacheData = getWithExpiry("full_team_list");
-  if (cacheData && cacheData?.length > 1000) {
-    log("Used Local Storage: Full Team List");
-    return cacheData;
-  }
-
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/teams/all`, { next: { revalidate: 60 } });
-  log(`/teams/all took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = (await res.json())?.data;
-  setWithExpiry("full_team_list", data, 60 * 60 * 24 * 7); // 1 week expiry
-  return data;
-}
-
-const PageContent = () => {
-  const [teams, setTeams] = useState([]);
+const MultiYear = ({ teams }: { teams: { [key: string]: any }[] }) => {
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
   const [allData, setAllData] = useState<{ [key: number]: any }>({});
-
-  useEffect(() => {
-    getTeamData().then((data) => setTeams(data));
-  }, []);
 
   const teamOptions = teams?.map((team: any) => ({
     value: team.num,
@@ -128,44 +101,39 @@ const PageContent = () => {
   });
 
   return (
-    <div className="w-full h-full flex-grow flex flex-col pt-4 md:pt-8 md:pb-4 md:px-4">
-      <div className="h-full h-full flex-grow flex flex-col">
-        <div className="w-full flex flex-row items-end justify-center mb-4">
-          <p className="text-xl lg:text-2xl">Compare Teams by Normalized EPA</p>
-        </div>
-        <div className="md:w-4/5 mx-auto flex flex-row justify-center mb-4">
-          <WindowedSelect
-            isMulti
-            instanceId={"team-select"}
-            className={"flex-grow text-sm mr-2"}
-            styles={multiSelectStyles((value) => {
-              let index = 0;
-              if (selectedTeams.length > 0) {
-                index = selectedTeams.findIndex((x) => x?.value === value);
-              }
-              return index + 1;
-            })}
-            options={teamOptions || []}
-            onChange={addTeam}
-            value={selectedTeams}
-            filterOption={createFilter({ ignoreAccents: false })}
-            windowThreshold={100}
-          />
-        </div>
-        <div className="flex">
-          <LineChart
-            data={lineData}
-            xAxis="Year"
-            yAxis="Norm EPA"
-            xMin={xMin}
-            xMax={xMax}
-            yMin={roundedYMin}
-            yMax={roundedYMax}
-          />
-        </div>
+    <div className="w-full h-full flex-grow flex flex-col md:pb-4 md:px-4">
+      <div className="md:w-4/5 mx-auto flex flex-row justify-center mb-4">
+        <WindowedSelect
+          isMulti
+          instanceId={"team-select"}
+          className={"flex-grow text-sm mr-2"}
+          styles={multiSelectStyles((value) => {
+            let index = 0;
+            if (selectedTeams.length > 0) {
+              index = selectedTeams.findIndex((x) => x?.value === value);
+            }
+            return index + 1;
+          })}
+          options={teamOptions || []}
+          onChange={addTeam}
+          value={selectedTeams}
+          filterOption={createFilter({ ignoreAccents: false })}
+          windowThreshold={100}
+        />
+      </div>
+      <div className="flex">
+        <LineChart
+          data={lineData}
+          xAxis="Year"
+          yAxis="Norm EPA"
+          xMin={xMin}
+          xMax={xMax}
+          yMin={roundedYMin}
+          yMax={roundedYMax}
+        />
       </div>
     </div>
   );
 };
 
-export default PageContent;
+export default MultiYear;
