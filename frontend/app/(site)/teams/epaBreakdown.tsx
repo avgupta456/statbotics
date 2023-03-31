@@ -23,6 +23,12 @@ export type EPABreakdown = {
   auto_cycles: number | string;
   teleop_cycles: number | string;
   total_cycles: number | string;
+  links: number | string;
+  cube_cycles: number | string;
+  cone_cycles: number | string;
+  bot_cycles: number | string;
+  mid_cycles: number | string;
+  top_cycles: number | string;
 };
 
 const columnHelper = createColumnHelper<EPABreakdown>();
@@ -70,6 +76,12 @@ const PageTeamInsightsTable = ({
         auto_cycles: round(teamYear?.epa_breakdown?.auto_cycles, 1) ?? "N/A",
         teleop_cycles: round(teamYear?.epa_breakdown?.teleop_cycles, 1) ?? "N/A",
         total_cycles: round(teamYear?.epa_breakdown?.total_cycles, 1) ?? "N/A",
+        links: round(teamYear?.epa_breakdown?.links, 1) ?? "N/A",
+        cube_cycles: round(teamYear?.epa_breakdown?.cube_cycles, 1) ?? "N/A",
+        cone_cycles: round(teamYear?.epa_breakdown?.cone_cycles, 1) ?? "N/A",
+        bot_cycles: round(teamYear?.epa_breakdown?.bot_cycles, 1) ?? "N/A",
+        mid_cycles: round(teamYear?.epa_breakdown?.mid_cycles, 1) ?? "N/A",
+        top_cycles: round(teamYear?.epa_breakdown?.top_cycles, 1) ?? "N/A",
       };
     });
 
@@ -98,6 +110,30 @@ const PageTeamInsightsTable = ({
       detailedColumnHelper.accessor("total_cycles", {
         cell: (info) => formatCell(info),
         header: "Total Cycles",
+      }),
+      detailedColumnHelper.accessor("links", {
+        cell: (info) => formatCell(info),
+        header: "Links",
+      }),
+      detailedColumnHelper.accessor("bot_cycles", {
+        cell: (info) => formatCell(info),
+        header: "Bottom Cycles",
+      }),
+      detailedColumnHelper.accessor("mid_cycles", {
+        cell: (info) => formatCell(info),
+        header: "Middle Cycles",
+      }),
+      detailedColumnHelper.accessor("top_cycles", {
+        cell: (info) => formatCell(info),
+        header: "Top Cycles",
+      }),
+      detailedColumnHelper.accessor("cube_cycles", {
+        cell: (info) => formatCell(info),
+        header: "Cube Cycles",
+      }),
+      detailedColumnHelper.accessor("cone_cycles", {
+        cell: (info) => formatCell(info),
+        header: "Cone Cycles",
       }),
     ].filter((x) => x);
     return showColumns;

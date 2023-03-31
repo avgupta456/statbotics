@@ -90,8 +90,23 @@ export type APITeamYear = {
   offseason: boolean;
   epa_breakdown?: {
     auto_cycles: number;
+    auto_points: number;
     teleop_cycles: number;
+    teleop_points: number;
     total_cycles: number;
+    links: number;
+    link_points: number;
+    total_points: number;
+    cube_cycles: number;
+    cube_points: number;
+    cone_cycles: number;
+    cone_points: number;
+    bot_cycles: number;
+    bot_points: number;
+    mid_cycles: number;
+    mid_points: number;
+    top_cycles: number;
+    top_points: number;
   };
 };
 

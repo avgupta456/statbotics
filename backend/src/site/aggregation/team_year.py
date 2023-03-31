@@ -12,14 +12,8 @@ from src.utils.alru_cache import alru_cache
 
 
 def unpack_team_year(
-    team_year: TeamYear, epa_breakdown: Optional[Dict[str, float]]
+    team_year: TeamYear, epa_breakdown: Dict[str, float]
 ) -> APITeamYear:
-    out_epa_breakdown = {}
-    if epa_breakdown is not None:
-        out_epa_breakdown["auto_cycles"] = epa_breakdown["auto_cycles"]
-        out_epa_breakdown["teleop_cycles"] = epa_breakdown["teleop_cycles"]
-        out_epa_breakdown["total_cycles"] = epa_breakdown["total_cycles"]
-
     return APITeamYear(
         year=team_year.year,
         num=team_year.team,
@@ -52,7 +46,7 @@ def unpack_team_year(
         ties=team_year.ties,
         count=team_year.count,
         offseason=team_year.offseason,
-        epa_breakdown=out_epa_breakdown,
+        epa_breakdown=epa_breakdown,
     )
 
 
@@ -91,7 +85,7 @@ async def get_team_years(
         epa_breakdown = get_epa_breakdown([x.team for x in team_year_objs])
 
     team_years = [
-        unpack_team_year(x, epa_breakdown.get(x.team, None)) for x in team_year_objs
+        unpack_team_year(x, epa_breakdown.get(x.team, {})) for x in team_year_objs
     ]
 
     return (True, sorted(team_years, key=lambda x: x.epa_rank))  # type: ignore
