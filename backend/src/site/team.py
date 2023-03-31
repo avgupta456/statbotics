@@ -29,7 +29,11 @@ router = APIRouter()
 @async_fail_gracefully
 async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
     teams: List[APITeam] = await get_teams()
-    return [{"num": x.num, "team": x.team} for x in teams if not x.offseason]
+    return [
+        {"num": x.num, "team": x.team, "active": x.active}
+        for x in teams
+        if not x.offseason
+    ]
 
 
 @router.get("/team/{team_num}")

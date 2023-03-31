@@ -18,7 +18,7 @@ const YearLineChart = ({
   teams,
 }: {
   year: number;
-  teamYears: APITeamYear[];
+  teamYears?: APITeamYear[];
   teams: any;
 }) => {
   const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
@@ -82,9 +82,9 @@ const YearLineChart = ({
   // VARIABLES
 
   const topTeams = teamYears
-    .sort((a, b) => b[yAxis.value] - a[yAxis.value])
-    .slice(0, 3)
-    .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
+    ?.sort((a, b) => b[yAxis.value] - a[yAxis.value])
+    ?.slice(0, 3)
+    ?.map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
 
   const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
 
@@ -159,9 +159,11 @@ const YearLineChart = ({
           value={yAxis}
         />
         <TeamSelect className="hidden md:inline-block" />
-        <div className="tooltip" data-tip="Show Top 3 Teams">
-          <GiPodium className="hover_icon ml-2" onClick={() => addManyTeams(topTeams)} />
-        </div>
+        {topTeams && (
+          <div className="tooltip" data-tip="Show Top 3 Teams">
+            <GiPodium className="hover_icon ml-2" onClick={() => addManyTeams(topTeams)} />
+          </div>
+        )}
         {xAxis === "match" && (
           <div className="tooltip" data-tip="Show % of Season">
             <AiOutlinePercentage className="hover_icon ml-2" onClick={() => setXAxis("season")} />

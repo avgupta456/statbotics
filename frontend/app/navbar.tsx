@@ -147,6 +147,11 @@ const Navbar = () => {
                 <div className="w-36 py-1 text-sm text-center">Compare Teams</div>
               </Link>
             </li>
+            <li>
+              <Link href="/hypothetical">
+                <div className="w-36 py-1 text-sm text-center">Hypothetical Match</div>
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="flex-grow" />

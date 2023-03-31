@@ -9,6 +9,7 @@ from src.site.models.main import APIModel
 class APITeam(APIModel):
     num: int
     team: str
+    active: bool
     state: Optional[str]
     country: Optional[str]
     district: Optional[str]

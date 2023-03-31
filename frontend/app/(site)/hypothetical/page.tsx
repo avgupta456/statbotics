@@ -3,7 +3,7 @@ import React from "react";
 import Tabs from "./tabs";
 
 export const metadata = {
-  title: "Compare Teams - Statbotics",
+  title: "Hypothetical - Statbotics",
 };
 
 const Page = () => {
