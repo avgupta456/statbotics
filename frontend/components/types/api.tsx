@@ -88,6 +88,11 @@ export type APITeamYear = {
   ties: number;
   count: number;
   offseason: boolean;
+  epa_breakdown?: {
+    auto_cycles: number;
+    teleop_cycles: number;
+    total_cycles: number;
+  };
 };
 
 export type APIEvent = {

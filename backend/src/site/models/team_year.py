@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import attr
 
@@ -38,3 +38,4 @@ class APITeamYear(APIModel):
     ties: int
     count: int
     offseason: bool
+    epa_breakdown: Optional[Dict[str, Any]]

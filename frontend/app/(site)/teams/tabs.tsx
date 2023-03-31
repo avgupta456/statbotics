@@ -6,6 +6,7 @@ import BubbleChart from "../../../components/Figures/Bubble";
 import { CURR_YEAR, RPMapping } from "../../../constants";
 import TabsSection from "../shared/tabs";
 import { TeamYearData, emptyTeamYearData } from "../types";
+import EPABreakdownSection from "./epaBreakdown";
 import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
 
@@ -66,11 +67,24 @@ const Tabs = ({
     [year, data]
   );
 
+  const MemoizedEPABreakdownSection = useMemo(
+    () => (
+      <EPABreakdownSection
+        year={year}
+        data={data || emptyTeamYearData}
+        filters={filters}
+        setFilters={setFilters}
+      />
+    ),
+    [year, data, filters, setFilters]
+  );
+
   const tabs = [
     { title: "Insights", content: MemoizedInsightsTable },
     { title: "Bubble Chart", content: MemoizedBubbleChart },
     { title: "Figures", content: MemoizedFigureSection },
-  ];
+    year === 2023 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
+  ].filter(Boolean);
 
   return <TabsSection loading={data === undefined} error={error} tabs={tabs} />;
 };
