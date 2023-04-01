@@ -38,4 +38,4 @@ class APITeamYear(APIModel):
     ties: int
     count: int
     offseason: bool
-    epa_breakdown: Optional[Dict[str, Any]]
+    epa_breakdown: Dict[str, Any]

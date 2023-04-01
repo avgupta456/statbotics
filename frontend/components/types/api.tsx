@@ -41,6 +41,7 @@ export type APIYear = {
   rp_1_stats: PercentileStats;
   rp_2_stats: PercentileStats;
   foul_rate: number;
+  epa_breakdown_stats?: { [key: string]: PercentileStats };
 };
 
 export const emptyAPIYear: APIYear = {

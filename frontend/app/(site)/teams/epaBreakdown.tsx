@@ -66,6 +66,7 @@ const PageTeamInsightsTable = ({
 
   const allTeamYears = data.team_years.sort((a, b) => b.total_epa - a.total_epa);
 
+  console.log(data.year);
   const yearInsightsData: EPABreakdown[] = filterData(allTeamYears, actualFilters)
     .filter((teamYear: APITeamYear) => showProjections || teamYear.count > 0)
     .map((teamYear: APITeamYear) => {
@@ -87,54 +88,88 @@ const PageTeamInsightsTable = ({
 
   const columns = useMemo<any>(() => {
     const showColumns = [
-      columnHelper.accessor("num", {
-        cell: (info) => formatNumber(info.getValue()),
-        header: "Number",
-      }),
-      columnHelper.accessor("team", {
-        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
-        header: "Name",
-      }),
-      columnHelper.accessor("total_epa", {
-        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
-        header: "EPA",
-      }),
-      detailedColumnHelper.accessor("auto_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Auto Cycles",
-      }),
-      detailedColumnHelper.accessor("teleop_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Teleop Cycles",
-      }),
-      detailedColumnHelper.accessor("total_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Total Cycles",
-      }),
-      detailedColumnHelper.accessor("links", {
-        cell: (info) => formatCell(info),
-        header: "Links",
-      }),
-      detailedColumnHelper.accessor("bot_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Bottom Cycles",
-      }),
-      detailedColumnHelper.accessor("mid_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Middle Cycles",
-      }),
-      detailedColumnHelper.accessor("top_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Top Cycles",
-      }),
-      detailedColumnHelper.accessor("cube_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Cube Cycles",
-      }),
-      detailedColumnHelper.accessor("cone_cycles", {
-        cell: (info) => formatCell(info),
-        header: "Cone Cycles",
-      }),
+      {
+        header: "Team",
+        columns: [
+          columnHelper.accessor("num", {
+            cell: (info) => formatNumber(info.getValue()),
+            header: "Number",
+          }),
+          columnHelper.accessor("team", {
+            cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
+            header: "Name",
+          }),
+        ],
+      },
+      {
+        header: "Overall",
+        columns: [
+          columnHelper.accessor("total_epa", {
+            cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+            header: "EPA",
+          }),
+          detailedColumnHelper.accessor("total_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.total_cycles, info, disableHighlight),
+            header: "Total Cycles",
+          }),
+          detailedColumnHelper.accessor("links", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.links, info, disableHighlight),
+            header: "Links",
+          }),
+        ],
+      },
+      {
+        header: "Cycle Time",
+        columns: [
+          detailedColumnHelper.accessor("auto_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.auto_cycles, info, disableHighlight),
+            header: "Auto Cycles",
+          }),
+          detailedColumnHelper.accessor("teleop_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.teleop_cycles, info, disableHighlight),
+            header: "Teleop Cycles",
+          }),
+        ],
+      },
+      {
+        header: "Cycle Location",
+        columns: [
+          detailedColumnHelper.accessor("bot_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.bot_cycles, info, disableHighlight),
+            header: "Bottom Cycles",
+          }),
+          detailedColumnHelper.accessor("mid_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.mid_cycles, info, disableHighlight),
+            header: "Middle Cycles",
+          }),
+          detailedColumnHelper.accessor("top_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.top_cycles, info, disableHighlight),
+            header: "Top Cycles",
+          }),
+        ],
+      },
+      {
+        header: "Cycle Type",
+        columns: [
+          detailedColumnHelper.accessor("cube_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.cube_cycles, info, disableHighlight),
+            header: "Cube Cycles",
+          }),
+          detailedColumnHelper.accessor("cone_cycles", {
+            cell: (info) =>
+              formatEPACell(data.year.epa_breakdown_stats.cone_cycles, info, disableHighlight),
+            header: "Cone Cycles",
+          }),
+        ],
+      },
     ].filter((x) => x);
     return showColumns;
   }, [year, data.year, disableHighlight]);
