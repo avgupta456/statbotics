@@ -69,13 +69,13 @@ export const getEPAColor = (
   multiplier: number = 1
 ) => {
   let color = "";
-  if (value < multiplier * percentileStats.p25) {
+  if (value < multiplier * percentileStats?.p25 ?? 0) {
     color = CONDITIONAL_COLORS[0];
-  } else if (value < multiplier * percentileStats.p75) {
+  } else if (value < multiplier * percentileStats?.p75 ?? 0) {
     color = CONDITIONAL_COLORS[1];
-  } else if (value < multiplier * percentileStats.p90) {
+  } else if (value < multiplier * percentileStats?.p90 ?? 0) {
     color = CONDITIONAL_COLORS[2];
-  } else if (value < multiplier * percentileStats.p99) {
+  } else if (value < multiplier * percentileStats?.p99 ?? 0) {
     color = CONDITIONAL_COLORS[3];
   } else {
     color = CONDITIONAL_COLORS[4];

@@ -85,17 +85,17 @@ const EPABreakdownTable = ({
         header: "Overall",
         columns: [
           columnHelper.accessor("total_epa", {
-            cell: (info) => formatEPACell(yearData.total_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(yearData?.total_stats, info, disableHighlight),
             header: "EPA",
           }),
           columnHelper.accessor("total_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.total_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.total_cycles, info, disableHighlight),
             header: "Total Cycles",
           }),
           columnHelper.accessor("links", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.links, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.links, info, disableHighlight),
             header: "Links",
           }),
         ],
@@ -105,12 +105,12 @@ const EPABreakdownTable = ({
         columns: [
           columnHelper.accessor("auto_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.auto_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.auto_cycles, info, disableHighlight),
             header: "Auto Cycles",
           }),
           columnHelper.accessor("teleop_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.teleop_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.teleop_cycles, info, disableHighlight),
             header: "Teleop Cycles",
           }),
         ],
@@ -120,17 +120,17 @@ const EPABreakdownTable = ({
         columns: [
           columnHelper.accessor("bot_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.bot_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.bot_cycles, info, disableHighlight),
             header: "Bot Cycles",
           }),
           columnHelper.accessor("mid_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.mid_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.mid_cycles, info, disableHighlight),
             header: "Mid Cycles",
           }),
           columnHelper.accessor("top_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.top_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.top_cycles, info, disableHighlight),
             header: "Top Cycles",
           }),
         ],
@@ -140,12 +140,12 @@ const EPABreakdownTable = ({
         columns: [
           columnHelper.accessor("cube_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.cube_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.cube_cycles, info, disableHighlight),
             header: "Cube Cycles",
           }),
           columnHelper.accessor("cone_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.cone_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.cone_cycles, info, disableHighlight),
             header: "Cone Cycles",
           }),
         ],
@@ -173,22 +173,22 @@ const EPABreakdownTable = ({
         header: "Overall",
         columns: [
           detailedColumnHelper.accessor("total_epa", {
-            cell: (info) => formatEPACell(yearData.total_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(yearData?.total_stats, info, disableHighlight),
             header: "EPA",
           }),
           detailedColumnHelper.accessor("total_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.total_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.total_cycles, info, disableHighlight),
             header: "Total Cycles",
           }),
           detailedColumnHelper.accessor("links", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.links, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.links, info, disableHighlight),
             header: "Links",
           }),
           detailedColumnHelper.accessor("total_points", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.total_points, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.total_points, info, disableHighlight),
             header: "Grid Points",
           }),
         ],
@@ -198,22 +198,22 @@ const EPABreakdownTable = ({
         columns: [
           detailedColumnHelper.accessor("auto_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.auto_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.auto_cycles, info, disableHighlight),
             header: "Auto Cycles",
           }),
           detailedColumnHelper.accessor("auto_points", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.auto_points, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.auto_points, info, disableHighlight),
             header: "Auto Grid Points",
           }),
           detailedColumnHelper.accessor("teleop_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.teleop_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.teleop_cycles, info, disableHighlight),
             header: "Teleop Cycles",
           }),
           detailedColumnHelper.accessor("teleop_points", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.teleop_points, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.teleop_points, info, disableHighlight),
             header: "Teleop Grid Points",
           }),
         ],
@@ -223,17 +223,17 @@ const EPABreakdownTable = ({
         columns: [
           detailedColumnHelper.accessor("bot_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.bot_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.bot_cycles, info, disableHighlight),
             header: "Bot Cycles",
           }),
           detailedColumnHelper.accessor("mid_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.mid_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.mid_cycles, info, disableHighlight),
             header: "Mid Cycles",
           }),
           detailedColumnHelper.accessor("top_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.top_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.top_cycles, info, disableHighlight),
             header: "Top Cycles",
           }),
         ],
@@ -243,22 +243,22 @@ const EPABreakdownTable = ({
         columns: [
           detailedColumnHelper.accessor("cube_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.cube_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.cube_cycles, info, disableHighlight),
             header: "Cube Cycles",
           }),
           detailedColumnHelper.accessor("cube_points", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.cube_points, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.cube_points, info, disableHighlight),
             header: "Cube Points",
           }),
           detailedColumnHelper.accessor("cone_cycles", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.cone_cycles, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.cone_cycles, info, disableHighlight),
             header: "Cone Cycles",
           }),
           detailedColumnHelper.accessor("cone_points", {
             cell: (info) =>
-              formatEPACell(yearData.epa_breakdown_stats.cone_points, info, disableHighlight),
+              formatEPACell(yearData?.epa_breakdown_stats?.cone_points, info, disableHighlight),
             header: "Cone Points",
           }),
         ],
