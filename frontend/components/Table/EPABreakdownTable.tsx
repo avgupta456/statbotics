@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
 
+import Link from "next/link";
+
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { CURR_YEAR } from "../../constants";
@@ -266,6 +268,20 @@ const EPABreakdownTable = ({
 
   return (
     <>
+      <div className="w-full my-4 px-16">
+        EPA Breakdowns apply the same EPA formula used to predict match outcomes to more granular
+        data. <strong>EPA Breakdowns are currently in BETA</strong>, and I cannot guarantee their
+        accuracy or completeness. They are only available on the website and update at a much slower
+        pace than the rest of the site. If you have any questions or bug reports, please reach out
+        on{" "}
+        <Link
+          href="https://www.chiefdelphi.com/t/statbotics-2023-season/423703"
+          className="text_link"
+        >
+          Chief Delphi
+        </Link>
+        . <strong>Last Updated:</strong> 5:00 AM ET, 4/1/2023
+      </div>
       <InsightsTable
         title={"EPA Breakdown (BETA)"}
         data={yearInsightsData}
@@ -276,19 +292,6 @@ const EPABreakdownTable = ({
         csvFilename={`${year}_epa_breakdown.csv`}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
-      <div className="w-full px-4 border-t-[1px] border-gray-200">
-        {year >= CURR_YEAR && (
-          <>
-            <div className="w-full text-xs mt-4">
-              <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
-              only a projection.
-            </div>
-            <div className="w-full text-xs mb-4">
-              <strong>2.</strong> TODO for more details.
-            </div>
-          </>
-        )}
-      </div>
     </>
   );
 };
