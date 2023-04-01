@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import { createColumnHelper } from "@tanstack/react-table";
 
-import { CURR_YEAR } from "../../constants";
 import { round, truncate } from "../../utils";
 import { APITeamEvent, APITeamYear, APIYear } from "../types/api";
 import { formatNumber } from "../utils";
@@ -34,10 +33,12 @@ const EPABreakdownTable = ({
   year,
   yearData,
   data,
+  csvFilename,
 }: {
   year: number;
   yearData: APIYear;
   data: (APITeamYear | APITeamEvent)[];
+  csvFilename: string;
 }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
 
@@ -276,6 +277,8 @@ const EPABreakdownTable = ({
         on{" "}
         <Link
           href="https://www.chiefdelphi.com/t/statbotics-2023-season/423703"
+          rel="noopener noreferrer"
+          target="_blank"
           className="text_link"
         >
           Chief Delphi
@@ -289,7 +292,7 @@ const EPABreakdownTable = ({
         detailedData={yearInsightsData}
         detailedColumns={detailedColumns}
         searchCols={["num", "team"]}
-        csvFilename={`${year}_epa_breakdown.csv`}
+        csvFilename={csvFilename}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
     </>

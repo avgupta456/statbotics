@@ -8,8 +8,8 @@ from src.data.nepa import (
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
 from src.site.models import APITeamEvent
-from src.utils.alru_cache import alru_cache
 from src.site.static import get_event_epa_breakdown
+from src.utils.alru_cache import alru_cache
 
 
 def unpack_team_event(

@@ -16,7 +16,12 @@ const EPABreakdownSection = ({
 }) => {
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <EPABreakdownTable year={year} yearData={data.year} data={data.team_events} />
+      <EPABreakdownTable
+        year={year}
+        yearData={data.year}
+        data={data.team_events}
+        csvFilename={`${eventId}_epa_breakdown.csv`}
+      />
     </div>
   );
 };

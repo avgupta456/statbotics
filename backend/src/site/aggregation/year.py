@@ -4,8 +4,8 @@ from typing import Dict, Optional
 from src.db.models import Year
 from src.db.read import get_year as _get_year
 from src.site.models import APIYear, PercentileStats
-from src.utils.alru_cache import alru_cache
 from src.site.static import get_epa_breakdown_percentiles
+from src.utils.alru_cache import alru_cache
 
 
 def unpack_year(

@@ -48,6 +48,7 @@ const EPABreakdownSection = ({
         year={year}
         yearData={data.year}
         data={filterData(data.team_years, actualFilters)}
+        csvFilename={`${year}_epa_breakdown.csv`}
       />
     </div>
   );
