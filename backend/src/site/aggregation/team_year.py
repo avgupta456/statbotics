@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from src.db.models import TeamYear
 from src.db.read import (
@@ -7,10 +7,13 @@ from src.db.read import (
     get_team_years as _get_team_years,
 )
 from src.site.models import APITeamYear
+from src.site.static import get_epa_breakdown
 from src.utils.alru_cache import alru_cache
 
 
-def unpack_team_year(team_year: TeamYear) -> APITeamYear:
+def unpack_team_year(
+    team_year: TeamYear, epa_breakdown: Dict[str, float]
+) -> APITeamYear:
     return APITeamYear(
         year=team_year.year,
         num=team_year.team,
@@ -43,6 +46,7 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
         ties=team_year.ties,
         count=team_year.count,
         offseason=team_year.offseason,
+        epa_breakdown=epa_breakdown,
     )
 
 
@@ -56,8 +60,12 @@ async def get_team_year(
     if team_year_obj is None:
         return (False, None)  # type: ignore
 
+    epa_breakdown = {}
+    if year == 2023:
+        epa_breakdown = get_epa_breakdown([team])
+
     # If valid, cache
-    return (True, unpack_team_year(team_year_obj))  # type: ignore
+    return (True, unpack_team_year(team_year_obj, epa_breakdown.get(team, None)))  # type: ignore
 
 
 @alru_cache(ttl=timedelta(minutes=5))
@@ -72,5 +80,12 @@ async def get_team_years(
         team=team, year=year, limit=limit, metric=metric
     )
 
-    team_years = [unpack_team_year(x) for x in team_year_objs]
+    epa_breakdown = {}
+    if year == 2023:
+        epa_breakdown = get_epa_breakdown([x.team for x in team_year_objs])
+
+    team_years = [
+        unpack_team_year(x, epa_breakdown.get(x.team, {})) for x in team_year_objs
+    ]
+
     return (True, sorted(team_years, key=lambda x: x.epa_rank))  # type: ignore

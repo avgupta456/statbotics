@@ -1,8 +1,7 @@
+import sentry_sdk
 from dotenv import load_dotenv  # type: ignore
 from fastapi import APIRouter, FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-
-import sentry_sdk
 
 load_dotenv()
 

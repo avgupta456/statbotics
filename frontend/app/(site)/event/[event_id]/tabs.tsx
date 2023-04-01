@@ -6,6 +6,7 @@ import BubbleChart from "../../../../components/Figures/Bubble";
 import { CURR_YEAR, RPMapping } from "../../../../constants";
 import TabsSection from "../../shared/tabs";
 import AlliancesSection from "./alliances";
+import EPABreakdownSection from "./epaBreakdown";
 import FiguresSection from "./figures";
 import InsightsTable from "./insightsTable";
 import MatchSection from "./matches";
@@ -83,6 +84,11 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     [eventId, data]
   );
 
+  const MemoizedEPABreakdownSection = useMemo(
+    () => <EPABreakdownSection year={year} eventId={eventId} data={data} />,
+    [year, eventId, data]
+  );
+
   const qualsN = data?.matches?.filter((match) => !match.playoff)?.length || 0;
   const elimsN = data?.matches?.filter((match) => match.playoff)?.length || 0;
 
@@ -105,6 +111,7 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     year !== 2015 && qualsN > 0
       ? { title: "SOS", content: MemoizedSosSection }
       : { title: "", content: "" },
+    year === 2023 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
   ].filter((tab) => tab.title !== "");
 
   return <TabsSection loading={data === undefined} error={false} tabs={tabs} />;

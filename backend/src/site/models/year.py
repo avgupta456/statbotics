@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import attr
 
 from src.site.models.main import APIModel
@@ -27,3 +29,4 @@ class APIYear(APIModel):
     rp_1_stats: PercentileStats
     rp_2_stats: PercentileStats
     foul_rate: float
+    epa_breakdown_stats: Dict[str, Any]

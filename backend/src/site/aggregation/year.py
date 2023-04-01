@@ -1,13 +1,16 @@
 from datetime import timedelta
-from typing import Optional
+from typing import Dict, Optional
 
 from src.db.models import Year
 from src.db.read import get_year as _get_year
 from src.site.models import APIYear, PercentileStats
+from src.site.static import get_epa_breakdown_percentiles
 from src.utils.alru_cache import alru_cache
 
 
-def unpack_year(year: Year) -> APIYear:
+def unpack_year(
+    year: Year, epa_breakdown_percentiles: Dict[str, Dict[str, float]]
+) -> APIYear:
     total_stats = PercentileStats(
         p99=year.epa_1p or 0,
         p95=year.epa_5p or 0,
@@ -76,6 +79,20 @@ def unpack_year(year: Year) -> APIYear:
 
     foul_rate = (year.fouls_mean or 0) / (year.no_fouls_mean or 1)
 
+    epa_breakdown_stats = {
+        k: PercentileStats(
+            p99=v.get("p99", 0),
+            p95=v.get("p95", 0),
+            p90=v.get("p90", 0),
+            p75=v.get("p75", 0),
+            p50=v.get("p50", 0),
+            p25=v.get("p25", 0),
+            mean=v.get("mean", 0),
+            sd=v.get("sd", 0),
+        ).to_dict()  # to_dict() doesn't fully handle nesting
+        for k, v in epa_breakdown_percentiles.items()
+    }
+
     return APIYear(
         year=year.year,
         score_mean=year.score_mean or 0,
@@ -87,6 +104,7 @@ def unpack_year(year: Year) -> APIYear:
         rp_1_stats=rp_1_stats,
         rp_2_stats=rp_2_stats,
         foul_rate=foul_rate,
+        epa_breakdown_stats=epa_breakdown_stats,
     )
 
 
@@ -98,5 +116,9 @@ async def get_year(year: int, no_cache: bool = False) -> Optional[APIYear]:
     if year_obj is None:
         return (False, None)  # type: ignore
 
+    epa_breakdown_percentiles = {}
+    if year == 2023:
+        epa_breakdown_percentiles = get_epa_breakdown_percentiles()
+
     # If valid, cache
-    return (True, unpack_year(year_obj))  # type: ignore
+    return (True, unpack_year(year_obj, epa_breakdown_percentiles))  # type: ignore
