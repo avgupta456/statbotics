@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 import EPABreakdownTable from "../../../components/Table/EPABreakdownTable";
 import { filterData } from "../../../components/filter";
@@ -19,8 +19,6 @@ const EPABreakdownSection = ({
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
 }) => {
-  const [showProjections, setShowProjections] = useState(true);
-
   let defaultFilters = {
     country: "",
     state: "",
@@ -43,9 +41,7 @@ const EPABreakdownSection = ({
           defaultFilters={defaultFilters}
           filters={actualFilters}
           setFilters={setFilters}
-          includeProjections={year === CURR_YEAR}
-          showProjections={showProjections}
-          setShowProjections={setShowProjections}
+          includeProjections={false}
         />
       </div>
       <EPABreakdownTable
