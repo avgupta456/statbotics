@@ -57,6 +57,27 @@ export const emptyAPIYear: APIYear = {
   foul_rate: 0,
 };
 
+export type EPABreakdown = {
+  auto_cycles: number;
+  auto_points: number;
+  teleop_cycles: number;
+  teleop_points: number;
+  total_cycles: number;
+  links: number;
+  link_points: number;
+  total_points: number;
+  cube_cycles: number;
+  cube_points: number;
+  cone_cycles: number;
+  cone_points: number;
+  bot_cycles: number;
+  bot_points: number;
+  mid_cycles: number;
+  mid_points: number;
+  top_cycles: number;
+  top_points: number;
+};
+
 export type APITeamYear = {
   year: number;
   num: number;
@@ -89,26 +110,7 @@ export type APITeamYear = {
   ties: number;
   count: number;
   offseason: boolean;
-  epa_breakdown?: {
-    auto_cycles: number;
-    auto_points: number;
-    teleop_cycles: number;
-    teleop_points: number;
-    total_cycles: number;
-    links: number;
-    link_points: number;
-    total_points: number;
-    cube_cycles: number;
-    cube_points: number;
-    cone_cycles: number;
-    cone_points: number;
-    bot_cycles: number;
-    bot_points: number;
-    mid_cycles: number;
-    mid_points: number;
-    top_cycles: number;
-    top_points: number;
-  };
+  epa_breakdown?: EPABreakdown;
 };
 
 export type APIEvent = {
@@ -166,6 +168,7 @@ export type APITeamEvent = {
   rps: number;
   rps_per_match: number;
   offseason: boolean;
+  epa_breakdown?: EPABreakdown;
 };
 
 export type APIMatch = {
