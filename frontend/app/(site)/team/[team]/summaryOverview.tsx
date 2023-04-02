@@ -81,7 +81,7 @@ const SummaryOverviewSection = ({
   }
 
   const filteredTeamYearsData = teamYearsData
-    .filter((x) => x.year >= teamData.rookie_year && x.year < CURR_YEAR)
+    .filter((x) => x.year >= teamData.rookie_year && x.year <= CURR_YEAR)
     .sort((a, b) => a.year - b.year);
 
   const tableData = filteredTeamYearsData
