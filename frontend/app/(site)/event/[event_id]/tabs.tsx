@@ -95,24 +95,18 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
   let tabs = [
     { title: "Insights", content: MemoizedInsightsTable },
     { title: "Bubble Chart", content: MemoizedBubbleChart },
-    qualsN > 0
-      ? { title: "Qual Matches", content: MemoizedQualMatchSection }
-      : { title: "", content: "" },
-    elimsN > 0
-      ? { title: "Alliances", content: MemoizedAlliancesSection }
-      : { title: "", content: "" },
-    elimsN > 0
-      ? { title: "Elim Matches", content: MemoizedElimMatchSection }
-      : { title: "", content: "" },
+    qualsN > 0 && { title: "Qual Matches", content: MemoizedQualMatchSection },
+    elimsN > 0 && { title: "Alliances", content: MemoizedAlliancesSection },
+    elimsN > 0 && { title: "Elim Matches", content: MemoizedElimMatchSection },
     { title: "Figures", content: MemoizedFigureSection },
-    year !== 2015 && (qualsN > 0 || data?.event?.status === "Upcoming")
-      ? { title: "Simulation", content: MemoizedSimulationSection }
-      : { title: "", content: "" },
-    year !== 2015 && qualsN > 0
-      ? { title: "SOS", content: MemoizedSosSection }
-      : { title: "", content: "" },
+    year !== 2015 &&
+      (qualsN > 0 || data?.event?.status === "Upcoming") && {
+        title: "Simulation",
+        content: MemoizedSimulationSection,
+      },
+    year !== 2015 && qualsN > 0 && { title: "SOS", content: MemoizedSosSection },
     year === 2023 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
-  ].filter((tab) => tab.title !== "");
+  ].filter(Boolean);
 
   return <TabsSection loading={data === undefined} error={false} tabs={tabs} />;
 };
