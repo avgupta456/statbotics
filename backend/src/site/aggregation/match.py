@@ -96,7 +96,7 @@ async def get_matches(
     return (True, sorted(matches, key=lambda x: x.time))  # type: ignore
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=5))
 async def get_upcoming_matches(
     country: Optional[str],
     state: Optional[str],
@@ -122,7 +122,7 @@ async def get_upcoming_matches(
     return (True, matches)  # type: ignore
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=15))
 async def get_noteworthy_matches(
     year: int,
     country: Optional[str],
