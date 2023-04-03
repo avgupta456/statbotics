@@ -274,14 +274,24 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
           className="mr-4 flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
           onClick={() => setPreEvent(true)}
         >
-          <input type="radio" className="radio-sm mr-1 cursor-pointer" checked={preEvent} />
+          <input
+            type="radio"
+            className="radio-sm mr-1 cursor-pointer"
+            checked={preEvent}
+            onChange={() => {}}
+          />
           <span>Before Event</span>
         </div>
         <div
           className="flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
           onClick={() => setPreEvent(false)}
         >
-          <input type="radio" className="radio-sm mr-1 cursor-pointer" checked={!preEvent} />
+          <input
+            type="radio"
+            className="radio-sm mr-1 cursor-pointer"
+            checked={!preEvent}
+            onChange={() => {}}
+          />
           <span>After Event</span>
         </div>
       </div>

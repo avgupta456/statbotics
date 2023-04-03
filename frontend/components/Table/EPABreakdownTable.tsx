@@ -63,6 +63,10 @@ const EPABreakdownTable = ({
         bot_cycles: round(team?.epa_breakdown?.bot_cycles, 1) ?? "N/A",
         mid_cycles: round(team?.epa_breakdown?.mid_cycles, 1) ?? "N/A",
         top_cycles: round(team?.epa_breakdown?.top_cycles, 1) ?? "N/A",
+        fouls_committed: round(team?.epa_breakdown?.fouls_committed, 1) ?? "N/A",
+        fouls_drawn: round(team?.epa_breakdown?.fouls_drawn, 1) ?? "N/A",
+        capped_fouls_committed: round(team?.epa_breakdown?.capped_fouls_committed, 1) ?? "N/A",
+        capped_fouls_drawn: round(team?.epa_breakdown?.capped_fouls_drawn, 1) ?? "N/A",
       };
     });
 
@@ -260,6 +264,31 @@ const EPABreakdownTable = ({
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.cone_points, info, disableHighlight),
             header: "Cone Points",
+          }),
+        ],
+      },
+      {
+        header: "Fouls",
+        columns: [
+          detailedColumnHelper.accessor("capped_fouls_committed", {
+            cell: (info) =>
+              formatEPACell(
+                yearData?.epa_breakdown_stats?.capped_fouls_committed,
+                info,
+                disableHighlight,
+                1,
+                true
+              ),
+            header: "Fouls Committed",
+          }),
+          detailedColumnHelper.accessor("capped_fouls_drawn", {
+            cell: (info) =>
+              formatEPACell(
+                yearData?.epa_breakdown_stats?.capped_fouls_drawn,
+                info,
+                disableHighlight
+              ),
+            header: "Fouls Drawn",
           }),
         ],
       },
