@@ -105,7 +105,7 @@ const EPABreakdownTable = ({
         ],
       },
       {
-        header: "Cycle Time",
+        header: "Scoring Period",
         columns: [
           columnHelper.accessor("auto_cycles", {
             cell: (info) =>
@@ -198,7 +198,7 @@ const EPABreakdownTable = ({
         ],
       },
       {
-        header: "Cycle Time",
+        header: "Scoring Period",
         columns: [
           detailedColumnHelper.accessor("auto_cycles", {
             cell: (info) =>
