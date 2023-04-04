@@ -27,12 +27,12 @@ class MatchORM(Base, ModelORM):
     offseason = Column(Boolean)
 
     # Choices are 'Upcoming', 'Completed'
-    status = Column(String(10))
+    status = Column(String(10), index=True)
     video = Column(String(20))
 
-    red_1 = Column(Integer)
-    red_2 = Column(Integer)
-    red_3 = Column(Integer)
+    red_1 = Column(Integer, index=True)
+    red_2 = Column(Integer, index=True)
+    red_3 = Column(Integer, index=True)
     red_dq = Column(String(20))
     red_surrogate = Column(String(20))
     red_epa_sum = Column(Float)
@@ -43,9 +43,9 @@ class MatchORM(Base, ModelORM):
     red_rp_2_epa_sum = Column(Float)
 
     # Different than dq/surrogate to allow for easier querying
-    blue_1 = Column(Integer)
-    blue_2 = Column(Integer)
-    blue_3 = Column(Integer)
+    blue_1 = Column(Integer, index=True)
+    blue_2 = Column(Integer, index=True)
+    blue_3 = Column(Integer, index=True)
     blue_dq = Column(String(20))
     blue_surrogate = Column(String(20))
     blue_epa_sum = Column(Float)
@@ -63,7 +63,7 @@ class MatchORM(Base, ModelORM):
     blue_rp_1_prob = Column(Float)
     blue_rp_2_prob = Column(Float)
 
-    playoff = Column(Boolean)
+    playoff = Column(Boolean, index=True)
     time = Column(Integer)  # Enforces ordering
     predicted_time = Column(Integer)  # For display
 
