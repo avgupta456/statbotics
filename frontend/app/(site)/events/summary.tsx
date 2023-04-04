@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 import { APIEvent } from "../../../components/types/api";
-import { truncate } from "../../../utils";
+import { formatEventName } from "../../../utils";
 import { EventData } from "../types";
 import EventsLayout from "./shared";
 
@@ -20,7 +20,9 @@ const EventCard = ({ event }: { event: APIEvent }) => {
   return (
     <Link href={`/event/${event.key}`}>
       <div className="h-40 m-2 p-4 rounded flex flex-col border-[1px] shadow hover:bg-blue-100 cursor-pointer">
-        <div className="w-full flex-grow text-lg font-bold mb-4">{truncate(event.name, 45)}</div>
+        <div className="w-full flex-grow text-lg font-bold mb-4">
+          {formatEventName(event.name, 45)}
+        </div>
         <div className="w-full mb-2">
           {location} - Week {event.week}
         </div>
