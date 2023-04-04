@@ -120,7 +120,7 @@ const EPABreakdownTable = ({
         ],
       },
       {
-        header: "Cycle Location",
+        header: "Scoring Location",
         columns: [
           columnHelper.accessor("bot_cycles", {
             cell: (info) =>
@@ -140,7 +140,7 @@ const EPABreakdownTable = ({
         ],
       },
       {
-        header: "Cycle Type",
+        header: "Game Piece Type",
         columns: [
           columnHelper.accessor("cube_cycles", {
             cell: (info) =>
@@ -223,7 +223,7 @@ const EPABreakdownTable = ({
         ],
       },
       {
-        header: "Cycle Location",
+        header: "Scoring Location",
         columns: [
           detailedColumnHelper.accessor("bot_cycles", {
             cell: (info) =>
@@ -243,7 +243,7 @@ const EPABreakdownTable = ({
         ],
       },
       {
-        header: "Cycle Type",
+        header: "Game Piece Type",
         columns: [
           detailedColumnHelper.accessor("cube_cycles", {
             cell: (info) =>
