@@ -95,7 +95,7 @@ const EPABreakdownTable = ({
           columnHelper.accessor("total_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.total_cycles, info, disableHighlight),
-            header: "Total Cycles",
+            header: "Total Pieces",
           }),
           columnHelper.accessor("links", {
             cell: (info) =>
@@ -110,12 +110,12 @@ const EPABreakdownTable = ({
           columnHelper.accessor("auto_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.auto_cycles, info, disableHighlight),
-            header: "Auto Cycles",
+            header: "Auto Pieces",
           }),
           columnHelper.accessor("teleop_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.teleop_cycles, info, disableHighlight),
-            header: "Teleop Cycles",
+            header: "Teleop Pieces",
           }),
         ],
       },
@@ -125,17 +125,17 @@ const EPABreakdownTable = ({
           columnHelper.accessor("bot_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.bot_cycles, info, disableHighlight),
-            header: "Bot Cycles",
+            header: "Bottom Pieces",
           }),
           columnHelper.accessor("mid_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.mid_cycles, info, disableHighlight),
-            header: "Mid Cycles",
+            header: "Middle Pieces",
           }),
           columnHelper.accessor("top_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.top_cycles, info, disableHighlight),
-            header: "Top Cycles",
+            header: "Top Pieces",
           }),
         ],
       },
@@ -145,12 +145,12 @@ const EPABreakdownTable = ({
           columnHelper.accessor("cube_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.cube_cycles, info, disableHighlight),
-            header: "Cube Cycles",
+            header: "Cubes Scored",
           }),
           columnHelper.accessor("cone_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.cone_cycles, info, disableHighlight),
-            header: "Cone Cycles",
+            header: "Cones Scored",
           }),
         ],
       },
@@ -183,7 +183,7 @@ const EPABreakdownTable = ({
           detailedColumnHelper.accessor("total_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.total_cycles, info, disableHighlight),
-            header: "Total Cycles",
+            header: "Total Pieces",
           }),
           detailedColumnHelper.accessor("links", {
             cell: (info) =>
@@ -203,7 +203,7 @@ const EPABreakdownTable = ({
           detailedColumnHelper.accessor("auto_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.auto_cycles, info, disableHighlight),
-            header: "Auto Cycles",
+            header: "Auto Pieces",
           }),
           detailedColumnHelper.accessor("auto_points", {
             cell: (info) =>
@@ -213,7 +213,7 @@ const EPABreakdownTable = ({
           detailedColumnHelper.accessor("teleop_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.teleop_cycles, info, disableHighlight),
-            header: "Teleop Cycles",
+            header: "Teleop Pieces",
           }),
           detailedColumnHelper.accessor("teleop_points", {
             cell: (info) =>
@@ -228,17 +228,17 @@ const EPABreakdownTable = ({
           detailedColumnHelper.accessor("bot_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.bot_cycles, info, disableHighlight),
-            header: "Bot Cycles",
+            header: "Bottom Pieces",
           }),
           detailedColumnHelper.accessor("mid_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.mid_cycles, info, disableHighlight),
-            header: "Mid Cycles",
+            header: "Middle Pieces",
           }),
           detailedColumnHelper.accessor("top_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.top_cycles, info, disableHighlight),
-            header: "Top Cycles",
+            header: "Top Pieces",
           }),
         ],
       },
@@ -248,7 +248,7 @@ const EPABreakdownTable = ({
           detailedColumnHelper.accessor("cube_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.cube_cycles, info, disableHighlight),
-            header: "Cube Cycles",
+            header: "Cubes Scored",
           }),
           detailedColumnHelper.accessor("cube_points", {
             cell: (info) =>
@@ -258,7 +258,7 @@ const EPABreakdownTable = ({
           detailedColumnHelper.accessor("cone_cycles", {
             cell: (info) =>
               formatEPACell(yearData?.epa_breakdown_stats?.cone_cycles, info, disableHighlight),
-            header: "Cone Cycles",
+            header: "Cones Scored",
           }),
           detailedColumnHelper.accessor("cone_points", {
             cell: (info) =>
