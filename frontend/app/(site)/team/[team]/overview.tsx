@@ -46,6 +46,7 @@ const OverviewSection = ({
   teamData: TeamData | undefined;
   teamYearData: TeamYearData | undefined;
 }) => {
+  const [alliance, setAlliance] = useState<boolean>(true);
   const [media, setMedia] = useState<string | null>(null);
 
   useEffect(() => {
@@ -154,6 +155,33 @@ const OverviewSection = ({
         )}
       </div>
       <div className="w-full h-1 bg-gray-300" />
+      <div className="w-full my-4 flex flex justify-center items-center">
+        <strong className="mr-2">Perspective: </strong>
+        <div
+          className="mr-4 flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
+          onClick={() => setAlliance(true)}
+        >
+          <input
+            type="radio"
+            className="radio-sm mr-1 cursor-pointer"
+            checked={alliance}
+            onChange={() => {}}
+          />
+          <span>Team (Green = Team Won Match)</span>
+        </div>
+        <div
+          className="flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
+          onClick={() => setAlliance(false)}
+        >
+          <input
+            type="radio"
+            className="radio-sm mr-1 cursor-pointer"
+            checked={!alliance}
+            onChange={() => {}}
+          />
+          <span>Predicted Winner (Green = Correct Prediction)</span>
+        </div>
+      </div>
       {teamEvents
         .filter((event) => !event.offseason)
         .map((event) => {
@@ -206,6 +234,7 @@ const OverviewSection = ({
                   teamNum={teamData.num}
                   matches={eventMatches}
                   foulRate={year.foul_rate}
+                  myAlliance={alliance}
                 />
               </div>
             </div>

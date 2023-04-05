@@ -4,7 +4,7 @@ import { BsPlayCircle } from "react-icons/bs";
 import Link from "next/link";
 
 import { CORRECT_COLOR, INCORRECT_COLOR } from "../constants";
-import { classnames, round } from "../utils";
+import { capitalize, classnames, round } from "../utils";
 import { APIMatch } from "./types/api";
 import { compLevelFullNames, formatMatch, formatNumber } from "./utils";
 
@@ -31,6 +31,7 @@ const MatchRow = ({
   showVideo,
   rawTitle,
   stacked,
+  myAlliance,
 }: {
   year: number;
   foulRate: number;
@@ -40,6 +41,7 @@ const MatchRow = ({
   showVideo: boolean;
   rawTitle: boolean;
   stacked: boolean;
+  myAlliance: boolean;
 }) => {
   let alliance = match.red.includes(teamNum) ? "red" : "";
   alliance = match.blue.includes(teamNum) ? "blue" : alliance;
@@ -47,6 +49,9 @@ const MatchRow = ({
   const _winProb = round(match.epa_win_prob * 100, 0);
   const winProb = _winProb > 50 ? _winProb : 100 - _winProb;
   const correctWinner = match.winner === match.pred_winner;
+
+  const myAllianceWinProb = alliance === match.pred_winner ? winProb : 100 - winProb;
+  const myAllianceWinner = alliance === match.winner;
 
   const Video = () => (
     <div className="w-16 h-full flex justify-center items-center border-r border-b border-gray-300">
@@ -243,13 +248,13 @@ const MatchRow = ({
             stacked ? "w-full h-1/2" : "w-1/2 h-full border-double border-l-4 border-gray-300 "
           )}
         >
-          {match.pred_winner === "red" ? "Red" : "Blue"}
+          {myAlliance ? capitalize(alliance) : match.pred_winner === "red" ? "Red" : "Blue"}
         </div>
         <div
           style={{
             backgroundColor:
               match.status === "Completed"
-                ? correctWinner
+                ? (myAlliance ? myAllianceWinner : correctWinner)
                   ? CORRECT_COLOR
                   : INCORRECT_COLOR
                 : "#FFF",
@@ -259,7 +264,7 @@ const MatchRow = ({
             stacked ? "w-full h-1/2" : "w-1/2 h-full"
           )}
         >
-          {winProb}%
+          {myAlliance ? myAllianceWinProb : winProb}%
         </div>
       </div>
     </>
@@ -292,6 +297,7 @@ const MatchTable = ({
   showVideo = true,
   rawTitle = false,
   stacked = false,
+  myAlliance = true,
 }: {
   year: number;
   teamNum: number;
@@ -303,10 +309,13 @@ const MatchTable = ({
   showVideo?: boolean;
   rawTitle?: boolean;
   stacked?: boolean;
+  myAlliance?: boolean;
 }) => {
   if (matches.length === 0) {
     return <div className="w-full text-center">Schedule not released yet.</div>;
   }
+
+  const myAllianceActual = teamNum !== 0 && myAlliance;
 
   const compLevels = matches.map((match) => match.comp_level);
   const uniqueCompLevels = compLevels
@@ -377,6 +386,7 @@ const MatchTable = ({
                       showVideo={showVideo}
                       rawTitle={rawTitle}
                       stacked={stacked}
+                      myAlliance={myAllianceActual}
                     />
                   );
                 })}
@@ -394,6 +404,7 @@ const MatchTable = ({
                 showVideo={showVideo}
                 rawTitle={rawTitle}
                 stacked={stacked}
+                myAlliance={myAllianceActual}
               />
             );
           })}
