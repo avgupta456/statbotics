@@ -4,7 +4,7 @@ import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Link from "next/link";
 
 import { BACKEND_URL } from "../../../../constants";
-import { log, round, truncate } from "../../../../utils";
+import { formatEventName, log, round } from "../../../../utils";
 import NotFound from "../../shared/notFound";
 import ImageRow from "./imageRow";
 import Summary from "./summary";
@@ -51,7 +51,7 @@ async function Page({ params }: { params: { match_id: string } }) {
     return <NotFound type="Match" />;
   }
 
-  let truncatedEventName = truncate(data.event.name, 40);
+  let truncatedEventName = formatEventName(data.event.name, 40);
 
   let prevMatch: string | null = null;
   if (!data.match.playoff && data.match.match_number > 1) {
