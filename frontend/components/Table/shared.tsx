@@ -72,7 +72,6 @@ export const getEPAColor = (
   let color = "";
 
   if (reverse) {
-    console.log(percentileStats);
     if (value > multiplier * percentileStats?.p25 ?? 0) {
       color = CONDITIONAL_COLORS[0];
     } else if (value > multiplier * percentileStats?.p75 ?? 0) {

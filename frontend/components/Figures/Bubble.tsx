@@ -60,6 +60,8 @@ const BubbleChart = ({
     z: "Constant",
   });
 
+  const [showZero, setShowZero] = useState(false);
+
   const actualFilters = Object.keys(defaultFilters).reduce(
     (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
     {}
@@ -67,7 +69,10 @@ const BubbleChart = ({
 
   let filteredData: any[] = filterData(data, actualFilters);
   const numRemoved = filteredData.filter((datum) => datum?.count === 0).length;
-  filteredData = filteredData.filter((datum) => datum?.count > 0);
+
+  if (!showZero) {
+    filteredData = filteredData.filter((datum) => datum?.count > 0);
+  }
 
   const columnOptionsDict = getColumnOptionsDict(year);
   const xAxis = columnOptionsDict[columns.x];
@@ -251,7 +256,15 @@ const BubbleChart = ({
       </div>
       {numRemoved > 0 && (
         <div className="w-full text-center text-sm">
-          <strong>Note</strong>: {numRemoved} teams have not played yet, and are not shown.
+          <strong>Note</strong>: {numRemoved} teams have not played yet.
+          <div className="ml-2 inline-block">
+            <button
+              className="text-blue-500 hover:text-blue-700"
+              onClick={() => setShowZero(!showZero)}
+            >
+              {showZero ? "Hide" : "Show"} teams with no matches
+            </button>
+          </div>
         </div>
       )}
       <div className="w-full flex justify-center">
