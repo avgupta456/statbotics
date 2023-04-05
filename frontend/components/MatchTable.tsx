@@ -248,7 +248,13 @@ const MatchRow = ({
             stacked ? "w-full h-1/2" : "w-1/2 h-full border-double border-l-4 border-gray-300 "
           )}
         >
-          {myAlliance ? capitalize(alliance) : match.pred_winner === "red" ? "Red" : "Blue"}
+          {myAlliance
+            ? match.pred_winner === alliance
+              ? "Win"
+              : "Lose"
+            : match.pred_winner === "red"
+            ? "Red"
+            : "Blue"}
         </div>
         <div
           style={{
