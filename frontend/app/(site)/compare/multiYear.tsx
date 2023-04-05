@@ -36,7 +36,7 @@ const MultiYear = ({ teams }: { teams: { [key: string]: any }[] }) => {
     }
 
     const sortedData: any[] = data.data
-      .filter((x) => x.year < CURR_YEAR)
+      .filter((x) => x.year <= CURR_YEAR)
       .sort((a: any, b: any) => a.year - b.year);
 
     return sortedData;
@@ -66,7 +66,7 @@ const MultiYear = ({ teams }: { teams: { [key: string]: any }[] }) => {
 
   let ySamples = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
-    .map((teamNum) => allData[teamNum]?.map((x) => x.norm_epa) || [])
+    .map((teamNum) => allData[teamNum]?.map((x) => x.norm_epa || x.unitless_epa) || [])
     .flat();
 
   if (ySamples.length === 0) {
@@ -87,7 +87,7 @@ const MultiYear = ({ teams }: { teams: { [key: string]: any }[] }) => {
       data:
         allData[teamNum]?.map((x) => ({
           x: x.year,
-          y: round(x.norm_epa, 0),
+          y: round(x.norm_epa || x.unitless_epa, 0),
           label: x.year.toString(),
         })) || [],
     }));
