@@ -82,7 +82,8 @@ const SummaryOverviewSection = ({
 
   const filteredTeamYearsData = teamYearsData
     .filter((x) => x.year >= teamData.rookie_year && x.year <= CURR_YEAR)
-    .sort((a, b) => a.year - b.year);
+    .sort((a, b) => a.year - b.year)
+    .map((x) => ({ ...x, norm_epa: round(x.norm_epa || x.unitless_epa, 0) }));
 
   const tableData = filteredTeamYearsData
     .map((teamYear) => ({
