@@ -9,7 +9,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
 import { EventLink, formatCell, formatEPACell } from "../../../components/Table/shared";
-import { round } from "../../../utils";
+import { formatEventName, round } from "../../../utils";
 import { EventData } from "../types";
 import EventsLayout from "./shared";
 
@@ -43,7 +43,7 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
       const endDate = event.end_date.slice(5).replace("-", "/").replace(/^0+/, "");
       return {
         event_key: event.key,
-        name: event.name,
+        name: formatEventName(event.name),
         week: event.week,
         date: `${startDate} - ${endDate}`,
         country: event.country || "",
