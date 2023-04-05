@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import WindowedSelect, { createFilter } from "react-windowed-select";
 
 import { classnames, round } from "../../../utils";
+import ImageRow from "../match/[match_id]/imageRow";
+import PageMatchTable from "../match/[match_id]/table";
 import { TeamYearData } from "../types";
 
 const Select = ({
@@ -72,62 +74,100 @@ const Match = ({ data }: { data: TeamYearData }) => {
       total_epa: team.total_epa,
     }));
 
+  const teamMatches: any = data?.team_years.filter((team) =>
+    [red1, red2, red3, blue1, blue2, blue3].includes(team.num)
+  );
+
+  teamMatches.push({
+    num: 0,
+    total_epa: 0,
+    auto_epa: 0,
+    teleop_epa: 0,
+    endgame_epa: 0,
+    rp_1_epa: 0,
+    rp_2_epa: 0,
+  });
+
+  const matchData: any = {
+    match: {
+      red: [red1, red2, red3],
+      blue: [blue3, blue2, blue1],
+      red_epa_pred: redPred,
+      blue_epa_pred: bluePred,
+    },
+    team_matches: teamMatches,
+    team_events: teamMatches,
+    year: data?.year,
+  };
+
   return (
-    <div className="w-full lg:w-2/3 xl:w-1/2 mx-auto">
-      <div className="bg-red-100 rounded p-2">
-        <div className="text-lg mb-2">Red Alliance</div>
-        <div className="w-full flex flex-wrap md:flex-nowrap gap-2">
-          <Select label="Red 1" value={red1} setValue={setRed1} options={teamOptions} />
-          <Select label="Red 2" value={red2} setValue={setRed2} options={teamOptions} />
-          <Select label="Red 3" value={red3} setValue={setRed3} options={teamOptions} />
-        </div>
-      </div>
-      <div className="bg-blue-100 rounded mt-4 p-2">
-        <div className="text-lg mb-2">Blue Alliance</div>
-        <div className="w-full flex flex-wrap md:flex-nowrap gap-2">
-          <Select label="Blue 1" value={blue1} setValue={setBlue1} options={teamOptions} />
-          <Select label="Blue 2" value={blue2} setValue={setBlue2} options={teamOptions} />
-          <Select label="Blue 3" value={blue3} setValue={setBlue3} options={teamOptions} />
-        </div>
-      </div>
-      <div className="w-full flex flex-col md:flex-row justify-center gap-4 md:gap-16 mt-12 mb-4">
-        <div className="flex flex-col items-center">
-          <div className="flex text-3xl">
-            <p className={classnames("data text-red-500", redPred > bluePred ? "font-bold" : "")}>
-              {Math.round(redPred)}
-            </p>
-            <p className="mx-2">-</p>
-            <p className={classnames("data text-blue-500", bluePred > redPred ? "font-bold" : "")}>
-              {Math.round(bluePred)}
-            </p>
+    <div className="w-full mb-8">
+      <div className="w-full lg:w-2/3 xl:w-1/2 mx-auto">
+        <div className="bg-red-100 rounded p-2">
+          <div className="text-lg mb-2">Red Alliance</div>
+          <div className="w-full flex flex-wrap md:flex-nowrap gap-2">
+            <Select label="Red 1" value={red1} setValue={setRed1} options={teamOptions} />
+            <Select label="Red 2" value={red2} setValue={setRed2} options={teamOptions} />
+            <Select label="Red 3" value={red3} setValue={setRed3} options={teamOptions} />
           </div>
-          <div className="mt-4 text-xl flex">
-            Projected Winner:{" "}
-            <p
-              className={classnames(
-                "ml-2",
-                predWinner === "red" ? "text-red-500" : "text-blue-500"
+        </div>
+        <div className="bg-blue-100 rounded mt-4 p-2">
+          <div className="text-lg mb-2">Blue Alliance</div>
+          <div className="w-full flex flex-wrap md:flex-nowrap gap-2">
+            <Select label="Blue 1" value={blue1} setValue={setBlue1} options={teamOptions} />
+            <Select label="Blue 2" value={blue2} setValue={setBlue2} options={teamOptions} />
+            <Select label="Blue 3" value={blue3} setValue={setBlue3} options={teamOptions} />
+          </div>
+        </div>
+        <div className="w-full flex flex-col md:flex-row justify-center gap-4 md:gap-16 mt-12 mb-4">
+          <div className="flex flex-col items-center">
+            <div className="flex text-3xl">
+              <p className={classnames("data text-red-500", redPred > bluePred ? "font-bold" : "")}>
+                {Math.round(redPred)}
+              </p>
+              <p className="mx-2">-</p>
+              <p
+                className={classnames("data text-blue-500", bluePred > redPred ? "font-bold" : "")}
+              >
+                {Math.round(bluePred)}
+              </p>
+            </div>
+            <div className="mt-4 text-xl flex">
+              Projected Winner:{" "}
+              <p
+                className={classnames(
+                  "ml-2",
+                  predWinner === "red" ? "text-red-500" : "text-blue-500"
+                )}
+              >
+                {predWinner.toUpperCase()}
+              </p>
+            </div>
+            <div className="text-sm text-gray-600 mt-2">
+              Includes {Math.round(data?.year?.foul_rate * 100)}% foul rate
+            </div>
+          </div>
+          <div className="h-full w-1 bg-gray-300" />
+          <div className="flex flex-col items-center">
+            <div className="flex text-3xl">
+              {redWinProb > blueWinProb ? (
+                <p className="data text-red-500">{Math.round(redWinProb)}%</p>
+              ) : (
+                <p className="data text-blue-500">{Math.round(blueWinProb)}%</p>
               )}
-            >
-              {predWinner.toUpperCase()}
-            </p>
+            </div>
+            <div className="mt-4 text-xl flex">Win Probability</div>
           </div>
-          <div className="text-sm text-gray-600 mt-2">
-            Includes {Math.round(data?.year?.foul_rate * 100)}% foul rate
-          </div>
-        </div>
-        <div className="h-full w-1 bg-gray-300" />
-        <div className="flex flex-col items-center">
-          <div className="flex text-3xl">
-            {redWinProb > blueWinProb ? (
-              <p className="data text-red-500">{Math.round(redWinProb)}%</p>
-            ) : (
-              <p className="data text-blue-500">{Math.round(blueWinProb)}%</p>
-            )}
-          </div>
-          <div className="mt-4 text-xl flex">Win Probability</div>
         </div>
       </div>
+      {data?.year?.year >= 2016 && (
+        <>
+          <div className="h-[2px] bg-gray-300 my-8" />
+          <PageMatchTable data={matchData} />
+          <div className="my-16" />
+          <ImageRow data={matchData} />
+        </>
+      )}
     </div>
   );
 };

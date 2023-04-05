@@ -37,6 +37,7 @@ export const readTBA = async (url: string) => {
 };
 
 export const getMediaUrl = async (team: number, year: number) => {
+  if (team === 0) return null;
   const data = await readTBA(`/team/frc${team}/media/${year}`);
   const image = data.filter((item: any) => item?.preferred)?.[0];
   if (image?.type === "instagram-image") {
