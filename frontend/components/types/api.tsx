@@ -76,6 +76,10 @@ export type EPABreakdown = {
   mid_points: number;
   top_cycles: number;
   top_points: number;
+  fouls_committed: number;
+  fouls_drawn: number;
+  capped_fouls_committed: number;
+  capped_fouls_drawn: number;
 };
 
 export type APITeamYear = {

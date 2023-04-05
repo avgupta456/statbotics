@@ -66,19 +66,35 @@ export const CONDITIONAL_COLORS = [
 export const getEPAColor = (
   value: number,
   percentileStats: PercentileStats,
-  multiplier: number = 1
+  multiplier: number = 1,
+  reverse: boolean = false
 ) => {
   let color = "";
-  if (value < multiplier * percentileStats?.p25 ?? 0) {
-    color = CONDITIONAL_COLORS[0];
-  } else if (value < multiplier * percentileStats?.p75 ?? 0) {
-    color = CONDITIONAL_COLORS[1];
-  } else if (value < multiplier * percentileStats?.p90 ?? 0) {
-    color = CONDITIONAL_COLORS[2];
-  } else if (value < multiplier * percentileStats?.p99 ?? 0) {
-    color = CONDITIONAL_COLORS[3];
+
+  if (reverse) {
+    if (value > multiplier * percentileStats?.p25 ?? 0) {
+      color = CONDITIONAL_COLORS[0];
+    } else if (value > multiplier * percentileStats?.p75 ?? 0) {
+      color = CONDITIONAL_COLORS[1];
+    } else if (value > multiplier * percentileStats?.p90 ?? 0) {
+      color = CONDITIONAL_COLORS[2];
+    } else if (value > multiplier * percentileStats?.p99 ?? 0) {
+      color = CONDITIONAL_COLORS[3];
+    } else {
+      color = CONDITIONAL_COLORS[4];
+    }
   } else {
-    color = CONDITIONAL_COLORS[4];
+    if (value < multiplier * percentileStats?.p25 ?? 0) {
+      color = CONDITIONAL_COLORS[0];
+    } else if (value < multiplier * percentileStats?.p75 ?? 0) {
+      color = CONDITIONAL_COLORS[1];
+    } else if (value < multiplier * percentileStats?.p90 ?? 0) {
+      color = CONDITIONAL_COLORS[2];
+    } else if (value < multiplier * percentileStats?.p99 ?? 0) {
+      color = CONDITIONAL_COLORS[3];
+    } else {
+      color = CONDITIONAL_COLORS[4];
+    }
   }
 
   return color;
@@ -110,7 +126,8 @@ export const formatEPACell = (
   percentileStats: PercentileStats,
   info: CellContext<any, number | string>,
   disableHighlight: boolean,
-  multiplier: number = 1
+  multiplier: number = 1,
+  reverse: boolean = false
 ) => {
   const column = info.column.id;
   const value = info.getValue();
@@ -123,7 +140,7 @@ export const formatEPACell = (
   } else if (column == "rp_1_epa" || column == "rp_2_epa") {
     color = getRPColor(value);
   } else {
-    color = getEPAColor(value, percentileStats, multiplier);
+    color = getEPAColor(value, percentileStats, multiplier, reverse);
   }
 
   return (

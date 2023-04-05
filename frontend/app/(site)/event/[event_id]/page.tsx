@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { BACKEND_URL } from "../../../../constants";
-import { log, round, truncate } from "../../../../utils";
+import { formatEventName, log, round } from "../../../../utils";
 import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 import { Data } from "./types";
@@ -50,7 +50,7 @@ async function Page({ params }: { params: { event_id: string } }) {
     return <NotFound type="Event" />;
   }
 
-  let truncatedEventName = truncate(data.event.name, 30);
+  let truncatedEventName = formatEventName(data.event.name, 30);
   const status = data.event.status;
 
   return (

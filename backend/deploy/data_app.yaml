@@ -2,7 +2,7 @@ service: data
 runtime: python38
 entrypoint: gunicorn -w 1 -t 600 -k uvicorn.workers.UvicornWorker main:app
 
-instance_class: B2
+instance_class: B4
 
 # exactly one instance
 basic_scaling:

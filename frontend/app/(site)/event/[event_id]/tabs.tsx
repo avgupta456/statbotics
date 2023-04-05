@@ -1,9 +1,17 @@
 "use client";
 
 import React, { useMemo } from "react";
+import Select from "react-select";
+
+import { useRouter } from "next/navigation";
 
 import BubbleChart from "../../../../components/Figures/Bubble";
-import { CURR_YEAR, RPMapping } from "../../../../constants";
+import {
+  CURR_YEAR,
+  RPMapping,
+  divisionToMainEvent,
+  mainEventToDivisions,
+} from "../../../../constants";
 import TabsSection from "../../shared/tabs";
 import AlliancesSection from "./alliances";
 import EPABreakdownSection from "./epaBreakdown";
@@ -15,6 +23,8 @@ import SosSection from "./sos";
 import { Data } from "./types";
 
 const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Data }) => {
+  const router = useRouter();
+
   const MemoizedInsightsTable = useMemo(
     () => <InsightsTable eventId={eventId} data={data} />,
     [eventId, data]
@@ -95,26 +105,47 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
   let tabs = [
     { title: "Insights", content: MemoizedInsightsTable },
     { title: "Bubble Chart", content: MemoizedBubbleChart },
-    qualsN > 0
-      ? { title: "Qual Matches", content: MemoizedQualMatchSection }
-      : { title: "", content: "" },
-    elimsN > 0
-      ? { title: "Alliances", content: MemoizedAlliancesSection }
-      : { title: "", content: "" },
-    elimsN > 0
-      ? { title: "Elim Matches", content: MemoizedElimMatchSection }
-      : { title: "", content: "" },
+    qualsN > 0 && { title: "Qual Matches", content: MemoizedQualMatchSection },
+    elimsN > 0 && { title: "Alliances", content: MemoizedAlliancesSection },
+    elimsN > 0 && { title: "Elim Matches", content: MemoizedElimMatchSection },
     { title: "Figures", content: MemoizedFigureSection },
-    year !== 2015 && (qualsN > 0 || data?.event?.status === "Upcoming")
-      ? { title: "Simulation", content: MemoizedSimulationSection }
-      : { title: "", content: "" },
-    year !== 2015 && qualsN > 0
-      ? { title: "SOS", content: MemoizedSosSection }
-      : { title: "", content: "" },
+    year !== 2015 &&
+      (qualsN > 0 || data?.event?.status === "Upcoming") && {
+        title: "Simulation",
+        content: MemoizedSimulationSection,
+      },
+    year !== 2015 && qualsN > 0 && { title: "SOS", content: MemoizedSosSection },
     year === 2023 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
-  ].filter((tab) => tab.title !== "");
+  ].filter(Boolean);
 
-  return <TabsSection loading={data === undefined} error={false} tabs={tabs} />;
+  const mainEvent = divisionToMainEvent[eventId];
+  const isDivision = mainEvent !== undefined;
+  const allDivisions = mainEventToDivisions[mainEvent] || [];
+  const currDivision = allDivisions?.filter((division) => division.key === eventId)?.[0] || {};
+  const otherDivisions = allDivisions?.filter((division) => division.key !== eventId);
+
+  return (
+    <>
+      {isDivision && (
+        <div className="w-full flex items-center justify-center mb-4 text-sm">
+          <p className="mr-2">Other Divisions:</p>
+          <Select
+            options={otherDivisions?.map((division) => ({
+              value: division.key,
+              label: division.name,
+            }))}
+            value={{
+              value: currDivision.key,
+              label: currDivision.name,
+            }}
+            onChange={(e) => router.push(`/event/${e.value}`)}
+            className="w-40"
+          />
+        </div>
+      )}
+      <TabsSection loading={data === undefined} error={false} tabs={tabs} />
+    </>
+  );
 };
 
 export default Tabs;

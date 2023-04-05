@@ -1,4 +1,4 @@
-import { PROD, TBA_API_KEY } from "./constants";
+import { PROD, TBA_API_KEY, eventNameMap } from "./constants";
 
 export const classnames = (...args: string[]) => args.join(" ");
 
@@ -37,6 +37,7 @@ export const readTBA = async (url: string) => {
 };
 
 export const getMediaUrl = async (team: number, year: number) => {
+  if (team === 0) return null;
   const data = await readTBA(`/team/frc${team}/media/${year}`);
   const image = data.filter((item: any) => item?.preferred)?.[0];
   if (image?.type === "instagram-image") {
@@ -58,4 +59,9 @@ export const getMediaUrls = async (teams: number[], year: number) => {
     urls.push(url);
   }
   return urls;
+};
+
+export const formatEventName = (eventName: string, limit: number = -1) => {
+  const name = eventNameMap[eventName] || eventName;
+  return limit > 0 ? truncate(name, limit) : name;
 };

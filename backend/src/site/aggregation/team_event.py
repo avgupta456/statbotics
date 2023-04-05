@@ -8,7 +8,7 @@ from src.data.nepa import (
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
 from src.site.models import APITeamEvent
-from src.site.static import get_event_epa_breakdown
+from src.site.static import get_event_epa_breakdown, get_epa_breakdown
 from src.utils.alru_cache import alru_cache
 
 
@@ -78,9 +78,16 @@ async def get_team_events(
     if year == 2023 and event is not None:
         event_epa_breakdown = get_event_epa_breakdown(event)
 
+    epa_breakdown = {}
+    if year == 2023 and len(team_event_objs) > 0:
+        epa_breakdown = get_epa_breakdown([t.team for t in team_event_objs])
+
     team_events = [
         unpack_team_event(
-            x, epa_to_unitless_epa, epa_to_norm_epa, event_epa_breakdown.get(x.team, {})
+            x,
+            epa_to_unitless_epa,
+            epa_to_norm_epa,
+            event_epa_breakdown.get(x.team, epa_breakdown.get(x.team, {})),
         )
         for x in team_event_objs
     ]
