@@ -88,5 +88,5 @@ const eventNameMap = {
 
 export const formatEventName = (eventName: string, limit: number = -1) => {
   const name = eventNameMap[eventName] || eventName;
-  return limit > 0 ? name.substring(0, limit) : name;
+  return limit > 0 ? truncate(name, limit) : name;
 };
