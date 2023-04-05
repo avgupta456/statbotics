@@ -55,6 +55,7 @@ async def read_team_years(response: Response, team_num: int) -> List[Dict[str, A
             "year": x.year,
             "team": x.team,
             "norm_epa": x.norm_epa,
+            "unitless_epa": x.unitless_epa,
             "epa_rank": x.epa_rank if x.epa_count > 0 else None,
             "epa_percentile": x.epa_rank / x.epa_count if x.epa_count > 0 else None,
             "country_epa_rank": x.country_epa_rank if x.country_epa_count > 0 else None,
