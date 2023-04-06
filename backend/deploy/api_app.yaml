@@ -6,7 +6,7 @@ instance_class: F2
 
 # up to 4 instance
 automatic_scaling:
-  min_instances: 1
+  min_instances: 2
   max_instances: 4
 
 #set to minimums
