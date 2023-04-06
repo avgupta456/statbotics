@@ -70,7 +70,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
       <div className="w-full my-4 overflow-x-scroll scrollbar-hide">
         <MatchTable
           year={data.event.year}
-          teamNum={null}
+          teamNum={0}
           matches={matches}
           foulRate={data.year.foul_rate}
         />
