@@ -81,7 +81,6 @@ async function getMatchData(country, state, district, playoff, filterMatches, so
   if (country) suffix += `&country=${country}`;
   if (state) suffix += `&state=${state}`;
   if (district) suffix += `&district=${district}`;
-  if (district === null) suffix += `&district=regionals`;
   if (playoff) suffix += `&playoff=${playoff}`;
 
   const res = await fetch(`${BACKEND_URL}/upcoming_matches${suffix}`, { next: { revalidate: 60 } });

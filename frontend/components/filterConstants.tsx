@@ -89,7 +89,7 @@ export const districtOptions = [
   { value: "ont", label: "Ontario" },
   { value: "pch", label: "Peachtree" },
   { value: "pnw", label: "Pacific NW" },
-  { value: null, label: "Regionals" },
+  { value: "regionals", label: "Regionals" },
 ];
 
 export const yearOptions = [
