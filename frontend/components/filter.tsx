@@ -89,6 +89,8 @@ export const filterData = (data: any[] | undefined, filter: any) => {
     if (key !== "search" && value !== "") {
       if (key === "is_competing") {
         filteredData = filteredData.filter((datum) => datum[key]);
+      } else if (key === "district" && value === "regionals") {
+        filteredData = filteredData.filter((datum) => datum["district"] === null);
       } else {
         filteredData = filteredData.filter((datum) => datum[key] === value);
       }
