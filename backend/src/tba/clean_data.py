@@ -230,9 +230,12 @@ def get_breakdown(
             + breakdown.get("endGameParkPoints", 0),
             "rp1": int(breakdown.get("sustainabilityBonusAchieved", 0)),
             "rp2": int(breakdown.get("activationBonusAchieved", 0)),
-            # first tiebreaker is tech foul count, second is charge station points
-            "tiebreaker": 10000 * breakdown.get("techFoulCount", 0)
-            + breakdown.get("totalChargeStationPoints", 0),
+            # first tiebreaker is average alliance match score, not including fouls
+            "tiebreaker": breakdown.get("autoPoints", 0)
+            + breakdown.get("teleopGamePiecePoints", 0)
+            + breakdown.get("linkPoints", 0)
+            + breakdown.get("endGameChargeStationPoints", 0)
+            + breakdown.get("endGameParkPoints", 0),
         }
     else:
         raise ValueError("Invalid year: " + str(year))
