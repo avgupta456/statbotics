@@ -36,15 +36,15 @@ const EPABreakdownTable = ({
   csvFilename,
 }: {
   year: number;
-  yearData: APIYear;
-  data: (APITeamYear | APITeamEvent)[];
+  yearData: any;
+  data: any[];
   csvFilename: string;
 }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
 
   const yearInsightsData: EPABreakdown[] = data
     .sort((a, b) => b.total_epa - a.total_epa)
-    .map((team: APITeamYear | APITeamEvent) => {
+    .map((team) => {
       return {
         num: team.num ?? -1,
         team: team.team ? truncate(team.team, 30) : "N/A",
@@ -312,7 +312,7 @@ const EPABreakdownTable = ({
         >
           Chief Delphi
         </Link>
-        . <strong>Last Updated:</strong> 11:00 AM ET, 4/3/2023
+        . <strong>Last Updated:</strong> 10:00 PM ET, 4/6/2023
       </div>
       <InsightsTable
         title={"EPA Breakdown (BETA)"}
