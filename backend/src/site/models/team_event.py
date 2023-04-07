@@ -1,5 +1,3 @@
-from typing import Any, Dict
-
 import attr
 
 from src.site.models.main import APIModel
@@ -40,4 +38,3 @@ class APITeamEvent(APIModel):
     rps: int
     rps_per_match: float
     offseason: bool
-    epa_breakdown: Dict[str, Any]

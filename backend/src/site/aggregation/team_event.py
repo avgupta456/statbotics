@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Callable, Dict, List, Optional
+from typing import Callable, List, Optional
 
 from src.data.nepa import (
     epa_to_unitless_epa as _epa_to_unitless_epa,
@@ -8,7 +8,6 @@ from src.data.nepa import (
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
 from src.site.models import APITeamEvent
-from src.site.static import get_event_epa_breakdown, get_epa_breakdown
 from src.utils.alru_cache import alru_cache
 
 
@@ -16,7 +15,6 @@ def unpack_team_event(
     team_event: TeamEvent,
     epa_to_unitless_epa: Callable[[float], float],
     epa_to_norm_epa: Callable[[float], float],
-    epa_breakdown: Dict[str, float],
 ) -> APITeamEvent:
     return APITeamEvent(
         num=team_event.team,
@@ -50,7 +48,6 @@ def unpack_team_event(
         rps=team_event.rps or 0,
         rps_per_match=team_event.rps_per_match or 0,
         offseason=team_event.offseason,
-        epa_breakdown=epa_breakdown,
     )
 
 
@@ -74,20 +71,11 @@ async def get_team_events(
     def epa_to_unitless_epa(epa: float) -> float:
         return _epa_to_unitless_epa(epa, score_mean, score_sd)
 
-    event_epa_breakdown = {}
-    if year == 2023 and event is not None:
-        event_epa_breakdown = get_event_epa_breakdown(event)
-
-    epa_breakdown = {}
-    if year == 2023 and len(team_event_objs) > 0:
-        epa_breakdown = get_epa_breakdown([t.team for t in team_event_objs])
-
     team_events = [
         unpack_team_event(
             x,
             epa_to_unitless_epa,
             epa_to_norm_epa,
-            event_epa_breakdown.get(x.team, epa_breakdown.get(x.team, {})),
         )
         for x in team_event_objs
     ]
