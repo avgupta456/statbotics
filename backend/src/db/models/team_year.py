@@ -38,7 +38,7 @@ class TeamYearORM(Base, ModelORM):
     """EPA"""
     epa_start = Column(Float)
     epa_pre_champs = Column(Float)
-    epa_end = Column(Float)
+    epa_end = Column(Float, index=True)
     epa_mean = Column(Float)
     epa_max = Column(Float)
     epa_diff = Column(Float)
