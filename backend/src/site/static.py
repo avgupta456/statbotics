@@ -13,13 +13,16 @@ with open("data/epa_breakdown_percentiles.json") as f:
 
 
 def get_epa_breakdown(teams: List[int]) -> Dict[int, Dict[str, float]]:
+    return {}
     return {team: epa_breakdown.get(str(team), {}) for team in teams}
 
 
 def get_event_epa_breakdown(event_key: str) -> Dict[int, Dict[str, float]]:
+    return {}
     valid_keys = [k for k in event_epa_breakdown.keys() if k.endswith("_" + event_key)]
     return {int(k.split("_")[0]): event_epa_breakdown[k] for k in valid_keys}
 
 
 def get_epa_breakdown_percentiles() -> Dict[str, Dict[str, float]]:
+    return {}
     return epa_breakdown_percentiles
