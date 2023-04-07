@@ -298,7 +298,7 @@ const EPABreakdownTable = ({
 
   return (
     <>
-      <div className="w-full my-4 px-16">
+      <div className="w-full my-4 px-4 lg:px-16">
         EPA Breakdowns apply the same EPA formula used to predict match outcomes to more granular
         data. <strong>EPA Breakdowns are currently in BETA</strong>, and I cannot guarantee their
         accuracy or completeness. They are only available on the website and update at a much slower

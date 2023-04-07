@@ -83,7 +83,7 @@ const Tabs = ({
     { title: "Insights", content: MemoizedInsightsTable },
     { title: "Bubble Chart", content: MemoizedBubbleChart },
     { title: "Figures", content: MemoizedFigureSection },
-    year === 2024 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
+    year === 2023 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
   ].filter(Boolean);
 
   return <TabsSection loading={data === undefined} error={error} tabs={tabs} />;

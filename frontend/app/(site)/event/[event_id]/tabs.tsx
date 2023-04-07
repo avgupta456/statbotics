@@ -115,7 +115,7 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
         content: MemoizedSimulationSection,
       },
     year !== 2015 && qualsN > 0 && { title: "SOS", content: MemoizedSosSection },
-    year === 2024 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
+    year === 2023 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
   ].filter(Boolean);
 
   const mainEvent = divisionToMainEvent[eventId];
