@@ -59,16 +59,10 @@ const EPABreakdownSection = ({
 
   const epaBreakdownData = data.team_years.map((teamYear) => {
     const teamYearEPABreakdown = epaBreakdown?.[teamYear.num] ?? {};
-    return {
-      ...teamYear,
-      epa_breakdown: teamYearEPABreakdown,
-    };
+    return { ...teamYear, epa_breakdown: teamYearEPABreakdown };
   });
 
-  const epaBreakdownYearData = {
-    ...data.year,
-    epa_breakdown_stats: epaBreakdownPercentiles ?? {},
-  };
+  const epaBreakdownYearData = { ...data.year, epa_breakdown_stats: epaBreakdownPercentiles ?? {} };
 
   return (
     <div className="w-full flex flex-col justify-center items-center">

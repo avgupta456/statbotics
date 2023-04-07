@@ -16,6 +16,7 @@ const EPABreakdownSection = ({
 }) => {
   const [epaBreakdownPercentiles, setEPABreakdownPercentiles] = useState(null);
   const [epaBreakdown, setEPABreakdown] = useState(null);
+  const [eventEpaBreakdown, setEventEpaBreakdown] = useState(null);
 
   useEffect(() => {
     if (!epaBreakdownPercentiles && data.year) {
@@ -35,20 +36,24 @@ const EPABreakdownSection = ({
         });
       });
     }
-  }, [epaBreakdownPercentiles, epaBreakdown, data.year]);
+
+    if (!eventEpaBreakdown && data.year) {
+      // read json from public folder
+      fetch(`/data/event_epa_breakdown.json`).then((response) => {
+        response.json().then((data) => {
+          setEventEpaBreakdown(data);
+        });
+      });
+    }
+  }, [epaBreakdownPercentiles, epaBreakdown, eventEpaBreakdown, data.year]);
 
   const epaBreakdownData = data.team_events.map((teamEvent) => {
+    const teamEventEPABreakdown = eventEpaBreakdown?.[`${teamEvent.num}_${eventId}`];
     const teamYearEPABreakdown = epaBreakdown?.[teamEvent.num] ?? {};
-    return {
-      ...teamEvent,
-      epa_breakdown: teamYearEPABreakdown,
-    };
+    return { ...teamEvent, epa_breakdown: teamEventEPABreakdown ?? teamYearEPABreakdown };
   });
 
-  const epaBreakdownYearData = {
-    ...data.year,
-    epa_breakdown_stats: epaBreakdownPercentiles ?? {},
-  };
+  const epaBreakdownYearData = { ...data.year, epa_breakdown_stats: epaBreakdownPercentiles ?? {} };
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
