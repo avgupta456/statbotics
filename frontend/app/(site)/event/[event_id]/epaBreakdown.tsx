@@ -16,7 +16,6 @@ const EPABreakdownSection = ({
 }) => {
   const [epaBreakdownPercentiles, setEPABreakdownPercentiles] = useState(null);
   const [epaBreakdown, setEPABreakdown] = useState(null);
-  const [eventEpaBreakdown, setEventEpaBreakdown] = useState(null);
 
   useEffect(() => {
     if (!epaBreakdownPercentiles && data.year) {
@@ -36,21 +35,11 @@ const EPABreakdownSection = ({
         });
       });
     }
-
-    if (!eventEpaBreakdown && data.year) {
-      // read json from public folder
-      fetch(`/data/event_epa_breakdown.json`).then((response) => {
-        response.json().then((data) => {
-          setEventEpaBreakdown(data);
-        });
-      });
-    }
-  }, [epaBreakdownPercentiles, epaBreakdown, eventEpaBreakdown, data.year]);
+  }, [epaBreakdownPercentiles, epaBreakdown, data.year]);
 
   const epaBreakdownData = data.team_events.map((teamEvent) => {
-    const teamEventEPABreakdown = eventEpaBreakdown?.[`${teamEvent.num}_${eventId}`];
     const teamYearEPABreakdown = epaBreakdown?.[teamEvent.num] ?? {};
-    return { ...teamEvent, epa_breakdown: teamEventEPABreakdown ?? teamYearEPABreakdown };
+    return { ...teamEvent, epa_breakdown: teamYearEPABreakdown };
   });
 
   const epaBreakdownYearData = { ...data.year, epa_breakdown_stats: epaBreakdownPercentiles ?? {} };
