@@ -5,7 +5,6 @@ import Link from "next/link";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { round, truncate } from "../../utils";
-import { APITeamEvent, APITeamYear, APIYear } from "../types/api";
 import { formatNumber } from "../utils";
 import InsightsTable from "./InsightsTable";
 import { TeamLink, formatEPACell } from "./shared";
@@ -312,7 +311,7 @@ const EPABreakdownTable = ({
         >
           Chief Delphi
         </Link>
-        . <strong>Last Updated:</strong> 10:00 PM ET, 4/6/2023
+        . <strong>Last Updated:</strong> 11:00 PM ET, 4/7/2023
       </div>
       <InsightsTable
         title={"EPA Breakdown (BETA)"}
