@@ -155,7 +155,7 @@ const OverviewSection = ({
         )}
       </div>
       <div className="w-full h-1 bg-gray-300" />
-      <div className="w-full my-4 flex flex justify-center items-center">
+      <div className="w-full my-4 flex flex-wrap justify-center items-center">
         <strong className="mr-2">Perspective: </strong>
         <div
           className="mr-4 flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
