@@ -37,3 +37,7 @@ next-env.d.ts
 
 # tailwind
 app/dist.css
+
+# Sentry
+.sentryclirc
+next.config.original.js

@@ -1,9 +1,7 @@
 {
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-
   "python.formatting.provider": "black",
-
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": true,
   "python.linting.pylintEnabled": false,
@@ -11,11 +9,9 @@
     "--ignore=E501,E203,W503",
     "--max-line-length=88"
   ],
-
-  "python.defaultInterpreterPath": ".\\backend\\.venv\\Scripts\\python.exe",
+  "python.defaultInterpreterPath": "./backend/.venv/bin",
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.diagnosticMode": "workspace",
-
   "files.exclude": {
     "**/.git": true,
     "**/__pycache__": true,

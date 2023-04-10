@@ -30,6 +30,7 @@ class TeamYearORM(Base, ModelORM):
     district = Column(String(10))
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
+    is_competing = Column(Boolean)
     next_event_key = Column(String(10))
     next_event_name = Column(String(100))
     next_event_week = Column(Integer)
@@ -37,7 +38,7 @@ class TeamYearORM(Base, ModelORM):
     """EPA"""
     epa_start = Column(Float)
     epa_pre_champs = Column(Float)
-    epa_end = Column(Float)
+    epa_end = Column(Float, index=True)
     epa_mean = Column(Float)
     epa_max = Column(Float)
     epa_diff = Column(Float)
@@ -73,6 +74,7 @@ class TeamYearORM(Base, ModelORM):
     rp_2_epa_max = Column(Float)
 
     """NORM EPA"""
+    unitless_epa_end = Column(Float)
     norm_epa_end = Column(Float)
 
     """STATS"""
@@ -117,6 +119,7 @@ class TeamYear(Model):
     country: Optional[str] = None
     district: Optional[str] = None
 
+    is_competing: Optional[bool] = None
     next_event_key: Optional[str] = None
     next_event_name: Optional[str] = None
     next_event_week: Optional[int] = None
@@ -158,6 +161,7 @@ class TeamYear(Model):
     rp_2_epa_mean: Optional[float] = None
     rp_2_epa_max: Optional[float] = None
 
+    unitless_epa_end: Optional[float] = None
     norm_epa_end: Optional[float] = None
 
     wins: int = 0

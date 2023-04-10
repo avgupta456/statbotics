@@ -1,38 +1,15 @@
 /* eslint-disable react/no-children-prop */
-import "katex/dist/katex.min.css";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
-
 import React from "react";
-import ReactMarkdown from "react-markdown";
 
 import Image from "next/image";
 import Link from "next/link";
 
 import PageLayout from "../shared/pageLayout";
+import { renderMath, renderMathBlock } from "../shared/utils";
 import SeasonTable from "../table";
 
-const renderMath = (str: string) => {
-  return (
-    <ReactMarkdown
-      //inline
-      className="inline-block m-0 not-prose"
-      children={`$${str}$`}
-      remarkPlugins={[remarkMath]}
-      rehypePlugins={[rehypeKatex]}
-    />
-  );
-};
-
-const renderMathBlock = (str: string) => {
-  return (
-    <ReactMarkdown
-      className="w-full text-center"
-      children={`$$${str}$$`}
-      remarkPlugins={[remarkMath]}
-      rehypePlugins={[rehypeKatex]}
-    />
-  );
+export const metadata = {
+  title: "The EPA Model - Statbotics",
 };
 
 const Page = () => {

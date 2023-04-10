@@ -6,6 +6,7 @@ import numpy as np
 from scipy.stats import expon, exponnorm  # type: ignore
 
 from src.constants import CURR_YEAR
+from src.data.nepa import epa_to_unitless_epa
 from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
 from src.db.write.main import update_teams as update_teams_db
@@ -687,19 +688,15 @@ def process_year(
         team_event.count = event_count
         team_event.winrate = winrate
 
-        (
-            qual_wins,
-            qual_losses,
-            qual_ties,
-            qual_rps,
-            qual_event_count,
-        ) = qual_team_event_stats[key]
-        team_event.qual_wins = qual_wins
-        team_event.qual_losses = qual_losses
-        team_event.qual_ties = qual_ties
-        team_event.rps = qual_rps
-        team_event.rps_per_match = qual_rps / max(1, qual_event_count)
-        team_event.qual_count = qual_event_count
+        q_wins, q_losses, q_ties, q_rps, q_event_count = qual_team_event_stats[key]
+        q_winrate = round((q_wins + q_ties / 2) / max(1, q_event_count), 4)
+        team_event.qual_wins = q_wins
+        team_event.qual_losses = q_losses
+        team_event.qual_ties = q_ties
+        team_event.rps = q_rps
+        team_event.rps_per_match = q_rps / max(1, q_event_count)
+        team_event.qual_count = q_event_count
+        team_event.qual_winrate = q_winrate
 
     # EVENTS
     for event in events:
@@ -831,9 +828,11 @@ def process_year(
         obj.epa_end = round(team_epas[team], 2)
         obj.epa_diff = round(obj.epa_end - (obj.epa_start or 0), 2)
 
+        unitless_epa: float = epa_to_unitless_epa(obj.epa_end, TOTAL_MEAN, TOTAL_SD)
+        obj.unitless_epa_end = round(unitless_epa, 0)
         if year.year != CURR_YEAR:
             epa_index = year_epas.index(obj.epa_end)
-            obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 2)
+            obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 0)
 
         if USE_COMPONENTS:
             year_auto_epas.append(round(curr_auto_team_epas[-1], 2))

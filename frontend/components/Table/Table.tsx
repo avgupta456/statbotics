@@ -62,18 +62,35 @@ const Table = ({
     { value: 100, label: 100 },
   ];
 
+  const colSpans = table.getHeaderGroups()[0].headers.map((header) => header.colSpan);
+  const cumColSpans = colSpans
+    .reduce((acc, curr) => [...acc, curr + (acc[acc.length - 1] ?? 0)], [])
+    .slice(0, -1);
+
+  const showColDividers = table.getHeaderGroups().length > 1;
+
   return (
     <div className="text-sm">
       <table>
         <thead className={headerClassName()}>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map((headerGroup, i) => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
+              {headerGroup.headers.map((header, j) => {
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={headerCellClassName(header)}
+                    className={classnames(
+                      headerCellClassName(header),
+                      showColDividers &&
+                        i === 0 &&
+                        j !== cumColSpans.length &&
+                        "border-r-2 border-double border-gray-300",
+                      showColDividers &&
+                        i !== 0 &&
+                        cumColSpans.includes(j + 1) &&
+                        "border-r-2 border-double border-gray-300"
+                    )}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -98,8 +115,16 @@ const Table = ({
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} className={rowClassName(row)}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={cellClassName(cell)}>
+              {row.getVisibleCells().map((cell, j) => (
+                <td
+                  key={cell.id}
+                  className={classnames(
+                    cellClassName(cell),
+                    showColDividers &&
+                      cumColSpans.includes(j + 1) &&
+                      "border-r-2 border-double border-gray-300"
+                  )}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

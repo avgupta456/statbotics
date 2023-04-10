@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import Link from "next/link";
 
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
-import {
-  EventLink,
-  TeamLink,
-  formatCell,
-  formatPercentileCell,
-} from "../../../components/Table/shared";
-import { FilterBar, filterData } from "../../../components/filter";
+import { EventLink, TeamLink, formatCell, formatEPACell } from "../../../components/Table/shared";
+import { filterData } from "../../../components/filter";
+import { FilterBar } from "../../../components/filterBar";
 import { APITeamYear } from "../../../components/types/api";
 import { formatNumber } from "../../../components/utils";
 import { CURR_YEAR, RPMapping } from "../../../constants";
@@ -42,24 +38,34 @@ const columnHelper = createColumnHelper<TeamYearInsights>();
 
 const detailedColumnHelper = createColumnHelper<any>();
 
-const defaultFilters = {
-  country: "",
-  state: "",
-  district: "",
-};
-
-const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearData }) => {
+const PageTeamInsightsTable = ({
+  year,
+  data,
+  filters,
+  setFilters,
+}: {
+  year: number;
+  data: TeamYearData;
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
+}) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [showProjections, setShowProjections] = useState(true);
-  const [filters, setFilters] = useState({});
 
-  useEffect(() => {
-    if (year === CURR_YEAR) {
-      setFilters({ ...defaultFilters, competing: "" });
-    } else {
-      setFilters(defaultFilters);
-    }
-  }, [year]);
+  let defaultFilters = {
+    country: "",
+    state: "",
+    district: "",
+  };
+
+  if (year === CURR_YEAR) {
+    defaultFilters["is_competing"] = "";
+  }
+
+  const actualFilters = Object.keys(defaultFilters).reduce(
+    (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
+    {}
+  );
 
   const allTeamYears = data.team_years
     .sort((a, b) => b.total_epa - a.total_epa)
@@ -69,11 +75,7 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
       epa_rank: i + 1,
     }));
 
-  const numProjections = filterData(allTeamYears, filters).filter(
-    (teamYear: APITeamYear) => teamYear.count === 0
-  ).length;
-
-  const yearInsightsData: TeamYearInsights[] = filterData(allTeamYears, filters)
+  const yearInsightsData: TeamYearInsights[] = filterData(allTeamYears, actualFilters)
     .filter((teamYear: APITeamYear) => showProjections || teamYear.count > 0)
     .map((teamYear: APITeamYear) => {
       const wins = teamYear.wins ?? 0;
@@ -124,22 +126,22 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
           header: "Unitless EPA*",
         }),
       columnHelper.accessor("total_epa", {
-        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
         header: "EPA",
       }),
       year >= 2016 &&
         columnHelper.accessor("auto_epa", {
-          cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.auto_stats, info, disableHighlight),
           header: "Auto EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("teleop_epa", {
-          cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.teleop_stats, info, disableHighlight),
           header: "Teleop EPA",
         }),
       year >= 2016 &&
         columnHelper.accessor("endgame_epa", {
-          cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
           header: "Endgame EPA",
         }),
       year == CURR_YEAR &&
@@ -181,32 +183,32 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
           header: "Unitless EPA*",
         }),
       detailedColumnHelper.accessor("total_epa", {
-        cell: (info) => formatPercentileCell(data.year.total_stats, info, disableHighlight),
+        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
         header: "EPA",
       }),
       year >= 2016 &&
         detailedColumnHelper.accessor("auto_epa", {
-          cell: (info) => formatPercentileCell(data.year.auto_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.auto_stats, info, disableHighlight),
           header: "Auto EPA",
         }),
       year >= 2016 &&
         detailedColumnHelper.accessor("teleop_epa", {
-          cell: (info) => formatPercentileCell(data.year.teleop_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.teleop_stats, info, disableHighlight),
           header: "Teleop EPA",
         }),
       year >= 2016 &&
         detailedColumnHelper.accessor("endgame_epa", {
-          cell: (info) => formatPercentileCell(data.year.endgame_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
           header: "Endgame EPA",
         }),
       year >= 2016 &&
         detailedColumnHelper.accessor("rp_1_epa", {
-          cell: (info) => formatPercentileCell(data.year.rp_1_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
           header: RPMapping[year][0],
         }),
       year >= 2016 &&
         detailedColumnHelper.accessor("rp_2_epa", {
-          cell: (info) => formatPercentileCell(data.year.rp_2_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
           header: RPMapping[year][1],
         }),
       year == CURR_YEAR &&
@@ -232,9 +234,9 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
       <div className="flex items-center justify-center">
         <FilterBar
           defaultFilters={defaultFilters}
-          filters={filters}
+          filters={actualFilters}
           setFilters={setFilters}
-          includeProjections={numProjections > 0}
+          includeProjections={year === CURR_YEAR}
           showProjections={showProjections}
           setShowProjections={setShowProjections}
         />
@@ -250,21 +252,21 @@ const PageTeamInsightsTable = ({ year, data }: { year: number; data: TeamYearDat
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
       <div className="w-full px-4 border-t-[1px] border-gray-200">
-        {numProjections > 0 && showProjections && (
-          <div className="w-full text-xs mt-4">
-            <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
-            only a projection.
-          </div>
-        )}
         {year >= CURR_YEAR && (
-          <div className="w-full text-xs mb-4">
-            <strong>2.</strong> Unitless EPA is a linear function mapping EPA into Elo units. This
-            is not the same as Year Normalized EPA for past seasons. See{" "}
-            <Link href="/blog/epa" className="text_link">
-              blog
-            </Link>{" "}
-            for more details.
-          </div>
+          <>
+            <div className="w-full text-xs mt-4">
+              <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
+              only a projection.
+            </div>
+            <div className="w-full text-xs mb-4">
+              <strong>2.</strong> Unitless EPA is a linear function mapping EPA into Elo units. This
+              is not the same as Year Normalized EPA for past seasons. See{" "}
+              <Link href="/blog/epa" className="text_link">
+                blog
+              </Link>{" "}
+              for more details.
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { PROD } from "./constants";
+import { PROD, TBA_API_KEY, eventNameMap } from "./constants";
 
 export const classnames = (...args: string[]) => args.join(" ");
 
@@ -14,8 +14,54 @@ export const truncate = (str: string, length: number) => {
   return str;
 };
 
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 export const log = (...args: any[]) => {
   if (!PROD) {
     console.log(...args);
   }
+};
+
+export const readTBA = async (url: string) => {
+  const response = await fetch("https://www.thebluealliance.com/api/v3" + url, {
+    headers: { "X-TBA-Auth-Key": TBA_API_KEY },
+  });
+
+  if (response.status === 200) {
+    return response.json();
+  }
+
+  throw new Error("TBA Error: " + response.status);
+};
+
+export const getMediaUrl = async (team: number, year: number) => {
+  if (team === 0) return null;
+  const data = await readTBA(`/team/frc${team}/media/${year}`);
+  const image = data.filter((item: any) => item?.preferred)?.[0];
+  if (image?.type === "instagram-image") {
+    // if (image?.view_url) {
+    //   return `https://www.thebluealliance.com/${image?.direct_url}`;
+    // }
+    return null;
+  } else if (image?.type === "imgur") {
+    return image?.direct_url ?? null;
+  } else {
+    return null;
+  }
+};
+
+export const getMediaUrls = async (teams: number[], year: number) => {
+  const urls = [];
+  for (const team of teams) {
+    const url = await getMediaUrl(team, year);
+    urls.push(url);
+  }
+  return urls;
+};
+
+export const formatEventName = (eventName: string, limit: number = -1) => {
+  const name = eventNameMap[eventName] || eventName;
+  return limit > 0 ? truncate(name, limit) : name;
 };

@@ -63,6 +63,7 @@ export type APITeamYear = {
   state?: string;
   country?: string;
   district?: string;
+  is_competing?: boolean;
   next_event_key?: string;
   next_event_name?: string;
   next_event_week?: number;
@@ -119,6 +120,7 @@ export type APITeamEvent = {
   event_name: string;
   week: number;
   time: number;
+  first_event: boolean;
   num_teams: number;
   start_total_epa: number;
   start_rp_1_epa: number;

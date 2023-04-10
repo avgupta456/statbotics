@@ -21,6 +21,7 @@ export type SummaryRow = {
   team: number;
   year: number;
   norm_epa: number;
+  unitless_epa: number;
   epa_rank?: number;
   epa_percentile?: number;
   country_epa_rank?: number;

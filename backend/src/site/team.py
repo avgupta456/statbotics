@@ -29,7 +29,11 @@ router = APIRouter()
 @async_fail_gracefully
 async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
     teams: List[APITeam] = await get_teams()
-    return [{"num": x.num, "team": x.team} for x in teams if not x.offseason]
+    return [
+        {"num": x.num, "team": x.team, "active": x.active}
+        for x in teams
+        if not x.offseason
+    ]
 
 
 @router.get("/team/{team_num}")
@@ -51,6 +55,7 @@ async def read_team_years(response: Response, team_num: int) -> List[Dict[str, A
             "year": x.year,
             "team": x.team,
             "norm_epa": x.norm_epa,
+            "unitless_epa": x.unitless_epa,
             "epa_rank": x.epa_rank if x.epa_count > 0 else None,
             "epa_percentile": x.epa_rank / x.epa_count if x.epa_count > 0 else None,
             "country_epa_rank": x.country_epa_rank if x.country_epa_count > 0 else None,
@@ -88,8 +93,6 @@ async def read_team_year(
     team_year: Optional[APITeamYear] = await get_team_year(
         team=team_num,
         year=year,
-        score_mean=year_obj.score_mean,
-        score_sd=year_obj.score_sd,
     )
     if team_year is None or team_year.offseason:
         raise Exception("TeamYear not found")

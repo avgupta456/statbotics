@@ -77,10 +77,12 @@ const Navbar = () => {
     label: `${team.num} | ${team.team}`,
   }));
 
-  const eventOptions = events?.map((event: any) => ({
-    value: `/event/${event.key}`,
-    label: `${event.key.slice(0, 4)} ${event.name}`,
-  }));
+  const eventOptions = events
+    ?.sort((a, b) => parseInt(b.key.slice(0, 4)) - parseInt(a.key.slice(0, 4)))
+    ?.map((event: any) => ({
+      value: `/event/${event.key}`,
+      label: `${event.key.slice(0, 4)} ${event.name}`,
+    }));
 
   const allOptions = [...teamOptions, ...eventOptions];
 
@@ -126,8 +128,11 @@ const Navbar = () => {
         <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
           <Link href="/teams">Teams</Link>
         </div>
-        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin mr-4">
           <Link href="/events">Events</Link>
+        </div>
+        <div className="hidden md:flex items-center text-base text-gray-300 hover:text-gray-100 font-thin">
+          <Link href="/matches">Matches</Link>
         </div>
         <div className="hidden md:inline dropdown dropdown-end dropdown-hover" tabIndex={0}>
           <div className="h-10 flex items-center ml-4 cursor-pointer">
@@ -140,6 +145,11 @@ const Navbar = () => {
             <li>
               <Link href="/compare">
                 <div className="w-36 py-1 text-sm text-center">Compare Teams</div>
+              </Link>
+            </li>
+            <li>
+              <Link href="/hypothetical">
+                <div className="w-36 py-1 text-sm text-center">Hypothetical Match</div>
               </Link>
             </li>
           </ul>
@@ -225,6 +235,9 @@ const Navbar = () => {
         </Link>
         <Link href="/events" className="ml-4" onClick={() => setToggle(false)}>
           Events
+        </Link>
+        <Link href="/matches" className="ml-4" onClick={() => setToggle(false)}>
+          Matches
         </Link>
         <Link href="/blog" className="ml-4" onClick={() => setToggle(false)}>
           Blog

@@ -11,6 +11,7 @@ CRDB_PWD = os.getenv("CRDB_PWD", "")
 CRDB_HOST = os.getenv("CRDB_HOST", "")
 CRDB_CLUSTER = os.getenv("CRDB_CLUSTER", "")
 LOCAL_DB = os.getenv("LOCAL_DB", "True") == "True"
+# LOCAL_DB = False
 
 CONN_STR = (
     "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
@@ -30,5 +31,5 @@ CONN_STR = (
 # CONFIG
 
 CURR_YEAR = 2023
-CURR_WEEK = 3
+CURR_WEEK = 8
 MAX_TEAM = 9316

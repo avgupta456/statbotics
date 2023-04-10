@@ -24,8 +24,6 @@ async def read_team_years(
 
     team_years: List[APITeamYear] = await get_team_years(
         year=year,
-        score_mean=year_obj.score_mean,
-        score_sd=year_obj.score_sd,
         limit=limit,
         metric=metric,
     )

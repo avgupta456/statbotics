@@ -1,4 +1,4 @@
-import { APIEvent, APITeamYear, APIYear, emptyAPIYear } from "../../components/types/api";
+import { APIEvent, APIMatch, APITeamYear, APIYear, emptyAPIYear } from "../../components/types/api";
 
 export type TeamYearData = {
   team_years: APITeamYear[];

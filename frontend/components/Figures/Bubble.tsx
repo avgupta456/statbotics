@@ -7,7 +7,8 @@ import HC_more from "highcharts/highcharts-more";
 import React, { useEffect, useState } from "react";
 
 import { ColumnBar, getColumnOptionsDict } from "../columns";
-import { FilterBar, filterData } from "../filter";
+import { filterData } from "../filter";
+import { FilterBar } from "../filterBar";
 import { formatNumber } from "../utils";
 
 if (typeof Highcharts === "object") {
@@ -26,12 +27,16 @@ const BubbleChart = ({
   year,
   data,
   columnOptions,
-  filterOptions,
+  defaultFilters,
+  filters,
+  setFilters,
 }: {
   year: number;
   data: any[];
   columnOptions: string[];
-  filterOptions: string[];
+  defaultFilters: { [key: string]: any };
+  filters: { [key: string]: any };
+  setFilters: (filters: { [key: string]: any }) => void;
 }) => {
   const [width, setWidth] = useState(0);
 
@@ -49,17 +54,25 @@ const BubbleChart = ({
     };
   }, []);
 
-  const defaultFilters = filterOptions.reduce((acc, curr) => ({ ...acc, [curr]: "" }), {});
-  const [filters, setFilters] = useState(defaultFilters);
   const [columns, setColumns] = useState({
     x: year >= 2016 ? "Teleop" : "Total EPA",
     y: year >= 2016 ? "Auto + Endgame" : "Wins",
     z: "Constant",
   });
 
-  let filteredData: any[] = filterData(data, filters);
+  const [showZero, setShowZero] = useState(false);
+
+  const actualFilters = Object.keys(defaultFilters).reduce(
+    (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
+    {}
+  );
+
+  let filteredData: any[] = filterData(data, actualFilters);
   const numRemoved = filteredData.filter((datum) => datum?.count === 0).length;
-  filteredData = filteredData.filter((datum) => datum?.count > 0);
+
+  if (!showZero) {
+    filteredData = filteredData.filter((datum) => datum?.count > 0);
+  }
 
   const columnOptionsDict = getColumnOptionsDict(year);
   const xAxis = columnOptionsDict[columns.x];
@@ -82,6 +95,36 @@ const BubbleChart = ({
   const yCutoff = ys.sort((a, b) => b - a)[len];
   const zCutoff = zs.sort((a, b) => b - a)[len];
 
+  const xMin = Math.min(Math.min(...xs), 0);
+  const yMin = Math.min(Math.min(...ys), 0);
+
+  const xMax = Math.max(...xs);
+  const yMax = Math.max(...ys);
+
+  const minSum = Math.min(xMin + yMin, 0);
+  const maxSum = Math.max(xMax + yMax, 0);
+
+  const numLines = 20; // 10% each, with 50% buffer on each side
+  const values = Array.from(Array(numLines + 1).keys()).map(
+    (i) => minSum + (maxSum - minSum) * ((i - 5) / 10)
+  );
+
+  const lineSeries: any =
+    xAxis?.label === "Teleop" && yAxis?.label === "Auto + Endgame"
+      ? values.map((value) => ({
+          type: "line",
+          name: value.toString(),
+          data: [
+            [value - 2 * yMax, 2 * yMax],
+            [2 * xMax, value - 2 * xMax],
+          ],
+          enableMouseTracking: false,
+          color: "rgba(0, 0, 0, 0.15)",
+        }))
+      : [];
+
+  const showGrid = lineSeries.length === 0;
+
   const filteredDataSubset: ScatterData[] = scatterData.map((datum) => ({
     x: datum.x,
     y: datum.y,
@@ -101,13 +144,16 @@ const BubbleChart = ({
       title: {
         text: xAxis["label"],
       },
-      min: xAxis["label"].includes("RP") ? -1 / 3 : 0,
+      min: xMin - 0.01 * (xMax - xMin),
+      max: xMax + 0.05 * (xMax - xMin),
     },
     yAxis: {
       title: {
         text: yAxis["label"],
       },
-      min: yAxis["label"].includes("RP") ? -1 / 3 : 0,
+      min: yMin - 0.01 * (yMax - yMin),
+      max: yMax + 0.05 * (yMax - yMin),
+      gridLineWidth: showGrid ? 1 : 0,
     },
     tooltip: {
       useHTML: true,
@@ -164,12 +210,20 @@ const BubbleChart = ({
         maxSize: zAxis.label === "Constant" ? 10 : 15,
         color: "#3b82f6",
       },
+      line: {
+        lineWidth: 1,
+        color: "#f87171",
+        dataLabels: {
+          enabled: false,
+        },
+      },
     },
     series: [
       {
         type: "bubble",
         data: filteredDataSubset,
       },
+      ...lineSeries,
     ],
     credits: {
       enabled: false,
@@ -182,9 +236,13 @@ const BubbleChart = ({
   return (
     <div className="w-full">
       <div className="w-full flex flex-wrap items-end justify-center">
-        {filterOptions.length > 0 && (
+        {Object.keys(defaultFilters).length > 0 && (
           <div className="flex items-center justify-center mr-4">
-            <FilterBar defaultFilters={defaultFilters} filters={filters} setFilters={setFilters} />
+            <FilterBar
+              defaultFilters={defaultFilters}
+              filters={actualFilters}
+              setFilters={setFilters}
+            />
           </div>
         )}
         <div className="flex items-center justify-center">
@@ -198,7 +256,15 @@ const BubbleChart = ({
       </div>
       {numRemoved > 0 && (
         <div className="w-full text-center text-sm">
-          <strong>Note</strong>: {numRemoved} teams have not played yet, and are not shown.
+          <strong>Note</strong>: {numRemoved} teams have not played yet.
+          <div className="ml-2 inline-block">
+            <button
+              className="text-blue-500 hover:text-blue-700"
+              onClick={() => setShowZero(!showZero)}
+            >
+              {showZero ? "Hide" : "Show"} teams with no matches
+            </button>
+          </div>
         </div>
       )}
       <div className="w-full flex justify-center">

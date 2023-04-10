@@ -23,6 +23,7 @@ def unpack_team_event(
         event_name=team_event.event_name or "",
         week=team_event.week or -1,
         time=team_event.time,
+        first_event=bool(team_event.first_event),
         num_teams=team_event.num_teams or -1,
         start_total_epa=team_event.epa_start or 0,
         start_rp_1_epa=team_event.rp_1_epa_start or 0,
@@ -71,7 +72,11 @@ async def get_team_events(
         return _epa_to_unitless_epa(epa, score_mean, score_sd)
 
     team_events = [
-        unpack_team_event(x, epa_to_unitless_epa, epa_to_norm_epa)
+        unpack_team_event(
+            x,
+            epa_to_unitless_epa,
+            epa_to_norm_epa,
+        )
         for x in team_event_objs
     ]
     return (True, sorted(team_events, key=lambda x: x.time))  # type: ignore
