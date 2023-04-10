@@ -104,9 +104,9 @@ const BubbleChart = ({
   const minSum = Math.min(xMin + yMin, 0);
   const maxSum = Math.max(xMax + yMax, 0);
 
-  const numLines = 10;
+  const numLines = 20; // 10% each, with 50% buffer on each side
   const values = Array.from(Array(numLines + 1).keys()).map(
-    (i) => minSum + (maxSum - minSum) * (i / numLines)
+    (i) => minSum + (maxSum - minSum) * ((i - 5) / 10)
   );
 
   const lineSeries: any =
