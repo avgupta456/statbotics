@@ -57,14 +57,14 @@ def get_noteworthy_matches(
                 func.greatest(red_score_col, blue_score_col).label("max_score")
             )
             .order_by(desc("max_score"), asc("time"))
-            .limit(10)
+            .limit(30)
             .all()
         )
 
         combined_score_matches = (
             matches.add_columns((red_score_col + blue_score_col).label("sum_score"))
             .order_by(desc("sum_score"), asc("time"))
-            .limit(10)
+            .limit(30)
             .all()
         )
 
@@ -75,7 +75,7 @@ def get_noteworthy_matches(
                 ),
             )
             .order_by(desc("losing_score"), asc("time"))
-            .limit(10)
+            .limit(30)
             .all()
         )
 
@@ -88,7 +88,7 @@ def get_noteworthy_matches(
                     )
                 )
                 .order_by(desc("max_auto_score"), asc("time"))
-                .limit(10)
+                .limit(30)
                 .all()
             )
 
@@ -99,7 +99,7 @@ def get_noteworthy_matches(
                     )
                 )
                 .order_by(desc("max_teleop_score"), asc("time"))
-                .limit(10)
+                .limit(30)
                 .all()
             )
 
@@ -110,7 +110,7 @@ def get_noteworthy_matches(
                     )
                 )
                 .order_by(desc("max_endgame_score"), asc("time"))
-                .limit(10)
+                .limit(30)
                 .all()
             )
 

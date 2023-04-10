@@ -39,9 +39,21 @@ const NoteworthySection = ({
   redAccessor?: (match: APIMatch) => number;
   blueAccessor?: (match: APIMatch) => number;
 }) => {
+  const [more, setMore] = useState(false);
+
   return (
     <div className="w-full">
-      <div className="w-full text-2xl font-bold my-4">{mainHeader}</div>
+      <div className="w-full flex items-center text-2xl font-bold my-4">
+        {mainHeader}
+        {matches.length > 10 && (
+          <button
+            className="w-24 p-2 ml-4 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
+            onClick={() => setMore(!more)}
+          >
+            {more ? "Show Less" : "Show More"}
+          </button>
+        )}
+      </div>
       <div className="flex overflow-x-scroll scrollbar-hide">
         <div className="min-w-[100px] md:min-w-[135px] flex flex-col border-2 border-gray-300">
           <div
@@ -50,24 +62,26 @@ const NoteworthySection = ({
           >
             {header}
           </div>
-          {matches.map((match, i) => (
-            <div
-              className={classnames(
-                "flex w-full h-8 justify-center items-center border-b border-gray-300 bg-green-100",
-                redAccessor && redAccessor(match) === accessor(match) && "text-red-500",
-                blueAccessor && blueAccessor(match) === accessor(match) && "text-blue-600"
-              )}
-              key={`${match.key}-${i}`}
-            >
-              {i + 1}. {accessor(match).toFixed(0)}
-            </div>
-          ))}
+          {matches
+            .slice(0, more ? matches.length : Math.min(matches.length, 10))
+            .map((match, i) => (
+              <div
+                className={classnames(
+                  "flex w-full h-8 justify-center items-center border-b border-gray-300 bg-green-100",
+                  redAccessor && redAccessor(match) === accessor(match) && "text-red-500",
+                  blueAccessor && blueAccessor(match) === accessor(match) && "text-blue-600"
+                )}
+                key={`${match.key}-${i}`}
+              >
+                {i + 1}. {accessor(match).toFixed(0)}
+              </div>
+            ))}
         </div>
         <div className="flex-grow min-w-[720px]">
           <MatchTable
             year={year}
             teamNum={0}
-            matches={matches}
+            matches={matches.slice(0, more ? matches.length : Math.min(matches.length, 10))}
             foulRate={foulRate}
             showHeaders={true}
             showSubHeaders={false}
