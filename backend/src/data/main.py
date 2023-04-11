@@ -103,7 +103,8 @@ def reset_curr_year(curr_year: int, mock: bool = False):
     team_years_dict = out[0]
     objs = out[1:]
 
-    time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, True)  # type: ignore
+    # Changed to False to prevent deleting data without a backup
+    time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, False)  # type: ignore
 
     if curr_year == CURR_YEAR:
         time_func("Post TBA", post_process_tba)
