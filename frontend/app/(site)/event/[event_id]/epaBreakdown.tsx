@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import EPABreakdownTable from "../../../../components/Table/EPABreakdownTable";
+import { getEPABreakdown, getEPABreakdownPercentiles, log } from "../../../../utils";
 import { Data } from "./types";
 
 const EPABreakdownSection = ({
@@ -19,21 +20,11 @@ const EPABreakdownSection = ({
 
   useEffect(() => {
     if (!epaBreakdownPercentiles && data.year) {
-      // read json from public folder
-      fetch("/data/epa_breakdown_percentiles.json").then((response) => {
-        response.json().then((data) => {
-          setEPABreakdownPercentiles(data);
-        });
-      });
+      getEPABreakdownPercentiles(setEPABreakdownPercentiles);
     }
 
     if (!epaBreakdown && data.year) {
-      // read json from public folder
-      fetch("/data/epa_breakdown.json").then((response) => {
-        response.json().then((data) => {
-          setEPABreakdown(data);
-        });
-      });
+      getEPABreakdown(setEPABreakdown);
     }
   }, [epaBreakdownPercentiles, epaBreakdown, data.year]);
 
