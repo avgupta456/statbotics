@@ -65,3 +65,19 @@ export const formatEventName = (eventName: string, limit: number = -1) => {
   const name = eventNameMap[eventName] || eventName;
   return limit > 0 ? truncate(name, limit) : name;
 };
+
+export const getEPABreakdownPercentiles = (setEPABreakdownPercentiles) => {
+  fetch(
+    "https://raw.githubusercontent.com/avgupta456/statbotics/master/data/2023/epa_breakdown_percentiles.json"
+  ).then((response) => {
+    response.json().then(setEPABreakdownPercentiles);
+  });
+};
+
+export const getEPABreakdown = (setEPABreakdown) => {
+  fetch(
+    "https://raw.githubusercontent.com/avgupta456/statbotics/master/data/2023/epa_breakdown.json"
+  ).then((response) => {
+    response.json().then(setEPABreakdown);
+  });
+};

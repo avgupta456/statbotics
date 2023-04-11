@@ -198,7 +198,7 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <p className="text-2xl lg:text-3xl mt-8 mb-4">Match Breakdown</p>
-      <div className="w-full overflow-x-scroll md:overflow-x-auto md:flex md:justify-center">
+      <div className="w-full overflow-x-scroll md:overflow-x-auto lg:flex lg:justify-center">
         <MatchBreakdown {...MatchTableProps} />
       </div>
       <TableKey />
