@@ -66,46 +66,18 @@ export const formatEventName = (eventName: string, limit: number = -1) => {
   return limit > 0 ? truncate(name, limit) : name;
 };
 
-const getEPABreakdownPercentilesOld = (setEPABreakdownPercentiles) => {
-  console.log("Using old EPABreakdownPercentiles data");
-  fetch("/data/epa_breakdown_percentiles.json").then((response) => {
-    response.json().then((data) => {
-      setEPABreakdownPercentiles(data);
-    });
-  });
-};
-
 export const getEPABreakdownPercentiles = (setEPABreakdownPercentiles) => {
   fetch(
-    "https://raw.githubusercontent.com/avgupta456/statbotics/master/frontend/public/data/epa_breakdown_percentiles.json"
-  )
-    .then((response) => {
-      response
-        .json()
-        .then(setEPABreakdownPercentiles)
-        .catch(() => getEPABreakdownPercentilesOld(setEPABreakdownPercentiles));
-    })
-    .catch(() => getEPABreakdownPercentilesOld(setEPABreakdownPercentiles));
-};
-
-const getEPABreakdownOld = (setEPABreakdown) => {
-  console.log("Using old EPABreakdown data");
-  fetch("/data/epa_breakdown.json").then((response) => {
-    response.json().then((data) => {
-      setEPABreakdown(data);
-    });
+    "https://raw.githubusercontent.com/avgupta456/statbotics/master/data/2023/epa_breakdown_percentiles.json"
+  ).then((response) => {
+    response.json().then(setEPABreakdownPercentiles);
   });
 };
 
 export const getEPABreakdown = (setEPABreakdown) => {
   fetch(
-    "https://raw.githubusercontent.com/avgupta456/statbotics/master/frontend/public/data/epa_breakdown.json"
-  )
-    .then((response) => {
-      response
-        .json()
-        .then(setEPABreakdown)
-        .catch(() => getEPABreakdownOld(setEPABreakdown));
-    })
-    .catch(() => getEPABreakdownOld(setEPABreakdown));
+    "https://raw.githubusercontent.com/avgupta456/statbotics/master/data/2023/epa_breakdown.json"
+  ).then((response) => {
+    response.json().then(setEPABreakdown);
+  });
 };
