@@ -80,12 +80,10 @@ export const getEPABreakdownPercentiles = (setEPABreakdownPercentiles) => {
     "https://raw.githubusercontent.com/avgupta456/statbotics/master/frontend/public/data/epa_breakdown_percentiles.json"
   )
     .then((response) => {
-      console.log(response);
-      if (response.status === 200 && response.type !== "cors") {
-        setEPABreakdownPercentiles(response.json());
-      } else {
-        getEPABreakdownPercentilesOld(setEPABreakdownPercentiles);
-      }
+      response
+        .json()
+        .then(setEPABreakdownPercentiles)
+        .catch(() => getEPABreakdownPercentilesOld(setEPABreakdownPercentiles));
     })
     .catch(() => getEPABreakdownPercentilesOld(setEPABreakdownPercentiles));
 };
@@ -104,12 +102,10 @@ export const getEPABreakdown = (setEPABreakdown) => {
     "https://raw.githubusercontent.com/avgupta456/statbotics/master/frontend/public/data/epa_breakdown.json"
   )
     .then((response) => {
-      console.log(response);
-      if (response.status === 200 && response.type !== "cors") {
-        setEPABreakdown(response.json());
-      } else {
-        getEPABreakdownOld(setEPABreakdown);
-      }
+      response
+        .json()
+        .then(setEPABreakdown)
+        .catch(() => getEPABreakdownOld(setEPABreakdown));
     })
     .catch(() => getEPABreakdownOld(setEPABreakdown));
 };
