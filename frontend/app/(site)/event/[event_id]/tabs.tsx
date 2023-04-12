@@ -39,6 +39,7 @@ const Tabs = ({ eventId, year, data: _data }: { eventId: string; year: number; d
   useEffect(() => {
     if (_data.event.key === "2023isde1") {
       fetch(
+        // "/2023cacmp1.json"
         "https://raw.githubusercontent.com/avgupta456/statbotics/cali/frontend/public/2023cacmp1.json"
       ).then((res) =>
         res.json().then((newData) => {
@@ -48,6 +49,7 @@ const Tabs = ({ eventId, year, data: _data }: { eventId: string; year: number; d
       );
     } else if (_data.event.key === "2023isde2") {
       fetch(
+        // "/2023cacmp2.json"
         "https://raw.githubusercontent.com/avgupta456/statbotics/cali/frontend/public/2023cacmp2.json"
       ).then((res) =>
         res.json().then((newData) => {
