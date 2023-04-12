@@ -63,13 +63,14 @@ async def get_team_year(
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_years(
     team: Optional[int] = None,
+    teams: Optional[List[int]] = None,
     year: Optional[int] = None,
     limit: Optional[int] = None,
     metric: Optional[str] = None,
     no_cache: bool = False,
 ) -> List[APITeamYear]:
     team_year_objs: List[TeamYear] = _get_team_years(
-        team=team, year=year, limit=limit, metric=metric
+        team=team, teams=teams, year=year, limit=limit, metric=metric
     )
 
     team_years = [unpack_team_year(x) for x in team_year_objs]
