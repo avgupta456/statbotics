@@ -28,6 +28,12 @@ export async function generateMetadata({ params }) {
 }
 
 async function getData(event_id: string) {
+  if (event_id === "2023cacmp1") {
+    event_id = "2023isde1";
+  } else if (event_id === "2023cacmp2") {
+    event_id = "2023isde2";
+  }
+
   const start = performance.now();
   const res = await fetch(`${BACKEND_URL}/event/` + event_id, { next: { revalidate: 60 } });
   log(`/event/${event_id} took ${round(performance.now() - start, 0)}ms`);
@@ -51,6 +57,12 @@ async function Page({ params }: { params: { event_id: string } }) {
   }
 
   let truncatedEventName = formatEventName(data.event.name, 30);
+  if (event_id === "2023cacmp1") {
+    truncatedEventName = "California Champs - Shoreline Division";
+  } else if (event_id === "2023cacmp2") {
+    truncatedEventName = "California Champs - Redwood Division";
+  }
+
   const status = data.event.status;
 
   return (

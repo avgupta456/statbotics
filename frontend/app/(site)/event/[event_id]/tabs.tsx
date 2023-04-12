@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 
 import { useRouter } from "next/navigation";
@@ -22,8 +22,35 @@ import SimulationSection from "./simulation";
 import SosSection from "./sos";
 import { Data } from "./types";
 
-const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Data }) => {
+export const getFakeData = async (event_id: string) => {
+  return await fetch("/" + event_id + ".json").then((res) =>
+    res.json().then((data) => {
+      console.log(data);
+      return data;
+    })
+  );
+};
+
+const Tabs = ({ eventId, year, data: _data }: { eventId: string; year: number; data: Data }) => {
   const router = useRouter();
+
+  const [data, setData] = useState(_data);
+
+  useEffect(() => {
+    if (_data.event.key === "2023isde1") {
+      fetch("/2023cacmp1.json").then((res) =>
+        res.json().then((newData) => {
+          setData(newData.data);
+        })
+      );
+    } else if (_data.event.key === "2023isde2") {
+      fetch("/2023cacmp2.json").then((res) =>
+        res.json().then((newData) => {
+          setData(newData.data);
+        })
+      );
+    }
+  }, [_data]);
 
   const MemoizedInsightsTable = useMemo(
     () => <InsightsTable eventId={eventId} data={data} />,
@@ -143,7 +170,13 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
           />
         </div>
       )}
-      <TabsSection loading={data === undefined} error={false} tabs={tabs} />
+      <TabsSection
+        loading={
+          data === undefined || data.event.key === "2023isde1" || data.event.key === "2023isde2"
+        }
+        error={false}
+        tabs={tabs}
+      />
     </>
   );
 };
