@@ -110,7 +110,7 @@ export const mainEventToDivisions = {
     { name: "Science", key: "2023oncmp2" },
   ],
   "2023cmptx": [
-    { name: "Overall", key: "2023txcmp" },
+    { name: "Overall", key: "2023cmptx" },
     { name: "Archimedes", key: "2023arc" },
     { name: "Curie", key: "2023cur" },
     { name: "Daly", key: "2023dal" },
