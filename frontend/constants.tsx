@@ -76,6 +76,14 @@ export const divisionToMainEvent = {
   "2023oncmp": "2023oncmp",
   "2023oncmp1": "2023oncmp",
   "2023oncmp2": "2023oncmp",
+  "2023arc": "2023cmptx",
+  "2023cur": "2023cmptx",
+  "2023dal": "2023cmptx",
+  "2023gal": "2023cmptx",
+  "2023hop": "2023cmptx",
+  "2023joh": "2023cmptx",
+  "2023mil": "2023cmptx",
+  "2023new": "2023cmptx",
 };
 
 export const mainEventToDivisions = {
@@ -100,5 +108,16 @@ export const mainEventToDivisions = {
     { name: "Overall", key: "2023oncmp" },
     { name: "Technology", key: "2023oncmp1" },
     { name: "Science", key: "2023oncmp2" },
+  ],
+  "2023cmptx": [
+    { name: "Overall", key: "2023txcmp" },
+    { name: "Archimedes", key: "2023arc" },
+    { name: "Curie", key: "2023cur" },
+    { name: "Daly", key: "2023dal" },
+    { name: "Galileo", key: "2023gal" },
+    { name: "Hopper", key: "2023hop" },
+    { name: "Johnson", key: "2023joh" },
+    { name: "Milstein", key: "2023mil" },
+    { name: "Newton", key: "2023new" },
   ],
 };

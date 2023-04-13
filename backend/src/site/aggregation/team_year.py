@@ -74,4 +74,4 @@ async def get_team_years(
 
     team_years = [unpack_team_year(x) for x in team_year_objs]
 
-    return (True, sorted(team_years, key=lambda x: x.epa_rank))  # type: ignore
+    return (True, sorted(team_years, key=lambda x: x.epa_rank or 0))  # type: ignore

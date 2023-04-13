@@ -79,4 +79,4 @@ async def get_team_events(
         )
         for x in team_event_objs
     ]
-    return (True, sorted(team_events, key=lambda x: x.time))  # type: ignore
+    return (True, sorted(team_events, key=lambda x: x.time or 0))  # type: ignore

@@ -40,4 +40,4 @@ async def get_team_matches(
     )
 
     team_matches = [unpack_team_match(x) for x in team_match_objs]
-    return (True, sorted(team_matches, key=lambda x: x.time))  # type: ignore
+    return (True, sorted(team_matches, key=lambda x: x.time or 0))  # type: ignore

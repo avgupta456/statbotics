@@ -36,4 +36,4 @@ async def get_team(team: int) -> APITeam:
 async def get_teams(no_cache: bool = False) -> List[APITeam]:
     team_objs: List[Team] = _get_teams()
     teams = [unpack_team(x) for x in team_objs]
-    return (True, sorted(teams, key=lambda x: x.num))  # type: ignore
+    return (True, sorted(teams, key=lambda x: x.num or 0))  # type: ignore
