@@ -276,7 +276,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
               ? "Before Schedule Release"
               : index === 0
               ? "Schedule Release"
-              : "Qualification Match " + index}
+              : "Qual Match " + index}
           </strong>
         </div>
         {scheduleReleased && (
