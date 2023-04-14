@@ -76,6 +76,7 @@ export const divisionToMainEvent = {
   "2023oncmp": "2023oncmp",
   "2023oncmp1": "2023oncmp",
   "2023oncmp2": "2023oncmp",
+  "2023cmptx": "2023cmptx",
   "2023arc": "2023cmptx",
   "2023cur": "2023cmptx",
   "2023dal": "2023cmptx",
