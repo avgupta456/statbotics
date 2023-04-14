@@ -53,6 +53,9 @@ const columnHelper = createColumnHelper<SosRow>();
 const detailedColumnHelper = createColumnHelper<any>();
 
 const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
+  const [simCount, setSimCount] = useState(1000);
+  const [refresh, setRefresh] = useState(0);
+
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SosResults[]>([]);
   const [preEvent, setPreEvent] = useState(true);
@@ -77,8 +80,8 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
 
     setWorkerMessages([]);
 
-    workerRef.current.postMessage({ type: "strengthOfSchedule", data, simCount: 1000 });
-  }, [data]);
+    workerRef.current.postMessage({ type: "strengthOfSchedule", data, simCount });
+  }, [data, simCount, refresh]);
 
   const preSimAvgRank = {};
   const simAvgRank = {};
@@ -268,8 +271,25 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         </Link>
         .
       </div>
+      <div className="w-full mb-4 flex">
+        <p>Run </p>
+        <input
+          type="number"
+          className="w-16 text-center ring-2 rounded mx-2"
+          value={simCount}
+          onChange={(e) => setSimCount(parseInt(e.target.value))}
+        />
+        <p> {simCount === 1 ? "simulation" : "simulations"}.</p>
+        <p
+          className="text-blue-500 ml-4 cursor-pointer"
+          onClick={() => setRefresh((refresh) => refresh + 1)}
+        >
+          {" "}
+          Reload
+        </p>
+      </div>
       <div className="w-full h-8 mb-4 flex items-center text-sm md:text-base text-center">
-        <strong className="mr-2">Using EPAs from:</strong>
+        <p className="mr-2">Using EPAs from:</p>
         <div
           className="mr-4 flex items-center hover:bg-blue-50 p-1 rounded cursor-pointer"
           onClick={() => setPreEvent(true)}
