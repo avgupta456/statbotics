@@ -6,8 +6,15 @@ import { Range } from "react-range";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
-import { TeamLink, formatCell, formatProbCell } from "../../../../components/Table/shared";
+import {
+  TeamLink,
+  formatCell,
+  formatEPACell,
+  formatProbCell,
+} from "../../../../components/Table/shared";
+import { APITeamEvent } from "../../../../components/types/api";
 import { formatNumber } from "../../../../components/utils";
+import { round } from "../../../../utils";
 import { Data } from "./types";
 
 type SimResults = {
@@ -20,6 +27,7 @@ type SimulationRow = {
   rank: number;
   num: number;
   team: string;
+  epa: number;
   rankMean: number;
   rank5: number;
   rank50: number;
@@ -37,6 +45,8 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
 
   const [index, setIndex] = useState(eventOngoing ? qualsN : -1);
   const [finalIndex, setFinalIndex] = useState(eventOngoing ? qualsN : -1);
+  const [simCount, setSimCount] = useState(1000);
+  const [refresh, setRefresh] = useState(0);
 
   const workerRef = useRef<Worker | null>();
   const [workerMessages, setWorkerMessages] = useState<SimResults[]>([]);
@@ -64,17 +74,17 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       workerRef.current.postMessage({
         type: "preSim",
         data,
-        simCount: 1000,
+        simCount,
       });
     } else {
       workerRef.current.postMessage({
         type: "indexSim",
         data,
         index: finalIndex,
-        simCount: 1000,
+        simCount,
       });
     }
-  }, [data, finalIndex]);
+  }, [data, finalIndex, simCount, refresh]);
 
   const simRanks = {};
   const simRPs = {};
@@ -123,15 +133,16 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
 
   const simulationData = data.team_events
     .sort((a, b) => rankMean[a.num] - rankMean[b.num])
-    .map((teamEvent, i) => ({
+    .map((teamEvent: APITeamEvent, i) => ({
       rank: i + 1,
       num: teamEvent.num,
       team: teamEvent.team,
-      rankMean: rankMean[teamEvent.num],
-      rank5: rank5[teamEvent.num],
-      rank50: rank50[teamEvent.num],
-      rank95: rank95[teamEvent.num],
-      RPMean: RPMean[teamEvent.num],
+      epa: round(teamEvent.total_epa ?? 0, 1),
+      rankMean: rankMean[teamEvent.num] ? round(rankMean[teamEvent.num], 2) : "",
+      rank5: rank5[teamEvent.num] ? round(rank5[teamEvent.num], 2) : "",
+      rank50: rank50[teamEvent.num] ? round(rank50[teamEvent.num], 2) : "",
+      rank95: rank95[teamEvent.num] ? round(rank95[teamEvent.num], 2) : "",
+      RPMean: RPMean[teamEvent.num] ? round(RPMean[teamEvent.num], 2) : "",
     }));
 
   const detailedSimData = data.team_events
@@ -139,14 +150,17 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
     .map((teamEvent) => {
       const probsObj = {};
       for (let i = 0; i < N; i++) {
-        probsObj[`prob${i + 1}`] = rankProbs[teamEvent.num]?.[i];
+        probsObj[`prob${i + 1}`] = rankProbs[teamEvent.num]?.[i]
+          ? round(rankProbs[teamEvent.num]?.[i], 2)
+          : "";
       }
 
       return {
         num: teamEvent.num,
         team: teamEvent.team,
-        rankMean: rankMean[teamEvent.num],
-        RPMean: RPMean[teamEvent.num],
+        epa: round(teamEvent.total_epa ?? 0, 1),
+        rankMean: rankMean[teamEvent.num] ? round(rankMean[teamEvent.num], 2) : "",
+        RPMean: RPMean[teamEvent.num] ? round(RPMean[teamEvent.num], 2) : "",
         ...probsObj,
       };
     });
@@ -164,6 +178,10 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       columnHelper.accessor("team", {
         cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
         header: "Team",
+      }),
+      columnHelper.accessor("epa", {
+        cell: (info) => formatEPACell(data.year.total_stats, info, false),
+        header: "EPA",
       }),
       columnHelper.accessor("rankMean", {
         cell: (info) => formatCell(info),
@@ -186,7 +204,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         header: "Mean RPs",
       }),
     ],
-    [year]
+    [year, data.year]
   );
 
   const detailedColumns = useMemo<any>(
@@ -198,6 +216,10 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
       detailedColumnHelper.accessor("team", {
         cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
         header: "Team",
+      }),
+      detailedColumnHelper.accessor("epa", {
+        cell: (info) => formatEPACell(data.year.total_stats, info, false),
+        header: "EPA",
       }),
       detailedColumnHelper.accessor("rankMean", {
         cell: (info) => formatCell(info),
@@ -217,7 +239,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
           })
         ),
     ],
-    [year, emptyArr]
+    [year, data.year, emptyArr]
   );
 
   return (
@@ -228,6 +250,23 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         the event. The entire event is simulated 1000 times. Surrogates and DQed teams are correctly
         handled. The first tiebreaker is included from 2016 onwards.{" "}
         <strong>The simulation happens live, and may take a few seconds to load.</strong>
+      </div>
+      <div className="w-full mb-4 flex">
+        <p>Run </p>
+        <input
+          type="number"
+          className="w-16 text-center ring-2 rounded mx-2"
+          value={simCount}
+          onChange={(e) => setSimCount(parseInt(e.target.value))}
+        />
+        <p> {simCount === 1 ? "simulation" : "simulations"}.</p>
+        <p
+          className="text-blue-500 ml-4 cursor-pointer"
+          onClick={() => setRefresh((refresh) => refresh + 1)}
+        >
+          {" "}
+          Reload
+        </p>
       </div>
       <div className="w-full mb-4 flex flex-col">
         <div>
