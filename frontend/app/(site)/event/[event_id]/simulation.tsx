@@ -75,6 +75,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         type: "preSim",
         data,
         simCount,
+        matchesPerTeam: data.event.week === 8 ? 10 : 12,
       });
     } else {
       workerRef.current.postMessage({

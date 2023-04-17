@@ -146,6 +146,7 @@ async function preSim(
   }
 
   for (let i = 0; i < simCount; i++) {
+    const currSimMatches = {};
     const currSimRPs = {};
     const indexToTeam = {};
     const randArr = shuffle(
@@ -156,6 +157,7 @@ async function preSim(
     for (let j = 0; j < data.team_events.length; j++) {
       const teamEvent = data.team_events[j];
       indexToTeam[randArr[j]] = teamEvent.num;
+      currSimMatches[teamEvent.num] = 0;
       currSimRPs[teamEvent.num] = 0;
     }
 
@@ -190,11 +192,17 @@ async function preSim(
       const blueRPs = blueRP1 + blueRP2 + (redWin ? 0 : 2);
 
       red.forEach((team) => {
-        currSimRPs[team] += redRPs;
+        if (currSimMatches[team] < numMatches) {
+          currSimRPs[team] += redRPs;
+          currSimMatches[team]++;
+        }
       });
 
       blue.forEach((team) => {
-        currSimRPs[team] += blueRPs;
+        if (currSimMatches[team] < numMatches) {
+          currSimRPs[team] += blueRPs;
+          currSimMatches[team]++;
+        }
       });
     }
 
@@ -237,7 +245,6 @@ async function indexSim(
   const currEPAs = {};
   const currRP1EPAs = {};
   const currRP2EPAs = {};
-  const currMatches = {};
   const currRPs = {};
   const currTiebreakers = {};
 
@@ -266,7 +273,6 @@ async function indexSim(
     currEPAs[teamEvent.num] = currEPA;
     currRP1EPAs[teamEvent.num] = currRP1EPA;
     currRP2EPAs[teamEvent.num] = currRP2EPA;
-    currMatches[teamEvent.num] = 0;
     currRPs[teamEvent.num] = 0;
     currTiebreakers[teamEvent.num] = [];
   }
@@ -289,7 +295,6 @@ async function indexSim(
         currRP1EPAs[team] = teamMatch.rp_1_epa;
         currRP2EPAs[team] = teamMatch.rp_2_epa;
       }
-      currMatches[team] += 1;
       if (
         !match.red_surrogates.includes(team) &&
         !match.blue_surrogates.includes(team) &&
@@ -554,19 +559,20 @@ async function strengthOfSchedule(data: Data, simCount: number, postMessage: boo
 }
 
 ctx.addEventListener("message", (evt) => {
-  let out;
   switch (evt.data.type) {
     case "preSim":
       const qualMatches = evt.data.data?.event?.qual_matches;
       const teamEvents = evt.data.data?.team_events?.length;
-      const N = qualMatches > 0 && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : 12;
-      out = preSim(evt.data.data, evt.data.simCount, N, false, true);
+      const matchesPerTeam = evt.data?.matchesPerTeam || 12;
+      const N =
+        qualMatches > 0 && teamEvents ? Math.round((6 * qualMatches) / teamEvents) : matchesPerTeam;
+      preSim(evt.data.data, evt.data.simCount, N, false, true);
       return;
     case "indexSim":
-      out = indexSim(evt.data.data, evt.data.index, evt.data.simCount, false, true);
+      indexSim(evt.data.data, evt.data.index, evt.data.simCount, false, true);
       return;
     case "strengthOfSchedule":
-      out = strengthOfSchedule(evt.data.data, evt.data.simCount, true);
+      strengthOfSchedule(evt.data.data, evt.data.simCount, true);
       return;
   }
 });
