@@ -124,7 +124,6 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const year = data.event.year;
 
   const sosData = data.team_events
-    .sort((a, b) => a.rank - b.rank)
     .map((teamEvent, i) => ({
       rank: i + 1,
       num: teamEvent.num,
@@ -143,7 +142,8 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
       deltaEPA: deltaEPA[teamEvent.num],
       epaPercentile: epaPercentile[teamEvent.num],
       overallPercentile: overallPercentile[teamEvent.num],
-    }));
+    }))
+    .sort((a, b) => a.overallPercentile - b.overallPercentile);
 
   const columns = useMemo<any>(
     () => [
