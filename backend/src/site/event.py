@@ -47,7 +47,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
 
     team_events: List[APITeamEvent] = await get_team_events(
         year=year.year,
-        score_mean=year.score_mean,
+        score_mean=year.score_mean / (1 + year.foul_rate),
         score_sd=year.score_sd,
         event=event_id,
     )
