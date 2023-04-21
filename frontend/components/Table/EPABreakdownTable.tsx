@@ -311,7 +311,7 @@ const EPABreakdownTable = ({
         >
           Chief Delphi
         </Link>
-        . <strong>Last Updated:</strong> 5:00 PM ET, 4/20/2023
+        . <strong>Last Updated:</strong> 11:00 AM ET, 4/21/2023
       </div>
       <InsightsTable
         title={"EPA Breakdown (BETA)"}
