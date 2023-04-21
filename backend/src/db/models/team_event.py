@@ -77,6 +77,11 @@ class TeamEventORM(Base, ModelORM):
     rp_2_epa_mean = Column(Float)
     rp_2_epa_max = Column(Float)
 
+    # TODO: Add unitless and norm epa
+    # """NORM EPA"""
+    # unitless_epa_end = Column(Float)
+    # norm_epa_end = Column(Float)
+
     """STATS"""
     wins = Column(Integer)
     losses = Column(Integer)
