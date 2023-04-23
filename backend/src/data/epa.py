@@ -830,9 +830,8 @@ def process_year(
 
         unitless_epa: float = epa_to_unitless_epa(obj.epa_end, TOTAL_MEAN, TOTAL_SD)
         obj.unitless_epa_end = round(unitless_epa, 0)
-        if year.year != CURR_YEAR:
-            epa_index = year_epas.index(obj.epa_end)
-            obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 0)
+        epa_index = year_epas.index(obj.epa_end)
+        obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 0)
 
         if USE_COMPONENTS:
             year_auto_epas.append(round(curr_auto_team_epas[-1], 2))
