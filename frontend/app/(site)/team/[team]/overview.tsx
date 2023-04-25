@@ -182,64 +182,62 @@ const OverviewSection = ({
           <span>Predicted Winner (Green = Correct Prediction)</span>
         </div>
       </div>
-      {teamEvents
-        .filter((event) => !event.offseason)
-        .map((event) => {
-          const eventMatches = matches
-            .filter((match) => match.event === event.event)
-            .sort((a, b) => a.time - b.time);
-          return (
-            <div key={event.event} className="w-full my-4 flex flex-wrap">
-              <div className="w-full lg:w-1/4 h-full flex flex-col">
-                <div className="flex flex-col mb-2">
-                  <Link href={`/event/${event.event}`} className="text_link text-xl">
-                    {event.event_name}
-                  </Link>
-                  Week {event.week}
-                </div>
-                <div className="flex flex-col mb-2">
-                  {event.rank > 0 && event.num_teams > 0 && (
-                    <div>
-                      Rank:{" "}
-                      <strong>
-                        {event.rank} of {event.num_teams}
-                      </strong>
-                    </div>
-                  )}
-                  {event.count > 0 && (
-                    <div>
-                      Record:{" "}
-                      <strong>
-                        {event.wins}-{event.losses}-{event.ties}
-                      </strong>
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-row flex-wrap mb-2">
-                  {year.year >= 2016 ? (
-                    <>
-                      {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
-                      {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
-                      {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-                      {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[3])}
-                    </>
-                  ) : (
-                    epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[0])
-                  )}
-                </div>
+      {teamEvents.map((event) => {
+        const eventMatches = matches
+          .filter((match) => match.event === event.event)
+          .sort((a, b) => a.time - b.time);
+        return (
+          <div key={event.event} className="w-full my-4 flex flex-wrap">
+            <div className="w-full lg:w-1/4 h-full flex flex-col">
+              <div className="flex flex-col mb-2">
+                <Link href={`/event/${event.event}`} className="text_link text-xl">
+                  {event.event_name}
+                </Link>
+                Week {event.week}
               </div>
-              <div className="w-full lg:w-3/4 h-full pl-4 overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
-                <MatchTable
-                  year={year.year}
-                  teamNum={teamData.num}
-                  matches={eventMatches}
-                  foulRate={year.foul_rate}
-                  myAlliance={alliance}
-                />
+              <div className="flex flex-col mb-2">
+                {event.rank > 0 && event.num_teams > 0 && (
+                  <div>
+                    Rank:{" "}
+                    <strong>
+                      {event.rank} of {event.num_teams}
+                    </strong>
+                  </div>
+                )}
+                {event.count > 0 && (
+                  <div>
+                    Record:{" "}
+                    <strong>
+                      {event.wins}-{event.losses}-{event.ties}
+                    </strong>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-row flex-wrap mb-2">
+                {year.year >= 2016 ? (
+                  <>
+                    {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
+                    {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
+                    {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
+                    {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[3])}
+                  </>
+                ) : (
+                  epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[0])
+                )}
               </div>
             </div>
-          );
-        })}
+            <div className="w-full lg:w-3/4 h-full pl-4 overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
+              <MatchTable
+                year={year.year}
+                teamNum={teamData.num}
+                matches={eventMatches}
+                foulRate={year.foul_rate}
+                myAlliance={alliance}
+              />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

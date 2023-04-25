@@ -102,9 +102,15 @@ async def read_team_year(
         score_mean=year_obj.score_mean,
         score_sd=year_obj.score_sd,
         team=team_num,
+        offseason=None,
     )
-    matches: List[APIMatch] = await get_matches(team=team_num, year=year)
-    team_matches: List[APITeamMatch] = await get_team_matches(team=team_num, year=year)
+
+    matches: List[APIMatch] = await get_matches(
+        team=team_num, year=year, offseason=None
+    )
+    team_matches: List[APITeamMatch] = await get_team_matches(
+        team=team_num, year=year, offseason=None
+    )
 
     out = {
         "year": year_obj.to_dict(),
