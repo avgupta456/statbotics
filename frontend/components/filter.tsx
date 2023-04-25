@@ -23,7 +23,7 @@ export const validateFilters = (
 
   // Note: playoff, filterMatches, sortMatches are not validated here
 
-  for (const key of ["year", "week", "is_competing"]) {
+  for (const key of ["year", "week", "is_competing", "offseason"]) {
     if (validFilters.includes(key) && filters[key]) {
       outFilters[key] = keyToOptions[key].filter(
         (x) => x.value?.toLowerCase() === filters[key]?.toLowerCase()
@@ -91,6 +91,12 @@ export const filterData = (data: any[] | undefined, filter: any) => {
         filteredData = filteredData.filter((datum) => datum[key]);
       } else if (key === "district" && value === "regionals") {
         filteredData = filteredData.filter((datum) => datum["district"] === null);
+      } else if (key === "offseason") {
+        if (value === "offseason") {
+          filteredData = filteredData.filter((datum) => datum["offseason"]);
+        } else if (value === "season") {
+          filteredData = filteredData.filter((datum) => !datum["offseason"]);
+        }
       } else {
         filteredData = filteredData.filter((datum) => datum[key] === value);
       }

@@ -26,16 +26,12 @@ def get_matches(
     event: Optional[str] = None,
     week: Optional[int] = None,
     elims: Optional[bool] = None,
-    offseason: Optional[bool] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Match]:
-    # If filtering by year, default to not offseason
-    if offseason is None and year is not None:
-        offseason = False
-
     def callback(session: SessionType):
         data = session.query(MatchORM)
         if team is not None:

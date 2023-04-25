@@ -2,8 +2,6 @@ import React from "react";
 
 import { CURR_YEAR } from "../../../../constants";
 import PageContent from "./main";
-import { getTeamData } from "./shared";
-import { TeamData } from "./types";
 
 /*
 export async function generateMetadata({ params }) {

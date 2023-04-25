@@ -34,9 +34,10 @@ async def get_team_matches(
     event: Optional[str] = None,
     team: Optional[int] = None,
     match: Optional[str] = None,
+    offseason: Optional[bool] = False,
 ) -> List[APITeamMatch]:
     team_match_objs: List[TeamMatch] = _get_team_matches(
-        team=team, year=year, event=event, match=match
+        team=team, year=year, event=event, match=match, offseason=offseason
     )
 
     team_matches = [unpack_team_match(x) for x in team_match_objs]
