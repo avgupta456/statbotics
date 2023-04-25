@@ -89,7 +89,7 @@ async def get_matches(
     team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
-    offseason: bool = False,
+    offseason: Optional[bool] = False,
     no_cache: bool = False,
 ) -> List[APIMatch]:
     match_objs: List[Match] = _get_matches(

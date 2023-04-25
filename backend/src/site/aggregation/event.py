@@ -62,9 +62,11 @@ async def get_event(event: str, no_cache: bool = False) -> Optional[APIEvent]:
 
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_events(
-    year: Optional[int] = None, no_cache: bool = False
+    year: Optional[int] = None,
+    offseason: Optional[bool] = False,
+    no_cache: bool = False,
 ) -> List[APIEvent]:
-    event_objs: List[Event] = _get_events(year=year)
+    event_objs: List[Event] = _get_events(year=year, offseason=offseason)
 
     events = [unpack_event(event) for event in event_objs]
     return (True, events)  # type: ignore

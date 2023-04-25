@@ -135,6 +135,12 @@ export const competingOptions = [
   { value: CURR_WEEK, label: "This Week" },
 ];
 
+export const offseasonOptions = [
+  { value: "", label: "All" },
+  { value: "season", label: "Season Only" },
+  { value: "offseason", label: "Offseason Only" },
+];
+
 export const playoffOptions = [
   { value: "", label: "All" },
   { value: "quals", label: "Quals Only" },

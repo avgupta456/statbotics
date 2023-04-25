@@ -13,6 +13,7 @@ const defaultFilters = {
   country: "",
   state: "",
   district: "",
+  offseason: "",
   search: "",
 };
 
@@ -27,9 +28,6 @@ const EventsLayout = ({
   setFilters: (filters: { [key: string]: any }) => void;
   SectionComponent: FC<{ name: string; data: EventData }>;
 }) => {
-  // Currently always set to true --> No offseason events shown
-  const filterOffseason = true;
-
   const actualFilters = Object.keys(defaultFilters).reduce(
     (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
     {}
@@ -39,9 +37,8 @@ const EventsLayout = ({
 
   const filteredData: APIEvent[] | undefined = filterData(data.events, actualFilters).filter(
     (event: APIEvent) =>
-      (!filterOffseason || !event.offseason) &&
-      (event.key?.toLowerCase().includes(search.toLowerCase()) ||
-        event.name?.toLowerCase().includes(search.toLowerCase()))
+      event.key?.toLowerCase().includes(search.toLowerCase()) ||
+      event.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   const N = filteredData?.length;

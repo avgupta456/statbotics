@@ -30,7 +30,7 @@ async def read_events(response: Response, year: int) -> Dict[str, Any]:
     if year_obj is None:
         raise Exception("Year not found")
 
-    events: List[APIEvent] = await get_events(year=year)
+    events: List[APIEvent] = await get_events(year=year, offseason=None)
     return {"year": year_obj.to_dict(), "events": [x.to_dict() for x in events]}
 
 
