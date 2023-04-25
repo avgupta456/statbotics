@@ -164,6 +164,8 @@ def get_event_rankings(
             return out, new_etag
         rankings = data["rankings"]
         for ranking in rankings:
+            # TODO: handle offseason teams like "973B"
+            # Currently ignores all teams after first offseason team
             team_num = int(ranking["team_key"][3:])
             out[team_num] = ranking["rank"]
     except Exception:
