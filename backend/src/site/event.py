@@ -50,9 +50,14 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
         score_mean=year.score_mean / (1 + year.foul_rate),
         score_sd=year.score_sd,
         event=event_id,
+        offseason=event.offseason,
     )
-    matches: List[APIMatch] = await get_matches(event=event_id)
-    team_matches: List[APITeamMatch] = await get_team_matches(event=event_id)
+    matches: List[APIMatch] = await get_matches(
+        event=event_id, offseason=event.offseason
+    )
+    team_matches: List[APITeamMatch] = await get_team_matches(
+        event=event_id, offseason=event.offseason
+    )
 
     out = {
         "event": event.to_dict(),

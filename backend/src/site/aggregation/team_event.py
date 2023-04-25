@@ -58,11 +58,12 @@ async def get_team_events(
     score_sd: float,
     event: Optional[str] = None,
     team: Optional[int] = None,
+    offseason: bool = False,
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
 ) -> List[APITeamEvent]:
     team_event_objs: List[TeamEvent] = _get_team_events(
-        year=year, team=team, event=event
+        year=year, team=team, event=event, offseason=offseason
     )
 
     if epa_to_norm_epa is None:

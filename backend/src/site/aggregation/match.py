@@ -89,9 +89,12 @@ async def get_matches(
     team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
+    offseason: bool = False,
     no_cache: bool = False,
 ) -> List[APIMatch]:
-    match_objs: List[Match] = _get_matches(team=team, year=year, event=event)
+    match_objs: List[Match] = _get_matches(
+        team=team, year=year, event=event, offseason=offseason
+    )
     matches = [unpack_match(match) for match in match_objs]
     return (True, sorted(matches, key=lambda x: x.time))  # type: ignore
 
