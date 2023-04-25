@@ -133,6 +133,13 @@ def get_events(
     return out, new_etag
 
 
+def format_team(team: str) -> int:
+    team = team[3:]
+    if not team[-1].isdigit():
+        team = team[:-1] + "000" + str(ord(team[-1]) - ord("A")).rjust(2, "0")
+    return int(team)
+
+
 def get_event_teams(
     event: str, etag: Optional[str] = None, mock: bool = False, cache: bool = True
 ) -> Tuple[List[int], Optional[str]]:
@@ -140,7 +147,7 @@ def get_event_teams(
     data, new_etag = get_tba(query_str, etag=etag, cache=cache)
     if type(data) is bool:
         return [], new_etag
-    out = [int(x["team_number"]) for x in data]
+    out = [format_team(x["key"]) for x in data]
     return out, new_etag
 
 
@@ -164,9 +171,7 @@ def get_event_rankings(
             return out, new_etag
         rankings = data["rankings"]
         for ranking in rankings:
-            # TODO: handle offseason teams like "973B"
-            # Currently ignores all teams after first offseason team
-            team_num = int(ranking["team_key"][3:])
+            team_num = format_team(ranking["team_key"])
             out[team_num] = ranking["rank"]
     except Exception:
         pass
@@ -218,12 +223,6 @@ def get_matches(
 
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
             continue
-
-        def format_team(team: str) -> int:
-            team = team[3:]
-            if not team[-1].isdigit():
-                team = team[:-1] + "000" + str(ord(team[-1]) - ord("A")).rjust(2, "0")
-            return int(team)
 
         red_teams = [format_team(team) for team in red_teams]
         blue_teams = [format_team(team) for team in blue_teams]
