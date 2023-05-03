@@ -22,6 +22,7 @@ def get_team_year(team: int, year: int) -> Optional[TeamYear]:
 
 def get_team_years(
     team: Optional[int] = None,
+    teams: Optional[List[int]] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
     district: Optional[str] = None,
@@ -36,6 +37,8 @@ def get_team_years(
         data = session.query(TeamYearORM)
         if team is not None:
             data = data.filter(TeamYearORM.team == team)  # type: ignore
+        if teams is not None:
+            data = data.filter(TeamYearORM.team.in_(teams))  # type: ignore
         if year is not None:
             data = data.filter(TeamYearORM.year == year)  # type: ignore
         if country is not None:

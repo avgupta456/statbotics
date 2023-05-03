@@ -2,15 +2,25 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
+from src.utils.compress import decompress
 from src.site.aggregation import (
     get_event,
     get_events,
     get_matches,
     get_team_events,
     get_team_matches,
+    get_team_years,
     get_year,
+    team_year_to_team_event,
 )
-from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
+from src.site.models import (
+    APIEvent,
+    APIMatch,
+    APITeamEvent,
+    APITeamMatch,
+    APITeamYear,
+    APIYear,
+)
 from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
@@ -68,6 +78,57 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
     }
 
     return out
+
+
+@router.get("/event/hypothetical/{event_id}")
+@async_fail_gracefully
+async def read_hypothetical_event(response: Response, event_id: str) -> Dict[str, Any]:
+    parsed = decompress(event_id)
+    year = parsed[0]
+    teams = parsed[1:]
+
+    print(year, teams)
+
+    event = APIEvent(
+        key=event_id,
+        name="Hypothetical Event",
+        year=year,
+        week=9,
+        start_date=f"{year}-01-01",
+        end_date=f"{year}-01-01",
+        country=None,
+        state=None,
+        district=None,
+        offseason=True,
+        status="Ongoing",
+        status_str="Ongoing",
+        qual_matches=0,
+        current_match=0,
+        epa_acc=0,
+        epa_mse=0,
+        epa_max=0,
+        epa_top8=0,
+        epa_top24=0,
+        epa_mean=0,
+    )
+
+    year_obj: Optional[APIYear] = await get_year(year=year)
+    if year_obj is None:
+        raise Exception("Year not found")
+
+    team_years: List[APITeamYear] = await get_team_years(
+        year=year, teams=frozenset(teams)
+    )
+
+    return {
+        "event": event.to_dict(),
+        "matches": [],
+        "team_events": [
+            team_year_to_team_event(x, event).to_dict() for x in team_years
+        ],
+        "team_matches": [],
+        "year": year_obj.to_dict(),
+    }
 
 
 @router.get("/event/{event_id}/team_matches/{team}")
