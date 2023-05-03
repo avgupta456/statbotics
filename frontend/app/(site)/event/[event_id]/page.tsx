@@ -39,12 +39,34 @@ async function getData(event_id: string) {
   return data?.data;
 }
 
+async function getHypotheticalData(event_id: string) {
+  const start = performance.now();
+  const res = await fetch(`${BACKEND_URL}/event/hypothetical/${event_id}`, {
+    next: { revalidate: 60 },
+  });
+  log(`/event/hypothetical/${event_id} took ${round(performance.now() - start, 0)}ms`);
+
+  if (!res.ok) {
+    return undefined;
+  }
+
+  const data = await res.json();
+  return data?.data;
+}
+
 // do not cache this page
 export const revalidate = 0;
 
 async function Page({ params }: { params: { event_id: string } }) {
   const { event_id } = params;
-  const data: Data = await getData(event_id);
+
+  let data: Data = await getData(event_id);
+  let hypothetical = false;
+
+  if (!data && event_id.length % 5 === 0 && event_id.length > 18) {
+    data = await getHypotheticalData(event_id);
+    hypothetical = true;
+  }
 
   if (!data) {
     return <NotFound type="Event" />;
@@ -60,14 +82,16 @@ async function Page({ params }: { params: { event_id: string } }) {
           {data.year.year} {truncatedEventName}
         </p>
         <div className="flex">
-          <Link
-            href={"https://www.thebluealliance.com/event/" + event_id}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <Image src="/tba.png" alt="TBA" height={28} width={28} />
-          </Link>
-          {status === "Ongoing" && (
+          {!hypothetical && (
+            <Link
+              href={"https://www.thebluealliance.com/event/" + event_id}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Image src="/tba.png" alt="TBA" height={28} width={28} />
+            </Link>
+          )}
+          {status === "Ongoing" && !hypothetical && (
             <Link
               href={"https://www.thebluealliance.com/gameday/" + event_id}
               rel="noopener noreferrer"

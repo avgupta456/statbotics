@@ -81,3 +81,15 @@ export const getEPABreakdown = (setEPABreakdown) => {
     response.json().then(setEPABreakdown);
   });
 };
+
+export const compress = (arr: number[]) => {
+  return arr.map((num) => num.toString().padStart(5, "0")).join("");
+};
+
+export const decompress = (str: string) => {
+  const arr = [];
+  for (let i = 0; i < str.length; i += 5) {
+    arr.push(parseInt(str.substring(i, i + 5)));
+  }
+  return arr;
+};
