@@ -9,6 +9,7 @@ import { AppContext } from "../context";
 import PageLayout from "../shared/layout";
 import TabsSection from "../shared/tabs";
 import { TeamYearData } from "../types";
+import Event from "./event";
 import Match from "./match";
 
 async function getTeamYearData(year: number, limit?: number | null) {
@@ -62,11 +63,15 @@ const Tabs = () => {
   }, [teamYearDataDict, setTeamYearDataDict, year, error]);
 
   const MemoizedMatch = useMemo(() => <Match data={data} />, [data]);
+  const MemoizedEvent = useMemo(() => <Event data={data} />, [data]);
 
-  const tabs = [{ title: "Match", content: MemoizedMatch }];
+  const tabs = [
+    { title: "Match", content: MemoizedMatch },
+    { title: "Event", content: MemoizedEvent },
+  ];
 
   return (
-    <PageLayout title="Hypothetical Match" year={year} setYear={setYear}>
+    <PageLayout title="Hypothetical" year={year} setYear={setYear}>
       <TabsSection loading={data === undefined} error={error} tabs={tabs} />
     </PageLayout>
   );

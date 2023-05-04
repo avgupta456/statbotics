@@ -117,11 +117,7 @@ async def test_compression(response: Response) -> bool:
 @router.get("/event/hypothetical/{event_id}")
 @async_fail_gracefully
 async def read_hypothetical_event(response: Response, event_id: str) -> Dict[str, Any]:
-    parsed = decompress(event_id)
-    year = parsed[0]
-    teams = parsed[1:]
-
-    print(year, teams)
+    year, teams, _ = decompress(event_id)
 
     event = APIEvent(
         key=event_id,

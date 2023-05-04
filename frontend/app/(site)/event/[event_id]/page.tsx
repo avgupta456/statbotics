@@ -60,10 +60,12 @@ export const revalidate = 0;
 async function Page({ params }: { params: { event_id: string } }) {
   const { event_id } = params;
 
-  let data: Data = await getData(event_id);
+  let data: Data | undefined;
   let hypothetical = false;
 
-  if (!data && event_id.length % 5 === 0 && event_id.length > 18) {
+  if (event_id.length <= 10) {
+    data = await getData(event_id);
+  } else {
     data = await getHypotheticalData(event_id);
     hypothetical = true;
   }
