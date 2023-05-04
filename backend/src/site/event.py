@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.utils.compress import decompress
+from src.utils.compress import compress, decompress
 from src.site.aggregation import (
     get_event,
     get_events,
@@ -76,6 +76,40 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
         "team_matches": [x.to_dict() for x in team_matches],
         "year": year.to_dict(),
     }
+
+    return out
+
+
+@router.get("/event/hypothetical/test_compression")
+@async_fail_gracefully
+async def test_compression(response: Response) -> bool:
+    test = decompress(compress(2023, [254, 1323, 1678], 10))
+
+    out = True
+
+    if test[0] != 2023:
+        print("year")
+        out = False
+
+    if len(test[1]) != 3:
+        print("teams")
+        out = False
+
+    if 254 not in test[1]:
+        print("254")
+        out = False
+
+    if 1323 not in test[1]:
+        print("1323")
+        out = False
+
+    if 1678 not in test[1]:
+        print("1678")
+        out = False
+
+    if test[2] != 10:
+        print("match")
+        out = False
 
     return out
 
