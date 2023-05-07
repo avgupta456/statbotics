@@ -86,7 +86,7 @@ const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
 
 export const compress = (year: number, teams: number[], match: number) => {
   const yearBinary = (year - 2000).toString(2).padStart(6, "0");
-  const matchBinary = match.toString(2).padStart(6, "0");
+  const matchBinary = match.toString(2).padStart(7, "0");
   const prefix = yearBinary + matchBinary;
 
   teams.sort((a, b) => a - b);
@@ -124,14 +124,14 @@ export const decompress = (str: string) => {
     .map((char) => chars.indexOf(char).toString(2).padStart(6, "0"))
     .join("");
 
-  const prefix = binaryString.substring(0, 12);
+  const prefix = binaryString.substring(0, 13);
   const year = parseInt(prefix.substring(0, 6), 2) + 2000;
-  const match = parseInt(prefix.substring(6), 2);
+  const match = parseInt(prefix.substring(7), 2);
 
-  const posLengthsBinary = binaryString.substring(12, 32);
+  const posLengthsBinary = binaryString.substring(13, 33);
   const numPositive = posLengthsBinary.split("1").length - 1;
-  let lengthsBinary = binaryString.substring(32, 32 + 7 * numPositive);
-  let teamsBinary = binaryString.substring(32 + 7 * numPositive);
+  let lengthsBinary = binaryString.substring(33, 33 + 7 * numPositive);
+  let teamsBinary = binaryString.substring(33 + 7 * numPositive);
 
   const lengths = [];
   for (let i = 0; i < posLengthsBinary.length; i++) {

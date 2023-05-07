@@ -6,7 +6,7 @@ chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
 def compress(year: int, teams: List[int], match: int) -> str:
     year_binary = bin(year - 2000)[2:]
     match_binary = bin(match)[2:]
-    prefix = year_binary.rjust(6, "0") + match_binary.rjust(6, "0")
+    prefix = year_binary.rjust(6, "0") + match_binary.rjust(7, "0")
 
     teams = sorted(teams)
     teams_binary = [int(bin(team)[2:]) for team in teams]
@@ -40,11 +40,11 @@ def decompress(string: str) -> Tuple[int, List[int], int]:
 
     prefix = binary_string[:12]
     year = int(prefix[:6], 2) + 2000
-    match = int(prefix[6:], 2)
+    match = int(prefix[7:], 2)
 
-    pos_lengths_binary = binary_string[12:32]
-    lengths_binary = binary_string[32 : 32 + 7 * pos_lengths_binary.count("1")]
-    teams_binary = binary_string[32 + 7 * pos_lengths_binary.count("1") :]
+    pos_lengths_binary = binary_string[13:33]
+    lengths_binary = binary_string[33 : 33 + 7 * pos_lengths_binary.count("1")]
+    teams_binary = binary_string[33 + 7 * pos_lengths_binary.count("1") :]
 
     lengths: List[int] = []
     for i in range(len(pos_lengths_binary)):
