@@ -115,7 +115,7 @@ def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
     etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
 
     if not mock:
-        event_objs = time_func("Load Events", get_events_db, curr_year)  # type: ignore
+        event_objs = get_events_db(year=curr_year, offseason=None)
         is_new_data = time_func("Check TBA", check_year_partial_tba, curr_year, event_objs, etags)  # type: ignore
         if not is_new_data:
             return
