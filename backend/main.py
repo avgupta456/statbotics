@@ -1,5 +1,5 @@
 from dotenv import load_dotenv  # type: ignore
-from fastapi import APIRouter, FastAPI, Response
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
@@ -9,7 +9,6 @@ from src.api.router import router as api_router
 from src.constants import CONN_STR, PROD
 from src.data.router import router as data_router
 from src.site.router import router as site_router
-from src.utils.decorators import async_fail_gracefully
 
 """
 SETUP
