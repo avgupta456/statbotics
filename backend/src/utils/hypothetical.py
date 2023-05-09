@@ -71,5 +71,4 @@ def get_cheesy_schedule(num_teams: int, matches_per_team: int) -> List[Any]:
     )
     lines = data.text.split("\n")
     lines = [[int(x) for x in line.split(",")[::2]] for line in lines[:-1]]
-    print(lines)
     return lines
