@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from src.constants import CURR_YEAR
-from src.data.main import update_curr_year, reset_curr_year
+from src.data.main import reset_curr_year, update_curr_year
 from src.site.event import router as event_router
 from src.site.match import router as match_router
 from src.site.team import router as team_router

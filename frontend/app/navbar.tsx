@@ -149,7 +149,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link href="/hypothetical">
-                <div className="w-36 py-1 text-sm text-center">Hypothetical Match</div>
+                <div className="w-36 py-1 text-sm text-center">Hypotheticals</div>
               </Link>
             </li>
           </ul>
