@@ -10,6 +10,7 @@ from src.site.aggregation import (
     get_team_matches,
     get_year,
 )
+from src.site.hypo_event import read_hypothetical_event as _read_hypothetical_event
 from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.utils.decorators import async_fail_gracefully
 
@@ -77,3 +78,9 @@ async def read_team_matches(
 ) -> List[Dict[str, Any]]:
     team_matches: List[APITeamMatch] = await get_team_matches(event=event_id, team=team)
     return [x.to_dict() for x in team_matches]
+
+
+@router.get("/event/hypothetical/{event_id}")
+@async_fail_gracefully
+async def read_hypothetical_event(response: Response, event_id: str) -> Dict[str, Any]:
+    return await _read_hypothetical_event(event_id)

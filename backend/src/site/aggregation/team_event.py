@@ -7,7 +7,7 @@ from src.data.nepa import (
 )
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
-from src.site.models import APITeamEvent
+from src.site.models import APIEvent, APITeamEvent, APITeamYear
 from src.utils.alru_cache import alru_cache
 
 
@@ -48,6 +48,42 @@ def unpack_team_event(
         rps=team_event.rps or 0,
         rps_per_match=team_event.rps_per_match or 0,
         offseason=team_event.offseason,
+    )
+
+
+def team_year_to_team_event(team_year: APITeamYear, event: APIEvent) -> APITeamEvent:
+    return APITeamEvent(
+        num=team_year.num,
+        team=team_year.team,
+        event=event.key,
+        event_name=event.name,
+        week=event.week,
+        time=0,
+        first_event=False,
+        num_teams=0,
+        start_total_epa=team_year.total_epa,
+        start_rp_1_epa=team_year.rp_1_epa,
+        start_rp_2_epa=team_year.rp_2_epa,
+        total_epa=team_year.total_epa,
+        unitless_epa=team_year.unitless_epa,
+        norm_epa=team_year.norm_epa,
+        auto_epa=team_year.auto_epa,
+        teleop_epa=team_year.teleop_epa,
+        endgame_epa=team_year.endgame_epa,
+        rp_1_epa=team_year.rp_1_epa,
+        rp_2_epa=team_year.rp_2_epa,
+        wins=0,
+        losses=0,
+        ties=0,
+        count=0,
+        qual_wins=0,
+        qual_losses=0,
+        qual_ties=0,
+        qual_count=0,
+        rank=-1,
+        rps=0,
+        rps_per_match=0,
+        offseason=event.offseason,
     )
 
 
