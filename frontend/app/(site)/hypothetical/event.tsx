@@ -5,15 +5,23 @@ import WindowedSelect from "react-windowed-select";
 
 import Link from "next/link";
 
+import { PROD } from "../../../constants";
 import { classnames, decompress } from "../../../utils";
 import { compress } from "../../../utils";
 import { TeamYearData } from "../types";
 
-const Event = ({ data }: { data: TeamYearData }) => {
+// for multi-select
+const formatTeam = (team) => ({
+  value: team.num,
+  label: `${team.num} | ${team.team}`,
+});
+
+const Event = ({ data, year }: { data: TeamYearData; year: number }) => {
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
   const [seed, setSeed] = useState(0);
 
   const [loadUrl, setLoadUrl] = useState("");
+  const [invalidUrl, setInvalidUrl] = useState(false);
 
   useEffect(() => {
     if (loadUrl) {
@@ -21,35 +29,53 @@ const Event = ({ data }: { data: TeamYearData }) => {
       if (url.includes("/")) {
         url = url.split("/").pop();
       }
-      const data = decompress(url);
+      const decompressData = decompress(url);
       if (data) {
-        const { year, teams, match } = data;
-        if (teams?.length < 6 || teams?.length > 100) {
+        const { year: dataYear, teams: dataTeams, match: dataMatch } = decompressData;
+        if (dataYear !== year) {
+          setInvalidUrl(true);
           return;
         }
-        console.log(match);
-        setSelectedTeams(teams.map((team) => ({ value: team, label: team })));
-        setSeed(match);
+
+        if (dataTeams?.length < 6 || dataTeams?.length > 100) {
+          setInvalidUrl(true);
+          return;
+        }
+
+        // get from data.team_years
+        const teamObjs = dataTeams.map((team) =>
+          data.team_years.find((teamYear) => teamYear.num === team)
+        );
+
+        if (teamObjs.some((team) => !team)) {
+          setInvalidUrl(true);
+          return;
+        }
+
+        setSelectedTeams(teamObjs.map((team) => formatTeam(team)));
+        setSeed(dataMatch);
       }
     }
-  }, [loadUrl]);
+  }, [data, year, loadUrl]);
 
   const addTeam = async (selected) => {
-    if (selected.length > selectedTeams.length) {
-      const team = selected[selected.length - 1].value;
+    if (selected.length > 100) {
+      return;
     }
+    setLoadUrl("");
     setSelectedTeams(selected);
   };
 
-  const teamOptions = data.team_years
-    .sort((a, b) => a.num - b.num)
-    .map((team) => ({
-      value: team.num,
-      label: `${team.num} | ${team.team}`,
-    }));
+  const setRandomSeed = (seed) => {
+    setLoadUrl("");
+    setSeed(seed);
+  };
+
+  const teamOptions = data.team_years.sort((a, b) => a.num - b.num).map((team) => formatTeam(team));
 
   const TeamSelect = ({ className }) => (
     <WindowedSelect
+      autoFocus
       isMulti
       instanceId={"team-select"}
       className={classnames("flex-grow text-sm mr-2", className)}
@@ -64,7 +90,11 @@ const Event = ({ data }: { data: TeamYearData }) => {
   const teamNums = selectedTeams.map((team) => team.value);
   const numTeams = teamNums.length;
 
-  const url = `statbotics.io/event/${compress(2023, teamNums, seed)}`;
+  const url = PROD
+    ? `statbotics.io/event/${compress(year, teamNums, seed)}`
+    : `localhost:3000/event/${compress(year, teamNums, seed)}`;
+
+  const fullUrl = PROD ? `https://www.${url}` : `http://${url}`;
 
   return (
     <div className="w-full mb-8">
@@ -87,18 +117,24 @@ const Event = ({ data }: { data: TeamYearData }) => {
                 .map((_, i) => i + 1),
             ].map((i) => ({ value: i, label: i }))}
             value={{ value: seed, label: seed }}
-            onChange={(e) => setSeed(e.value)}
+            onChange={(e) => setRandomSeed(e.value)}
           />
         </div>
       </div>
       <div className="w-full lg:w-4/5 mx-auto flex items-center justify-center mb-16">
         <p>Or Load from URL: </p>
         <input
-          className="ml-2 w-96 rounded ring-2 p-1"
+          className={classnames(
+            "ml-2 w-96 rounded border border-gray-300 p-1",
+            invalidUrl && "border-red-500 bg-red-100"
+          )}
           type="text"
           placeholder="statbotics.io/event/..."
           value={loadUrl}
-          onChange={(e) => setLoadUrl(e.target.value)}
+          onChange={(e) => {
+            setInvalidUrl(false);
+            setLoadUrl(e.target.value);
+          }}
         />
       </div>
       {numTeams >= 6 && numTeams <= 100 && (
@@ -106,12 +142,7 @@ const Event = ({ data }: { data: TeamYearData }) => {
           <p className="text-xl flex flex-col items-center">
             Your Custom URL is{" "}
             <div className="flex items-center">
-              <Link
-                href={`https://www.${url}`}
-                className="text_link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={fullUrl} className="text_link" target="_blank" rel="noopener noreferrer">
                 {url}
               </Link>
               <div className="tooltip ml-2" data-tip="Copy Link">

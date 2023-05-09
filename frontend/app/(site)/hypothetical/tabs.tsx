@@ -63,7 +63,7 @@ const Tabs = () => {
   }, [teamYearDataDict, setTeamYearDataDict, year, error]);
 
   const MemoizedMatch = useMemo(() => <Match data={data} />, [data]);
-  const MemoizedEvent = useMemo(() => <Event data={data} />, [data]);
+  const MemoizedEvent = useMemo(() => <Event data={data} year={year} />, [data, year]);
 
   const tabs = [
     { title: "Match", content: MemoizedMatch },
