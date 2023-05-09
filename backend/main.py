@@ -1,4 +1,3 @@
-import sentry_sdk
 from dotenv import load_dotenv  # type: ignore
 from fastapi import APIRouter, FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,14 +14,6 @@ from src.utils.decorators import async_fail_gracefully
 """
 SETUP
 """
-
-sentry_sdk.init(
-    dsn="https://d13d19b3a7c54cc79ad19ff65640088c@o4504899523575808.ingest.sentry.io/4504899684270080",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production,
-    traces_sample_rate=0.2 if PROD else 1.0,
-)
 
 app = FastAPI(
     title="Statbotics REST API",
@@ -57,12 +48,6 @@ async def read_root():
 @router.get("/info")
 def get_info():
     return {"PROD": PROD, "CONN_STR": "REDACTED" if PROD else CONN_STR}
-
-
-@app.get("/sentry-debug")
-@async_fail_gracefully
-async def trigger_error(response: Response):
-    return 1 / 0
 
 
 app.include_router(router, prefix="", include_in_schema=False)
