@@ -38,9 +38,9 @@ def decompress(string: str) -> Tuple[int, List[int], int]:
     for char in string:
         binary_string += bin(chars.index(char))[2:].rjust(6, "0")
 
-    prefix = binary_string[:12]
+    prefix = binary_string[:13]
     year = int(prefix[:6], 2) + 2000
-    match = int(prefix[7:], 2)
+    match = int(prefix[6:], 2)
 
     pos_lengths_binary = binary_string[13:33]
     lengths_binary = binary_string[33 : 33 + 7 * pos_lengths_binary.count("1")]

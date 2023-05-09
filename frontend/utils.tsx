@@ -119,10 +119,10 @@ export const compress = (year: number, teams: number[], match: number) => {
 };
 
 export const decompress = (str: string) => {
-  const binaryString = str
-    .split("")
-    .map((char) => chars.indexOf(char).toString(2).padStart(6, "0"))
-    .join("");
+  let binaryString = "";
+  for (const char of str) {
+    binaryString += chars.indexOf(char).toString(2).padStart(6, "0");
+  }
 
   const prefix = binaryString.substring(0, 13);
   const year = parseInt(prefix.substring(0, 6), 2) + 2000;
@@ -151,7 +151,7 @@ export const decompress = (str: string) => {
     }
   }
 
-  return [year, teams, match];
+  return { year, teams, match };
 };
 
 // console.log(decompress(compress(2023, [254, 1323, 1678], 10)));
