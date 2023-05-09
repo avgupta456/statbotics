@@ -1,55 +1,15 @@
 import random
 from typing import Any, Dict, List, Optional
 
-from fastapi import Response
-
 from src.data.epa import sigmoid
 from src.site.aggregation import get_team_years, get_year, team_year_to_team_event
-from src.site.event import router
 from src.site.models import APIEvent, APIMatch, APITeamMatch, APITeamYear, APIYear
-from src.utils.decorators import async_fail_gracefully
-from src.utils.hypothetical import compress, decompress, get_cheesy_schedule
+from src.utils.hypothetical import decompress, get_cheesy_schedule
 
 # TODO: Avoid code duplication with Database schema, EPA calculations, etc.
 
 
-@router.get("/event/hypothetical/test_compression")
-@async_fail_gracefully
-async def test_compression(response: Response) -> bool:
-    test = decompress(compress(2023, [254, 1323, 1678], 10))
-
-    out = True
-
-    if test[0] != 2023:
-        print("year")
-        out = False
-
-    if len(test[1]) != 3:
-        print("teams")
-        out = False
-
-    if 254 not in test[1]:
-        print("254")
-        out = False
-
-    if 1323 not in test[1]:
-        print("1323")
-        out = False
-
-    if 1678 not in test[1]:
-        print("1678")
-        out = False
-
-    if test[2] != 10:
-        print("match")
-        out = False
-
-    return out
-
-
-@router.get("/event/hypothetical/{event_id}")
-@async_fail_gracefully
-async def read_hypothetical_event(response: Response, event_id: str) -> Dict[str, Any]:
+async def read_hypothetical_event(event_id: str) -> Dict[str, Any]:
     year, teams, seed = decompress(event_id)
 
     event = APIEvent(
