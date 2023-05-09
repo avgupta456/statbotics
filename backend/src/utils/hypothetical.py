@@ -1,4 +1,6 @@
-from typing import List, Tuple
+from typing import Any, List, Tuple
+
+import requests
 
 chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
 
@@ -61,3 +63,13 @@ def decompress(string: str) -> Tuple[int, List[int], int]:
             teams_binary = teams_binary[i:]
 
     return year, teams, match
+
+
+def get_cheesy_schedule(num_teams: int, matches_per_team: int) -> List[Any]:
+    data = requests.get(
+        f"https://raw.githubusercontent.com/Team254/cheesy-arena/main/schedules/{num_teams}_{matches_per_team}.csv"
+    )
+    lines = data.text.split("\n")
+    lines = [[int(x) for x in line.split(",")[::2]] for line in lines[:-1]]
+    print(lines)
+    return lines
