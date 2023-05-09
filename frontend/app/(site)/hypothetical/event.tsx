@@ -23,6 +23,9 @@ const Event = ({ data, year }: { data: TeamYearData; year: number }) => {
   const [loadUrl, setLoadUrl] = useState("");
   const [invalidUrl, setInvalidUrl] = useState(false);
 
+  const [commaSep, setCommaSep] = useState("");
+  const [invalidCommaSep, setInvalidCommaSep] = useState(false);
+
   useEffect(() => {
     if (loadUrl) {
       let url = loadUrl;
@@ -58,16 +61,39 @@ const Event = ({ data, year }: { data: TeamYearData; year: number }) => {
     }
   }, [data, year, loadUrl]);
 
+  useEffect(() => {
+    if (commaSep) {
+      const teams = commaSep.split(",").map((team) => team.trim());
+      if (teams.length === 0 || teams.length > 100) {
+        setInvalidCommaSep(true);
+        return;
+      }
+
+      const teamObjs = teams.map((team) =>
+        data.team_years.find((teamYear) => teamYear.num === parseInt(team))
+      );
+
+      if (teamObjs.some((team) => !team)) {
+        setInvalidCommaSep(true);
+        return;
+      }
+
+      setSelectedTeams(teamObjs.map((team) => formatTeam(team)));
+    }
+  }, [data, commaSep]);
+
   const addTeam = async (selected) => {
     if (selected.length > 100) {
       return;
     }
     setLoadUrl("");
+    setCommaSep("");
     setSelectedTeams(selected);
   };
 
   const setRandomSeed = (seed) => {
     setLoadUrl("");
+    setCommaSep("");
     setSeed(seed);
   };
 
@@ -75,7 +101,7 @@ const Event = ({ data, year }: { data: TeamYearData; year: number }) => {
 
   const TeamSelect = ({ className }) => (
     <WindowedSelect
-      autoFocus
+      autoFocus={!loadUrl && !commaSep}
       isMulti
       instanceId={"team-select"}
       className={classnames("flex-grow text-sm mr-2", className)}
@@ -121,7 +147,7 @@ const Event = ({ data, year }: { data: TeamYearData; year: number }) => {
           />
         </div>
       </div>
-      <div className="w-full lg:w-4/5 mx-auto flex items-center justify-center mb-16">
+      <div className="w-full lg:w-4/5 mx-auto flex items-center justify-center mb-8">
         <p>Or Load from URL: </p>
         <input
           className={classnames(
@@ -134,6 +160,22 @@ const Event = ({ data, year }: { data: TeamYearData; year: number }) => {
           onChange={(e) => {
             setInvalidUrl(false);
             setLoadUrl(e.target.value);
+          }}
+        />
+      </div>
+      <div className="w-full lg:w-4/5 mx-auto flex items-center justify-center mb-16">
+        <p>Or Load from Comma-Separated Team List: </p>
+        <input
+          className={classnames(
+            "ml-2 w-96 rounded border border-gray-300 p-1",
+            invalidCommaSep && "border-red-500 bg-red-100"
+          )}
+          type="text"
+          placeholder="A, B, C, ..."
+          value={commaSep}
+          onChange={(e) => {
+            setInvalidCommaSep(false);
+            setCommaSep(e.target.value);
           }}
         />
       </div>
