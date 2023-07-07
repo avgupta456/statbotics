@@ -577,10 +577,12 @@ def process_year(
     completed_team_matches = [m for m in team_matches if m.status == "Completed"]
     for team_match in completed_team_matches:
         match_key = get_team_match_key(team_match.team, team_match.match)
-        team_match.epa = round(team_match_ids[match_key], 2)
-        team_match.post_epa = round(team_match_ids_post[match_key], 2)
+        team_match.epa = round(team_match_ids.get(match_key, -1), 2)
+        team_match.post_epa = round(team_match_ids_post.get(match_key, -1), 2)
         if USE_COMPONENTS:
-            auto, teleop, endgame, rp_1, rp_2 = component_team_match_ids[match_key]
+            auto, teleop, endgame, rp_1, rp_2 = component_team_match_ids.get(
+                match_key, (-1, -1, -1, -1, -1)
+            )
             team_match.auto_epa = round(auto, 2)
             team_match.teleop_epa = round(teleop, 2)
             team_match.endgame_epa = round(endgame, 2)
