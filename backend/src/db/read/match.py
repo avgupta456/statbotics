@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy.orm.session import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -15,7 +15,7 @@ def get_match(match: str) -> Optional[Match]:
         if data is None:
             return None
 
-        return Match.from_dict(data.__dict__)
+        return Match.from_dict(data.__dict__)  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -33,7 +33,7 @@ def get_matches(
     offset: Optional[int] = None,
 ) -> List[Match]:
     def callback(session: SessionType):
-        data = session.query(MatchORM)
+        data = session.query(MatchORM)  # type: ignore
         if team is not None:
             data = data.filter(  # type: ignore
                 (MatchORM.red_1 == team)  # type: ignore
@@ -63,15 +63,15 @@ def get_matches(
             data = data.limit(limit)  # type: ignore
         if offset is not None:
             data = data.offset(offset)  # type: ignore
-        out_data: List[MatchORM] = data.all()
+        out_data: List[MatchORM] = data.all()  # type: ignore
 
-        return [Match.from_dict(x.__dict__) for x in out_data]
+        return [Match.from_dict(x.__dict__) for x in out_data]  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_matches() -> int:
-    def callback(session: SessionType):
-        return session.query(MatchORM).count()
+    def callback(session: SessionType) -> int:
+        return session.query(MatchORM).count()  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore

@@ -1,12 +1,12 @@
 from typing import Any
 
 from sqlalchemy import create_engine  # type: ignore
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base  # type: ignore
+from sqlalchemy.orm import sessionmaker  # type: ignore
 
 from src.constants import CONN_STR
 
-engine = create_engine(CONN_STR)
+engine = create_engine(CONN_STR)  # type: ignore
 
 Session = sessionmaker(bind=engine)
 

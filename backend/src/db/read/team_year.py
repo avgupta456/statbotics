@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy.orm.session import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -12,10 +12,10 @@ def get_team_year(team: int, year: int) -> Optional[TeamYear]:
         data = session.query(TeamYearORM).filter(  # type: ignore
             TeamYearORM.team == team, TeamYearORM.year == year
         )
-        out_data: Optional[TeamYearORM] = data.first()
+        out_data: Optional[TeamYearORM] = data.first()  # type: ignore
         if out_data is None:
             return None
-        return TeamYear.from_dict(out_data.__dict__)
+        return TeamYear.from_dict(out_data.__dict__)  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -34,7 +34,7 @@ def get_team_years(
     offset: Optional[int] = None,
 ) -> List[TeamYear]:
     def callback(session: SessionType):
-        data = session.query(TeamYearORM)
+        data = session.query(TeamYearORM)  # type: ignore
         if team is not None:
             data = data.filter(TeamYearORM.team == team)  # type: ignore
         if teams is not None:
@@ -59,14 +59,14 @@ def get_team_years(
             data = data.limit(limit)  # type: ignore
         if offset is not None:
             data = data.offset(offset)  # type: ignore
-        out_data: List[TeamYearORM] = data.all()
-        return [TeamYear.from_dict(x.__dict__) for x in out_data]
+        out_data: List[TeamYearORM] = data.all()  # type: ignore
+        return [TeamYear.from_dict(x.__dict__) for x in out_data]  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_team_years() -> int:
-    def callback(session: SessionType):
-        return session.query(TeamYearORM).count()
+    def callback(session: SessionType) -> int:
+        return session.query(TeamYearORM).count()  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore

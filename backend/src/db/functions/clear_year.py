@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session as SessionType
+from sqlalchemy.orm import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session

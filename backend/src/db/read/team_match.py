@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy.orm.session import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -13,10 +13,10 @@ def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
         data = session.query(TeamMatchORM).filter(  # type: ignore
             TeamMatchORM.team == team, TeamMatchORM.match == match
         )
-        out_data: Optional[TeamMatchORM] = data.first()
+        out_data: Optional[TeamMatchORM] = data.first()  # type: ignore
         if out_data is None:
             return None
-        return TeamMatch.from_dict(out_data.__dict__)
+        return TeamMatch.from_dict(out_data.__dict__)  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -35,7 +35,7 @@ def get_team_matches(
     offset: Optional[int] = None,
 ) -> List[TeamMatch]:
     def callback(session: SessionType):
-        data = session.query(TeamMatchORM)
+        data = session.query(TeamMatchORM)  # type: ignore
         if team is not None:
             data = data.filter(TeamMatchORM.team == team)  # type: ignore
         if year is not None:
@@ -60,14 +60,14 @@ def get_team_matches(
             data = data.limit(limit)  # type: ignore
         if offset is not None:
             data = data.offset(offset)  # type: ignore
-        out_data: List[TeamMatchORM] = data.all()
-        return [TeamMatch.from_dict(x.__dict__) for x in out_data]
+        out_data: List[TeamMatchORM] = data.all()  # type: ignore
+        return [TeamMatch.from_dict(x.__dict__) for x in out_data]  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_team_matches() -> int:
-    def callback(session: SessionType):
-        return session.query(TeamMatchORM).count()
+    def callback(session: SessionType) -> int:
+        return session.query(TeamMatchORM).count()  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore

@@ -1,6 +1,6 @@
 from sqlalchemy import inspect  # type: ignore
 
-from src.db.main import engine
+from src.db.main import engine  # type: ignore
 
 
 def print_all_tables():

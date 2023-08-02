@@ -1,4 +1,6 @@
-from sqlalchemy.orm import Session as SessionType
+from typing import List
+
+from sqlalchemy.orm import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.constants import CURR_YEAR
@@ -10,7 +12,7 @@ from src.db.models.team_year import TeamYearORM
 
 def remove_teams_with_no_events() -> None:
     def callback(session: SessionType):
-        teams = [
+        teams: List[TeamORM] = [
             x[0]
             for x in session.query(TeamEventORM.team).group_by(TeamEventORM.team).all()  # type: ignore
         ]

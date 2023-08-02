@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy.orm.session import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -10,7 +10,7 @@ from src.db.models.team import Team, TeamORM
 def get_team(team: int) -> Optional[Team]:
     def callback(session: SessionType):
         out_data = session.query(TeamORM).filter(TeamORM.team == team).first()  # type: ignore
-        return Team.from_dict(out_data.__dict__) if out_data else None
+        return Team.from_dict(out_data.__dict__) if out_data else None  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -27,7 +27,7 @@ def get_teams(
     offset: Optional[int] = None,
 ) -> List[Team]:
     def callback(session: SessionType):
-        data = session.query(TeamORM)
+        data = session.query(TeamORM)  # type: ignore
         if country is not None:
             data = data.filter(TeamORM.country == country)  # type: ignore
         if district is not None:
@@ -49,14 +49,14 @@ def get_teams(
         if offset is not None:
             data = data.offset(offset)  # type: ignore
 
-        out_data: List[TeamORM] = data.all()
-        return [Team.from_dict(x.__dict__) for x in out_data]
+        out_data: List[TeamORM] = data.all()  # type: ignore
+        return [Team.from_dict(x.__dict__) for x in out_data]  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_teams() -> int:
-    def callback(session: SessionType):
-        return session.query(TeamORM).count()
+    def callback(session: SessionType) -> int:
+        return session.query(TeamORM).count()  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore

@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy.orm.session import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -12,7 +12,7 @@ def get_event(event_id: str) -> Optional[Event]:
         data = session.query(EventORM).filter(EventORM.key == event_id).first()  # type: ignore
         if data is None:
             return None
-        return Event.from_dict(data.__dict__)
+        return Event.from_dict(data.__dict__)  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -31,7 +31,7 @@ def get_events(
     offset: Optional[int] = None,
 ) -> List[Event]:
     def callback(session: SessionType):
-        data = session.query(EventORM)
+        data = session.query(EventORM)  # type: ignore
         if year is not None:
             data = data.filter(EventORM.year == year)  # type: ignore
         if country is not None:
@@ -56,14 +56,14 @@ def get_events(
             data = data.limit(limit)  # type: ignore
         if offset is not None:
             data = data.offset(offset)  # type: ignore
-        out_data: List[EventORM] = data.all()
-        return [Event.from_dict(x.__dict__) for x in out_data]
+        out_data: List[EventORM] = data.all()  # type: ignore
+        return [Event.from_dict(x.__dict__) for x in out_data]  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_events() -> int:
-    def callback(session: SessionType):
-        return session.query(EventORM).count()
+    def callback(session: SessionType) -> int:
+        return session.query(EventORM).count()  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore

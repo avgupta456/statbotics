@@ -1,8 +1,8 @@
 from typing import Any, Callable, Dict, List, Type
 
 import attr
-from sqlalchemy.dialects import postgresql
-from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy.dialects import postgresql  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -34,10 +34,10 @@ def update_template(
                 insert = postgresql.insert(orm_type.__table__).values(  # type: ignore
                     data[i : i + CUTOFF]
                 )
-                update_cols = {
-                    c.name: c for c in insert.excluded if c.name not in primary_key
+                update_cols = {  # type: ignore
+                    c.name: c for c in insert.excluded if c.name not in primary_key  # type: ignore
                 }
-                update = insert.on_conflict_do_update(
+                update = insert.on_conflict_do_update(  # type: ignore
                     index_elements=primary_key, set_=update_cols
                 )
                 session.execute(update.execution_options(synchronize_session=False))  # type: ignore

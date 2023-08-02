@@ -1,8 +1,8 @@
 from typing import Any, Dict, Optional
 
 import attr
-from sqlalchemy import Column, Float, Integer
-from sqlalchemy.sql.schema import PrimaryKeyConstraint
+from sqlalchemy import Column, Float, Integer  # type: ignore
+from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
 
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM

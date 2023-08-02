@@ -1,9 +1,9 @@
 from typing import Any, Dict, Optional, Tuple
 
 import attr
-from sqlalchemy import Boolean, Column, Float, Integer
-from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
-from sqlalchemy.sql.sqltypes import String
+from sqlalchemy import Boolean, Column, Float, Integer  # type: ignore
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint  # type: ignore
+from sqlalchemy.sql.sqltypes import String  # type: ignore
 
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM
