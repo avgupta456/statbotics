@@ -1,7 +1,8 @@
 from collections import defaultdict
 from typing import Any, Dict
 
-from src.simulation.classes import Match, Model, Pred
+from src.classes import Match, Pred
+from src.models.template import Model
 
 
 class Baseline(Model):

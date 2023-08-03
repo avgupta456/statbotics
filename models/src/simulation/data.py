@@ -6,8 +6,8 @@ from typing import Any, Dict, List
 
 from requests import Session
 
-from src.simulation.classes import Match, YearStats
-from src.simulation.utils import dump_cache, load_cache
+from src.classes import Match, YearStats
+from src.utils import dump_cache, load_cache
 
 # TBA API
 

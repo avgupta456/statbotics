@@ -5,7 +5,7 @@ from rich.progress import track
 
 from src.simulation.data import get_data
 from src.simulation.main import Simulation
-from src.simulation.utils import print_table
+from src.utils import print_table
 
 app = typer.Typer()
 
