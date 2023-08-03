@@ -2,10 +2,11 @@ import os
 import time
 from datetime import datetime
 from typing import Any, Dict, List
+import statistics
 
 from requests import Session
 from src.utils import dump_cache, load_cache
-from src.classes import Match
+from src.classes import Match, YearStats
 
 # TBA API
 
@@ -75,7 +76,6 @@ def get_data(year: int) -> List[Any]:
         event_time = get_timestamp_from_str(event["start_date"])
 
         for match in get_tba(f"event/{event_key}/matches"):
-            match: Any = match
             if match["key"] in MATCH_BLACKLIST:
                 continue
 
@@ -101,6 +101,18 @@ def get_data(year: int) -> List[Any]:
                 )
             )
 
-    dump_cache(f"cache/processed/{year}", all_matches)
+    scores: List[int] = []
+    for match in all_matches:
+        if match.week == 1 and not match.playoff:
+            scores.extend([match.red_score, match.blue_score])
+
+    score_sd = statistics.stdev(scores)
+    score_mean = statistics.mean(scores)
+    stats = YearStats(year, score_sd, score_mean)
+
+    dump_cache(
+        f"cache/processed/{year}",
+        (all_matches, stats),
+    )
 
     return all_matches

@@ -6,7 +6,8 @@ from src.classes import Method, Pred, Match
 
 class Baseline(Method):
     def process_match(self, match: Match) -> Pred:
-        return Pred(100, 100, 0.5)
+        mean = 3 * self.stats.score_mean  # rough heuristic
+        return Pred(mean, mean, 0.5)
 
     def update_match(self, match: Match, pred: Pred):
         pass
@@ -30,7 +31,7 @@ class AvgScore(Method):
         blue_pred = sum(self.scores[t] for t in match.blue())
         blue_pred /= max(1, sum(self.counts[t] for t in match.blue()))
 
-        win_prob = 1 / (1 + 10 ** ((blue_pred - red_pred) / 15))
+        win_prob = 1 / (1 + 10 ** ((blue_pred - red_pred) / self.stats.score_sd))
 
         return Pred(red_pred, blue_pred, win_prob)
 
@@ -42,18 +43,3 @@ class AvgScore(Method):
         for t in match.blue():
             self.counts[t] += 1
             self.scores[t] += match.blue_score
-
-
-class MovingAvgScore(AvgScore):
-    def __init__(self, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-        self.decay = 0.9
-
-    def update_match(self, match: Match, pred: Pred):
-        for t in match.red():
-            self.counts[t] = self.counts[t] * self.decay + 1
-            self.scores[t] = self.scores[t] * self.decay + match.red_score
-
-        for t in match.blue():
-            self.counts[t] = self.counts[t] * self.decay + 1
-            self.scores[t] = self.scores[t] * self.decay + match.blue_score

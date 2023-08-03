@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 from src.utils import load_cache
-from src.baseline import Baseline, AvgScore, MovingAvgScore
+from src.baseline import Baseline, AvgScore
 from src.classes import Metrics, Method
 
 
@@ -15,18 +15,16 @@ class Simulation:
 
         self.metrics = Metrics()
 
+        self.matches, self.stats = Simulation.get_data(self.year)
+
         method_dict: Dict[str, Any] = {
-            "baseline": Baseline,
-            "avg_score": AvgScore,
-            "moving_avg_score": MovingAvgScore,
+            "baseline": Baseline("baseline", self.metrics, self.stats),
+            "avg_score": AvgScore("avg_score", self.metrics, self.stats),
         }
 
-        self.methods: List[Method] = [
-            method_dict[name](name, self.metrics) for name in methods
-        ]
+        self.methods: List[Method] = [method_dict[name] for name in methods]
 
     def run(self):
-        self.matches = Simulation.get_data(self.year)
         matches = sorted(self.matches, key=lambda m: m.time)
         for match in matches:
             for method in self.methods:

@@ -72,6 +72,20 @@ class Match:
         return f"Match({self.key}, {self.red_1} {self.red_2} {self.red_3} vs. {self.blue_1} {self.blue_2} {self.blue_3}, {self.red_score}-{self.blue_score})"
 
 
+class YearStats:
+    year: int
+    score_mean: float
+    score_sd: float
+
+    def __init__(self, year: int, score_mean: float, score_sd: float):
+        self.year = year
+        self.score_mean = score_mean
+        self.score_sd = score_sd
+
+    def __repr__(self):
+        return f"YearStats({self.year})"
+
+
 class Pred:
     red_score: float
     blue_score: float
@@ -168,9 +182,10 @@ class Metrics:
 
 
 class Method:
-    def __init__(self, name: str, metrics: Metrics):
+    def __init__(self, name: str, metrics: Metrics, stats: YearStats):
         self.name = name
         self.metrics = metrics
+        self.stats = stats
 
     def process_match(self, match: Match) -> Pred:
         raise NotImplementedError
