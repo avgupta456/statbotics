@@ -8,11 +8,11 @@ class Model:
         self.name = name
         self.stats = stats
 
-    def process_match(self, match: Match) -> Pred:
+    def predict_match(self, match: Match) -> Pred:
         raise NotImplementedError
 
-    def attribute_match(self, match: Match) -> Dict[int, Attribution]:
+    def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
         raise NotImplementedError
 
-    def update_team(self, team: int, attr: Attribution) -> None:
+    def update_team(self, team: int, attr: Attribution, playoff: bool) -> None:
         raise NotImplementedError

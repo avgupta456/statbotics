@@ -6,14 +6,14 @@ from src.models.template import Model
 
 
 class Baseline(Model):
-    def process_match(self, match: Match) -> Pred:
+    def predict_match(self, match: Match) -> Pred:
         mean = 3 * self.stats.score_mean  # rough heuristic
         return Pred(mean, mean, 0.5)
 
-    def attribute_match(self, match: Match) -> Dict[int, Attribution]:
+    def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
         return {}
 
-    def update_team(self, team: int, attr: Attribution) -> None:
+    def update_team(self, team: int, attr: Attribution, playoff: bool) -> None:
         pass
 
 
@@ -27,7 +27,7 @@ class AvgScore(Model):
         self.counts: Dict[int, float] = defaultdict(int)
         self.scores: Dict[int, float] = defaultdict(int)
 
-    def process_match(self, match: Match) -> Pred:
+    def predict_match(self, match: Match) -> Pred:
         red_pred = sum(self.scores[t] / max(1, self.counts[t]) for t in match.red())
         blue_pred = sum(self.scores[t] / max(1, self.counts[t]) for t in match.blue())
 
@@ -35,7 +35,7 @@ class AvgScore(Model):
 
         return Pred(red_pred, blue_pred, win_prob)
 
-    def attribute_match(self, match: Match) -> Dict[int, Attribution]:
+    def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
         out: Dict[int, Attribution] = {}
         for t in match.red():
             out[t] = Attribution(match.red_score / 3)
@@ -45,6 +45,6 @@ class AvgScore(Model):
 
         return out
 
-    def update_team(self, team: int, attr: Attribution) -> None:
+    def update_team(self, team: int, attr: Attribution, playoff: bool) -> None:
         self.counts[team] += 1
         self.scores[team] += attr.contrib

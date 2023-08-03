@@ -5,6 +5,8 @@ from typing import Any, Dict, List
 from src.classes import Match, Pred
 from src.models.baseline import AvgScore, Baseline
 from src.models.template import Model
+from src.models.elo import Elo
+from src.models.epa import EPA
 from src.utils import load_cache, print_table
 
 
@@ -104,6 +106,8 @@ class Simulation:
         models_dict: Dict[str, Any] = {
             "baseline": Baseline("baseline", self.stats),
             "avg_score": AvgScore("avg_score", self.stats),
+            "elo": Elo("elo", self.stats),
+            "epa": EPA("epa", self.stats),
         }
 
         self.models: List[Model] = [models_dict[name] for name in models]
@@ -112,10 +116,10 @@ class Simulation:
         matches = sorted(self.matches, key=lambda m: m.time)
         for match in matches:
             for model in self.models:
-                pred = model.process_match(match.mask())
+                pred = model.predict_match(match.mask())
                 self.metrics.add_match_model(model.name, match, pred)
-                attributions = model.attribute_match(match)
+                attributions = model.attribute_match(match, pred)
                 for team, attr in attributions.items():
-                    model.update_team(team, attr)
+                    model.update_team(team, attr, match.playoff)
 
         self.metrics.print()
