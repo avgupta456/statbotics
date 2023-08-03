@@ -1,10 +1,10 @@
-from typing import Any, Dict
 from collections import defaultdict
+from typing import Any, Dict
 
-from src.classes import Method, Pred, Match
+from src.simulation.classes import Match, Model, Pred
 
 
-class Baseline(Method):
+class Baseline(Model):
     def process_match(self, match: Match) -> Pred:
         mean = 3 * self.stats.score_mean  # rough heuristic
         return Pred(mean, mean, 0.5)
@@ -13,7 +13,7 @@ class Baseline(Method):
         pass
 
 
-class AvgScore(Method):
+class AvgScore(Model):
     counts: Dict[int, float]
     scores: Dict[int, float]
 

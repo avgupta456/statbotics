@@ -1,9 +1,9 @@
-from typing import Any, List
 import os
 import pickle
+from typing import Any, List
 
-from rich.table import Table
 from rich.console import Console
+from rich.table import Table
 
 # CACHING
 

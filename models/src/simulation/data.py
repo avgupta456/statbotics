@@ -1,12 +1,13 @@
 import os
+import statistics
 import time
 from datetime import datetime
 from typing import Any, Dict, List
-import statistics
 
 from requests import Session
-from src.utils import dump_cache, load_cache
-from src.classes import Match, YearStats
+
+from src.simulation.classes import Match, YearStats
+from src.simulation.utils import dump_cache, load_cache
 
 # TBA API
 
