@@ -1,4 +1,6 @@
-from src.classes import Match, Pred, YearStats
+from typing import Dict
+
+from src.classes import Match, Pred, Attribution, YearStats
 
 
 class Model:
@@ -9,5 +11,8 @@ class Model:
     def process_match(self, match: Match) -> Pred:
         raise NotImplementedError
 
-    def update_match(self, match: Match, pred: Pred) -> None:
+    def attribute_match(self, match: Match) -> Dict[int, Attribution]:
+        raise NotImplementedError
+
+    def update_team(self, team: int, attr: Attribution) -> None:
         raise NotImplementedError

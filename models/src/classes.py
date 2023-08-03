@@ -93,3 +93,13 @@ class Pred:
 
     def __repr__(self):
         return f"Pred({self.red_score}-{self.blue_score}, {self.win_prob})"
+
+
+class Attribution:
+    contrib: float
+
+    def __init__(self, contrib: float):
+        self.contrib = contrib
+
+    def __repr__(self):
+        return f"Attribution({self.contrib})"

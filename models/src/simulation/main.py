@@ -114,6 +114,8 @@ class Simulation:
             for model in self.models:
                 pred = model.process_match(match.mask())
                 self.metrics.add_match_model(model.name, match, pred)
-                model.update_match(match, pred)
+                attributions = model.attribute_match(match)
+                for team, attr in attributions.items():
+                    model.update_team(team, attr)
 
         self.metrics.print()
