@@ -1,9 +1,9 @@
 from typing import Dict, List, Type
 
 from src.models.baseline import AvgScore, Baseline
-from src.models.template import Model
 from src.models.elo import Elo
 from src.models.epa import EPA
+from src.models.template import Model
 from src.utils import load_cache, print_table
 
 model_name_to_class: Dict[str, Type[Model]] = {

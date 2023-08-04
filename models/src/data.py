@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 
 from requests import Session
 
+from src.breakdown import clean_breakdown
 from src.classes import Match, YearStats
 from src.utils import dump_cache, load_cache
 
@@ -77,7 +78,8 @@ def get_data(year: int) -> List[Any]:
         event_time = get_timestamp_from_str(event["start_date"])
 
         for match in get_tba(f"event/{event_key}/matches"):
-            if match["key"] in MATCH_BLACKLIST:
+            key = match["key"]
+            if key in MATCH_BLACKLIST:
                 continue
 
             # Skip handling DQs and surrogates for simplicity
@@ -91,17 +93,21 @@ def get_data(year: int) -> List[Any]:
             if red_score < 0 or blue_score < 0:
                 continue
 
-            red_fouls = (
-                0 if year < 2016 else match["score_breakdown"]["red"]["foulPoints"]
-            )
-
-            blue_fouls = (
-                0 if year < 2016 else match["score_breakdown"]["blue"]["foulPoints"]
-            )
+            red_no_fouls, blue_no_fouls = red_score, blue_score
+            red_breakdown, blue_breakdown = {}, {}
+            if year >= 2016:
+                red_no_fouls -= match["score_breakdown"]["red"]["foulPoints"]
+                blue_no_fouls -= match["score_breakdown"]["blue"]["foulPoints"]
+                red_breakdown = clean_breakdown(
+                    year, key, match["score_breakdown"]["red"]
+                )
+                blue_breakdown = clean_breakdown(
+                    year, key, match["score_breakdown"]["blue"]
+                )
 
             all_matches.append(
                 Match(
-                    match["key"],
+                    key,
                     event_key,
                     event["week"],
                     match["comp_level"] != "qm",
@@ -114,8 +120,10 @@ def get_data(year: int) -> List[Any]:
                     blue_teams[2],
                     red_score,
                     blue_score,
-                    red_score - red_fouls,
-                    blue_score - blue_fouls,
+                    red_no_fouls,
+                    blue_no_fouls,
+                    red_breakdown,
+                    blue_breakdown,
                 )
             )
 

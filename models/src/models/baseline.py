@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Dict
 
-from src.classes import Match, Pred, Attribution, YearStats
+from src.classes import Attribution, Match, Pred, YearStats
 from src.models.template import Model
 
 
