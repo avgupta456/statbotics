@@ -1,13 +1,13 @@
 from collections import defaultdict
-from typing import Any, Dict
+from typing import Dict
 
-from src.classes import Match, Pred, Attribution
+from src.classes import Match, Pred, Attribution, YearStats
 from src.models.template import Model
 
 
 class Baseline(Model):
     def predict_match(self, match: Match) -> Pred:
-        mean = 3 * self.stats.score_mean  # rough heuristic
+        mean = self.stats.score_mean  # rough heuristic
         return Pred(mean, mean, 0.5)
 
     def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
@@ -21,8 +21,8 @@ class AvgScore(Model):
     counts: Dict[int, float]
     scores: Dict[int, float]
 
-    def __init__(self, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
+    def start_season(self, stats: YearStats) -> None:
+        super().start_season(stats)
 
         self.counts: Dict[int, float] = defaultdict(int)
         self.scores: Dict[int, float] = defaultdict(int)

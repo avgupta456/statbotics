@@ -3,8 +3,8 @@ from typing import Any, List
 import typer
 from rich.progress import track
 
-from src.simulation.data import get_data
-from src.simulation.main import Simulation
+from src.data import get_data
+from src.simulation import run_sim
 from src.utils import print_table
 
 app = typer.Typer()
@@ -21,9 +21,8 @@ def items_create():
 
 
 @app.command("single")
-def run_model(year: int, models: List[str]):
-    sim = Simulation(year, models)
-    sim.run()
+def run_model(start_year: int, end_year: int, models: List[str]):
+    run_sim(start_year, end_year, models)
 
 
 if __name__ == "__main__":

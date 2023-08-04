@@ -84,6 +84,21 @@ def get_data(year: int) -> List[Any]:
             red_teams = [int(t[3:]) for t in match["alliances"]["red"]["team_keys"]]
             blue_teams = [int(t[3:]) for t in match["alliances"]["blue"]["team_keys"]]
 
+            red_score = match["alliances"]["red"]["score"]
+            blue_score = match["alliances"]["blue"]["score"]
+
+            # Skip matches with missing data
+            if red_score < 0 or blue_score < 0:
+                continue
+
+            red_fouls = (
+                0 if year < 2016 else match["score_breakdown"]["red"]["foulPoints"]
+            )
+
+            blue_fouls = (
+                0 if year < 2016 else match["score_breakdown"]["blue"]["foulPoints"]
+            )
+
             all_matches.append(
                 Match(
                     match["key"],
@@ -97,8 +112,10 @@ def get_data(year: int) -> List[Any]:
                     blue_teams[0],
                     blue_teams[1],
                     blue_teams[2],
-                    match["alliances"]["red"]["score"],
-                    match["alliances"]["blue"]["score"],
+                    red_score,
+                    blue_score,
+                    red_score - red_fouls,
+                    blue_score - blue_fouls,
                 )
             )
 
@@ -107,9 +124,9 @@ def get_data(year: int) -> List[Any]:
         if match.week == 1 and not match.playoff:
             scores.extend([match.red_score, match.blue_score])
 
-    score_sd = statistics.stdev(scores)
+    score_sd = statistics.pstdev(scores)
     score_mean = statistics.mean(scores)
-    stats = YearStats(year, score_sd, score_mean)
+    stats = YearStats(year, score_mean, score_sd)
 
     dump_cache(
         f"cache/processed/{year}",

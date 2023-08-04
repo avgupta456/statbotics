@@ -32,6 +32,8 @@ class Match:
         blue_3: int,
         red_score: int,
         blue_score: int,
+        red_no_fouls: int,
+        blue_no_fouls: int,
     ):
         self.key = key
         self.event = event
@@ -46,6 +48,8 @@ class Match:
         self.blue_3 = blue_3
         self.red_score = red_score
         self.blue_score = blue_score
+        self.red_no_fouls = red_no_fouls
+        self.blue_no_fouls = blue_no_fouls
 
         self.winner = (
             1 if red_score > blue_score else 0.5 if red_score == blue_score else 0
