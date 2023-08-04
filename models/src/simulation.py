@@ -18,25 +18,21 @@ def to_fixed(num: float, digits: int) -> str:
     return f"{num:.{digits}f}"
 
 
-def run_sim(start_year: int, end_year: int, model_names: List[str]):
+def run_sim(
+    start_year: int, end_year: int, model_names: List[str], verbose: bool = False
+):
     models: Dict[str, Model] = {m: model_name_to_class[m]() for m in model_names}
 
-    headers = [
-        "Year",
-        "Model",
-        "Accuracy",
-        "Brier Score",
-        "Log Loss",
-        "Score RMSE",
-        "Score MAE",
-        "Score Error",
-    ]
+    table: List[List[str]] = []
 
     for year in range(start_year, end_year + 1):
         if year not in range(2005, 2024) or year == 2021:
             continue
 
-        table: List[List[str]] = []
+        if verbose:
+            table: List[List[str]] = []
+        else:
+            table.append([str(year)])
 
         matches, stats = load_cache(f"cache/processed/{year}")
         matches = sorted(matches, key=lambda m: m.time)
@@ -48,18 +44,35 @@ def run_sim(start_year: int, end_year: int, model_names: List[str]):
             model.end_season()
 
             metrics = model.metrics.aggregate()
-            table.append(
-                [
-                    str(year),
-                    model_name,
-                    to_fixed(metrics["win_pred"]["acc"], 4),
-                    to_fixed(metrics["win_pred"]["mse"], 4),
-                    to_fixed(metrics["win_pred"]["ll"], 4),
-                    to_fixed(metrics["score_pred"]["rmse"], 2),
-                    to_fixed(metrics["score_pred"]["mae"], 2),
-                    to_fixed(metrics["score_pred"]["error"], 2),
-                ]
-            )
 
-        print_table(headers, table)
-        print()
+            if verbose:
+                table.append(
+                    [
+                        str(year),
+                        model_name,
+                        to_fixed(metrics["win_pred"]["acc"], 4),
+                        to_fixed(metrics["win_pred"]["mse"], 4),
+                        to_fixed(metrics["win_pred"]["ll"], 4),
+                        to_fixed(metrics["score_pred"]["rmse"], 2),
+                        to_fixed(metrics["score_pred"]["mae"], 2),
+                        to_fixed(metrics["score_pred"]["error"], 2),
+                    ]
+                )
+            else:
+                table[-1].append(to_fixed(metrics["win_pred"]["acc"], 4))
+
+        if verbose:
+            headers = [
+                "Year",
+                "Model",
+                "Accuracy",
+                "Brier Score",
+                "Log Loss",
+                "Score RMSE",
+                "Score MAE",
+                "Score Error",
+            ]
+            print_table(headers, table)
+
+    if not verbose:
+        print_table(["Year", *model_names], table)

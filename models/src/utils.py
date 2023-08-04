@@ -34,3 +34,4 @@ def print_table(headers: List[str], data: List[List[Any]]):
         table.add_row(*row)
 
     console.print(table)
+    print()

@@ -21,8 +21,8 @@ def items_create():
 
 
 @app.command("single")
-def run_model(start_year: int, end_year: int, models: List[str]):
-    run_sim(start_year, end_year, models)
+def run_model(start_year: int, end_year: int, models: List[str], verbose: bool = False):
+    run_sim(start_year, end_year, models, verbose)
 
 
 if __name__ == "__main__":
