@@ -6,9 +6,11 @@ authors = ["Abhijit Gupta <avgupta456@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 typer = {extras = ["all"], version = "^0.9.0"}
 requests = "^2.31.0"
+numpy = "^1.25.2"
+scipy = "^1.11.1"
 
 
 [tool.poetry.group.dev.dependencies]

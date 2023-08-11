@@ -12,7 +12,7 @@ class Model:
     def __init__(self):
         self.end_ratings: Dict[int, Dict[int, float]] = defaultdict(dict)
 
-        self.stats = YearStats(0, 0, 0)
+        self.stats = YearStats(0, 0, 0, 0, 0, 0, 0, {}, {})
         self.metrics = Metrics()
 
     def start_season(self, stats: YearStats) -> None:
@@ -25,7 +25,7 @@ class Model:
     def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
         raise NotImplementedError
 
-    def update_team(self, team: int, attr: Attribution, playoff: bool) -> None:
+    def update_team(self, team: int, attr: Attribution, match: Match) -> None:
         raise NotImplementedError
 
     def process_match(self, match: Match) -> Pred:
@@ -33,7 +33,7 @@ class Model:
         self.metrics.add_match(match, pred)
         attribution = self.attribute_match(match, pred)
         for team, attr in attribution.items():
-            self.update_team(team, attr, match.playoff)
+            self.update_team(team, attr, match)
         return pred
 
     def end_season(self) -> None:

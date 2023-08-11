@@ -11,7 +11,7 @@ app = typer.Typer()
 
 
 @app.command("data")
-def items_create():
+def get_data_endpoint():
 
     output: List[Any] = []
     for year in track(range(2005, 2024), description="Processing..."):
@@ -20,9 +20,9 @@ def items_create():
     print_table(["Year", "Matches"], output)
 
 
-@app.command("single")
-def run_model(start_year: int, end_year: int, models: List[str], verbose: bool = False):
-    run_sim(start_year, end_year, models, verbose)
+@app.command("sim")
+def run_sim_endpoint(start_year: int, end_year: int, models: List[str]):
+    run_sim(start_year, end_year, models)
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ import statistics
 import time
 from datetime import datetime
 from typing import Any, Dict, List
+from collections import defaultdict
 
 from requests import Session
 
@@ -93,23 +94,38 @@ def get_data(year: int) -> List[Any]:
             if red_score < 0 or blue_score < 0:
                 continue
 
-            red_no_fouls, blue_no_fouls = red_score, blue_score
-            red_breakdown, blue_breakdown = {}, {}
-            if year >= 2016:
-                red_no_fouls -= match["score_breakdown"]["red"]["foulPoints"]
-                blue_no_fouls -= match["score_breakdown"]["blue"]["foulPoints"]
-                red_breakdown = clean_breakdown(
-                    year, key, match["score_breakdown"]["red"]
-                )
-                blue_breakdown = clean_breakdown(
-                    year, key, match["score_breakdown"]["blue"]
-                )
+            # Skip playoff matches with DQ
+            if match["comp_level"] != "qm" and min(red_score, blue_score) <= 0:
+                continue
+
+            red_breakdown = clean_breakdown(
+                year,
+                key,
+                (match.get("score_breakdown", {}) or {}).get("red", {}),
+                red_score,
+            )
+            blue_breakdown = clean_breakdown(
+                year,
+                key,
+                (match.get("score_breakdown", {}) or {}).get("blue", {}),
+                blue_score,
+            )
+
+            red_no_fouls = red_breakdown["no_foul_points"]
+            blue_no_fouls = blue_breakdown["no_foul_points"]
+
+            red_rp_1 = red_breakdown["rp_1"]
+            blue_rp_1 = blue_breakdown["rp_1"]
+
+            red_rp_2 = red_breakdown["rp_2"]
+            blue_rp_2 = blue_breakdown["rp_2"]
 
             all_matches.append(
                 Match(
                     key,
                     event_key,
                     event["week"],
+                    year,
                     match["comp_level"] != "qm",
                     match["time"] or get_match_time(match, event_time),
                     red_teams[0],
@@ -122,19 +138,53 @@ def get_data(year: int) -> List[Any]:
                     blue_score,
                     red_no_fouls,
                     blue_no_fouls,
+                    red_rp_1,
+                    blue_rp_1,
+                    red_rp_2,
+                    blue_rp_2,
                     red_breakdown,
                     blue_breakdown,
                 )
             )
 
     scores: List[int] = []
+    rp_1s: List[int] = []
+    rp_2s: List[int] = []
+    breakdown: Dict[str, List[int]] = defaultdict(list)
     for match in all_matches:
         if match.week == 1 and not match.playoff:
             scores.extend([match.red_score, match.blue_score])
+            rp_1s.extend([match.red_rp_1, match.blue_rp_1])
+            rp_2s.extend([match.red_rp_2, match.blue_rp_2])
+            for k in match.red_breakdown:
+                breakdown[k].extend([match.red_breakdown[k], match.blue_breakdown[k]])
 
-    score_sd = statistics.pstdev(scores)
     score_mean = statistics.mean(scores)
-    stats = YearStats(year, score_mean, score_sd)
+    score_sd = statistics.pstdev(scores)
+
+    rp_1_mean = statistics.mean(rp_1s)
+    rp_1_sd = statistics.pstdev(rp_1s)
+
+    rp_2_mean = statistics.mean(rp_2s)
+    rp_2_sd = statistics.pstdev(rp_2s)
+
+    breakdown_mean = {}
+    breakdown_sd = {}
+    for k in breakdown:
+        breakdown_mean[k] = statistics.mean(breakdown[k])
+        breakdown_sd[k] = statistics.pstdev(breakdown[k])
+
+    stats = YearStats(
+        year,
+        score_mean,
+        score_sd,
+        rp_1_mean,
+        rp_1_sd,
+        rp_2_mean,
+        rp_2_sd,
+        breakdown_mean,
+        breakdown_sd,
+    )
 
     dump_cache(
         f"cache/processed/{year}",
