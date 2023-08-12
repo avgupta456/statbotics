@@ -1,9 +1,7 @@
 import math
-
 from typing import Any, Tuple
 
 import numpy as np
-
 import scipy.stats  # type: ignore
 
 

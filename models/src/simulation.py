@@ -1,11 +1,12 @@
-from typing import Dict, List, Type
+from typing import Dict, List, Tuple, Type
 
+from src.classes import Match, YearStats
+from src.metrics import Metrics
 from src.models.baseline import AvgScore, Baseline
 from src.models.elo import Elo
 from src.models.epa import EPA
 from src.models.epa_v2 import EPAV2
 from src.models.template import Model
-from src.metrics import Metrics
 from src.utils import load_cache, print_table
 
 model_name_to_class: Dict[str, Type[Model]] = {
@@ -15,6 +16,12 @@ model_name_to_class: Dict[str, Type[Model]] = {
     "epa": EPA,
     "epa_v2": EPAV2,
 }
+
+
+def get_matches(year: int) -> Tuple[List[Match], YearStats]:
+    matches, stats = load_cache(f"cache/processed/{year}")
+    matches = sorted(matches, key=lambda m: m.time)
+    return matches, stats
 
 
 def to_fixed(num: float, digits: int) -> str:
@@ -96,9 +103,7 @@ def run_sim(start_year: int, end_year: int, model_names: List[str]):
 
         table: List[List[str]] = []
 
-        matches, stats = load_cache(f"cache/processed/{year}")
-        matches = sorted(matches, key=lambda m: m.time)
-
+        matches, stats = get_matches(year)
         for model_name, model in models.items():
             model.start_season(stats)
             for match in matches:

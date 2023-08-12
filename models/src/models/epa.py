@@ -1,10 +1,10 @@
 from collections import defaultdict
 from typing import Dict
 
+import numpy as np
+
 from src.classes import Attribution, Match, Pred, YearStats
 from src.models.template import Model
-
-import numpy as np
 
 
 class EPA(Model):

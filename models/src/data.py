@@ -1,9 +1,9 @@
 import os
 import statistics
 import time
+from collections import defaultdict
 from datetime import datetime
 from typing import Any, Dict, List
-from collections import defaultdict
 
 from requests import Session
 

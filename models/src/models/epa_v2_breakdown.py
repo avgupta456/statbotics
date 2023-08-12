@@ -1,9 +1,9 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
-from src.models.epa_v2_math import t_prob_gt_0, zero_sigmoid, unit_sigmoid
-
 import numpy as np
+
+from src.models.epa_v2_math import t_prob_gt_0, unit_sigmoid, zero_sigmoid
 
 # Always put total_points first
 all_keys: Dict[int, List[str]] = defaultdict(lambda: ["no_foul_points", "foul_points"])
