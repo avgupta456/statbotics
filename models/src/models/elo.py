@@ -40,8 +40,19 @@ class Elo(Model):
         red_rp_2 = self.sigmoid(sum(self.rp_2[t] for t in match.red()))
         blue_rp_2 = self.sigmoid(sum(self.rp_2[t] for t in match.blue()))
 
+        foul_rate = (
+            self.stats.breakdown_mean["foul_points"]
+            / self.stats.breakdown_mean["no_foul_points"]
+        )
+
         return Pred(
-            red_elo, blue_elo, win_prob, red_rp_1, blue_rp_1, red_rp_2, blue_rp_2
+            red_elo * (1 + foul_rate),
+            blue_elo * (1 + foul_rate),
+            win_prob,
+            red_rp_1,
+            blue_rp_1,
+            red_rp_2,
+            blue_rp_2,
         )
 
     def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
@@ -86,7 +97,7 @@ class Elo(Model):
         self.elo[team] += 72 / 250 * weight * update
 
         if not match.playoff:
-            self.rp_1[team] += 0.3 * weight * rp_1_update
+            self.rp_1[team] += 72 / 250 * weight * rp_1_update
             self.rp_2[team] += 72 / 250 * weight * rp_2_update
 
     def end_season(self) -> None:

@@ -174,9 +174,9 @@ class Pred:
 
 class Attribution:
     contrib: float
-    breakdown: Dict[str, float]
+    breakdown: Dict[str, Any]
 
-    def __init__(self, contrib: float, breakdown: Optional[Dict[str, float]] = None):
+    def __init__(self, contrib: float, breakdown: Optional[Dict[str, Any]] = None):
         self.contrib = contrib
         self.breakdown = breakdown or {}
 

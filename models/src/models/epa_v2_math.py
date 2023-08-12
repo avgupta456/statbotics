@@ -1,6 +1,6 @@
 import math
 
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 import numpy as np
 
@@ -118,11 +118,12 @@ class SkewNormal:
         return f"SkewNormal(mean={self.mean}, var={self.var}, skew={self.skew})"
 
 
-def sigmoid(x: float) -> float:
+# used for 2018 switch/scale power
+# -2 instead of -4 since both alliances contribute
+def zero_sigmoid(x: float) -> float:
     return 1 / (1 + np.exp(-2 * x))
 
 
-def softmax(arr: List[float]) -> List[float]:
-    exp_arr = [np.exp(x) for x in arr]
-    sum_exp_arr = sum(exp_arr)
-    return [x / sum_exp_arr for x in exp_arr]
+# used for ILS ranking point system
+def unit_sigmoid(x: float) -> float:
+    return 1 / (1 + np.exp(-4 * (x - 0.5)))

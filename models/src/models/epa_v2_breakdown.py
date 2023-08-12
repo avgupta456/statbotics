@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
-from src.models.epa_v2_math import t_prob_gt_0, sigmoid
+from src.models.epa_v2_math import t_prob_gt_0, zero_sigmoid, unit_sigmoid
 
 import numpy as np
 
@@ -22,6 +22,7 @@ all_keys[2016] = [
     # computed
     "defenses",
     "boulders",
+    "rp_2_power",
     "auto_points",
     "teleop_points",
     "endgame_points",
@@ -58,6 +59,8 @@ all_keys[2018] = [
     "switch_power",
     "scale_power",
     "opp_switch_power",
+    "rp_1_power",
+    "rp_2_power",
     "auto_points",
     "teleop_points",
     "endgame_points",
@@ -145,9 +148,9 @@ all_keys[2023] = [
 
 
 all_headers: Dict[int, str] = defaultdict(lambda: "Team\tLow\tMean\tHigh")
-all_headers[2016] = "Team\tAReach\tACross\tALow\tAHigh\tTCross\tTLow\tTHigh\tTChal\tTScale\tDef\tBoulder\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
+all_headers[2016] = "Team\tAReach\tACross\tALow\tAHigh\tTCross\tTLow\tTHigh\tTChal\tTScale\tDef\tBoulder\tRP2Pow\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
 all_headers[2017] = "Team\tAutoMob\tALow\tAHigh\tAutoRot\tTLow\tTHigh\tTeleRot\tTakeoff\tkPA\tGears\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
-all_headers[2018] = "Team\tAutoRun\tASwitch\tAScale\tTSwitch\tTScale\tVault\tEnd\tSwPow\tScPow\tOSwPow\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
+all_headers[2018] = "Team\tAutoRun\tASwitch\tAScale\tTSwitch\tTScale\tVault\tEnd\tSwPow\tScPow\tOSwPow\tRP1Pow\tRP2Pow\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
 all_headers[2019] = "Team\tSS\tBHatch\tBCargo\tRHatchL\tRHatchM\tRHatchT\tRCargoL\tRCargoM\tRCargoT\tHClimb\tMidTop\tHatch\tCargo\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
 all_headers[2020] = "Team\tInit\tABot\tAOuter\tAInner\tTBot\tTOuter\tTInner\tCP\tEnd\tCells\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
 all_headers[2022] = "Team\tTaxi\tALow\tAHigh\tTLow\tTHigh\tEndgame\tCargo\tAuto\tTeleop\tEndgame\tLow\tMean\tHigh"  # type: ignore
@@ -155,8 +158,12 @@ all_headers[2023] = "Team\tMob\tAuto CS\tALCu\tALCo\tAMCu\tAMCo\tAHCu\tAHCo\tTLC
 
 
 def expand_breakdown(
-    year: int, breakdown: Dict[str, int | float], opp_breakdown: Dict[str, int | float]
+    year: int,
+    breakdown: Dict[str, int | float],
+    opp_breakdown: Dict[str, int | float],
+    mean: bool = False,
 ) -> Any:
+    # mean flag denotes if individual breakdown or week 1 mean
     if year == 2016:
         breakdown["defenses"] = (
             breakdown["auto_crossing_points"] / 10
@@ -169,6 +176,9 @@ def expand_breakdown(
             + breakdown["teleop_low_boulders"]
             + breakdown["teleop_high_boulders"]
         )
+
+        num_robots = breakdown["challenge_points"] / 5 + breakdown["scale_points"] / 15
+        breakdown["rp_2_power"] = 0.5 if mean else num_robots > 2.5
 
         breakdown["auto_points"] = (
             breakdown["auto_reach_points"]
@@ -196,12 +206,18 @@ def expand_breakdown(
         )
 
         num_rotors = breakdown["teleop_rotor_points"] // 40
-        breakdown["gears"] = (
+        num_gears = (
             (1 if num_rotors >= 1 else 0)
             + (2 if num_rotors >= 2 else 0)
             + (4 if num_rotors >= 3 else 0)
             + (6 if num_rotors >= 4 else 0)
         )
+
+        # Alliances often scored 3.x rotors, but truncated
+        if num_rotors == 3:
+            num_gears += 2
+
+        breakdown["gears"] = num_gears
 
         breakdown["auto_points"] = (
             breakdown["auto_mobility_points"]
@@ -229,6 +245,9 @@ def expand_breakdown(
         breakdown["switch_power"] = min(1, my_switch_secs / 145)
         breakdown["scale_power"] = min(1, my_scale_secs / total_scale_secs)
         breakdown["opp_switch_power"] = min(1, my_opp_switch_secs / 145)
+
+        breakdown["rp_1_power"] = breakdown["rp_1"]
+        breakdown["rp_2_power"] = breakdown["rp_2"]
 
         breakdown["auto_points"] = (
             breakdown["auto_run_points"]
@@ -365,22 +384,36 @@ def post_process_breakdown(
     keys = all_keys[year]
     total_change = 0
 
-    if year == 2018:
+    if year == 2016:
+        rp_2_power = breakdown[keys.index("rp_2_power")]
+        new_rp_2_power = unit_sigmoid(rp_2_power)
+
+        breakdown[keys.index("rp_2_power")] = new_rp_2_power
+
+    elif year == 2018:
         my_switch_power = breakdown[keys.index("switch_power")]
         opp_opp_switch_power = opp_breakdown[keys.index("opp_switch_power")]
-        new_switch_power = sigmoid(my_switch_power - opp_opp_switch_power)
+        new_switch_power = zero_sigmoid(my_switch_power - opp_opp_switch_power)
 
         my_scale_power = breakdown[keys.index("scale_power")]
         opp_scale_power = opp_breakdown[keys.index("scale_power")]
-        new_scale_power = sigmoid(my_scale_power - opp_scale_power)
+        new_scale_power = zero_sigmoid(my_scale_power - opp_scale_power)
 
         my_opp_switch_power = breakdown[keys.index("opp_switch_power")]
         opp_switch_power = opp_breakdown[keys.index("switch_power")]
-        new_opp_switch_power = sigmoid(my_opp_switch_power - opp_switch_power)
+        new_opp_switch_power = zero_sigmoid(my_opp_switch_power - opp_switch_power)
+
+        rp_1_power = breakdown[keys.index("rp_1_power")]
+        new_rp_1_power = unit_sigmoid(rp_1_power)
+
+        rp_2_power = breakdown[keys.index("rp_2_power")]
+        new_rp_2_power = unit_sigmoid(rp_2_power)
 
         breakdown[keys.index("switch_power")] = new_switch_power
         breakdown[keys.index("scale_power")] = new_scale_power
         breakdown[keys.index("opp_switch_power")] = new_opp_switch_power
+        breakdown[keys.index("rp_1_power")] = new_rp_1_power
+        breakdown[keys.index("rp_2_power")] = new_rp_2_power
 
     elif year == 2023:
         # ahcui = Auto High CUbes Index, etc
@@ -446,7 +479,7 @@ def post_process_breakdown(
 def get_pred_rps(
     year: int, week: int, breakdown_mean: Any, breakdown_sd: Any
 ) -> Tuple[float, float]:
-    DISCOUNT = 0.85
+    DISCOUNT = 0.85  # Teams try harder when near the threshold
 
     keys = all_keys[year]
 
@@ -460,10 +493,13 @@ def get_pred_rps(
         boulders_sd = breakdown_sd[keys.index("boulders")]
 
         rp_1 = t_prob_gt_0(defenses_mean - 8 * DISCOUNT, defenses_sd)
+
+        # rp_2_power only captures if three robots challenge
+        rp_2 = breakdown_mean[keys.index("rp_2_power")]
         if week < 8:
-            rp_2 = t_prob_gt_0(boulders_mean - 8 * DISCOUNT, boulders_sd)
+            rp_2 *= t_prob_gt_0(boulders_mean - 8 * DISCOUNT, boulders_sd)
         else:
-            rp_2 = t_prob_gt_0(boulders_mean - 10 * DISCOUNT, boulders_sd)
+            rp_2 *= t_prob_gt_0(boulders_mean - 10 * DISCOUNT, boulders_sd)
 
     elif year == 2017:
         kpa_mean = breakdown_mean[keys.index("kpa")]
@@ -473,18 +509,11 @@ def get_pred_rps(
         gears_sd = breakdown_sd[keys.index("gears")]
 
         rp_1 = t_prob_gt_0(kpa_mean - 40 * DISCOUNT, kpa_sd)
-        # reduced discount to 0.75 since 3 rotors often meant more than 7 gears
-        rp_2 = t_prob_gt_0(gears_mean - 13 * 0.75, gears_sd)
+        rp_2 = t_prob_gt_0(gears_mean - 13 * DISCOUNT, gears_sd)
 
     elif year == 2018:
-        endgame_points_mean = breakdown_mean[keys.index("endgame_points")]
-        endgame_points_sd = breakdown_sd[keys.index("endgame_points")]
-
-        auto_run_points_mean = breakdown_mean[keys.index("auto_run_points")]
-        auto_run_points_sd = breakdown_sd[keys.index("auto_run_points")]
-
-        rp_1 = t_prob_gt_0(endgame_points_mean - 90 * DISCOUNT, endgame_points_sd)
-        rp_2 = t_prob_gt_0(auto_run_points_mean - 15 * DISCOUNT, auto_run_points_sd)
+        rp_1 = breakdown_mean[keys.index("rp_1_power")]
+        rp_2 = breakdown_mean[keys.index("rp_2_power")]
 
     elif year == 2019:
         hab_points_mean = breakdown_mean[keys.index("hab_climb_points")]
@@ -583,11 +612,11 @@ def get_score_from_breakdown(
         score += min(15, breakdown[keys.index("auto_run_points")])
         score += 2 * min(15, breakdown[keys.index("auto_switch_secs")])
         score += 2 * min(15, breakdown[keys.index("auto_scale_secs")])
-        score += 145 * sigmoid(
+        score += 145 * zero_sigmoid(
             breakdown[keys.index("switch_power")]
             - opp_breakdown[keys.index("opp_switch_power")]
         )
-        score += 145 * sigmoid(
+        score += 145 * zero_sigmoid(
             breakdown[keys.index("scale_power")]
             - opp_breakdown[keys.index("scale_power")]
         )

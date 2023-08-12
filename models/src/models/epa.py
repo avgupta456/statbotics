@@ -55,8 +55,19 @@ class EPA(Model):
         red_rp_2 = self.sigmoid(sum(self.rp_2[t] for t in match.red()))
         blue_rp_2 = self.sigmoid(sum(self.rp_2[t] for t in match.blue()))
 
+        foul_rate = (
+            self.stats.breakdown_mean["foul_points"]
+            / self.stats.breakdown_mean["no_foul_points"]
+        )
+
         return Pred(
-            red_epa, blue_epa, win_prob, red_rp_1, blue_rp_1, red_rp_2, blue_rp_2
+            red_epa * (1 + foul_rate),
+            blue_epa * (1 + foul_rate),
+            win_prob,
+            red_rp_1,
+            blue_rp_1,
+            red_rp_2,
+            blue_rp_2,
         )
 
     def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:

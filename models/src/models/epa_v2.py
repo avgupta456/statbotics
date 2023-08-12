@@ -92,10 +92,15 @@ class EPAV2(Model):
         year = self.stats.year
         playoff = match.playoff
 
+        foul_rate = (
+            self.stats.breakdown_mean["foul_points"]
+            / self.stats.breakdown_mean["no_foul_points"]
+        )
+
         red_score = get_score_from_breakdown(
             year,
-            breakdowns[0]["offense"],
-            breakdowns[1]["offense"],
+            breakdowns[0]["offense"] * (1 + foul_rate),
+            breakdowns[1]["offense"] * (1 + foul_rate),
             rp_1s[0],
             rp_2s[0],
             playoff,
@@ -150,6 +155,16 @@ class EPAV2(Model):
                 defense_attrib = self.defense_epas[t].mean + defense_error / 3
                 fouls_attrib = self.fouls_epas[t].mean + fouls_error / 3
 
+                # Don't update RP score during playoff match
+                # Do update in 2016 since incentivized
+                year = self.stats.year
+                if year == 2018 and match.playoff:
+                    rp_1_index = all_keys[year].index("rp_1_power")
+                    offense_attrib[rp_1_index] = self.epas[t].mean[rp_1_index]
+
+                    rp_2_index = all_keys[year].index("rp_2_power")
+                    offense_attrib[rp_2_index] = self.epas[t].mean[rp_2_index]
+
                 out[t] = Attribution(
                     offense_attrib[0],
                     {
@@ -168,9 +183,9 @@ class EPAV2(Model):
 
         self.epas[team].add_obs(attr.breakdown["offense"], alpha)
         self.defense_epas[team].add_obs(
-            attr.breakdown["defense"], alpha / 6, only_pos=True
+            attr.breakdown["defense"], alpha / 2, only_pos=True
         )
-        self.fouls_epas[team].add_obs(attr.breakdown["fouls"], alpha / 6, only_pos=True)
+        self.fouls_epas[team].add_obs(attr.breakdown["fouls"], alpha / 2, only_pos=True)
 
         if not match.playoff:
             self.counts[team] += 1
