@@ -29,7 +29,7 @@ class EPAV2(Model):
         overall_sd = self.stats.score_sd
 
         mean = expand_breakdown(
-            year, self.stats.breakdown_mean, self.stats.breakdown_mean
+            year, self.stats.breakdown_mean, self.stats.breakdown_mean, True
         )
         sd = (overall_sd / overall_mean) * mean
 
@@ -99,8 +99,8 @@ class EPAV2(Model):
 
         red_score = get_score_from_breakdown(
             year,
-            breakdowns[0]["offense"] * (1 + foul_rate),
-            breakdowns[1]["offense"] * (1 + foul_rate),
+            breakdowns[0]["offense"],
+            breakdowns[1]["offense"],
             rp_1s[0],
             rp_2s[0],
             playoff,
@@ -124,9 +124,13 @@ class EPAV2(Model):
         total_sd = (red_sd**2 + blue_sd**2 + 2 * corr * red_sd * blue_sd) ** 0.5
         win_prob = t_prob_gt_0(score_diff, total_sd)
 
+        # K = 5 / 8
+        # norm_diff = (blue_score - red_score) / self.stats.score_sd
+        # win_prob = 1 / (1 + 10 ** (K * norm_diff))
+
         return Pred(
-            red_score,
-            blue_score,
+            red_score * (1 + foul_rate),
+            blue_score * (1 + foul_rate),
             win_prob,
             rp_1s[0],
             rp_1s[1],
