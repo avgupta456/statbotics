@@ -673,3 +673,35 @@ def get_score_from_breakdown(
         score += breakdown[keys.index("no_foul_points")]
 
     return score
+
+
+def post_process_attrib(year: int, epa: Any, attrib: Any, playoff: bool) -> Any:
+    keys = all_keys[year]
+    if year == 2018:
+        # Overwrite total points using switch/scale power
+        teleop_index = keys.index("teleop_points")
+        no_fouls_index = keys.index("no_foul_points")
+
+        attrib[teleop_index] = (
+            145 * epa[keys.index("switch_power")]
+            + 145 * epa[keys.index("scale_power")]
+            + epa[keys.index("vault_points")]
+        )
+
+        attrib[no_fouls_index] = (
+            epa[keys.index("auto_run_points")]
+            + 2 * epa[keys.index("auto_switch_secs")]
+            + 4 * epa[keys.index("auto_scale_secs")]
+            + attrib[teleop_index]
+            + epa[keys.index("endgame_points")]
+        )
+
+        if playoff:
+            # Don't update RP score during playoff match
+            rp_1_index = keys.index("rp_1_power")
+            attrib[rp_1_index] = epa[rp_1_index]
+
+            rp_2_index = keys.index("rp_2_power")
+            attrib[rp_2_index] = epa[rp_2_index]
+
+    return attrib

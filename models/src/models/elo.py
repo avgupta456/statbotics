@@ -87,10 +87,10 @@ class Elo(Model):
 
         return out
 
-    def update_team(self, team: int, attr: Attribution, match: Match) -> None:
-        update = attr.contrib - self.elo[team]
-        rp_1_update = attr.breakdown["rp_1"] - self.rp_1[team]
-        rp_2_update = attr.breakdown["rp_2"] - self.rp_2[team]
+    def update_team(self, team: int, attrib: Attribution, match: Match) -> None:
+        update = attrib.contrib - self.elo[team]
+        rp_1_update = attrib.breakdown["rp_1"] - self.rp_1[team]
+        rp_2_update = attrib.breakdown["rp_2"] - self.rp_2[team]
 
         weight = 1 / 3 if match.playoff else 1
 

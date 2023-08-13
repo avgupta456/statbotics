@@ -25,7 +25,7 @@ class Model:
     def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
         raise NotImplementedError
 
-    def update_team(self, team: int, attr: Attribution, match: Match) -> None:
+    def update_team(self, team: int, attrib: Attribution, match: Match) -> None:
         raise NotImplementedError
 
     def process_match(self, match: Match) -> Pred:

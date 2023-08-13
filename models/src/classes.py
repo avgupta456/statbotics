@@ -155,8 +155,8 @@ class Pred:
         blue_rp_1: float,
         red_rp_2: float,
         blue_rp_2: float,
-        red_breakdown: Optional[Dict[str, Any]] = None,
-        blue_breakdown: Optional[Dict[str, Any]] = None,
+        red_breakdown: Any = None,
+        blue_breakdown: Any = None,
     ):
         self.red_score = red_score
         self.blue_score = blue_score
@@ -165,8 +165,8 @@ class Pred:
         self.blue_rp_1 = blue_rp_1
         self.red_rp_2 = red_rp_2
         self.blue_rp_2 = blue_rp_2
-        self.red_breakdown = red_breakdown or {}
-        self.blue_breakdown = blue_breakdown or {}
+        self.red_breakdown = red_breakdown
+        self.blue_breakdown = blue_breakdown
 
     def __repr__(self):
         return f"Pred({self.red_score}-{self.blue_score}, {self.win_prob})"

@@ -15,7 +15,7 @@ class Baseline(Model):
     def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
         return {}
 
-    def update_team(self, team: int, attr: Attribution, match: Match) -> None:
+    def update_team(self, team: int, attrib: Attribution, match: Match) -> None:
         pass
 
 
@@ -69,8 +69,8 @@ class AvgScore(Model):
 
         return out
 
-    def update_team(self, team: int, attr: Attribution, match: Match) -> None:
+    def update_team(self, team: int, attrib: Attribution, match: Match) -> None:
         self.counts[team] += 1
-        self.scores[team] += attr.contrib
-        self.rp_1s[team] += attr.breakdown["rp_1"]
-        self.rp_2s[team] += attr.breakdown["rp_2"]
+        self.scores[team] += attrib.contrib
+        self.rp_1s[team] += attrib.breakdown["rp_1"]
+        self.rp_2s[team] += attrib.breakdown["rp_2"]
