@@ -158,10 +158,7 @@ all_headers[2023] = "Team\tMob\tAuto CS\tALCu\tALCo\tAMCu\tAMCo\tAHCu\tAHCo\tTLC
 
 
 def expand_breakdown(
-    year: int,
-    breakdown: Dict[str, int | float],
-    opp_breakdown: Dict[str, int | float],
-    mean: bool = False,
+    year: int, breakdown: Dict[str, int | float], opp_breakdown: Dict[str, int | float]
 ) -> Any:
     # mean flag denotes if individual breakdown or week 1 mean
     if year == 2016:
@@ -177,8 +174,7 @@ def expand_breakdown(
             + breakdown["teleop_high_boulders"]
         )
 
-        num_robots = breakdown["challenge_points"] / 5 + breakdown["scale_points"] / 15
-        breakdown["rp_2_power"] = 0.5 if mean else num_robots > 2.5
+        breakdown["rp_2_power"] = breakdown["all_endgame_robots"]
 
         breakdown["auto_points"] = (
             breakdown["auto_reach_points"]

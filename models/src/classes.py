@@ -174,11 +174,11 @@ class Pred:
 
 class Attribution:
     contrib: float
-    breakdown: Dict[str, Any]
+    breakdown: Any
 
-    def __init__(self, contrib: float, breakdown: Optional[Dict[str, Any]] = None):
+    def __init__(self, contrib: float, breakdown: Optional[Any] = None):
         self.contrib = contrib
-        self.breakdown = breakdown or {}
+        self.breakdown = breakdown
 
     def __repr__(self):
         return f"Attribution({self.contrib})"

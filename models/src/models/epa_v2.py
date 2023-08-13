@@ -29,7 +29,7 @@ class EPAV2(Model):
         overall_sd = self.stats.score_sd
 
         mean = expand_breakdown(
-            year, self.stats.breakdown_mean, self.stats.breakdown_mean, True
+            year, self.stats.breakdown_mean, self.stats.breakdown_mean
         )
         sd = (overall_sd / overall_mean) * mean
 
@@ -39,15 +39,7 @@ class EPAV2(Model):
 
         self.counts: Dict[int, int] = defaultdict(int)
         self.epas: Dict[int, SkewNormal] = defaultdict(
-            lambda: SkewNormal(mean / 3, np.square(sd / 3), 0)
-        )
-
-        self.defense_epas: Dict[int, SkewNormal] = defaultdict(
-            lambda: SkewNormal(np.array([0]), np.array([1]), 0)
-        )
-
-        self.fouls_epas: Dict[int, SkewNormal] = defaultdict(
-            lambda: SkewNormal(np.array([0]), np.array([1]), 0)
+            lambda: SkewNormal(mean / 3 - 0.2 * sd, np.square(sd / 3), 0)
         )
 
         for t in set(self.end_ratings[year - 1]).union(self.end_ratings[year - 2]):
@@ -75,9 +67,6 @@ class EPAV2(Model):
                 self.stats.year, match.key, pred_mean, opp_pred_mean
             )
 
-            pred_defense = np.array([self.defense_epas[t].mean for t in teams]).sum(axis=0)  # type: ignore
-            pred_fouls = np.array([self.fouls_epas[t].mean for t in teams]).sum(axis=0)  # type: ignore
-
             pred_rp_1, pred_rp_2 = get_pred_rps(
                 self.stats.year, match.week, pred_mean, pred_sd
             )
@@ -85,9 +74,7 @@ class EPAV2(Model):
             rp_1s.append(pred_rp_1)
             rp_2s.append(pred_rp_2)
 
-            breakdowns.append(
-                {"offense": pred_mean, "defense": pred_defense, "fouls": pred_fouls}
-            )
+            breakdowns.append({"offense": pred_mean})
 
         year = self.stats.year
         playoff = match.playoff
@@ -146,37 +133,25 @@ class EPAV2(Model):
         year = self.stats.year
         red_bd = expand_breakdown(year, match.red_breakdown, match.blue_breakdown)
         blue_bd = expand_breakdown(year, match.blue_breakdown, match.red_breakdown)
-        for teams, bd, opp_bd, pred_bd, opp_pred_bd in [
-            (match.red(), red_bd, blue_bd, pred.red_breakdown, pred.blue_breakdown),
-            (match.blue(), blue_bd, red_bd, pred.blue_breakdown, pred.red_breakdown),
+        for teams, bd, pred_bd in [
+            (match.red(), red_bd, pred.red_breakdown),
+            (match.blue(), blue_bd, pred.blue_breakdown),
         ]:
-            offense_error = bd - pred_bd["offense"]
-            defense_error = (opp_pred_bd["offense"] - opp_bd).sum() - pred_bd["defense"]
-            fouls_error = np.array([opp_bd[1]]) - pred_bd["fouls"]
-
+            error = bd - pred_bd["offense"]
             for t in teams:
-                offense_attrib = self.epas[t].mean + offense_error / 3
-                defense_attrib = self.defense_epas[t].mean + defense_error / 3
-                fouls_attrib = self.fouls_epas[t].mean + fouls_error / 3
+                attrib = self.epas[t].mean + error / 3
 
                 # Don't update RP score during playoff match
                 # Do update in 2016 since incentivized
                 year = self.stats.year
                 if year == 2018 and match.playoff:
                     rp_1_index = all_keys[year].index("rp_1_power")
-                    offense_attrib[rp_1_index] = self.epas[t].mean[rp_1_index]
+                    attrib[rp_1_index] = self.epas[t].mean[rp_1_index]
 
                     rp_2_index = all_keys[year].index("rp_2_power")
-                    offense_attrib[rp_2_index] = self.epas[t].mean[rp_2_index]
+                    attrib[rp_2_index] = self.epas[t].mean[rp_2_index]
 
-                out[t] = Attribution(
-                    offense_attrib[0],
-                    {
-                        "offense": offense_attrib,
-                        "defense": defense_attrib,
-                        "fouls": fouls_attrib,
-                    },
-                )
+                out[t] = Attribution(attrib[0], attrib)
 
         return out
 
@@ -185,11 +160,7 @@ class EPAV2(Model):
         percent = self.percent_func(self.counts[team])
         alpha = percent * weight
 
-        self.epas[team].add_obs(attr.breakdown["offense"], alpha)
-        self.defense_epas[team].add_obs(
-            attr.breakdown["defense"], alpha / 2, only_pos=True
-        )
-        self.fouls_epas[team].add_obs(attr.breakdown["fouls"], alpha / 2, only_pos=True)
+        self.epas[team].add_obs(attr.breakdown, alpha)
 
         if not match.playoff:
             self.counts[team] += 1
