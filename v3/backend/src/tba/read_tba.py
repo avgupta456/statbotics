@@ -24,14 +24,6 @@ def get_timestamp_from_str(date: str):
     return int(time.mktime(datetime.strptime(date, "%Y-%m-%d").timetuple()))
 
 
-def get_district(team: int) -> Optional[str]:
-    query_str = "team/frc" + str(team) + "/districts"
-    district_data, _ = get_tba(query_str, etag=None, cache=True)
-    if type(district_data) is bool or district_data is None or len(district_data) == 0:
-        return None
-    return district_data[0]["abbreviation"]
-
-
 def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []
     for i in range(20):
@@ -46,11 +38,40 @@ def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
                 "rookie_year": data_team["rookie_year"],
                 "offseason": num > MAX_TEAM,
                 "state": clean_state(data_team["state_prov"]),
-                "district": clean_district(get_district(num)),
+                "district": None,  # added later
                 "country": data_team["country"],
             }
             out.append(new_data)
     return out
+
+
+def get_districts(
+    year: int, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[Tuple[str, str]], Optional[str]]:
+    out: List[Tuple[str, str]] = []
+    data, new_etag = get_tba("districts/" + str(year), etag=etag, cache=cache)
+    if type(data) is bool:
+        return out, new_etag
+    for district in data:
+        out.append((district["key"], district["abbreviation"]))
+    return out, new_etag
+
+
+def get_district_teams(
+    district: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[int], Optional[str]]:
+    out: List[int] = []
+    data, new_etag = get_tba(
+        "district/" + str(district) + "/rankings", etag=etag, cache=cache
+    )
+    if type(data) is bool:
+        return out, new_etag
+    for team in data:
+        team_num = int(team["team_key"][3:])
+        # points = int(team["point_total"])
+        out.append(team_num)
+
+    return out, new_etag
 
 
 def get_events(

@@ -2,7 +2,10 @@ from typing import Any, Dict, Optional
 
 import attr
 from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint  # type: ignore
+from sqlalchemy.sql.schema import (  # type: ignore
+    ForeignKeyConstraint,
+    PrimaryKeyConstraint,
+)
 
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM
