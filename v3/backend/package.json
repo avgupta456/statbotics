@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "poetry run uvicorn main:app --reload --port=8000",
+    "set-reqs": "poetry lock && poetry export -f requirements.txt --output requirements.txt --without-hashes",
+    "isort": "poetry run isort . --src-path=./src --skip=./.venv --multi-line=3 --trailing-comma --line-length=88 --combine-as --ensure-newline-before-comments",
+    "create-env": "printenv > .env"
+  }
+}

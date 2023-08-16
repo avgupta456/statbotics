@@ -1,0 +1,12 @@
+dispatch:
+  - url: "*/v3/data/*"
+    service: data_v3
+
+  - url: "*/v3/.*"
+    service: default_v3
+
+  - url: "*/data/*"
+    service: data
+
+  - url: "*/.*"
+    service: default
