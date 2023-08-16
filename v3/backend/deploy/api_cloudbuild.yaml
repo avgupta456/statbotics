@@ -2,11 +2,11 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["install"]
-    dir: "backend"
+    dir: "v3/backend"
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "create-env"]
-    dir: "backend"
+    dir: "v3/backend"
     env:
       - "CRDB_USER=abhijit"
       - "CRDB_PWD=${_CRDB_PWD}"
@@ -15,4 +15,4 @@ steps:
       - "PROD=True"
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy", "--appyaml", "./deploy/api_app.yaml"]
-    dir: "backend"
+    dir: "v3/backend"

@@ -14,7 +14,7 @@ LOCAL_DB = os.getenv("LOCAL_DB", "True") == "True"
 # LOCAL_DB = False
 
 CONN_STR = (
-    "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
+    "cockroachdb://root@localhost:26257/statbotics3?sslmode=disable"
     if LOCAL_DB
     else (
         "cockroachdb://"
@@ -23,7 +23,7 @@ CONN_STR = (
         + CRDB_PWD
         + "@"
         + CRDB_HOST
-        + "/statbotics2?sslmode=verify-full&sslrootcert=root.crt&options=--cluster%3D"
+        + "/statbotics3?sslmode=verify-full&sslrootcert=root.crt&options=--cluster%3D"
         + CRDB_CLUSTER
     )
 )
