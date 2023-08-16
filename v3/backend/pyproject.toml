@@ -5,24 +5,24 @@ description = ""
 authors = ["Abhijit Gupta <avgupta456@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-fastapi = "^0.79.0"
-python-dotenv = "^0.20.0"
-uvicorn = "^0.18.2"
-gunicorn = "^20.1.0"
-requests = "^2.28.1"
-SQLAlchemy = "^1.4.40"
-sqlalchemy-cockroachdb = "^1.4.3"
-psycopg2 = "^2.9.3"
-attrs = "^22.1.0"
-scipy = "^1.9.1"
-CacheControl = "^0.12.11"
+python = ">=3.9,<3.12"
+fastapi = "^0.101.1"
+python-dotenv = "^1.0.0"
+uvicorn = "^0.23.2"
+gunicorn = "^21.2.0"
+requests = "^2.31.0"
+SQLAlchemy = "^2.0.20"
+sqlalchemy-cockroachdb = "^2.0.1"
+psycopg2 = "^2.9.7"
+attrs = "^23.1.0"
+scipy = "^1.11.1"
+CacheControl = "^0.13.1"
 typer = {extras = ["all"], version = "^0.9.0"}
 
 [tool.poetry.dev-dependencies]
-black = "^22.6.0"
-flake8 = "^5.0.4"
-isort = "^5.10.1"
+black = "^23.7.0"
+flake8 = "^6.1.0"
+isort = "^5.12.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
