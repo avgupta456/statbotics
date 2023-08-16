@@ -49,7 +49,7 @@ def get_info():
     return {"PROD": PROD, "CONN_STR": "REDACTED" if PROD else CONN_STR}
 
 
-app.include_router(router, prefix="", include_in_schema=False)
-app.include_router(api_router, prefix="/v2")
-app.include_router(data_router, prefix="/data", include_in_schema=False)
-app.include_router(site_router, prefix="/site", include_in_schema=False)
+app.include_router(router, prefix="/v3", include_in_schema=False)
+app.include_router(api_router, prefix="/v3")
+app.include_router(data_router, prefix="/v3/data", include_in_schema=False)
+app.include_router(site_router, prefix="/v3/site", include_in_schema=False)
