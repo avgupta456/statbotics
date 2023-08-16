@@ -1,4 +1,4 @@
-service: data_v3
+service: data-v3
 runtime: python38
 entrypoint: gunicorn -w 1 -t 600 -k uvicorn.workers.UvicornWorker main:app
 
