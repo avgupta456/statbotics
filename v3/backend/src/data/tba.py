@@ -14,7 +14,7 @@ from src.db.models.create import (
     create_team_year_obj,
     create_year_obj,
 )
-from src.tba.constants import YEAR_BLACKLIST
+from src.tba.constants import DISTRICT_MAPPING, YEAR_BLACKLIST
 from src.tba.mock import all_mock_events
 from src.tba.read_tba import (
     get_district_teams as get_district_teams_tba,
@@ -110,7 +110,7 @@ def process_year(
     for district_key, district_abbrev in districts:
         district_teams, _ = get_district_teams_tba(district_key, cache=cache)
         for team in district_teams:
-            year_teams[team] = district_abbrev
+            year_teams[team] = DISTRICT_MAPPING.get(district_abbrev, district_abbrev)
 
     events, _ = get_events_tba(year_num, mock=mock, cache=cache)
 
