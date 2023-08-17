@@ -1,10 +1,10 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from src.constants import CURR_WEEK, CURR_YEAR, MAX_TEAM
 from src.data.utils import objs_type
-from src.db.functions import remove_teams_with_no_events
+from src.db.functions import remove_teams_with_no_events, update_team_districts
 from src.db.models import ETag, Event, Match, Team, TeamEvent, TeamMatch, TeamYear
 from src.db.models.create import (
     create_event_obj,
@@ -14,9 +14,11 @@ from src.db.models.create import (
     create_team_year_obj,
     create_year_obj,
 )
-from src.tba.constants import YEAR_BLACKLIST
+from src.tba.constants import DISTRICT_MAPPING, YEAR_BLACKLIST
 from src.tba.mock import all_mock_events
 from src.tba.read_tba import (
+    get_district_teams as get_district_teams_tba,
+    get_districts as get_districts_tba,
     get_event_rankings as get_event_rankings_tba,
     get_event_teams as get_event_teams_tba,
     get_events as get_events_tba,
@@ -101,7 +103,14 @@ def process_year(
     team_next_event_dict: Dict[int, Any] = defaultdict(lambda: (None, None, None))
     team_first_event_dict: Dict[int, Any] = defaultdict(lambda: (None, None))
 
-    year_teams: Set[int] = set()
+    # maps team to district_abbrev (or None if not in a district)
+    year_teams: Dict[int, Optional[str]] = {}
+
+    districts, _ = get_districts_tba(year_num, cache=cache)
+    for district_key, district_abbrev in districts:
+        district_teams, _ = get_district_teams_tba(district_key, cache=cache)
+        for team in district_teams:
+            year_teams[team] = DISTRICT_MAPPING.get(district_abbrev, district_abbrev)
 
     events, _ = get_events_tba(year_num, mock=mock, cache=cache)
 
@@ -128,7 +137,9 @@ def process_year(
 
         def add_team_event(team: int):
             event_teams.add(team)
-            year_teams.add(team)
+            if team not in year_teams:
+                year_teams[team] = None
+
             # Stores whether a team is competing this week
             if event_obj.year == CURR_YEAR and event_obj.week == CURR_WEEK:
                 team_is_competing_dict[team] = True
@@ -221,7 +232,7 @@ def process_year(
                     "name": team_obj.name,
                     "state": team_obj.state,
                     "country": team_obj.country,
-                    "district": team_obj.district,
+                    "district": year_teams[team],
                     "is_competing": is_competing,
                     "next_event_key": next_event[0],
                     "next_event_name": next_event[1],
@@ -372,3 +383,4 @@ def process_year_partial(
 
 def post_process():
     remove_teams_with_no_events()
+    update_team_districts()
