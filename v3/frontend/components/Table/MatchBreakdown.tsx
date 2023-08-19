@@ -10,7 +10,7 @@ import { classnames, truncate } from "../../utils";
 import { APIYear, PercentileStats } from "../types/api";
 import { formatNumber } from "../utils";
 import Table from "./Table";
-import { CONDITIONAL_COLORS, getEPAColor, getRPColor } from "./shared";
+import { CONDITIONAL_COLORS, getEPAColor } from "./shared";
 
 export type Component = {
   name: string;
@@ -69,11 +69,7 @@ const formatCell = (
         ? stats.rp_2_stats
         : stats.total_stats;
 
-    if (row.includes("RP")) {
-      color = getRPColor(value);
-    } else {
-      color = getEPAColor(value, percentileStats, multiplier);
-    }
+    color = getEPAColor(value, percentileStats, multiplier);
   }
 
   return (
