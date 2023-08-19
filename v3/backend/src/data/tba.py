@@ -15,7 +15,6 @@ from src.db.models.create import (
     create_year_obj,
 )
 from src.tba.constants import DISTRICT_MAPPING, YEAR_BLACKLIST
-from src.tba.mock import all_mock_events
 from src.tba.read_tba import (
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
@@ -63,11 +62,7 @@ def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
 
 
 def process_year(
-    year_num: int,
-    teams: List[Team],
-    etags: List[ETag],
-    mock: bool = False,
-    cache: bool = True,
+    year_num: int, teams: List[Team], etags: List[ETag], cache: bool = True
 ) -> Tuple[objs_type, List[ETag]]:
     year_obj = create_year_obj({"year": year_num})
     team_year_objs: List[TeamYear] = []
@@ -112,14 +107,14 @@ def process_year(
         for team in district_teams:
             year_teams[team] = DISTRICT_MAPPING.get(district_abbrev, district_abbrev)
 
-    events, _ = get_events_tba(year_num, mock=mock, cache=cache)
+    events, _ = get_events_tba(year_num, cache=cache)
 
     for event in events:
         event_obj = create_event_obj(event)
         event_key, event_time = event_obj.key, event_obj.time
 
         matches, new_etag = get_matches_tba(
-            year_num, event_key, event_time, mock=mock, cache=cache
+            year_num, event_key, event_time, cache=cache
         )
         prev_etag = etags_dict.get(event_key + "/matches", default_etag).etag
         if new_etag != prev_etag and new_etag is not None:
@@ -167,7 +162,7 @@ def process_year(
         if event_status == "Invalid":
             continue
         elif event_status == "Upcoming":
-            temp_event_teams, _ = get_event_teams_tba(event_key, mock=mock, cache=cache)
+            temp_event_teams, _ = get_event_teams_tba(event_key, cache=cache)
             for team in temp_event_teams:
                 add_team_event(team)
         elif event_status in ["Ongoing", "Completed"]:
@@ -182,7 +177,7 @@ def process_year(
                 for team_match in curr_team_match_objs:
                     add_team_event(team_match.team)
 
-            rankings, _ = get_event_rankings_tba(event_key, mock=mock, cache=cache)
+            rankings, _ = get_event_rankings_tba(event_key, cache=cache)
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
@@ -284,11 +279,7 @@ def check_year_partial(
 
 
 def process_year_partial(
-    year_num: int,
-    objs: objs_type,
-    etags: List[ETag],
-    mock: bool = False,
-    mock_index: int = 0,
+    year_num: int, objs: objs_type, etags: List[ETag]
 ) -> Tuple[objs_type, List[ETag]]:
     (y_obj, ty_objs, event_objs, team_event_objs, match_objs, team_match_objs) = objs
     match_objs_dict = {x.key: x for x in match_objs}
@@ -302,28 +293,18 @@ def process_year_partial(
         if event_obj.status == "Completed":
             continue
 
-        if mock:
-            if event_obj.key not in all_mock_events:
-                continue
-        else:
-            start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
-            end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
-            if start_date - timedelta(days=1) > datetime.now():
-                continue
+        start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
+        if start_date - timedelta(days=1) > datetime.now():
+            continue
 
-            if end_date + timedelta(days=1) < datetime.now():
-                continue
+        if end_date + timedelta(days=1) < datetime.now():
+            continue
 
         # Load matches, if same as before then skip event
         prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
         matches, new_etag = get_matches_tba(
-            year_num,
-            event_obj.key,
-            event_obj.time,
-            prev_etag,
-            mock=mock,
-            mock_index=mock_index,
-            cache=False,
+            year_num, event_obj.key, event_obj.time, prev_etag, cache=False
         )
         if new_etag is not None:
             if new_etag == prev_etag:
@@ -363,7 +344,7 @@ def process_year_partial(
             # Update team_event_objs
             prev_etag = etags_dict.get(event_obj.key + "/rankings", default_etag).etag
             rankings, new_etag = get_event_rankings_tba(
-                event_obj.key, None, mock=mock, mock_index=mock_index, cache=False
+                event_obj.key, None, cache=False
             )
             if new_etag is not None and new_etag != prev_etag:
                 new_etags.append(ETag(year_num, event_obj.key + "/rankings", new_etag))

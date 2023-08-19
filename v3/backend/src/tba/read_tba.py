@@ -3,19 +3,10 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
 from src.constants import MAX_TEAM
-from src.tba.clean_data import (
-    clean_district,
-    clean_state,
-    get_breakdown,
-    get_match_time,
-)
+from src.tba.clean_data import clean_district, clean_state, get_match_time
+from src.tba.breakdown import get_breakdown
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
-from src.tba.mock import (
-    all_mock_events,
-    get_event_rankings as get_event_rankings_mock,
-    get_matches as get_matches_mock,
-)
 
 m_type = List[Dict[str, Any]]
 
@@ -75,7 +66,7 @@ def get_district_teams(
 
 
 def get_events(
-    year: int, etag: Optional[str] = None, mock: bool = False, cache: bool = True
+    year: int, etag: Optional[str] = None, cache: bool = True
 ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
     out: List[Dict[str, Any]] = []
     data, new_etag = get_tba("events/" + str(year), etag=etag, cache=cache)
@@ -162,7 +153,7 @@ def format_team(team: str) -> int:
 
 
 def get_event_teams(
-    event: str, etag: Optional[str] = None, mock: bool = False, cache: bool = True
+    event: str, etag: Optional[str] = None, cache: bool = True
 ) -> Tuple[List[int], Optional[str]]:
     query_str = "event/" + str(event) + "/teams/simple"
     data, new_etag = get_tba(query_str, etag=etag, cache=cache)
@@ -173,15 +164,8 @@ def get_event_teams(
 
 
 def get_event_rankings(
-    event: str,
-    etag: Optional[str] = None,
-    mock: bool = False,
-    mock_index: int = 0,
-    cache: bool = True,
+    event: str, etag: Optional[str] = None, cache: bool = True
 ) -> Tuple[Dict[int, int], Optional[str]]:
-    if mock and event in all_mock_events:
-        return get_event_rankings_mock(event, mock_index), None
-
     out: Dict[int, int] = {}
     new_etag: Optional[str] = None
     # queries TBA for rankings, some older events are not populated
@@ -205,13 +189,8 @@ def get_matches(
     event: str,
     event_time: int,
     etag: Optional[str] = None,
-    mock: bool = False,
-    mock_index: int = 0,
     cache: bool = True,
 ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
-    if mock and event in all_mock_events:
-        return get_matches_mock(year, event, event_time, mock_index), None
-
     out: m_type = []
     query_str = "event/" + str(event) + "/matches"
     matches, new_etag = get_tba(query_str, etag=etag, cache=cache)

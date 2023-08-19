@@ -75,7 +75,7 @@ def reset_all_years(start_year: int, end_year: int):
     # print_table_stats()
 
 
-def reset_curr_year(curr_year: int, mock: bool = False):
+def reset_curr_year(curr_year: int):
     teams = time_func("Load Teams", get_teams_db)
     etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
 
@@ -93,7 +93,7 @@ def reset_curr_year(curr_year: int, mock: bool = False):
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     objs, new_etags = time_func(
-        str(curr_year) + " TBA", process_year_tba, curr_year, teams, etags, mock, False  # type: ignore
+        str(curr_year) + " TBA", process_year_tba, curr_year, teams, etags, False  # type: ignore
     )
     year = time_func(
         str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -112,14 +112,13 @@ def reset_curr_year(curr_year: int, mock: bool = False):
         time_func("Post EPA", lambda: post_process_epa(curr_year))
 
 
-def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
+def update_curr_year(curr_year: int):
     etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
 
-    if not mock:
-        event_objs = get_events_db(year=curr_year, offseason=None)
-        is_new_data = time_func("Check TBA", check_year_partial_tba, curr_year, event_objs, etags)  # type: ignore
-        if not is_new_data:
-            return
+    event_objs = get_events_db(year=curr_year, offseason=None)
+    is_new_data = time_func("Check TBA", check_year_partial_tba, curr_year, event_objs, etags)  # type: ignore
+    if not is_new_data:
+        return
 
     objs: objs_type = time_func("Load Objs", read_objs, curr_year)  # type: ignore
 
@@ -145,7 +144,7 @@ def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     objs, new_etags = time_func(
-        str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags, mock, mock_index  # type: ignore
+        str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags  # type: ignore
     )
     year = time_func(
         str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore

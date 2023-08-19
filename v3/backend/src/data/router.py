@@ -34,15 +34,3 @@ async def update_year_endpoint(year: int):
 async def update_curr_year_endpoint():
     update_curr_year(curr_year=CURR_YEAR)
     return {"status": "success"}
-
-
-@router.get("/reset_curr_year_mock")
-async def reset_curr_year_mock_endpoint():
-    reset_curr_year(curr_year=CURR_YEAR, mock=True)
-    return {"status": "success"}
-
-
-@router.get("/update_curr_year_mock/{index}")
-async def update_curr_year_mock_endpoint(index: int = 0):
-    update_curr_year(curr_year=CURR_YEAR, mock=True, mock_index=index)
-    return {"status": "success"}
