@@ -26,7 +26,7 @@ async function getTeamData() {
   }
 
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/teams/all`, { next: { revalidate: 60 } });
+  const res = await fetch(`${BACKEND_URL}/teams/all`);
   log(`/teams/all took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
@@ -45,7 +45,7 @@ async function getEventData() {
   }
 
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/events/all`, { next: { revalidate: 60 } });
+  const res = await fetch(`${BACKEND_URL}/events/all`);
   log(`events/all took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {
@@ -61,8 +61,8 @@ const Navbar = () => {
 
   const [toggle, setToggle] = useState(false);
 
-  const [teams, setTeams] = useState([]);
-  const [events, setEvents] = useState([]);
+  const [teams, setTeams] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
     getTeamData().then((data) => setTeams(data));
@@ -226,7 +226,7 @@ const Navbar = () => {
         className={classnames(
           "pt-0 border-t-[1px] border-gray-500 w-full flex flex-col gap-2",
           "md:hidden", // Hide on desktop
-          !toggle && "hidden"
+          !toggle ? "hidden" : ""
         )}
       >
         <div className="h-2" />

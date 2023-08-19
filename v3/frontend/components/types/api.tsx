@@ -10,24 +10,16 @@ export type APITeam = {
 
 export type PercentileStats = {
   p99: number;
-  p95: number;
   p90: number;
   p75: number;
-  p50: number;
   p25: number;
-  mean: number;
-  sd: number;
 };
 
 export const emptyPercentileStats: PercentileStats = {
   p99: 0,
-  p95: 0,
   p90: 0,
   p75: 0,
-  p50: 0,
   p25: 0,
-  mean: 0,
-  sd: 0,
 };
 
 export type APIYear = {

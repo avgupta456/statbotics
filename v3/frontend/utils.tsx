@@ -53,7 +53,7 @@ export const getMediaUrl = async (team: number, year: number) => {
 };
 
 export const getMediaUrls = async (teams: number[], year: number) => {
-  const urls = [];
+  const urls: string[] = [];
   for (const team of teams) {
     const url = await getMediaUrl(team, year);
     urls.push(url);
@@ -133,7 +133,7 @@ export const decompress = (str: string) => {
   let lengthsBinary = binaryString.substring(33, 33 + 7 * numPositive);
   let teamsBinary = binaryString.substring(33 + 7 * numPositive);
 
-  const lengths = [];
+  const lengths: number[] = [];
   for (let i = 0; i < posLengthsBinary.length; i++) {
     if (posLengthsBinary[i] === "1") {
       lengths.push(parseInt(lengthsBinary.substring(0, 7), 2));
@@ -143,7 +143,7 @@ export const decompress = (str: string) => {
     }
   }
 
-  const teams = [];
+  const teams: number[] = [];
   for (let i = 0; i < lengths.length; i++) {
     for (let j = 0; j < lengths[i]; j++) {
       teams.push(parseInt(teamsBinary.substring(0, i), 2));
