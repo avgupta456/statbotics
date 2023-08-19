@@ -2,6 +2,7 @@ import React from "react";
 
 import MatchBreakdown from "../../../../components/Table/MatchBreakdown";
 import { TableKey } from "../../../../components/Table/shared";
+import { emptyAPITeamEvent, emptyAPITeamMatch } from "../../../../components/types/api";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
@@ -16,20 +17,32 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const blue3 = data.match.blue[2];
 
   // Used for completed matches
-  const red1Data = data.team_matches.find((teamMatch) => teamMatch.num === red1);
-  const red2Data = data.team_matches.find((teamMatch) => teamMatch.num === red2);
-  const red3Data = data.team_matches.find((teamMatch) => teamMatch.num === red3);
-  const blue1Data = data.team_matches.find((teamMatch) => teamMatch.num === blue1);
-  const blue2Data = data.team_matches.find((teamMatch) => teamMatch.num === blue2);
-  const blue3Data = data.team_matches.find((teamMatch) => teamMatch.num === blue3);
+  const red1Data =
+    data.team_matches.find((teamMatch) => teamMatch.num === red1) ?? emptyAPITeamMatch;
+  const red2Data =
+    data.team_matches.find((teamMatch) => teamMatch.num === red2) ?? emptyAPITeamMatch;
+  const red3Data =
+    data.team_matches.find((teamMatch) => teamMatch.num === red3) ?? emptyAPITeamMatch;
+  const blue1Data =
+    data.team_matches.find((teamMatch) => teamMatch.num === blue1) ?? emptyAPITeamMatch;
+  const blue2Data =
+    data.team_matches.find((teamMatch) => teamMatch.num === blue2) ?? emptyAPITeamMatch;
+  const blue3Data =
+    data.team_matches.find((teamMatch) => teamMatch.num === blue3) ?? emptyAPITeamMatch;
 
   // Used for upcoming matches
-  const red1EventData = data.team_events.find((teamEvent) => teamEvent.num === red1);
-  const red2EventData = data.team_events.find((teamEvent) => teamEvent.num === red2);
-  const red3EventData = data.team_events.find((teamEvent) => teamEvent.num === red3);
-  const blue1EventData = data.team_events.find((teamEvent) => teamEvent.num === blue1);
-  const blue2EventData = data.team_events.find((teamEvent) => teamEvent.num === blue2);
-  const blue3EventData = data.team_events.find((teamEvent) => teamEvent.num === blue3);
+  const red1EventData =
+    data.team_events.find((teamEvent) => teamEvent.num === red1) ?? emptyAPITeamEvent;
+  const red2EventData =
+    data.team_events.find((teamEvent) => teamEvent.num === red2) ?? emptyAPITeamEvent;
+  const red3EventData =
+    data.team_events.find((teamEvent) => teamEvent.num === red3) ?? emptyAPITeamEvent;
+  const blue1EventData =
+    data.team_events.find((teamEvent) => teamEvent.num === blue1) ?? emptyAPITeamEvent;
+  const blue2EventData =
+    data.team_events.find((teamEvent) => teamEvent.num === blue2) ?? emptyAPITeamEvent;
+  const blue3EventData =
+    data.team_events.find((teamEvent) => teamEvent.num === blue3) ?? emptyAPITeamEvent;
 
   // Used for both upcoming and completed matches
   const redFouls = data.match.red_epa_pred * data.year.foul_rate;
@@ -45,10 +58,6 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1EventData.endgame_epa + red2EventData.endgame_epa + red3EventData.endgame_epa;
   const blueEventEndgame =
     blue1EventData.endgame_epa + blue2EventData.endgame_epa + blue3EventData.endgame_epa;
-  const redEventRP1 = red1EventData.rp_1_epa + red2EventData.rp_1_epa + red3EventData.rp_1_epa;
-  const blueEventRP1 = blue1EventData.rp_1_epa + blue2EventData.rp_1_epa + blue3EventData.rp_1_epa;
-  const redEventRP2 = red1EventData.rp_2_epa + red2EventData.rp_2_epa + red3EventData.rp_2_epa;
-  const blueEventRP2 = blue1EventData.rp_2_epa + blue2EventData.rp_2_epa + blue3EventData.rp_2_epa;
   const redEventTotal = redEventAuto + redEventTeleop + redEventEndgame + redFouls;
   const blueEventTotal = blueEventAuto + blueEventTeleop + blueEventEndgame + blueFouls;
 
@@ -110,32 +119,33 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     blueActual: completed ? data.match.blue_fouls : null,
   };
 
+  // TODO: Fix RP calculations
   const rp1Component = {
     name: "RP1",
-    red1: completed ? red1Data.rp_1_epa : red1EventData.rp_1_epa,
-    red2: completed ? red2Data.rp_1_epa : red2EventData.rp_1_epa,
-    red3: completed ? red3Data.rp_1_epa : red3EventData.rp_1_epa,
-    redTotal: completed ? RPSigmoid(data.match.red_rp_1_pred) : RPSigmoid(redEventRP1),
-    redActual: completed ? data.match.red_rp_1 : null,
-    blue1: completed ? blue1Data.rp_1_epa : blue1EventData.rp_1_epa,
-    blue2: completed ? blue2Data.rp_1_epa : blue2EventData.rp_1_epa,
-    blue3: completed ? blue3Data.rp_1_epa : blue3EventData.rp_1_epa,
-    blueTotal: completed ? RPSigmoid(data.match.blue_rp_1_pred) : RPSigmoid(blueEventRP1),
-    blueActual: completed ? data.match.blue_rp_1 : null,
+    red1: completed ? 0 : 0,
+    red2: completed ? 0 : 0,
+    red3: completed ? 0 : 0,
+    redTotal: completed ? 0 : 0,
+    redActual: completed ? 0 : null,
+    blue1: completed ? 0 : 0,
+    blue2: completed ? 0 : 0,
+    blue3: completed ? 0 : 0,
+    blueTotal: completed ? 0 : 0,
+    blueActual: completed ? 0 : null,
   };
 
   const rp2Component = {
     name: "RP2",
-    red1: completed ? red1Data.rp_2_epa : red1EventData.rp_2_epa,
-    red2: completed ? red2Data.rp_2_epa : red2EventData.rp_2_epa,
-    red3: completed ? red3Data.rp_2_epa : red3EventData.rp_2_epa,
-    redTotal: completed ? RPSigmoid(data.match.red_rp_2_pred) : RPSigmoid(redEventRP2),
-    redActual: completed ? data.match.red_rp_2 : null,
-    blue1: completed ? blue1Data.rp_2_epa : blue1EventData.rp_2_epa,
-    blue2: completed ? blue2Data.rp_2_epa : blue2EventData.rp_2_epa,
-    blue3: completed ? blue3Data.rp_2_epa : blue3EventData.rp_2_epa,
-    blueTotal: completed ? RPSigmoid(data.match.blue_rp_2_pred) : RPSigmoid(blueEventRP2),
-    blueActual: completed ? data.match.blue_rp_2 : null,
+    red1: completed ? 0 : 0,
+    red2: completed ? 0 : 0,
+    red3: completed ? 0 : 0,
+    redTotal: completed ? 0 : 0,
+    redActual: completed ? 0 : null,
+    blue1: completed ? 0 : 0,
+    blue2: completed ? 0 : 0,
+    blue3: completed ? 0 : 0,
+    blueTotal: completed ? 0 : 0,
+    blueActual: completed ? 0 : null,
   };
 
   const totalComponent = {

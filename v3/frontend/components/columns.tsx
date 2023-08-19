@@ -16,9 +16,6 @@ export const getColumnOptions = (year: number) => [
     label: "Auto + Endgame",
     accessor: (datum) => round(datum?.auto_epa + datum?.endgame_epa),
   },
-  { label: `${RPMapping?.[year]?.[0]}`, accessor: (datum) => round(datum?.rp_1_epa, 3) },
-  { label: `${RPMapping?.[year]?.[1]}`, accessor: (datum) => round(datum?.rp_2_epa, 3) },
-
   { label: "Wins", accessor: (datum) => datum?.wins },
   {
     label: "Win Rate",

@@ -971,34 +971,6 @@ def process_year(
                 year_endgame_epas[round(0.75 * len(year_endgame_epas))], 2
             )
 
-            year_rp_1_epas.sort(reverse=True)
-            year.rp_1_epa_1p = round(
-                year_rp_1_epas[round(0.01 * len(year_rp_1_epas))], 4
-            )
-            year.rp_1_epa_10p = round(
-                year_rp_1_epas[round(0.1 * len(year_rp_1_epas))], 4
-            )
-            year.rp_1_epa_25p = round(
-                year_rp_1_epas[round(0.25 * len(year_rp_1_epas))], 4
-            )
-            year.rp_1_epa_75p = round(
-                year_rp_1_epas[round(0.75 * len(year_rp_1_epas))], 4
-            )
-
-            year_rp_2_epas.sort(reverse=True)
-            year.rp_2_epa_1p = round(
-                year_rp_2_epas[round(0.01 * len(year_rp_2_epas))], 4
-            )
-            year.rp_2_epa_10p = round(
-                year_rp_2_epas[round(0.1 * len(year_rp_2_epas))], 4
-            )
-            year.rp_2_epa_25p = round(
-                year_rp_2_epas[round(0.25 * len(year_rp_2_epas))], 4
-            )
-            year.rp_2_epa_75p = round(
-                year_rp_2_epas[round(0.75 * len(year_rp_2_epas))], 4
-            )
-
         year.epa_acc = acc
         year.epa_mse = mse
         year.count = count

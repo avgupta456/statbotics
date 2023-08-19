@@ -38,15 +38,55 @@ class YearORM(Base, ModelORM):
     endgame_epa_25p = Column(Float)
     endgame_epa_75p = Column(Float)
 
-    rp_1_epa_1p = Column(Float)
-    rp_1_epa_10p = Column(Float)
-    rp_1_epa_25p = Column(Float)
-    rp_1_epa_75p = Column(Float)
+    comp_1_epa_1p = Column(Float)
+    comp_1_epa_10p = Column(Float)
+    comp_1_epa_25p = Column(Float)
+    comp_1_epa_75p = Column(Float)
 
-    rp_2_epa_1p = Column(Float)
-    rp_2_epa_10p = Column(Float)
-    rp_2_epa_25p = Column(Float)
-    rp_2_epa_75p = Column(Float)
+    comp_2_epa_1p = Column(Float)
+    comp_2_epa_10p = Column(Float)
+    comp_2_epa_25p = Column(Float)
+    comp_2_epa_75p = Column(Float)
+
+    comp_3_epa_1p = Column(Float)
+    comp_3_epa_10p = Column(Float)
+    comp_3_epa_25p = Column(Float)
+    comp_3_epa_75p = Column(Float)
+
+    comp_4_epa_1p = Column(Float)
+    comp_4_epa_10p = Column(Float)
+    comp_4_epa_25p = Column(Float)
+    comp_4_epa_75p = Column(Float)
+
+    comp_5_epa_1p = Column(Float)
+    comp_5_epa_10p = Column(Float)
+    comp_5_epa_25p = Column(Float)
+    comp_5_epa_75p = Column(Float)
+
+    comp_6_epa_1p = Column(Float)
+    comp_6_epa_10p = Column(Float)
+    comp_6_epa_25p = Column(Float)
+    comp_6_epa_75p = Column(Float)
+
+    comp_7_epa_1p = Column(Float)
+    comp_7_epa_10p = Column(Float)
+    comp_7_epa_25p = Column(Float)
+    comp_7_epa_75p = Column(Float)
+
+    comp_8_epa_1p = Column(Float)
+    comp_8_epa_10p = Column(Float)
+    comp_8_epa_25p = Column(Float)
+    comp_8_epa_75p = Column(Float)
+
+    comp_9_epa_1p = Column(Float)
+    comp_9_epa_10p = Column(Float)
+    comp_9_epa_25p = Column(Float)
+    comp_9_epa_75p = Column(Float)
+
+    comp_10_epa_1p = Column(Float)
+    comp_10_epa_10p = Column(Float)
+    comp_10_epa_25p = Column(Float)
+    comp_10_epa_75p = Column(Float)
 
     """WIN PROB"""
     epa_quals_acc = Column(Float)
@@ -109,15 +149,55 @@ class Year(Model):
     endgame_epa_25p: Optional[float] = None
     endgame_epa_75p: Optional[float] = None
 
-    rp_1_epa_1p: Optional[float] = None
-    rp_1_epa_10p: Optional[float] = None
-    rp_1_epa_25p: Optional[float] = None
-    rp_1_epa_75p: Optional[float] = None
+    comp_1_epa_1p: Optional[float] = None
+    comp_1_epa_10p: Optional[float] = None
+    comp_1_epa_25p: Optional[float] = None
+    comp_1_epa_75p: Optional[float] = None
 
-    rp_2_epa_1p: Optional[float] = None
-    rp_2_epa_10p: Optional[float] = None
-    rp_2_epa_25p: Optional[float] = None
-    rp_2_epa_75p: Optional[float] = None
+    comp_2_epa_1p: Optional[float] = None
+    comp_2_epa_10p: Optional[float] = None
+    comp_2_epa_25p: Optional[float] = None
+    comp_2_epa_75p: Optional[float] = None
+
+    comp_3_epa_1p: Optional[float] = None
+    comp_3_epa_10p: Optional[float] = None
+    comp_3_epa_25p: Optional[float] = None
+    comp_3_epa_75p: Optional[float] = None
+
+    comp_4_epa_1p: Optional[float] = None
+    comp_4_epa_10p: Optional[float] = None
+    comp_4_epa_25p: Optional[float] = None
+    comp_4_epa_75p: Optional[float] = None
+
+    comp_5_epa_1p: Optional[float] = None
+    comp_5_epa_10p: Optional[float] = None
+    comp_5_epa_25p: Optional[float] = None
+    comp_5_epa_75p: Optional[float] = None
+
+    comp_6_epa_1p: Optional[float] = None
+    comp_6_epa_10p: Optional[float] = None
+    comp_6_epa_25p: Optional[float] = None
+    comp_6_epa_75p: Optional[float] = None
+
+    comp_7_epa_1p: Optional[float] = None
+    comp_7_epa_10p: Optional[float] = None
+    comp_7_epa_25p: Optional[float] = None
+    comp_7_epa_75p: Optional[float] = None
+
+    comp_8_epa_1p: Optional[float] = None
+    comp_8_epa_10p: Optional[float] = None
+    comp_8_epa_25p: Optional[float] = None
+    comp_8_epa_75p: Optional[float] = None
+
+    comp_9_epa_1p: Optional[float] = None
+    comp_9_epa_10p: Optional[float] = None
+    comp_9_epa_25p: Optional[float] = None
+    comp_9_epa_75p: Optional[float] = None
+
+    comp_10_epa_1p: Optional[float] = None
+    comp_10_epa_10p: Optional[float] = None
+    comp_10_epa_25p: Optional[float] = None
+    comp_10_epa_75p: Optional[float] = None
 
     epa_quals_acc: Optional[float] = None
     epa_quals_mse: Optional[float] = None

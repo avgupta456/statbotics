@@ -26,8 +26,6 @@ export type TeamYearInsights = {
   auto_epa: number | string;
   teleop_epa: number | string;
   endgame_epa: number | string;
-  rp_1_epa: number | string;
-  rp_2_epa: number | string;
   next_event_key?: string;
   next_event_name?: string;
   next_event_week?: number | string;
@@ -91,8 +89,6 @@ const PageTeamInsightsTable = ({
         auto_epa: round(teamYear.auto_epa, 1) ?? "N/A",
         teleop_epa: round(teamYear.teleop_epa, 1) ?? "N/A",
         endgame_epa: round(teamYear.endgame_epa, 1) ?? "N/A",
-        rp_1_epa: round(teamYear.rp_1_epa, 2) ?? "N/A",
-        rp_2_epa: round(teamYear.rp_2_epa, 2) ?? "N/A",
         next_event_key: teamYear.next_event_key ?? "N/A",
         next_event_name: teamYear.next_event_name ?? "N/A",
         next_event_week: teamYear.next_event_week ?? "N/A",
@@ -202,16 +198,6 @@ const PageTeamInsightsTable = ({
         detailedColumnHelper.accessor("endgame_epa", {
           cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
           header: "Endgame EPA",
-        }),
-      year >= 2016 &&
-        detailedColumnHelper.accessor("rp_1_epa", {
-          cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
-          header: RPMapping[year][0],
-        }),
-      year >= 2016 &&
-        detailedColumnHelper.accessor("rp_2_epa", {
-          cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
-          header: RPMapping[year][1],
         }),
       /*
       year == CURR_YEAR &&

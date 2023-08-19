@@ -29,9 +29,7 @@ const EventLineChart = ({
 
   const fetchData = async (teamNum: number) => {
     const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/event/${eventId}/team_matches/${teamNum}`, {
-      next: { revalidate: 60 },
-    });
+    const res = await fetch(`${BACKEND_URL}/event/${eventId}/team_matches/${teamNum}`);
     log(`/event/${eventId}/team_matches/${teamNum} took ${round(performance.now() - start, 0)} ms`);
 
     if (!res.ok) {
@@ -56,6 +54,10 @@ const EventLineChart = ({
       const team = selected[selected.length - 1].value;
       if (!allData[team]) {
         const newData = await fetchData(team);
+        if (!newData) {
+          return;
+        }
+
         setAllData({ ...allData, [team]: newData });
       }
     }
@@ -113,8 +115,6 @@ const EventLineChart = ({
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: `${RPMapping?.[year]?.[0]} EPA` },
-          { value: "rp_2_epa", label: `${RPMapping?.[year]?.[1]} EPA` },
         ].filter(Boolean)
       : [{ value: "total_epa", label: "EPA" }];
 

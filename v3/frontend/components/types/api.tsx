@@ -73,8 +73,6 @@ export type APITeamYear = {
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;
-  rp_1_epa: number;
-  rp_2_epa: number;
   wins: number;
   losses: number;
   ties: number;
@@ -115,16 +113,12 @@ export type APITeamEvent = {
   first_event: boolean;
   num_teams: number;
   start_total_epa: number;
-  start_rp_1_epa: number;
-  start_rp_2_epa: number;
   total_epa: number;
   unitless_epa: number;
   norm_epa: number;
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;
-  rp_1_epa: number;
-  rp_2_epa: number;
   wins: number;
   losses: number;
   ties: number;
@@ -137,6 +131,36 @@ export type APITeamEvent = {
   rps: number;
   rps_per_match: number;
   offseason: boolean;
+};
+
+export const emptyAPITeamEvent: APITeamEvent = {
+  num: 0,
+  team: "",
+  event: "",
+  event_name: "",
+  week: 0,
+  time: 0,
+  first_event: false,
+  num_teams: 0,
+  start_total_epa: 0,
+  total_epa: 0,
+  unitless_epa: 0,
+  norm_epa: 0,
+  auto_epa: 0,
+  teleop_epa: 0,
+  endgame_epa: 0,
+  wins: 0,
+  losses: 0,
+  ties: 0,
+  count: 0,
+  qual_wins: 0,
+  qual_losses: 0,
+  qual_ties: 0,
+  qual_count: 0,
+  rank: 0,
+  rps: 0,
+  rps_per_match: 0,
+  offseason: false,
 };
 
 export type APIMatch = {
@@ -208,9 +232,23 @@ export type APITeamMatch = {
   auto_epa: number;
   teleop_epa: number;
   endgame_epa: number;
-  rp_1_epa: number;
-  rp_2_epa: number;
   post_epa?: number;
   offseason: boolean;
   status: string;
+};
+
+export const emptyAPITeamMatch: APITeamMatch = {
+  num: 0,
+  alliance: "",
+  match: "",
+  time: 0,
+  playoff: false,
+  match_number: 0,
+  total_epa: 0,
+  auto_epa: 0,
+  teleop_epa: 0,
+  endgame_epa: 0,
+  post_epa: 0,
+  offseason: false,
+  status: "",
 };

@@ -100,20 +100,6 @@ export const getEPAColor = (
   return color;
 };
 
-export const getRPColor = (value: number) => {
-  let color = "";
-  if (value < 0.5) {
-    color = CONDITIONAL_COLORS[1];
-  } else if (value < 0.75) {
-    color = CONDITIONAL_COLORS[2];
-  } else if (value <= 1) {
-    color = CONDITIONAL_COLORS[3];
-  } else {
-    color = CONDITIONAL_COLORS[4];
-  }
-  return color;
-};
-
 export const formatCell = (info: CellContext<any, number | string>) => {
   const value = info.getValue();
 
@@ -137,8 +123,6 @@ export const formatEPACell = (
     color = "";
   } else if (typeof value === "string") {
     color = CONDITIONAL_COLORS[1];
-  } else if (column == "rp_1_epa" || column == "rp_2_epa") {
-    color = getRPColor(value);
   } else {
     color = getEPAColor(value, percentileStats, multiplier, reverse);
   }

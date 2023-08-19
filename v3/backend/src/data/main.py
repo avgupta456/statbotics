@@ -50,8 +50,9 @@ def reset_all_years(start_year: int, end_year: int):
             year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
     for year_num in range(start_year, end_year + 1):
+        # NOTE: year_num < end_year replaced with True
         objs, new_etags = time_func(
-            str(year_num) + " TBA", process_year_tba, year_num, teams, [], False, year_num < end_year  # type: ignore
+            str(year_num) + " TBA", process_year_tba, year_num, teams, [], False, True  # type: ignore
         )
         year = time_func(
             str(year_num) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore

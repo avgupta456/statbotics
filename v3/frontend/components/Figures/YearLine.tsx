@@ -35,9 +35,7 @@ const YearLineChart = ({
 
   const fetchData = async (teamNum: number) => {
     const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`, {
-      next: { revalidate: 60 },
-    });
+    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`);
     log(`/team_year/${year}/${teamNum}/matches took ${round(performance.now() - start, 0)} ms`);
 
     if (!res.ok) {
@@ -120,8 +118,6 @@ const YearLineChart = ({
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: `${RPMapping?.[year]?.[0]} EPA` },
-          { value: "rp_2_epa", label: `${RPMapping?.[year]?.[1]} EPA` },
         ].filter(Boolean)
       : [{ value: "total_epa", label: "EPA" }];
 

@@ -84,8 +84,6 @@ const Match = ({ data }: { data: TeamYearData }) => {
     auto_epa: 0,
     teleop_epa: 0,
     endgame_epa: 0,
-    rp_1_epa: 0,
-    rp_2_epa: 0,
   });
 
   const matchData: any = {

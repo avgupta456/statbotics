@@ -36,20 +36,6 @@ def unpack_year(year: Year) -> APIYear:
         p25=year.endgame_epa_75p or 0,
     )
 
-    rp_1_stats = PercentileStats(
-        p99=year.rp_1_epa_1p or 0,
-        p90=year.rp_1_epa_10p or 0,
-        p75=year.rp_1_epa_25p or 0,
-        p25=year.rp_1_epa_75p or 0,
-    )
-
-    rp_2_stats = PercentileStats(
-        p99=year.rp_2_epa_1p or 0,
-        p90=year.rp_2_epa_10p or 0,
-        p75=year.rp_2_epa_25p or 0,
-        p25=year.rp_2_epa_75p or 0,
-    )
-
     foul_rate = (year.fouls_mean or 0) / (year.no_fouls_mean or 1)
 
     return APIYear(
@@ -60,8 +46,6 @@ def unpack_year(year: Year) -> APIYear:
         auto_stats=auto_stats,
         teleop_stats=teleop_stats,
         endgame_stats=endgame_stats,
-        rp_1_stats=rp_1_stats,
-        rp_2_stats=rp_2_stats,
         foul_rate=foul_rate,
     )
 
