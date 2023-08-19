@@ -17,65 +17,36 @@ class YearORM(Base, ModelORM):
     PrimaryKeyConstraint(year)
 
     """EPA"""
-    epa_max = Column(Float)
     epa_1p = Column(Float)
-    epa_5p = Column(Float)
     epa_10p = Column(Float)
     epa_25p = Column(Float)
-    epa_median = Column(Float)
     epa_75p = Column(Float)
-    epa_mean = Column(Float)
-    epa_sd = Column(Float)
 
-    auto_epa_max = Column(Float)
     auto_epa_1p = Column(Float)
-    auto_epa_5p = Column(Float)
     auto_epa_10p = Column(Float)
     auto_epa_25p = Column(Float)
-    auto_epa_median = Column(Float)
     auto_epa_75p = Column(Float)
-    auto_epa_mean = Column(Float)
-    auto_epa_sd = Column(Float)
 
     teleop_epa_max = Column(Float)
     teleop_epa_1p = Column(Float)
-    teleop_epa_5p = Column(Float)
     teleop_epa_10p = Column(Float)
     teleop_epa_25p = Column(Float)
-    teleop_epa_median = Column(Float)
     teleop_epa_75p = Column(Float)
-    teleop_epa_mean = Column(Float)
-    teleop_epa_sd = Column(Float)
 
-    endgame_epa_max = Column(Float)
     endgame_epa_1p = Column(Float)
-    endgame_epa_5p = Column(Float)
     endgame_epa_10p = Column(Float)
     endgame_epa_25p = Column(Float)
-    endgame_epa_median = Column(Float)
     endgame_epa_75p = Column(Float)
-    endgame_epa_mean = Column(Float)
-    endgame_epa_sd = Column(Float)
 
-    rp_1_epa_max = Column(Float)
     rp_1_epa_1p = Column(Float)
-    rp_1_epa_5p = Column(Float)
     rp_1_epa_10p = Column(Float)
     rp_1_epa_25p = Column(Float)
-    rp_1_epa_median = Column(Float)
     rp_1_epa_75p = Column(Float)
-    rp_1_epa_mean = Column(Float)
-    rp_1_epa_sd = Column(Float)
 
-    rp_2_epa_max = Column(Float)
     rp_2_epa_1p = Column(Float)
-    rp_2_epa_5p = Column(Float)
     rp_2_epa_10p = Column(Float)
     rp_2_epa_25p = Column(Float)
-    rp_2_epa_median = Column(Float)
     rp_2_epa_75p = Column(Float)
-    rp_2_epa_mean = Column(Float)
-    rp_2_epa_sd = Column(Float)
 
     """WIN PROB"""
     epa_quals_acc = Column(Float)
@@ -108,8 +79,6 @@ class YearORM(Base, ModelORM):
     score_sd = Column(Float)
     auto_mean = Column(Float)
     teleop_mean = Column(Float)
-    one_mean = Column(Float)  # TODO: delete eventually, unused now
-    two_mean = Column(Float)  # TODO: delete eventually, unused now
     endgame_mean = Column(Float)
     fouls_mean = Column(Float)
     no_fouls_mean = Column(Float)
@@ -120,65 +89,35 @@ class YearORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class Year(Model):
     year: int
-    epa_max: Optional[float] = None
     epa_1p: Optional[float] = None
-    epa_5p: Optional[float] = None
     epa_10p: Optional[float] = None
     epa_25p: Optional[float] = None
-    epa_median: Optional[float] = None
     epa_75p: Optional[float] = None
-    epa_mean: Optional[float] = None
-    epa_sd: Optional[float] = None
 
-    auto_epa_max: Optional[float] = None
     auto_epa_1p: Optional[float] = None
-    auto_epa_5p: Optional[float] = None
     auto_epa_10p: Optional[float] = None
     auto_epa_25p: Optional[float] = None
-    auto_epa_median: Optional[float] = None
     auto_epa_75p: Optional[float] = None
-    auto_epa_mean: Optional[float] = None
-    auto_epa_sd: Optional[float] = None
 
-    teleop_epa_max: Optional[float] = None
     teleop_epa_1p: Optional[float] = None
-    teleop_epa_5p: Optional[float] = None
     teleop_epa_10p: Optional[float] = None
     teleop_epa_25p: Optional[float] = None
-    teleop_epa_median: Optional[float] = None
     teleop_epa_75p: Optional[float] = None
-    teleop_epa_mean: Optional[float] = None
-    teleop_epa_sd: Optional[float] = None
 
-    endgame_epa_max: Optional[float] = None
     endgame_epa_1p: Optional[float] = None
-    endgame_epa_5p: Optional[float] = None
     endgame_epa_10p: Optional[float] = None
     endgame_epa_25p: Optional[float] = None
-    endgame_epa_median: Optional[float] = None
     endgame_epa_75p: Optional[float] = None
-    endgame_epa_mean: Optional[float] = None
-    endgame_epa_sd: Optional[float] = None
 
-    rp_1_epa_max: Optional[float] = None
     rp_1_epa_1p: Optional[float] = None
-    rp_1_epa_5p: Optional[float] = None
     rp_1_epa_10p: Optional[float] = None
     rp_1_epa_25p: Optional[float] = None
-    rp_1_epa_median: Optional[float] = None
     rp_1_epa_75p: Optional[float] = None
-    rp_1_epa_mean: Optional[float] = None
-    rp_1_epa_sd: Optional[float] = None
 
-    rp_2_epa_max: Optional[float] = None
     rp_2_epa_1p: Optional[float] = None
-    rp_2_epa_5p: Optional[float] = None
     rp_2_epa_10p: Optional[float] = None
     rp_2_epa_25p: Optional[float] = None
-    rp_2_epa_median: Optional[float] = None
     rp_2_epa_75p: Optional[float] = None
-    rp_2_epa_mean: Optional[float] = None
-    rp_2_epa_sd: Optional[float] = None
 
     epa_quals_acc: Optional[float] = None
     epa_quals_mse: Optional[float] = None
@@ -208,8 +147,6 @@ class Year(Model):
     score_sd: Optional[float] = None
     auto_mean: Optional[float] = None
     teleop_mean: Optional[float] = None
-    one_mean: Optional[float] = None
-    two_mean: Optional[float] = None
     endgame_mean: Optional[float] = None
     fouls_mean: Optional[float] = None
     no_fouls_mean: Optional[float] = None
@@ -222,12 +159,7 @@ class Year(Model):
         return Year(**dict)
 
     def as_dict(self: "Year") -> Dict[str, Any]:
-        return attr.asdict(
-            self,  # type: ignore
-            filter=attr.filters.exclude(
-                attr.fields(Year).one_mean, attr.fields(Year).two_mean  # type: ignore
-            ),
-        )
+        return attr.asdict(self)
 
     def __str__(self: "Year"):
         # Only refresh DB if these change (during 1 min partial update)

@@ -925,24 +925,15 @@ def process_year(
     # YEARS
     if len(year_epas) > 0:
         year_epas.sort(reverse=True)
-        year.epa_max = round(year_epas[0], 2)
         year.epa_1p = round(year_epas[round(0.01 * len(year_epas))], 2)
-        year.epa_5p = round(year_epas[round(0.05 * len(year_epas))], 2)
         year.epa_10p = round(year_epas[round(0.1 * len(year_epas))], 2)
         year.epa_25p = round(year_epas[round(0.25 * len(year_epas))], 2)
-        year.epa_median = round(year_epas[round(0.5 * len(year_epas))], 2)
         year.epa_75p = round(year_epas[round(0.75 * len(year_epas))], 2)
-        year.epa_mean = round(sum(year_epas) / len(year_epas), 2)
-        year.epa_sd = round(stdev(year_epas), 2)
 
         if USE_COMPONENTS:
             year_auto_epas.sort(reverse=True)
-            year.auto_epa_max = round(year_auto_epas[0], 2)
             year.auto_epa_1p = round(
                 year_auto_epas[round(0.01 * len(year_auto_epas))], 2
-            )
-            year.auto_epa_5p = round(
-                year_auto_epas[round(0.05 * len(year_auto_epas))], 2
             )
             year.auto_epa_10p = round(
                 year_auto_epas[round(0.1 * len(year_auto_epas))], 2
@@ -950,22 +941,12 @@ def process_year(
             year.auto_epa_25p = round(
                 year_auto_epas[round(0.25 * len(year_auto_epas))], 2
             )
-            year.auto_epa_median = round(
-                year_auto_epas[round(0.5 * len(year_auto_epas))], 2
-            )
             year.auto_epa_75p = round(
                 year_auto_epas[round(0.75 * len(year_auto_epas))], 2
             )
-            year.auto_epa_mean = round(sum(year_auto_epas) / len(year_auto_epas), 2)
-            year.auto_epa_sd = round(stdev(year_auto_epas), 2)
-
             year_teleop_epas.sort(reverse=True)
-            year.teleop_epa_max = round(year_teleop_epas[0], 2)
             year.teleop_epa_1p = round(
                 year_teleop_epas[round(0.01 * len(year_teleop_epas))], 2
-            )
-            year.teleop_epa_5p = round(
-                year_teleop_epas[round(0.05 * len(year_teleop_epas))], 2
             )
             year.teleop_epa_10p = round(
                 year_teleop_epas[round(0.1 * len(year_teleop_epas))], 2
@@ -973,24 +954,12 @@ def process_year(
             year.teleop_epa_25p = round(
                 year_teleop_epas[round(0.25 * len(year_teleop_epas))], 2
             )
-            year.teleop_epa_median = round(
-                year_teleop_epas[round(0.5 * len(year_teleop_epas))], 2
-            )
             year.teleop_epa_75p = round(
                 year_teleop_epas[round(0.75 * len(year_teleop_epas))], 2
             )
-            year.teleop_epa_mean = round(
-                sum(year_teleop_epas) / len(year_teleop_epas), 2
-            )
-            year.teleop_epa_sd = round(stdev(year_teleop_epas), 2)
-
             year_endgame_epas.sort(reverse=True)
-            year.endgame_epa_max = round(year_endgame_epas[0], 2)
             year.endgame_epa_1p = round(
                 year_endgame_epas[round(0.01 * len(year_endgame_epas))], 2
-            )
-            year.endgame_epa_5p = round(
-                year_endgame_epas[round(0.05 * len(year_endgame_epas))], 2
             )
             year.endgame_epa_10p = round(
                 year_endgame_epas[round(0.1 * len(year_endgame_epas))], 2
@@ -998,24 +967,13 @@ def process_year(
             year.endgame_epa_25p = round(
                 year_endgame_epas[round(0.25 * len(year_endgame_epas))], 2
             )
-            year.endgame_epa_median = round(
-                year_endgame_epas[round(0.5 * len(year_endgame_epas))], 2
-            )
             year.endgame_epa_75p = round(
                 year_endgame_epas[round(0.75 * len(year_endgame_epas))], 2
             )
-            year.endgame_epa_mean = round(
-                sum(year_endgame_epas) / len(year_endgame_epas), 2
-            )
-            year.endgame_epa_sd = round(stdev(year_endgame_epas), 2)
 
             year_rp_1_epas.sort(reverse=True)
-            year.rp_1_epa_max = round(year_rp_1_epas[0], 4)
             year.rp_1_epa_1p = round(
                 year_rp_1_epas[round(0.01 * len(year_rp_1_epas))], 4
-            )
-            year.rp_1_epa_5p = round(
-                year_rp_1_epas[round(0.05 * len(year_rp_1_epas))], 4
             )
             year.rp_1_epa_10p = round(
                 year_rp_1_epas[round(0.1 * len(year_rp_1_epas))], 4
@@ -1023,22 +981,13 @@ def process_year(
             year.rp_1_epa_25p = round(
                 year_rp_1_epas[round(0.25 * len(year_rp_1_epas))], 4
             )
-            year.rp_1_epa_median = round(
-                year_rp_1_epas[round(0.5 * len(year_rp_1_epas))], 4
-            )
             year.rp_1_epa_75p = round(
                 year_rp_1_epas[round(0.75 * len(year_rp_1_epas))], 4
             )
-            year.rp_1_epa_mean = round(sum(year_rp_1_epas) / len(year_rp_1_epas), 4)
-            year.rp_1_epa_sd = round(stdev(year_rp_1_epas), 4)
 
             year_rp_2_epas.sort(reverse=True)
-            year.rp_2_epa_max = round(year_rp_2_epas[0], 4)
             year.rp_2_epa_1p = round(
                 year_rp_2_epas[round(0.01 * len(year_rp_2_epas))], 4
-            )
-            year.rp_2_epa_5p = round(
-                year_rp_2_epas[round(0.05 * len(year_rp_2_epas))], 4
             )
             year.rp_2_epa_10p = round(
                 year_rp_2_epas[round(0.1 * len(year_rp_2_epas))], 4
@@ -1046,14 +995,9 @@ def process_year(
             year.rp_2_epa_25p = round(
                 year_rp_2_epas[round(0.25 * len(year_rp_2_epas))], 4
             )
-            year.rp_2_epa_median = round(
-                year_rp_2_epas[round(0.5 * len(year_rp_2_epas))], 4
-            )
             year.rp_2_epa_75p = round(
                 year_rp_2_epas[round(0.75 * len(year_rp_2_epas))], 4
             )
-            year.rp_2_epa_mean = round(sum(year_rp_2_epas) / len(year_rp_2_epas), 4)
-            year.rp_2_epa_sd = round(stdev(year_rp_2_epas), 4)
 
         year.epa_acc = acc
         year.epa_mse = mse

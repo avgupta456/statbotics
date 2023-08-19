@@ -6,13 +6,9 @@ from src.site.models.main import APIModel
 @attr.s(auto_attribs=True, slots=True)
 class PercentileStats(APIModel):
     p99: float
-    p95: float
     p90: float
     p75: float
-    p50: float
     p25: float
-    mean: float
-    sd: float
 
 
 @attr.s(auto_attribs=True, slots=True)
