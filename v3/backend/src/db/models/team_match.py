@@ -8,18 +8,19 @@ from sqlalchemy.sql.schema import (  # type: ignore
 )
 
 from src.db.main import Base
-from src.db.models.main import Model, ModelORM
+from src.db.models.main import ModelORM, generate_attr_class
 
 
 class TeamMatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "team_matches"
-    id = Column(Integer)  # placeholder for backend API
-    team = Column(String(6), index=True)
-    year = Column(Integer, index=True)
-    event = Column(String(20), index=True)
-    match = Column(String(20), index=True)
+    id: int = Column(Integer)  # placeholder for backend API
+    team: str = Column(String(6), index=True)
+    year: int = Column(Integer, index=True)
+    event: str = Column(String(20), index=True)
+    match: str = Column(String(20), index=True)
+    alliance: str = Column(String(6), index=True)
 
     PrimaryKeyConstraint(team, match)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -28,55 +29,36 @@ class TeamMatchORM(Base, ModelORM):
     ForeignKeyConstraint(["match"], ["matches.key"])
     ForeignKeyConstraint(["team", "year"], ["team_years.team", "team_years.year"])
     ForeignKeyConstraint(["team", "event"], ["team_events.team", "team_events.event"])
+    ForeignKeyConstraint(
+        ["match", "alliance"], ["alliances.match", "alliances.alliance"]
+    )
 
     """GENERAL"""
-    time = Column(Integer)
-    offseason = Column(Boolean)
-    playoff = Column(Boolean)
-    alliance = Column(String(6))
+    time: int = Column(Integer)
+    offseason: bool = Column(Boolean)
+    playoff: bool = Column(Boolean)
+    alliance: str = Column(String(6))
 
-    dq = Column(Boolean)
-    surrogate = Column(Boolean)
+    dq: bool = Column(Boolean)
+    surrogate: bool = Column(Boolean)
 
     # Choices are 'Upcoming', 'Completed'
-    status = Column(String(10))
+    status: str = Column(String(10))
 
-    epa = Column(Float)
-    auto_epa = Column(Float)
-    teleop_epa = Column(Float)
-    endgame_epa = Column(Float)
-    rp_1_epa = Column(Float)
-    rp_2_epa = Column(Float)
+    epa: float = Column(Float)
+    auto_epa: float = Column(Float)
+    teleop_epa: float = Column(Float)
+    endgame_epa: float = Column(Float)
+    rp_1_epa: float = Column(Float)
+    rp_2_epa: float = Column(Float)
 
-    post_epa = Column(Float)
+    post_epa: Optional[float] = Column(Float)
 
 
-@attr.s(auto_attribs=True, slots=True)
-class TeamMatch(Model):
-    id: int
-    team: str
-    year: int
-    event: str
-    match: str
+_TeamMatch = generate_attr_class("TeamMatch", TeamMatchORM)
 
-    time: int = 0
-    offseason: bool = False
-    playoff: bool = False
-    alliance: str = ""
-    status: str = ""
 
-    dq: bool = False
-    surrogate: bool = False
-
-    epa: Optional[float] = None
-    auto_epa: Optional[float] = None
-    teleop_epa: Optional[float] = None
-    endgame_epa: Optional[float] = None
-    rp_1_epa: Optional[float] = None
-    rp_2_epa: Optional[float] = None
-
-    post_epa: Optional[float] = None
-
+class TeamMatch(_TeamMatch):
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "TeamMatch":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
@@ -90,12 +72,12 @@ class TeamMatch(Model):
 
     """SUPER FUNCTIONS"""
 
-    def sort(self) -> int:
+    def sort(self: Any) -> int:
         return self.time
 
     def to_dict(self) -> Dict[str, Any]:
         return {k: getattr(self, k) for k in self.__slots__}  # type: ignore
 
-    def __str__(self: "TeamMatch"):
+    def __str__(self: Any):
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.match}_{self.status}_{self.epa}_{self.post_epa}"

@@ -1,78 +1,54 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import attr
 from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
 from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
 
 from src.db.main import Base
-from src.db.models.main import Model, ModelORM
+from src.db.models.main import ModelORM, generate_attr_class
 
 
 class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team = Column(String(6), index=True)
+    team: str = Column(String(6), index=True)
 
     PrimaryKeyConstraint(team)
 
     """GENERAL"""
-    name = Column(String(100))
-    offseason = Column(Boolean)
-    state = Column(String(10))
-    country = Column(String(30))
-    district = Column(String(10))
-    rookie_year = Column(Integer)
-    active = Column(Boolean)
+    name: str = Column(String(100))
+    offseason: bool = Column(Boolean)
+    state: str = Column(String(10))
+    country: str = Column(String(30))
+    district: str = Column(String(10))
+    rookie_year: int = Column(Integer)
+    active: bool = Column(Boolean)
 
     """EPA"""
-    norm_epa = Column(Float)
-    norm_epa_recent = Column(Float)
-    norm_epa_mean = Column(Float)
-    norm_epa_max = Column(Float)
+    norm_epa: float = Column(Float)
+    norm_epa_recent: float = Column(Float)
+    norm_epa_mean: float = Column(Float)
+    norm_epa_max: float = Column(Float)
 
     """STATS"""
-    wins = Column(Integer)
-    losses = Column(Integer)
-    ties = Column(Integer)
-    count = Column(Integer)
-    winrate = Column(Float)
+    wins: int = Column(Integer)
+    losses: int = Column(Integer)
+    ties: int = Column(Integer)
+    count: int = Column(Integer)
+    winrate: float = Column(Float)
 
-    full_wins = Column(Integer)
-    full_losses = Column(Integer)
-    full_ties = Column(Integer)
-    full_count = Column(Integer)
-    full_winrate = Column(Float)
+    full_wins: int = Column(Integer)
+    full_losses: int = Column(Integer)
+    full_ties: int = Column(Integer)
+    full_count: int = Column(Integer)
+    full_winrate: float = Column(Float)
 
 
-@attr.s(auto_attribs=True, slots=True)
-class Team(Model):
-    team: str
-    name: str
-    offseason: bool
-    state: Optional[str] = None
-    country: Optional[str] = None
-    district: Optional[str] = None
-    rookie_year: Optional[int] = None
-    active: Optional[bool] = None
+_Team = generate_attr_class("Team", TeamORM)
 
-    norm_epa: Optional[float] = None
-    norm_epa_recent: Optional[float] = None
-    norm_epa_mean: Optional[float] = None
-    norm_epa_max: Optional[float] = None
 
-    wins: int = 0
-    losses: int = 0
-    ties: int = 0
-    count: int = 0
-    winrate: float = 0
-
-    full_wins: int = 0
-    full_losses: int = 0
-    full_ties: int = 0
-    full_count: int = 0
-    full_winrate: float = 0
-
+class Team(_Team):
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Team":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
@@ -81,6 +57,6 @@ class Team(Model):
     def as_dict(self: "Team") -> Dict[str, Any]:
         return attr.asdict(self)  # type: ignore
 
-    def __str__(self: "Team"):
+    def __str__(self: Any):
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.count}"

@@ -9,8 +9,6 @@ def process_year(year: Year, alliances: List[Alliance]) -> Year:
         a for a in alliances if a.week == 1 and a.status == "Completed"
     ]
 
-    print(len(week_one_alliances))
-
     score_arr: List[int] = []
     no_foul_arr: List[int] = []
     foul_arr: List[int] = []
