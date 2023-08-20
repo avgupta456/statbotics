@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 
 from src.db.functions import clear_year
 from src.db.models import (

@@ -7,11 +7,11 @@ from scipy.stats import expon, exponnorm  # type: ignore
 
 from src.constants import CURR_YEAR
 from src.data.nepa import epa_to_unitless_epa
+from src.data.utils import objs_type
 from src.db.models import TeamEvent, TeamYear
 from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
 from src.db.write.main import update_teams as update_teams_db
 from src.utils.utils import get_team_event_key, get_team_match_key
-from src.data.utils import objs_type
 
 # HELPER FUNCTIONS
 

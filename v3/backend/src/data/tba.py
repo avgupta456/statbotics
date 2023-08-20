@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
 from src.constants import CURR_WEEK, CURR_YEAR, MAX_TEAM
 from src.data.utils import objs_type
@@ -140,6 +140,21 @@ def process_year(
     default_etag = ETag(year_num, "NA", "NA")
     new_etags_dict: Dict[str, ETag] = {}
 
+    T = TypeVar("T")
+
+    def call_tba(
+        func: Callable[..., Tuple[T, Optional[str]]], path: str
+    ) -> Tuple[T, bool]:
+        prev_etag = etags_dict.get(path, default_etag).etag
+        if partial:
+            out, new_etag = func(prev_etag, False)
+            if new_etag is not None:
+                new_etag_obj = ETag(year_num, path, new_etag)
+                new_etags_dict[new_etag_obj.pk()] = new_etag_obj
+        else:
+            out, new_etag = func(None, cache)
+        return out, new_etag is not None and new_etag != prev_etag
+
     teams_dict: Dict[str, Team] = {team.team: team for team in teams}
     # TODO: can this handle offseason teams? Should we set the offseason flag?
     default_team = create_team_obj(
@@ -154,7 +169,11 @@ def process_year(
     district_teams: Dict[str, Optional[str]] = {}
 
     if not partial:
-        districts, _ = get_districts_tba(year_num, cache=cache)
+        districts, _ = call_tba(
+            lambda etag, cache: get_districts_tba(year_num, etag=etag, cache=cache),
+            str(year_num) + "/districts",
+        )
+
         for district_key, district_abbrev in districts:
             curr_district_teams, _ = get_district_teams_tba(district_key, cache=cache)
             for team in curr_district_teams:
@@ -162,15 +181,10 @@ def process_year(
                     district_abbrev, district_abbrev
                 )
 
-    if partial:
-        etag_key = str(year_num) + "/events"
-        prev_etag = etags_dict.get(etag_key, default_etag).etag
-        events, new_etag = get_events_tba(year_num, etag=prev_etag, cache=False)
-        if new_etag is not None:
-            new_etag_obj = ETag(year_num, etag_key, new_etag)
-            new_etags_dict[new_etag_obj.pk()] = new_etag_obj
-    else:
-        events, _ = get_events_tba(year_num, etag=None, cache=cache)
+    events, _ = call_tba(
+        lambda etag, cache: get_events_tba(year_num, etag=etag, cache=cache),
+        str(year_num) + "/events",
+    )
 
     for event in events:
         event_objs_dict[event["key"]] = create_event_obj(event)
@@ -190,22 +204,15 @@ def process_year(
 
         event_key, event_time = event_obj.key, event_obj.time
 
-        if partial:
-            etag_key = event_key + "/matches"
-            prev_etag = etags_dict.get(etag_key, default_etag).etag
-            matches, new_etag = get_matches_tba(
-                year_num, event_key, event_time, etag=prev_etag, cache=False
-            )
-            if new_etag is not None:
-                if new_etag == prev_etag:
-                    continue
-                else:
-                    new_etag_obj = ETag(year_num, etag_key, new_etag)
-                    new_etags_dict[new_etag_obj.pk()] = new_etag_obj
-        else:
-            matches, _ = get_matches_tba(
-                year_num, event_key, event_time, etag=None, cache=cache
-            )
+        matches, new_etag = call_tba(
+            lambda etag, cache: get_matches_tba(
+                year_num, event_key, event_time, etag, cache
+            ),
+            event_key + "/matches",
+        )
+
+        if partial and not new_etag:
+            continue
 
         current_match = 0 if len(matches) > 0 else -1
         qual_matches = 0 if len(matches) > 0 else -1
@@ -252,19 +259,10 @@ def process_year(
             continue
 
         elif event_status == "Upcoming":
-            if partial:
-                etag_key = event_key + "/teams"
-                prev_etag = etags_dict.get(etag_key, default_etag).etag
-                temp_event_teams, new_etag = get_event_teams_tba(
-                    event_key, etag=prev_etag, cache=False
-                )
-                if new_etag is not None:
-                    new_etag_obj = ETag(year_num, etag_key, new_etag)
-                    new_etags_dict[new_etag_obj.pk()] = new_etag_obj
-            else:
-                temp_event_teams, _ = get_event_teams_tba(
-                    event_key, etag=None, cache=cache
-                )
+            temp_event_teams, _ = call_tba(
+                lambda etag, cache: get_event_teams_tba(event_key, etag, cache),
+                event_key + "/teams",
+            )
 
             for team in temp_event_teams:
                 add_team_event(team)
@@ -288,17 +286,10 @@ def process_year(
                     add_team_event(team_match_obj.team)
                     team_match_objs_dict[team_match_obj.pk()] = team_match_obj
 
-            if partial:
-                etag_key = event_key + "/rankings"
-                prev_etag = etags_dict.get(etag_key, default_etag).etag
-                rankings, new_etag = get_event_rankings_tba(
-                    event_key, etag=prev_etag, cache=False
-                )
-                if new_etag is not None:
-                    new_etag_obj = ETag(year_num, etag_key, new_etag)
-                    new_etags_dict[new_etag_obj.pk()] = new_etag_obj
-            else:
-                rankings, _ = get_event_rankings_tba(event_key, etag=None, cache=cache)
+            rankings, _ = call_tba(
+                lambda etag, cache: get_event_rankings_tba(event_key, etag, cache),
+                event_key + "/rankings",
+            )
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
