@@ -14,8 +14,6 @@ def common_filters(
     limit: Optional[int],
     offset: Optional[int],
 ) -> Any:
-    print(metric, ascending, limit, offset)
-
     def decorator(func: Any) -> Any:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             data = func(*args, **kwargs)

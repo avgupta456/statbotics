@@ -4,7 +4,6 @@ from sqlalchemy.orm.session import Session as SessionType  # type: ignore
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
-from src.db.models.event import EventORM
 from src.db.models.team_match import TeamMatch, TeamMatchORM
 from src.db.read.main import common_filters
 
@@ -45,7 +44,7 @@ def get_team_matches(
         if event is not None:
             data = data.filter(TeamMatchORM.event == event)  # type: ignore
         if week is not None:
-            data = data.join(EventORM).filter(EventORM.week == week)  # type: ignore
+            data = data.filter(TeamMatchORM.week == week)  # type: ignore
         if match is not None:
             data = data.filter(TeamMatchORM.match == match)  # type: ignore
         if elims is not None:

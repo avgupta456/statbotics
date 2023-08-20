@@ -31,8 +31,6 @@ def get_events(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Event]:
-    print(metric, ascending, limit, offset)
-
     @common_filters(EventORM, Event, metric, ascending, limit, offset)
     def callback(session: SessionType):  # type: ignore
         data = session.query(EventORM)  # type: ignore
