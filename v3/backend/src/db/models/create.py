@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Tuple
 
+from src.db.models.alliance import Alliance
 from src.db.models.etag import ETag
 from src.db.models.event import Event
 from src.db.models.match import Match
@@ -55,44 +56,55 @@ def create_team_event_obj(data: Dict[str, Any]) -> TeamEvent:
     return TeamEvent.from_dict(data)
 
 
-def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
+def create_match_obj(
+    data: Dict[str, Any]
+) -> Tuple[Match, List[Alliance], List[TeamMatch]]:
     data["playoff"] = data["comp_level"] != "qm"
-    data["red_auto"] = data["red_score_breakdown"]["auto"]
-    data["red_auto_movement"] = data["red_score_breakdown"]["auto_movement"]
-    data["red_auto_1"] = data["red_score_breakdown"]["auto_1"]
-    data["red_auto_2"] = data["red_score_breakdown"]["auto_2"]
-    data["red_auto_2_1"] = data["red_score_breakdown"]["auto_2_1"]
-    data["red_auto_2_2"] = data["red_score_breakdown"]["auto_2_2"]
-    data["red_teleop_1"] = data["red_score_breakdown"]["teleop_1"]
-    data["red_teleop_2"] = data["red_score_breakdown"]["teleop_2"]
-    data["red_teleop_2_1"] = data["red_score_breakdown"]["teleop_2_1"]
-    data["red_teleop_2_2"] = data["red_score_breakdown"]["teleop_2_2"]
-    data["red_teleop"] = data["red_score_breakdown"]["teleop"]
-    data["red_endgame"] = data["red_score_breakdown"]["endgame"]
-    data["red_no_fouls"] = data["red_score_breakdown"]["no_fouls"]
-    data["red_fouls"] = data["red_score_breakdown"]["fouls"]
+
+    data["red_no_foul"] = data["red_score_breakdown"]["no_foul_points"]
     data["red_rp_1"] = data["red_score_breakdown"]["rp1"]
     data["red_rp_2"] = data["red_score_breakdown"]["rp2"]
     data["red_tiebreaker"] = data["red_score_breakdown"]["tiebreaker"]
-    data["blue_auto"] = data["blue_score_breakdown"]["auto"]
-    data["blue_auto_movement"] = data["blue_score_breakdown"]["auto_movement"]
-    data["blue_auto_1"] = data["blue_score_breakdown"]["auto_1"]
-    data["blue_auto_2"] = data["blue_score_breakdown"]["auto_2"]
-    data["blue_auto_2_1"] = data["blue_score_breakdown"]["auto_2_1"]
-    data["blue_auto_2_2"] = data["blue_score_breakdown"]["auto_2_2"]
-    data["blue_teleop_1"] = data["blue_score_breakdown"]["teleop_1"]
-    data["blue_teleop_2"] = data["blue_score_breakdown"]["teleop_2"]
-    data["blue_teleop_2_1"] = data["blue_score_breakdown"]["teleop_2_1"]
-    data["blue_teleop_2_2"] = data["blue_score_breakdown"]["teleop_2_2"]
-    data["blue_teleop"] = data["blue_score_breakdown"]["teleop"]
-    data["blue_endgame"] = data["blue_score_breakdown"]["endgame"]
-    data["blue_no_fouls"] = data["blue_score_breakdown"]["no_fouls"]
-    data["blue_fouls"] = data["blue_score_breakdown"]["fouls"]
+    """
+    data["red_foul_points"] = data["red_score_breakdown"]["foul_points"]
+    data["red_auto_points"] = data["red_score_breakdown"]["auto_points"]
+    data["red_teleop_points"] = data["red_score_breakdown"]["teleop_points"]
+    data["red_endgame_points"] = data["red_score_breakdown"]["endgame_points"]
+    data["red_comp_1"] = data["red_score_breakdown"]["comp_1"]
+    data["red_comp_2"] = data["red_score_breakdown"]["comp_2"]
+    data["red_comp_3"] = data["red_score_breakdown"]["comp_3"]
+    data["red_comp_4"] = data["red_score_breakdown"]["comp_4"]
+    data["red_comp_5"] = data["red_score_breakdown"]["comp_5"]
+    data["red_comp_6"] = data["red_score_breakdown"]["comp_6"]
+    data["red_comp_7"] = data["red_score_breakdown"]["comp_7"]
+    data["red_comp_8"] = data["red_score_breakdown"]["comp_8"]
+    data["red_comp_9"] = data["red_score_breakdown"]["comp_9"]
+    data["red_comp_10"] = data["red_score_breakdown"]["comp_10"]
+    """
+
+    data["blue_no_foul"] = data["blue_score_breakdown"]["no_foul_points"]
     data["blue_rp_1"] = data["blue_score_breakdown"]["rp1"]
     data["blue_rp_2"] = data["blue_score_breakdown"]["rp2"]
-    data["blue_tiebreaker"] = data["blue_score_breakdown"]["tiebreaker"]
+    data["blue_comp_10"] = data["blue_score_breakdown"]["comp_10"]
+    """
+    data["blue_foul_points"] = data["blue_score_breakdown"]["foul_points"]
+    data["blue_auto_points"] = data["blue_score_breakdown"]["auto_points"]
+    data["blue_teleop_points"] = data["blue_score_breakdown"]["teleop_points"]
+    data["blue_endgame_points"] = data["blue_score_breakdown"]["endgame_points"]
+    data["blue_comp_1"] = data["blue_score_breakdown"]["comp_1"]
+    data["blue_comp_2"] = data["blue_score_breakdown"]["comp_2"]
+    data["blue_comp_3"] = data["blue_score_breakdown"]["comp_3"]
+    data["blue_comp_4"] = data["blue_score_breakdown"]["comp_4"]
+    data["blue_comp_5"] = data["blue_score_breakdown"]["comp_5"]
+    data["blue_comp_6"] = data["blue_score_breakdown"]["comp_6"]
+    data["blue_comp_7"] = data["blue_score_breakdown"]["comp_7"]
+    data["blue_comp_8"] = data["blue_score_breakdown"]["comp_8"]
+    data["blue_comp_9"] = data["blue_score_breakdown"]["comp_9"]
+    """
+
     match = Match.from_dict(data)
 
+    alliances: List[Alliance] = []
     team_matches: List[TeamMatch] = []
     new_data = {"match": data["key"], **data}
 
@@ -100,13 +112,25 @@ def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
         new_data["alliance"] = alliance
         teams = [data[f"{alliance}_1"], data[f"{alliance}_2"], data[f"{alliance}_3"]]
         teams = [team for team in teams if team is not None]
+        alliances.append(create_alliance_obj(data, alliance))
         for team in teams:
             new_data["team"] = team
             new_data["dq"] = team in data[f"{alliance}_dq"].split(",")
             new_data["surrogate"] = team in data[f"{alliance}_surrogate"].split(",")
             team_matches.append(create_team_match_obj(new_data))
 
-    return (match, team_matches)
+    return (match, alliances, team_matches)
+
+
+def create_alliance_obj(data: Dict[str, Any], alliance: str) -> Alliance:
+    data["match"] = data["key"]
+    data["alliance"] = alliance
+    data["score"] = data[f"{alliance}_score"]
+    data["team_1"] = data[f"{alliance}_1"]
+    data["team_2"] = data[f"{alliance}_2"]
+    data["team_3"] = data[f"{alliance}_3"]
+    data["winner"] = data["winner"] == alliance
+    return Alliance.from_dict(data)
 
 
 def create_team_match_obj(data: Dict[str, Any]) -> TeamMatch:

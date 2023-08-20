@@ -12,7 +12,7 @@ class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team = Column(Integer, index=True)
+    team = Column(String(6), index=True)
 
     PrimaryKeyConstraint(team)
 
@@ -47,7 +47,7 @@ class TeamORM(Base, ModelORM):
 
 @attr.s(auto_attribs=True, slots=True)
 class Team(Model):
-    team: int
+    team: str
     name: str
     offseason: bool
     state: Optional[str] = None

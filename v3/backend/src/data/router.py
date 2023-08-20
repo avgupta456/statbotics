@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from src.constants import CURR_YEAR
-from src.data.main import reset_all_years, reset_curr_year, update_curr_year
+from src.data.main import reset_all_years, update_single_year
 
 router = APIRouter()
 
@@ -18,19 +18,22 @@ async def reset_all_years_endpoint():
     return {"status": "success"}
 
 
-@router.get("/reset_curr_year")
-async def reset_curr_year_endpoint():
-    reset_curr_year(curr_year=CURR_YEAR)
+# TODO: change naming (update_single_year)
+
+
+@router.get("/update_single_year")
+async def update_single_year_endpoint():
+    update_single_year(year=CURR_YEAR, partial=False)
     return {"status": "success"}
 
 
 @router.get("/update_year/{year}")
 async def update_year_endpoint(year: int):
-    update_curr_year(curr_year=year)
+    update_single_year(year=year, partial=True)
     return {"status": "success"}
 
 
 @router.get("/update_curr_year")
 async def update_curr_year_endpoint():
-    update_curr_year(curr_year=CURR_YEAR)
+    update_single_year(year=CURR_YEAR, partial=True)
     return {"status": "success"}

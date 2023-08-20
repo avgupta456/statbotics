@@ -49,8 +49,8 @@ def get_noteworthy_matches(
         if week is not None:
             matches = matches.filter(EventORM.week == week)
 
-        red_score_col = MatchORM.red_score if year < 2016 else MatchORM.red_no_fouls
-        blue_score_col = MatchORM.blue_score if year < 2016 else MatchORM.blue_no_fouls
+        red_score_col = MatchORM.red_score if year < 2016 else MatchORM.red_no_foul
+        blue_score_col = MatchORM.blue_score if year < 2016 else MatchORM.blue_no_foul
 
         high_score_matches = (
             matches.add_columns(

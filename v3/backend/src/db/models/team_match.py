@@ -16,7 +16,7 @@ class TeamMatchORM(Base, ModelORM):
 
     __tablename__ = "team_matches"
     id = Column(Integer)  # placeholder for backend API
-    team = Column(Integer, index=True)
+    team = Column(String(6), index=True)
     year = Column(Integer, index=True)
     event = Column(String(20), index=True)
     match = Column(String(20), index=True)
@@ -33,7 +33,7 @@ class TeamMatchORM(Base, ModelORM):
     time = Column(Integer)
     offseason = Column(Boolean)
     playoff = Column(Boolean)
-    alliance = Column(String(10))
+    alliance = Column(String(6))
 
     dq = Column(Boolean)
     surrogate = Column(Boolean)
@@ -54,7 +54,7 @@ class TeamMatchORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class TeamMatch(Model):
     id: int
-    team: int
+    team: str
     year: int
     event: str
     match: str

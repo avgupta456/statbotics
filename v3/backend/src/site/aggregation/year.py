@@ -36,7 +36,7 @@ def unpack_year(year: Year) -> APIYear:
         p25=year.endgame_epa_75p or 0,
     )
 
-    foul_rate = (year.fouls_mean or 0) / (year.no_fouls_mean or 1)
+    foul_rate = (year.foul_mean or 0) / (year.no_foul_mean or 1)
 
     return APIYear(
         year=year.year,

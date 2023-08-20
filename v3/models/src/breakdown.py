@@ -89,10 +89,6 @@ def clean_breakdown(
         challenge_points = data["teleopChallengePoints"]
         scale_points = data["teleopScalePoints"]
 
-        all_endgame_robots = (
-            data["teleopChallengePoints"] // 5 + data["teleopScalePoints"] // 15
-        ) == 3
-
         auto_points = (
             auto_reach_points
             + auto_crossing_points
@@ -123,7 +119,6 @@ def clean_breakdown(
         out["teleop_high_boulders"] = teleop_high_boulders
         out["challenge_points"] = challenge_points
         out["scale_points"] = scale_points
-        out["all_endgame_robots"] = all_endgame_robots
         out["no_foul_points"] = no_foul_points
 
         out["rp_1"] = rp_1

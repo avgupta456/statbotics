@@ -1,53 +1,122 @@
 from typing import Any, Dict, Optional
 
+empty_breakdown: Dict[str, float] = {
+    "score": 0,
+    "no_foul_points": 0,
+    "foul_points": 0,
+    "auto_points": 0,
+    "teleop_points": 0,
+    "endgame_points": 0,
+    "rp1": 0,
+    "rp2": 0,
+    "comp_1": 0,
+    "comp_2": 0,
+    "comp_3": 0,
+    "comp_4": 0,
+    "comp_5": 0,
+    "comp_6": 0,
+    "comp_7": 0,
+    "comp_8": 0,
+    "comp_9": 0,
+    "comp_10": 0,
+    "tiebreaker": 0,
+}
 
-def get_breakdown(
+INVALID_MATCH_KEYS = ["2016capl_f1m1", "2016milsu_qf4m1", "2016mndu2_f1m2"]
+
+
+def clean_breakdown_2016(
+    breakdown: Dict[str, Any],
+    opp_breakdown: Dict[str, Any],
+    curr: Dict[str, Any],
+) -> Dict[str, float]:
+    auto_reach_points = breakdown.get("autoReachPoints", 0)
+    auto_crossing_points = breakdown.get("autoCrossingPoints", 0)
+    auto_low_boulders = breakdown.get("autoBouldersLow", 0)
+    auto_high_boulders = breakdown.get("autoBouldersHigh", 0)
+
+    teleop_crossing_points = breakdown.get("teleopCrossingPoints", 0)
+    teleop_low_boulders = breakdown.get("teleopBouldersLow", 0)
+    teleop_high_boulders = breakdown.get("teleopBouldersHigh", 0)
+
+    challenge_points = breakdown.get("teleopChallengePoints", 0)
+    scale_points = breakdown.get("teleopScalePoints", 0)
+
+    auto_points = (
+        auto_reach_points
+        + auto_crossing_points
+        + 5 * auto_low_boulders
+        + 10 * auto_high_boulders
+    )
+
+    teleop_points = (
+        teleop_crossing_points + 2 * teleop_low_boulders + 5 * teleop_high_boulders
+    )
+
+    endgame_points = challenge_points + scale_points
+
+    rp_1 = int(breakdown.get("teleopDefensesBreached", 0))
+    rp_2 = int(breakdown.get("teleopTowerCaptured", 0))
+
+    rp_1_points = breakdown.get("breachPoints", 0)
+    rp_2_points = breakdown.get("capturePoints", 0)
+    curr["no_foul_points"] -= rp_1_points + rp_2_points
+
+    tiebreaker = -opp_breakdown.get("foulPoints", 0)
+
+    return {
+        "auto_points": auto_points,
+        "teleop_points": teleop_points,
+        "endgame_points": endgame_points,
+        "rp1": rp_1,
+        "rp2": rp_2,
+        "comp_1": auto_reach_points,
+        "comp_2": auto_crossing_points,
+        "comp_3": auto_low_boulders,
+        "comp_4": auto_high_boulders,
+        "comp_5": teleop_crossing_points,
+        "comp_6": teleop_low_boulders,
+        "comp_7": teleop_high_boulders,
+        "comp_8": challenge_points,
+        "comp_9": scale_points,
+        "comp_10": 0,
+        "tiebreaker": tiebreaker,
+    }
+
+
+def clean_breakdown(
     year: int,
-    breakdown: Optional[Dict[str, Any]] = None,
-    opp_breakdown: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Optional[int]]:
-    out: Dict[str, Optional[int]] = {}
+    key: str,
+    breakdown: Optional[Dict[str, Any]],
+    opp_breakdown: Optional[Dict[str, Any]],
+    score: int,
+) -> Dict[str, float]:
+    out: Dict[str, float] = {}
     if breakdown is None or opp_breakdown is None or year < 2016:
-        return {
-            "auto": None,
-            "auto_movement": None,
-            "auto_1": None,
-            "auto_2": None,
-            "auto_2_1": None,
-            "auto_2_2": None,
-            "teleop_1": None,
-            "teleop_2": None,
-            "teleop_2_1": None,
-            "teleop_2_2": None,
-            "1": None,
-            "2": None,
-            "teleop": None,
-            "endgame": None,
-            "no_fouls": None,
-            "fouls": None,
-            "rp1": None,
-            "rp2": None,
-            "tiebreaker": None,
-        }
+        return empty_breakdown
+
+    # Shared
+    foul_points = breakdown.get("foulPoints", 0) + breakdown.get("adjustPoints", 0)
+    out["score"] = score
+    out["no_foul_points"] = score - foul_points
+    out["foul_points"] = foul_points
+    out["rp_1"] = 0
+    out["rp_2"] = 0
 
     if year == 2016:
-        out = {
-            "auto": breakdown.get("autoPoints", 0),
-            "auto_movement": breakdown.get("autoReachPoints", 0),
-            "auto_1": breakdown.get("autoCrossingPoints", 0),
-            "auto_2": breakdown.get("autoBoulderPoints", 0),
-            "auto_2_1": 5 * breakdown.get("autoBouldersLow", 0),
-            "auto_2_2": 10 * breakdown.get("autoBouldersHigh", 0),
-            "teleop_1": breakdown.get("teleopCrossingPoints", 0),
-            "teleop_2": breakdown.get("teleopBoulderPoints", 0),
-            "teleop_2_1": 2 * breakdown.get("teleopBouldersLow", 0),
-            "teleop_2_2": 5 * breakdown.get("teleopBouldersHigh", 0),
-            "endgame": breakdown.get("teleopChallengePoints", 0)
-            + breakdown.get("teleopScalePoints", 0),
-            "rp1": int(breakdown.get("teleopDefensesBreached", 0)),
-            "rp2": int(breakdown.get("teleopTowerCaptured", 0)),
-            "tiebreaker": -opp_breakdown.get("foulPoints", 0),
-        }
+        out = clean_breakdown_2016(breakdown, opp_breakdown, out)
+    else:
+        out = empty_breakdown
+
+    if key not in INVALID_MATCH_KEYS:
+        assert (
+            out["auto_points"] + out["teleop_points"] + out["endgame_points"]
+            == out["no_foul_points"]
+        )
+
+    return out
+
+    """
     elif year == 2017:
         out = {
             "auto": breakdown.get("autoPoints", 0),
@@ -206,6 +275,7 @@ def get_breakdown(
     out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
     out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
     out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
-    out["no_fouls"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
+    out["no_foul"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
     out["fouls"] = breakdown.get("foulPoints", 0)
     return out
+    """

@@ -115,15 +115,26 @@ class YearORM(Base, ModelORM):
     rp_count = Column(Integer)
 
     """CONSTANTS"""
+    # TODO: enforce consistent order of score mean, score sd, no_foul, foul, auto, teleop, endgame, rp_1, rp_2, comps
     score_mean = Column(Float)
     score_sd = Column(Float)
+    foul_mean = Column(Float)
+    no_foul_mean = Column(Float)
     auto_mean = Column(Float)
     teleop_mean = Column(Float)
     endgame_mean = Column(Float)
-    fouls_mean = Column(Float)
-    no_fouls_mean = Column(Float)
     rp_1_mean = Column(Float)
     rp_2_mean = Column(Float)
+    comp_1_mean = Column(Float)
+    comp_2_mean = Column(Float)
+    comp_3_mean = Column(Float)
+    comp_4_mean = Column(Float)
+    comp_5_mean = Column(Float)
+    comp_6_mean = Column(Float)
+    comp_7_mean = Column(Float)
+    comp_8_mean = Column(Float)
+    comp_9_mean = Column(Float)
+    comp_10_mean = Column(Float)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -225,13 +236,23 @@ class Year(Model):
 
     score_mean: Optional[float] = None
     score_sd: Optional[float] = None
+    no_foul_mean: Optional[float] = None
+    foul_mean: Optional[float] = None
     auto_mean: Optional[float] = None
     teleop_mean: Optional[float] = None
     endgame_mean: Optional[float] = None
-    fouls_mean: Optional[float] = None
-    no_fouls_mean: Optional[float] = None
     rp_1_mean: Optional[float] = None
     rp_2_mean: Optional[float] = None
+    comp_1_mean: Optional[float] = None
+    comp_2_mean: Optional[float] = None
+    comp_3_mean: Optional[float] = None
+    comp_4_mean: Optional[float] = None
+    comp_5_mean: Optional[float] = None
+    comp_6_mean: Optional[float] = None
+    comp_7_mean: Optional[float] = None
+    comp_8_mean: Optional[float] = None
+    comp_9_mean: Optional[float] = None
+    comp_10_mean: Optional[float] = None
 
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Year":

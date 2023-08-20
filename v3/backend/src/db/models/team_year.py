@@ -18,7 +18,7 @@ class TeamYearORM(Base, ModelORM):
     __tablename__ = "team_years"
     id = Column(Integer)  # placeholder for backend API
     year = Column(Integer, index=True)
-    team = Column(Integer, index=True)
+    team = Column(String(6), index=True)
 
     # force unique (team, year)
     PrimaryKeyConstraint(team, year)
@@ -116,7 +116,7 @@ class TeamYearORM(Base, ModelORM):
 class TeamYear(Model):
     id: int
     year: int
-    team: int
+    team: str
     offseason: bool
 
     name: Optional[str] = None
@@ -215,7 +215,7 @@ class TeamYear(Model):
 
     """SUPER FUNCTIONS"""
 
-    def sort(self) -> Tuple[int, int]:
+    def sort(self) -> Tuple[str, int]:
         return (self.team, self.year)
 
     def __str__(self: "TeamYear"):

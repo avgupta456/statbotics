@@ -18,7 +18,7 @@ const getAlliances = async (eventId: string) => {
     status: alliance?.status?.status,
   }));
 
-  return alliances;
+  return alliances ?? [];
 };
 
 // Weird naming to use in the BarChart
@@ -47,7 +47,7 @@ const AlliancesSection = ({
   eventId: string;
   data: Data;
 }) => {
-  const [alliances, setAlliances] = useState(null);
+  const [alliances, setAlliances] = useState<any[]>([]);
   const [disableHighlight, setDisableHighlight] = useState(false);
 
   useEffect(() => {

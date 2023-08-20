@@ -24,41 +24,43 @@ class MatchORM(Base, ModelORM):
     ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
+    offseason = Column(Boolean, index=True)
+    week = Column(Integer, index=True)
+    playoff = Column(Boolean, index=True)
+
     comp_level = Column(String(10))
     set_number = Column(Integer)
     match_number = Column(Integer)
-    offseason = Column(Boolean)
+
+    time = Column(Integer)  # Enforces ordering
+    predicted_time = Column(Integer)  # For display
 
     # Choices are 'Upcoming', 'Completed'
     status = Column(String(10), index=True)
     video = Column(String(20))
 
+    # Different than dq/surrogate to allow for easier querying
     red_1 = Column(Integer, index=True)
     red_2 = Column(Integer, index=True)
     red_3 = Column(Integer, index=True)
     red_dq = Column(String(20))
     red_surrogate = Column(String(20))
-    red_epa_sum = Column(Float)
-    red_auto_epa_sum = Column(Float)
-    red_teleop_epa_sum = Column(Float)
-    red_endgame_epa_sum = Column(Float)
-    red_rp_1_epa_sum = Column(Float)
-    red_rp_2_epa_sum = Column(Float)
 
-    # Different than dq/surrogate to allow for easier querying
     blue_1 = Column(Integer, index=True)
     blue_2 = Column(Integer, index=True)
     blue_3 = Column(Integer, index=True)
     blue_dq = Column(String(20))
     blue_surrogate = Column(String(20))
+
+    """EPA"""
+    red_epa_sum = Column(Float)
+    red_rp_1_epa_sum = Column(Float)
+    red_rp_2_epa_sum = Column(Float)
+
     blue_epa_sum = Column(Float)
-    blue_auto_epa_sum = Column(Float)
-    blue_teleop_epa_sum = Column(Float)
-    blue_endgame_epa_sum = Column(Float)
     blue_rp_1_epa_sum = Column(Float)
     blue_rp_2_epa_sum = Column(Float)
 
-    winner = Column(String(10))
     epa_winner = Column(String(10))
     epa_win_prob = Column(Float)
     red_rp_1_prob = Column(Float)
@@ -66,45 +68,17 @@ class MatchORM(Base, ModelORM):
     blue_rp_1_prob = Column(Float)
     blue_rp_2_prob = Column(Float)
 
-    playoff = Column(Boolean, index=True)
-    time = Column(Integer)  # Enforces ordering
-    predicted_time = Column(Integer)  # For display
+    """OUTCOME"""
+    winner = Column(String(10))
 
     red_score = Column(Integer)
-    blue_score = Column(Integer)
-
-    red_auto = Column(Integer)
-    red_auto_movement = Column(Integer)
-    red_auto_1 = Column(Integer)
-    red_auto_2 = Column(Integer)
-    red_auto_2_1 = Column(Integer)
-    red_auto_2_2 = Column(Integer)
-    red_teleop_1 = Column(Integer)
-    red_teleop_2 = Column(Integer)
-    red_teleop_2_1 = Column(Integer)
-    red_teleop_2_2 = Column(Integer)
-    red_teleop = Column(Integer)
-    red_endgame = Column(Integer)
-    red_no_fouls = Column(Integer)
-    red_fouls = Column(Integer)
+    red_no_foul = Column(Integer)
     red_rp_1 = Column(Integer)
     red_rp_2 = Column(Integer)
     red_tiebreaker = Column(Integer)
 
-    blue_auto = Column(Integer)
-    blue_auto_movement = Column(Integer)
-    blue_auto_1 = Column(Integer)
-    blue_auto_2 = Column(Integer)
-    blue_auto_2_1 = Column(Integer)
-    blue_auto_2_2 = Column(Integer)
-    blue_teleop_1 = Column(Integer)
-    blue_teleop_2 = Column(Integer)
-    blue_teleop_2_1 = Column(Integer)
-    blue_teleop_2_2 = Column(Integer)
-    blue_teleop = Column(Integer)
-    blue_endgame = Column(Integer)
-    blue_no_fouls = Column(Integer)
-    blue_fouls = Column(Integer)
+    blue_score = Column(Integer)
+    blue_no_foul = Column(Integer)
     blue_rp_1 = Column(Integer)
     blue_rp_2 = Column(Integer)
     blue_tiebreaker = Column(Integer)
@@ -116,10 +90,18 @@ class Match(Model):
     year: int
     event: str
 
+    """GENERAL"""
+    offseason: bool
+    week: int
+    playoff: bool
+
     comp_level: str
     set_number: int
     match_number: int
-    offseason: bool
+
+    time: int
+    predicted_time: int
+
     status: str
     video: Optional[str] = None
 
@@ -128,26 +110,22 @@ class Match(Model):
     red_3: Optional[int] = None
     red_dq: Optional[str] = None
     red_surrogate: Optional[str] = None
-    red_epa_sum: Optional[float] = None
-    red_auto_epa_sum: Optional[float] = None
-    red_teleop_epa_sum: Optional[float] = None
-    red_endgame_epa_sum: Optional[float] = None
-    red_rp_1_epa_sum: Optional[float] = None
-    red_rp_2_epa_sum: Optional[float] = None
 
     blue_1: Optional[int] = None
     blue_2: Optional[int] = None
     blue_3: Optional[int] = None
     blue_dq: Optional[str] = None
     blue_surrogate: Optional[str] = None
+
+    """EPA"""
+    red_epa_sum: Optional[float] = None
+    red_rp_1_epa_sum: Optional[float] = None
+    red_rp_2_epa_sum: Optional[float] = None
+
     blue_epa_sum: Optional[float] = None
-    blue_auto_epa_sum: Optional[float] = None
-    blue_teleop_epa_sum: Optional[float] = None
-    blue_endgame_epa_sum: Optional[float] = None
     blue_rp_1_epa_sum: Optional[float] = None
     blue_rp_2_epa_sum: Optional[float] = None
 
-    winner: Optional[str] = None
     epa_winner: Optional[str] = None
     epa_win_prob: Optional[float] = None
     red_rp_1_prob: Optional[float] = None
@@ -155,45 +133,17 @@ class Match(Model):
     blue_rp_1_prob: Optional[float] = None
     blue_rp_2_prob: Optional[float] = None
 
-    playoff: bool = False
-    time: Optional[int] = None
-    predicted_time: Optional[int] = None
+    """OUTCOME"""
+    winner: Optional[str] = None
 
     red_score: Optional[int] = None
-    blue_score: Optional[int] = None
-
-    red_auto: Optional[int] = None
-    red_auto_movement: Optional[int] = None
-    red_auto_1: Optional[int] = None
-    red_auto_2: Optional[int] = None
-    red_auto_2_1: Optional[int] = None
-    red_auto_2_2: Optional[int] = None
-    red_teleop_1: Optional[int] = None
-    red_teleop_2: Optional[int] = None
-    red_teleop_2_1: Optional[int] = None
-    red_teleop_2_2: Optional[int] = None
-    red_teleop: Optional[int] = None
-    red_endgame: Optional[int] = None
-    red_no_fouls: Optional[int] = None
-    red_fouls: Optional[int] = None
+    red_no_foul: Optional[int] = None
     red_rp_1: Optional[int] = None
     red_rp_2: Optional[int] = None
     red_tiebreaker: Optional[int] = None
 
-    blue_auto: Optional[int] = None
-    blue_auto_movement: Optional[int] = None
-    blue_auto_1: Optional[int] = None
-    blue_auto_2: Optional[int] = None
-    blue_auto_2_1: Optional[int] = None
-    blue_auto_2_2: Optional[int] = None
-    blue_teleop_1: Optional[int] = None
-    blue_teleop_2: Optional[int] = None
-    blue_teleop_2_1: Optional[int] = None
-    blue_teleop_2_2: Optional[int] = None
-    blue_teleop: Optional[int] = None
-    blue_endgame: Optional[int] = None
-    blue_no_fouls: Optional[int] = None
-    blue_fouls: Optional[int] = None
+    blue_score: Optional[int] = None
+    blue_no_foul: Optional[int] = None
     blue_rp_1: Optional[int] = None
     blue_rp_2: Optional[int] = None
     blue_tiebreaker: Optional[int] = None
@@ -204,27 +154,7 @@ class Match(Model):
         return Match(**dict)
 
     def as_dict(self: "Match") -> Dict[str, Any]:
-        return attr.asdict(
-            self,  # type: ignore
-            filter=attr.filters.exclude(
-                attr.fields(Match).red_auto_1,  # type: ignore
-                attr.fields(Match).red_auto_2,  # type: ignore
-                attr.fields(Match).red_auto_2_1,  # type: ignore
-                attr.fields(Match).red_auto_2_2,  # type: ignore
-                attr.fields(Match).red_teleop_1,  # type: ignore
-                attr.fields(Match).red_teleop_2,  # type: ignore
-                attr.fields(Match).red_teleop_2_1,  # type: ignore
-                attr.fields(Match).red_teleop_2_2,  # type: ignore
-                attr.fields(Match).blue_auto_1,  # type: ignore
-                attr.fields(Match).blue_auto_2,  # type: ignore
-                attr.fields(Match).blue_auto_2_1,  # type: ignore
-                attr.fields(Match).blue_auto_2_2,  # type: ignore
-                attr.fields(Match).blue_teleop_1,  # type: ignore
-                attr.fields(Match).blue_teleop_2,  # type: ignore
-                attr.fields(Match).blue_teleop_2_1,  # type: ignore
-                attr.fields(Match).blue_teleop_2_2,  # type: ignore
-            ),
-        )
+        return attr.asdict(self)
 
     """SUPER FUNCTIONS"""
 
@@ -260,6 +190,7 @@ class Match(Model):
     def get_teams(self) -> List[List[int]]:
         return [self.get_red(), self.get_blue()]
 
+    # TODO: consolidate with as_dict()
     def to_dict(self) -> Dict[str, Any]:
         out: Dict[str, Any] = {k: getattr(self, k) for k in self.__slots__}  # type: ignore
         out["red"] = self.get_red()
@@ -268,6 +199,4 @@ class Match(Model):
 
     def __str__(self: "Match"):
         # Only refresh DB if these change (during 1 min partial update)
-        # Includes EPA to update when predictions change, includes red/blue score to update when score changes
-        # Includes red/blue teleop to updat when score breakdown changes, includes predicted time to update when time predictions change
-        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_teleop}_{self.blue_teleop}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"
+        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"

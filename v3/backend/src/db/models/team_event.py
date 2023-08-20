@@ -17,7 +17,7 @@ class TeamEventORM(Base, ModelORM):
 
     __tablename__ = "team_events"
     id = Column(Integer)  # placeholder for backend API
-    team = Column(Integer, index=True)
+    team = Column(String(6), index=True)
     year = Column(Integer, index=True)
     event = Column(String, index=True)
 
@@ -105,7 +105,7 @@ class TeamEventORM(Base, ModelORM):
 @attr.s(auto_attribs=True, slots=True)
 class TeamEvent(Model):
     id: int
-    team: int
+    team: str
     year: int
     event: str
 
@@ -188,7 +188,7 @@ class TeamEvent(Model):
 
     """SUPER FUNCTIONS"""
 
-    def sort(self) -> Tuple[int, int]:
+    def sort(self) -> Tuple[str, int]:
         return (self.team, self.time)
 
     def __str__(self: "TeamEvent"):

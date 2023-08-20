@@ -68,6 +68,7 @@ class Event(Model):
     key: str
     year: int
 
+    """GENERAL"""
     name: str
     time: int
     state: str
@@ -84,12 +85,14 @@ class Event(Model):
     current_match: int
     qual_matches: int
 
+    """EPA"""
     epa_max: Optional[float] = None
     epa_top8: Optional[float] = None
     epa_top24: Optional[float] = None
     epa_mean: Optional[float] = None
     epa_sd: Optional[float] = None
 
+    """STATS"""
     epa_acc: Optional[float] = None
     epa_mse: Optional[float] = None
     rp_1_acc: Optional[float] = None

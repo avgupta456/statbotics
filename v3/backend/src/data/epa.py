@@ -7,7 +7,7 @@ from scipy.stats import expon, exponnorm  # type: ignore
 
 from src.constants import CURR_YEAR
 from src.data.nepa import epa_to_unitless_epa
-from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Alliance, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
 from src.db.write.main import update_teams as update_teams_db
 from src.utils.utils import get_team_event_key, get_team_match_key
@@ -81,29 +81,31 @@ def percent_func(year: int, x: int) -> float:
 # MAIN FUNCTION
 def process_year(
     year_num: int,
-    team_years_all: Dict[int, Dict[int, TeamYear]],
+    team_years_all: Dict[int, Dict[str, TeamYear]],
     year: Year,
     team_years: List[TeamYear],
     events: List[Event],
     team_events: List[TeamEvent],
     matches: List[Match],
+    alliances: List[Alliance],
     team_matches: List[TeamMatch],
     year_epa_stats: Dict[int, Tuple[float, float]],
 ) -> Tuple[
-    Dict[int, Dict[int, TeamYear]],
+    Dict[int, Dict[str, TeamYear]],
     Year,
     List[TeamYear],
     List[Event],
     List[TeamEvent],
     List[Match],
+    List[Alliance],
     List[TeamMatch],
 ]:
     NUM_TEAMS = 2 if year_num <= 2004 else 3
     USE_COMPONENTS = year_num >= 2016
     K = k_func(year_num)
 
-    # no_fouls_mean after 2016, score_mean before 2016
-    TOTAL_MEAN = year.no_fouls_mean or year.score_mean or 0
+    # no_foul_mean after 2016, score_mean before 2016
+    TOTAL_MEAN = year.no_foul_mean or year.score_mean or 0
     TOTAL_SD = year.score_sd or 0
     INIT_EPA = TOTAL_MEAN / NUM_TEAMS - INIT_PENALTY * TOTAL_SD
 
@@ -130,7 +132,7 @@ def process_year(
     team_rp_1_epas: Dict[int, float] = defaultdict(lambda: RP1_SEED)
     team_rp_2_epas: Dict[int, float] = defaultdict(lambda: RP2_SEED)
 
-    team_years_dict: Dict[int, TeamYear] = {}
+    team_years_dict: Dict[str, TeamYear] = {}
     team_events_dict: Dict[str, List[Tuple[float, bool]]] = {}
     team_matches_dict: Dict[int, List[float]] = defaultdict(list)
     team_match_ids: Dict[str, float] = {}
@@ -336,9 +338,9 @@ def process_year(
         # UPDATE EPA
         weight = PLAYOFF_WEIGHT if match.playoff else 1
         rp_weight = 0 if match.playoff else 1
-        red_score = match.red_no_fouls or match.red_score or 0
+        red_score = match.red_no_foul or match.red_score or 0
         red_pred = match.red_epa_sum
-        blue_score = match.blue_no_fouls or match.blue_score or 0
+        blue_score = match.blue_no_foul or match.blue_score or 0
         blue_pred = match.blue_epa_sum
 
         # Track surrogates and DQs for RP calculations
@@ -1003,12 +1005,13 @@ def process_year(
         events,
         team_events,
         matches,
+        alliances,
         team_matches,
     )
 
 
 def post_process(end_year: int):
-    team_team_years: Dict[int, List[TeamYear]] = defaultdict(list)
+    team_team_years: Dict[str, List[TeamYear]] = defaultdict(list)
     all_team_years = get_team_years_db()
     for team_year in all_team_years:
         team_team_years[team_year.team].append(team_year)

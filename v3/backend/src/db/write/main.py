@@ -1,5 +1,6 @@
 from typing import List
 
+from src.db.models.alliance import Alliance, AllianceORM
 from src.db.models.etag import ETag, ETagORM
 from src.db.models.event import Event, EventORM
 from src.db.models.match import Match, MatchORM
@@ -9,6 +10,10 @@ from src.db.models.team_match import TeamMatch, TeamMatchORM
 from src.db.models.team_year import TeamYear, TeamYearORM
 from src.db.models.year import Year, YearORM
 from src.db.write.template import update_template
+
+
+def update_alliances(items: List[Alliance], only_insert: bool = False) -> None:
+    return update_template(AllianceORM, Alliance)(items, only_insert)
 
 
 def update_etags(items: List[ETag], only_insert: bool = False) -> None:
