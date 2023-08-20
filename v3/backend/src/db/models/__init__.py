@@ -7,12 +7,14 @@ from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
 from src.db.models.team_year import TeamYear
 from src.db.models.year import Year
+from src.db.models.main import Model
 
 __all__ = [
     "Alliance",
     "ETag",
     "Event",
     "Match",
+    "Model",
     "TeamEvent",
     "TeamMatch",
     "TeamYear",

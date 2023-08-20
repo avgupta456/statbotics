@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, Optional
+from typing import Any, Dict, Optional, Tuple
 
 import attr
 from sqlalchemy import Boolean, Column, Float, Integer  # type: ignore
@@ -117,11 +117,14 @@ class TeamEvent(_TeamEvent):
             ),
         )
 
-    """SUPER FUNCTIONS"""
+    """PARENT FUNCTIONS"""
 
     def sort(self: "TeamEvent") -> Tuple[str, int]:
         return (self.team, self.time)
 
-    def __str__(self: "TeamEvent"):
+    def pk(self: "TeamEvent") -> str:
+        return f"{self.team}_{self.event}"
+
+    def __str__(self: "TeamEvent") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.event}_{self.status}_{self.count}_{self.rank}"

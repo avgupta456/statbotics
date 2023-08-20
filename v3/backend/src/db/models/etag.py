@@ -27,3 +27,8 @@ class ETag(_ETag):
     def from_dict(cls, dict: Dict[str, Any]) -> "ETag":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return ETag(**dict)
+
+    """PARENT FUNCTIONS"""
+
+    def pk(self: "ETag") -> str:
+        return f"{self.year}-{self.path}"

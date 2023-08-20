@@ -57,6 +57,11 @@ class Team(_Team):
     def as_dict(self: "Team") -> Dict[str, Any]:
         return attr.asdict(self)  # type: ignore
 
-    def __str__(self: Any):
+    """PARENT FUNCTIONS"""
+
+    def pk(self: "Team") -> str:
+        return self.team
+
+    def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.count}"

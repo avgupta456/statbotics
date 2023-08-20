@@ -70,14 +70,21 @@ class TeamMatch(_TeamMatch):
             filter=attr.filters.exclude(attr.fields(TeamMatch).id),  # type: ignore
         )
 
-    """SUPER FUNCTIONS"""
+    """
+    HELPER FUNCTIONS
+    """
 
-    def sort(self: Any) -> int:
-        return self.time
-
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self: "TeamMatch") -> Dict[str, Any]:
         return {k: getattr(self, k) for k in self.__slots__}  # type: ignore
 
-    def __str__(self: Any):
+    """PARENT FUNCTIONS"""
+
+    def sort(self: "TeamMatch") -> int:
+        return self.time
+
+    def pk(self: "TeamMatch") -> str:
+        return f"{self.team}_{self.match}"
+
+    def __str__(self: "TeamMatch") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.match}_{self.status}_{self.epa}_{self.post_epa}"

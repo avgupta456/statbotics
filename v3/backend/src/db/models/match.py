@@ -96,10 +96,7 @@ class Match(_Match):
     def as_dict(self: "Match") -> Dict[str, Any]:
         return attr.asdict(self)
 
-    """SUPER FUNCTIONS"""
-
-    def sort(self: "Match") -> int:
-        return self.time or 0
+    """HELPER FUNCTIONS"""
 
     def get_red(self: "Match") -> List[str]:
         return [x for x in [self.red_1, self.red_2, self.red_3] if x is not None]
@@ -129,6 +126,16 @@ class Match(_Match):
         out["blue"] = self.get_blue()
         return out
 
-    def __str__(self: "Match"):
+    """
+    PARENT FUNCTIONS
+    """
+
+    def sort(self: "Match") -> int:
+        return self.time or 0
+
+    def pk(self: "Match") -> str:
+        return self.key
+
+    def __str__(self: "Match") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"

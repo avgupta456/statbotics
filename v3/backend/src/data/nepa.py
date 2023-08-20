@@ -21,9 +21,7 @@ def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
     if len(team_years) == 0:
         raise ValueError("No team years found for year " + str(year))
 
-    epas: List[float] = sorted(
-        [ty.epa_end for ty in team_years if ty.epa_end is not None]
-    )
+    epas: List[float] = sorted([ty.epa_end for ty in team_years])
     norm_epas: List[float] = sorted(
         [ty.norm_epa_end for ty in team_years if ty.norm_epa_end is not None]
     )

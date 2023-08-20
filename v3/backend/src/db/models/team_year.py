@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple, Optional
+from typing import Any, Dict, Optional, Tuple
 
 import attr
 from sqlalchemy import Boolean, Column, Float, Integer  # type: ignore
@@ -130,11 +130,14 @@ class TeamYear(_TeamYear):
             ),
         )
 
-    """SUPER FUNCTIONS"""
+    """PARENT FUNCTIONS"""
 
-    def sort(self: Any) -> Tuple[str, int]:
+    def sort(self: "TeamYear") -> Tuple[str, int]:
         return (self.team, self.year)
 
-    def __str__(self: Any):
+    def pk(self: "TeamYear") -> str:
+        return f"{self.team}_{self.year}"
+
+    def __str__(self: "TeamYear") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.year}_{self.count}"

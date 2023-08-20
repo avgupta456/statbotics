@@ -1,20 +1,11 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 from src.constants import CURR_WEEK, CURR_YEAR, MAX_TEAM
 from src.data.utils import objs_type
 from src.db.functions import remove_teams_with_no_events, update_team_districts
-from src.db.models import (
-    Alliance,
-    ETag,
-    Event,
-    Match,
-    Team,
-    TeamEvent,
-    TeamMatch,
-    TeamYear,
-)
+from src.db.models import ETag, Event, Team
 from src.db.models.create import (
     create_event_obj,
     create_match_obj,
@@ -37,8 +28,6 @@ from src.tba.read_tba import (
 """
 HELPER FUNCTIONS
 """
-
-# TODO: change objs_type from List of Lists to List of Dicts, add primary_key func to each object
 
 
 def load_teams(cache: bool = True) -> List[Team]:
@@ -79,23 +68,7 @@ def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
 
 
 def create_objs(year: int) -> objs_type:
-    year_obj = create_year_obj({"year": year})
-    team_year_objs: List[TeamYear] = []
-    event_objs: List[Event] = []
-    team_event_objs: List[TeamEvent] = []
-    match_objs: List[Match] = []
-    alliance_objs: List[Alliance] = []
-    team_match_objs: List[TeamMatch] = []
-
-    return (
-        year_obj,
-        team_year_objs,
-        event_objs,
-        team_event_objs,
-        match_objs,
-        alliance_objs,
-        team_match_objs,
-    )
+    return (create_year_obj({"year": year}), {}, {}, {}, {}, {}, {}, {})
 
 
 """
@@ -146,33 +119,26 @@ def process_year(
     year_num: int,
     teams: List[Team],
     objs: objs_type,
-    etags: List[ETag],
     partial: bool,
     cache: bool = True,
-) -> Tuple[objs_type, List[ETag]]:
+) -> objs_type:
     # TODO: Handle 2021 offseason events (low priority)
     if year_num in YEAR_BLACKLIST:
-        return (objs, [])
+        return objs
 
     (
         year_obj,
-        team_year_objs,
-        event_objs,
-        team_event_objs,
-        match_objs,
-        alliance_objs,
-        team_match_objs,
+        team_year_objs_dict,
+        event_objs_dict,
+        team_event_objs_dict,
+        match_objs_dict,
+        alliance_objs_dict,
+        team_match_objs_dict,
+        etags_dict,
     ) = objs
 
-    event_objs_dict = {x.key: x for x in event_objs}
-    team_event_objs_dict = {(x.team, x.event): x for x in team_event_objs}
-    match_objs_dict = {x.key: x for x in match_objs}
-    alliance_objs_dict = {(x.match, x.alliance): x for x in alliance_objs}
-    team_match_objs_dict = {(x.team, x.match): x for x in team_match_objs}
-
-    etags_dict = {etag.path: etag for etag in etags}
     default_etag = ETag(year_num, "NA", "NA")
-    new_etags: List[ETag] = []
+    new_etags_dict: Dict[str, ETag] = {}
 
     teams_dict: Dict[str, Team] = {team.team: team for team in teams}
     # TODO: can this handle offseason teams? Should we set the offseason flag?
@@ -200,8 +166,9 @@ def process_year(
         etag_key = str(year_num) + "/events"
         prev_etag = etags_dict.get(etag_key, default_etag).etag
         events, new_etag = get_events_tba(year_num, etag=prev_etag, cache=False)
-        if new_etag is not None and new_etag != prev_etag:
-            new_etags.append(ETag(year_num, etag_key, new_etag))
+        if new_etag is not None:
+            new_etag_obj = ETag(year_num, etag_key, new_etag)
+            new_etags_dict[new_etag_obj.pk()] = new_etag_obj
     else:
         events, _ = get_events_tba(year_num, etag=None, cache=cache)
 
@@ -233,7 +200,8 @@ def process_year(
                 if new_etag == prev_etag:
                     continue
                 else:
-                    new_etags.append(ETag(year_num, etag_key, new_etag))
+                    new_etag_obj = ETag(year_num, etag_key, new_etag)
+                    new_etags_dict[new_etag_obj.pk()] = new_etag_obj
         else:
             matches, _ = get_matches_tba(
                 year_num, event_key, event_time, etag=None, cache=cache
@@ -290,8 +258,9 @@ def process_year(
                 temp_event_teams, new_etag = get_event_teams_tba(
                     event_key, etag=prev_etag, cache=False
                 )
-                if new_etag is not None and new_etag != prev_etag:
-                    new_etags.append(ETag(year_num, etag_key, new_etag))
+                if new_etag is not None:
+                    new_etag_obj = ETag(year_num, etag_key, new_etag)
+                    new_etags_dict[new_etag_obj.pk()] = new_etag_obj
             else:
                 temp_event_teams, _ = get_event_teams_tba(
                     event_key, etag=None, cache=cache
@@ -314,14 +283,10 @@ def process_year(
                 # Replace even if present, since may be Upcoming -> Completed
                 match_objs_dict[match_obj.key] = match_obj
                 for alliance_obj in curr_alliance_objs:
-                    alliance_objs_dict[
-                        (alliance_obj.match, alliance_obj.alliance)
-                    ] = alliance_obj
+                    alliance_objs_dict[alliance_obj.pk()] = alliance_obj
                 for team_match_obj in curr_team_match_objs:
                     add_team_event(team_match_obj.team)
-                    team_match_objs_dict[
-                        (team_match_obj.team, team_match_obj.match)
-                    ] = team_match_obj
+                    team_match_objs_dict[team_match_obj.pk()] = team_match_obj
 
             if partial:
                 etag_key = event_key + "/rankings"
@@ -329,15 +294,16 @@ def process_year(
                 rankings, new_etag = get_event_rankings_tba(
                     event_key, etag=prev_etag, cache=False
                 )
-                if new_etag is not None and new_etag != prev_etag:
-                    new_etags.append(ETag(year_num, etag_key, new_etag))
+                if new_etag is not None:
+                    new_etag_obj = ETag(year_num, etag_key, new_etag)
+                    new_etags_dict[new_etag_obj.pk()] = new_etag_obj
             else:
                 rankings, _ = get_event_rankings_tba(event_key, etag=None, cache=cache)
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
             team_obj = teams_dict.get(team, default_team)
-            team_event_objs_dict[(team, event_key)] = create_team_event_obj(
+            team_event_obj = create_team_event_obj(
                 {
                     "team": team,
                     "year": year_num,
@@ -356,29 +322,23 @@ def process_year(
                     "num_teams": len(rankings),
                 }
             )
+            team_event_objs_dict[team_event_obj.pk()] = team_event_obj
 
         event_obj.current_match = current_match
         event_obj.qual_matches = qual_matches
         event_objs_dict[event_key] = event_obj
 
-    event_objs = list(event_objs_dict.values())
-    team_event_objs = list(team_event_objs_dict.values())
-    match_objs = list(match_objs_dict.values())
-    alliance_objs = list(alliance_objs_dict.values())
-    team_match_objs = list(team_match_objs_dict.values())
-
     # update is_first_event after iterating through all events
-    for team_event in team_event_objs:
-        team_event.first_event = (
+    for pk, team_event in team_event_objs_dict.items():
+        team_event_objs_dict[pk].first_event = (
             team_first_event_dict[team_event.team][0] == team_event.event
         )
 
-    team_year_objs_dict = {(x.team, x.year): x for x in team_year_objs}
     for team in district_teams:
         team_obj = teams_dict.get(team, default_team)
         is_competing = team_is_competing_dict[team]
         next_event = team_next_event_dict[team]
-        team_year_objs_dict[(team, year_num)] = create_team_year_obj(
+        team_year_obj = create_team_year_obj(
             {
                 "year": year_num,
                 "team": team,
@@ -393,29 +353,17 @@ def process_year(
                 "next_event_week": next_event[2],
             }
         )
-
-    team_year_objs = list(team_year_objs_dict.values())
-
-    print(
-        len(team_year_objs),
-        len(event_objs),
-        len(team_event_objs),
-        len(match_objs),
-        len(alliance_objs),
-        len(team_match_objs),
-    )
+        team_year_objs_dict[team_year_obj.pk()] = team_year_obj
 
     return (
-        (
-            year_obj,
-            team_year_objs,
-            event_objs,
-            team_event_objs,
-            match_objs,
-            alliance_objs,
-            team_match_objs,
-        ),
-        new_etags,
+        year_obj,
+        team_year_objs_dict,
+        event_objs_dict,
+        team_event_objs_dict,
+        match_objs_dict,
+        alliance_objs_dict,
+        team_match_objs_dict,
+        new_etags_dict,
     )
 
 

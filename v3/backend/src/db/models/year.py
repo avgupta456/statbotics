@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 
+import attr
 from sqlalchemy import Column, Float, Integer  # type: ignore
 from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
 
@@ -145,6 +146,14 @@ class Year(_Year):
         dict = {k: data.get(k, None) for k in cls.__slots__}  # type: ignore
         return Year(**dict)
 
-    def __str__(self: Any):
+    def as_dict(self: "Year") -> Dict[str, Any]:
+        return attr.asdict(self)  # type: ignore
+
+    """PARENT FUNCTIONS"""
+
+    def pk(self: "Year") -> str:
+        return str(self.year)
+
+    def __str__(self: "Year") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.year}_{self.count}"

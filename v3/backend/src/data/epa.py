@@ -7,10 +7,11 @@ from scipy.stats import expon, exponnorm  # type: ignore
 
 from src.constants import CURR_YEAR
 from src.data.nepa import epa_to_unitless_epa
-from src.db.models import Alliance, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import TeamEvent, TeamYear
 from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
 from src.db.write.main import update_teams as update_teams_db
 from src.utils.utils import get_team_event_key, get_team_match_key
+from src.data.utils import objs_type
 
 # HELPER FUNCTIONS
 
@@ -80,26 +81,17 @@ def percent_func(year: int, x: int) -> float:
 
 # MAIN FUNCTION
 def process_year(
-    year_num: int,
-    team_years_all: Dict[int, Dict[str, TeamYear]],
-    year: Year,
-    team_years: List[TeamYear],
-    events: List[Event],
-    team_events: List[TeamEvent],
-    matches: List[Match],
-    alliances: List[Alliance],
-    team_matches: List[TeamMatch],
-    year_epa_stats: Dict[int, Tuple[float, float]],
-) -> Tuple[
-    Dict[int, Dict[str, TeamYear]],
-    Year,
-    List[TeamYear],
-    List[Event],
-    List[TeamEvent],
-    List[Match],
-    List[Alliance],
-    List[TeamMatch],
-]:
+    year_num: int, team_years_all: Dict[int, Dict[str, TeamYear]], objs: objs_type
+) -> Tuple[objs_type, Dict[int, Dict[str, TeamYear]]]:
+    year = objs[0]
+    team_years = list(objs[1].values())
+    events = list(objs[2].values())
+    team_events = list(objs[3].values())
+    matches = list(objs[4].values())
+    alliances = list(objs[5].values())
+    team_matches = list(objs[6].values())
+    etags = list(objs[7].values())
+
     NUM_TEAMS = 2 if year_num <= 2004 else 3
     USE_COMPONENTS = year_num >= 2016
     K = k_func(year_num)
@@ -939,15 +931,26 @@ def process_year(
 
     team_years_all[year_num] = team_years_dict
 
+    out_team_years_dict = {ty.pk(): ty for ty in team_years}
+    out_events_dict = {e.pk(): e for e in events}
+    out_team_events_dict = {te.pk(): te for te in team_events}
+    out_matches_dict = {m.pk(): m for m in matches}
+    out_alliances_dict = {a.pk(): a for a in alliances}
+    out_team_matches_dict = {tm.pk(): tm for tm in team_matches}
+    out_etags_dict = {e.pk(): e for e in etags}
+
     return (
+        (
+            year,
+            out_team_years_dict,
+            out_events_dict,
+            out_team_events_dict,
+            out_matches_dict,
+            out_alliances_dict,
+            out_team_matches_dict,
+            out_etags_dict,
+        ),
         team_years_all,
-        year,
-        team_years,
-        events,
-        team_events,
-        matches,
-        alliances,
-        team_matches,
     )
 
 

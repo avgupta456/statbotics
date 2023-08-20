@@ -1,8 +1,8 @@
-from sqlalchemy import inspect, String, Integer, Float, Boolean  # type: ignore
-from sqlalchemy.sql.type_api import TypeEngine  # type: ignore
-import attr
+from typing import Any, Type, TypeVar
 
-from typing import Any, TypeVar, Type
+import attr
+from sqlalchemy import Boolean, Float, Integer, String, inspect  # type: ignore
+from sqlalchemy.sql.type_api import TypeEngine  # type: ignore
 
 
 class ModelORM:
@@ -10,6 +10,12 @@ class ModelORM:
 
 
 class Model:
+    def sort(self) -> Any:
+        raise NotImplementedError()
+
+    def pk(self) -> str:
+        raise NotImplementedError()
+
     def __str__(self):
         return self.__repr__()
 

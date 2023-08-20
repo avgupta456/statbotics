@@ -18,9 +18,6 @@ async def reset_all_years_endpoint():
     return {"status": "success"}
 
 
-# TODO: change naming (update_single_year)
-
-
 @router.get("/update_single_year")
 async def update_single_year_endpoint():
     update_single_year(year=CURR_YEAR, partial=False)

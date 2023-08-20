@@ -106,20 +106,25 @@ class Alliance(_Alliance):
     def as_dict(self: "Alliance") -> Dict[str, Any]:
         return attr.asdict(self)
 
-    """SUPER FUNCTIONS"""
+    """HELPER FUNCTIONS"""
 
-    def sort(self) -> int:
-        return self.time or 0
-
-    def get_teams(self) -> List[str]:
+    def get_teams(self: "Alliance") -> List[str]:
         return [x for x in [self.team_1, self.team_2, self.team_3] if x is not None]
 
-    def get_surrogates(self) -> List[str]:
+    def get_surrogates(self: "Alliance") -> List[str]:
         return [x for x in self.surrogate.split(",") if x != ""]
 
-    def get_dqs(self) -> List[str]:
+    def get_dqs(self: "Alliance") -> List[str]:
         return [x for x in self.dq.split(",") if x != ""]
 
-    def __str__(self: "Alliance"):
+    """PARENT FUNCTIONS"""
+
+    def sort(self: "Alliance") -> int:
+        return self.time or 0
+
+    def pk(self: "Alliance") -> str:
+        return f"{self.match}_{self.alliance}"
+
+    def __str__(self: "Alliance") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.match}_{self.alliance}_{self.score}_{self.teleop_points}_{self.epa_sum}"

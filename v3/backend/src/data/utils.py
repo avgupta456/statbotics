@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Tuple
+from typing import Dict, Tuple, Optional
 
 from src.db.functions import clear_year
 from src.db.models import (
@@ -14,6 +14,7 @@ from src.db.models import (
 )
 from src.db.read import (
     get_alliances as get_alliances_db,
+    get_etags as get_etags_db,
     get_events as get_events_db,
     get_matches as get_matches_db,
     get_num_alliances as get_num_alliances_db,
@@ -43,12 +44,13 @@ from src.db.write.main import (
 
 objs_type = Tuple[
     Year,
-    List[TeamYear],
-    List[Event],
-    List[TeamEvent],
-    List[Match],
-    List[Alliance],
-    List[TeamMatch],
+    Dict[str, TeamYear],
+    Dict[str, Event],
+    Dict[str, TeamEvent],
+    Dict[str, Match],
+    Dict[str, Alliance],
+    Dict[str, TeamMatch],
+    Dict[str, ETag],
 ]
 
 
@@ -57,46 +59,48 @@ def read_objs(year: int) -> objs_type:
     if year_obj is None:
         raise Exception("Year not found")
 
-    team_year_objs: List[TeamYear] = get_team_years_db(year=year)
-    event_objs: List[Event] = get_events_db(year=year, offseason=None)
-    team_event_objs: List[TeamEvent] = get_team_events_db(year=year, offseason=None)
-    match_objs: List[Match] = get_matches_db(year=year, offseason=None)
-    alliance_objs: List[Alliance] = get_alliances_db(year=year, offseason=None)
-    team_match_objs: List[TeamMatch] = get_team_matches_db(year=year, offseason=None)
-    original_objs: objs_type = (
+    return (
         year_obj,
-        team_year_objs,
-        event_objs,
-        team_event_objs,
-        match_objs,
-        alliance_objs,
-        team_match_objs,
+        {t.pk(): t for t in get_team_years_db(year=year)},
+        {e.pk(): e for e in get_events_db(year=year, offseason=None)},
+        {te.pk(): te for te in get_team_events_db(year=year, offseason=None)},
+        {m.pk(): m for m in get_matches_db(year=year, offseason=None)},
+        {a.pk(): a for a in get_alliances_db(year=year, offseason=None)},
+        {tm.pk(): tm for tm in get_team_matches_db(year=year, offseason=None)},
+        {e.pk(): e for e in get_etags_db(year=year)},
     )
-    return original_objs
 
 
 def write_objs(
     year_num: int,
-    year: Year,
-    team_years: List[TeamYear],
-    events: List[Event],
-    team_events: List[TeamEvent],
-    matches: List[Match],
-    alliances: List[Alliance],
-    team_matches: List[TeamMatch],
-    etags: List[ETag],
-    clean: bool,
+    objs: objs_type,
+    orig_objs: Optional[objs_type] = None,
+    clean: bool = False,
 ) -> None:
     if clean:
         clear_year(year_num)
-    update_years_db([year], clean)
-    update_team_years_db(team_years, clean)
-    update_events_db(events, clean)
-    update_team_events_db(team_events, clean)
-    update_matches_db(matches, clean)
-    update_alliances_db(alliances, clean)
-    update_team_matches_db(team_matches, clean)
-    update_etags_db(etags, clean)
+
+    update_years_db([objs[0]], clean)
+
+    if orig_objs is None:
+        orig_objs = read_objs(year_num)
+
+    for prev, curr, update_func in [
+        (orig_objs[1], objs[1], update_team_years_db),
+        (orig_objs[2], objs[2], update_events_db),
+        (orig_objs[3], objs[3], update_team_events_db),
+        (orig_objs[4], objs[4], update_matches_db),
+        (orig_objs[5], objs[5], update_alliances_db),
+        (orig_objs[6], objs[6], update_team_matches_db),
+        (orig_objs[7], objs[7], update_etags_db),
+    ]:
+        new_objs = [
+            obj
+            for obj in list(curr.values())
+            if str(obj) != str(prev.get(obj.pk(), ""))
+        ]
+
+        update_func(new_objs, clean)  # type: ignore
 
 
 def print_table_stats() -> None:
