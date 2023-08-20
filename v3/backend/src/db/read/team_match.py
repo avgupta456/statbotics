@@ -6,9 +6,10 @@ from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 from src.db.main import Session
 from src.db.models.event import EventORM
 from src.db.models.team_match import TeamMatch, TeamMatchORM
+from src.db.read.main import common_filters
 
 
-def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
+def get_team_match(team: str, match: str) -> Optional[TeamMatch]:
     def callback(session: SessionType):
         data = session.query(TeamMatchORM).filter(  # type: ignore
             TeamMatchORM.team == team, TeamMatchORM.match == match
@@ -22,7 +23,7 @@ def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
 
 
 def get_team_matches(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
@@ -34,7 +35,8 @@ def get_team_matches(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[TeamMatch]:
-    def callback(session: SessionType):
+    @common_filters(TeamMatchORM, TeamMatch, metric, ascending, limit, offset)
+    def callback(session: SessionType):  # type: ignore
         data = session.query(TeamMatchORM)  # type: ignore
         if team is not None:
             data = data.filter(TeamMatchORM.team == team)  # type: ignore
@@ -50,18 +52,8 @@ def get_team_matches(
             data = data.filter(TeamMatchORM.playoff == elims)  # type: ignore
         if offseason is not None:
             data = data.filter(TeamMatchORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(TeamMatchORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(TeamMatchORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(TeamMatchORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
-        out_data: List[TeamMatchORM] = data.all()  # type: ignore
-        return [TeamMatch.from_dict(x.__dict__) for x in out_data]  # type: ignore
+
+        return data  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 

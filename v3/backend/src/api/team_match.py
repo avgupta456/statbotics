@@ -67,7 +67,7 @@ async def read_team_match(response: Response, team: int, match: str) -> Dict[str
     if team_match_obj is None:
         raise Exception("Team Match not found")
 
-    return team_match_obj.as_dict()
+    return team_match_obj.to_dict()
 
 
 @router.get(
@@ -80,7 +80,7 @@ async def read_team_matches_team_year(
     response: Response, team: int, year: int
 ) -> List[Dict[str, Any]]:
     team_matches: List[TeamMatch] = await get_team_matches_cached(team=team, year=year)
-    return [team_match.as_dict() for team_match in team_matches]
+    return [team_match.to_dict() for team_match in team_matches]
 
 
 @router.get(
@@ -95,7 +95,7 @@ async def read_team_matches_team_event(
     team_matches: List[TeamMatch] = await get_team_matches_cached(
         team=team, event=event
     )
-    return [team_match.as_dict() for team_match in team_matches]
+    return [team_match.to_dict() for team_match in team_matches]
 
 
 @router.get(
@@ -108,7 +108,7 @@ async def read_team_matches_event(
     response: Response, event: str
 ) -> List[Dict[str, Any]]:
     team_matches: List[TeamMatch] = await get_team_matches_cached(event=event)
-    return [team_match.as_dict() for team_match in team_matches]
+    return [team_match.to_dict() for team_match in team_matches]
 
 
 @router.get(
@@ -142,4 +142,4 @@ async def read_team_matches(
         limit=limit,
         offset=offset,
     )
-    return [team_match.as_dict() for team_match in team_matches]
+    return [team_match.to_dict() for team_match in team_matches]

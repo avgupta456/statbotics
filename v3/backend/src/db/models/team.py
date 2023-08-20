@@ -1,11 +1,10 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 
-import attr
 from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
 from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class TeamORM(Base, ModelORM):
@@ -48,17 +47,7 @@ class TeamORM(Base, ModelORM):
 _Team = generate_attr_class("Team", TeamORM)
 
 
-class Team(_Team):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "Team":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return Team(**dict)
-
-    def as_dict(self: "Team") -> Dict[str, Any]:
-        return attr.asdict(self)  # type: ignore
-
-    """PARENT FUNCTIONS"""
-
+class Team(_Team, Model):
     def pk(self: "Team") -> str:
         return self.team
 

@@ -5,6 +5,7 @@ from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.match import Match, MatchORM
+from src.db.read.main import common_filters
 
 
 def get_match(match: str) -> Optional[Match]:
@@ -20,7 +21,7 @@ def get_match(match: str) -> Optional[Match]:
 
 
 def get_matches(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
@@ -31,7 +32,8 @@ def get_matches(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Match]:
-    def callback(session: SessionType):
+    @common_filters(MatchORM, Match, metric, ascending, limit, offset)
+    def callback(session: SessionType):  # type: ignore
         data = session.query(MatchORM)  # type: ignore
         if team is not None:
             data = data.filter(  # type: ignore
@@ -52,19 +54,8 @@ def get_matches(
             data = data.filter(MatchORM.playoff == elims)  # type: ignore
         if offseason is not None:
             data = data.filter(MatchORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(MatchORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(MatchORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(MatchORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
-        out_data: List[MatchORM] = data.all()  # type: ignore
 
-        return [Match.from_dict(x.__dict__) for x in out_data]  # type: ignore
+        return data  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 

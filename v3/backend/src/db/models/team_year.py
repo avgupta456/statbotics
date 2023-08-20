@@ -9,7 +9,7 @@ from sqlalchemy.sql.schema import (  # type: ignore
 from sqlalchemy.sql.sqltypes import String  # type: ignore
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class TeamYearORM(Base, ModelORM):
@@ -113,13 +113,8 @@ class TeamYearORM(Base, ModelORM):
 _TeamYear = generate_attr_class("TeamYear", TeamYearORM)
 
 
-class TeamYear(_TeamYear):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "TeamYear":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return TeamYear(**dict)
-
-    def as_dict(self: "TeamYear") -> Dict[str, Any]:
+class TeamYear(_TeamYear, Model):
+    def to_dict(self: "TeamYear") -> Dict[str, Any]:
         return attr.asdict(
             self,  # type: ignore
             filter=attr.filters.exclude(
@@ -129,8 +124,6 @@ class TeamYear(_TeamYear):
                 attr.fields(TeamYear).next_event_week,  # type: ignore
             ),
         )
-
-    """PARENT FUNCTIONS"""
 
     def sort(self: "TeamYear") -> Tuple[str, int]:
         return (self.team, self.year)

@@ -1,11 +1,10 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 
-import attr
 from sqlalchemy import Column, Float, Integer  # type: ignore
 from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class YearORM(Base, ModelORM):
@@ -140,17 +139,7 @@ class YearORM(Base, ModelORM):
 _Year = generate_attr_class("Year", YearORM)
 
 
-class Year(_Year):
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Year":
-        dict = {k: data.get(k, None) for k in cls.__slots__}  # type: ignore
-        return Year(**dict)
-
-    def as_dict(self: "Year") -> Dict[str, Any]:
-        return attr.asdict(self)  # type: ignore
-
-    """PARENT FUNCTIONS"""
-
+class Year(_Year, Model):
     def pk(self: "Year") -> str:
         return str(self.year)
 

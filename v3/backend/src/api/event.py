@@ -65,7 +65,7 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
     if event_obj is None:
         raise Exception("Event not found")
 
-    return event_obj.as_dict()
+    return event_obj.to_dict()
 
 
 @router.get(
@@ -76,7 +76,7 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
 @async_fail_gracefully_api_plural
 async def read_events_year(response: Response, year: int) -> List[Dict[str, Any]]:
     events: List[Event] = await get_events_cached(year=year)
-    return [event.as_dict() for event in events]
+    return [event.to_dict() for event in events]
 
 
 @router.get(
@@ -89,7 +89,7 @@ async def read_events_year_district(
     response: Response, year: int, district: str
 ) -> List[Dict[str, Any]]:
     events: List[Event] = await get_events_cached(year=year, district=district)
-    return [event.as_dict() for event in events]
+    return [event.to_dict() for event in events]
 
 
 @router.get(
@@ -102,7 +102,7 @@ async def read_events_year_state(
     response: Response, year: int, state: str
 ) -> List[Dict[str, Any]]:
     events: List[Event] = await get_events_cached(year=year, state=state)
-    return [event.as_dict() for event in events]
+    return [event.to_dict() for event in events]
 
 
 @router.get(
@@ -115,7 +115,7 @@ async def read_events_district(
     response: Response, district: str
 ) -> List[Dict[str, Any]]:
     events: List[Event] = await get_events_cached(district=district)
-    return [event.as_dict() for event in events]
+    return [event.to_dict() for event in events]
 
 
 @router.get(
@@ -126,7 +126,7 @@ async def read_events_district(
 @async_fail_gracefully_api_plural
 async def read_events_state(response: Response, state: str) -> List[Dict[str, Any]]:
     events: List[Event] = await get_events_cached(state=state)
-    return [event.as_dict() for event in events]
+    return [event.to_dict() for event in events]
 
 
 @router.get(
@@ -160,4 +160,4 @@ async def read_events(
         limit=limit,
         offset=offset,
     )
-    return [event.as_dict() for event in events]
+    return [event.to_dict() for event in events]

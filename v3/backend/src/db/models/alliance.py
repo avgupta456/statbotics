@@ -8,7 +8,7 @@ from sqlalchemy.sql.schema import (  # type: ignore
 )
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class AllianceORM(Base, ModelORM):
@@ -97,14 +97,24 @@ class AllianceORM(Base, ModelORM):
 _Alliance = generate_attr_class("Alliance", AllianceORM)
 
 
-class Alliance(_Alliance):
+class Alliance(_Alliance, Model):
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Alliance":
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
         return Alliance(**dict)
 
-    def as_dict(self: "Alliance") -> Dict[str, Any]:
+    def to_dict(self: "Alliance") -> Dict[str, Any]:
         return attr.asdict(self)
+
+    def sort(self: "Alliance") -> int:
+        return self.time or 0
+
+    def pk(self: "Alliance") -> str:
+        return f"{self.match}_{self.alliance}"
+
+    def __str__(self: "Alliance") -> str:
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.match}_{self.alliance}_{self.score}_{self.teleop_points}_{self.epa_sum}"
 
     """HELPER FUNCTIONS"""
 
@@ -116,15 +126,3 @@ class Alliance(_Alliance):
 
     def get_dqs(self: "Alliance") -> List[str]:
         return [x for x in self.dq.split(",") if x != ""]
-
-    """PARENT FUNCTIONS"""
-
-    def sort(self: "Alliance") -> int:
-        return self.time or 0
-
-    def pk(self: "Alliance") -> str:
-        return f"{self.match}_{self.alliance}"
-
-    def __str__(self: "Alliance") -> str:
-        # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.match}_{self.alliance}_{self.score}_{self.teleop_points}_{self.epa_sum}"

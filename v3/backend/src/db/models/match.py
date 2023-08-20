@@ -1,6 +1,5 @@
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-import attr
 from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
 from sqlalchemy.sql.schema import (  # type: ignore
     ForeignKeyConstraint,
@@ -8,7 +7,7 @@ from sqlalchemy.sql.schema import (  # type: ignore
 )
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class MatchORM(Base, ModelORM):
@@ -87,14 +86,16 @@ class MatchORM(Base, ModelORM):
 _Match = generate_attr_class("Match", MatchORM)
 
 
-class Match(_Match):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "Match":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return Match(**dict)
+class Match(_Match, Model):
+    def sort(self: "Match") -> int:
+        return self.time or 0
 
-    def as_dict(self: "Match") -> Dict[str, Any]:
-        return attr.asdict(self)
+    def pk(self: "Match") -> str:
+        return self.key
+
+    def __str__(self: "Match") -> str:
+        # Only refresh DB if these change (during 1 min partial update)
+        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"
 
     """HELPER FUNCTIONS"""
 
@@ -118,24 +119,3 @@ class Match(_Match):
 
     def get_teams(self: "Match") -> List[List[str]]:
         return [self.get_red(), self.get_blue()]
-
-    # TODO: consolidate with as_dict()
-    def to_dict(self: "Match") -> Dict[str, Any]:
-        out: Dict[str, Any] = {k: getattr(self, k) for k in self.__slots__}  # type: ignore
-        out["red"] = self.get_red()
-        out["blue"] = self.get_blue()
-        return out
-
-    """
-    PARENT FUNCTIONS
-    """
-
-    def sort(self: "Match") -> int:
-        return self.time or 0
-
-    def pk(self: "Match") -> str:
-        return self.key
-
-    def __str__(self: "Match") -> str:
-        # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"

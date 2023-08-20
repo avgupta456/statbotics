@@ -8,7 +8,7 @@ from sqlalchemy.sql.schema import (  # type: ignore
 )
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class EventORM(Base, ModelORM):
@@ -66,21 +66,12 @@ class EventORM(Base, ModelORM):
 _Event = generate_attr_class("Event", EventORM)
 
 
-class Event(_Event):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "Event":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return Event(**dict)
-
-    def as_dict(self: "Event") -> Dict[str, Any]:
+class Event(_Event, Model):
+    def to_dict(self: "Event") -> Dict[str, Any]:
         return attr.asdict(
             self,  # type: ignore
             filter=attr.filters.exclude(attr.fields(Event).current_match),  # type: ignore
         )
-
-    """
-    PARENT FUNCTIONS
-    """
 
     def pk(self: "Event") -> str:
         return self.key

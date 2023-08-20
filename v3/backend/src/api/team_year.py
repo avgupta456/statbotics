@@ -67,7 +67,7 @@ async def read_team_year(
     if team_year_obj is None:
         raise Exception("TeamYear not found")
 
-    return team_year_obj.as_dict()
+    return team_year_obj.to_dict()
 
 
 @router.get(
@@ -81,7 +81,7 @@ async def read_team_years_team(
     team: int,
 ) -> List[Dict[str, Any]]:
     team_years: List[TeamYear] = await get_team_years_cached(team=team)
-    return [team_year.as_dict() for team_year in team_years]
+    return [team_year.to_dict() for team_year in team_years]
 
 
 @router.get(
@@ -98,7 +98,7 @@ async def read_team_years_district(
     team_years: List[TeamYear] = await get_team_years_cached(
         year=year, district=district
     )
-    return [team_year.as_dict() for team_year in team_years]
+    return [team_year.to_dict() for team_year in team_years]
 
 
 @router.get(
@@ -113,7 +113,7 @@ async def read_team_years_state(
     state: str,
 ) -> List[Dict[str, Any]]:
     team_years: List[TeamYear] = await get_team_years_cached(year=year, state=state)
-    return [team_year.as_dict() for team_year in team_years]
+    return [team_year.to_dict() for team_year in team_years]
 
 
 @router.get(
@@ -145,4 +145,4 @@ async def read_team_years(
         limit=limit,
         offset=offset,
     )
-    return [team_year.as_dict() for team_year in team_years]
+    return [team_year.to_dict() for team_year in team_years]

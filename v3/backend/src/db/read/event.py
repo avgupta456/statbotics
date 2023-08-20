@@ -5,6 +5,7 @@ from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.event import Event, EventORM
+from src.db.read.main import common_filters
 
 
 def get_event(event_id: str) -> Optional[Event]:
@@ -30,7 +31,10 @@ def get_events(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Event]:
-    def callback(session: SessionType):
+    print(metric, ascending, limit, offset)
+
+    @common_filters(EventORM, Event, metric, ascending, limit, offset)
+    def callback(session: SessionType):  # type: ignore
         data = session.query(EventORM)  # type: ignore
         if year is not None:
             data = data.filter(EventORM.year == year)  # type: ignore
@@ -46,18 +50,8 @@ def get_events(
             data = data.filter(EventORM.week == week)  # type: ignore
         if offseason is not None:
             data = data.filter(EventORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(EventORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(EventORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(EventORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
-        out_data: List[EventORM] = data.all()  # type: ignore
-        return [Event.from_dict(x.__dict__) for x in out_data]  # type: ignore
+
+        return data  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 

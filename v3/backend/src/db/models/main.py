@@ -1,4 +1,4 @@
-from typing import Any, Type, TypeVar
+from typing import Any, Dict, Type, TypeVar
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String, inspect  # type: ignore
@@ -10,6 +10,16 @@ class ModelORM:
 
 
 class Model:
+    T1 = TypeVar("T1")
+
+    @classmethod
+    def from_dict(cls: Type[T1], dict: Dict[str, Any]) -> T1:
+        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
+        return cls(**dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return attr.asdict(self)
+
     def sort(self) -> Any:
         raise NotImplementedError()
 
@@ -20,10 +30,10 @@ class Model:
         return self.__repr__()
 
 
-T = TypeVar("T", bound=ModelORM)
+T2 = TypeVar("T2", bound=ModelORM)
 
 
-def generate_attr_class(name: str, sqlalchemy_model: T) -> T:
+def generate_attr_class(name: str, sqlalchemy_model: T2) -> T2:
     def sqlalchemy_to_python_type(sa_type: Type[TypeEngine]) -> type:
         if isinstance(sa_type, String):
             return str

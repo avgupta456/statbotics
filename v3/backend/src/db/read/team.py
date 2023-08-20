@@ -5,6 +5,7 @@ from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.team import Team, TeamORM
+from src.db.read.main import common_filters
 
 
 def get_team(team: int) -> Optional[Team]:
@@ -26,7 +27,8 @@ def get_teams(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Team]:
-    def callback(session: SessionType):
+    @common_filters(TeamORM, Team, metric, ascending, limit, offset)
+    def callback(session: SessionType):  # type: ignore
         data = session.query(TeamORM)  # type: ignore
         if country is not None:
             data = data.filter(TeamORM.country == country)  # type: ignore
@@ -38,19 +40,8 @@ def get_teams(
             data = data.filter(TeamORM.active == active)  # type: ignore
         if offseason is not None:
             data = data.filter(TeamORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(TeamORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(TeamORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(TeamORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
 
-        out_data: List[TeamORM] = data.all()  # type: ignore
-        return [Team.from_dict(x.__dict__) for x in out_data]  # type: ignore
+        return data  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 

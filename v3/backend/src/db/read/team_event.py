@@ -5,9 +5,10 @@ from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.team_event import TeamEvent, TeamEventORM
+from src.db.read.main import common_filters
 
 
-def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
+def get_team_event(team: str, event: str) -> Optional[TeamEvent]:
     def callback(session: SessionType):
         data = session.query(TeamEventORM).filter(  # type: ignore
             TeamEventORM.team == team, TeamEventORM.event == event
@@ -21,7 +22,7 @@ def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
 
 
 def get_team_events(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
@@ -35,7 +36,8 @@ def get_team_events(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[TeamEvent]:
-    def callback(session: SessionType):
+    @common_filters(TeamEventORM, TeamEvent, metric, ascending, limit, offset)
+    def callback(session: SessionType):  # type: ignore
         data = session.query(TeamEventORM)  # type: ignore
         if team is not None:
             data = data.filter(TeamEventORM.team == team)  # type: ignore
@@ -55,18 +57,8 @@ def get_team_events(
             data = data.filter(TeamEventORM.week == week)  # type: ignore
         if offseason is not None:
             data = data.filter(TeamEventORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(TeamEventORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(TeamEventORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(TeamEventORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
-        out_data: List[TeamEventORM] = data.all()  # type: ignore
-        return [TeamEvent.from_dict(x.__dict__) for x in out_data]  # type: ignore
+
+        return data  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 

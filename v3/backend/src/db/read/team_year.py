@@ -5,9 +5,10 @@ from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.team_year import TeamYear, TeamYearORM
+from src.db.read.main import common_filters
 
 
-def get_team_year(team: int, year: int) -> Optional[TeamYear]:
+def get_team_year(team: str, year: int) -> Optional[TeamYear]:
     def callback(session: SessionType):
         data = session.query(TeamYearORM).filter(  # type: ignore
             TeamYearORM.team == team, TeamYearORM.year == year
@@ -21,7 +22,7 @@ def get_team_year(team: int, year: int) -> Optional[TeamYear]:
 
 
 def get_team_years(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     teams: Optional[List[int]] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
@@ -33,7 +34,8 @@ def get_team_years(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[TeamYear]:
-    def callback(session: SessionType):
+    @common_filters(TeamYearORM, TeamYear, metric, ascending, limit, offset)
+    def callback(session: SessionType):  # type: ignore
         data = session.query(TeamYearORM)  # type: ignore
         if team is not None:
             data = data.filter(TeamYearORM.team == team)  # type: ignore
@@ -49,18 +51,8 @@ def get_team_years(
             data = data.filter(TeamYearORM.state == state)  # type: ignore
         if offseason is not None:
             data = data.filter(TeamYearORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(TeamYearORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(TeamYearORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(TeamYearORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
-        out_data: List[TeamYearORM] = data.all()  # type: ignore
-        return [TeamYear.from_dict(x.__dict__) for x in out_data]  # type: ignore
+
+        return data  # type: ignore
 
     return run_transaction(Session, callback)  # type: ignore
 

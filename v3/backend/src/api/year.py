@@ -51,7 +51,7 @@ async def read_year(
     if year_obj is None:
         raise Exception("Year not found")
 
-    return year_obj.as_dict()
+    return year_obj.to_dict()
 
 
 @router.get(
@@ -70,4 +70,4 @@ async def read_years(
     years: List[Year] = await get_years_cached(
         metric=metric, ascending=ascending, limit=limit, offset=offset
     )
-    return [year.as_dict() for year in years]
+    return [year.to_dict() for year in years]

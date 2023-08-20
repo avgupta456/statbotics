@@ -71,7 +71,7 @@ async def read_team_event(response: Response, team: int, event: str) -> Dict[str
     if team_event_obj is None:
         raise Exception("Team Event not found")
 
-    return team_event_obj.as_dict()
+    return team_event_obj.to_dict()
 
 
 @router.get(
@@ -82,7 +82,7 @@ async def read_team_event(response: Response, team: int, event: str) -> Dict[str
 @async_fail_gracefully_api_plural
 async def read_team_events_team(response: Response, team: int) -> List[Dict[str, Any]]:
     team_events: List[TeamEvent] = await get_team_events_cached(team=team)
-    return [team_event.as_dict() for team_event in team_events]
+    return [team_event.to_dict() for team_event in team_events]
 
 
 @router.get(
@@ -95,7 +95,7 @@ async def read_team_events_team_year(
     response: Response, team: int, year: int
 ) -> List[Dict[str, Any]]:
     team_events: List[TeamEvent] = await get_team_events_cached(team=team, year=year)
-    return [team_event.as_dict() for team_event in team_events]
+    return [team_event.to_dict() for team_event in team_events]
 
 
 @router.get(
@@ -108,7 +108,7 @@ async def read_team_events_event(
     response: Response, event: str
 ) -> List[Dict[str, Any]]:
     team_events: List[TeamEvent] = await get_team_events_cached(event=event)
-    return [team_event.as_dict() for team_event in team_events]
+    return [team_event.to_dict() for team_event in team_events]
 
 
 @router.get(
@@ -123,7 +123,7 @@ async def read_team_events_year_district(
     team_events: List[TeamEvent] = await get_team_events_cached(
         year=year, district=district
     )
-    return [team_event.as_dict() for team_event in team_events]
+    return [team_event.to_dict() for team_event in team_events]
 
 
 @router.get(
@@ -136,7 +136,7 @@ async def read_team_events_year_state(
     response: Response, year: int, state: str
 ) -> List[Dict[str, Any]]:
     team_events: List[TeamEvent] = await get_team_events_cached(year=year, state=state)
-    return [team_event.as_dict() for team_event in team_events]
+    return [team_event.to_dict() for team_event in team_events]
 
 
 @router.get(
@@ -174,4 +174,4 @@ async def read_team_events(
         limit=limit,
         offset=offset,
     )
-    return [team_event.as_dict() for team_event in team_events]
+    return [team_event.to_dict() for team_event in team_events]

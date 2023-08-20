@@ -1,10 +1,10 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from sqlalchemy import Column, Integer, String  # type: ignore
 from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class ETagORM(Base, ModelORM):
@@ -22,13 +22,6 @@ class ETagORM(Base, ModelORM):
 _ETag = generate_attr_class("ETag", ETagORM)
 
 
-class ETag(_ETag):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "ETag":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return ETag(**dict)
-
-    """PARENT FUNCTIONS"""
-
+class ETag(_ETag, Model):
     def pk(self: "ETag") -> str:
         return f"{self.year}-{self.path}"

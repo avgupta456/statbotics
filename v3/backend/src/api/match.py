@@ -63,7 +63,7 @@ async def read_match(response: Response, match: str) -> Dict[str, Any]:
     if match_obj is None:
         raise Exception("Match not found")
 
-    return match_obj.as_dict()
+    return match_obj.to_dict()
 
 
 @router.get(
@@ -74,7 +74,7 @@ async def read_match(response: Response, match: str) -> Dict[str, Any]:
 @async_fail_gracefully_api_plural
 async def read_matches_event(response: Response, event: str) -> List[Dict[str, Any]]:
     matches: List[Match] = await get_matches_cached(event=event)
-    return [match.as_dict() for match in matches]
+    return [match.to_dict() for match in matches]
 
 
 @router.get(
@@ -87,7 +87,7 @@ async def read_matches_team_year(
     response: Response, team: int, year: int
 ) -> List[Dict[str, Any]]:
     matches: List[Match] = await get_matches_cached(team=team, year=year)
-    return [match.as_dict() for match in matches]
+    return [match.to_dict() for match in matches]
 
 
 @router.get(
@@ -100,7 +100,7 @@ async def read_matches_team_event(
     response: Response, team: int, event: str
 ) -> List[Dict[str, Any]]:
     matches: List[Match] = await get_matches_cached(team=team, event=event)
-    return [match.as_dict() for match in matches]
+    return [match.to_dict() for match in matches]
 
 
 @router.get(
@@ -132,4 +132,4 @@ async def read_matches(
         limit=limit,
         offset=offset,
     )
-    return [match.as_dict() for match in matches]
+    return [match.to_dict() for match in matches]

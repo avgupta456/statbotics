@@ -8,7 +8,7 @@ from sqlalchemy.sql.schema import (  # type: ignore
 )
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class TeamMatchORM(Base, ModelORM):
@@ -58,26 +58,12 @@ class TeamMatchORM(Base, ModelORM):
 _TeamMatch = generate_attr_class("TeamMatch", TeamMatchORM)
 
 
-class TeamMatch(_TeamMatch):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "TeamMatch":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return TeamMatch(**dict)
-
-    def as_dict(self: "TeamMatch") -> Dict[str, Any]:
+class TeamMatch(_TeamMatch, Model):
+    def to_dict(self: "TeamMatch") -> Dict[str, Any]:
         return attr.asdict(
             self,  # type: ignore
             filter=attr.filters.exclude(attr.fields(TeamMatch).id),  # type: ignore
         )
-
-    """
-    HELPER FUNCTIONS
-    """
-
-    def to_dict(self: "TeamMatch") -> Dict[str, Any]:
-        return {k: getattr(self, k) for k in self.__slots__}  # type: ignore
-
-    """PARENT FUNCTIONS"""
 
     def sort(self: "TeamMatch") -> int:
         return self.time

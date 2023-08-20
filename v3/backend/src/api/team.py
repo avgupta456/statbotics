@@ -64,7 +64,7 @@ async def read_team(
     if team_obj is None:
         raise Exception("Team not found")
 
-    return team_obj.as_dict()
+    return team_obj.to_dict()
 
 
 @router.get(
@@ -78,7 +78,7 @@ async def read_teams_district(
     district: str,
 ) -> List[Dict[str, Any]]:
     teams: List[Team] = await get_teams_cached(district=district)
-    return [team.as_dict() for team in teams]
+    return [team.to_dict() for team in teams]
 
 
 @router.get(
@@ -92,7 +92,7 @@ async def read_teams_state(
     state: str,
 ) -> List[Dict[str, Any]]:
     teams: List[Team] = await get_teams_cached(state=state)
-    return [team.as_dict() for team in teams]
+    return [team.to_dict() for team in teams]
 
 
 @router.get(
@@ -122,4 +122,4 @@ async def read_teams(
         limit=limit,
         offset=offset,
     )
-    return [team.as_dict() for team in teams]
+    return [team.to_dict() for team in teams]

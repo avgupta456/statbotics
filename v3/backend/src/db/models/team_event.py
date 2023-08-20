@@ -9,7 +9,7 @@ from sqlalchemy.sql.schema import (  # type: ignore
 from sqlalchemy.sql.sqltypes import String  # type: ignore
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, generate_attr_class
+from src.db.models.main import ModelORM, Model, generate_attr_class
 
 
 class TeamEventORM(Base, ModelORM):
@@ -103,21 +103,14 @@ class TeamEventORM(Base, ModelORM):
 _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
 
 
-class TeamEvent(_TeamEvent):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "TeamEvent":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return TeamEvent(**dict)
-
-    def as_dict(self: "TeamEvent") -> Dict[str, Any]:
+class TeamEvent(_TeamEvent, Model):
+    def to_dict(self: "TeamEvent") -> Dict[str, Any]:
         return attr.asdict(
             self,  # type: ignore
             filter=attr.filters.exclude(
                 attr.fields(TeamEvent).id, attr.fields(TeamEvent).time  # type: ignore
             ),
         )
-
-    """PARENT FUNCTIONS"""
 
     def sort(self: "TeamEvent") -> Tuple[str, int]:
         return (self.team, self.time)
