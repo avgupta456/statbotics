@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import attr
 from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
@@ -24,9 +24,9 @@ class EventORM(Base, ModelORM):
     """GENERAL"""
     name: str = Column(String(100))
     time: int = Column(Integer)
-    state: str = Column(String(10))
-    country: str = Column(String(30))
-    district: str = Column(String(10))
+    country: Optional[str] = Column(String(30))
+    district: Optional[str] = Column(String(10))
+    state: Optional[str] = Column(String(10))
     start_date: str = Column(String(10))
     end_date: str = Column(String(10))
 
@@ -49,18 +49,18 @@ class EventORM(Base, ModelORM):
 
     """EPA"""
     epa_max: float = Column(Float)
-    epa_top8: float = Column(Float)
-    epa_top24: float = Column(Float)
+    epa_top8: Optional[float] = Column(Float)
+    epa_top24: Optional[float] = Column(Float)
     epa_mean: float = Column(Float)
     epa_sd: float = Column(Float)
 
     """STATS"""
-    epa_acc: float = Column(Float)
-    epa_mse: float = Column(Float)
-    rp_1_acc: float = Column(Float)
-    rp_1_mse: float = Column(Float)
-    rp_2_acc: float = Column(Float)
-    rp_2_mse: float = Column(Float)
+    epa_acc: Optional[float] = Column(Float)
+    epa_mse: Optional[float] = Column(Float)
+    rp_1_acc: Optional[float] = Column(Float)
+    rp_1_mse: Optional[float] = Column(Float)
+    rp_2_acc: Optional[float] = Column(Float)
+    rp_2_mse: Optional[float] = Column(Float)
 
 
 _Event = generate_attr_class("Event", EventORM)

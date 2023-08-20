@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import attr
 from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
@@ -19,17 +19,17 @@ class TeamORM(Base, ModelORM):
     """GENERAL"""
     name: str = Column(String(100))
     offseason: bool = Column(Boolean)
-    state: str = Column(String(10))
-    country: str = Column(String(30))
-    district: str = Column(String(10))
+    country: Optional[str] = Column(String(30))
+    district: Optional[str] = Column(String(10))
+    state: Optional[str] = Column(String(10))
     rookie_year: int = Column(Integer)
     active: bool = Column(Boolean)
 
     """EPA"""
-    norm_epa: float = Column(Float)
-    norm_epa_recent: float = Column(Float)
-    norm_epa_mean: float = Column(Float)
-    norm_epa_max: float = Column(Float)
+    norm_epa: Optional[float] = Column(Float)
+    norm_epa_recent: Optional[float] = Column(Float)
+    norm_epa_mean: Optional[float] = Column(Float)
+    norm_epa_max: Optional[float] = Column(Float)
 
     """STATS"""
     wins: int = Column(Integer)

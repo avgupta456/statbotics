@@ -124,24 +124,24 @@ def process_year(
     RP1_SEED = inv_sigmoid(RP1_MEAN) / NUM_TEAMS
     RP2_SEED = inv_sigmoid(RP2_MEAN) / NUM_TEAMS
 
-    team_counts: Dict[int, int] = defaultdict(int)  # for updating epa
-    team_epas: Dict[int, float] = defaultdict(lambda: INIT_EPA)  # most recent epa
-    team_auto_epas: Dict[int, float] = defaultdict(lambda: INIT_AUTO_EPA)
-    team_teleop_epas: Dict[int, float] = defaultdict(lambda: INIT_TELEOP_EPA)
-    team_endgame_epas: Dict[int, float] = defaultdict(lambda: INIT_ENDGAME_EPA)
-    team_rp_1_epas: Dict[int, float] = defaultdict(lambda: RP1_SEED)
-    team_rp_2_epas: Dict[int, float] = defaultdict(lambda: RP2_SEED)
+    team_counts: Dict[str, int] = defaultdict(int)  # for updating epa
+    team_epas: Dict[str, float] = defaultdict(lambda: INIT_EPA)  # most recent epa
+    team_auto_epas: Dict[str, float] = defaultdict(lambda: INIT_AUTO_EPA)
+    team_teleop_epas: Dict[str, float] = defaultdict(lambda: INIT_TELEOP_EPA)
+    team_endgame_epas: Dict[str, float] = defaultdict(lambda: INIT_ENDGAME_EPA)
+    team_rp_1_epas: Dict[str, float] = defaultdict(lambda: RP1_SEED)
+    team_rp_2_epas: Dict[str, float] = defaultdict(lambda: RP2_SEED)
 
     team_years_dict: Dict[str, TeamYear] = {}
     team_events_dict: Dict[str, List[Tuple[float, bool]]] = {}
-    team_matches_dict: Dict[int, List[float]] = defaultdict(list)
+    team_matches_dict: Dict[str, List[float]] = defaultdict(list)
     team_match_ids: Dict[str, float] = {}
     team_match_ids_post: Dict[str, float] = {}
     component_team_events_dict: Dict[
         str, List[Tuple[float, float, float, float, float, bool]]
     ] = {}
     component_team_matches_dict: Dict[
-        int, List[Tuple[float, float, float, float, float]]
+        str, List[Tuple[float, float, float, float, float]]
     ] = defaultdict(list)
     component_team_match_ids: Dict[str, Tuple[float, float, float, float, float]] = {}
 
@@ -155,7 +155,7 @@ def process_year(
             past_epas: List[float] = []
             for past_year in range(year_num - 1, year_num - 5, -1):
                 past_team_year = team_years_all.get(past_year, {}).get(num, None)
-                if past_team_year is not None and past_team_year.epa_max is not None:
+                if past_team_year is not None:
                     prev_norm_epa = past_team_year.norm_epa_end or NORM_MEAN
                     new_epa = norm_epa_to_next_season_epa(
                         prev_norm_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
@@ -166,13 +166,13 @@ def process_year(
         else:
             # Otherwise use the two most recent years (regardless of team activity)
             team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
-            if team_year_1 is not None and team_year_1.epa_max is not None:
+            if team_year_1 is not None:
                 prev_norm_epa = team_year_1.norm_epa_end or NORM_MEAN
                 epa_1yr = norm_epa_to_next_season_epa(
                     prev_norm_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
                 )
             team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
-            if team_year_2 is not None and team_year_2.epa_max is not None:
+            if team_year_2 is not None:
                 prev_norm_epa = team_year_2.norm_epa_end or NORM_MEAN
                 epa_2yr = norm_epa_to_next_season_epa(
                     prev_norm_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
@@ -200,10 +200,10 @@ def process_year(
             team_year.rp_2_epa_start = round(team_rp_2_epas[num], 4)
 
     # win, loss, tie, (rp), count
-    team_year_stats: Dict[int, List[int]] = defaultdict(
+    team_year_stats: Dict[str, List[int]] = defaultdict(
         lambda: [0, 0, 0, 0]
     )  # no offseason
-    full_team_year_stats: Dict[int, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
+    full_team_year_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0])
     qual_team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0, 0])
 
@@ -234,8 +234,8 @@ def process_year(
         event_key = match.event
         red, blue = match.get_teams()
 
-        red_epa_pre: Dict[int, float] = {}
-        blue_epa_pre: Dict[int, float] = {}
+        red_epa_pre: Dict[str, float] = {}
+        blue_epa_pre: Dict[str, float] = {}
 
         for team in red:
             red_epa_pre[team] = team_epas[team]
@@ -250,14 +250,14 @@ def process_year(
         match.red_epa_sum = round(red_epa_sum, 2)
         match.blue_epa_sum = round(blue_epa_sum, 2)
 
-        red_auto_epa_pre: Dict[int, float] = {}
-        blue_auto_epa_pre: Dict[int, float] = {}
-        red_endgame_epa_pre: Dict[int, float] = {}
-        blue_endgame_epa_pre: Dict[int, float] = {}
-        red_rp_1_epa_pre: Dict[int, float] = {}
-        blue_rp_1_epa_pre: Dict[int, float] = {}
-        red_rp_2_epa_pre: Dict[int, float] = {}
-        blue_rp_2_epa_pre: Dict[int, float] = {}
+        red_auto_epa_pre: Dict[str, float] = {}
+        blue_auto_epa_pre: Dict[str, float] = {}
+        red_endgame_epa_pre: Dict[str, float] = {}
+        blue_endgame_epa_pre: Dict[str, float] = {}
+        red_rp_1_epa_pre: Dict[str, float] = {}
+        blue_rp_1_epa_pre: Dict[str, float] = {}
+        red_rp_2_epa_pre: Dict[str, float] = {}
+        blue_rp_2_epa_pre: Dict[str, float] = {}
         if USE_COMPONENTS:
             for team in red:
                 red_auto_epa_pre[team] = team_auto_epas[team]
@@ -337,21 +337,16 @@ def process_year(
 
         # UPDATE EPA
         weight = PLAYOFF_WEIGHT if match.playoff else 1
-        rp_weight = 0 if match.playoff else 1
         red_score = match.red_no_foul or match.red_score or 0
         red_pred = match.red_epa_sum
         blue_score = match.blue_no_foul or match.blue_score or 0
         blue_pred = match.blue_epa_sum
 
         # Track surrogates and DQs for RP calculations
-        red_surrogates = [
-            int(x) for x in (match.red_surrogate or "").split(",") if x != ""
-        ]
-        blue_surrogates = [
-            int(x) for x in (match.blue_surrogate or "").split(",") if x != ""
-        ]
-        red_dqs = [int(x) for x in (match.red_dq or "").split(",") if x != ""]
-        blue_dqs = [int(x) for x in (match.blue_dq or "").split(",") if x != ""]
+        red_surrogates = match.get_red_surrogates()
+        blue_surrogates = match.get_blue_surrogates()
+        red_dqs = match.get_red_dqs()
+        blue_dqs = match.get_blue_dqs()
 
         # If either, do not update EPA values
         playoff_dq = match.playoff and (len(red_dqs) == 3 or len(blue_dqs) == 3)
@@ -435,60 +430,6 @@ def process_year(
 
                 if not match.playoff and not offseason_event:
                     team_counts[t] += 1  # for EPA calculation
-
-        if USE_COMPONENTS:
-            red_auto_err = (match.red_auto or 0) - (match.red_auto_epa_sum or 0)
-            blue_auto_err = (match.blue_auto or 0) - (match.blue_auto_epa_sum or 0)
-            red_endgame_err = (match.red_endgame or 0) - (
-                match.red_endgame_epa_sum or 0
-            )
-            blue_endgame_err = (match.blue_endgame or 0) - (
-                match.blue_endgame_epa_sum or 0
-            )
-            red_rp_1_err = (match.red_rp_1 or 0) - (match.red_rp_1_prob or 0)
-            blue_rp_1_err = (match.blue_rp_1 or 0) - (match.blue_rp_1_prob or 0)
-            red_rp_2_err = (match.red_rp_2 or 0) - (match.red_rp_2_prob or 0)
-            blue_rp_2_err = (match.blue_rp_2 or 0) - (match.blue_rp_2_prob or 0)
-            for (
-                teams,
-                auto_epa_pre,
-                endgame_epa_pre,
-                rp_1_epa_pre,
-                rp_2_epa_pre,
-                auto_err,
-                endgame_err,
-                rp_1_err,
-                rp_2_err,
-            ) in [
-                (red, red_auto_epa_pre, red_endgame_epa_pre, red_rp_1_epa_pre, red_rp_2_epa_pre, red_auto_err, red_endgame_err, red_rp_1_err, red_rp_2_err),  # type: ignore
-                (blue, blue_auto_epa_pre, blue_endgame_epa_pre, blue_rp_1_epa_pre, blue_rp_2_epa_pre, blue_auto_err, blue_endgame_err, blue_rp_1_err, blue_rp_2_err),  # type: ignore
-            ]:
-                for t in teams:
-                    a_epa = auto_epa_pre[t] + weight * percent * auto_err / NUM_TEAMS  # type: ignore
-                    e_epa = endgame_epa_pre[t] + weight * percent * endgame_err / NUM_TEAMS  # type: ignore
-                    t_epa = team_epas[t] - a_epa - e_epa  # type: ignore
-                    rp_1_epa = max(MIN_RP_EPA, rp_1_epa_pre[t] + rp_weight * RP_PERCENT * rp_1_err / NUM_TEAMS)  # type: ignore
-                    rp_2_epa = max(MIN_RP_EPA, rp_2_epa_pre[t] + rp_weight * RP_PERCENT * rp_2_err / NUM_TEAMS)  # type: ignore
-
-                    if playoff_dq or offseason_event:
-                        a_epa = auto_epa_pre[t]
-                        e_epa = endgame_epa_pre[t]
-                        t_epa = team_epas[t] - a_epa - e_epa
-                        rp_1_epa = rp_1_epa_pre[t]
-                        rp_2_epa = rp_2_epa_pre[t]
-
-                    team_auto_epas[t] = a_epa
-                    team_teleop_epas[t] = t_epa
-                    team_endgame_epas[t] = e_epa
-                    team_rp_1_epas[t] = rp_1_epa
-                    team_rp_2_epas[t] = rp_2_epa
-                    team_event_key = get_team_event_key(t, event_key)
-                    component_team_events_dict[team_event_key].append(
-                        (a_epa, t_epa, e_epa, rp_1_epa, rp_2_epa, match.playoff)
-                    )
-                    component_team_matches_dict[t].append(
-                        (a_epa, t_epa, e_epa, rp_1_epa, rp_2_epa)
-                    )
 
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
         new_acc = 1 if winner == match.epa_winner else 0
@@ -593,7 +534,7 @@ def process_year(
 
     # TEAM EVENTS
     event_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
-    team_team_events: Dict[int, List[TeamEvent]] = defaultdict(list)
+    team_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
     for team_event in sorted(team_events, key=lambda e: (e.week, e.time)):
         key = get_team_event_key(team_event.team, team_event.event)
         event_team_events[team_event.event].append(team_event)
@@ -741,7 +682,7 @@ def process_year(
 
     # TEAM YEARS
     year_epas: List[float] = []
-    year_epas_dict: Dict[int, float] = {}  # for norm epa
+    year_epas_dict: Dict[str, float] = {}  # for norm epa
     country_year_epas: Dict[str, List[float]] = defaultdict(list)  # for rank/percentile
     state_year_epas: Dict[str, List[float]] = defaultdict(list)
     district_year_epas: Dict[str, List[float]] = defaultdict(list)
@@ -750,7 +691,7 @@ def process_year(
     year_endgame_epas: List[float] = []
     year_rp_1_epas: List[float] = []
     year_rp_2_epas: List[float] = []
-    to_remove: List[int] = []
+    to_remove: List[str] = []
     for team in team_years_dict:
         curr_team_epas = team_matches_dict[team]
         if curr_team_epas == []:
@@ -870,7 +811,7 @@ def process_year(
         rp_1_pre_champs = obj.rp_1_epa_start or 0
         rp_2_pre_champs = obj.rp_2_epa_start or 0
         for team_event in sorted(team_team_events[team], key=lambda t: t.sort()):
-            if event_types[team_event.event] < 3 and team_event.epa_end is not None:
+            if event_types[team_event.event] < 3:
                 pre_champs = team_event.epa_end
                 auto_pre_champs = team_event.auto_epa_end or 0
                 teleop_pre_champs = team_event.teleop_epa_end or 0

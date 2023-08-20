@@ -28,11 +28,9 @@ class TeamYearORM(Base, ModelORM):
     """API COMPLETENESS"""
     offseason: bool = Column(Boolean)
     name: str = Column(String(100))
-    state: str = Column(String(10))
-    country: str = Column(String(30))
-
-    """METADATA"""
-    district: str = Column(String(10))
+    country: Optional[str] = Column(String(30))
+    district: Optional[str] = Column(String(10))
+    state: Optional[str] = Column(String(10))
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
     is_competing: bool = Column(Boolean)

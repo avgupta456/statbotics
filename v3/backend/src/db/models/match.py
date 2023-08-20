@@ -42,13 +42,13 @@ class MatchORM(Base, ModelORM):
     # Different than dq/surrogate to allow for easier querying
     red_1: str = Column(String(6), index=True)
     red_2: str = Column(String(6), index=True)
-    red_3: str = Column(String(6), index=True)
+    red_3: Optional[str] = Column(String(6), index=True)
     red_dq: str = Column(String(20))
     red_surrogate: str = Column(String(20))
 
     blue_1: str = Column(String(6), index=True)
     blue_2: str = Column(String(6), index=True)
-    blue_3: str = Column(String(6), index=True)
+    blue_3: Optional[str] = Column(String(6), index=True)
     blue_dq: str = Column(String(20))
     blue_surrogate: str = Column(String(20))
 
@@ -98,28 +98,28 @@ class Match(_Match):
 
     """SUPER FUNCTIONS"""
 
-    def sort(self: Any) -> int:
+    def sort(self: "Match") -> int:
         return self.time or 0
 
-    def get_red(self: Any) -> List[int]:
+    def get_red(self: "Match") -> List[str]:
         return [x for x in [self.red_1, self.red_2, self.red_3] if x is not None]
 
-    def get_blue(self: Any) -> List[int]:
+    def get_blue(self: "Match") -> List[str]:
         return [x for x in [self.blue_1, self.blue_2, self.blue_3] if x is not None]
 
-    def get_red_surrogates(self: "Match") -> List[int]:
-        return [int(x) for x in self.red_surrogate.split(",") if x != ""]
+    def get_red_surrogates(self: "Match") -> List[str]:
+        return [x for x in self.red_surrogate.split(",") if x != ""]
 
-    def get_blue_surrogates(self: "Match") -> List[int]:
-        return [int(x) for x in self.blue_surrogate.split(",") if x != ""]
+    def get_blue_surrogates(self: "Match") -> List[str]:
+        return [x for x in self.blue_surrogate.split(",") if x != ""]
 
-    def get_red_dqs(self: "Match") -> List[int]:
-        return [int(x) for x in self.red_dq.split(",") if x != ""]
+    def get_red_dqs(self: "Match") -> List[str]:
+        return [x for x in self.red_dq.split(",") if x != ""]
 
-    def get_blue_dqs(self: "Match") -> List[int]:
-        return [int(x) for x in self.blue_dq.split(",") if x != ""]
+    def get_blue_dqs(self: "Match") -> List[str]:
+        return [x for x in self.blue_dq.split(",") if x != ""]
 
-    def get_teams(self: "Match") -> List[List[int]]:
+    def get_teams(self: "Match") -> List[List[str]]:
         return [self.get_red(), self.get_blue()]
 
     # TODO: consolidate with as_dict()

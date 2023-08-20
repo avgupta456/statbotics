@@ -34,9 +34,9 @@ class TeamEventORM(Base, ModelORM):
     """API COMPLETENESS"""
     team_name: str = Column(String(100))
     event_name: str = Column(String(100))
-    state: str = Column(String(10))
-    country: str = Column(String(30))
-    district: str = Column(String(10))
+    country: Optional[str] = Column(String(30))
+    district: Optional[str] = Column(String(10))
+    state: Optional[str] = Column(String(10))
     type: int = Column(Integer)
     week: int = Column(Integer)
 
