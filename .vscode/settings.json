@@ -1,17 +1,15 @@
 {
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "python.formatting.provider": "black",
-  "python.linting.enabled": true,
-  "python.linting.flake8Enabled": true,
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Args": [
-    "--ignore=E501,E203,W503",
-    "--max-line-length=88"
-  ],
   "python.defaultInterpreterPath": "./backend/.venv/bin",
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.diagnosticMode": "workspace",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "files.exclude": {
     "**/.git": true,
     "**/__pycache__": true,
