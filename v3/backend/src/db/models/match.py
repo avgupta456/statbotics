@@ -1,86 +1,81 @@
-from typing import List, Optional
+from typing import List
 
-from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import (  # type: ignore
-    ForeignKeyConstraint,
-    PrimaryKeyConstraint,
-)
+from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
+from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
 from src.db.models.main import ModelORM, Model, generate_attr_class
+from src.db.models.types import MI, MS, MF, MB, MOS, MOI, MOF
 
 
 class MatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "matches"
-    key: str = Column(String(20), index=True)
-    year: int = Column(Integer, index=True)
-    event: str = Column(String(20), index=True)
+    key: MS = mapped_column(String(20), index=True)
+    year: MI = mapped_column(Integer, index=True)
+    event: MS = mapped_column(String(20), index=True)
 
     PrimaryKeyConstraint(key)
     ForeignKeyConstraint(["year"], ["years.year"])
     ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    offseason: bool = Column(Boolean, index=True)
-    week: int = Column(Integer, index=True)
-    playoff: bool = Column(Boolean, index=True)
+    offseason: MB = mapped_column(Boolean, index=True)
+    week: MI = mapped_column(Integer, index=True)
+    playoff: MB = mapped_column(Boolean, index=True)
 
-    comp_level: str = Column(String(10))
-    set_number: int = Column(Integer)
-    match_number: int = Column(Integer)
+    comp_level: MS = mapped_column(String(10))
+    set_number: MI = mapped_column(Integer)
+    match_number: MI = mapped_column(Integer)
 
-    time: int = Column(Integer)  # Enforces ordering
-    predicted_time: int = Column(Integer)  # For display
+    time: MI = mapped_column(Integer)  # Enforces ordering
+    predicted_time: MOI = mapped_column(Integer, nullable=True)  # For display
 
     # Choices are 'Upcoming', 'Completed'
-    status: str = Column(String(10), index=True)
-    video: str = Column(String(20))
+    status: MS = mapped_column(String(10), index=True)
+    video: MOS = mapped_column(String(20), nullable=True)
 
     # Different than dq/surrogate to allow for easier querying
-    red_1: str = Column(String(6), index=True)
-    red_2: str = Column(String(6), index=True)
-    red_3: Optional[str] = Column(String(6), index=True)
-    red_dq: str = Column(String(20))
-    red_surrogate: str = Column(String(20))
+    red_1: MS = mapped_column(String(6), index=True)
+    red_2: MS = mapped_column(String(6), index=True)
+    red_3: MOS = mapped_column(String(6), index=True)
+    red_dq: MS = mapped_column(String(20))
+    red_surrogate: MS = mapped_column(String(20))
 
-    blue_1: str = Column(String(6), index=True)
-    blue_2: str = Column(String(6), index=True)
-    blue_3: Optional[str] = Column(String(6), index=True)
-    blue_dq: str = Column(String(20))
-    blue_surrogate: str = Column(String(20))
+    blue_1: MS = mapped_column(String(6), index=True)
+    blue_2: MS = mapped_column(String(6), index=True)
+    blue_3: MOS = mapped_column(String(6), index=True)
+    blue_dq: MS = mapped_column(String(20))
+    blue_surrogate: MS = mapped_column(String(20))
 
     """EPA"""
-    red_epa_sum: float = Column(Float)
-    red_rp_1_epa_sum: float = Column(Float)
-    red_rp_2_epa_sum: float = Column(Float)
+    red_epa_sum: MF = mapped_column(Float)
 
-    blue_epa_sum: float = Column(Float)
-    blue_rp_1_epa_sum: float = Column(Float)
-    blue_rp_2_epa_sum: float = Column(Float)
+    blue_epa_sum: MF = mapped_column(Float)
 
-    epa_winner: str = Column(String(10))
-    epa_win_prob: float = Column(Float)
-    red_rp_1_prob: float = Column(Float)
-    red_rp_2_prob: float = Column(Float)
-    blue_rp_1_prob: float = Column(Float)
-    blue_rp_2_prob: float = Column(Float)
+    epa_winner: MS = mapped_column(String(10))
+    epa_win_prob: MF = mapped_column(Float)
+    red_rp_1_prob: MOF = mapped_column(Float, nullable=True)
+    red_rp_2_prob: MOF = mapped_column(Float, nullable=True)
+    blue_rp_1_prob: MOF = mapped_column(Float, nullable=True)
+    blue_rp_2_prob: MOF = mapped_column(Float, nullable=True)
 
     """OUTCOME"""
-    winner: Optional[str] = Column(String(10))
+    winner: MOS = mapped_column(String(10))
 
-    red_score: Optional[int] = Column(Integer)
-    red_no_foul: Optional[int] = Column(Integer)
-    red_rp_1: Optional[int] = Column(Integer)
-    red_rp_2: Optional[int] = Column(Integer)
-    red_tiebreaker: Optional[int] = Column(Integer)
+    red_score: MOI = mapped_column(Integer)
+    red_no_foul: MOI = mapped_column(Integer)
+    red_rp_1: MOI = mapped_column(Integer)
+    red_rp_2: MOI = mapped_column(Integer)
+    red_tiebreaker: MOI = mapped_column(Integer)
 
-    blue_score: Optional[int] = Column(Integer)
-    blue_no_foul: Optional[int] = Column(Integer)
-    blue_rp_1: Optional[int] = Column(Integer)
-    blue_rp_2: Optional[int] = Column(Integer)
-    blue_tiebreaker: Optional[int] = Column(Integer)
+    blue_score: MOI = mapped_column(Integer)
+    blue_no_foul: MOI = mapped_column(Integer)
+    blue_rp_1: MOI = mapped_column(Integer)
+    blue_rp_2: MOI = mapped_column(Integer)
+    blue_tiebreaker: MOI = mapped_column(Integer)
 
 
 _Match = generate_attr_class("Match", MatchORM)

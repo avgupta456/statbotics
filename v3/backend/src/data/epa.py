@@ -79,6 +79,7 @@ def percent_func(year: int, x: int) -> float:
 # TODO: I removed nonlinear sum_func, but it might be useful
 # In general, model overpredicts when 2+ strong teams
 
+
 # MAIN FUNCTION
 def process_year(
     year_num: int, team_years_all: Dict[int, Dict[str, TeamYear]], objs: objs_type
@@ -176,6 +177,26 @@ def process_year(
         epa_prior = (1 - MEAN_REVERSION) * epa_prior + MEAN_REVERSION * INIT_EPA
         team_epas[num] = epa_prior
         team_year.epa_start = round(epa_prior, 2)
+        team_year.epa_pre_champs = round(epa_prior, 2)
+        team_year.epa_end = round(epa_prior, 2)
+        team_year.epa_mean = round(epa_prior, 2)
+        team_year.epa_max = round(epa_prior, 2)
+        team_year.epa_diff = 0
+
+        team_year.wins = 0
+        team_year.losses = 0
+        team_year.ties = 0
+        team_year.count = 0
+        team_year.winrate = 0
+
+        team_year.full_wins = 0
+        team_year.full_losses = 0
+        team_year.full_ties = 0
+        team_year.full_count = 0
+        team_year.full_winrate = 0
+
+        unitless_epa: float = epa_to_unitless_epa(epa_prior, TOTAL_MEAN, TOTAL_SD)
+        team_year.unitless_epa_end = round(unitless_epa, 0)
 
         if USE_COMPONENTS:
             team_auto_epas[num] = epa_prior * AUTO_MEAN / TOTAL_MEAN
@@ -276,25 +297,10 @@ def process_year(
                     team_rp_2_epas[team],
                 )
 
-            red_auto_epa_sum = sum(red_auto_epa_pre.values())
-            blue_auto_epa_sum = sum(blue_auto_epa_pre.values())
-            red_endgame_epa_sum = sum(red_endgame_epa_pre.values())
-            blue_endgame_epa_sum = sum(blue_endgame_epa_pre.values())
             red_rp_1_epa_sum = sum(list(red_rp_1_epa_pre.values()))
             blue_rp_1_epa_sum = sum(list(blue_rp_1_epa_pre.values()))
             red_rp_2_epa_sum = sum(list(red_rp_2_epa_pre.values()))
             blue_rp_2_epa_sum = sum(list(blue_rp_2_epa_pre.values()))
-
-            match.red_auto_epa_sum = round(red_auto_epa_sum, 2)
-            match.blue_auto_epa_sum = round(blue_auto_epa_sum, 2)
-            match.red_endgame_epa_sum = round(red_endgame_epa_sum, 2)
-            match.blue_endgame_epa_sum = round(blue_endgame_epa_sum, 2)
-            match.red_teleop_epa_sum = round(match.red_epa_sum - red_auto_epa_sum - red_endgame_epa_sum, 2)  # type: ignore
-            match.blue_teleop_epa_sum = round(match.blue_epa_sum - blue_auto_epa_sum - blue_endgame_epa_sum, 2)  # type: ignore
-            match.red_rp_1_epa_sum = round(red_rp_1_epa_sum, 4)
-            match.blue_rp_1_epa_sum = round(blue_rp_1_epa_sum, 4)
-            match.red_rp_2_epa_sum = round(red_rp_2_epa_sum, 4)
-            match.blue_rp_2_epa_sum = round(blue_rp_2_epa_sum, 4)
 
             match.red_rp_1_prob = round(sigmoid(red_rp_1_epa_sum), 4)
             match.blue_rp_1_prob = round(sigmoid(blue_rp_1_epa_sum), 4)
@@ -509,11 +515,12 @@ def process_year(
     champs_rp_2_mse = None if champs_rp_2_count == 0 else round(champs_rp_2_mse / champs_rp_2_count, 4)  # type: ignore
 
     # TEAM MATCHES
-    completed_team_matches = [m for m in team_matches if m.status == "Completed"]
-    for team_match in completed_team_matches:
+    for team_match in team_matches:
         match_key = get_team_match_key(team_match.team, team_match.match)
         team_match.epa = round(team_match_ids.get(match_key, -1), 2)
-        team_match.post_epa = round(team_match_ids_post.get(match_key, -1), 2)
+        if team_match.status == "Completed":
+            team_match.post_epa = round(team_match_ids_post.get(match_key, -1), 2)
+
         if USE_COMPONENTS:
             auto, teleop, endgame, rp_1, rp_2 = component_team_match_ids.get(
                 match_key, (-1, -1, -1, -1, -1)

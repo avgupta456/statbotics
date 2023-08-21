@@ -1,26 +1,25 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import attr
-from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import (  # type: ignore
-    ForeignKeyConstraint,
-    PrimaryKeyConstraint,
-)
+from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
+from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
 from src.db.models.main import ModelORM, Model, generate_attr_class
+from src.db.models.types import MI, MS, MF, MB, MOF
 
 
 class TeamMatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "team_matches"
-    id: int = Column(Integer)  # placeholder for backend API
-    team: str = Column(String(6), index=True)
-    year: int = Column(Integer, index=True)
-    event: str = Column(String(20), index=True)
-    match: str = Column(String(20), index=True)
-    alliance: str = Column(String(6), index=True)
+    id: MI = mapped_column(Integer, nullable=True)  # placeholder for backend API
+    team: MS = mapped_column(String(6), index=True)
+    year: MI = mapped_column(Integer, index=True)
+    event: MS = mapped_column(String(20), index=True)
+    match: MS = mapped_column(String(20), index=True)
+    alliance: MS = mapped_column(String(6), index=True)
 
     PrimaryKeyConstraint(team, match)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -34,26 +33,26 @@ class TeamMatchORM(Base, ModelORM):
     )
 
     """GENERAL"""
-    time: int = Column(Integer)
-    offseason: bool = Column(Boolean)
-    week: int = Column(Integer)
-    playoff: bool = Column(Boolean)
-    alliance: str = Column(String(6))
+    time: MI = mapped_column(Integer)
+    offseason: MB = mapped_column(Boolean)
+    week: MI = mapped_column(Integer)
+    playoff: MB = mapped_column(Boolean)
+    alliance: MS = mapped_column(String(6))
 
-    dq: bool = Column(Boolean)
-    surrogate: bool = Column(Boolean)
+    dq: MB = mapped_column(Boolean)
+    surrogate: MB = mapped_column(Boolean)
 
     # Choices are 'Upcoming', 'Completed'
-    status: str = Column(String(10))
+    status: MS = mapped_column(String(10))
 
-    epa: float = Column(Float)
-    auto_epa: float = Column(Float)
-    teleop_epa: float = Column(Float)
-    endgame_epa: float = Column(Float)
-    rp_1_epa: float = Column(Float)
-    rp_2_epa: float = Column(Float)
+    epa: MF = mapped_column(Float)
+    auto_epa: MOF = mapped_column(Float, nullable=True)
+    teleop_epa: MOF = mapped_column(Float, nullable=True)
+    endgame_epa: MOF = mapped_column(Float, nullable=True)
+    rp_1_epa: MOF = mapped_column(Float, nullable=True)
+    rp_2_epa: MOF = mapped_column(Float, nullable=True)
 
-    post_epa: Optional[float] = Column(Float)
+    post_epa: MOF = mapped_column(Float)
 
 
 _TeamMatch = generate_attr_class("TeamMatch", TeamMatchORM)
@@ -61,10 +60,7 @@ _TeamMatch = generate_attr_class("TeamMatch", TeamMatchORM)
 
 class TeamMatch(_TeamMatch, Model):
     def to_dict(self: "TeamMatch") -> Dict[str, Any]:
-        return attr.asdict(
-            self,  # type: ignore
-            filter=attr.filters.exclude(attr.fields(TeamMatch).id),  # type: ignore
-        )
+        return attr.asdict(self, filter=attr.filters.exclude(attr.fields(TeamMatch).id))
 
     def sort(self: "TeamMatch") -> int:
         return self.time

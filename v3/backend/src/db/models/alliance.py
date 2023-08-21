@@ -1,25 +1,24 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import attr
-from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import (  # type: ignore
-    ForeignKeyConstraint,
-    PrimaryKeyConstraint,
-)
+from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
+from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
 from src.db.models.main import ModelORM, Model, generate_attr_class
+from src.db.models.types import MI, MS, MB, MOF, MOI, MOB, MOS
 
 
 class AllianceORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "alliances"
-    id: int = Column(Integer)  # placeholder for backend API
-    alliance: str = Column(String(4), index=True)
-    year: int = Column(Integer, index=True)
-    event: str = Column(String(20), index=True)
-    match: str = Column(String(20), index=True)
+    id: MI = mapped_column(Integer, nullable=True)  # placeholder for backend API
+    alliance: MS = mapped_column(String(4), index=True)
+    year: MI = mapped_column(Integer, index=True)
+    event: MS = mapped_column(String(20), index=True)
+    match: MS = mapped_column(String(20), index=True)
 
     PrimaryKeyConstraint(alliance, match)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -27,71 +26,72 @@ class AllianceORM(Base, ModelORM):
     ForeignKeyConstraint(["match"], ["matches.key"])
 
     """GENERAL"""
-    offseason: bool = Column(Boolean, index=True)
-    week: int = Column(Integer, index=True)
-    playoff: bool = Column(Boolean, index=True)
+    offseason: MB = mapped_column(Boolean, index=True)
+    week: MI = mapped_column(Integer, index=True)
+    playoff: MB = mapped_column(Boolean, index=True)
 
     # TODO: Do we need all of these?
-    comp_level: str = Column(String(10))
-    set_number: int = Column(Integer)
-    match_number: int = Column(Integer)
+    comp_level: MS = mapped_column(String(10))
+    set_number: MI = mapped_column(Integer)
+    match_number: MI = mapped_column(Integer)
 
-    time: int = Column(Integer)
+    time: MI = mapped_column(Integer)
 
     # TODO: Convert to boolean
     # Choices are 'Upcoming', 'Completed'
-    status: str = Column(String(10), index=True)
+    status: MS = mapped_column(String(10), index=True)
 
-    team_1: str = Column(String(6), index=True)
-    team_2: str = Column(String(6), index=True)
-    team_3: Optional[str] = Column(String(6), index=True)
-    dq: str = Column(String(20))
-    surrogate: str = Column(String(20))
+    team_1: MS = mapped_column(String(6), index=True)
+    team_2: MS = mapped_column(String(6), index=True)
+    team_3: MOS = mapped_column(String(6), index=True)
+    dq: MS = mapped_column(String(20))
+    surrogate: MS = mapped_column(String(20))
 
     """EPA"""
-    epa_winner: bool = Column(Boolean)
-    epa_win_prob: float = Column(Float)
-    rp_1_prob: float = Column(Float)
-    rp_2_prob: float = Column(Float)
+    # TODO: implement all of these, make non-nullable
+    epa_winner: MOB = mapped_column(Boolean, nullable=True)
+    epa_win_prob: MOF = mapped_column(Float, nullable=True)
+    rp_1_prob: MOF = mapped_column(Float, nullable=True)
+    rp_2_prob: MOF = mapped_column(Float, nullable=True)
 
-    epa_sum: float = Column(Float)
-    auto_epa_sum: float = Column(Float)
-    teleop_epa_sum: float = Column(Float)
-    endgame_epa_sum: float = Column(Float)
-    comp_1_epa_sum: float = Column(Float)
-    comp_2_epa_sum: float = Column(Float)
-    comp_3_epa_sum: float = Column(Float)
-    comp_4_epa_sum: float = Column(Float)
-    comp_5_epa_sum: float = Column(Float)
-    comp_6_epa_sum: float = Column(Float)
-    comp_7_epa_sum: float = Column(Float)
-    comp_8_epa_sum: float = Column(Float)
-    comp_9_epa_sum: float = Column(Float)
-    comp_10_epa_sum: float = Column(Float)
-    rp_1_epa_sum: float = Column(Float)
-    rp_2_epa_sum: float = Column(Float)
+    epa_sum: MOF = mapped_column(Float, nullable=True)
+    auto_epa_sum: MOF = mapped_column(Float, nullable=True)
+    teleop_epa_sum: MOF = mapped_column(Float, nullable=True)
+    endgame_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_1_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_2_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_3_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_4_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_5_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_6_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_7_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_8_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_9_epa_sum: MOF = mapped_column(Float, nullable=True)
+    comp_10_epa_sum: MOF = mapped_column(Float, nullable=True)
+    rp_1_epa_sum: MOF = mapped_column(Float, nullable=True)
+    rp_2_epa_sum: MOF = mapped_column(Float, nullable=True)
 
     """OUTCOME"""
-    winner: Optional[bool] = Column(Boolean)
-    score: Optional[int] = Column(Integer)
-    no_foul_points: Optional[int] = Column(Integer)
-    foul_points: Optional[int] = Column(Integer)
-    auto_points: Optional[int] = Column(Integer)
-    teleop_points: Optional[int] = Column(Integer)
-    endgame_points: Optional[int] = Column(Integer)
-    rp_1: Optional[bool] = Column(Boolean)
-    rp_2: Optional[bool] = Column(Boolean)
+    winner: MOB = mapped_column(Boolean)
+    score: MOI = mapped_column(Integer)
+    no_foul_points: MOI = mapped_column(Integer)
+    foul_points: MOI = mapped_column(Integer)
+    auto_points: MOI = mapped_column(Integer)
+    teleop_points: MOI = mapped_column(Integer)
+    endgame_points: MOI = mapped_column(Integer)
+    rp_1: MOB = mapped_column(Boolean)
+    rp_2: MOB = mapped_column(Boolean)
 
-    comp_1: Optional[float] = Column(Float)
-    comp_2: Optional[float] = Column(Float)
-    comp_3: Optional[float] = Column(Float)
-    comp_4: Optional[float] = Column(Float)
-    comp_5: Optional[float] = Column(Float)
-    comp_6: Optional[float] = Column(Float)
-    comp_7: Optional[float] = Column(Float)
-    comp_8: Optional[float] = Column(Float)
-    comp_9: Optional[float] = Column(Float)
-    comp_10: Optional[float] = Column(Float)
+    comp_1: MOF = mapped_column(Float)
+    comp_2: MOF = mapped_column(Float)
+    comp_3: MOF = mapped_column(Float)
+    comp_4: MOF = mapped_column(Float)
+    comp_5: MOF = mapped_column(Float)
+    comp_6: MOF = mapped_column(Float)
+    comp_7: MOF = mapped_column(Float)
+    comp_8: MOF = mapped_column(Float)
+    comp_9: MOF = mapped_column(Float)
+    comp_10: MOF = mapped_column(Float)
 
 
 _Alliance = generate_attr_class("Alliance", AllianceORM)
@@ -100,7 +100,7 @@ _Alliance = generate_attr_class("Alliance", AllianceORM)
 class Alliance(_Alliance, Model):
     @classmethod
     def from_dict(cls, dict: Dict[str, Any]) -> "Alliance":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
+        dict = {k: dict.get(k, None) for k in cls.__slots__}
         return Alliance(**dict)
 
     def to_dict(self: "Alliance") -> Dict[str, Any]:

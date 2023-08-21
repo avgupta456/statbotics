@@ -47,5 +47,6 @@ def generate_attr_class(name: str, sqlalchemy_model: Type[T2]) -> Type[T2]:
 TModelORM = TypeVar("TModelORM", bound=ModelORM)
 TModel = TypeVar("TModel", bound=Model)
 
+
 # TODO: enforce consistent usage of playoff vs. elims
 # TODO: enforce consistent usage of foul vs fouls

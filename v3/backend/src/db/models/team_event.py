@@ -1,25 +1,23 @@
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 import attr
-from sqlalchemy import Boolean, Column, Float, Integer  # type: ignore
-from sqlalchemy.sql.schema import (  # type: ignore
-    ForeignKeyConstraint,
-    PrimaryKeyConstraint,
-)
-from sqlalchemy.sql.sqltypes import String  # type: ignore
+from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
+from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
 from src.db.models.main import ModelORM, Model, generate_attr_class
+from src.db.models.types import MI, MS, MF, MOS, MOF, MB
 
 
 class TeamEventORM(Base, ModelORM):
     """DECLARATIONS"""
 
     __tablename__ = "team_events"
-    id: int = Column(Integer)  # placeholder for backend API
-    team: str = Column(String(6), index=True)
-    year: int = Column(Integer, index=True)
-    event: str = Column(String(10), index=True)
+    id: MI = mapped_column(Integer, nullable=True)  # placeholder for backend API
+    team: MS = mapped_column(String(6), index=True)
+    year: MI = mapped_column(Integer, index=True)
+    event: MS = mapped_column(String(10), index=True)
 
     PrimaryKeyConstraint(team, event)
     ForeignKeyConstraint(["team"], ["teams.team"])
@@ -28,76 +26,77 @@ class TeamEventORM(Base, ModelORM):
     ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    time: int = Column(Integer)
-    offseason: bool = Column(Boolean)
+    time: MI = mapped_column(Integer)
+    offseason: MB = mapped_column(Boolean)
 
     """API COMPLETENESS"""
-    team_name: str = Column(String(100))
-    event_name: str = Column(String(100))
-    country: Optional[str] = Column(String(30))
-    district: Optional[str] = Column(String(10))
-    state: Optional[str] = Column(String(10))
-    type: int = Column(Integer)
-    week: int = Column(Integer)
+    team_name: MS = mapped_column(String(100))
+    event_name: MS = mapped_column(String(100))
+    country: MOS = mapped_column(String(30))
+    district: MOS = mapped_column(String(10))
+    state: MOS = mapped_column(String(10))
+    type: MI = mapped_column(Integer)
+    week: MI = mapped_column(Integer)
 
     # Choices are 'Upcoming', 'Ongoing', 'Completed'
-    status: str = Column(String(10))
-    first_event: bool = Column(Boolean)
+    status: MS = mapped_column(String(10))
+    first_event: MB = mapped_column(Boolean)
 
     """EPA"""
-    epa_start: float = Column(Float)
-    epa_pre_playoffs: float = Column(Float)
-    epa_end: float = Column(Float)
-    epa_mean: float = Column(Float)
-    epa_max: float = Column(Float)
-    epa_diff: float = Column(Float)
+    epa_start: MF = mapped_column(Float)
+    epa_pre_playoffs: MF = mapped_column(Float)
+    epa_end: MF = mapped_column(Float)
+    epa_mean: MF = mapped_column(Float)
+    epa_max: MF = mapped_column(Float)
+    epa_diff: MF = mapped_column(Float)
 
-    auto_epa_start: float = Column(Float)
-    auto_epa_pre_playoffs: float = Column(Float)
-    auto_epa_end: float = Column(Float)
-    auto_epa_mean: float = Column(Float)
-    auto_epa_max: float = Column(Float)
+    auto_epa_start: MOF = mapped_column(Float, nullable=True)
+    auto_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True)
+    auto_epa_end: MOF = mapped_column(Float, nullable=True)
+    auto_epa_mean: MOF = mapped_column(Float, nullable=True)
+    auto_epa_max: MOF = mapped_column(Float, nullable=True)
 
-    teleop_epa_start: float = Column(Float)
-    teleop_epa_pre_playoffs: float = Column(Float)
-    teleop_epa_end: float = Column(Float)
-    teleop_epa_mean: float = Column(Float)
-    teleop_epa_max: float = Column(Float)
+    teleop_epa_start: MOF = mapped_column(Float, nullable=True)
+    teleop_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True)
+    teleop_epa_end: MOF = mapped_column(Float, nullable=True)
+    teleop_epa_mean: MOF = mapped_column(Float, nullable=True)
+    teleop_epa_max: MOF = mapped_column(Float, nullable=True)
 
-    endgame_epa_start: float = Column(Float)
-    endgame_epa_pre_playoffs: float = Column(Float)
-    endgame_epa_end: float = Column(Float)
-    endgame_epa_mean: float = Column(Float)
-    endgame_epa_max: float = Column(Float)
+    endgame_epa_start: MOF = mapped_column(Float, nullable=True)
+    endgame_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True)
+    endgame_epa_end: MOF = mapped_column(Float, nullable=True)
+    endgame_epa_mean: MOF = mapped_column(Float, nullable=True)
+    endgame_epa_max: MOF = mapped_column(Float, nullable=True)
 
-    rp_1_epa_start: float = Column(Float)
-    rp_1_epa_end: float = Column(Float)
-    rp_1_epa_mean: float = Column(Float)
-    rp_1_epa_max: float = Column(Float)
+    rp_1_epa_start: MOF = mapped_column(Float, nullable=True)
+    rp_1_epa_end: MOF = mapped_column(Float, nullable=True)
+    rp_1_epa_mean: MOF = mapped_column(Float, nullable=True)
+    rp_1_epa_max: MOF = mapped_column(Float, nullable=True)
 
-    rp_2_epa_start: float = Column(Float)
-    rp_2_epa_end: float = Column(Float)
-    rp_2_epa_mean: float = Column(Float)
-    rp_2_epa_max: float = Column(Float)
+    rp_2_epa_start: MOF = mapped_column(Float, nullable=True)
+    rp_2_epa_end: MOF = mapped_column(Float, nullable=True)
+    rp_2_epa_mean: MOF = mapped_column(Float, nullable=True)
+    rp_2_epa_max: MOF = mapped_column(Float, nullable=True)
 
-    unitless_epa_end: float = Column(Float)
-    norm_epa_end: Optional[float] = Column(Float)
+    # TODO: populate unitless_epa_end, make not nullable
+    unitless_epa_end: MOF = mapped_column(Float, nullable=True)
+    norm_epa_end: MOF = mapped_column(Float, nullable=True)
 
     """STATS"""
-    wins: int = Column(Integer)
-    losses: int = Column(Integer)
-    ties: int = Column(Integer)
-    count: int = Column(Integer)
-    winrate: float = Column(Float)
-    qual_wins: int = Column(Integer)
-    qual_losses: int = Column(Integer)
-    qual_ties: int = Column(Integer)
-    qual_count: int = Column(Integer)
-    qual_winrate: float = Column(Float)
-    rps: int = Column(Integer)
-    rps_per_match: float = Column(Float)
-    rank: int = Column(Integer)
-    num_teams: int = Column(Integer)
+    wins: MI = mapped_column(Integer)
+    losses: MI = mapped_column(Integer)
+    ties: MI = mapped_column(Integer)
+    count: MI = mapped_column(Integer)
+    winrate: MF = mapped_column(Float)
+    qual_wins: MI = mapped_column(Integer)
+    qual_losses: MI = mapped_column(Integer)
+    qual_ties: MI = mapped_column(Integer)
+    qual_count: MI = mapped_column(Integer)
+    qual_winrate: MF = mapped_column(Float)
+    rps: MI = mapped_column(Integer)
+    rps_per_match: MF = mapped_column(Float)
+    rank: MI = mapped_column(Integer)
+    num_teams: MI = mapped_column(Integer)
 
 
 _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
@@ -106,9 +105,9 @@ _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
 class TeamEvent(_TeamEvent, Model):
     def to_dict(self: "TeamEvent") -> Dict[str, Any]:
         return attr.asdict(
-            self,  # type: ignore
+            self,
             filter=attr.filters.exclude(
-                attr.fields(TeamEvent).id, attr.fields(TeamEvent).time  # type: ignore
+                attr.fields(TeamEvent).id, attr.fields(TeamEvent).time
             ),
         )
 

@@ -150,6 +150,8 @@ def create_alliance_obj(data: Dict[str, Any], alliance: str) -> Alliance:
     data["team_1"] = data[f"{alliance}_1"]
     data["team_2"] = data[f"{alliance}_2"]
     data["team_3"] = data[f"{alliance}_3"]
+    data["dq"] = data[f"{alliance}_dq"]
+    data["surrogate"] = data[f"{alliance}_surrogate"]
     data["winner"] = data["winner"] == alliance
     return Alliance.from_dict(data)
 

@@ -1,66 +1,65 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import attr
-from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import (  # type: ignore
-    ForeignKeyConstraint,
-    PrimaryKeyConstraint,
-)
+from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
+from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
 from src.db.models.main import ModelORM, Model, generate_attr_class
+from src.db.models.types import MI, MS, MB, MOS, MOF, MOI
 
 
 class EventORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "events"
-    key: str = Column(String(20), index=True)
-    year: int = Column(Integer, index=True)
+    key: MS = mapped_column(String(20), index=True)
+    year: MI = mapped_column(Integer, index=True)
 
     PrimaryKeyConstraint(key)
     ForeignKeyConstraint(["year"], ["years.year"])
 
     """GENERAL"""
-    name: str = Column(String(100))
-    time: int = Column(Integer)
-    country: Optional[str] = Column(String(30))
-    district: Optional[str] = Column(String(10))
-    state: Optional[str] = Column(String(10))
-    start_date: str = Column(String(10))
-    end_date: str = Column(String(10))
+    name: MS = mapped_column(String(100))
+    time: MI = mapped_column(Integer)
+    country: MOS = mapped_column(String(30))
+    district: MOS = mapped_column(String(10))
+    state: MOS = mapped_column(String(10))
+    start_date: MS = mapped_column(String(10))
+    end_date: MS = mapped_column(String(10))
 
     # 0 is regional, 1 is district, 2 is district champ,
     # 3 is worlds division, 4 is einsteins/FOC
     # 99 is offseason, 100 is preseason
-    type: int = Column(Integer)
-    week: int = Column(Integer)
-    offseason: bool = Column(Boolean)
+    type: MI = mapped_column(Integer)
+    week: MI = mapped_column(Integer)
+    offseason: MB = mapped_column(Boolean)
 
     # Link to livestream, full link (unlike Match) to handle Twitch/YT
-    video: str = Column(String(50))
+    video: MOS = mapped_column(String(50), nullable=True)
 
     # Choices are 'Upcoming', 'Ongoing', 'Completed'
-    status: str = Column(String(10))
+    status: MS = mapped_column(String(10))
 
     # -1 = upcoming event, 0 = schedule release, x = match x concluded
-    current_match: int = Column(Integer)
-    qual_matches: int = Column(Integer)
+    current_match: MOI = mapped_column(Integer, nullable=True)
+    qual_matches: MOI = mapped_column(Integer, nullable=True)
 
     """EPA"""
-    epa_max: float = Column(Float)
-    epa_top8: Optional[float] = Column(Float)
-    epa_top24: Optional[float] = Column(Float)
-    epa_mean: float = Column(Float)
-    epa_sd: float = Column(Float)
+    epa_max: MOF = mapped_column(Float, nullable=True)
+    epa_top8: MOF = mapped_column(Float, nullable=True)
+    epa_top24: MOF = mapped_column(Float, nullable=True)
+    epa_mean: MOF = mapped_column(Float, nullable=True)
+    epa_sd: MOF = mapped_column(Float, nullable=True)
 
     """STATS"""
-    epa_acc: Optional[float] = Column(Float)
-    epa_mse: Optional[float] = Column(Float)
-    rp_1_acc: Optional[float] = Column(Float)
-    rp_1_mse: Optional[float] = Column(Float)
-    rp_2_acc: Optional[float] = Column(Float)
-    rp_2_mse: Optional[float] = Column(Float)
+    epa_acc: MOF = mapped_column(Float, nullable=True)
+    epa_mse: MOF = mapped_column(Float, nullable=True)
+    rp_1_acc: MOF = mapped_column(Float, nullable=True)
+    rp_1_mse: MOF = mapped_column(Float, nullable=True)
+    rp_2_acc: MOF = mapped_column(Float, nullable=True)
+    rp_2_mse: MOF = mapped_column(Float, nullable=True)
 
 
 _Event = generate_attr_class("Event", EventORM)
@@ -69,8 +68,7 @@ _Event = generate_attr_class("Event", EventORM)
 class Event(_Event, Model):
     def to_dict(self: "Event") -> Dict[str, Any]:
         return attr.asdict(
-            self,  # type: ignore
-            filter=attr.filters.exclude(attr.fields(Event).current_match),  # type: ignore
+            self, filter=attr.filters.exclude(attr.fields(Event).current_match)
         )
 
     def pk(self: "Event") -> str:
