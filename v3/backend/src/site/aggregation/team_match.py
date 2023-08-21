@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from src.db.models import TeamMatch
 from src.db.read import get_team_matches as _get_team_matches
@@ -35,10 +35,10 @@ async def get_team_matches(
     team: Optional[int] = None,
     match: Optional[str] = None,
     offseason: Optional[bool] = False,
-) -> List[APITeamMatch]:
+) -> Tuple[bool, List[APITeamMatch]]:
     team_match_objs: List[TeamMatch] = _get_team_matches(
         team=team, year=year, event=event, match=match, offseason=offseason
     )
 
     team_matches = [unpack_team_match(x) for x in team_match_objs]
-    return (True, sorted(team_matches, key=lambda x: x.time or 0))  # type: ignore
+    return (True, sorted(team_matches, key=lambda x: x.time or 0))

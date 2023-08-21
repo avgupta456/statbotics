@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Tuple
 
 from src.db.models import Year
 from src.db.read import get_year as _get_year
@@ -51,12 +51,12 @@ def unpack_year(year: Year) -> APIYear:
 
 
 @alru_cache(ttl=timedelta(minutes=1))
-async def get_year(year: int, no_cache: bool = False) -> Optional[APIYear]:
+async def get_year(year: int, no_cache: bool = False) -> Tuple[bool, Optional[APIYear]]:
     year_obj = _get_year(year=year)
 
     # If invalid, do not cache
     if year_obj is None:
-        return (False, None)  # type: ignore
+        return (False, None)
 
     # If valid, cache
-    return (True, unpack_year(year_obj))  # type: ignore
+    return (True, unpack_year(year_obj))

@@ -2,8 +2,8 @@ from sqlalchemy import Float, Integer
 from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, Model, generate_attr_class
-from src.db.models.types import MOF, MI, MF
+from src.db.models.main import Model, ModelORM, generate_attr_class
+from src.db.models.types import MF, MI, MOF
 
 
 class YearORM(Base, ModelORM):

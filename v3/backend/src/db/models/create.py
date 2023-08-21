@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from src.db.models.alliance import Alliance
 from src.db.models.etag import ETag

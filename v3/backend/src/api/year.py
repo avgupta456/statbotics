@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
@@ -20,8 +20,8 @@ async def read_root():
 
 
 @alru_cache(ttl=timedelta(hours=1))
-async def get_year_cached(year: int) -> Optional[Year]:
-    return (True, get_year(year=year))  # type: ignore
+async def get_year_cached(year: int) -> Tuple[bool, Optional[Year]]:
+    return (True, get_year(year=year))
 
 
 @alru_cache(ttl=timedelta(hours=1))
@@ -30,8 +30,8 @@ async def get_years_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
-) -> List[Year]:
-    return (  # type: ignore
+) -> Tuple[bool, List[Year]]:
+    return (
         True,
         get_years(metric=metric, ascending=ascending, limit=limit, offset=offset),
     )

@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from src.db.models import TeamYear
 from src.db.read import (
@@ -49,15 +49,15 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_team_year(
     team: int, year: int, no_cache: bool = False
-) -> Optional[APITeamYear]:
-    team_year_obj = _get_team_year(team=team, year=year)  # type: ignore
+) -> Tuple[bool, Optional[APITeamYear]]:
+    team_year_obj = _get_team_year(team=team, year=year)
 
     # If invalid, do not cache
     if team_year_obj is None:
-        return (False, None)  # type: ignore
+        return (False, None)
 
     # If valid, cache
-    return (True, unpack_team_year(team_year_obj))  # type: ignore
+    return (True, unpack_team_year(team_year_obj))
 
 
 @alru_cache(ttl=timedelta(minutes=5))
@@ -68,11 +68,11 @@ async def get_team_years(
     limit: Optional[int] = None,
     metric: Optional[str] = None,
     no_cache: bool = False,
-) -> List[APITeamYear]:
+) -> Tuple[bool, List[APITeamYear]]:
     team_year_objs: List[TeamYear] = _get_team_years(
         team=team, teams=teams, year=year, limit=limit, metric=metric
     )
 
     team_years = [unpack_team_year(x) for x in team_year_objs]
 
-    return (True, sorted(team_years, key=lambda x: x.epa_rank or 0))  # type: ignore
+    return (True, sorted(team_years, key=lambda x: x.epa_rank or 0))

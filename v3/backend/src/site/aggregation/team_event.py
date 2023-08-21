@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
 from src.data.nepa import (
     epa_to_unitless_epa as _epa_to_unitless_epa,
@@ -97,7 +97,7 @@ async def get_team_events(
     offseason: Optional[bool] = False,
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
-) -> List[APITeamEvent]:
+) -> Tuple[bool, List[APITeamEvent]]:
     team_event_objs: List[TeamEvent] = _get_team_events(
         year=year, team=team, event=event, offseason=offseason
     )

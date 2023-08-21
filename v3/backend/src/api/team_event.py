@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
@@ -20,8 +20,10 @@ async def read_root():
 
 
 @alru_cache(ttl=timedelta(hours=1))
-async def get_team_event_cached(team: int, event: str) -> Optional[TeamEvent]:
-    return (True, get_team_event(team=team, event=event))  # type: ignore
+async def get_team_event_cached(
+    team: int, event: str
+) -> Tuple[bool, Optional[TeamEvent]]:
+    return (True, get_team_event(team=team, event=event))
 
 
 @alru_cache(ttl=timedelta(hours=1))
@@ -39,8 +41,8 @@ async def get_team_events_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
-) -> List[TeamEvent]:
-    return (  # type: ignore
+) -> Tuple[bool, List[TeamEvent]]:
+    return (
         True,
         get_team_events(
             team=team,

@@ -1,7 +1,6 @@
 from typing import Any, List, Optional, TypeVar
 
-from src.db.models.main import ModelORM, Model
-
+from src.db.models.main import Model, ModelORM
 
 T = TypeVar("T")
 

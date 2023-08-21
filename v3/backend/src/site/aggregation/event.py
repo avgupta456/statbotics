@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from src.db.models import Event
 from src.db.read import get_event as _get_event, get_events as _get_events
@@ -49,15 +49,17 @@ def unpack_event(event: Event) -> APIEvent:
 
 
 @alru_cache(ttl=timedelta(minutes=1))
-async def get_event(event: str, no_cache: bool = False) -> Optional[APIEvent]:
+async def get_event(
+    event: str, no_cache: bool = False
+) -> Tuple[bool, Optional[APIEvent]]:
     event_obj = _get_event(event_id=event)
 
     # If invalid, do not cache
     if event_obj is None:
-        return (False, None)  # type: ignore
+        return (False, None)
 
     # If valid, cache
-    return (True, unpack_event(event_obj))  # type: ignore
+    return (True, unpack_event(event_obj))
 
 
 @alru_cache(ttl=timedelta(minutes=1))
@@ -65,8 +67,8 @@ async def get_events(
     year: Optional[int] = None,
     offseason: Optional[bool] = False,
     no_cache: bool = False,
-) -> List[APIEvent]:
+) -> Tuple[bool, List[APIEvent]]:
     event_objs: List[Event] = _get_events(year=year, offseason=offseason)
 
     events = [unpack_event(event) for event in event_objs]
-    return (True, events)  # type: ignore
+    return (True, events)

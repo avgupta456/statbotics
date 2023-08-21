@@ -1,12 +1,12 @@
 from typing import List
 
 from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import mapped_column
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, Model, generate_attr_class
-from src.db.models.types import MI, MS, MF, MB, MOS, MOI, MOF
+from src.db.models.main import Model, ModelORM, generate_attr_class
+from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
 
 
 class MatchORM(Base, ModelORM):

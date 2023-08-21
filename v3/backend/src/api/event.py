@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
@@ -20,8 +20,8 @@ async def read_root():
 
 
 @alru_cache(ttl=timedelta(hours=1))
-async def get_event_cached(event: str) -> Optional[Event]:
-    return (True, get_event(event_id=event))  # type: ignore
+async def get_event_cached(event: str) -> Tuple[bool, Optional[Event]]:
+    return (True, get_event(event_id=event))
 
 
 @alru_cache(ttl=timedelta(hours=1))
@@ -37,8 +37,8 @@ async def get_events_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
-) -> List[Event]:
-    return (  # type: ignore
+) -> Tuple[bool, List[Event]]:
+    return (
         True,
         get_events(
             year=year,
@@ -77,7 +77,7 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
 )
 @async_fail_gracefully_api_plural
 async def read_events_year(response: Response, year: int) -> List[Dict[str, Any]]:
-    events: List[Event] = await get_events_cached(year=year)
+    events = await get_events_cached(year=year)
     return [event.to_dict() for event in events]
 
 
@@ -90,7 +90,7 @@ async def read_events_year(response: Response, year: int) -> List[Dict[str, Any]
 async def read_events_year_district(
     response: Response, year: int, district: str
 ) -> List[Dict[str, Any]]:
-    events: List[Event] = await get_events_cached(year=year, district=district)
+    events = await get_events_cached(year=year, district=district)
     return [event.to_dict() for event in events]
 
 
@@ -103,7 +103,7 @@ async def read_events_year_district(
 async def read_events_year_state(
     response: Response, year: int, state: str
 ) -> List[Dict[str, Any]]:
-    events: List[Event] = await get_events_cached(year=year, state=state)
+    events = await get_events_cached(year=year, state=state)
     return [event.to_dict() for event in events]
 
 
@@ -116,7 +116,7 @@ async def read_events_year_state(
 async def read_events_district(
     response: Response, district: str
 ) -> List[Dict[str, Any]]:
-    events: List[Event] = await get_events_cached(district=district)
+    events = await get_events_cached(district=district)
     return [event.to_dict() for event in events]
 
 
@@ -127,7 +127,7 @@ async def read_events_district(
 )
 @async_fail_gracefully_api_plural
 async def read_events_state(response: Response, state: str) -> List[Dict[str, Any]]:
-    events: List[Event] = await get_events_cached(state=state)
+    events = await get_events_cached(state=state)
     return [event.to_dict() for event in events]
 
 
@@ -151,7 +151,7 @@ async def read_events(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
-    events: List[Event] = await get_events_cached(
+    events = await get_events_cached(
         year=year,
         country=country,
         district=district,

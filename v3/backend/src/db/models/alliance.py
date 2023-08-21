@@ -2,12 +2,12 @@ from typing import Any, Dict, List
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import mapped_column
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
-from src.db.models.main import ModelORM, Model, generate_attr_class
-from src.db.models.types import MI, MS, MB, MOF, MOI, MOB, MOS
+from src.db.models.main import Model, ModelORM, generate_attr_class
+from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS
 
 
 class AllianceORM(Base, ModelORM):
