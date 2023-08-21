@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -10,8 +10,8 @@ from src.db.read.main import common_filters
 
 def get_team(team: int) -> Optional[Team]:
     def callback(session: SessionType):
-        out_data = session.query(TeamORM).filter(TeamORM.team == team).first()  # type: ignore
-        return Team.from_dict(out_data.__dict__) if out_data else None  # type: ignore
+        out_data = session.query(TeamORM).filter(TeamORM.team == team).first()
+        return Team.from_dict(out_data.__dict__) if out_data else None
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -28,26 +28,26 @@ def get_teams(
     offset: Optional[int] = None,
 ) -> List[Team]:
     @common_filters(TeamORM, Team, metric, ascending, limit, offset)
-    def callback(session: SessionType):  # type: ignore
-        data = session.query(TeamORM)  # type: ignore
+    def callback(session: SessionType):
+        data = session.query(TeamORM)
         if country is not None:
-            data = data.filter(TeamORM.country == country)  # type: ignore
+            data = data.filter(TeamORM.country == country)
         if district is not None:
-            data = data.filter(TeamORM.district == district)  # type: ignore
+            data = data.filter(TeamORM.district == district)
         if state is not None:
-            data = data.filter(TeamORM.state == state)  # type: ignore
+            data = data.filter(TeamORM.state == state)
         if active is not None:
-            data = data.filter(TeamORM.active == active)  # type: ignore
+            data = data.filter(TeamORM.active == active)
         if offseason is not None:
-            data = data.filter(TeamORM.offseason == offseason)  # type: ignore
+            data = data.filter(TeamORM.offseason == offseason)
 
-        return data  # type: ignore
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_teams() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(TeamORM).count()  # type: ignore
+        return session.query(TeamORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

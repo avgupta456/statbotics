@@ -1,11 +1,9 @@
-# type: ignore
-
 from datetime import datetime
 from typing import List, Optional, Tuple
 
 from sqlalchemy import func, text
 from sqlalchemy.orm import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.constants import CURR_YEAR
 from src.db.main import Session
@@ -73,7 +71,7 @@ def get_upcoming_matches(
 
         return [
             (Match.from_dict(match.__dict__), event_name)
-            for (match, event_name, *args) in matches
+            for (match, event_name, *_args) in matches
         ]
 
-    return run_transaction(Session, callback)
+    return run_transaction(Session, callback)  # type: ignore

@@ -509,10 +509,26 @@ def process_year(
     rp_1_mse = None if rp_1_count == 0 else round(rp_1_mse / rp_1_count, 4)
     rp_2_acc = None if rp_2_count == 0 else round(rp_2_acc / rp_2_count, 4)
     rp_2_mse = None if rp_2_count == 0 else round(rp_2_mse / rp_2_count, 4)
-    champs_rp_1_acc = None if champs_rp_1_count == 0 else round(champs_rp_1_acc / champs_rp_1_count, 4)  # type: ignore
-    champs_rp_1_mse = None if champs_rp_1_count == 0 else round(champs_rp_1_mse / champs_rp_1_count, 4)  # type: ignore
-    champs_rp_2_acc = None if champs_rp_2_count == 0 else round(champs_rp_2_acc / champs_rp_2_count, 4)  # type: ignore
-    champs_rp_2_mse = None if champs_rp_2_count == 0 else round(champs_rp_2_mse / champs_rp_2_count, 4)  # type: ignore
+    champs_rp_1_acc = (
+        None
+        if champs_rp_1_count == 0
+        else round(champs_rp_1_acc / champs_rp_1_count, 4)
+    )
+    champs_rp_1_mse = (
+        None
+        if champs_rp_1_count == 0
+        else round(champs_rp_1_mse / champs_rp_1_count, 4)
+    )
+    champs_rp_2_acc = (
+        None
+        if champs_rp_2_count == 0
+        else round(champs_rp_2_acc / champs_rp_2_count, 4)
+    )
+    champs_rp_2_mse = (
+        None
+        if champs_rp_2_count == 0
+        else round(champs_rp_2_mse / champs_rp_2_count, 4)
+    )
 
     # TEAM MATCHES
     for team_match in team_matches:
@@ -542,7 +558,9 @@ def process_year(
         # Default if no matches played
         upcoming_epas = [(team_epas[team_event.team], False)]
         epas = [obj[0] for obj in team_events_dict.get(key, upcoming_epas)]
-        qual_epas = [obj[0] for obj in team_events_dict.get(key, upcoming_epas) if not obj[1]]  # type: ignore
+        qual_epas = [
+            obj[0] for obj in team_events_dict.get(key, upcoming_epas) if not obj[1]
+        ]
 
         team_event.epa_start = round(epas[0], 2)
         team_event.epa_end = round(epas[-1], 2)
@@ -606,7 +624,9 @@ def process_year(
             team_event.endgame_epa_start = round(endgame_epas[0], 2)
             team_event.endgame_epa_end = round(endgame_epas[-1], 2)
             team_event.endgame_epa_max = round(max(endgame_epas), 2)
-            team_event.endgame_epa_mean = round(sum(endgame_epas) / len(endgame_epas), 2)  # type: ignore
+            team_event.endgame_epa_mean = round(
+                sum(endgame_epas) / len(endgame_epas), 2
+            )
             endgame_epa_pre_playoffs = endgame_epas[0]
             if len(endgame_qual_epas) > 0:
                 endgame_epa_pre_playoffs = endgame_qual_epas[-1]
@@ -616,13 +636,17 @@ def process_year(
                 team_event.rp_1_epa_start = round(rp_1_qual_epas[0], 4)
                 team_event.rp_1_epa_end = round(rp_1_qual_epas[-1], 4)
                 team_event.rp_1_epa_max = round(max(rp_1_qual_epas), 4)
-                team_event.rp_1_epa_mean = round(sum(rp_1_qual_epas) / len(rp_1_qual_epas), 4)  # type: ignore
+                team_event.rp_1_epa_mean = round(
+                    sum(rp_1_qual_epas) / len(rp_1_qual_epas), 4
+                )
 
             if len(rp_2_qual_epas) > 0:
                 team_event.rp_2_epa_start = round(rp_2_qual_epas[0], 4)
                 team_event.rp_2_epa_end = round(rp_2_qual_epas[-1], 4)
                 team_event.rp_2_epa_max = round(max(rp_2_qual_epas), 4)
-                team_event.rp_2_epa_mean = round(sum(rp_2_qual_epas) / len(rp_2_qual_epas), 4)  # type: ignore
+                team_event.rp_2_epa_mean = round(
+                    sum(rp_2_qual_epas) / len(rp_2_qual_epas), 4
+                )
 
         wins, losses, ties, event_count = team_event_stats[key]
         winrate = round((wins + ties / 2) / max(1, event_count), 4)

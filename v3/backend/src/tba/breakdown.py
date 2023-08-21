@@ -136,11 +136,11 @@ def clean_breakdown(
         }
 
         # Correct some off-by-one edge cases
-        a, b, c = int(out["auto_2_1"]), int(out["auto_2_2"]), int(out["auto_2"])  # type: ignore
+        a, b, c = int(out["auto_2_1"]), int(out["auto_2_2"]), int(out["auto_2"])
         if a + b != c:
             out["auto_2_1" if a > b else "auto_2_2"] = c - min(a, b)
 
-        a, b, c = int(out["teleop_2_1"]), int(out["teleop_2_2"]), int(out["teleop_2"])  # type: ignore
+        a, b, c = int(out["teleop_2_1"]), int(out["teleop_2_2"]), int(out["teleop_2"])
         if a + b != c:
             out["teleop_2_1" if a > b else "teleop_2_2"] = c - min(a, b)
 
@@ -238,11 +238,11 @@ def clean_breakdown(
         }
 
         # Correct some edge cases (sensor issues, etc.)
-        a, b, c = int(out["auto_2_1"]), int(out["auto_2_2"]), int(out["auto_2"])  # type: ignore
+        a, b, c = int(out["auto_2_1"]), int(out["auto_2_2"]), int(out["auto_2"])
         if a + b != c:
             out["auto_2_1" if a > b else "auto_2_2"] = c - min(a, b)
 
-        a, b, c = int(out["teleop_2_1"]), int(out["teleop_2_2"]), int(out["teleop_2"])  # type: ignore
+        a, b, c = int(out["teleop_2_1"]), int(out["teleop_2_2"]), int(out["teleop_2"])
         if a + b != c:
             out["teleop_2_1" if a > b else "teleop_2_2"] = c - min(a, b)
     elif year == 2023:
@@ -272,10 +272,10 @@ def clean_breakdown(
     else:
         raise ValueError("Invalid year: " + str(year))
 
-    out["1"] = out["auto_1"] + out["teleop_1"]  # type: ignore
-    out["2"] = out["auto_2"] + out["teleop_2"]  # type: ignore
-    out["teleop"] = out["teleop_1"] + out["teleop_2"]  # type: ignore
-    out["no_foul"] = out["auto"] + out["teleop"] + out["endgame"]  # type: ignore
+    out["1"] = out["auto_1"] + out["teleop_1"]
+    out["2"] = out["auto_2"] + out["teleop_2"]
+    out["teleop"] = out["teleop_1"] + out["teleop_2"]
+    out["no_foul"] = out["auto"] + out["teleop"] + out["endgame"]
     out["fouls"] = breakdown.get("foulPoints", 0)
     return out
     """

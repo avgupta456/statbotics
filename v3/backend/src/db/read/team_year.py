@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -10,13 +10,13 @@ from src.db.read.main import common_filters
 
 def get_team_year(team: str, year: int) -> Optional[TeamYear]:
     def callback(session: SessionType):
-        data = session.query(TeamYearORM).filter(  # type: ignore
+        data = session.query(TeamYearORM).filter(
             TeamYearORM.team == team, TeamYearORM.year == year
         )
-        out_data: Optional[TeamYearORM] = data.first()  # type: ignore
+        out_data: Optional[TeamYearORM] = data.first()
         if out_data is None:
             return None
-        return TeamYear.from_dict(out_data.__dict__)  # type: ignore
+        return TeamYear.from_dict(out_data.__dict__)
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -35,30 +35,30 @@ def get_team_years(
     offset: Optional[int] = None,
 ) -> List[TeamYear]:
     @common_filters(TeamYearORM, TeamYear, metric, ascending, limit, offset)
-    def callback(session: SessionType):  # type: ignore
-        data = session.query(TeamYearORM)  # type: ignore
+    def callback(session: SessionType):
+        data = session.query(TeamYearORM)
         if team is not None:
-            data = data.filter(TeamYearORM.team == team)  # type: ignore
+            data = data.filter(TeamYearORM.team == team)
         if teams is not None:
-            data = data.filter(TeamYearORM.team.in_(teams))  # type: ignore
+            data = data.filter(TeamYearORM.team.in_(teams))
         if year is not None:
-            data = data.filter(TeamYearORM.year == year)  # type: ignore
+            data = data.filter(TeamYearORM.year == year)
         if country is not None:
-            data = data.filter(TeamYearORM.country == country)  # type: ignore
+            data = data.filter(TeamYearORM.country == country)
         if district is not None:
-            data = data.filter(TeamYearORM.district == district)  # type: ignore
+            data = data.filter(TeamYearORM.district == district)
         if state is not None:
-            data = data.filter(TeamYearORM.state == state)  # type: ignore
+            data = data.filter(TeamYearORM.state == state)
         if offseason is not None:
-            data = data.filter(TeamYearORM.offseason == offseason)  # type: ignore
+            data = data.filter(TeamYearORM.offseason == offseason)
 
-        return data  # type: ignore
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_team_years() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(TeamYearORM).count()  # type: ignore
+        return session.query(TeamYearORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

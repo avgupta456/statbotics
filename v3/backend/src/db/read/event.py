@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -10,10 +10,10 @@ from src.db.read.main import common_filters
 
 def get_event(event_id: str) -> Optional[Event]:
     def callback(session: SessionType):
-        data = session.query(EventORM).filter(EventORM.key == event_id).first()  # type: ignore
+        data = session.query(EventORM).filter(EventORM.key == event_id).first()
         if data is None:
             return None
-        return Event.from_dict(data.__dict__)  # type: ignore
+        return Event.from_dict(data.__dict__)
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -32,30 +32,30 @@ def get_events(
     offset: Optional[int] = None,
 ) -> List[Event]:
     @common_filters(EventORM, Event, metric, ascending, limit, offset)
-    def callback(session: SessionType):  # type: ignore
-        data = session.query(EventORM)  # type: ignore
+    def callback(session: SessionType):
+        data = session.query(EventORM)
         if year is not None:
-            data = data.filter(EventORM.year == year)  # type: ignore
+            data = data.filter(EventORM.year == year)
         if country is not None:
-            data = data.filter(EventORM.country == country)  # type: ignore
+            data = data.filter(EventORM.country == country)
         if district is not None:
-            data = data.filter(EventORM.district == district)  # type: ignore
+            data = data.filter(EventORM.district == district)
         if state is not None:
-            data = data.filter(EventORM.state == state)  # type: ignore
+            data = data.filter(EventORM.state == state)
         if type is not None:
-            data = data.filter(EventORM.type == type)  # type: ignore
+            data = data.filter(EventORM.type == type)
         if week is not None:
-            data = data.filter(EventORM.week == week)  # type: ignore
+            data = data.filter(EventORM.week == week)
         if offseason is not None:
-            data = data.filter(EventORM.offseason == offseason)  # type: ignore
+            data = data.filter(EventORM.offseason == offseason)
 
-        return data  # type: ignore
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_events() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(EventORM).count()  # type: ignore
+        return session.query(EventORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

@@ -98,11 +98,6 @@ _Alliance = generate_attr_class("Alliance", AllianceORM)
 
 
 class Alliance(_Alliance, Model):
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "Alliance":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}
-        return Alliance(**dict)
-
     def to_dict(self: "Alliance") -> Dict[str, Any]:
         return attr.asdict(self)
 

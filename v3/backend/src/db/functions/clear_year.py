@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session as SessionType  # type: ignore
-from sqlalchemy_cockroachdb import run_transaction  # type: ignore
+from sqlalchemy.orm import Session as SessionType
+from sqlalchemy_cockroachdb import run_transaction
 
 from src.db.main import Session
 from src.db.models.etag import ETagORM
@@ -23,7 +23,7 @@ def clear_year(year: int):
             MatchORM,
             TeamMatchORM,
         ]:
-            session.query(table).filter(table.year == year).delete(  # type: ignore
+            session.query(table).filter(table.year == year).delete(
                 synchronize_session=False
             )
 

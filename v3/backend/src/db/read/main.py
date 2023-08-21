@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, TypeVar
+from typing import Any, List, Optional, TypeVar, Type
 
 from src.db.models.main import Model, ModelORM
 
@@ -6,8 +6,8 @@ T = TypeVar("T")
 
 
 def common_filters(
-    model_orm: ModelORM,
-    model: Model,
+    model_orm: Type[ModelORM],
+    model: Type[Model],
     metric: Optional[str],
     ascending: Optional[bool],
     limit: Optional[int],
@@ -18,18 +18,18 @@ def common_filters(
             data = func(*args, **kwargs)
 
             if metric is not None:
-                data = data.filter(model_orm.__dict__[metric] != None)  # type: ignore  # noqa: E711
+                data = data.filter(model_orm.__dict__[metric] != None)  # noqa: E711
                 if ascending is not None and ascending:
-                    data = data.order_by(model_orm.__dict__[metric].asc())  # type: ignore
+                    data = data.order_by(model_orm.__dict__[metric].asc())
                 else:
-                    data = data.order_by(model_orm.__dict__[metric].desc())  # type: ignore
+                    data = data.order_by(model_orm.__dict__[metric].desc())
             if limit is not None:
-                data = data.limit(limit)  # type: ignore
+                data = data.limit(limit)
             if offset is not None:
-                data = data.offset(offset)  # type: ignore
-            out_data: List[model_orm] = data.all()  # type: ignore
+                data = data.offset(offset)
+            out_data: List[model_orm] = data.all()
 
-            return [model.from_dict(x.__dict__) for x in out_data]  # type: ignore
+            return [model.from_dict(x.__dict__) for x in out_data]
 
         return wrapper
 

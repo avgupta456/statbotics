@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -10,12 +10,12 @@ from src.db.read.main import common_filters
 
 def get_match(match: str) -> Optional[Match]:
     def callback(session: SessionType):
-        data = session.query(MatchORM).filter(MatchORM.key == match).first()  # type: ignore
+        data = session.query(MatchORM).filter(MatchORM.key == match).first()
 
         if data is None:
             return None
 
-        return Match.from_dict(data.__dict__)  # type: ignore
+        return Match.from_dict(data.__dict__)
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -33,10 +33,10 @@ def get_matches(
     offset: Optional[int] = None,
 ) -> List[Match]:
     @common_filters(MatchORM, Match, metric, ascending, limit, offset)
-    def callback(session: SessionType):  # type: ignore
-        data = session.query(MatchORM)  # type: ignore
+    def callback(session: SessionType):
+        data = session.query(MatchORM)
         if team is not None:
-            data = data.filter(  # type: ignore
+            data = data.filter(
                 (MatchORM.red_1 == team)
                 | (MatchORM.red_2 == team)
                 | (MatchORM.red_3 == team)
@@ -45,23 +45,23 @@ def get_matches(
                 | (MatchORM.blue_3 == team)
             )
         if year is not None:
-            data = data.filter(MatchORM.year == year)  # type: ignore
+            data = data.filter(MatchORM.year == year)
         if event is not None:
-            data = data.filter(MatchORM.event == event)  # type: ignore
+            data = data.filter(MatchORM.event == event)
         if week is not None:
-            data = data.filter(MatchORM.week == week)  # type: ignore
+            data = data.filter(MatchORM.week == week)
         if elims is not None:
-            data = data.filter(MatchORM.playoff == elims)  # type: ignore
+            data = data.filter(MatchORM.playoff == elims)
         if offseason is not None:
-            data = data.filter(MatchORM.offseason == offseason)  # type: ignore
+            data = data.filter(MatchORM.offseason == offseason)
 
-        return data  # type: ignore
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_matches() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(MatchORM).count()  # type: ignore
+        return session.query(MatchORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

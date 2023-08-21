@@ -1,7 +1,5 @@
-# type: ignore
-
 from sqlalchemy.orm import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.team import TeamORM
@@ -21,7 +19,7 @@ def update_team_districts() -> None:
             synchronize_session=False,
         )
 
-    return run_transaction(Session, callback)
+    return run_transaction(Session, callback)  # type: ignore
 
 
 def update_team_offseason() -> None:
@@ -39,4 +37,4 @@ def update_team_offseason() -> None:
             {TeamORM.offseason: False}, synchronize_session=False
         )
 
-    return run_transaction(Session, callback)
+    return run_transaction(Session, callback)  # type: ignore

@@ -1,9 +1,8 @@
-# type: ignore
 from typing import Dict, List, Optional
 
 from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.event import EventORM
@@ -56,14 +55,14 @@ def get_noteworthy_matches(
             matches.add_columns(
                 func.greatest(red_score_col, blue_score_col).label("max_score")
             )
-            .order_by(desc("max_score"), asc("time"))
+            .order_by(desc("max_score"), asc(MatchORM.time))  # type: ignore
             .limit(30)
             .all()
         )
 
         combined_score_matches = (
             matches.add_columns((red_score_col + blue_score_col).label("sum_score"))
-            .order_by(desc("sum_score"), asc("time"))
+            .order_by(desc("sum_score"), asc(MatchORM.time))  # type: ignore
             .limit(30)
             .all()
         )
@@ -74,11 +73,13 @@ def get_noteworthy_matches(
                     "losing_score"
                 ),
             )
-            .order_by(desc("losing_score"), asc("time"))
+            .order_by(desc("losing_score"), asc(MatchORM.time))  # type: ignore
             .limit(30)
             .all()
         )
 
+        # TODO: Redo using alliance objects
+        """
         extra = {}
         if year >= 2016:
             high_auto_score_matches = (
@@ -128,19 +129,22 @@ def get_noteworthy_matches(
                     for (match, *args) in high_endgame_score_matches
                 ],
             }
+            """
 
         return {
             "high_score": [
-                Match.from_dict(match.__dict__) for (match, *args) in high_score_matches
+                Match.from_dict(match.__dict__)
+                for (match, *_args) in high_score_matches
             ],
             "combined_score": [
                 Match.from_dict(match.__dict__)
-                for (match, *args) in combined_score_matches
+                for (match, *_args) in combined_score_matches
             ],
             "losing_score": [
-                Match.from_dict(match.__dict__) for (match, *args) in high_losing_scores
+                Match.from_dict(match.__dict__)
+                for (match, *_args) in high_losing_scores
             ],
-            **extra,
+            # **extra,
         }
 
-    return run_transaction(Session, callback)
+    return run_transaction(Session, callback)  # type: ignore

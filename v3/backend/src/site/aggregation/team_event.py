@@ -93,7 +93,7 @@ async def get_team_events(
     score_mean: float,
     score_sd: float,
     event: Optional[str] = None,
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     offseason: Optional[bool] = False,
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
@@ -116,4 +116,4 @@ async def get_team_events(
         )
         for x in team_event_objs
     ]
-    return (True, sorted(team_events, key=lambda x: x.time or 0))  # type: ignore
+    return (True, sorted(team_events, key=lambda x: x.time or 0))

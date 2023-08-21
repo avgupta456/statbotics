@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -23,36 +23,36 @@ def get_alliances(
     offset: Optional[int] = None,
 ) -> List[Alliance]:
     @common_filters(AllianceORM, Alliance, metric, ascending, limit, offset)
-    def callback(session: SessionType):  # type: ignore
-        data = session.query(AllianceORM)  # type: ignore
+    def callback(session: SessionType):
+        data = session.query(AllianceORM)
         if team is not None:
-            data = data.filter(  # type: ignore
+            data = data.filter(
                 (AllianceORM.team_1 == team)
                 | (AllianceORM.team_2 == team)
                 | (AllianceORM.team_3 == team)
             )
         if year is not None:
-            data = data.filter(AllianceORM.year == year)  # type: ignore
+            data = data.filter(AllianceORM.year == year)
         if event is not None:
-            data = data.filter(AllianceORM.event == event)  # type: ignore
+            data = data.filter(AllianceORM.event == event)
         if match is not None:
-            data = data.filter(AllianceORM.match == match)  # type: ignore
+            data = data.filter(AllianceORM.match == match)
         if alliance is not None:
-            data = data.filter(AllianceORM.alliance == alliance)  # type: ignore
+            data = data.filter(AllianceORM.alliance == alliance)
         if week is not None:
-            data = data.filter(AllianceORM.week == week)  # type: ignore
+            data = data.filter(AllianceORM.week == week)
         if elims is not None:
-            data = data.filter(AllianceORM.playoff == elims)  # type: ignore
+            data = data.filter(AllianceORM.playoff == elims)
         if offseason is not None:
-            data = data.filter(AllianceORM.offseason == offseason)  # type: ignore
+            data = data.filter(AllianceORM.offseason == offseason)
 
-        return data  # type: ignore
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_alliances() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(AllianceORM).count()  # type: ignore
+        return session.query(AllianceORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

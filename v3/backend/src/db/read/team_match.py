@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -10,13 +10,13 @@ from src.db.read.main import common_filters
 
 def get_team_match(team: str, match: str) -> Optional[TeamMatch]:
     def callback(session: SessionType):
-        data = session.query(TeamMatchORM).filter(  # type: ignore
+        data = session.query(TeamMatchORM).filter(
             TeamMatchORM.team == team, TeamMatchORM.match == match
         )
-        out_data: Optional[TeamMatchORM] = data.first()  # type: ignore
+        out_data: Optional[TeamMatchORM] = data.first()
         if out_data is None:
             return None
-        return TeamMatch.from_dict(out_data.__dict__)  # type: ignore
+        return TeamMatch.from_dict(out_data.__dict__)
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -35,30 +35,30 @@ def get_team_matches(
     offset: Optional[int] = None,
 ) -> List[TeamMatch]:
     @common_filters(TeamMatchORM, TeamMatch, metric, ascending, limit, offset)
-    def callback(session: SessionType):  # type: ignore
-        data = session.query(TeamMatchORM)  # type: ignore
+    def callback(session: SessionType):
+        data = session.query(TeamMatchORM)
         if team is not None:
-            data = data.filter(TeamMatchORM.team == team)  # type: ignore
+            data = data.filter(TeamMatchORM.team == team)
         if year is not None:
-            data = data.filter(TeamMatchORM.year == year)  # type: ignore
+            data = data.filter(TeamMatchORM.year == year)
         if event is not None:
-            data = data.filter(TeamMatchORM.event == event)  # type: ignore
+            data = data.filter(TeamMatchORM.event == event)
         if week is not None:
-            data = data.filter(TeamMatchORM.week == week)  # type: ignore
+            data = data.filter(TeamMatchORM.week == week)
         if match is not None:
-            data = data.filter(TeamMatchORM.match == match)  # type: ignore
+            data = data.filter(TeamMatchORM.match == match)
         if elims is not None:
-            data = data.filter(TeamMatchORM.playoff == elims)  # type: ignore
+            data = data.filter(TeamMatchORM.playoff == elims)
         if offseason is not None:
-            data = data.filter(TeamMatchORM.offseason == offseason)  # type: ignore
+            data = data.filter(TeamMatchORM.offseason == offseason)
 
-        return data  # type: ignore
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_team_matches() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(TeamMatchORM).count()  # type: ignore
+        return session.query(TeamMatchORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

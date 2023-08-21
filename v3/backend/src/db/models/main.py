@@ -5,13 +5,12 @@ from sqlalchemy import inspect
 
 
 class ModelORM:
-    pass
+    __table__: Any
 
 
 class Model:
     T1 = TypeVar("T1")
 
-    # TODO: delete this
     @classmethod
     def from_dict(cls: Type[T1], dict: Dict[str, Any]) -> T1:
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
