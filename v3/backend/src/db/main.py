@@ -1,8 +1,7 @@
 from typing import Any
 
 from sqlalchemy import create_engine  # type: ignore
-from sqlalchemy.ext.declarative import declarative_base  # type: ignore
-from sqlalchemy.orm import sessionmaker  # type: ignore
+from sqlalchemy.orm import sessionmaker, declarative_base  # type: ignore
 
 from src.constants import CONN_STR
 
