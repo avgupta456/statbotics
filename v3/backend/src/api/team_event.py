@@ -26,7 +26,7 @@ async def get_team_event_cached(team: int, event: str) -> Optional[TeamEvent]:
 
 @alru_cache(ttl=timedelta(hours=1))
 async def get_team_events_cached(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
@@ -34,6 +34,7 @@ async def get_team_events_cached(
     state: Optional[str] = None,
     type: Optional[int] = None,
     week: Optional[int] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -50,6 +51,7 @@ async def get_team_events_cached(
             state=state,
             type=type,
             week=week,
+            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -147,7 +149,7 @@ async def read_team_events_year_state(
 @async_fail_gracefully_api_plural
 async def read_team_events(
     response: Response,
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
@@ -155,6 +157,7 @@ async def read_team_events(
     state: Optional[str] = None,
     type: Optional[int] = None,
     week: Optional[int] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -169,6 +172,7 @@ async def read_team_events(
         state=state,
         type=type,
         week=week,
+        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,

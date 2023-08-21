@@ -26,11 +26,12 @@ async def get_match_cached(match: str) -> Optional[Match]:
 
 @alru_cache(ttl=timedelta(hours=1))
 async def get_matches_cached(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
     elims: Optional[bool] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -44,6 +45,7 @@ async def get_matches_cached(
             event=event,
             week=week,
             elims=elims,
+            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -111,11 +113,12 @@ async def read_matches_team_event(
 @async_fail_gracefully_api_plural
 async def read_matches(
     response: Response,
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
     elims: Optional[bool] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -127,6 +130,7 @@ async def read_matches(
         event=event,
         week=week,
         elims=elims,
+        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,

@@ -26,11 +26,12 @@ async def get_team_year_cached(team: str, year: int) -> Optional[TeamYear]:
 
 @alru_cache(ttl=timedelta(hours=1))
 async def get_team_years_cached(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -44,6 +45,7 @@ async def get_team_years_cached(
             country=country,
             district=district,
             state=state,
+            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -124,11 +126,12 @@ async def read_team_years_state(
 @async_fail_gracefully_api_plural
 async def read_team_years(
     response: Response,
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
+    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -140,6 +143,7 @@ async def read_team_years(
         country=country,
         district=district,
         state=state,
+        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,
