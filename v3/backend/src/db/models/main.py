@@ -1,8 +1,7 @@
 from typing import Any, Dict, Type, TypeVar
 
 import attr
-from sqlalchemy import Boolean, Float, Integer, String, inspect  # type: ignore
-from sqlalchemy.sql.type_api import TypeEngine  # type: ignore
+from sqlalchemy import inspect
 
 
 class ModelORM:
@@ -12,6 +11,7 @@ class ModelORM:
 class Model:
     T1 = TypeVar("T1")
 
+    # TODO: delete this
     @classmethod
     def from_dict(cls: Type[T1], dict: Dict[str, Any]) -> T1:
         dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
@@ -33,25 +33,15 @@ class Model:
 T2 = TypeVar("T2", bound=ModelORM)
 
 
-def generate_attr_class(name: str, sqlalchemy_model: T2) -> T2:
-    def sqlalchemy_to_python_type(sa_type: Type[TypeEngine]) -> type:
-        if isinstance(sa_type, String):
-            return str
-        elif isinstance(sa_type, Integer):
-            return int
-        elif isinstance(sa_type, Float):
-            return float
-        elif isinstance(sa_type, Boolean):
-            return bool
+def generate_attr_class(name: str, sqlalchemy_model: Type[T2]) -> Type[T2]:
+    columns = inspect(sqlalchemy_model).columns  # type: ignore
+    fields = {column.name: attr.ib() for column in columns}
 
-        return Any
+    out_class = attr.make_class(
+        name, attrs=fields, bases=(Model,), auto_attribs=True, slots=True
+    )
 
-    fields = {}
-    for column in inspect(sqlalchemy_model).columns:  # type: ignore
-        python_type = sqlalchemy_to_python_type(column.type)  # type: ignore
-        fields[column.name] = attr.ib(type=python_type)  # type: ignore
-
-    return attr.make_class(name, fields, bases=(Model,), auto_attribs=True, slots=True)  # type: ignore
+    return out_class  # type: ignore
 
 
 TModelORM = TypeVar("TModelORM", bound=ModelORM)

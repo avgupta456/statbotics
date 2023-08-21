@@ -2,9 +2,13 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
-from src.constants import CURR_WEEK, CURR_YEAR, MAX_TEAM
+from src.constants import CURR_WEEK, CURR_YEAR
 from src.data.utils import objs_type
-from src.db.functions import remove_teams_with_no_events, update_team_districts
+from src.db.functions import (
+    remove_teams_with_no_events,
+    update_team_districts,
+    update_team_offseason,
+)
 from src.db.models import ETag, Event, Team
 from src.db.models.create import (
     create_event_obj,
@@ -32,7 +36,16 @@ HELPER FUNCTIONS
 
 def load_teams(cache: bool = True) -> List[Team]:
     teams = get_teams_tba(cache=cache)
-    team_objs = [create_team_obj(team) for team in teams]
+    team_objs = [
+        create_team_obj(
+            team=team["team"],
+            name=team["name"],
+            country=team["country"],
+            state=team["state"],
+            rookie_year=team["rookie_year"],
+        )
+        for team in teams
+    ]
     return team_objs
 
 
@@ -158,7 +171,7 @@ def process_year(
     teams_dict: Dict[str, Team] = {team.team: team for team in teams}
     # TODO: can this handle offseason teams? Should we set the offseason flag?
     default_team = create_team_obj(
-        {"name": None, "team": None, "state": None, "country": None, "district": None}
+        team="", name="", country=None, state=None, rookie_year=None
     )
 
     team_is_competing_dict: Dict[str, bool] = defaultdict(lambda: False)
@@ -167,6 +180,9 @@ def process_year(
 
     # maps team to district_abbrev (or None if not in a district)
     district_teams: Dict[str, Optional[str]] = {}
+
+    # maps team to offseason status
+    offseason_teams: Dict[str, bool] = {}
 
     if not partial:
         districts, _ = call_tba(
@@ -224,10 +240,13 @@ def process_year(
         event_teams: Set[str] = set()
         rankings: Dict[str, int] = defaultdict(int)
 
-        def add_team_event(team: str):
+        def add_team_event(team: str, offseason: bool):
             event_teams.add(team)
             if team not in district_teams:
                 district_teams[team] = None
+
+            if not offseason or team not in offseason_teams:
+                offseason_teams[team] = offseason
 
             event_name = event_obj.name
             event_week = event_obj.week
@@ -265,7 +284,7 @@ def process_year(
             )
 
             for team in temp_event_teams:
-                add_team_event(team)
+                add_team_event(team, event_obj.offseason)
 
         elif event_status in ["Ongoing", "Completed"]:
             # Update event_obj, accumulate match_obj, alliance_objs, team_match_objs
@@ -283,7 +302,7 @@ def process_year(
                 for alliance_obj in curr_alliance_objs:
                     alliance_objs_dict[alliance_obj.pk()] = alliance_obj
                 for team_match_obj in curr_team_match_objs:
-                    add_team_event(team_match_obj.team)
+                    add_team_event(team_match_obj.team, event_obj.offseason)
                     team_match_objs_dict[team_match_obj.pk()] = team_match_obj
 
             rankings, _ = call_tba(
@@ -325,7 +344,7 @@ def process_year(
             team_first_event_dict[team_event.team][0] == team_event.event
         )
 
-    for team in district_teams:
+    for team in offseason_teams:
         team_obj = teams_dict.get(team, default_team)
         is_competing = team_is_competing_dict[team]
         next_event = team_next_event_dict[team]
@@ -333,7 +352,7 @@ def process_year(
             {
                 "year": year_num,
                 "team": team,
-                "offseason": team > MAX_TEAM,
+                "offseason": offseason_teams[team],
                 "name": team_obj.name,
                 "state": team_obj.state,
                 "country": team_obj.country,
@@ -361,3 +380,4 @@ def process_year(
 def post_process():
     remove_teams_with_no_events()
     update_team_districts()
+    update_team_offseason()

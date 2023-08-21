@@ -42,6 +42,9 @@ def get_team_years_dict(year: int) -> Dict[int, Dict[str, TeamYear]]:
 def reset_all_years(start_year: int, end_year: int):
     timer = Timer()
 
+    start_year = 2014
+    end_year = 2014
+
     clean_db()
     timer.print("Clean DB")
 
@@ -67,7 +70,6 @@ def reset_all_years(start_year: int, end_year: int):
         objs, team_years_dict = process_year_epa(year_num, team_years_dict, objs)
         timer.print(str(year_num) + " EPA")
 
-        # Set clean=False to prevent deleting data without a backup
         write_objs_db(year_num, objs, None, True)
         timer.print(str(year_num) + " Write")
 

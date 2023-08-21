@@ -1,7 +1,7 @@
 {
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "python.defaultInterpreterPath": "./backend/.venv/bin",
+  "python.defaultInterpreterPath": "./v3/backend/.venv/bin/python",
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.diagnosticMode": "workspace",
   "[python]": {

@@ -1,7 +1,7 @@
 import React from "react";
 
 import MatchTable from "../../../../components/MatchTable";
-import { MAX_TEAM, RPMapping } from "../../../../constants";
+import { RPMapping } from "../../../../constants";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
@@ -45,9 +45,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
     }, 0);
   const rp2Accuracy = round((rp2CorrectPreds / (2 * Math.max(N, 1))) * 100, 1);
 
-  const hasOffseasonTeams = matches.some(
-    (match) => Math.max(...match.red, ...match.blue) > MAX_TEAM
-  );
+  const hasOffseasonTeams = matches.some((match) => Math.max(...match.red, ...match.blue) > 9316);
 
   return (
     <div className="flex flex-col">

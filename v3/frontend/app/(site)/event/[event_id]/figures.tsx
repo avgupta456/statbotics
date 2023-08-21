@@ -3,7 +3,6 @@ import React from "react";
 import { BarChart, BarChartNoLegend } from "../../../../components/Figures/Bar";
 import EventLineChart from "../../../../components/Figures/EventLine";
 import ScatterPlot from "../../../../components/Figures/Scatter";
-import { MAX_TEAM } from "../../../../constants";
 import { Data } from "./types";
 
 const FiguresSection = ({ year, eventId, data }: { year: number; eventId: string; data: Data }) => {
@@ -20,7 +19,7 @@ const FiguresSection = ({ year, eventId, data }: { year: number; eventId: string
     .slice(0, 16);
 
   const lineData = data.team_events
-    .filter((teamEvent) => teamEvent.num <= MAX_TEAM) // Filter out offseason teams
+    .filter((teamEvent) => teamEvent.num <= 9316) // Filter out offseason teams
     .map((teamEvent) => ({
       value: teamEvent.num,
       label: `${teamEvent.num} | ${teamEvent.team}`,
@@ -28,7 +27,7 @@ const FiguresSection = ({ year, eventId, data }: { year: number; eventId: string
     .sort((a, b) => a.value - b.value);
 
   const scatterData = data.team_events
-    .filter((teamEvent) => teamEvent.num <= MAX_TEAM && teamEvent.rank > 0) // Filter out offseason teams
+    .filter((teamEvent) => teamEvent.num <= 9316 && teamEvent.rank > 0) // Filter out offseason teams
     .map((teamEvent) => ({
       id: teamEvent.num.toString(),
       data: [

@@ -1,7 +1,7 @@
 from typing import Optional
 
-from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
+from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy.orm import mapped_column, Mapped
 
 from src.db.main import Base
 from src.db.models.main import ModelORM, Model, generate_attr_class
@@ -11,37 +11,37 @@ class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team: str = Column(String(6), index=True)
-
-    PrimaryKeyConstraint(team)
+    team: Mapped[str] = mapped_column(
+        String(6), index=True, nullable=False, primary_key=True
+    )
 
     """GENERAL"""
-    name: str = Column(String(100))
-    offseason: bool = Column(Boolean)
-    country: Optional[str] = Column(String(30))
-    district: Optional[str] = Column(String(10))
-    state: Optional[str] = Column(String(10))
-    rookie_year: int = Column(Integer)
-    active: bool = Column(Boolean)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    offseason: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    country: Mapped[Optional[str]] = mapped_column(String(30))
+    district: Mapped[Optional[str]] = mapped_column(String(10))
+    state: Mapped[Optional[str]] = mapped_column(String(10))
+    rookie_year: Mapped[Optional[int]] = mapped_column(Integer)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     """EPA"""
-    norm_epa: Optional[float] = Column(Float)
-    norm_epa_recent: Optional[float] = Column(Float)
-    norm_epa_mean: Optional[float] = Column(Float)
-    norm_epa_max: Optional[float] = Column(Float)
+    norm_epa: Mapped[Optional[float]] = mapped_column(Float)
+    norm_epa_recent: Mapped[Optional[float]] = mapped_column(Float)
+    norm_epa_mean: Mapped[Optional[float]] = mapped_column(Float)
+    norm_epa_max: Mapped[Optional[float]] = mapped_column(Float)
 
     """STATS"""
-    wins: int = Column(Integer)
-    losses: int = Column(Integer)
-    ties: int = Column(Integer)
-    count: int = Column(Integer)
-    winrate: float = Column(Float)
+    wins: Mapped[int] = mapped_column(Integer, nullable=False)
+    losses: Mapped[int] = mapped_column(Integer, nullable=False)
+    ties: Mapped[int] = mapped_column(Integer, nullable=False)
+    count: Mapped[int] = mapped_column(Integer, nullable=False)
+    winrate: Mapped[float] = mapped_column(Float, nullable=False)
 
-    full_wins: int = Column(Integer)
-    full_losses: int = Column(Integer)
-    full_ties: int = Column(Integer)
-    full_count: int = Column(Integer)
-    full_winrate: float = Column(Float)
+    full_wins: Mapped[int] = mapped_column(Integer, nullable=False)
+    full_losses: Mapped[int] = mapped_column(Integer, nullable=False)
+    full_ties: Mapped[int] = mapped_column(Integer, nullable=False)
+    full_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    full_winrate: Mapped[float] = mapped_column(Float, nullable=False)
 
 
 _Team = generate_attr_class("Team", TeamORM)

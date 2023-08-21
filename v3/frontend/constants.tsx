@@ -11,8 +11,6 @@ export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M3
 export const CURR_YEAR = 2023;
 export const CURR_WEEK = 8;
 
-export const MAX_TEAM = 9316; // above is offseason
-
 export const CORRECT_COLOR = "#86CFA3";
 export const INCORRECT_COLOR = "#F77F84";
 

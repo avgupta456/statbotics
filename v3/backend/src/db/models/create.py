@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 
 from src.db.models.alliance import Alliance
 from src.db.models.etag import ETag
@@ -11,16 +11,37 @@ from src.db.models.team_year import TeamYear
 from src.db.models.year import Year
 
 
-def create_team_obj(data: Dict[str, Any]) -> Team:
-    data["wins"] = 0
-    data["losses"] = 0
-    data["ties"] = 0
-    data["count"] = 0
-    data["full_wins"] = 0
-    data["full_losses"] = 0
-    data["full_ties"] = 0
-    data["full_count"] = 0
-    return Team.from_dict(data)
+def create_team_obj(
+    team: str,
+    name: str,
+    country: Optional[str],
+    state: Optional[str],
+    rookie_year: Optional[int],
+) -> Team:
+    return Team(
+        team=team,
+        name=name,
+        offseason=True,  # overwritten later
+        country=country,
+        district=None,  # overwritten later
+        state=state,
+        rookie_year=rookie_year,
+        active=False,  # overwritten later
+        norm_epa=None,
+        norm_epa_recent=None,
+        norm_epa_mean=None,
+        norm_epa_max=None,
+        wins=0,
+        losses=0,
+        ties=0,
+        count=0,
+        winrate=0,
+        full_wins=0,
+        full_losses=0,
+        full_ties=0,
+        full_count=0,
+        full_winrate=0,
+    )
 
 
 def create_year_obj(data: Dict[str, Any]) -> Year:
