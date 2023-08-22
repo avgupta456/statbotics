@@ -1,5 +1,6 @@
 import { CURR_WEEK } from "../constants";
 
+// TODO: Get options directly from year's team list
 export const countryOptions = [
   { value: "", label: "All" },
   { value: "USA", label: "USA" },
@@ -8,6 +9,7 @@ export const countryOptions = [
   { value: "Mexico", label: "Mexico" },
   { value: "Israel", label: "Israel" },
   { value: "Chinese Taipei", label: "Chinese Taipei" },
+  { value: "China", label: "China" },
   { value: "Australia", label: "Australia" },
   { value: "Brazil", label: "Brazil" },
   { value: "India", label: "India" },
@@ -68,6 +70,7 @@ export const usaOptions = [
   { value: "DC", label: "DC" },
 ];
 
+// TODO: Get options directly from year's team list
 export const canadaOptions = [
   { value: "", label: "All" },
   { value: "AB", label: "Alberta" },
@@ -76,6 +79,7 @@ export const canadaOptions = [
   { value: "QC", label: "Québec" },
 ];
 
+// TODO: Get options directly from year's team list
 export const districtOptions = [
   { value: "", label: "All" },
   { value: "chs", label: "Chesapeake" },
