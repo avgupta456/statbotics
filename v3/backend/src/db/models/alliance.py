@@ -142,6 +142,8 @@ def create_alliance_obj(
     team_3: str,
     dq: str,
     surrogate: str,
+    *args: List[Any],
+    **kwargs: Dict[str, Any],
 ) -> Alliance:
     return Alliance(
         id=None,
@@ -162,4 +164,6 @@ def create_alliance_obj(
         team_3=team_3,
         dq=dq,
         surrogate=surrogate,
+        *args,
+        **kwargs,
     )

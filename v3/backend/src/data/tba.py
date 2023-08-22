@@ -380,7 +380,7 @@ def process_year(
             name=team_obj.name,
             state=team_obj.state,
             country=team_obj.country,
-            district=team_obj.country,
+            district=district_teams[team],
             is_competing=is_competing,
             next_event_key=next_event[0],
             next_event_name=next_event[1],

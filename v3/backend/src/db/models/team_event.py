@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -140,6 +140,8 @@ def create_team_event_obj(
     status: str,
     first_event: bool,
     num_teams: int,
+    *args: List[Any],
+    **kwargs: Dict[str, Any],
 ) -> TeamEvent:
     return TeamEvent(
         id=None,
@@ -158,4 +160,6 @@ def create_team_event_obj(
         status=status,
         first_event=first_event,
         num_teams=num_teams,
+        *args,
+        **kwargs,
     )

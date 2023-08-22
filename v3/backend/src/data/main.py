@@ -54,7 +54,7 @@ def reset_all_years(start_year: int, end_year: int):
     update_teams_db(teams, True)
     timer.print("Update DB")
 
-    team_years_dict = get_team_years_dict(start_year)
+    # team_years_dict = get_team_years_dict(start_year)
     for year_num in range(start_year, end_year + 1):
         objs = create_objs_tba(year_num)
 
@@ -67,8 +67,8 @@ def reset_all_years(start_year: int, end_year: int):
 
         objs = (year_obj, *objs[1:])
 
-        objs, team_years_dict = process_year_epa(year_num, team_years_dict, objs)
-        timer.print(str(year_num) + " EPA")
+        # objs, team_years_dict = process_year_epa(year_num, team_years_dict, objs)
+        # timer.print(str(year_num) + " EPA")
 
         write_objs_db(year_num, objs, None, True)
         timer.print(str(year_num) + " Write")

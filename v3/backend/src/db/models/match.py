@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List
 
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
@@ -139,6 +139,8 @@ def create_match_obj(
     blue_3: str,
     blue_dq: str,
     blue_surrogate: str,
+    *args: List[Any],
+    **kwawrgs: Dict[str, Any],
 ) -> Match:
     return Match(
         key=key,
@@ -164,4 +166,6 @@ def create_match_obj(
         blue_3=blue_3,
         blue_dq=blue_dq,
         blue_surrogate=blue_surrogate,
+        *args,
+        **kwawrgs,
     )

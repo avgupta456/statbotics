@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
@@ -63,7 +63,15 @@ def create_team_obj(
     country: Optional[str],
     state: Optional[str],
     rookie_year: Optional[int],
+    *args: List[Any],
+    **kwargs: Dict[str, Any],
 ) -> Team:
     return Team(
-        team=team, name=name, country=country, state=state, rookie_year=rookie_year
+        team=team,
+        name=name,
+        country=country,
+        state=state,
+        rookie_year=rookie_year,
+        *args,
+        **kwargs,
     )

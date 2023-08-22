@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -147,6 +147,8 @@ def create_team_year_obj(
     next_event_key: Optional[str],
     next_event_name: Optional[str],
     next_event_week: Optional[int],
+    *args: List[Any],
+    **kwargs: Dict[str, Any],
 ) -> TeamYear:
     return TeamYear(
         id=None,
@@ -161,4 +163,6 @@ def create_team_year_obj(
         next_event_key=next_event_key,
         next_event_name=next_event_name,
         next_event_week=next_event_week,
+        *args,
+        **kwargs,
     )

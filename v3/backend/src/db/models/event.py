@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -93,6 +93,8 @@ def create_event_obj(
     week: int,
     video: Optional[str],
     status: str,
+    *args: List[Any],
+    **kwargs: Dict[str, Any],
 ) -> Event:
     return Event(
         key=key,
@@ -109,4 +111,6 @@ def create_event_obj(
         offseason=type > 10,
         video=video,
         status=status,
+        *args,
+        **kwargs,
     )

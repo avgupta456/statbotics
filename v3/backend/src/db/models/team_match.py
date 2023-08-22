@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -85,6 +85,8 @@ def create_team_match_obj(
     dq: bool,
     surrogate: bool,
     status: str,
+    *args: List[Any],
+    **kwargs: Dict[str, Any],
 ) -> TeamMatch:
     return TeamMatch(
         id=None,
@@ -100,4 +102,6 @@ def create_team_match_obj(
         dq=dq,
         surrogate=surrogate,
         status=status,
+        *args,
+        **kwargs,
     )
