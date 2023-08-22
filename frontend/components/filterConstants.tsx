@@ -8,6 +8,7 @@ export const countryOptions = [
   { value: "Mexico", label: "Mexico" },
   { value: "Israel", label: "Israel" },
   { value: "Chinese Taipei", label: "Chinese Taipei" },
+  { value: "China", label: "China" },
   { value: "Australia", label: "Australia" },
   { value: "Brazil", label: "Brazil" },
   { value: "India", label: "India" },
