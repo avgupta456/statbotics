@@ -73,6 +73,7 @@ class AllianceORM(Base, ModelORM):
     rp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
 
     """OUTCOME"""
+    # TODO: rethink to handle draws
     winner: MOB = mapped_column(Boolean, nullable=True, default=None)
     score: MOI = mapped_column(Integer, nullable=True, default=None)
     no_foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
@@ -82,6 +83,7 @@ class AllianceORM(Base, ModelORM):
     endgame_points: MOI = mapped_column(Integer, nullable=True, default=None)
     rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
 
     comp_1: MOF = mapped_column(Float, nullable=True, default=None)
     comp_2: MOF = mapped_column(Float, nullable=True, default=None)

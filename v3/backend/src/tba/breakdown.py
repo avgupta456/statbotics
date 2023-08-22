@@ -1,25 +1,25 @@
 from typing import Any, Dict, Optional
 
-empty_breakdown: Dict[str, float] = {
+empty_breakdown: Dict[str, Optional[float]] = {
     "score": 0,
-    "no_foul_points": 0,
-    "foul_points": 0,
-    "auto_points": 0,
-    "teleop_points": 0,
-    "endgame_points": 0,
-    "rp1": 0,
-    "rp2": 0,
-    "comp_1": 0,
-    "comp_2": 0,
-    "comp_3": 0,
-    "comp_4": 0,
-    "comp_5": 0,
-    "comp_6": 0,
-    "comp_7": 0,
-    "comp_8": 0,
-    "comp_9": 0,
-    "comp_10": 0,
-    "tiebreaker": 0,
+    "no_foul_points": None,
+    "foul_points": None,
+    "auto_points": None,
+    "teleop_points": None,
+    "endgame_points": None,
+    "rp1": None,
+    "rp2": None,
+    "comp_1": None,
+    "comp_2": None,
+    "comp_3": None,
+    "comp_4": None,
+    "comp_5": None,
+    "comp_6": None,
+    "comp_7": None,
+    "comp_8": None,
+    "comp_9": None,
+    "comp_10": None,
+    "tiebreaker": None,
 }
 
 INVALID_MATCH_KEYS = ["2016capl_f1m1", "2016milsu_qf4m1", "2016mndu2_f1m2"]
@@ -29,7 +29,7 @@ def clean_breakdown_2016(
     breakdown: Dict[str, Any],
     opp_breakdown: Dict[str, Any],
     curr: Dict[str, Any],
-) -> Dict[str, float]:
+) -> Dict[str, Optional[float]]:
     auto_reach_points = breakdown.get("autoReachPoints", 0)
     auto_crossing_points = breakdown.get("autoCrossingPoints", 0)
     auto_low_boulders = breakdown.get("autoBouldersLow", 0)
@@ -90,8 +90,8 @@ def clean_breakdown(
     breakdown: Optional[Dict[str, Any]],
     opp_breakdown: Optional[Dict[str, Any]],
     score: int,
-) -> Dict[str, float]:
-    out: Dict[str, float] = {}
+) -> Dict[str, Optional[float]]:
+    out: Dict[str, Optional[float]] = {}
     if breakdown is None or opp_breakdown is None or year < 2016:
         return empty_breakdown
 
@@ -100,19 +100,19 @@ def clean_breakdown(
     out["score"] = score
     out["no_foul_points"] = score - foul_points
     out["foul_points"] = foul_points
-    out["rp_1"] = 0
-    out["rp_2"] = 0
 
     if year == 2016:
         out = clean_breakdown_2016(breakdown, opp_breakdown, out)
     else:
         out = empty_breakdown
+        out["no_foul_points"] = score
 
-    if key not in INVALID_MATCH_KEYS:
-        assert (
-            out["auto_points"] + out["teleop_points"] + out["endgame_points"]
-            == out["no_foul_points"]
-        )
+    if year >= 2016 and key not in INVALID_MATCH_KEYS:
+        auto_points = out["auto_points"] or 0
+        teleop_points = out["teleop_points"] or 0
+        endgame_points = out["endgame_points"] or 0
+        no_foul_points = out["no_foul_points"] or 0
+        assert auto_points + teleop_points + endgame_points == no_foul_points
 
     return out
 
