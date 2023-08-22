@@ -14,11 +14,12 @@ class AllianceORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "alliances"
-    id: MI = mapped_column(Integer, nullable=True)  # placeholder for backend API
+    id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
     alliance: MS = mapped_column(String(4), index=True)
+    match: MS = mapped_column(String(20), index=True)
+
     year: MI = mapped_column(Integer, index=True)
     event: MS = mapped_column(String(20), index=True)
-    match: MS = mapped_column(String(20), index=True)
 
     PrimaryKeyConstraint(alliance, match)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -49,49 +50,49 @@ class AllianceORM(Base, ModelORM):
 
     """EPA"""
     # TODO: implement all of these, make non-nullable
-    epa_winner: MOB = mapped_column(Boolean, nullable=True)
-    epa_win_prob: MOF = mapped_column(Float, nullable=True)
-    rp_1_prob: MOF = mapped_column(Float, nullable=True)
-    rp_2_prob: MOF = mapped_column(Float, nullable=True)
+    epa_winner: MOB = mapped_column(Boolean, nullable=True, default=None)
+    epa_win_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
 
-    epa_sum: MOF = mapped_column(Float, nullable=True)
-    auto_epa_sum: MOF = mapped_column(Float, nullable=True)
-    teleop_epa_sum: MOF = mapped_column(Float, nullable=True)
-    endgame_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_1_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_2_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_3_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_4_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_5_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_6_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_7_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_8_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_9_epa_sum: MOF = mapped_column(Float, nullable=True)
-    comp_10_epa_sum: MOF = mapped_column(Float, nullable=True)
-    rp_1_epa_sum: MOF = mapped_column(Float, nullable=True)
-    rp_2_epa_sum: MOF = mapped_column(Float, nullable=True)
+    epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
 
     """OUTCOME"""
-    winner: MOB = mapped_column(Boolean)
-    score: MOI = mapped_column(Integer)
-    no_foul_points: MOI = mapped_column(Integer)
-    foul_points: MOI = mapped_column(Integer)
-    auto_points: MOI = mapped_column(Integer)
-    teleop_points: MOI = mapped_column(Integer)
-    endgame_points: MOI = mapped_column(Integer)
-    rp_1: MOB = mapped_column(Boolean)
-    rp_2: MOB = mapped_column(Boolean)
+    winner: MOB = mapped_column(Boolean, nullable=True, default=None)
+    score: MOI = mapped_column(Integer, nullable=True, default=None)
+    no_foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    auto_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    teleop_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    endgame_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
+    rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
 
-    comp_1: MOF = mapped_column(Float)
-    comp_2: MOF = mapped_column(Float)
-    comp_3: MOF = mapped_column(Float)
-    comp_4: MOF = mapped_column(Float)
-    comp_5: MOF = mapped_column(Float)
-    comp_6: MOF = mapped_column(Float)
-    comp_7: MOF = mapped_column(Float)
-    comp_8: MOF = mapped_column(Float)
-    comp_9: MOF = mapped_column(Float)
-    comp_10: MOF = mapped_column(Float)
+    comp_1: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Alliance = generate_attr_class("Alliance", AllianceORM)
@@ -121,3 +122,44 @@ class Alliance(_Alliance, Model):
 
     def get_dqs(self: "Alliance") -> List[str]:
         return [x for x in self.dq.split(",") if x != ""]
+
+
+def create_alliance_obj(
+    alliance: str,
+    match: str,
+    year: int,
+    event: str,
+    offseason: bool,
+    week: int,
+    playoff: bool,
+    comp_level: str,
+    set_number: int,
+    match_number: int,
+    time: int,
+    status: str,
+    team_1: str,
+    team_2: str,
+    team_3: str,
+    dq: str,
+    surrogate: str,
+) -> Alliance:
+    return Alliance(
+        id=None,
+        alliance=alliance,
+        match=match,
+        year=year,
+        event=event,
+        offseason=offseason,
+        week=week,
+        playoff=playoff,
+        comp_level=comp_level,
+        set_number=set_number,
+        match_number=match_number,
+        time=time,
+        status=status,
+        team_1=team_1,
+        team_2=team_2,
+        team_3=team_3,
+        dq=dq,
+        surrogate=surrogate,
+    )

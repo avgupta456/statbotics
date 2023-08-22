@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -7,14 +7,14 @@ from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOS, MS
+from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
 
 
 class TeamEventORM(Base, ModelORM):
     """DECLARATIONS"""
 
     __tablename__ = "team_events"
-    id: MI = mapped_column(Integer, nullable=True)  # placeholder for backend API
+    id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
     team: MS = mapped_column(String(6), index=True)
     year: MI = mapped_column(Integer, index=True)
     event: MS = mapped_column(String(10), index=True)
@@ -32,9 +32,9 @@ class TeamEventORM(Base, ModelORM):
     """API COMPLETENESS"""
     team_name: MS = mapped_column(String(100))
     event_name: MS = mapped_column(String(100))
-    country: MOS = mapped_column(String(30))
-    district: MOS = mapped_column(String(10))
-    state: MOS = mapped_column(String(10))
+    country: MOS = mapped_column(String(30), nullable=True)
+    district: MOS = mapped_column(String(10), nullable=True)
+    state: MOS = mapped_column(String(10), nullable=True)
     type: MI = mapped_column(Integer)
     week: MI = mapped_column(Integer)
 
@@ -42,61 +42,63 @@ class TeamEventORM(Base, ModelORM):
     status: MS = mapped_column(String(10))
     first_event: MB = mapped_column(Boolean)
 
+    """NO DEFAULTS"""
+    num_teams: MI = mapped_column(Integer)
+
     """EPA"""
-    epa_start: MF = mapped_column(Float)
-    epa_pre_playoffs: MF = mapped_column(Float)
-    epa_end: MF = mapped_column(Float)
-    epa_mean: MF = mapped_column(Float)
-    epa_max: MF = mapped_column(Float)
-    epa_diff: MF = mapped_column(Float)
+    epa_start: MF = mapped_column(Float, default=0)
+    epa_pre_playoffs: MF = mapped_column(Float, default=0)
+    epa_end: MF = mapped_column(Float, default=0)
+    epa_mean: MF = mapped_column(Float, default=0)
+    epa_max: MF = mapped_column(Float, default=0)
+    epa_diff: MF = mapped_column(Float, default=0)
 
-    auto_epa_start: MOF = mapped_column(Float, nullable=True)
-    auto_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True)
-    auto_epa_end: MOF = mapped_column(Float, nullable=True)
-    auto_epa_mean: MOF = mapped_column(Float, nullable=True)
-    auto_epa_max: MOF = mapped_column(Float, nullable=True)
+    auto_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
-    teleop_epa_start: MOF = mapped_column(Float, nullable=True)
-    teleop_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True)
-    teleop_epa_end: MOF = mapped_column(Float, nullable=True)
-    teleop_epa_mean: MOF = mapped_column(Float, nullable=True)
-    teleop_epa_max: MOF = mapped_column(Float, nullable=True)
+    teleop_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
-    endgame_epa_start: MOF = mapped_column(Float, nullable=True)
-    endgame_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True)
-    endgame_epa_end: MOF = mapped_column(Float, nullable=True)
-    endgame_epa_mean: MOF = mapped_column(Float, nullable=True)
-    endgame_epa_max: MOF = mapped_column(Float, nullable=True)
+    endgame_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
-    rp_1_epa_start: MOF = mapped_column(Float, nullable=True)
-    rp_1_epa_end: MOF = mapped_column(Float, nullable=True)
-    rp_1_epa_mean: MOF = mapped_column(Float, nullable=True)
-    rp_1_epa_max: MOF = mapped_column(Float, nullable=True)
+    rp_1_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
-    rp_2_epa_start: MOF = mapped_column(Float, nullable=True)
-    rp_2_epa_end: MOF = mapped_column(Float, nullable=True)
-    rp_2_epa_mean: MOF = mapped_column(Float, nullable=True)
-    rp_2_epa_max: MOF = mapped_column(Float, nullable=True)
+    rp_2_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     # TODO: populate unitless_epa_end, make not nullable
-    unitless_epa_end: MOF = mapped_column(Float, nullable=True)
-    norm_epa_end: MOF = mapped_column(Float, nullable=True)
+    unitless_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
 
     """STATS"""
-    wins: MI = mapped_column(Integer)
-    losses: MI = mapped_column(Integer)
-    ties: MI = mapped_column(Integer)
-    count: MI = mapped_column(Integer)
-    winrate: MF = mapped_column(Float)
-    qual_wins: MI = mapped_column(Integer)
-    qual_losses: MI = mapped_column(Integer)
-    qual_ties: MI = mapped_column(Integer)
-    qual_count: MI = mapped_column(Integer)
-    qual_winrate: MF = mapped_column(Float)
-    rps: MI = mapped_column(Integer)
-    rps_per_match: MF = mapped_column(Float)
-    rank: MI = mapped_column(Integer)
-    num_teams: MI = mapped_column(Integer)
+    wins: MI = mapped_column(Integer, default=0)
+    losses: MI = mapped_column(Integer, default=0)
+    ties: MI = mapped_column(Integer, default=0)
+    count: MI = mapped_column(Integer, default=0)
+    winrate: MF = mapped_column(Float, default=0)
+    qual_wins: MI = mapped_column(Integer, default=0)
+    qual_losses: MI = mapped_column(Integer, default=0)
+    qual_ties: MI = mapped_column(Integer, default=0)
+    qual_count: MI = mapped_column(Integer, default=0)
+    qual_winrate: MF = mapped_column(Float, default=0)
+    rps: MI = mapped_column(Integer, default=0)
+    rps_per_match: MF = mapped_column(Float, default=0)
+    rank: MOI = mapped_column(Integer, nullable=True, default=None)
 
 
 _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
@@ -120,3 +122,40 @@ class TeamEvent(_TeamEvent, Model):
     def __str__(self: "TeamEvent") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.event}_{self.status}_{self.count}_{self.rank}"
+
+
+def create_team_event_obj(
+    team: str,
+    year: int,
+    event: str,
+    time: int,
+    offseason: bool,
+    team_name: str,
+    event_name: str,
+    country: Optional[str],
+    district: Optional[str],
+    state: Optional[str],
+    type: int,
+    week: int,
+    status: str,
+    first_event: bool,
+    num_teams: int,
+) -> TeamEvent:
+    return TeamEvent(
+        id=None,
+        team=team,
+        year=year,
+        event=event,
+        time=time,
+        offseason=offseason,
+        team_name=team_name,
+        event_name=event_name,
+        country=country,
+        district=district,
+        state=state,
+        type=type,
+        week=week,
+        status=status,
+        first_event=first_event,
+        num_teams=num_teams,
+    )

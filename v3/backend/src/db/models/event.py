@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -23,9 +23,9 @@ class EventORM(Base, ModelORM):
     """GENERAL"""
     name: MS = mapped_column(String(100))
     time: MI = mapped_column(Integer)
-    country: MOS = mapped_column(String(30))
-    district: MOS = mapped_column(String(10))
-    state: MOS = mapped_column(String(10))
+    country: MOS = mapped_column(String(30), nullable=True)
+    district: MOS = mapped_column(String(10), nullable=True)
+    state: MOS = mapped_column(String(10), nullable=True)
     start_date: MS = mapped_column(String(10))
     end_date: MS = mapped_column(String(10))
 
@@ -43,23 +43,23 @@ class EventORM(Base, ModelORM):
     status: MS = mapped_column(String(10))
 
     # -1 = upcoming event, 0 = schedule release, x = match x concluded
-    current_match: MOI = mapped_column(Integer, nullable=True)
-    qual_matches: MOI = mapped_column(Integer, nullable=True)
+    current_match: MOI = mapped_column(Integer, nullable=True, default=None)
+    qual_matches: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """EPA"""
-    epa_max: MOF = mapped_column(Float, nullable=True)
-    epa_top8: MOF = mapped_column(Float, nullable=True)
-    epa_top24: MOF = mapped_column(Float, nullable=True)
-    epa_mean: MOF = mapped_column(Float, nullable=True)
-    epa_sd: MOF = mapped_column(Float, nullable=True)
+    epa_max: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_top8: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_top24: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_sd: MOF = mapped_column(Float, nullable=True, default=None)
 
     """STATS"""
-    epa_acc: MOF = mapped_column(Float, nullable=True)
-    epa_mse: MOF = mapped_column(Float, nullable=True)
-    rp_1_acc: MOF = mapped_column(Float, nullable=True)
-    rp_1_mse: MOF = mapped_column(Float, nullable=True)
-    rp_2_acc: MOF = mapped_column(Float, nullable=True)
-    rp_2_mse: MOF = mapped_column(Float, nullable=True)
+    epa_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_mse: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_mse: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_mse: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Event = generate_attr_class("Event", EventORM)
@@ -77,3 +77,36 @@ class Event(_Event, Model):
     def __str__(self: "Event") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.key}_{self.status}_{self.current_match}_{self.qual_matches}"
+
+
+def create_event_obj(
+    key: str,
+    year: int,
+    name: str,
+    time: int,
+    country: Optional[str],
+    district: Optional[str],
+    state: Optional[str],
+    start_date: str,
+    end_date: str,
+    type: int,
+    week: int,
+    video: Optional[str],
+    status: str,
+) -> Event:
+    return Event(
+        key=key,
+        year=year,
+        name=name,
+        time=time,
+        country=country,
+        district=district,
+        state=state,
+        start_date=start_date,
+        end_date=end_date,
+        type=type,
+        week=week,
+        offseason=type > 10,
+        video=video,
+        status=status,
+    )

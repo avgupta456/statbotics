@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, TypeVar, Type
+from typing import Any, List, Optional, Type, TypeVar
 
 from src.db.models.main import Model, ModelORM
 

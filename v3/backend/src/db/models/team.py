@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
 
@@ -12,33 +14,35 @@ class TeamORM(Base, ModelORM):
     __tablename__ = "teams"
     team: MS = mapped_column(String(6), index=True, primary_key=True)
 
-    """GENERAL"""
+    """NO DEFAULTS"""
     name: MS = mapped_column(String(100))
-    offseason: MB = mapped_column(Boolean)
-    country: MOS = mapped_column(String(30))
-    district: MOS = mapped_column(String(10))
-    state: MOS = mapped_column(String(10))
-    rookie_year: MOI = mapped_column(Integer)
-    active: MB = mapped_column(Boolean)
+    country: MOS = mapped_column(String(30), nullable=True)
+    state: MOS = mapped_column(String(10), nullable=True)
+    rookie_year: MOI = mapped_column(Integer, nullable=True)
+
+    """GENERAL"""
+    offseason: MB = mapped_column(Boolean, default=True)
+    district: MOS = mapped_column(String(10), nullable=True, default=None)
+    active: MB = mapped_column(Boolean, default=False)
 
     """EPA"""
-    norm_epa: MOF = mapped_column(Float)
-    norm_epa_recent: MOF = mapped_column(Float)
-    norm_epa_mean: MOF = mapped_column(Float)
-    norm_epa_max: MOF = mapped_column(Float)
+    norm_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_recent: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     """STATS"""
-    wins: MI = mapped_column(Integer)
-    losses: MI = mapped_column(Integer)
-    ties: MI = mapped_column(Integer)
-    count: MI = mapped_column(Integer)
-    winrate: MF = mapped_column(Float)
+    wins: MI = mapped_column(Integer, default=0)
+    losses: MI = mapped_column(Integer, default=0)
+    ties: MI = mapped_column(Integer, default=0)
+    count: MI = mapped_column(Integer, default=0)
+    winrate: MF = mapped_column(Float, default=0)
 
-    full_wins: MI = mapped_column(Integer)
-    full_losses: MI = mapped_column(Integer)
-    full_ties: MI = mapped_column(Integer)
-    full_count: MI = mapped_column(Integer)
-    full_winrate: MF = mapped_column(Float)
+    full_wins: MI = mapped_column(Integer, default=0)
+    full_losses: MI = mapped_column(Integer, default=0)
+    full_ties: MI = mapped_column(Integer, default=0)
+    full_count: MI = mapped_column(Integer, default=0)
+    full_winrate: MF = mapped_column(Float, default=0)
 
 
 _Team = generate_attr_class("Team", TeamORM)
@@ -51,3 +55,15 @@ class Team(_Team, Model):
     def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.count}"
+
+
+def create_team_obj(
+    team: str,
+    name: str,
+    country: Optional[str],
+    state: Optional[str],
+    rookie_year: Optional[int],
+) -> Team:
+    return Team(
+        team=team, name=name, country=country, state=state, rookie_year=rookie_year
+    )

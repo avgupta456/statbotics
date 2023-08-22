@@ -27,4 +27,4 @@ def remove_teams_with_no_events() -> None:
             (TeamORM.team.notin_(teams)) & (TeamORM.rookie_year != CURR_YEAR)
         ).delete()
 
-    return run_transaction(Session, callback)  # type: ignore
+    run_transaction(Session, callback)

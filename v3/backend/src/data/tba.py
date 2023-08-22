@@ -9,14 +9,16 @@ from src.db.functions import (
     update_team_districts,
     update_team_offseason,
 )
-from src.db.models import ETag, Event, Team
-from src.db.models.create import (
+from src.db.models import (
+    ETag,
+    Event,
+    Team,
     create_event_obj,
-    create_match_obj,
     create_team_event_obj,
     create_team_obj,
     create_team_year_obj,
     create_year_obj,
+    match_dict_to_objs,
 )
 from src.tba.constants import DISTRICT_MAPPING, YEAR_BLACKLIST
 from src.tba.read_tba import (
@@ -81,7 +83,7 @@ def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
 
 
 def create_objs(year: int) -> objs_type:
-    return (create_year_obj({"year": year}), {}, {}, {}, {}, {}, {}, {})
+    return (create_year_obj(year=year), {}, {}, {}, {}, {}, {}, {})
 
 
 """
@@ -203,7 +205,24 @@ def process_year(
     )
 
     for event in events:
-        event_objs_dict[event["key"]] = create_event_obj(event)
+        key = event["key"]
+        curr_obj = event_objs_dict.get(key, None)
+        curr_status = curr_obj.status if curr_obj is not None else None
+        event_objs_dict[key] = create_event_obj(
+            key=key,
+            year=year_num,
+            name=event["name"],
+            time=event["time"],
+            country=event["country"],
+            district=event["district"],
+            state=event["state"],
+            start_date=event["start_date"],
+            end_date=event["end_date"],
+            type=event["type"],
+            week=event["week"],
+            video=event["video"],
+            status=curr_status or "Upcoming",
+        )
 
     for event_obj in event_objs_dict.values():
         if partial:
@@ -292,15 +311,21 @@ def process_year(
                 match["year"] = year_num
                 match["week"] = event_obj.week
                 match["offseason"] = event_obj.offseason
-                match_obj, curr_alliance_objs, curr_team_match_objs = create_match_obj(
-                    match
-                )
+
+                (
+                    match_obj,
+                    curr_alliance_objs,
+                    curr_team_match_objs,
+                ) = match_dict_to_objs(match)
+
                 current_match += match_obj.status == "Completed"
                 qual_matches += not match_obj.playoff
+
                 # Replace even if present, since may be Upcoming -> Completed
                 match_objs_dict[match_obj.key] = match_obj
                 for alliance_obj in curr_alliance_objs:
                     alliance_objs_dict[alliance_obj.pk()] = alliance_obj
+
                 for team_match_obj in curr_team_match_objs:
                     add_team_event(team_match_obj.team, event_obj.offseason)
                     team_match_objs_dict[team_match_obj.pk()] = team_match_obj
@@ -314,24 +339,24 @@ def process_year(
         for team in event_teams:
             team_obj = teams_dict.get(team, default_team)
             team_event_obj = create_team_event_obj(
-                {
-                    "team": team,
-                    "year": year_num,
-                    "event": event_key,
-                    "time": event_time,
-                    "team_name": team_obj.name,
-                    "event_name": event_obj.name,
-                    "offseason": event_obj.offseason,
-                    "state": event_obj.state,
-                    "country": event_obj.country,
-                    "district": event_obj.district,
-                    "type": event_obj.type,
-                    "week": event_obj.week,
-                    "status": event_status,
-                    "rank": rankings.get(team, -1),
-                    "num_teams": len(rankings),
-                }
+                team=team,
+                year=year_num,
+                event=event_key,
+                time=event_time,
+                offseason=event_obj.offseason,
+                team_name=team_obj.name,
+                event_name=event_obj.name,
+                country=event_obj.country,
+                district=event_obj.district,
+                state=event_obj.state,
+                type=event_obj.type,
+                week=event_obj.week,
+                status=event_status,
+                first_event=False,
+                num_teams=len(rankings),
             )
+            if team in rankings:
+                team_event_obj.rank = rankings[team]
             team_event_objs_dict[team_event_obj.pk()] = team_event_obj
 
         event_obj.current_match = current_match
@@ -349,19 +374,17 @@ def process_year(
         is_competing = team_is_competing_dict[team]
         next_event = team_next_event_dict[team]
         team_year_obj = create_team_year_obj(
-            {
-                "year": year_num,
-                "team": team,
-                "offseason": offseason_teams[team],
-                "name": team_obj.name,
-                "state": team_obj.state,
-                "country": team_obj.country,
-                "district": district_teams[team],
-                "is_competing": is_competing,
-                "next_event_key": next_event[0],
-                "next_event_name": next_event[1],
-                "next_event_week": next_event[2],
-            }
+            year=year_num,
+            team=team,
+            offseason=offseason_teams[team],
+            name=team_obj.name,
+            state=team_obj.state,
+            country=team_obj.country,
+            district=team_obj.country,
+            is_competing=is_competing,
+            next_event_key=next_event[0],
+            next_event_name=next_event[1],
+            next_event_week=next_event[2],
         )
         team_year_objs_dict[team_year_obj.pk()] = team_year_obj
 

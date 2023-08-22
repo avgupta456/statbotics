@@ -142,3 +142,7 @@ class Year(_Year, Model):
     def __str__(self: "Year") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.year}_{self.count}"
+
+
+def create_year_obj(year: int) -> Year:
+    return Year(year=year)

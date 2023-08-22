@@ -34,13 +34,15 @@ T2 = TypeVar("T2", bound=ModelORM)
 
 def generate_attr_class(name: str, sqlalchemy_model: Type[T2]) -> Type[T2]:
     columns = inspect(sqlalchemy_model).columns  # type: ignore
-    fields = {column.name: attr.ib() for column in columns}
 
-    out_class = attr.make_class(
+    fields = {
+        c.name: attr.ib(default=None if c.default is None else c.default.arg)
+        for c in columns
+    }
+
+    return attr.make_class(  # type: ignore
         name, attrs=fields, bases=(Model,), auto_attribs=True, slots=True
     )
-
-    return out_class  # type: ignore
 
 
 TModelORM = TypeVar("TModelORM", bound=ModelORM)

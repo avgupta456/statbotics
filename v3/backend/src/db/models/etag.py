@@ -21,3 +21,7 @@ _ETag = generate_attr_class("ETag", ETagORM)
 class ETag(_ETag, Model):
     def pk(self: "ETag") -> str:
         return f"{self.year}-{self.path}"
+
+
+def create_etag_obj(year: int, path: str, etag: str) -> ETag:
+    return ETag(year=year, path=path, etag=etag)
