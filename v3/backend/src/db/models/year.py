@@ -13,7 +13,6 @@ class YearORM(Base, ModelORM):
     year: MI = mapped_column(Integer, index=True, primary_key=True)
 
     """CONSTANTS"""
-    # TODO: enforce consistent order of score mean, score sd, no_foul, foul, auto, teleop, endgame, rp_1, rp_2, comps
     score_mean: MF = mapped_column(Float, default=0)
     score_sd: MF = mapped_column(Float, default=0)
     foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
@@ -33,6 +32,7 @@ class YearORM(Base, ModelORM):
     comp_8_mean: MOF = mapped_column(Float, nullable=True, default=None)
     comp_9_mean: MOF = mapped_column(Float, nullable=True, default=None)
     comp_10_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    tiebreaker_mean: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     epa_1p: MOF = mapped_column(Float, nullable=True, default=None)

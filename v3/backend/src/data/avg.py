@@ -27,14 +27,15 @@ def process_year(year: Year, alliances: List[Alliance]) -> Year:
     comp_8_arr: List[float] = []
     comp_9_arr: List[float] = []
     comp_10_arr: List[float] = []
+    tiebreaker_arr: List[float] = []
 
     for alliance in week_one_alliances:
         score_arr.append(alliance.score or 0)
-        no_foul_arr.append(alliance.no_foul_points or 0)
-        foul_arr.append(alliance.foul_points or 0)
-        auto_arr.append(alliance.auto_points or 0)
-        teleop_arr.append(alliance.teleop_points or 0)
-        endgame_arr.append(alliance.endgame_points or 0)
+        no_foul_arr.append(alliance.no_foul or 0)
+        foul_arr.append(alliance.foul or 0)
+        auto_arr.append(alliance.auto or 0)
+        teleop_arr.append(alliance.teleop or 0)
+        endgame_arr.append(alliance.endgame or 0)
         rp_1_arr.append(alliance.rp_1 or 0)
         rp_2_arr.append(alliance.rp_2 or 0)
         comp_1_arr.append(alliance.comp_1 or 0)
@@ -47,6 +48,7 @@ def process_year(year: Year, alliances: List[Alliance]) -> Year:
         comp_8_arr.append(alliance.comp_8 or 0)
         comp_9_arr.append(alliance.comp_9 or 0)
         comp_10_arr.append(alliance.comp_10 or 0)
+        tiebreaker_arr.append(alliance.tiebreaker or 0)
 
     if len(score_arr) > 0:
         year.score_mean = round(sum(score_arr) / len(score_arr), 2)
@@ -68,24 +70,6 @@ def process_year(year: Year, alliances: List[Alliance]) -> Year:
         year.comp_8_mean = round(sum(comp_8_arr) / len(comp_8_arr), 2)
         year.comp_9_mean = round(sum(comp_9_arr) / len(comp_9_arr), 2)
         year.comp_10_mean = round(sum(comp_10_arr) / len(comp_10_arr), 2)
-
-    if year.year < 2016:
-        year.no_foul_mean = None
-        year.foul_mean = None
-        year.auto_mean = None
-        year.teleop_mean = None
-        year.endgame_mean = None
-        year.rp_1_mean = None
-        year.rp_2_mean = None
-        year.comp_1_mean = None
-        year.comp_2_mean = None
-        year.comp_3_mean = None
-        year.comp_4_mean = None
-        year.comp_5_mean = None
-        year.comp_6_mean = None
-        year.comp_7_mean = None
-        year.comp_8_mean = None
-        year.comp_9_mean = None
-        year.comp_10_mean = None
+        year.tiebreaker_mean = round(sum(tiebreaker_arr) / len(tiebreaker_arr), 2)
 
     return year

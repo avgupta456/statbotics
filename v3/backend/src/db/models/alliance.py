@@ -47,15 +47,13 @@ class AllianceORM(Base, ModelORM):
     official_winner: MOS = mapped_column(String(4), nullable=True, default=None)
     winner: MOS = mapped_column(String(4), nullable=True, default=None)
     score: MOI = mapped_column(Integer, nullable=True, default=None)
-    no_foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    auto_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    teleop_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    endgame_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    auto: MOI = mapped_column(Integer, nullable=True, default=None)
+    teleop: MOI = mapped_column(Integer, nullable=True, default=None)
+    endgame: MOI = mapped_column(Integer, nullable=True, default=None)
     rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
-    tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
-
     comp_1: MOF = mapped_column(Float, nullable=True, default=None)
     comp_2: MOF = mapped_column(Float, nullable=True, default=None)
     comp_3: MOF = mapped_column(Float, nullable=True, default=None)
@@ -66,6 +64,7 @@ class AllianceORM(Base, ModelORM):
     comp_8: MOF = mapped_column(Float, nullable=True, default=None)
     comp_9: MOF = mapped_column(Float, nullable=True, default=None)
     comp_10: MOF = mapped_column(Float, nullable=True, default=None)
+    tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     # TODO: implement all of these, make non-nullable
@@ -107,7 +106,7 @@ class Alliance(_Alliance, Model):
 
     def __str__(self: "Alliance") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.match}_{self.alliance}_{self.score}_{self.teleop_points}_{self.epa_sum}"
+        return f"{self.match}_{self.alliance}_{self.score}_{self.teleop}_{self.epa_sum}"
 
     """HELPER FUNCTIONS"""
 
