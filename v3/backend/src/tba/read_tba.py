@@ -226,14 +226,14 @@ def get_matches(
             elif blue_score > red_score:
                 winner = "blue"
             else:
-                winner = "draw"
+                winner = "tie"
 
             if match["winning_alliance"] == "red":
                 official_winner = "red"
             elif match["winning_alliance"] == "blue":
                 official_winner = "blue"
             elif match["winning_alliance"] == "" and red_score == blue_score:
-                official_winner = "draw"
+                official_winner = "tie"
 
             if year == 2015 and match["comp_level"] != "f":
                 official_winner = None

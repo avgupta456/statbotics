@@ -277,8 +277,8 @@ async function indexSim(
     currTiebreakers[teamEvent.num] = [];
   }
 
-  const redResultToRPs = { red: 2, draw: 1, blue: 0 };
-  const blueResultToRPs = { red: 0, draw: 1, blue: 2 };
+  const redResultToRPs = { red: 2, tie: 1, blue: 0 };
+  const blueResultToRPs = { red: 0, tie: 1, blue: 2 };
   for (let i = 0; i < index; i++) {
     const match = qualMatches[i];
     const redRPs = match.red_rp_1 + match.red_rp_2 + redResultToRPs[match.winner];

@@ -66,7 +66,7 @@ class MatchORM(Base, ModelORM):
     blue_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
-    epa_winner: MS = mapped_column(String(4), default="draw")
+    epa_winner: MS = mapped_column(String(4), default="tie")
     epa_win_prob: MF = mapped_column(Float, default=0.5)
     red_epa_sum: MF = mapped_column(Float, default=0)
     blue_epa_sum: MF = mapped_column(Float, default=0)

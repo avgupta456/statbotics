@@ -330,8 +330,8 @@ def process_year(
             continue
 
         winner = match.winner or "red"  # in practice, never None
-        red_mapping = {"red": 0, "blue": 1, "draw": 2}
-        blue_mapping = {"blue": 0, "red": 1, "draw": 2}
+        red_mapping = {"red": 0, "blue": 1, "tie": 2}
+        blue_mapping = {"blue": 0, "red": 1, "tie": 2}
 
         # UPDATE EPA
         weight = ELIM_WEIGHT if match.elim else 1
@@ -429,7 +429,7 @@ def process_year(
                 if not match.elim and not offseason_event:
                     team_counts[t] += 1  # for EPA calculation
 
-        win_probs = {"red": 1, "blue": 0, "draw": 0.5}
+        win_probs = {"red": 1, "blue": 0, "tie": 0.5}
         new_acc = 1 if winner == match.epa_winner else 0
         new_mse = (win_probs[winner] - match.epa_win_prob) ** 2
         _a, _m, _c = event_stats[event_key]
