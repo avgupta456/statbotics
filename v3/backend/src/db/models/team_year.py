@@ -31,8 +31,7 @@ class TeamYearORM(Base, ModelORM):
     state: MOS = mapped_column(String(10))
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
-    # TODO: replace is_competing with better method or at least rename
-    is_competing: MB = mapped_column(Boolean)
+    competing_this_week: MB = mapped_column(Boolean)
     next_event_key: MOS = mapped_column(String(10), nullable=True)
     next_event_name: MOS = mapped_column(String(100), nullable=True)
     next_event_week: MOI = mapped_column(Integer, nullable=True)

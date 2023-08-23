@@ -173,7 +173,7 @@ def process_year(
     # TODO: can this handle offseason teams? Should we set the offseason flag?
     default_team = Team(team="", name="", country=None, state=None, rookie_year=None)
 
-    team_is_competing_dict: Dict[str, bool] = defaultdict(lambda: False)
+    team_competing_this_week_dict: Dict[str, bool] = defaultdict(lambda: False)
     team_next_event_dict: Dict[
         str, Tuple[Optional[str], Optional[str], Optional[int]]
     ] = defaultdict(lambda: (None, None, None))
@@ -275,7 +275,7 @@ def process_year(
 
             # Stores whether a team is competing this week
             if event_year == CURR_YEAR and event_week == CURR_WEEK:
-                team_is_competing_dict[team] = True
+                team_competing_this_week_dict[team] = True
 
             # Store closest upcoming/ongoing event
             if event_week >= CURR_WEEK and event_status != "Completed":
@@ -372,7 +372,7 @@ def process_year(
 
     for team in offseason_teams:
         team_obj = teams_dict.get(team, default_team)
-        is_competing = team_is_competing_dict[team]
+        competing_this_week = team_competing_this_week_dict[team]
         next_event = team_next_event_dict[team]
         team_year_obj = TeamYear(
             id=None,
@@ -383,7 +383,7 @@ def process_year(
             state=team_obj.state,
             country=team_obj.country,
             district=district_teams[team],
-            is_competing=is_competing,
+            competing_this_week=competing_this_week,
             next_event_key=next_event[0],
             next_event_name=next_event[1],
             next_event_week=next_event[2],
