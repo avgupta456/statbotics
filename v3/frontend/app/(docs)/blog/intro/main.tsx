@@ -152,8 +152,8 @@ const PageContent = () => {
             <li>
               <strong>Quals vs Elims</strong>: The EPA model weighs qualification matches more than
               elimination matches. This is because elimination matches are all played with the same
-              alliance, making it difficult to attribute playoff success or failure to a single
-              team. Use the eye test to determine which teams perform best when the pressure is on.
+              alliance, making it difficult to attribute elim success or failure to a single team.
+              Use the eye test to determine which teams perform best when the pressure is on.
             </li>
             <li>
               <strong>Season Progress</strong>: The EPA model is designed to quickly adapt to a

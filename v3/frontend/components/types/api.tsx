@@ -175,7 +175,7 @@ export type APIMatch = {
   comp_level: string;
   set_number: number;
   match_number: number;
-  playoff: boolean;
+  elim: boolean;
   red: number[];
   blue: number[];
   red_surrogates: number[];
@@ -226,8 +226,8 @@ export type APITeamMatch = {
   alliance: string;
   match: string;
   time: number;
-  playoff: boolean;
-  match_number: number; // quals only
+  elim: boolean;
+  match_number: number; // qual only
   total_epa: number;
   auto_epa: number;
   teleop_epa: number;
@@ -242,7 +242,7 @@ export const emptyAPITeamMatch: APITeamMatch = {
   alliance: "",
   match: "",
   time: 0,
-  playoff: false,
+  elim: false,
   match_number: 0,
   total_epa: 0,
   auto_epa: 0,

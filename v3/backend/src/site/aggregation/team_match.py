@@ -14,7 +14,7 @@ def unpack_team_match(team_match: TeamMatch) -> APITeamMatch:
         alliance=team_match.alliance,
         match=team_match.match,
         time=team_match.time,
-        playoff=team_match.playoff,
+        elim=team_match.elim,
         match_number=get_match_number(team_match.match),
         total_epa=team_match.epa or 0,
         auto_epa=team_match.auto_epa or 0,

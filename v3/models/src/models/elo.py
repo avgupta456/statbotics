@@ -92,11 +92,11 @@ class Elo(Model):
         rp_1_update = attrib.breakdown["rp_1"] - self.rp_1[team]
         rp_2_update = attrib.breakdown["rp_2"] - self.rp_2[team]
 
-        weight = 1 / 3 if match.playoff else 1
+        weight = 1 / 3 if match.elim else 1
 
         self.elo[team] += 72 / 250 * weight * update
 
-        if not match.playoff:
+        if not match.elim:
             self.rp_1[team] += 72 / 250 * weight * rp_1_update
             self.rp_2[team] += 72 / 250 * weight * rp_2_update
 

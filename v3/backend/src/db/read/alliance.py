@@ -15,7 +15,7 @@ def get_alliances(
     match: Optional[str] = None,
     alliance: Optional[str] = None,
     week: Optional[int] = None,
-    elims: Optional[bool] = None,
+    elim: Optional[bool] = None,
     offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
@@ -41,8 +41,8 @@ def get_alliances(
             data = data.filter(AllianceORM.alliance == alliance)
         if week is not None:
             data = data.filter(AllianceORM.week == week)
-        if elims is not None:
-            data = data.filter(AllianceORM.playoff == elims)
+        if elim is not None:
+            data = data.filter(AllianceORM.elim == elim)
         if offseason is not None:
             data = data.filter(AllianceORM.offseason == offseason)
 

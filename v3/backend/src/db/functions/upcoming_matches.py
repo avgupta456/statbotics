@@ -15,7 +15,7 @@ def get_upcoming_matches(
     country: Optional[str],
     state: Optional[str],
     district: Optional[str],
-    playoff: Optional[bool],
+    elim: Optional[bool],
     minutes: int,
     limit: int,
     metric: str,
@@ -57,8 +57,8 @@ def get_upcoming_matches(
         elif district is not None:
             matches = matches.filter(EventORM.district == district)
 
-        if playoff is not None:
-            matches = matches.filter(MatchORM.playoff == playoff)
+        if elim is not None:
+            matches = matches.filter(MatchORM.elim == elim)
 
         if metric in ["max_epa", "sum_epa"]:
             # sort desc

@@ -61,7 +61,7 @@ class Metrics:
     @staticmethod
     def add_metadata(metrics: Dict[str, float], match: Match) -> Dict[str, float]:
         metrics["week"] = match.week
-        metrics["playoff"] = match.playoff
+        metrics["elim"] = match.elim
         return metrics
 
     @staticmethod
@@ -118,7 +118,7 @@ class Metrics:
         blue_pred = Metrics.cont(m.blue_score, p.blue_score)
         self.score_pred[m.key + "_blue"] = Metrics.add_metadata(blue_pred, m)
 
-        if not m.playoff:
+        if not m.elim:
             rp_1_pred = Metrics.binary(m.red_rp_1, max(min(p.red_rp_1, 1 - EPS), EPS))
             self.rp_1_pred[m.key + "_red"] = Metrics.add_metadata(rp_1_pred, m)
 
@@ -137,11 +137,11 @@ class Metrics:
         rp1 = self.rp_1_pred.values()
         rp2 = self.rp_2_pred.values()
 
-        def champs_filter(x: Any):
+        def champ_filter(x: Any):
             return x["week"] == 8
 
-        def champs_elims_filter(x: Any):
-            return x["week"] == 8 and x["playoff"]
+        def champ_elim_filter(x: Any):
+            return x["week"] == 8 and x["elim"]
 
         return {
             "all": {
@@ -150,16 +150,16 @@ class Metrics:
                 "rp_1_pred": Metrics.agg_binary(list(rp1)),
                 "rp_2_pred": Metrics.agg_binary(list(rp2)),
             },
-            "champs": {
-                "win_pred": Metrics.agg_binary(list(filter(champs_filter, wp))),
-                "score_pred": Metrics.agg_cont(list(filter(champs_filter, sp))),
-                "rp_1_pred": Metrics.agg_binary(list(filter(champs_filter, rp1))),
-                "rp_2_pred": Metrics.agg_binary(list(filter(champs_filter, rp2))),
+            "champ": {
+                "win_pred": Metrics.agg_binary(list(filter(champ_filter, wp))),
+                "score_pred": Metrics.agg_cont(list(filter(champ_filter, sp))),
+                "rp_1_pred": Metrics.agg_binary(list(filter(champ_filter, rp1))),
+                "rp_2_pred": Metrics.agg_binary(list(filter(champ_filter, rp2))),
             },
-            "champs_elims": {
-                "win_pred": Metrics.agg_binary(list(filter(champs_elims_filter, wp))),
-                "score_pred": Metrics.agg_cont(list(filter(champs_elims_filter, sp))),
-                "rp_1_pred": Metrics.agg_binary(list(filter(champs_elims_filter, rp1))),
-                "rp_2_pred": Metrics.agg_binary(list(filter(champs_elims_filter, rp2))),
+            "champ_elim": {
+                "win_pred": Metrics.agg_binary(list(filter(champ_elim_filter, wp))),
+                "score_pred": Metrics.agg_cont(list(filter(champ_elim_filter, sp))),
+                "rp_1_pred": Metrics.agg_binary(list(filter(champ_elim_filter, rp1))),
+                "rp_2_pred": Metrics.agg_binary(list(filter(champ_elim_filter, rp2))),
             },
         }

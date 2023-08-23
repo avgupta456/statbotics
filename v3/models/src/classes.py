@@ -7,7 +7,7 @@ class Match:
     event: str
     week: int
     year: int
-    playoff: bool
+    elim: bool
     time: int
     red_1: int
     red_2: int
@@ -33,7 +33,7 @@ class Match:
         event: str,
         week: int,
         year: int,
-        playoff: bool,
+        elim: bool,
         time: int,
         red_1: int,
         red_2: int,
@@ -56,7 +56,7 @@ class Match:
         self.event = event
         self.week = week
         self.year = year
-        self.playoff = playoff
+        self.elim = elim
         self.time = time
         self.red_1 = red_1
         self.red_2 = red_2

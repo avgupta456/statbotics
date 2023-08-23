@@ -75,14 +75,14 @@ class EPAV2(Model):
             breakdowns.append(pred_mean)
 
         year = self.stats.year
-        playoff = match.playoff
+        elim = match.elim
 
         red_score = get_score_from_breakdown(
-            year, breakdowns[0], breakdowns[1], rp_1s[0], rp_2s[0], playoff
+            year, breakdowns[0], breakdowns[1], rp_1s[0], rp_2s[0], elim
         )
 
         blue_score = get_score_from_breakdown(
-            year, breakdowns[1], breakdowns[0], rp_1s[1], rp_2s[1], playoff
+            year, breakdowns[1], breakdowns[0], rp_1s[1], rp_2s[1], elim
         )
 
         # Could also use variance to get win probability
@@ -122,20 +122,20 @@ class EPAV2(Model):
             for t in teams:
                 attrib = self.epas[t].mean + (bd - pred_bd) / 3
                 attrib = post_process_attrib(
-                    year, self.epas[t].mean, attrib, match.playoff
+                    year, self.epas[t].mean, attrib, match.elim
                 )
                 out[t] = Attribution(attrib[0], attrib)
 
         return out
 
     def update_team(self, team: int, attrib: Attribution, match: Match) -> None:
-        weight = 1 / 3 if match.playoff else 1
+        weight = 1 / 3 if match.elim else 1
         percent = self.percent_func(self.counts[team])
         alpha = percent * weight
 
         self.epas[team].add_obs(attrib.breakdown, alpha)
 
-        if not match.playoff:
+        if not match.elim:
             self.counts[team] += 1
 
     def end_season(self) -> None:

@@ -52,7 +52,7 @@ YEAR_ONE_WEIGHT = 0.7
 MEAN_REVERSION = 0.4
 INIT_PENALTY = 0.2
 
-PLAYOFF_WEIGHT = 1 / 3
+ELIM_WEIGHT = 1 / 3
 MIN_RP_EPA = -1 / 3
 RP_PERCENT = 0.3
 
@@ -221,19 +221,19 @@ def process_year(
     qual_team_event_stats: Dict[str, List[int]] = defaultdict(lambda: [0, 0, 0, 0, 0])
 
     acc, mse, count = 0, 0, 0
-    quals_acc, quals_mse, quals_count = 0, 0, 0
-    elims_acc, elims_mse, elims_count = 0, 0, 0
-    champs_acc, champs_mse, champs_count = 0, 0, 0
+    qual_acc, qual_mse, qual_count = 0, 0, 0
+    elim_acc, elim_mse, elim_count = 0, 0, 0
+    champ_acc, champ_mse, champ_count = 0, 0, 0
     event_stats: Dict[str, Tuple[float, float, int]] = defaultdict(lambda: (0, 0, 0))
 
     rp_1_acc, rp_1_mse, rp_1_count = 0, 0, 0
-    champs_rp_1_acc, champs_rp_1_mse, champs_rp_1_count = 0, 0, 0
+    champ_rp_1_acc, champ_rp_1_mse, champ_rp_1_count = 0, 0, 0
     rp_1_event_stats: Dict[str, Tuple[float, float, int]] = defaultdict(
         lambda: (0, 0, 0)
     )
 
     rp_2_acc, rp_2_mse, rp_2_count = 0, 0, 0
-    champs_rp_2_acc, champs_rp_2_mse, champs_rp_2_count = 0, 0, 0
+    champ_rp_2_acc, champ_rp_2_mse, champ_rp_2_count = 0, 0, 0
     rp_2_event_stats: Dict[str, Tuple[float, float, int]] = defaultdict(
         lambda: (0, 0, 0)
     )
@@ -317,13 +317,13 @@ def process_year(
             for t in teams:
                 team_event_key = get_team_event_key(t, event_key)
                 if team_event_key not in team_events_dict:
-                    team_events_dict[team_event_key] = [(epa_dict[t], match.playoff)]
+                    team_events_dict[team_event_key] = [(epa_dict[t], match.elim)]
                     if USE_COMPONENTS:
                         temp_epas = component_team_match_ids[
                             get_team_match_key(t, match.key)
                         ]
                         component_team_events_dict[team_event_key] = [
-                            (*temp_epas, match.playoff)
+                            (*temp_epas, match.elim)
                         ]
 
         if match.status != "Completed":
@@ -334,7 +334,7 @@ def process_year(
         blue_mapping = {"blue": 0, "red": 1, "draw": 2}
 
         # UPDATE EPA
-        weight = PLAYOFF_WEIGHT if match.playoff else 1
+        weight = ELIM_WEIGHT if match.elim else 1
         red_score = match.red_no_foul or match.red_score or 0
         red_pred = match.red_epa_sum
         blue_score = match.blue_no_foul or match.blue_score or 0
@@ -347,7 +347,7 @@ def process_year(
         blue_dqs = match.get_blue_dqs()
 
         # If either, do not update EPA values
-        playoff_dq = match.playoff and (len(red_dqs) == 3 or len(blue_dqs) == 3)
+        elim_dq = match.elim and (len(red_dqs) == 3 or len(blue_dqs) == 3)
         offseason_event = event_types[match.event] > 10
 
         for (
@@ -398,13 +398,13 @@ def process_year(
                 error = (my_error - margin * opp_error) / (1 + margin)
                 new_epa = max(0, epa_pre[t] + weight * percent * error / NUM_TEAMS)
 
-                # Skip EPA update for playoff DQs
-                if playoff_dq or offseason_event:
+                # Skip EPA update for elim DQs
+                if elim_dq or offseason_event:
                     new_epa = epa_pre[t]
 
                 team_epas[t] = new_epa
                 team_event_key = get_team_event_key(t, event_key)
-                team_events_dict[team_event_key].append((new_epa, match.playoff))
+                team_events_dict[team_event_key].append((new_epa, match.elim))
                 team_matches_dict[t].append(new_epa)
                 team_match_ids_post[get_team_match_key(t, match.key)] = new_epa
 
@@ -418,7 +418,7 @@ def process_year(
                 team_event_stats[team_event_key][mapping[winner]] += 1
                 team_event_stats[team_event_key][3] += 1
 
-                if not match.playoff:
+                if not match.elim:
                     if t not in surrogates:  # Count win/loss/ties for all qual matches
                         qual_team_event_stats[team_event_key][mapping[winner]] += 1
                         qual_team_event_stats[team_event_key][4] += 1
@@ -426,7 +426,7 @@ def process_year(
                         rps = my_rp_1 + my_rp_2 + (2 if mapping[winner] == 0 else 0)
                         qual_team_event_stats[team_event_key][3] += rps
 
-                if not match.playoff and not offseason_event:
+                if not match.elim and not offseason_event:
                     team_counts[t] += 1  # for EPA calculation
 
         win_probs = {"red": 1, "blue": 0, "draw": 0.5}
@@ -441,20 +441,20 @@ def process_year(
         acc += new_acc
         mse += new_mse
         count += 1
-        if match.playoff:
-            elims_mse += new_mse
-            elims_acc += new_acc
-            elims_count += 1
+        if match.elim:
+            elim_mse += new_mse
+            elim_acc += new_acc
+            elim_count += 1
         else:
-            quals_mse += new_mse
-            quals_acc += new_acc
-            quals_count += 1
+            qual_mse += new_mse
+            qual_acc += new_acc
+            qual_count += 1
         if event_weeks[match.event] == 8:
-            champs_mse += new_mse
-            champs_acc += new_acc
-            champs_count += 1
+            champ_mse += new_mse
+            champ_acc += new_acc
+            champ_count += 1
 
-        if not match.playoff and USE_COMPONENTS:
+        if not match.elim and USE_COMPONENTS:
             rp_1_new_acc = 0
             rp_1_new_mse = 0
             if (match.red_rp_1 or 0) == round(match.red_rp_1_prob or 0):
@@ -488,46 +488,38 @@ def process_year(
             rp_2_count += 2
 
             if event_weeks[match.event] == 8:
-                champs_rp_1_mse += rp_1_new_mse
-                champs_rp_1_acc += rp_1_new_acc
-                champs_rp_1_count += 2
+                champ_rp_1_mse += rp_1_new_mse
+                champ_rp_1_acc += rp_1_new_acc
+                champ_rp_1_count += 2
 
-                champs_rp_2_mse += rp_2_new_mse
-                champs_rp_2_acc += rp_2_new_acc
-                champs_rp_2_count += 2
+                champ_rp_2_mse += rp_2_new_mse
+                champ_rp_2_acc += rp_2_new_acc
+                champ_rp_2_count += 2
 
     acc = None if count == 0 else round(acc / count, 4)
     mse = None if count == 0 else round(mse / count, 4)
-    elims_acc = None if elims_count == 0 else round(elims_acc / elims_count, 4)
-    elims_mse = None if elims_count == 0 else round(elims_mse / elims_count, 4)
-    quals_acc = None if quals_count == 0 else round(quals_acc / quals_count, 4)
-    quals_mse = None if quals_count == 0 else round(quals_mse / quals_count, 4)
-    champs_acc = None if champs_count == 0 else round(champs_acc / champs_count, 4)
-    champs_mse = None if champs_count == 0 else round(champs_mse / champs_count, 4)
+    elim_acc = None if elim_count == 0 else round(elim_acc / elim_count, 4)
+    elim_mse = None if elim_count == 0 else round(elim_mse / elim_count, 4)
+    qual_acc = None if qual_count == 0 else round(qual_acc / qual_count, 4)
+    qual_mse = None if qual_count == 0 else round(qual_mse / qual_count, 4)
+    champ_acc = None if champ_count == 0 else round(champ_acc / champ_count, 4)
+    champ_mse = None if champ_count == 0 else round(champ_mse / champ_count, 4)
 
     rp_1_acc = None if rp_1_count == 0 else round(rp_1_acc / rp_1_count, 4)
     rp_1_mse = None if rp_1_count == 0 else round(rp_1_mse / rp_1_count, 4)
     rp_2_acc = None if rp_2_count == 0 else round(rp_2_acc / rp_2_count, 4)
     rp_2_mse = None if rp_2_count == 0 else round(rp_2_mse / rp_2_count, 4)
-    champs_rp_1_acc = (
-        None
-        if champs_rp_1_count == 0
-        else round(champs_rp_1_acc / champs_rp_1_count, 4)
+    champ_rp_1_acc = (
+        None if champ_rp_1_count == 0 else round(champ_rp_1_acc / champ_rp_1_count, 4)
     )
-    champs_rp_1_mse = (
-        None
-        if champs_rp_1_count == 0
-        else round(champs_rp_1_mse / champs_rp_1_count, 4)
+    champ_rp_1_mse = (
+        None if champ_rp_1_count == 0 else round(champ_rp_1_mse / champ_rp_1_count, 4)
     )
-    champs_rp_2_acc = (
-        None
-        if champs_rp_2_count == 0
-        else round(champs_rp_2_acc / champs_rp_2_count, 4)
+    champ_rp_2_acc = (
+        None if champ_rp_2_count == 0 else round(champ_rp_2_acc / champ_rp_2_count, 4)
     )
-    champs_rp_2_mse = (
-        None
-        if champs_rp_2_count == 0
-        else round(champs_rp_2_mse / champs_rp_2_count, 4)
+    champ_rp_2_mse = (
+        None if champ_rp_2_count == 0 else round(champ_rp_2_mse / champ_rp_2_count, 4)
     )
 
     # TEAM MATCHES
@@ -567,8 +559,8 @@ def process_year(
         team_event.epa_max = round(max(epas), 2)
         team_event.epa_mean = round(sum(epas) / len(epas), 2)
         team_event.epa_diff = round(epas[-1] - epas[0], 2)
-        epa_pre_playoffs = epas[0] if len(qual_epas) == 0 else qual_epas[-1]
-        team_event.epa_pre_playoffs = round(epa_pre_playoffs, 2)
+        epa_pre_elim = epas[0] if len(qual_epas) == 0 else qual_epas[-1]
+        team_event.epa_pre_elim = round(epa_pre_elim, 2)
 
         if USE_COMPONENTS:
             # Default if no matches played
@@ -607,19 +599,19 @@ def process_year(
             team_event.auto_epa_end = round(auto_epas[-1], 2)
             team_event.auto_epa_max = round(max(auto_epas), 2)
             team_event.auto_epa_mean = round(sum(auto_epas) / len(auto_epas), 2)
-            auto_epa_pre_playoffs = auto_epas[0]
+            auto_epa_pre_elim = auto_epas[0]
             if len(auto_qual_epas) > 0:
-                auto_epa_pre_playoffs = auto_qual_epas[-1]
-            team_event.auto_epa_pre_playoffs = round(auto_epa_pre_playoffs, 2)
+                auto_epa_pre_elim = auto_qual_epas[-1]
+            team_event.auto_epa_pre_elim = round(auto_epa_pre_elim, 2)
 
             team_event.teleop_epa_start = round(teleop_epas[0], 2)
             team_event.teleop_epa_end = round(teleop_epas[-1], 2)
             team_event.teleop_epa_max = round(max(teleop_epas), 2)
             team_event.teleop_epa_mean = round(sum(teleop_epas) / len(teleop_epas), 2)
-            teleop_epa_pre_playoffs = teleop_epas[0]
+            teleop_epa_pre_elim = teleop_epas[0]
             if len(teleop_qual_epas) > 0:
-                teleop_epa_pre_playoffs = teleop_qual_epas[-1]
-            team_event.teleop_epa_pre_playoffs = round(teleop_epa_pre_playoffs, 2)
+                teleop_epa_pre_elim = teleop_qual_epas[-1]
+            team_event.teleop_epa_pre_elim = round(teleop_epa_pre_elim, 2)
 
             team_event.endgame_epa_start = round(endgame_epas[0], 2)
             team_event.endgame_epa_end = round(endgame_epas[-1], 2)
@@ -627,10 +619,10 @@ def process_year(
             team_event.endgame_epa_mean = round(
                 sum(endgame_epas) / len(endgame_epas), 2
             )
-            endgame_epa_pre_playoffs = endgame_epas[0]
+            endgame_epa_pre_elim = endgame_epas[0]
             if len(endgame_qual_epas) > 0:
-                endgame_epa_pre_playoffs = endgame_qual_epas[-1]
-            team_event.endgame_epa_pre_playoffs = round(endgame_epa_pre_playoffs, 2)
+                endgame_epa_pre_elim = endgame_qual_epas[-1]
+            team_event.endgame_epa_pre_elim = round(endgame_epa_pre_elim, 2)
 
             if len(rp_1_qual_epas) > 0:
                 team_event.rp_1_epa_start = round(rp_1_qual_epas[0], 4)
@@ -672,7 +664,7 @@ def process_year(
 
         event_epas: List[float] = []
         for team_event in event_team_events[event_key]:
-            event_epas.append(team_event.epa_pre_playoffs or 0)
+            event_epas.append(team_event.epa_pre_elim or 0)
         event_epas.sort(reverse=True)
 
         if len(event_epas) > 0 and max(event_epas) > 0:
@@ -940,15 +932,15 @@ def process_year(
         year.epa_acc = acc
         year.epa_mse = mse
         year.count = count
-        year.epa_elims_acc = elims_acc
-        year.epa_elims_mse = elims_mse
-        year.elims_count = elims_count
-        year.epa_quals_acc = quals_acc
-        year.epa_quals_mse = quals_mse
-        year.quals_count = quals_count
-        year.epa_champs_acc = champs_acc
-        year.epa_champs_mse = champs_mse
-        year.champs_count = champs_count
+        year.epa_elim_acc = elim_acc
+        year.epa_elim_mse = elim_mse
+        year.elim_count = elim_count
+        year.epa_qual_acc = qual_acc
+        year.epa_qual_mse = qual_mse
+        year.qual_count = qual_count
+        year.epa_champs_acc = champ_acc
+        year.epa_champs_mse = champ_mse
+        year.champs_count = champ_count
         year.rp_1_acc = rp_1_acc
         year.rp_1_mse = rp_1_mse
         year.rp_2_acc = rp_2_acc

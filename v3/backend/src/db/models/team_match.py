@@ -36,7 +36,7 @@ class TeamMatchORM(Base, ModelORM):
     time: MI = mapped_column(Integer)
     offseason: MB = mapped_column(Boolean)
     week: MI = mapped_column(Integer)
-    playoff: MB = mapped_column(Boolean)
+    elim: MB = mapped_column(Boolean)
 
     dq: MB = mapped_column(Boolean)
     surrogate: MB = mapped_column(Boolean)

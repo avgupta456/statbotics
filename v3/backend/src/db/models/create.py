@@ -9,7 +9,7 @@ from src.tba.read_tba import MatchDict
 def match_dict_to_objs(
     data: MatchDict, year: int, week: int, offseason: bool
 ) -> Tuple[Match, List[Alliance], List[TeamMatch]]:
-    playoff = data["comp_level"] != "qm"
+    elim = data["comp_level"] != "qm"
 
     red_breakdown = data["red_score_breakdown"]
     blue_breakdown = data["blue_score_breakdown"]
@@ -20,7 +20,7 @@ def match_dict_to_objs(
         event=data["event"],
         offseason=offseason,
         week=week,
-        playoff=playoff,
+        elim=elim,
         comp_level=data["comp_level"],
         set_number=data["set_number"],
         match_number=data["match_number"],
@@ -78,7 +78,7 @@ def match_dict_to_objs(
                 event=data["event"],
                 offseason=offseason,
                 week=week,
-                playoff=playoff,
+                elim=elim,
                 alliance_num=None,  # TODO: Implement alliance_num
                 time=data["time"],
                 status=data["status"],
@@ -125,7 +125,7 @@ def match_dict_to_objs(
                     time=data["time"],
                     offseason=offseason,
                     week=week,
-                    playoff=playoff,
+                    elim=elim,
                     dq=team in dq.split(","),
                     surrogate=team in surrogate.split(","),
                     status=data["status"],

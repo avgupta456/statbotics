@@ -94,7 +94,7 @@ def get_data(year: int) -> List[Any]:
             if red_score < 0 or blue_score < 0:
                 continue
 
-            # Skip playoff matches with DQ
+            # Skip elim matches with DQ
             if match["comp_level"] != "qm" and min(red_score, blue_score) <= 0:
                 continue
 
@@ -152,7 +152,7 @@ def get_data(year: int) -> List[Any]:
     rp_2s: List[int] = []
     breakdown: Dict[str, List[int]] = defaultdict(list)
     for match in all_matches:
-        if match.week == 1 and not match.playoff:
+        if match.week == 1 and not match.elim:
             scores.extend([match.red_score, match.blue_score])
             rp_1s.extend([match.red_rp_1, match.blue_rp_1])
             rp_2s.extend([match.red_rp_2, match.blue_rp_2])

@@ -71,9 +71,9 @@ const Page = () => {
       )}
       <p>
         where {renderMath("K")} is a constant that controls the amount of change. K is set to 12 for
-        qualification matches and 3 for playoff matches. Small adjustments are made to penalize
-        rookie teams and apply mean reversion year over year. For its relative simplicity, Elo has
-        proven to be a very effective model for FRC.
+        qualification matches and 3 for elim matches. Small adjustments are made to penalize rookie
+        teams and apply mean reversion year over year. For its relative simplicity, Elo has proven
+        to be a very effective model for FRC.
       </p>
       <h4>Point Unit Elo</h4>
       <p>

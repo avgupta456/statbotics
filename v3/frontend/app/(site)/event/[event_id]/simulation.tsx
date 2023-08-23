@@ -40,11 +40,11 @@ const detailedColumnHelper = createColumnHelper<any>();
 
 const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const scheduleReleased = data.matches.length > 0;
-  const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
+  const qualN = data.matches.filter((m) => m.status === "Completed" && !m.elim).length;
   const eventOngoing = data.event.status === "Ongoing";
 
-  const [index, setIndex] = useState(eventOngoing ? qualsN : -1);
-  const [finalIndex, setFinalIndex] = useState(eventOngoing ? qualsN : -1);
+  const [index, setIndex] = useState(eventOngoing ? qualN : -1);
+  const [finalIndex, setFinalIndex] = useState(eventOngoing ? qualN : -1);
   const [simCount, setSimCount] = useState(1000);
   const [refresh, setRefresh] = useState(0);
 
@@ -285,7 +285,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
             <Range
               step={1}
               min={-1}
-              max={qualsN}
+              max={qualN}
               values={[index]}
               onChange={(values) => setIndex(values[0])}
               onFinalChange={(values) => {
@@ -305,7 +305,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
               )}
               renderMark={({ props, index }) =>
                 index > 0 &&
-                index !== qualsN + 1 && (
+                index !== qualN + 1 && (
                   <div
                     {...props}
                     key={`slider-mark-${props.key}`}

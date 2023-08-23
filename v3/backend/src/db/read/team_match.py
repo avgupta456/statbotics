@@ -27,7 +27,7 @@ def get_team_matches(
     event: Optional[str] = None,
     week: Optional[int] = None,
     match: Optional[str] = None,
-    elims: Optional[bool] = None,
+    elim: Optional[bool] = None,
     offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
@@ -47,8 +47,8 @@ def get_team_matches(
             data = data.filter(TeamMatchORM.week == week)
         if match is not None:
             data = data.filter(TeamMatchORM.match == match)
-        if elims is not None:
-            data = data.filter(TeamMatchORM.playoff == elims)
+        if elim is not None:
+            data = data.filter(TeamMatchORM.elim == elim)
         if offseason is not None:
             data = data.filter(TeamMatchORM.offseason == offseason)
 

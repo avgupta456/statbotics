@@ -49,6 +49,5 @@ TModelORM = TypeVar("TModelORM", bound=ModelORM)
 TModel = TypeVar("TModel", bound=Model)
 
 
-# TODO: enforce consistent usage of playoff vs. elims
 # TODO: enforce consistent usage of foul vs fouls
 # TODO: enforce consistent usage of draw vs tie

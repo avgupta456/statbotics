@@ -19,5 +19,5 @@ To start a simulation, run `python main.py sim {start_year} {end_year} {method_1
 ## Limitations
 
 - OPR ratings are excluded. Unlike the other models, OPR cannot be iteratively calculated and is much more computationally expensive to run every match. OPR is also extremely noisy at the beginning of an event. Instead of Statbotics, refer to The Blue Alliance for OPR ratings.
-- 2002-2004 is excluded since there were fewer teams per alliance. Playoff matches with red cards are excluded since the outlier scores can cause issues (handled better in production).
+- 2002-2004 is excluded since there were fewer teams per alliance. Elimination matches with red cards are excluded since the outlier scores can cause issues (handled better in production).
 - End of year mean reversion is simplified for the EPA and EPA2 models due to complexity.

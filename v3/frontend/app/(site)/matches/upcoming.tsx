@@ -74,14 +74,14 @@ const UpcomingMatch = ({
   );
 };
 
-async function getMatchData(country, state, district, playoff, filterMatches, sortMatches) {
+async function getMatchData(country, state, district, elim, filterMatches, sortMatches) {
   const start = performance.now();
   let suffix = `?limit=20&metric=${sortMatches}`;
   if (filterMatches) suffix += `&minutes=${filterMatches}`;
   if (country) suffix += `&country=${country}`;
   if (state) suffix += `&state=${state}`;
   if (district) suffix += `&district=${district}`;
-  if (playoff) suffix += `&playoff=${playoff}`;
+  if (elim) suffix += `&elim=${elim}`;
 
   const res = await fetch(`${BACKEND_URL}/upcoming_matches${suffix}`, { next: { revalidate: 60 } });
   log(`/upcoming_matches/ took ${round(performance.now() - start, 0)}ms`);
@@ -98,7 +98,7 @@ const defaultFilters = {
   state: "",
   district: "",
   vbar: "", // draws vertical bar
-  playoff: "",
+  elim: "",
   filterMatches: "",
   sortMatches: "predicted_time",
   refresh: 0,
@@ -131,7 +131,7 @@ const UpcomingMatches = ({
       actualFilters.country,
       actualFilters.state,
       actualFilters.district,
-      actualFilters.playoff,
+      actualFilters.elim,
       actualFilters.filterMatches,
       actualFilters.sortMatches
     ).then((data) => {

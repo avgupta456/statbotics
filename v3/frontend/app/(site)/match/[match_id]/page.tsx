@@ -54,12 +54,12 @@ async function Page({ params }: { params: { match_id: string } }) {
   let truncatedEventName = formatEventName(data.event.name, 40);
 
   let prevMatch: string | null = null;
-  if (!data.match.playoff && data.match.match_number > 1) {
+  if (!data.match.elim && data.match.match_number > 1) {
     prevMatch = `${data.match.event}_qm${(data.match.match_number - 1).toString()}`;
   }
 
   let nextMatch: string | null = null;
-  if (!data.match.playoff && data.match.match_number < data.event.qual_matches) {
+  if (!data.match.elim && data.match.match_number < data.event.qual_matches) {
     nextMatch = `${data.match.event}_qm${(data.match.match_number + 1).toString()}`;
   }
 

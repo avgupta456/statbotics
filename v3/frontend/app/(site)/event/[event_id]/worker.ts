@@ -237,9 +237,9 @@ async function indexSim(
   const TOTAL_SD = data.year.score_sd;
 
   const qualMatches = data.matches
-    .filter((match) => !match.playoff)
+    .filter((match) => !match.elim)
     .sort((a, b) => a.match_number - b.match_number);
-  const qualTeamMatches = data.team_matches.filter((match) => !match.playoff);
+  const qualTeamMatches = data.team_matches.filter((match) => !match.elim);
   const qualN = qualMatches.length;
 
   const currEPAs = {};
@@ -425,7 +425,7 @@ async function _strengthOfSchedule(data: Data, simCount: number, postEvent: bool
   }
   for (let i = 0; i < data.matches.length; i++) {
     const match = data.matches[i];
-    if (match.playoff) continue;
+    if (match.elim) continue;
     const redTeams = match.red;
     const blueTeams = match.blue;
     for (let j = 0; j < redTeams.length; j++) {

@@ -64,14 +64,14 @@ def get_event_status(matches: List[MatchDict], year: int) -> str:
         if match["status"] == "Upcoming":
             num_upcoming_matches += 1
 
-    elims_started = num_matches > num_qual_matches
+    elim_started = num_matches > num_qual_matches
     finals_finished = num_upcoming_matches == 0 and max_finals_winner >= 2
 
     event_status = "Completed"
     if year == CURR_YEAR:
         if num_matches == 0:
             event_status = "Upcoming"
-        elif not elims_started or not finals_finished:
+        elif not elim_started or not finals_finished:
             event_status = "Ongoing"
         else:
             event_status = "Completed"
@@ -319,7 +319,7 @@ def process_year(
                 )
 
                 current_match += match_obj.status == "Completed"
-                qual_matches += not match_obj.playoff
+                qual_matches += not match_obj.elim
 
                 # Replace even if present, since may be Upcoming -> Completed
                 match_objs_dict[match_obj.key] = match_obj

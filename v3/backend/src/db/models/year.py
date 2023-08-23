@@ -106,12 +106,12 @@ class YearORM(Base, ModelORM):
     comp_10_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
 
     """WIN PROB"""
-    epa_quals_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_quals_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    quals_count: MI = mapped_column(Integer, default=0)
-    epa_elims_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_elims_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    elims_count: MI = mapped_column(Integer, default=0)
+    epa_qual_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_qual_mse: MOF = mapped_column(Float, nullable=True, default=None)
+    qual_count: MI = mapped_column(Integer, default=0)
+    epa_elim_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_elim_mse: MOF = mapped_column(Float, nullable=True, default=None)
+    elim_count: MI = mapped_column(Integer, default=0)
     epa_champs_acc: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_mse: MOF = mapped_column(Float, nullable=True, default=None)
     champs_count: MI = mapped_column(Integer, default=0)

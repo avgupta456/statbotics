@@ -43,7 +43,7 @@ const EventLineChart = ({
     }
 
     const sortedData = data.data
-      .filter((teamMatch: any) => !teamMatch.playoff && teamMatch.status === "Completed")
+      .filter((teamMatch: any) => !teamMatch.elim && teamMatch.status === "Completed")
       .sort((a: any, b: any) => a.match_num - b.match_num);
 
     return sortedData;

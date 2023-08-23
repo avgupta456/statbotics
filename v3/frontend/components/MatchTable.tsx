@@ -219,8 +219,8 @@ const MatchRow = ({
           >
             {round((1 + foulRate) * match.red_epa_pred, 0)}
           </span>
-          {year >= 2016 && !match.playoff && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.playoff && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
         </div>
         <div
           className={classnames(
@@ -237,8 +237,8 @@ const MatchRow = ({
           >
             {round((1 + foulRate) * match.blue_epa_pred, 0)}
           </span>
-          {year >= 2016 && !match.playoff && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.playoff && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
         </div>
       </div>
       <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>

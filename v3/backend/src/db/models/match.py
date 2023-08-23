@@ -24,7 +24,7 @@ class MatchORM(Base, ModelORM):
     """GENERAL"""
     offseason: MB = mapped_column(Boolean, index=True)
     week: MI = mapped_column(Integer, index=True)
-    playoff: MB = mapped_column(Boolean, index=True)
+    elim: MB = mapped_column(Boolean, index=True)
 
     comp_level: MS = mapped_column(String(10))
     set_number: MI = mapped_column(Integer)

@@ -60,26 +60,26 @@ class TeamEventORM(Base, ModelORM):
 
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
-    epa_pre_playoffs: MF = mapped_column(Float, default=0)
+    epa_pre_elim: MF = mapped_column(Float, default=0)
     epa_end: MF = mapped_column(Float, default=0)
     epa_mean: MF = mapped_column(Float, default=0)
     epa_max: MF = mapped_column(Float, default=0)
     epa_diff: MF = mapped_column(Float, default=0)
 
     auto_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
     auto_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
     auto_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     auto_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     teleop_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
     teleop_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
     teleop_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     teleop_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     endgame_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_epa_pre_playoffs: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
     endgame_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
     endgame_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     endgame_epa_max: MOF = mapped_column(Float, nullable=True, default=None)

@@ -62,7 +62,7 @@ async def read_upcoming_matches(
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    playoff: Optional[str] = None,
+    elim: Optional[str] = None,
     minutes: int = -1,
     limit: int = 100,
     metric: str = "predicted_time",
@@ -72,7 +72,7 @@ async def read_upcoming_matches(
         country=country,
         state=state,
         district=district,
-        playoff={None: None, "quals": False, "elims": True}[playoff],
+        elim={None: None, "qual": False, "elim": True}[elim],
         minutes=minutes,
         limit=limit,
         metric=metric,
@@ -104,7 +104,7 @@ async def read_noteworthy_matches(
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    playoff: Optional[str] = None,
+    elim: Optional[str] = None,
     week: Optional[int] = None,
 ) -> Dict[str, Any]:
     noteworthy_matches: Dict[str, List[APIMatch]] = {}
@@ -113,7 +113,7 @@ async def read_noteworthy_matches(
         country=country,
         state=state,
         district=district,
-        playoff={None: None, "quals": False, "elims": True}[playoff],
+        elim={None: None, "qual": False, "elim": True}[elim],
         week=week,
     )
 

@@ -96,13 +96,13 @@ const NoteworthySection = ({
   );
 };
 
-async function getMatchData(year, country, state, district, playoff, week) {
+async function getMatchData(year, country, state, district, elim, week) {
   const start = performance.now();
   let suffix = "";
   if (country) suffix += `?country=${country}`;
   if (state) suffix += (suffix ? "&" : "?") + `state=${state}`;
   if (district) suffix += (suffix ? "&" : "?") + `district=${district}`;
-  if (playoff) suffix += (suffix ? "&" : "?") + `playoff=${playoff}`;
+  if (elim) suffix += (suffix ? "&" : "?") + `elim=${elim}`;
   if (week) suffix += (suffix ? "&" : "?") + `week=${week}`;
 
   const res = await fetch(`${BACKEND_URL}/noteworthy_matches/${year}${suffix}`, {
@@ -121,7 +121,7 @@ const defaultFilters = {
   country: "",
   state: "",
   district: "",
-  playoff: "",
+  elim: "",
   week: "",
 };
 
@@ -155,7 +155,7 @@ const NoteworthyMatches = ({
       actualFilters.country,
       actualFilters.state,
       actualFilters.district,
-      actualFilters.playoff,
+      actualFilters.elim,
       actualFilters.week
     ).then((data) => {
       if (data) {

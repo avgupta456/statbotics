@@ -14,7 +14,7 @@ def get_noteworthy_matches(
     country: Optional[str],
     state: Optional[str],
     district: Optional[str],
-    playoff: Optional[bool],
+    elim: Optional[bool],
     week: Optional[int],
 ) -> Dict[str, List[Match]]:
     def callback(session: SessionType):
@@ -42,8 +42,8 @@ def get_noteworthy_matches(
         elif district is not None:
             matches = matches.filter(EventORM.district == district)
 
-        if playoff is not None:
-            matches = matches.filter(MatchORM.playoff == playoff)
+        if elim is not None:
+            matches = matches.filter(MatchORM.elim == elim)
 
         if week is not None:
             matches = matches.filter(EventORM.week == week)

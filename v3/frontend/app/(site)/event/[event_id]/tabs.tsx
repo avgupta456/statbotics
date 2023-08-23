@@ -99,22 +99,22 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     [year, eventId, data]
   );
 
-  const qualsN = data?.matches?.filter((match) => !match.playoff)?.length || 0;
-  const elimsN = data?.matches?.filter((match) => match.playoff)?.length || 0;
+  const qualN = data?.matches?.filter((match) => !match.elim)?.length || 0;
+  const elimN = data?.matches?.filter((match) => match.elim)?.length || 0;
 
   let tabs = [
     { title: "Insights", content: MemoizedInsightsTable },
     { title: "Bubble Chart", content: MemoizedBubbleChart },
-    qualsN > 0 && { title: "Qual Matches", content: MemoizedQualMatchSection },
-    elimsN > 0 && { title: "Alliances", content: MemoizedAlliancesSection },
-    elimsN > 0 && { title: "Elim Matches", content: MemoizedElimMatchSection },
+    qualN > 0 && { title: "Qual Matches", content: MemoizedQualMatchSection },
+    elimN > 0 && { title: "Alliances", content: MemoizedAlliancesSection },
+    elimN > 0 && { title: "Elim Matches", content: MemoizedElimMatchSection },
     { title: "Figures", content: MemoizedFigureSection },
     year !== 2015 &&
-      (qualsN > 0 || data?.event?.status === "Upcoming") && {
+      (qualN > 0 || data?.event?.status === "Upcoming") && {
         title: "Simulation",
         content: MemoizedSimulationSection,
       },
-    year !== 2015 && qualsN > 0 && { title: "SOS", content: MemoizedSosSection },
+    year !== 2015 && qualN > 0 && { title: "SOS", content: MemoizedSosSection },
     year === 2023 && { title: "EPA Breakdown", content: MemoizedEPABreakdownSection },
   ].filter(Boolean);
 

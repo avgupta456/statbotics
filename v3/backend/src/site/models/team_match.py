@@ -11,8 +11,8 @@ class APITeamMatch(APIModel):
     alliance: str
     match: str
     time: int
-    playoff: bool
-    match_number: int  # quals only
+    elim: bool
+    match_number: int  # qual only
     total_epa: float
     auto_epa: float
     teleop_epa: float

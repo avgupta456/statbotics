@@ -6,7 +6,7 @@ import { round } from "../../../../utils";
 import { Data } from "./types";
 
 const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; data: Data }) => {
-  const matches = data.matches.filter((match) => match.playoff === !quals);
+  const matches = data.matches.filter((match) => match.elim === !quals);
 
   const N = matches.filter((match) => match.status === "Completed").length;
   const correctPreds = matches
@@ -20,7 +20,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
   const accuracy = round((correctPreds / Math.max(N, 1)) * 100, 1);
 
   const rp1CorrectPreds = matches
-    .filter((match) => !match.playoff && match.status === "Completed")
+    .filter((match) => !match.elim && match.status === "Completed")
     .reduce((acc, match) => {
       if (match.red_rp_1_pred > 0.5 === match.red_rp_1 > 0.5) {
         acc = acc + 1;
@@ -33,7 +33,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
   const rp1Accuracy = round((rp1CorrectPreds / (2 * Math.max(N, 1))) * 100, 1);
 
   const rp2CorrectPreds = matches
-    .filter((match) => !match.playoff && match.status === "Completed")
+    .filter((match) => !match.elim && match.status === "Completed")
     .reduce((acc, match) => {
       if (match.red_rp_2_pred > 0.5 === match.red_rp_2 > 0.5) {
         acc = acc + 1;

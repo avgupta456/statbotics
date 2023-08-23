@@ -21,7 +21,7 @@ export const validateFilters = (
     is_competing: competingOptions,
   };
 
-  // Note: playoff, filterMatches, sortMatches are not validated here
+  // Note: elim, filterMatches, sortMatches are not validated here
 
   for (const key of ["year", "week", "is_competing", "offseason"]) {
     if (validFilters.includes(key) && filters[key]) {

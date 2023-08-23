@@ -145,10 +145,10 @@ export const offseasonOptions = [
   { value: "offseason", label: "Offseason Only" },
 ];
 
-export const playoffOptions = [
+export const elimOptions = [
   { value: "", label: "All" },
-  { value: "quals", label: "Quals Only" },
-  { value: "elims", label: "Elims Only" },
+  { value: "qual", label: "Qual Only" },
+  { value: "elim", label: "Elim Only" },
 ];
 
 export const filterMatchesOptions = [

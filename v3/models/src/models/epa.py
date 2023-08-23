@@ -111,15 +111,15 @@ class EPA(Model):
         rp_2_update = attrib.breakdown["rp_2"] - self.rp_2[team]
 
         percent = self.percent_func(self.counts[team])
-        weight = 1 / 3 if match.playoff else 1
+        weight = 1 / 3 if match.elim else 1
 
         self.epa[team] += percent * weight * update
 
-        if not match.playoff:
+        if not match.elim:
             self.rp_1[team] += 0.3 * weight * rp_1_update
             self.rp_2[team] += 0.3 * weight * rp_2_update
 
-        self.counts[team] += 0 if match.playoff else 1
+        self.counts[team] += 0 if match.elim else 1
 
     def end_season(self) -> None:
         super().end_season()

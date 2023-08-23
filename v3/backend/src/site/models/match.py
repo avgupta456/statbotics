@@ -18,7 +18,7 @@ class APIMatch(APIModel):
     comp_level: str
     set_number: int
     match_number: int
-    playoff: bool
+    elim: bool
     red: List[int]
     blue: List[int]
     red_surrogates: List[int]

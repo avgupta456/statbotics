@@ -11,9 +11,9 @@ import {
   competingOptions,
   countryOptions,
   districtOptions,
+  elimOptions,
   filterMatchesOptions,
   offseasonOptions,
-  playoffOptions,
   sortMatchesOptions,
   usaOptions,
   weekOptions,
@@ -57,7 +57,7 @@ export const FilterBar = ({
         "is_competing",
         "offseason",
         "search",
-        "playoff",
+        "elim",
         "filterMatches",
         "sortMatches",
       ].includes(key)
@@ -87,7 +87,7 @@ export const FilterBar = ({
         { key: "is_competing", label: "Competing", options: competingOptions },
         { key: "offseason", label: "Offseason", options: offseasonOptions },
         { key: "vbar", label: "", options: [] },
-        { key: "playoff", label: "Comp Level", options: playoffOptions },
+        { key: "elim", label: "Comp Level", options: elimOptions },
         { key: "filterMatches", label: "Time Range", options: filterMatchesOptions },
         { key: "sortMatches", label: "Sort Matches", options: sortMatchesOptions },
       ].map((filter) => {

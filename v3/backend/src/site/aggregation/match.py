@@ -27,7 +27,7 @@ def unpack_match(match: Match) -> APIMatch:
         comp_level=match.comp_level,
         set_number=match.set_number,
         match_number=match.match_number,
-        playoff=match.playoff,
+        elim=match.elim,
         red=match.get_red(),
         blue=match.get_blue(),
         red_surrogates=match.get_red_surrogates(),
@@ -106,7 +106,7 @@ async def get_upcoming_matches(
     country: Optional[str],
     state: Optional[str],
     district: Optional[str],
-    playoff: Optional[bool],
+    elim: Optional[bool],
     minutes: int,
     limit: int,
     metric: str,
@@ -116,7 +116,7 @@ async def get_upcoming_matches(
         country=country,
         state=state,
         district=district,
-        playoff=playoff,
+        elim=elim,
         minutes=minutes,
         limit=limit,
         metric=metric,
@@ -133,7 +133,7 @@ async def get_noteworthy_matches(
     country: Optional[str],
     state: Optional[str],
     district: Optional[str],
-    playoff: Optional[bool],
+    elim: Optional[bool],
     week: Optional[int],
 ) -> Tuple[bool, Dict[str, List[APIMatch]]]:
     match_objs = _get_noteworthy_matches(
@@ -141,7 +141,7 @@ async def get_noteworthy_matches(
         country=country,
         state=state,
         district=district,
-        playoff=playoff,
+        elim=elim,
         week=week,
     )
 

@@ -15,7 +15,7 @@ const PageContent = ({ paramFilters }: { paramFilters: { [key: string]: any } })
     country: paramFilters.country,
     state: paramFilters.state,
     district: paramFilters.district,
-    playoff: "",
+    elim: "",
     filterMatches: "",
     sortMatches: "predicted_time",
     refresh: 0,

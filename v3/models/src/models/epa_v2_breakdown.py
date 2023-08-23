@@ -568,7 +568,7 @@ def get_score_from_breakdown(
     opp_breakdown: Any,
     rp_1_pred: float,
     rp_2_pred: float,
-    playoff: bool,
+    elim: bool,
 ) -> float:
     # Applies caps to components, but EPAs still use the uncapped values
     # TODO: Compute and return standard deviation as well
@@ -586,7 +586,7 @@ def get_score_from_breakdown(
         score += 5 * breakdown[keys.index("teleop_high_boulders")]
         score += min(45, breakdown[keys.index("endgame_points")])
 
-        if playoff:
+        if elim:
             score += rp_1_pred * 20
             score += rp_2_pred * 25
 
@@ -600,7 +600,7 @@ def get_score_from_breakdown(
         score += min(160, breakdown[keys.index("teleop_rotor_points")])
         score += min(150, breakdown[keys.index("takeoff_points")])
 
-        if playoff:
+        if elim:
             score += rp_1_pred * 20
             score += rp_2_pred * 100
 
@@ -675,7 +675,7 @@ def get_score_from_breakdown(
     return score
 
 
-def post_process_attrib(year: int, epa: Any, attrib: Any, playoff: bool) -> Any:
+def post_process_attrib(year: int, epa: Any, attrib: Any, elim: bool) -> Any:
     keys = all_keys[year]
     if year == 2018:
         # Overwrite total points using switch/scale power
@@ -696,8 +696,8 @@ def post_process_attrib(year: int, epa: Any, attrib: Any, playoff: bool) -> Any:
             + epa[keys.index("endgame_points")]
         )
 
-        if playoff:
-            # Don't update RP score during playoff match
+        if elim:
+            # Don't update RP score during elim match
             rp_1_index = keys.index("rp_1_power")
             attrib[rp_1_index] = epa[rp_1_index]
 
