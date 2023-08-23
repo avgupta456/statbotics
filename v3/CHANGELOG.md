@@ -10,3 +10,4 @@ A semi-comprehensive list of changes for the 2024 season!
 - Add week column to Match and TeamMatch objects, removing the need to join with the Events table to filter by week.
 - Refactor the TBA sync process to check for new events and team events more frequently. More consistently use ETags to reduce unnecessary data transfer.
 - Add official_winner column to Match and Alliance objects to handle tiebreakers and 2015 correctly.
+- Standardize vocabulary. Replace "draw" with "tie", "qual(s)/elim(s)/playoff" with "qual/elim", "fouls/no_fouls" with "foul/no_foul"
