@@ -1,4 +1,4 @@
-from src.db.models.alliance import Alliance, create_alliance_obj
+from src.db.models.alliance import Alliance
 from src.db.models.create import match_dict_to_objs
 from src.db.models.etag import ETag, create_etag_obj
 from src.db.models.event import Event, create_event_obj
@@ -13,7 +13,6 @@ from src.db.models.year import Year, create_year_obj
 __all__ = [
     "Model",
     "Alliance",
-    "create_alliance_obj",
     "ETag",
     "create_etag_obj",
     "Event",

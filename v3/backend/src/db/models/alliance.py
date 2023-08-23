@@ -38,7 +38,6 @@ class AllianceORM(Base, ModelORM):
 
     time: MI = mapped_column(Integer)
 
-    # TODO: Convert to boolean
     # Choices are 'Upcoming', 'Completed'
     status: MS = mapped_column(String(10), index=True)
 
@@ -50,7 +49,7 @@ class AllianceORM(Base, ModelORM):
 
     """EPA"""
     # TODO: implement all of these, make non-nullable
-    epa_winner: MOB = mapped_column(Boolean, nullable=True, default=None)
+    epa_winner: MOS = mapped_column(String(4), nullable=True, default=None)
     epa_win_prob: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
@@ -73,8 +72,7 @@ class AllianceORM(Base, ModelORM):
     rp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
 
     """OUTCOME"""
-    # TODO: rethink to handle draws
-    winner: MOB = mapped_column(Boolean, nullable=True, default=None)
+    winner: MOS = mapped_column(String(4), nullable=True, default=None)
     score: MOI = mapped_column(Integer, nullable=True, default=None)
     no_foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
     foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
@@ -83,7 +81,7 @@ class AllianceORM(Base, ModelORM):
     endgame_points: MOI = mapped_column(Integer, nullable=True, default=None)
     rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
-    tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     comp_1: MOF = mapped_column(Float, nullable=True, default=None)
     comp_2: MOF = mapped_column(Float, nullable=True, default=None)
@@ -124,48 +122,3 @@ class Alliance(_Alliance, Model):
 
     def get_dqs(self: "Alliance") -> List[str]:
         return [x for x in self.dq.split(",") if x != ""]
-
-
-def create_alliance_obj(
-    alliance: str,
-    match: str,
-    year: int,
-    event: str,
-    offseason: bool,
-    week: int,
-    playoff: bool,
-    comp_level: str,
-    set_number: int,
-    match_number: int,
-    time: int,
-    status: str,
-    team_1: str,
-    team_2: str,
-    team_3: str,
-    dq: str,
-    surrogate: str,
-    *args: List[Any],
-    **kwargs: Dict[str, Any],
-) -> Alliance:
-    return Alliance(
-        id=None,
-        alliance=alliance,
-        match=match,
-        year=year,
-        event=event,
-        offseason=offseason,
-        week=week,
-        playoff=playoff,
-        comp_level=comp_level,
-        set_number=set_number,
-        match_number=match_number,
-        time=time,
-        status=status,
-        team_1=team_1,
-        team_2=team_2,
-        team_3=team_3,
-        dq=dq,
-        surrogate=surrogate,
-        *args,
-        **kwargs,
-    )

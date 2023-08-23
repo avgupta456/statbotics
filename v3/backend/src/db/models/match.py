@@ -54,7 +54,7 @@ class MatchORM(Base, ModelORM):
 
     blue_epa_sum: MF = mapped_column(Float, default=0)
 
-    epa_winner: MS = mapped_column(String(10), default="draw")
+    epa_winner: MS = mapped_column(String(4), default="draw")
     epa_win_prob: MF = mapped_column(Float, default=0.5)
     red_rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
     red_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
@@ -62,7 +62,7 @@ class MatchORM(Base, ModelORM):
     blue_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
 
     """OUTCOME"""
-    winner: MOS = mapped_column(String(10), nullable=True, default=None)
+    winner: MOS = mapped_column(String(4), nullable=True, default=None)
 
     red_score: MOI = mapped_column(Integer, nullable=True, default=None)
     red_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)

@@ -1,7 +1,30 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, TypedDict
 
-empty_breakdown: Dict[str, Optional[float]] = {
-    "score": 0,
+
+class Breakdown(TypedDict):
+    score: Optional[int]
+    no_foul_points: Optional[int]
+    foul_points: Optional[int]
+    auto_points: Optional[int]
+    teleop_points: Optional[int]
+    endgame_points: Optional[int]
+    rp1: Optional[bool]
+    rp2: Optional[bool]
+    comp_1: Optional[float]
+    comp_2: Optional[float]
+    comp_3: Optional[float]
+    comp_4: Optional[float]
+    comp_5: Optional[float]
+    comp_6: Optional[float]
+    comp_7: Optional[float]
+    comp_8: Optional[float]
+    comp_9: Optional[float]
+    comp_10: Optional[float]
+    tiebreaker: Optional[float]
+
+
+empty_breakdown: Breakdown = {
+    "score": None,
     "no_foul_points": None,
     "foul_points": None,
     "auto_points": None,
@@ -28,8 +51,10 @@ INVALID_MATCH_KEYS = ["2016capl_f1m1", "2016milsu_qf4m1", "2016mndu2_f1m2"]
 def clean_breakdown_2016(
     breakdown: Dict[str, Any],
     opp_breakdown: Dict[str, Any],
-    curr: Dict[str, Any],
-) -> Dict[str, Optional[float]]:
+    score: int,
+    no_foul_points: int,
+    foul_points: int,
+) -> Breakdown:
     auto_reach_points = breakdown.get("autoReachPoints", 0)
     auto_crossing_points = breakdown.get("autoCrossingPoints", 0)
     auto_low_boulders = breakdown.get("autoBouldersLow", 0)
@@ -55,16 +80,19 @@ def clean_breakdown_2016(
 
     endgame_points = challenge_points + scale_points
 
-    rp_1 = int(breakdown.get("teleopDefensesBreached", 0))
-    rp_2 = int(breakdown.get("teleopTowerCaptured", 0))
+    rp_1 = bool(breakdown.get("teleopDefensesBreached", 0))
+    rp_2 = bool(breakdown.get("teleopTowerCaptured", 0))
 
     rp_1_points = breakdown.get("breachPoints", 0)
     rp_2_points = breakdown.get("capturePoints", 0)
-    curr["no_foul_points"] -= rp_1_points + rp_2_points
+    no_foul_points -= rp_1_points + rp_2_points
 
     tiebreaker = -opp_breakdown.get("foulPoints", 0)
 
     return {
+        "score": score,
+        "no_foul_points": no_foul_points,
+        "foul_points": foul_points,
         "auto_points": auto_points,
         "teleop_points": teleop_points,
         "endgame_points": endgame_points,
@@ -90,21 +118,20 @@ def clean_breakdown(
     breakdown: Optional[Dict[str, Any]],
     opp_breakdown: Optional[Dict[str, Any]],
     score: int,
-) -> Dict[str, Optional[float]]:
-    out: Dict[str, Optional[float]] = {}
+) -> Breakdown:
+    out = empty_breakdown
     if breakdown is None or opp_breakdown is None or year < 2016:
-        return empty_breakdown
+        return out
 
     # Shared
     foul_points = breakdown.get("foulPoints", 0) + breakdown.get("adjustPoints", 0)
-    out["score"] = score
-    out["no_foul_points"] = score - foul_points
-    out["foul_points"] = foul_points
+    no_foul_points = score - foul_points
+
+    inputs = (breakdown, opp_breakdown, score, no_foul_points, foul_points)
 
     if year == 2016:
-        out = clean_breakdown_2016(breakdown, opp_breakdown, out)
+        out = clean_breakdown_2016(*inputs)
     else:
-        out = empty_breakdown
         out["no_foul_points"] = score
 
     if year >= 2016 and key not in INVALID_MATCH_KEYS:

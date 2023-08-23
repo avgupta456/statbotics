@@ -1,8 +1,9 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, cast, Optional
 
-from src.db.models.alliance import Alliance, create_alliance_obj
+from src.db.models.alliance import Alliance
 from src.db.models.match import Match, create_match_obj
 from src.db.models.team_match import TeamMatch, create_team_match_obj
+from src.tba.breakdown import Breakdown
 
 
 def match_dict_to_objs(
@@ -61,66 +62,48 @@ def match_dict_to_objs(
     team_matches: List[TeamMatch] = []
 
     for alliance in ["red", "blue"]:
-        winner = data["winner"] == alliance
-        score = data[f"{alliance}_score"]
-        no_foul_points = data[f"{alliance}_score_breakdown"]["no_foul_points"]
-        foul_points = data[f"{alliance}_score_breakdown"]["foul_points"]
-        auto_points = data[f"{alliance}_score_breakdown"]["auto_points"]
-        teleop_points = data[f"{alliance}_score_breakdown"]["teleop_points"]
-        endgame_points = data[f"{alliance}_score_breakdown"]["endgame_points"]
-        rp_1 = data[f"{alliance}_score_breakdown"]["rp1"]
-        rp_2 = data[f"{alliance}_score_breakdown"]["rp2"]
-        tiebreaker = data[f"{alliance}_score_breakdown"]["tiebreaker"]
-        comp_1 = data[f"{alliance}_score_breakdown"]["comp_1"]
-        comp_2 = data[f"{alliance}_score_breakdown"]["comp_2"]
-        comp_3 = data[f"{alliance}_score_breakdown"]["comp_3"]
-        comp_4 = data[f"{alliance}_score_breakdown"]["comp_4"]
-        comp_5 = data[f"{alliance}_score_breakdown"]["comp_5"]
-        comp_6 = data[f"{alliance}_score_breakdown"]["comp_6"]
-        comp_7 = data[f"{alliance}_score_breakdown"]["comp_7"]
-        comp_8 = data[f"{alliance}_score_breakdown"]["comp_8"]
-        comp_9 = data[f"{alliance}_score_breakdown"]["comp_9"]
-        comp_10 = data[f"{alliance}_score_breakdown"]["comp_10"]
+        breakdown: Breakdown = data[f"{alliance}_score_breakdown"]
 
         alliances.append(
-            create_alliance_obj(
+            Alliance(
+                id=None,
                 alliance=alliance,
-                match=data["key"],
-                year=data["year"],
-                event=data["event"],
-                offseason=data["offseason"],
-                week=data["week"],
-                playoff=data["playoff"],
-                comp_level=data["comp_level"],
-                set_number=data["set_number"],
-                match_number=data["match_number"],
-                time=data["time"],
-                status=data["status"],
-                team_1=data[f"{alliance}_1"],
-                team_2=data[f"{alliance}_2"],
-                team_3=data[f"{alliance}_3"],
-                dq=data[f"{alliance}_dq"],
-                surrogate=data[f"{alliance}_surrogate"],
-                winner=winner,
-                score=score,
-                no_foul_points=no_foul_points,
-                foul_points=foul_points,
-                auto_points=auto_points,
-                teleop_points=teleop_points,
-                endgame_points=endgame_points,
-                rp_1=rp_1,
-                rp_2=rp_2,
-                tiebreaker=tiebreaker,
-                comp_1=comp_1,
-                comp_2=comp_2,
-                comp_3=comp_3,
-                comp_4=comp_4,
-                comp_5=comp_5,
-                comp_6=comp_6,
-                comp_7=comp_7,
-                comp_8=comp_8,
-                comp_9=comp_9,
-                comp_10=comp_10,
+                match=cast(str, data["key"]),
+                year=cast(int, data["year"]),
+                event=cast(str, data["event"]),
+                offseason=cast(bool, data["offseason"]),
+                week=cast(int, data["week"]),
+                playoff=cast(bool, data["playoff"]),
+                comp_level=cast(str, data["comp_level"]),
+                set_number=cast(int, data["set_number"]),
+                match_number=cast(int, data["match_number"]),
+                time=cast(int, data["time"]),
+                status=cast(str, data["status"]),
+                team_1=cast(str, data[f"{alliance}_1"]),
+                team_2=cast(str, data[f"{alliance}_2"]),
+                team_3=cast(Optional[str], data[f"{alliance}_3"]),
+                dq=cast(str, data[f"{alliance}_dq"]),
+                surrogate=cast(str, data[f"{alliance}_surrogate"]),
+                winner=cast(Optional[str], data["winner"]),
+                score=cast(Optional[int], data[f"{alliance}_score"]),
+                no_foul_points=breakdown["no_foul_points"],
+                foul_points=breakdown["foul_points"],
+                auto_points=breakdown["auto_points"],
+                teleop_points=breakdown["teleop_points"],
+                endgame_points=breakdown["endgame_points"],
+                rp_1=breakdown["rp1"],
+                rp_2=breakdown["rp2"],
+                tiebreaker=breakdown["tiebreaker"],
+                comp_1=breakdown["comp_1"],
+                comp_2=breakdown["comp_2"],
+                comp_3=breakdown["comp_3"],
+                comp_4=breakdown["comp_4"],
+                comp_5=breakdown["comp_5"],
+                comp_6=breakdown["comp_6"],
+                comp_7=breakdown["comp_7"],
+                comp_8=breakdown["comp_8"],
+                comp_9=breakdown["comp_9"],
+                comp_10=breakdown["comp_10"],
             )
         )
 

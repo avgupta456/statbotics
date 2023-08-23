@@ -43,7 +43,7 @@ def reset_all_years(start_year: int, end_year: int):
     timer = Timer()
 
     start_year = 2014
-    end_year = 2014
+    end_year = 2015
 
     clean_db()
     timer.print("Clean DB")
