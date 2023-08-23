@@ -5,7 +5,7 @@ from src.site.models.main import APIModel
 
 @attr.s(auto_attribs=True, slots=True)
 class APITeamEvent(APIModel):
-    num: int
+    num: str
     team: str
     event: str
     event_name: str

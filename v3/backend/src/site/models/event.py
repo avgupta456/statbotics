@@ -19,8 +19,8 @@ class APIEvent(APIModel):
     offseason: bool
     status: str
     status_str: str
-    qual_matches: int
-    current_match: int
+    qual_matches: Optional[int]
+    current_match: Optional[int]
     epa_acc: Optional[float]
     epa_mse: Optional[float]
     epa_max: Optional[float]

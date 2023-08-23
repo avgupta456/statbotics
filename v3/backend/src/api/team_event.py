@@ -21,7 +21,7 @@ async def read_root():
 
 @alru_cache(ttl=timedelta(hours=1))
 async def get_team_event_cached(
-    team: int, event: str
+    team: str, event: str
 ) -> Tuple[bool, Optional[TeamEvent]]:
     return (True, get_team_event(team=team, event=event))
 
@@ -68,7 +68,7 @@ async def get_team_events_cached(
     response_description="A Team Event object.",
 )
 @async_fail_gracefully_api_singular
-async def read_team_event(response: Response, team: int, event: str) -> Dict[str, Any]:
+async def read_team_event(response: Response, team: str, event: str) -> Dict[str, Any]:
     team_event_obj: Optional[TeamEvent] = await get_team_event_cached(
         team=team, event=event
     )
@@ -84,7 +84,7 @@ async def read_team_event(response: Response, team: int, event: str) -> Dict[str
     response_description="A list of Team Event objects. See /team_event/{team}/{event} for more information.",
 )
 @async_fail_gracefully_api_plural
-async def read_team_events_team(response: Response, team: int) -> List[Dict[str, Any]]:
+async def read_team_events_team(response: Response, team: str) -> List[Dict[str, Any]]:
     team_events: List[TeamEvent] = await get_team_events_cached(team=team)
     return [team_event.to_dict() for team_event in team_events]
 
@@ -96,7 +96,7 @@ async def read_team_events_team(response: Response, team: int) -> List[Dict[str,
 )
 @async_fail_gracefully_api_plural
 async def read_team_events_team_year(
-    response: Response, team: int, year: int
+    response: Response, team: str, year: int
 ) -> List[Dict[str, Any]]:
     team_events: List[TeamEvent] = await get_team_events_cached(team=team, year=year)
     return [team_event.to_dict() for team_event in team_events]

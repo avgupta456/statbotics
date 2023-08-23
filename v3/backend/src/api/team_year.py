@@ -62,7 +62,7 @@ async def get_team_years_cached(
 @async_fail_gracefully_api_singular
 async def read_team_year(
     response: Response,
-    team: int,
+    team: str,
     year: int,
 ) -> Dict[str, Any]:
     team_year_obj: Optional[TeamYear] = await get_team_year_cached(team=team, year=year)
@@ -80,7 +80,7 @@ async def read_team_year(
 @async_fail_gracefully_api_plural
 async def read_team_years_team(
     response: Response,
-    team: int,
+    team: str,
 ) -> List[Dict[str, Any]]:
     team_years: List[TeamYear] = await get_team_years_cached(team=team)
     return [team_year.to_dict() for team_year in team_years]

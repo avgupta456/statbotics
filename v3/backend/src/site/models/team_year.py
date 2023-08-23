@@ -8,12 +8,12 @@ from src.site.models.main import APIModel
 @attr.s(auto_attribs=True, slots=True)
 class APITeamYear(APIModel):
     year: int
-    num: int
+    num: str
     team: str
     state: Optional[str]
     country: Optional[str]
     district: Optional[str]
-    is_competing: Optional[bool]
+    competing_this_week: Optional[bool]
     next_event_key: Optional[str]
     next_event_name: Optional[str]
     next_event_week: Optional[int]

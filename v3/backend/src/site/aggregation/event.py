@@ -11,6 +11,9 @@ def get_event_status_str(event: Event) -> str:
     if event.status != "Ongoing":
         return event.status
 
+    if event.current_match is None or event.qual_matches is None:
+        return ""
+
     if event.qual_matches == 0:
         return "Scheduled Unreleased"
     elif event.current_match == 0:

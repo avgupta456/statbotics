@@ -40,7 +40,7 @@ async def read_team_years(
 @router.get("/team_year/{year}/{team}/matches")
 @async_fail_gracefully
 async def read_team_matches(
-    response: Response, year: int, team: int
+    response: Response, year: int, team: str
 ) -> List[Dict[str, Any]]:
     team_matches: List[APITeamMatch] = await get_team_matches(team=team, year=year)
     return [x.to_dict() for x in team_matches]

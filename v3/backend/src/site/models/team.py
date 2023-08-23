@@ -7,7 +7,7 @@ from src.site.models.main import APIModel
 
 @attr.s(auto_attribs=True, slots=True)
 class APITeam(APIModel):
-    num: int
+    num: str
     team: str
     active: bool
     state: Optional[str]

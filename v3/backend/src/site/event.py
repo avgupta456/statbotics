@@ -74,7 +74,7 @@ async def read_event(response: Response, event_id: str) -> Dict[str, Any]:
 @router.get("/event/{event_id}/team_matches/{team}")
 @async_fail_gracefully
 async def read_team_matches(
-    response: Response, event_id: str, team: int
+    response: Response, event_id: str, team: str
 ) -> List[Dict[str, Any]]:
     team_matches: List[APITeamMatch] = await get_team_matches(event=event_id, team=team)
     return [x.to_dict() for x in team_matches]

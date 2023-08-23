@@ -38,7 +38,7 @@ async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
 
 @router.get("/team/{team_num}")
 @async_fail_gracefully
-async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
+async def read_team(response: Response, team_num: str) -> Dict[str, Any]:
     team: Optional[APITeam] = await get_team(team=team_num)
     if team is None or team.offseason:
         raise Exception("Team not found")
@@ -48,7 +48,7 @@ async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
 
 @router.get("/team/{team_num}/years")
 @async_fail_gracefully
-async def read_team_years(response: Response, team_num: int) -> List[Dict[str, Any]]:
+async def read_team_years(response: Response, team_num: str) -> List[Dict[str, Any]]:
     team_years: List[APITeamYear] = await get_team_years(team=team_num)
     return [
         {
@@ -84,7 +84,7 @@ async def read_team_years(response: Response, team_num: int) -> List[Dict[str, A
 @router.get("/team/{team_num}/{year}")
 @async_fail_gracefully
 async def read_team_year(
-    response: Response, team_num: int, year: int
+    response: Response, team_num: str, year: int
 ) -> Dict[str, Any]:
     year_obj: Optional[APIYear] = await get_year(year=year)
     if year_obj is None:

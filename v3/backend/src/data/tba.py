@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
@@ -17,7 +16,7 @@ from src.db.models import (
     TeamEvent,
     match_dict_to_objs,
 )
-from src.tba.constants import DISTRICT_MAPPING, YEAR_BLACKLIST
+from src.tba.constants import DISTRICT_MAPPING
 from src.tba.read_tba import (
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
@@ -28,6 +27,9 @@ from src.tba.read_tba import (
     get_teams as get_teams_tba,
 )
 from src.tba.read_tba import MatchDict
+
+OS = Optional[str]
+OI = Optional[int]
 
 """
 HELPER FUNCTIONS
@@ -130,11 +132,7 @@ def process_year(
     objs: objs_type,
     partial: bool,
     cache: bool = True,
-) -> objs_type:
-    # TODO: Handle 2021 offseason events (low priority)
-    if year_num in YEAR_BLACKLIST:
-        return objs
-
+) -> Tuple[List[Team], objs_type]:
     (
         year_obj,
         team_year_objs_dict,
@@ -151,9 +149,7 @@ def process_year(
 
     T = TypeVar("T")
 
-    def call_tba(
-        func: Callable[..., Tuple[T, Optional[str]]], path: str
-    ) -> Tuple[T, bool]:
+    def call_tba(func: Callable[..., Tuple[T, OS]], path: str) -> Tuple[T, bool]:
         prev_etag = etags_dict.get(path, default_etag).etag
         if partial:
             out, new_etag = func(prev_etag, False)
@@ -165,19 +161,12 @@ def process_year(
         return out, new_etag is not None and new_etag != prev_etag
 
     teams_dict: Dict[str, Team] = {team.team: team for team in teams}
-    # TODO: can this handle offseason teams? Should we set the offseason flag?
-    default_team = Team(team="", name="", country=None, state=None, rookie_year=None)
-
-    team_competing_this_week_dict: Dict[str, bool] = defaultdict(lambda: False)
-    team_next_event_dict: Dict[
-        str, Tuple[Optional[str], Optional[str], Optional[int]]
-    ] = defaultdict(lambda: (None, None, None))
-    team_first_event_dict: Dict[str, Tuple[Optional[str], Optional[int]]] = defaultdict(
-        lambda: (None, None)
-    )
+    team_competing_this_week_dict: Dict[str, bool] = {}
+    team_next_event_dict: Dict[str, Tuple[OS, OS, OI]] = {}
+    team_first_event_dict: Dict[str, Tuple[OS, OI]] = {}
 
     # maps team to district_abbrev (or None if not in a district)
-    district_teams: Dict[str, Optional[str]] = {}
+    district_teams: Dict[str, OS] = {}
 
     # maps team to offseason status
     offseason_teams: Dict[str, bool] = {}
@@ -254,7 +243,7 @@ def process_year(
         event_obj.status = event_status
 
         event_teams: Set[str] = set()
-        rankings: Dict[str, int] = defaultdict(int)
+        rankings: Dict[str, int] = {}
 
         def add_team_event(team: str, offseason: bool):
             event_teams.add(team)
@@ -332,7 +321,19 @@ def process_year(
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
-            team_obj = teams_dict.get(team, default_team)
+            if team not in teams_dict:
+                print(team)
+                new_team_obj = Team(
+                    team=team,
+                    name=team,
+                    country=None,
+                    state=None,
+                    rookie_year=None,
+                    offseason=True,
+                )
+                teams_dict[team] = new_team_obj
+
+            team_obj = teams_dict[team]
             team_event_obj = TeamEvent(
                 id=None,
                 team=team,
@@ -365,10 +366,12 @@ def process_year(
             team_first_event_dict[team_event.team][0] == team_event.event
         )
 
+    # NOTE: offseason_teams does not refer to offseason status
+    # Just a dictionary of teams mapping to their offseason status
     for team in offseason_teams:
-        team_obj = teams_dict.get(team, default_team)
-        competing_this_week = team_competing_this_week_dict[team]
-        next_event = team_next_event_dict[team]
+        team_obj = teams_dict[team]
+        competing_this_week = team_competing_this_week_dict.get(team, False)
+        next_event = team_next_event_dict.get(team, (None, None, None))
         team_year_obj = TeamYear(
             id=None,
             year=year_num,
@@ -385,7 +388,10 @@ def process_year(
         )
         team_year_objs_dict[team_year_obj.pk()] = team_year_obj
 
-    return (
+    orig_teams = set([team.team for team in teams])
+    new_teams = [team for team in teams_dict.values() if team.team not in orig_teams]
+
+    return new_teams, (
         year_obj,
         team_year_objs_dict,
         event_objs_dict,

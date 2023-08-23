@@ -32,7 +32,7 @@ def unpack_team_match(team_match: TeamMatch) -> APITeamMatch:
 async def get_team_matches(
     year: Optional[int] = None,
     event: Optional[str] = None,
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     match: Optional[str] = None,
     offseason: Optional[bool] = False,
 ) -> Tuple[bool, List[APITeamMatch]]:

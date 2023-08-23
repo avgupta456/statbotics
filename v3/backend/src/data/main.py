@@ -8,7 +8,6 @@ from src.data.epa import (
 )
 from src.data.tba import (
     check_year_partial as check_year_partial_tba,
-    create_objs as create_objs_tba,
     load_teams as load_teams_tba,
     post_process as post_process_tba,
     process_year as process_year_tba,
@@ -18,6 +17,7 @@ from src.data.utils import (
     objs_type,
     read_objs as read_objs_db,
     write_objs as write_objs_db,
+    create_objs,
 )
 from src.db.main import clean_db
 from src.db.models import TeamYear
@@ -56,10 +56,11 @@ def reset_all_years(start_year: int, end_year: int):
 
     # team_years_dict = get_team_years_dict(start_year)
     for year_num in range(start_year, end_year + 1):
-        objs = create_objs_tba(year_num)
+        objs = create_objs(year_num)
 
         # TODO: temporarily year_num < end_year replaced with True
-        objs = process_year_tba(year_num, teams, objs, False, True)
+        new_teams, objs = process_year_tba(year_num, teams, objs, False, True)
+        teams += new_teams
         timer.print(str(year_num) + " TBA")
 
         year_obj = process_year_avg(objs[0], list(objs[5].values()))
@@ -70,6 +71,7 @@ def reset_all_years(start_year: int, end_year: int):
         # objs, team_years_dict = process_year_epa(year_num, team_years_dict, objs)
         # timer.print(str(year_num) + " EPA")
 
+        update_teams_db(teams, False)
         write_objs_db(year_num, objs, None, True)
         timer.print(str(year_num) + " Write")
 
@@ -99,7 +101,7 @@ def update_single_year(year: int, partial: bool):
         objs: objs_type = read_objs_db(year)
         timer.print("Read Objs")
     else:
-        objs = create_objs_tba(year)
+        objs = create_objs(year)
 
     orig_objs = (
         objs[0],
@@ -112,7 +114,8 @@ def update_single_year(year: int, partial: bool):
         {**objs[7]},
     )
 
-    objs = process_year_tba(year, teams, objs, partial, False)
+    new_teams, objs = process_year_tba(year, teams, objs, partial, False)
+    teams += new_teams
     timer.print(str(year) + " TBA")
 
     year_obj = process_year_avg(objs[0], list(objs[5].values()))
@@ -124,6 +127,8 @@ def update_single_year(year: int, partial: bool):
     objs, team_years_dict = process_year_epa(year, team_years_dict, objs)
     timer.print(str(year) + " EPA")
 
+    if not partial:
+        update_teams_db(teams, False)
     # Set clean=False to prevent deleting data without a backup
     write_objs_db(year, objs, orig_objs if partial else None, False)
     timer.print(str(year) + " Write")

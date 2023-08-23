@@ -39,7 +39,7 @@ def get_tba(
     data, new_etag = _get_tba(url, etag)
 
     # Either Etag or Invalid
-    if type(data) == bool:
+    if type(data) is bool:
         return data, new_etag
 
     # Cache Miss

@@ -8,7 +8,7 @@ from src.db.models.team import Team, TeamORM
 from src.db.read.main import common_filters
 
 
-def get_team(team: int) -> Optional[Team]:
+def get_team(team: str) -> Optional[Team]:
     def callback(session: SessionType):
         out_data = session.query(TeamORM).filter(TeamORM.team == team).first()
         return Team.from_dict(out_data.__dict__) if out_data else None

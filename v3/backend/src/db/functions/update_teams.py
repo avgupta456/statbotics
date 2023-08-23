@@ -10,7 +10,7 @@ def update_team_districts() -> None:
     def callback(session: SessionType):
         session.query(TeamORM).update(
             {
-                TeamORM.district: session.query(TeamYearORM.district)
+                TeamORM.district: session.query(TeamYearORM.district)  # type: ignore
                 .filter(TeamYearORM.team == TeamORM.team)
                 .order_by(TeamYearORM.year.desc())
                 .limit(1)
@@ -34,7 +34,7 @@ def update_team_offseason() -> None:
         ]
 
         session.query(TeamORM).filter(TeamORM.team.in_(not_offseason_teams)).update(
-            {TeamORM.offseason: False}, synchronize_session=False
+            {TeamORM.offseason: False}, synchronize_session=False  # type: ignore
         )
 
     run_transaction(Session, callback)

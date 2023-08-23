@@ -86,7 +86,7 @@ async def read_matches_event(response: Response, event: str) -> List[Dict[str, A
 )
 @async_fail_gracefully_api_plural
 async def read_matches_team_year(
-    response: Response, team: int, year: int
+    response: Response, team: str, year: int
 ) -> List[Dict[str, Any]]:
     matches: List[Match] = await get_matches_cached(team=team, year=year)
     return [match.to_dict() for match in matches]
@@ -99,7 +99,7 @@ async def read_matches_team_year(
 )
 @async_fail_gracefully_api_plural
 async def read_matches_team_event(
-    response: Response, team: int, event: str
+    response: Response, team: str, event: str
 ) -> List[Dict[str, Any]]:
     matches: List[Match] = await get_matches_cached(team=team, event=event)
     return [match.to_dict() for match in matches]

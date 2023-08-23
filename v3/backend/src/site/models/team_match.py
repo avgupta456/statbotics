@@ -7,7 +7,7 @@ from src.site.models.main import APIModel
 
 @attr.s(auto_attribs=True, slots=True)
 class APITeamMatch(APIModel):
-    num: int
+    num: str
     alliance: str
     match: str
     time: int

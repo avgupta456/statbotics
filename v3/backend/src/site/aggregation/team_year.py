@@ -18,7 +18,7 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
         state=team_year.state,
         country=team_year.country,
         district=team_year.district,
-        is_competing=team_year.is_competing,
+        competing_this_week=team_year.competing_this_week,
         next_event_key=team_year.next_event_key,
         next_event_name=team_year.next_event_name,
         next_event_week=team_year.next_event_week,
@@ -48,7 +48,7 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
 
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_team_year(
-    team: int, year: int, no_cache: bool = False
+    team: str, year: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[APITeamYear]]:
     team_year_obj = _get_team_year(team=team, year=year)
 
@@ -62,8 +62,8 @@ async def get_team_year(
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_years(
-    team: Optional[int] = None,
-    teams: Optional[List[int]] = None,
+    team: Optional[str] = None,
+    teams: Optional[List[str]] = None,
     year: Optional[int] = None,
     limit: Optional[int] = None,
     metric: Optional[str] = None,

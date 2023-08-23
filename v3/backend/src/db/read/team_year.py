@@ -23,7 +23,7 @@ def get_team_year(team: str, year: int) -> Optional[TeamYear]:
 
 def get_team_years(
     team: Optional[str] = None,
-    teams: Optional[List[int]] = None,
+    teams: Optional[List[str]] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
     district: Optional[str] = None,
