@@ -1,5 +1,3 @@
-from typing import Any, Dict, List
-
 from sqlalchemy import Float, Integer
 from sqlalchemy.orm import mapped_column
 
@@ -144,7 +142,3 @@ class Year(_Year, Model):
     def __str__(self: "Year") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.year}_{self.count}"
-
-
-def create_year_obj(year: int, *args: List[Any], **kwargs: Dict[str, Any]) -> Year:
-    return Year(year=year, *args, **kwargs)

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -120,44 +120,3 @@ class TeamEvent(_TeamEvent, Model):
     def __str__(self: "TeamEvent") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.event}_{self.status}_{self.count}_{self.rank}"
-
-
-def create_team_event_obj(
-    team: str,
-    year: int,
-    event: str,
-    time: int,
-    offseason: bool,
-    team_name: str,
-    event_name: str,
-    country: Optional[str],
-    district: Optional[str],
-    state: Optional[str],
-    type: int,
-    week: int,
-    status: str,
-    first_event: bool,
-    num_teams: int,
-    *args: List[Any],
-    **kwargs: Dict[str, Any],
-) -> TeamEvent:
-    return TeamEvent(
-        id=None,
-        team=team,
-        year=year,
-        event=event,
-        time=time,
-        offseason=offseason,
-        team_name=team_name,
-        event_name=event_name,
-        country=country,
-        district=district,
-        state=state,
-        type=type,
-        week=week,
-        status=status,
-        first_event=first_event,
-        num_teams=num_teams,
-        *args,
-        **kwargs,
-    )

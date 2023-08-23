@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -132,36 +132,3 @@ class TeamYear(_TeamYear, Model):
     def __str__(self: "TeamYear") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.year}_{self.count}"
-
-
-def create_team_year_obj(
-    year: int,
-    team: str,
-    offseason: bool,
-    name: str,
-    state: Optional[str],
-    country: Optional[str],
-    district: Optional[str],
-    is_competing: bool,
-    next_event_key: Optional[str],
-    next_event_name: Optional[str],
-    next_event_week: Optional[int],
-    *args: List[Any],
-    **kwargs: Dict[str, Any],
-) -> TeamYear:
-    return TeamYear(
-        id=None,
-        year=year,
-        team=team,
-        offseason=offseason,
-        name=name,
-        state=state,
-        country=country,
-        district=district,
-        is_competing=is_competing,
-        next_event_key=next_event_key,
-        next_event_name=next_event_name,
-        next_event_week=next_event_week,
-        *args,
-        **kwargs,
-    )

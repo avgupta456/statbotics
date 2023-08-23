@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -77,40 +77,3 @@ class Event(_Event, Model):
     def __str__(self: "Event") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.key}_{self.status}_{self.current_match}_{self.qual_matches}"
-
-
-def create_event_obj(
-    key: str,
-    year: int,
-    name: str,
-    time: int,
-    country: Optional[str],
-    district: Optional[str],
-    state: Optional[str],
-    start_date: str,
-    end_date: str,
-    type: int,
-    week: int,
-    video: Optional[str],
-    status: str,
-    *args: List[Any],
-    **kwargs: Dict[str, Any],
-) -> Event:
-    return Event(
-        key=key,
-        year=year,
-        name=name,
-        time=time,
-        country=country,
-        district=district,
-        state=state,
-        start_date=start_date,
-        end_date=end_date,
-        type=type,
-        week=week,
-        offseason=type > 10,
-        video=video,
-        status=status,
-        *args,
-        **kwargs,
-    )

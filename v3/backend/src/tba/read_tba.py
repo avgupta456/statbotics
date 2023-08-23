@@ -1,33 +1,32 @@
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Dict, List, Optional, Tuple, cast
 
 from src.tba.breakdown import clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
-from src.tba.types import MatchDict
+from src.tba.types import MatchDict, TeamDict, EventDict
 
 
 def get_timestamp_from_str(date: str):
     return int(time.mktime(datetime.strptime(date, "%Y-%m-%d").timetuple()))
 
 
-def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
-    out: List[Dict[str, Any]] = []
+def get_teams(cache: bool = True) -> List[TeamDict]:
+    out: List[TeamDict] = []
     for i in range(20):
         data, _ = get_tba("teams/" + str(i), etag=None, cache=cache)
         if type(data) is bool:
             continue
         for data_team in data:
             num = data_team["key"][3:]
-            new_data = {
+            new_data: TeamDict = {
                 "team": num,
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
-                "offseason": False,
+                "offseason": True,
                 "state": clean_state(data_team["state_prov"]),
-                "district": None,  # added later
                 "country": data_team["country"],
             }
             out.append(new_data)
@@ -65,13 +64,13 @@ def get_district_teams(
 
 def get_events(
     year: int, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[List[Dict[str, Any]], Optional[str]]:
-    out: List[Dict[str, Any]] = []
+) -> Tuple[List[EventDict], Optional[str]]:
+    out: List[EventDict] = []
     data, new_etag = get_tba("events/" + str(year), etag=etag, cache=cache)
     if type(data) is bool:
         return out, new_etag
     for event in data:
-        key = event["key"]
+        key: str = event["key"]
 
         # filters out partial/missing events
         if key in EVENT_BLACKLIST:
@@ -85,7 +84,7 @@ def get_events(
 
         # renames district divisions to district championship
         # renames festival of championships to einsteins
-        event_type = event["event_type"]
+        event_type: int = event["event_type"]
         if event_type == 5:
             event_type = 2
         if event_type == 6:
@@ -111,7 +110,7 @@ def get_events(
         if event_type < 3 and year != 2016:
             event["week"] += 1
 
-        video = None
+        video: Optional[str] = None
         webcasts = event["webcasts"]
         if len(webcasts) > 0:
             video_type = webcasts[0]["type"]
@@ -123,22 +122,22 @@ def get_events(
             if video is not None and len(video) > 50:
                 video = None
 
-        out.append(
-            {
-                "year": year,
-                "key": key,
-                "name": event["name"],
-                "state": clean_state(event["state_prov"]),
-                "country": event["country"],
-                "district": clean_district(event["district"]),
-                "start_date": event["start_date"],
-                "end_date": event["end_date"],
-                "time": get_timestamp_from_str(event["start_date"]),
-                "type": event_type,
-                "week": event["week"],
-                "video": video,
-            }
-        )
+        new_data: EventDict = {
+            "year": year,
+            "key": key,
+            "name": cast(str, event["name"]),
+            "state": clean_state(event["state_prov"]),
+            "country": cast(str, event["country"]),
+            "district": clean_district(event["district"]),
+            "start_date": cast(str, event["start_date"]),
+            "end_date": cast(str, event["end_date"]),
+            "time": get_timestamp_from_str(event["start_date"]),
+            "type": event_type,
+            "week": cast(int, event["week"]),
+            "video": video,
+        }
+
+        out.append(new_data)
 
     return out, new_etag
 
@@ -242,7 +241,7 @@ def get_matches(
         red_teams = [team[3:] for team in red_teams]
         blue_teams = [team[3:] for team in blue_teams]
 
-        breakdown: Dict[str, Any] = match.get("score_breakdown", {}) or {}
+        breakdown = match.get("score_breakdown", {}) or {}
         red_breakdown = clean_breakdown(
             year,
             match["key"],

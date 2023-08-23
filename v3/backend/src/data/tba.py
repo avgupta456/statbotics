@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypeVar
+from typing import Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
 from src.constants import CURR_WEEK, CURR_YEAR
 from src.data.utils import objs_type
@@ -12,12 +12,10 @@ from src.db.functions import (
 from src.db.models import (
     ETag,
     Event,
+    TeamYear,
     Team,
-    create_event_obj,
-    create_team_event_obj,
-    create_team_obj,
-    create_team_year_obj,
-    create_year_obj,
+    TeamEvent,
+    Year,
     match_dict_to_objs,
 )
 from src.tba.constants import DISTRICT_MAPPING, YEAR_BLACKLIST
@@ -40,7 +38,7 @@ HELPER FUNCTIONS
 def load_teams(cache: bool = True) -> List[Team]:
     teams = get_teams_tba(cache=cache)
     team_objs = [
-        create_team_obj(
+        Team(
             team=team["team"],
             name=team["name"],
             country=team["country"],
@@ -84,7 +82,7 @@ def get_event_status(matches: List[MatchDict], year: int) -> str:
 
 
 def create_objs(year: int) -> objs_type:
-    return (create_year_obj(year=year), {}, {}, {}, {}, {}, {}, {})
+    return (Year(year=year), {}, {}, {}, {}, {}, {}, {})
 
 
 """
@@ -173,13 +171,15 @@ def process_year(
 
     teams_dict: Dict[str, Team] = {team.team: team for team in teams}
     # TODO: can this handle offseason teams? Should we set the offseason flag?
-    default_team = create_team_obj(
-        team="", name="", country=None, state=None, rookie_year=None
-    )
+    default_team = Team(team="", name="", country=None, state=None, rookie_year=None)
 
     team_is_competing_dict: Dict[str, bool] = defaultdict(lambda: False)
-    team_next_event_dict: Dict[str, Any] = defaultdict(lambda: (None, None, None))
-    team_first_event_dict: Dict[str, Any] = defaultdict(lambda: (None, None))
+    team_next_event_dict: Dict[
+        str, Tuple[Optional[str], Optional[str], Optional[int]]
+    ] = defaultdict(lambda: (None, None, None))
+    team_first_event_dict: Dict[str, Tuple[Optional[str], Optional[int]]] = defaultdict(
+        lambda: (None, None)
+    )
 
     # maps team to district_abbrev (or None if not in a district)
     district_teams: Dict[str, Optional[str]] = {}
@@ -209,7 +209,7 @@ def process_year(
         key = event["key"]
         curr_obj = event_objs_dict.get(key, None)
         curr_status = "Upcoming" if curr_obj is None else curr_obj.status
-        event_objs_dict[key] = create_event_obj(
+        event_objs_dict[key] = Event(
             key=key,
             year=year_num,
             name=event["name"],
@@ -221,6 +221,7 @@ def process_year(
             end_date=event["end_date"],
             type=event["type"],
             week=event["week"],
+            offseason=event["type"] > 10,
             video=event["video"],
             status=curr_status,
         )
@@ -277,21 +278,21 @@ def process_year(
                 team_is_competing_dict[team] = True
 
             # Store closest upcoming/ongoing event
-            if (
-                event_week >= CURR_WEEK
-                and event_status != "Completed"
-                and (
-                    team not in team_next_event_dict
-                    or team_next_event_dict[team][2] > event_week
-                )
-            ):
-                team_next_event_dict[team] = (event_key, event_name, event_week)
+            if event_week >= CURR_WEEK and event_status != "Completed":
+                # event is upcoming or ongoing
+                if team not in team_next_event_dict:
+                    # first event for team
+                    team_next_event_dict[team] = (event_key, event_name, event_week)
+                elif (team_next_event_dict[team][2] or -1) > event_week:
+                    # event is closer than previous closest event
+                    team_next_event_dict[team] = (event_key, event_name, event_week)
 
             # Store first event
-            if (
-                team not in team_first_event_dict
-                or team_first_event_dict[team][1] > event_week
-            ):
+            if team not in team_first_event_dict:
+                # first event for team
+                team_first_event_dict[team] = (event_key, event_week)
+            elif (team_first_event_dict[team][1] or -1) > event_week:
+                # event is closer than previous closest event
                 team_first_event_dict[team] = (event_key, event_week)
 
         if event_status == "Invalid":
@@ -337,7 +338,8 @@ def process_year(
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
             team_obj = teams_dict.get(team, default_team)
-            team_event_obj = create_team_event_obj(
+            team_event_obj = TeamEvent(
+                id=None,
                 team=team,
                 year=year_num,
                 event=event_key,
@@ -352,10 +354,10 @@ def process_year(
                 week=event_obj.week,
                 status=event_status,
                 first_event=False,
+                rank=rankings.get(team, None),
                 num_teams=len(rankings),
             )
-            if team in rankings:
-                team_event_obj.rank = rankings[team]
+
             team_event_objs_dict[team_event_obj.pk()] = team_event_obj
 
         event_obj.current_match = current_match
@@ -372,7 +374,8 @@ def process_year(
         team_obj = teams_dict.get(team, default_team)
         is_competing = team_is_competing_dict[team]
         next_event = team_next_event_dict[team]
-        team_year_obj = create_team_year_obj(
+        team_year_obj = TeamYear(
+            id=None,
             year=year_num,
             team=team,
             offseason=offseason_teams[team],

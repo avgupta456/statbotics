@@ -1,5 +1,3 @@
-from typing import Any, Dict, List, Optional
-
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
 
@@ -55,23 +53,3 @@ class Team(_Team, Model):
     def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.count}"
-
-
-def create_team_obj(
-    team: str,
-    name: str,
-    country: Optional[str],
-    state: Optional[str],
-    rookie_year: Optional[int],
-    *args: List[Any],
-    **kwargs: Dict[str, Any],
-) -> Team:
-    return Team(
-        team=team,
-        name=name,
-        country=country,
-        state=state,
-        rookie_year=rookie_year,
-        *args,
-        **kwargs,
-    )

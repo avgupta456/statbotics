@@ -1,6 +1,30 @@
 from typing import Optional, TypedDict
 
 
+class TeamDict(TypedDict):
+    team: str
+    name: str
+    rookie_year: int
+    offseason: bool
+    state: Optional[str]
+    country: Optional[str]
+
+
+class EventDict(TypedDict):
+    year: int
+    key: str
+    name: str
+    state: Optional[str]
+    country: Optional[str]
+    district: Optional[str]
+    start_date: str
+    end_date: str
+    time: int
+    type: int
+    week: int
+    video: Optional[str]
+
+
 class BreakdownDict(TypedDict):
     score: Optional[int]
     no_foul_points: Optional[int]
