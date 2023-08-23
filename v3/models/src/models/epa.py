@@ -73,8 +73,8 @@ class EPA(Model):
     def attribute_match(self, match: Match, pred: Pred) -> Dict[int, Attribution]:
         out: Dict[int, Attribution] = {}
 
-        red_error = match.red_no_fouls - pred.red_score
-        blue_error = match.blue_no_fouls - pred.blue_score
+        red_error = match.red_no_foul - pred.red_score
+        blue_error = match.blue_no_foul - pred.blue_score
 
         red_rp_1_error = match.red_rp_1 - pred.red_rp_1
         blue_rp_1_error = match.blue_rp_1 - pred.blue_rp_1

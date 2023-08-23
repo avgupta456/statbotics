@@ -59,7 +59,7 @@ class Elo(Model):
         out: Dict[int, Attribution] = {}
 
         pred_diff = pred.red_score - pred.blue_score
-        actual_diff = match.red_no_fouls - match.blue_no_fouls
+        actual_diff = match.red_no_foul - match.blue_no_foul
         error = actual_diff - pred_diff
 
         red_rp_1_error = match.red_rp_1 - pred.red_rp_1

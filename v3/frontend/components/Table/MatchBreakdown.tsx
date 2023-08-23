@@ -53,7 +53,7 @@ const formatCell = (
   const value = info.getValue();
 
   let color = "";
-  if (typeof value === "string" || row == "Fouls") {
+  if (typeof value === "string" || row == "fouls") {
     color = CONDITIONAL_COLORS[1];
   } else {
     const percentileStats: PercentileStats =

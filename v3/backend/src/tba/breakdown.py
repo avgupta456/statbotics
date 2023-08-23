@@ -283,6 +283,6 @@ def clean_breakdown(
     out["2"] = out["auto_2"] + out["teleop_2"]
     out["teleop"] = out["teleop_1"] + out["teleop_2"]
     out["no_foul"] = out["auto"] + out["teleop"] + out["endgame"]
-    out["fouls"] = breakdown.get("foulPoints", 0)
+    out["foul"] = breakdown.get("foulPoints", 0)
     return out
     """

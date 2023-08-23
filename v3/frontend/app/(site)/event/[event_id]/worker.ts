@@ -16,7 +16,7 @@ const shuffle = (a) => {
 const getTiebreakers = (year: number, match: APIMatch) => {
   // # TODO: remove this once we have stored tiebreakers pre 2023
   if (year === 2016) {
-    return [-match.blue_fouls, -match.red_fouls];
+    return [-match.blue_foul, -match.red_foul];
   } else if (year === 2017) {
     return [match.red_auto, match.blue_auto];
   } else if (year === 2018) {

@@ -17,8 +17,8 @@ class Match:
     blue_3: int
     red_score: int
     blue_score: int
-    red_no_fouls: int
-    blue_no_fouls: int
+    red_no_foul: int
+    blue_no_foul: int
     red_rp_1: bool
     blue_rp_1: bool
     red_rp_2: bool
@@ -43,8 +43,8 @@ class Match:
         blue_3: int,
         red_score: int,
         blue_score: int,
-        red_no_fouls: int,
-        blue_no_fouls: int,
+        red_no_foul: int,
+        blue_no_foul: int,
         red_rp_1: bool,
         blue_rp_1: bool,
         red_rp_2: bool,
@@ -66,8 +66,8 @@ class Match:
         self.blue_3 = blue_3
         self.red_score = red_score
         self.blue_score = blue_score
-        self.red_no_fouls = red_no_fouls
-        self.blue_no_fouls = blue_no_fouls
+        self.red_no_foul = red_no_foul
+        self.blue_no_foul = blue_no_foul
         self.red_rp_1 = red_rp_1
         self.blue_rp_1 = blue_rp_1
         self.red_rp_2 = red_rp_2

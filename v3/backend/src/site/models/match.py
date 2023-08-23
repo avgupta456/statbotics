@@ -33,7 +33,7 @@ class APIMatch(APIModel):
     red_endgame: int
     red_1: int
     red_2: int
-    red_fouls: int
+    red_foul: int
     red_rp_1: int
     red_rp_2: int
     red_tiebreaker: int
@@ -43,7 +43,7 @@ class APIMatch(APIModel):
     blue_endgame: int
     blue_1: int
     blue_2: int
-    blue_fouls: int
+    blue_foul: int
     blue_rp_1: int
     blue_rp_2: int
     blue_tiebreaker: int

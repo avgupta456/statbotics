@@ -111,8 +111,8 @@ def get_data(year: int) -> List[Any]:
                 blue_score,
             )
 
-            red_no_fouls = red_breakdown["no_foul_points"]
-            blue_no_fouls = blue_breakdown["no_foul_points"]
+            red_no_foul = red_breakdown["no_foul_points"]
+            blue_no_foul = blue_breakdown["no_foul_points"]
 
             red_rp_1 = red_breakdown["rp_1"]
             blue_rp_1 = blue_breakdown["rp_1"]
@@ -136,8 +136,8 @@ def get_data(year: int) -> List[Any]:
                     blue_teams[2],
                     red_score,
                     blue_score,
-                    red_no_fouls,
-                    blue_no_fouls,
+                    red_no_foul,
+                    blue_no_foul,
                     red_rp_1,
                     blue_rp_1,
                     red_rp_2,

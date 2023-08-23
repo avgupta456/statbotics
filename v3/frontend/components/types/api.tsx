@@ -189,7 +189,7 @@ export type APIMatch = {
   red_endgame: number;
   red_1: number;
   red_2: number;
-  red_fouls: number;
+  red_foul: number;
   red_rp_1: number;
   red_rp_2: number;
   red_tiebreaker: number;
@@ -199,7 +199,7 @@ export type APIMatch = {
   blue_endgame: number;
   blue_1: number;
   blue_2: number;
-  blue_fouls: number;
+  blue_foul: number;
   blue_rp_1: number;
   blue_rp_2: number;
   blue_tiebreaker: number;
