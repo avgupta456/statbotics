@@ -15,7 +15,6 @@ from src.db.models import (
     TeamYear,
     Team,
     TeamEvent,
-    Year,
     match_dict_to_objs,
 )
 from src.tba.constants import DISTRICT_MAPPING, YEAR_BLACKLIST
@@ -79,10 +78,6 @@ def get_event_status(matches: List[MatchDict], year: int) -> str:
         return "Invalid"
 
     return event_status
-
-
-def create_objs(year: int) -> objs_type:
-    return (Year(year=year), {}, {}, {}, {}, {}, {}, {})
 
 
 """

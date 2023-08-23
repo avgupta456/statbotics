@@ -54,6 +54,10 @@ objs_type = Tuple[
 ]
 
 
+def create_objs(year: int) -> objs_type:
+    return (Year(year=year), {}, {}, {}, {}, {}, {}, {})
+
+
 def read_objs(year: int) -> objs_type:
     year_obj = get_year_db(year)
     if year_obj is None:
@@ -80,10 +84,11 @@ def write_objs(
     if clean:
         clear_year(year_num)
 
-    update_years_db([objs[0]], clean)
-
     if orig_objs is None:
-        orig_objs = read_objs(year_num)
+        # Ensure that all objects are updated
+        orig_objs = create_objs(-1)
+
+    update_years_db([objs[0]], clean)
 
     for prev, curr, update_func in [
         (orig_objs[1], objs[1], update_team_years_db),
