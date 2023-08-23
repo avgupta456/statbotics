@@ -1,29 +1,9 @@
-from typing import Any, Dict, Optional, TypedDict
+from typing import Any, Dict, Optional
+
+from src.tba.types import BreakdownDict
 
 
-class Breakdown(TypedDict):
-    score: Optional[int]
-    no_foul_points: Optional[int]
-    foul_points: Optional[int]
-    auto_points: Optional[int]
-    teleop_points: Optional[int]
-    endgame_points: Optional[int]
-    rp1: Optional[bool]
-    rp2: Optional[bool]
-    comp_1: Optional[float]
-    comp_2: Optional[float]
-    comp_3: Optional[float]
-    comp_4: Optional[float]
-    comp_5: Optional[float]
-    comp_6: Optional[float]
-    comp_7: Optional[float]
-    comp_8: Optional[float]
-    comp_9: Optional[float]
-    comp_10: Optional[float]
-    tiebreaker: Optional[float]
-
-
-empty_breakdown: Breakdown = {
+empty_breakdown: BreakdownDict = {
     "score": None,
     "no_foul_points": None,
     "foul_points": None,
@@ -54,7 +34,7 @@ def clean_breakdown_2016(
     score: int,
     no_foul_points: int,
     foul_points: int,
-) -> Breakdown:
+) -> BreakdownDict:
     auto_reach_points = breakdown.get("autoReachPoints", 0)
     auto_crossing_points = breakdown.get("autoCrossingPoints", 0)
     auto_low_boulders = breakdown.get("autoBouldersLow", 0)
@@ -117,10 +97,10 @@ def clean_breakdown(
     key: str,
     breakdown: Optional[Dict[str, Any]],
     opp_breakdown: Optional[Dict[str, Any]],
-    score: int,
-) -> Breakdown:
+    score: Optional[int],
+) -> BreakdownDict:
     out = empty_breakdown
-    if breakdown is None or opp_breakdown is None or year < 2016:
+    if breakdown is None or opp_breakdown is None or score is None or year < 2016:
         return out
 
     # Shared

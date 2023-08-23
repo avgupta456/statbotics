@@ -14,6 +14,28 @@ class YearORM(Base, ModelORM):
     __tablename__ = "years"
     year: MI = mapped_column(Integer, index=True, primary_key=True)
 
+    """CONSTANTS"""
+    # TODO: enforce consistent order of score mean, score sd, no_foul, foul, auto, teleop, endgame, rp_1, rp_2, comps
+    score_mean: MF = mapped_column(Float, default=0)
+    score_sd: MF = mapped_column(Float, default=0)
+    foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    no_foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_mean: MOF = mapped_column(Float, nullable=True, default=None)
+
     """EPA"""
     epa_1p: MOF = mapped_column(Float, nullable=True, default=None)
     epa_10p: MOF = mapped_column(Float, nullable=True, default=None)
@@ -110,28 +132,6 @@ class YearORM(Base, ModelORM):
     rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_mse: MOF = mapped_column(Float, nullable=True, default=None)
     rp_count: MI = mapped_column(Integer, default=0)
-
-    """CONSTANTS"""
-    # TODO: enforce consistent order of score mean, score sd, no_foul, foul, auto, teleop, endgame, rp_1, rp_2, comps
-    score_mean: MF = mapped_column(Float, default=0)
-    score_sd: MF = mapped_column(Float, default=0)
-    foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    no_foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_3_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_4_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_5_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_6_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_7_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_8_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_9_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_10_mean: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Year = generate_attr_class("Year", YearORM)

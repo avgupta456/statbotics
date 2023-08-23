@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import List
 
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
@@ -49,32 +49,31 @@ class MatchORM(Base, ModelORM):
     blue_dq: MS = mapped_column(String(20))
     blue_surrogate: MS = mapped_column(String(20))
 
-    """EPA"""
-    red_epa_sum: MF = mapped_column(Float, default=0)
-
-    blue_epa_sum: MF = mapped_column(Float, default=0)
-
-    epa_winner: MS = mapped_column(String(4), default="draw")
-    epa_win_prob: MF = mapped_column(Float, default=0.5)
-    red_rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    red_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
-
     """OUTCOME"""
+    official_winner: MOS = mapped_column(String(4), nullable=True, default=None)
     winner: MOS = mapped_column(String(4), nullable=True, default=None)
 
     red_score: MOI = mapped_column(Integer, nullable=True, default=None)
     red_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
     red_rp_1: MOI = mapped_column(Integer, nullable=True, default=None)
     red_rp_2: MOI = mapped_column(Integer, nullable=True, default=None)
-    red_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     blue_score: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_rp_1: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_rp_2: MOI = mapped_column(Integer, nullable=True, default=None)
-    blue_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """EPA"""
+    epa_winner: MS = mapped_column(String(4), default="draw")
+    epa_win_prob: MF = mapped_column(Float, default=0.5)
+    red_epa_sum: MF = mapped_column(Float, default=0)
+    blue_epa_sum: MF = mapped_column(Float, default=0)
+    red_rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    red_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Match = generate_attr_class("Match", MatchORM)
@@ -113,59 +112,3 @@ class Match(_Match, Model):
 
     def get_teams(self: "Match") -> List[List[str]]:
         return [self.get_red(), self.get_blue()]
-
-
-def create_match_obj(
-    key: str,
-    year: int,
-    event: str,
-    offseason: bool,
-    week: int,
-    playoff: bool,
-    comp_level: str,
-    set_number: int,
-    match_number: int,
-    time: int,
-    predicted_time: int,
-    status: str,
-    video: str,
-    red_1: str,
-    red_2: str,
-    red_3: str,
-    red_dq: str,
-    red_surrogate: str,
-    blue_1: str,
-    blue_2: str,
-    blue_3: str,
-    blue_dq: str,
-    blue_surrogate: str,
-    *args: List[Any],
-    **kwawrgs: Dict[str, Any],
-) -> Match:
-    return Match(
-        key=key,
-        year=year,
-        event=event,
-        offseason=offseason,
-        week=week,
-        playoff=playoff,
-        comp_level=comp_level,
-        set_number=set_number,
-        match_number=match_number,
-        time=time,
-        predicted_time=predicted_time,
-        status=status,
-        video=video,
-        red_1=red_1,
-        red_2=red_2,
-        red_3=red_3,
-        red_dq=red_dq,
-        red_surrogate=red_surrogate,
-        blue_1=blue_1,
-        blue_2=blue_2,
-        blue_3=blue_3,
-        blue_dq=blue_dq,
-        blue_surrogate=blue_surrogate,
-        *args,
-        **kwawrgs,
-    )

@@ -30,6 +30,7 @@ from src.tba.read_tba import (
     get_matches as get_matches_tba,
     get_teams as get_teams_tba,
 )
+from src.tba.read_tba import MatchDict
 
 """
 HELPER FUNCTIONS
@@ -51,7 +52,7 @@ def load_teams(cache: bool = True) -> List[Team]:
     return team_objs
 
 
-def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
+def get_event_status(matches: List[MatchDict], year: int) -> str:
     num_matches = len(matches)
     num_qual_matches = len([m for m in matches if m["comp_level"] == "qm"])
     finals_matches = [m for m in matches if m["comp_level"] == "f"]
@@ -207,7 +208,7 @@ def process_year(
     for event in events:
         key = event["key"]
         curr_obj = event_objs_dict.get(key, None)
-        curr_status = curr_obj.status if curr_obj is not None else None
+        curr_status = "Upcoming" if curr_obj is None else curr_obj.status
         event_objs_dict[key] = create_event_obj(
             key=key,
             year=year_num,
@@ -221,7 +222,7 @@ def process_year(
             type=event["type"],
             week=event["week"],
             video=event["video"],
-            status=curr_status or "Upcoming",
+            status=curr_status,
         )
 
     for event_obj in event_objs_dict.values():
@@ -308,15 +309,13 @@ def process_year(
         elif event_status in ["Ongoing", "Completed"]:
             # Update event_obj, accumulate match_obj, alliance_objs, team_match_objs
             for match in matches:
-                match["year"] = year_num
-                match["week"] = event_obj.week
-                match["offseason"] = event_obj.offseason
-
                 (
                     match_obj,
                     curr_alliance_objs,
                     curr_team_match_objs,
-                ) = match_dict_to_objs(match)
+                ) = match_dict_to_objs(
+                    match, year_num, event_obj.week, event_obj.offseason
+                )
 
                 current_match += match_obj.status == "Completed"
                 qual_matches += not match_obj.playoff

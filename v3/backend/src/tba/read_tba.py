@@ -1,13 +1,12 @@
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 from src.tba.breakdown import clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
-
-m_type = List[Dict[str, Any]]
+from src.tba.types import MatchDict
 
 
 def get_timestamp_from_str(date: str):
@@ -182,27 +181,23 @@ def get_matches(
     event_time: int,
     etag: Optional[str] = None,
     cache: bool = True,
-) -> Tuple[List[Dict[str, Any]], Optional[str]]:
-    out: m_type = []
+) -> Tuple[List[MatchDict], Optional[str]]:
+    out: List[MatchDict] = []
     query_str = "event/" + str(event) + "/matches"
     matches, new_etag = get_tba(query_str, etag=etag, cache=cache)
     if type(matches) is bool:
         return out, new_etag
     for match in matches:
-        red_teams = match["alliances"]["red"]["team_keys"]
-        red_dq_teams = match["alliances"]["red"]["dq_team_keys"]
-        red_surrogate_teams = match["alliances"]["red"]["surrogate_team_keys"]
-        blue_teams = match["alliances"]["blue"]["team_keys"]
-        blue_dq_teams = match["alliances"]["blue"]["dq_team_keys"]
-        blue_surrogate_teams = match["alliances"]["blue"]["surrogate_team_keys"]
-
-        red_score = match["alliances"]["red"]["score"]
-        blue_score = match["alliances"]["blue"]["score"]
-        winner = "draw"
-        if red_score > blue_score:
-            winner = "red"
-        elif blue_score > red_score:
-            winner = "blue"
+        red_teams: List[str] = match["alliances"]["red"]["team_keys"]
+        red_dq_teams: List[str] = match["alliances"]["red"]["dq_team_keys"]
+        red_surrogate_teams: List[str] = match["alliances"]["red"][
+            "surrogate_team_keys"
+        ]
+        blue_teams: List[str] = match["alliances"]["blue"]["team_keys"]
+        blue_dq_teams: List[str] = match["alliances"]["blue"]["dq_team_keys"]
+        blue_surrogate_teams: List[str] = match["alliances"]["blue"][
+            "surrogate_team_keys"
+        ]
 
         if match["key"] in MATCH_BLACKLIST:
             continue
@@ -215,6 +210,34 @@ def get_matches(
 
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
             continue
+
+        raw_red_score: int = match["alliances"]["red"]["score"]
+        raw_blue_score: int = match["alliances"]["blue"]["score"]
+        status = "Completed" if min(raw_red_score, raw_blue_score) >= 0 else "Upcoming"
+
+        red_score = None
+        blue_score = None
+        winner = None
+        official_winner = None
+        if status == "Completed":
+            red_score = raw_red_score
+            blue_score = raw_blue_score
+            if red_score > blue_score:
+                winner = "red"
+            elif blue_score > red_score:
+                winner = "blue"
+            else:
+                winner = "draw"
+
+            if match["winning_alliance"] == "red":
+                official_winner = "red"
+            elif match["winning_alliance"] == "blue":
+                official_winner = "blue"
+            elif match["winning_alliance"] == "" and red_score == blue_score:
+                official_winner = "draw"
+
+            if year == 2015 and match["comp_level"] != "f":
+                official_winner = None
 
         red_teams = [team[3:] for team in red_teams]
         blue_teams = [team[3:] for team in blue_teams]
@@ -244,27 +267,35 @@ def get_matches(
                 if len(video) > 20:
                     video = None
 
-        match_data: Dict[str, Any] = {
+        time: int = match["time"] or get_match_time(
+            match["comp_level"],
+            match["set_number"],
+            match["match_number"],
+            event_time,
+        )
+
+        match_data: MatchDict = {
             "event": event,
-            "key": match["key"],
-            "comp_level": match["comp_level"],
-            "set_number": match["set_number"],
-            "match_number": match["match_number"],
-            "status": "Completed" if min(red_score, blue_score) >= 0 else "Upcoming",
+            "key": cast(str, match["key"]),
+            "comp_level": cast(str, match["comp_level"]),
+            "set_number": cast(int, match["set_number"]),
+            "match_number": cast(int, match["match_number"]),
+            "status": status,
             "video": video,
-            "red_1": red_teams[0] if len(red_teams) > 0 else None,
-            "red_2": red_teams[1] if len(red_teams) > 1 else None,
+            "red_1": red_teams[0],
+            "red_2": red_teams[1],
             "red_3": red_teams[2] if len(red_teams) > 2 else None,
-            "blue_1": blue_teams[0] if len(blue_teams) > 0 else None,
-            "blue_2": blue_teams[1] if len(blue_teams) > 1 else None,
-            "blue_3": blue_teams[2] if len(blue_teams) > 2 else None,
             "red_dq": ",".join([t[3:] for t in red_dq_teams]),
-            "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
             "red_surrogate": ",".join([t[3:] for t in red_surrogate_teams]),
+            "blue_1": blue_teams[0],
+            "blue_2": blue_teams[1],
+            "blue_3": blue_teams[2] if len(blue_teams) > 2 else None,
+            "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
             "blue_surrogate": ",".join([t[3:] for t in blue_surrogate_teams]),
+            "official_winner": official_winner,
             "winner": winner,
-            "time": match["time"] or get_match_time(match, event_time),
-            "predicted_time": match["predicted_time"],
+            "time": time,
+            "predicted_time": cast(Optional[int], match["predicted_time"]),
             "red_score": red_score,
             "blue_score": blue_score,
             "red_score_breakdown": red_breakdown,

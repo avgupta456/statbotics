@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from src.tba.constants import CANADA_MAPPING, DISTRICT_MAPPING, USA_MAPPING
 
@@ -21,18 +21,20 @@ def clean_district(district: Optional[str]) -> Optional[str]:
     return district
 
 
-def get_match_time(match: Dict[str, Any], event_time: int) -> int:
+def get_match_time(
+    comp_level: str, set_number: int, match_number: int, event_time: int
+) -> int:
     match_time = event_time  # start value
-    if match["comp_level"] == "qm":
-        match_time += match["match_number"]
-    elif match["comp_level"] == "ef":
-        match_time += 200 + 10 * match["set_number"] + match["match_number"]
-    elif match["comp_level"] == "qf":
-        match_time += 300 + 10 * match["set_number"] + match["match_number"]
-    elif match["comp_level"] == "sf":
-        match_time += 400 + 10 * match["set_number"] + match["match_number"]
-    elif match["comp_level"] == "f":
-        match_time += 500 + match["match_number"]
+    if comp_level == "qm":
+        match_time += match_number
+    elif comp_level == "ef":
+        match_time += 200 + 10 * set_number + match_number
+    elif comp_level == "qf":
+        match_time += 300 + 10 * set_number + match_number
+    elif comp_level == "sf":
+        match_time += 400 + 10 * set_number + match_number
+    elif comp_level == "f":
+        match_time += 500 + match_number
     else:
-        raise ValueError("Invalid comp_level: " + match["comp_level"])
+        raise ValueError("Invalid comp_level: " + comp_level)
     return match_time

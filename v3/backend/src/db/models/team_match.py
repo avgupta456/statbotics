@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import attr
 from sqlalchemy import Boolean, Float, Integer, String
@@ -70,38 +70,3 @@ class TeamMatch(_TeamMatch, Model):
     def __str__(self: "TeamMatch") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.match}_{self.status}_{self.epa}_{self.post_epa}"
-
-
-def create_team_match_obj(
-    team: str,
-    year: int,
-    event: str,
-    match: str,
-    alliance: str,
-    time: int,
-    offseason: bool,
-    week: int,
-    playoff: bool,
-    dq: bool,
-    surrogate: bool,
-    status: str,
-    *args: List[Any],
-    **kwargs: Dict[str, Any],
-) -> TeamMatch:
-    return TeamMatch(
-        id=None,
-        team=team,
-        year=year,
-        event=event,
-        match=match,
-        alliance=alliance,
-        time=time,
-        offseason=offseason,
-        week=week,
-        playoff=playoff,
-        dq=dq,
-        surrogate=surrogate,
-        status=status,
-        *args,
-        **kwargs,
-    )

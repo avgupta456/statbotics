@@ -30,11 +30,7 @@ class AllianceORM(Base, ModelORM):
     offseason: MB = mapped_column(Boolean, index=True)
     week: MI = mapped_column(Integer, index=True)
     playoff: MB = mapped_column(Boolean, index=True)
-
-    # TODO: Do we need all of these?
-    comp_level: MS = mapped_column(String(10))
-    set_number: MI = mapped_column(Integer)
-    match_number: MI = mapped_column(Integer)
+    alliance_num: MOI = mapped_column(Integer, index=True)
 
     time: MI = mapped_column(Integer)
 
@@ -46,6 +42,30 @@ class AllianceORM(Base, ModelORM):
     team_3: MOS = mapped_column(String(6), index=True)
     dq: MS = mapped_column(String(20))
     surrogate: MS = mapped_column(String(20))
+
+    """OUTCOME"""
+    official_winner: MOS = mapped_column(String(4), nullable=True, default=None)
+    winner: MOS = mapped_column(String(4), nullable=True, default=None)
+    score: MOI = mapped_column(Integer, nullable=True, default=None)
+    no_foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    auto_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    teleop_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    endgame_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
+    rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_1: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     # TODO: implement all of these, make non-nullable
@@ -70,29 +90,6 @@ class AllianceORM(Base, ModelORM):
     comp_10_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-
-    """OUTCOME"""
-    winner: MOS = mapped_column(String(4), nullable=True, default=None)
-    score: MOI = mapped_column(Integer, nullable=True, default=None)
-    no_foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    foul_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    auto_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    teleop_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    endgame_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
-    rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
-    tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_1: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_2: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_3: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_4: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_5: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_6: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_7: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_8: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_9: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_10: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Alliance = generate_attr_class("Alliance", AllianceORM)

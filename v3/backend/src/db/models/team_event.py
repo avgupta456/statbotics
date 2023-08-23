@@ -42,8 +42,21 @@ class TeamEventORM(Base, ModelORM):
     status: MS = mapped_column(String(10))
     first_event: MB = mapped_column(Boolean)
 
-    """NO DEFAULTS"""
-    num_teams: MI = mapped_column(Integer)
+    """STATS"""
+    wins: MI = mapped_column(Integer, default=0)
+    losses: MI = mapped_column(Integer, default=0)
+    ties: MI = mapped_column(Integer, default=0)
+    count: MI = mapped_column(Integer, default=0)
+    winrate: MF = mapped_column(Float, default=0)
+    qual_wins: MI = mapped_column(Integer, default=0)
+    qual_losses: MI = mapped_column(Integer, default=0)
+    qual_ties: MI = mapped_column(Integer, default=0)
+    qual_count: MI = mapped_column(Integer, default=0)
+    qual_winrate: MF = mapped_column(Float, default=0)
+    rps: MI = mapped_column(Integer, default=0)
+    rps_per_match: MF = mapped_column(Float, default=0)
+    rank: MOI = mapped_column(Integer, nullable=True, default=None)
+    num_teams: MI = mapped_column(Integer, default=0)
 
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
@@ -84,21 +97,6 @@ class TeamEventORM(Base, ModelORM):
     # TODO: populate unitless_epa_end, make not nullable
     unitless_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
     norm_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-
-    """STATS"""
-    wins: MI = mapped_column(Integer, default=0)
-    losses: MI = mapped_column(Integer, default=0)
-    ties: MI = mapped_column(Integer, default=0)
-    count: MI = mapped_column(Integer, default=0)
-    winrate: MF = mapped_column(Float, default=0)
-    qual_wins: MI = mapped_column(Integer, default=0)
-    qual_losses: MI = mapped_column(Integer, default=0)
-    qual_ties: MI = mapped_column(Integer, default=0)
-    qual_count: MI = mapped_column(Integer, default=0)
-    qual_winrate: MF = mapped_column(Float, default=0)
-    rps: MI = mapped_column(Integer, default=0)
-    rps_per_match: MF = mapped_column(Float, default=0)
-    rank: MOI = mapped_column(Integer, nullable=True, default=None)
 
 
 _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)

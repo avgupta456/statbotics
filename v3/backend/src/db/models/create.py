@@ -1,33 +1,26 @@
-from typing import Any, Dict, List, Tuple, cast, Optional
+from typing import List, Tuple
 
 from src.db.models.alliance import Alliance
-from src.db.models.match import Match, create_match_obj
-from src.db.models.team_match import TeamMatch, create_team_match_obj
-from src.tba.breakdown import Breakdown
+from src.db.models.match import Match
+from src.db.models.team_match import TeamMatch
+from src.tba.read_tba import MatchDict
 
 
 def match_dict_to_objs(
-    data: Dict[str, Any]
+    data: MatchDict, year: int, week: int, offseason: bool
 ) -> Tuple[Match, List[Alliance], List[TeamMatch]]:
-    data["playoff"] = data["comp_level"] != "qm"
+    playoff = data["comp_level"] != "qm"
 
-    red_no_foul_points = data["red_score_breakdown"]["no_foul_points"]
-    red_rp_1 = data["red_score_breakdown"]["rp1"]
-    red_rp_2 = data["red_score_breakdown"]["rp2"]
-    red_tiebreaker = data["red_score_breakdown"]["tiebreaker"]
+    red_breakdown = data["red_score_breakdown"]
+    blue_breakdown = data["blue_score_breakdown"]
 
-    blue_no_foul_points = data["blue_score_breakdown"]["no_foul_points"]
-    blue_rp_1 = data["blue_score_breakdown"]["rp1"]
-    blue_rp_2 = data["blue_score_breakdown"]["rp2"]
-    blue_tiebreaker = data["blue_score_breakdown"]["tiebreaker"]
-
-    match = create_match_obj(
+    match = Match(
         key=data["key"],
-        year=data["year"],
+        year=year,
         event=data["event"],
-        offseason=data["offseason"],
-        week=data["week"],
-        playoff=data["playoff"],
+        offseason=offseason,
+        week=week,
+        playoff=playoff,
         comp_level=data["comp_level"],
         set_number=data["set_number"],
         match_number=data["match_number"],
@@ -47,45 +40,56 @@ def match_dict_to_objs(
         blue_surrogate=data["blue_surrogate"],
         winner=data["winner"],
         red_score=data["red_score"],
-        red_no_foul=red_no_foul_points,
-        red_rp_1=red_rp_1,
-        red_rp_2=red_rp_2,
-        red_tiebreaker=red_tiebreaker,
+        red_no_foul=red_breakdown["no_foul_points"],
+        red_rp_1=red_breakdown["rp1"],
+        red_rp_2=red_breakdown["rp2"],
+        red_tiebreaker=red_breakdown["tiebreaker"],
         blue_score=data["blue_score"],
-        blue_no_foul=blue_no_foul_points,
-        blue_rp_1=blue_rp_1,
-        blue_rp_2=blue_rp_2,
-        blue_tiebreaker=blue_tiebreaker,
+        blue_no_foul=blue_breakdown["no_foul_points"],
+        blue_rp_1=blue_breakdown["rp1"],
+        blue_rp_2=blue_breakdown["rp2"],
+        blue_tiebreaker=blue_breakdown["tiebreaker"],
     )
 
     alliances: List[Alliance] = []
     team_matches: List[TeamMatch] = []
 
     for alliance in ["red", "blue"]:
-        breakdown: Breakdown = data[f"{alliance}_score_breakdown"]
+        breakdown = (
+            data["red_score_breakdown"]
+            if alliance == "red"
+            else data["blue_score_breakdown"]
+        )
+        team_1 = data["red_1"] if alliance == "red" else data["blue_1"]
+        team_2 = data["red_2"] if alliance == "red" else data["blue_2"]
+        team_3 = data["red_3"] if alliance == "red" else data["blue_3"]
+        dq = data["red_dq"] if alliance == "red" else data["blue_dq"]
+        surrogate = (
+            data["red_surrogate"] if alliance == "red" else data["blue_surrogate"]
+        )
+        score = data["red_score"] if alliance == "red" else data["blue_score"]
 
         alliances.append(
             Alliance(
                 id=None,
                 alliance=alliance,
-                match=cast(str, data["key"]),
-                year=cast(int, data["year"]),
-                event=cast(str, data["event"]),
-                offseason=cast(bool, data["offseason"]),
-                week=cast(int, data["week"]),
-                playoff=cast(bool, data["playoff"]),
-                comp_level=cast(str, data["comp_level"]),
-                set_number=cast(int, data["set_number"]),
-                match_number=cast(int, data["match_number"]),
-                time=cast(int, data["time"]),
-                status=cast(str, data["status"]),
-                team_1=cast(str, data[f"{alliance}_1"]),
-                team_2=cast(str, data[f"{alliance}_2"]),
-                team_3=cast(Optional[str], data[f"{alliance}_3"]),
-                dq=cast(str, data[f"{alliance}_dq"]),
-                surrogate=cast(str, data[f"{alliance}_surrogate"]),
-                winner=cast(Optional[str], data["winner"]),
-                score=cast(Optional[int], data[f"{alliance}_score"]),
+                match=data["key"],
+                year=year,
+                event=data["event"],
+                offseason=offseason,
+                week=week,
+                playoff=playoff,
+                alliance_num=None,  # TODO: Implement alliance_num
+                time=data["time"],
+                status=data["status"],
+                team_1=team_1,
+                team_2=team_2,
+                team_3=team_3,
+                dq=dq,
+                surrogate=surrogate,
+                official_winner=data["official_winner"],
+                winner=data["winner"],
+                score=score,
                 no_foul_points=breakdown["no_foul_points"],
                 foul_points=breakdown["foul_points"],
                 auto_points=breakdown["auto_points"],
@@ -107,25 +111,23 @@ def match_dict_to_objs(
             )
         )
 
-        teams = [data[f"{alliance}_1"], data[f"{alliance}_2"], data[f"{alliance}_3"]]
+        teams = [team_1, team_2, team_3]
         teams = [team for team in teams if team is not None]
         for team in teams:
-            team = team
-            dq = team in data[f"{alliance}_dq"].split(",")
-            surrogate = team in data[f"{alliance}_surrogate"].split(",")
             team_matches.append(
-                create_team_match_obj(
+                TeamMatch(
+                    id=None,
                     team=team,
-                    year=data["year"],
+                    year=year,
                     event=data["event"],
                     match=data["key"],
                     alliance=alliance,
                     time=data["time"],
-                    offseason=data["offseason"],
-                    week=data["week"],
-                    playoff=data["playoff"],
-                    dq=dq,
-                    surrogate=surrogate,
+                    offseason=offseason,
+                    week=week,
+                    playoff=playoff,
+                    dq=team in dq.split(","),
+                    surrogate=team in surrogate.split(","),
                     status=data["status"],
                 )
             )

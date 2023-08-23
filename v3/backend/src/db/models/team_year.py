@@ -75,7 +75,6 @@ class TeamYearORM(Base, ModelORM):
     rp_2_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
-    """NORM EPA"""
     unitless_epa_end: MF = mapped_column(Float, default=0)
     norm_epa_end: MOF = mapped_column(Float, default=0)
 

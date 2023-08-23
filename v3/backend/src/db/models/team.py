@@ -25,12 +25,6 @@ class TeamORM(Base, ModelORM):
     district: MOS = mapped_column(String(10), nullable=True, default=None)
     active: MB = mapped_column(Boolean, default=False)
 
-    """EPA"""
-    norm_epa: MOF = mapped_column(Float, nullable=True, default=None)
-    norm_epa_recent: MOF = mapped_column(Float, nullable=True, default=None)
-    norm_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    norm_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
-
     """STATS"""
     wins: MI = mapped_column(Integer, default=0)
     losses: MI = mapped_column(Integer, default=0)
@@ -43,6 +37,12 @@ class TeamORM(Base, ModelORM):
     full_ties: MI = mapped_column(Integer, default=0)
     full_count: MI = mapped_column(Integer, default=0)
     full_winrate: MF = mapped_column(Float, default=0)
+
+    """EPA"""
+    norm_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_recent: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Team = generate_attr_class("Team", TeamORM)
