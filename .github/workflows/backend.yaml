@@ -1,0 +1,29 @@
+name: CI-Backend
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+      - name: Linting
+        run: |
+          cd v3/backend
+          python -m pip install --upgrade pip
+          python -m pip install virtualenv
+          python -m virtualenv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          python -m black . --check --diff
+          python -m flake8 . --exclude=./.venv/
+          python -m pyright . --venvpath=./.venv/
