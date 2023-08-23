@@ -61,7 +61,7 @@ def get_table_rows(metrics: Metrics, year: int, model_name: str) -> List[List[st
     data = metrics.aggregate()
     for filter, filter_name in [
         ("all", ""),
-        ("champ", " (C)"),
+        ("champs", " (C)"),
         ("champs_elim", " (CE)"),
     ]:
         out.append(

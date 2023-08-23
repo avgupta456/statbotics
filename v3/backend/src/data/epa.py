@@ -223,17 +223,17 @@ def process_year(
     acc, mse, count = 0, 0, 0
     qual_acc, qual_mse, qual_count = 0, 0, 0
     elim_acc, elim_mse, elim_count = 0, 0, 0
-    champ_acc, champ_mse, champ_count = 0, 0, 0
+    champs_acc, champs_mse, champs_count = 0, 0, 0
     event_stats: Dict[str, Tuple[float, float, int]] = defaultdict(lambda: (0, 0, 0))
 
     rp_1_acc, rp_1_mse, rp_1_count = 0, 0, 0
-    champ_rp_1_acc, champ_rp_1_mse, champ_rp_1_count = 0, 0, 0
+    champs_rp_1_acc, champs_rp_1_mse, champs_rp_1_count = 0, 0, 0
     rp_1_event_stats: Dict[str, Tuple[float, float, int]] = defaultdict(
         lambda: (0, 0, 0)
     )
 
     rp_2_acc, rp_2_mse, rp_2_count = 0, 0, 0
-    champ_rp_2_acc, champ_rp_2_mse, champ_rp_2_count = 0, 0, 0
+    champs_rp_2_acc, champs_rp_2_mse, champs_rp_2_count = 0, 0, 0
     rp_2_event_stats: Dict[str, Tuple[float, float, int]] = defaultdict(
         lambda: (0, 0, 0)
     )
@@ -450,9 +450,9 @@ def process_year(
             qual_acc += new_acc
             qual_count += 1
         if event_weeks[match.event] == 8:
-            champ_mse += new_mse
-            champ_acc += new_acc
-            champ_count += 1
+            champs_mse += new_mse
+            champs_acc += new_acc
+            champs_count += 1
 
         if not match.elim and USE_COMPONENTS:
             rp_1_new_acc = 0
@@ -488,13 +488,13 @@ def process_year(
             rp_2_count += 2
 
             if event_weeks[match.event] == 8:
-                champ_rp_1_mse += rp_1_new_mse
-                champ_rp_1_acc += rp_1_new_acc
-                champ_rp_1_count += 2
+                champs_rp_1_mse += rp_1_new_mse
+                champs_rp_1_acc += rp_1_new_acc
+                champs_rp_1_count += 2
 
-                champ_rp_2_mse += rp_2_new_mse
-                champ_rp_2_acc += rp_2_new_acc
-                champ_rp_2_count += 2
+                champs_rp_2_mse += rp_2_new_mse
+                champs_rp_2_acc += rp_2_new_acc
+                champs_rp_2_count += 2
 
     acc = None if count == 0 else round(acc / count, 4)
     mse = None if count == 0 else round(mse / count, 4)
@@ -502,24 +502,32 @@ def process_year(
     elim_mse = None if elim_count == 0 else round(elim_mse / elim_count, 4)
     qual_acc = None if qual_count == 0 else round(qual_acc / qual_count, 4)
     qual_mse = None if qual_count == 0 else round(qual_mse / qual_count, 4)
-    champ_acc = None if champ_count == 0 else round(champ_acc / champ_count, 4)
-    champ_mse = None if champ_count == 0 else round(champ_mse / champ_count, 4)
+    champs_acc = None if champs_count == 0 else round(champs_acc / champs_count, 4)
+    champs_mse = None if champs_count == 0 else round(champs_mse / champs_count, 4)
 
     rp_1_acc = None if rp_1_count == 0 else round(rp_1_acc / rp_1_count, 4)
     rp_1_mse = None if rp_1_count == 0 else round(rp_1_mse / rp_1_count, 4)
     rp_2_acc = None if rp_2_count == 0 else round(rp_2_acc / rp_2_count, 4)
     rp_2_mse = None if rp_2_count == 0 else round(rp_2_mse / rp_2_count, 4)
-    champ_rp_1_acc = (
-        None if champ_rp_1_count == 0 else round(champ_rp_1_acc / champ_rp_1_count, 4)
+    champs_rp_1_acc = (
+        None
+        if champs_rp_1_count == 0
+        else round(champs_rp_1_acc / champs_rp_1_count, 4)
     )
-    champ_rp_1_mse = (
-        None if champ_rp_1_count == 0 else round(champ_rp_1_mse / champ_rp_1_count, 4)
+    champs_rp_1_mse = (
+        None
+        if champs_rp_1_count == 0
+        else round(champs_rp_1_mse / champs_rp_1_count, 4)
     )
-    champ_rp_2_acc = (
-        None if champ_rp_2_count == 0 else round(champ_rp_2_acc / champ_rp_2_count, 4)
+    champs_rp_2_acc = (
+        None
+        if champs_rp_2_count == 0
+        else round(champs_rp_2_acc / champs_rp_2_count, 4)
     )
-    champ_rp_2_mse = (
-        None if champ_rp_2_count == 0 else round(champ_rp_2_mse / champ_rp_2_count, 4)
+    champs_rp_2_mse = (
+        None
+        if champs_rp_2_count == 0
+        else round(champs_rp_2_mse / champs_rp_2_count, 4)
     )
 
     # TEAM MATCHES
@@ -938,9 +946,9 @@ def process_year(
         year.epa_qual_acc = qual_acc
         year.epa_qual_mse = qual_mse
         year.qual_count = qual_count
-        year.epa_champs_acc = champ_acc
-        year.epa_champs_mse = champ_mse
-        year.champs_count = champ_count
+        year.epa_champs_acc = champs_acc
+        year.epa_champs_mse = champs_mse
+        year.champs_count = champs_count
         year.rp_1_acc = rp_1_acc
         year.rp_1_mse = rp_1_mse
         year.rp_2_acc = rp_2_acc

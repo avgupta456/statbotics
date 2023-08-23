@@ -137,10 +137,10 @@ class Metrics:
         rp1 = self.rp_1_pred.values()
         rp2 = self.rp_2_pred.values()
 
-        def champ_filter(x: Any):
+        def champs_filter(x: Any):
             return x["week"] == 8
 
-        def champ_elim_filter(x: Any):
+        def champs_elim_filter(x: Any):
             return x["week"] == 8 and x["elim"]
 
         return {
@@ -150,16 +150,16 @@ class Metrics:
                 "rp_1_pred": Metrics.agg_binary(list(rp1)),
                 "rp_2_pred": Metrics.agg_binary(list(rp2)),
             },
-            "champ": {
-                "win_pred": Metrics.agg_binary(list(filter(champ_filter, wp))),
-                "score_pred": Metrics.agg_cont(list(filter(champ_filter, sp))),
-                "rp_1_pred": Metrics.agg_binary(list(filter(champ_filter, rp1))),
-                "rp_2_pred": Metrics.agg_binary(list(filter(champ_filter, rp2))),
+            "champs": {
+                "win_pred": Metrics.agg_binary(list(filter(champs_filter, wp))),
+                "score_pred": Metrics.agg_cont(list(filter(champs_filter, sp))),
+                "rp_1_pred": Metrics.agg_binary(list(filter(champs_filter, rp1))),
+                "rp_2_pred": Metrics.agg_binary(list(filter(champs_filter, rp2))),
             },
-            "champ_elim": {
-                "win_pred": Metrics.agg_binary(list(filter(champ_elim_filter, wp))),
-                "score_pred": Metrics.agg_cont(list(filter(champ_elim_filter, sp))),
-                "rp_1_pred": Metrics.agg_binary(list(filter(champ_elim_filter, rp1))),
-                "rp_2_pred": Metrics.agg_binary(list(filter(champ_elim_filter, rp2))),
+            "champs_elim": {
+                "win_pred": Metrics.agg_binary(list(filter(champs_elim_filter, wp))),
+                "score_pred": Metrics.agg_cont(list(filter(champs_elim_filter, sp))),
+                "rp_1_pred": Metrics.agg_binary(list(filter(champs_elim_filter, rp1))),
+                "rp_2_pred": Metrics.agg_binary(list(filter(champs_elim_filter, rp2))),
             },
         }
