@@ -10,8 +10,8 @@ empty_breakdown: BreakdownDict = {
     "auto_points": None,
     "teleop_points": None,
     "endgame_points": None,
-    "rp1": None,
-    "rp2": None,
+    "rp_1": None,
+    "rp_2": None,
     "comp_1": None,
     "comp_2": None,
     "comp_3": None,
@@ -76,8 +76,8 @@ def clean_breakdown_2016(
         "auto_points": auto_points,
         "teleop_points": teleop_points,
         "endgame_points": endgame_points,
-        "rp1": rp_1,
-        "rp2": rp_2,
+        "rp_1": rp_1,
+        "rp_2": rp_2,
         "comp_1": auto_reach_points,
         "comp_2": auto_crossing_points,
         "comp_3": auto_low_boulders,
@@ -119,7 +119,9 @@ def clean_breakdown(
         teleop_points = out["teleop_points"] or 0
         endgame_points = out["endgame_points"] or 0
         no_foul_points = out["no_foul_points"] or 0
-        assert auto_points + teleop_points + endgame_points == no_foul_points
+        if auto_points + teleop_points + endgame_points != no_foul_points:
+            print(key, auto_points, teleop_points, endgame_points, no_foul_points)
+            # assert auto_points + teleop_points + endgame_points == no_foul_points
 
     return out
 

@@ -41,13 +41,13 @@ def match_dict_to_objs(
         winner=data["winner"],
         red_score=data["red_score"],
         red_no_foul=red_breakdown["no_foul_points"],
-        red_rp_1=red_breakdown["rp1"],
-        red_rp_2=red_breakdown["rp2"],
+        red_rp_1=red_breakdown["rp_1"],
+        red_rp_2=red_breakdown["rp_2"],
         red_tiebreaker=red_breakdown["tiebreaker"],
         blue_score=data["blue_score"],
         blue_no_foul=blue_breakdown["no_foul_points"],
-        blue_rp_1=blue_breakdown["rp1"],
-        blue_rp_2=blue_breakdown["rp2"],
+        blue_rp_1=blue_breakdown["rp_1"],
+        blue_rp_2=blue_breakdown["rp_2"],
         blue_tiebreaker=blue_breakdown["tiebreaker"],
     )
 
@@ -60,6 +60,7 @@ def match_dict_to_objs(
             if alliance == "red"
             else data["blue_score_breakdown"]
         )
+
         team_1 = data["red_1"] if alliance == "red" else data["blue_1"]
         team_2 = data["red_2"] if alliance == "red" else data["blue_2"]
         team_3 = data["red_3"] if alliance == "red" else data["blue_3"]
@@ -94,8 +95,8 @@ def match_dict_to_objs(
                 auto=breakdown["auto_points"],
                 teleop=breakdown["teleop_points"],
                 endgame=breakdown["endgame_points"],
-                rp_1=breakdown["rp1"],
-                rp_2=breakdown["rp2"],
+                rp_1=breakdown["rp_1"],
+                rp_2=breakdown["rp_2"],
                 tiebreaker=breakdown["tiebreaker"],
                 comp_1=breakdown["comp_1"],
                 comp_2=breakdown["comp_2"],

@@ -6,7 +6,7 @@ from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
+from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS, MOB
 
 
 class MatchORM(Base, ModelORM):
@@ -55,14 +55,14 @@ class MatchORM(Base, ModelORM):
 
     red_score: MOI = mapped_column(Integer, nullable=True, default=None)
     red_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
-    red_rp_1: MOI = mapped_column(Integer, nullable=True, default=None)
-    red_rp_2: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
+    red_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     blue_score: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
-    blue_rp_1: MOI = mapped_column(Integer, nullable=True, default=None)
-    blue_rp_2: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
+    blue_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
