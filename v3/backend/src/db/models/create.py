@@ -79,7 +79,6 @@ def match_dict_to_objs(
                 offseason=offseason,
                 week=week,
                 elim=elim,
-                alliance_num=None,  # TODO: Implement alliance_num
                 time=data["time"],
                 status=data["status"],
                 team_1=team_1,
