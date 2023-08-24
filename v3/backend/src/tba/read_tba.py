@@ -177,6 +177,7 @@ def get_event_rankings(
 def get_matches(
     year: int,
     event: str,
+    offseason: bool,
     event_time: int,
     etag: Optional[str] = None,
     cache: bool = True,
@@ -212,6 +213,7 @@ def get_matches(
 
         raw_red_score: int = match["alliances"]["red"]["score"]
         raw_blue_score: int = match["alliances"]["blue"]["score"]
+
         status = "Completed" if min(raw_red_score, raw_blue_score) >= 0 else "Upcoming"
 
         red_score = None
@@ -243,15 +245,17 @@ def get_matches(
 
         breakdown = match.get("score_breakdown", {}) or {}
         red_breakdown = clean_breakdown(
-            year,
             match["key"],
+            year,
+            offseason,
             breakdown.get("red", None),
             breakdown.get("blue", None),
             red_score,
         )
         blue_breakdown = clean_breakdown(
-            year,
             match["key"],
+            year,
+            offseason,
             breakdown.get("blue", None),
             breakdown.get("red", None),
             blue_score,

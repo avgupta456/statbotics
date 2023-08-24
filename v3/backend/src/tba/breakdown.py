@@ -29,6 +29,7 @@ INVALID_MATCH_KEYS = ["2016capl_f1m1", "2016milsu_qf4m1", "2016mndu2_f1m2"]
 
 
 def clean_breakdown_2016(
+    key: str,
     breakdown: Dict[str, Any],
     opp_breakdown: Dict[str, Any],
     score: int,
@@ -39,6 +40,13 @@ def clean_breakdown_2016(
     auto_crossing_points = breakdown.get("autoCrossingPoints", 0)
     auto_low_boulders = breakdown.get("autoBouldersLow", 0)
     auto_high_boulders = breakdown.get("autoBouldersHigh", 0)
+
+    # some 2016 offseason events don't have autoBouldersLow/High
+    auto_boulder_points = breakdown.get("autoBoulderPoints", 0)
+    if 5 * auto_low_boulders + 10 * auto_high_boulders != auto_boulder_points:
+        # print("Auto Boulders", key)
+        auto_high_boulders = auto_boulder_points // 10
+        auto_low_boulders = (auto_boulder_points - 10 * auto_high_boulders) // 5
 
     teleop_crossing_points = breakdown.get("teleopCrossingPoints", 0)
     teleop_low_boulders = breakdown.get("teleopBouldersLow", 0)
@@ -94,6 +102,7 @@ def clean_breakdown_2016(
 
 def clean_breakdown(
     year: int,
+    offseason: bool,
     key: str,
     breakdown: Optional[Dict[str, Any]],
     opp_breakdown: Optional[Dict[str, Any]],
@@ -107,7 +116,7 @@ def clean_breakdown(
     foul_points = breakdown.get("foulPoints", 0) + breakdown.get("adjustPoints", 0)
     no_foul_points = score - foul_points
 
-    inputs = (breakdown, opp_breakdown, score, no_foul_points, foul_points)
+    inputs = (key, breakdown, opp_breakdown, score, no_foul_points, foul_points)
 
     if year == 2016:
         out = clean_breakdown_2016(*inputs)
@@ -121,7 +130,8 @@ def clean_breakdown(
         no_foul_points = out["no_foul_points"] or 0
         if auto_points + teleop_points + endgame_points != no_foul_points:
             print(key, auto_points, teleop_points, endgame_points, no_foul_points)
-            # assert auto_points + teleop_points + endgame_points == no_foul_points
+            if not offseason:
+                assert auto_points + teleop_points + endgame_points == no_foul_points
 
     return out
 

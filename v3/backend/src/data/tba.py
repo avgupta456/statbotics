@@ -112,7 +112,12 @@ def check_year_partial(
 
         prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
         _, new_etag = get_matches_tba(
-            year_num, event_obj.key, event_obj.time, prev_etag, cache=False
+            year_num,
+            event_obj.key,
+            event_obj.offseason,
+            event_obj.time,
+            prev_etag,
+            cache=False,
         )
         if new_etag == prev_etag and new_etag is not None:
             continue
@@ -227,7 +232,7 @@ def process_year(
 
         matches, new_etag = call_tba(
             lambda etag, cache: get_matches_tba(
-                year_num, event_key, event_time, etag, cache
+                year_num, event_key, event_obj.offseason, event_time, etag, cache
             ),
             event_key + "/matches",
         )
@@ -322,7 +327,6 @@ def process_year(
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
             if team not in teams_dict:
-                print(team)
                 new_team_obj = Team(
                     team=team,
                     name=team,
