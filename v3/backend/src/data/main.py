@@ -14,10 +14,10 @@ from src.data.tba import (
 )
 from src.data.utils import (
     Timer,
+    create_objs,
     objs_type,
     read_objs as read_objs_db,
     write_objs as write_objs_db,
-    create_objs,
 )
 from src.db.main import clean_db
 from src.db.models import TeamYear

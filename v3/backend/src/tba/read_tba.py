@@ -6,7 +6,7 @@ from src.tba.breakdown import clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
-from src.tba.types import MatchDict, TeamDict, EventDict
+from src.tba.types import EventDict, MatchDict, TeamDict
 
 
 def get_timestamp_from_str(date: str):

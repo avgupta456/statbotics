@@ -8,16 +8,10 @@ from src.db.functions import (
     update_team_districts,
     update_team_offseason,
 )
-from src.db.models import (
-    ETag,
-    Event,
-    TeamYear,
-    Team,
-    TeamEvent,
-    match_dict_to_objs,
-)
+from src.db.models import ETag, Event, Team, TeamEvent, TeamYear, match_dict_to_objs
 from src.tba.constants import DISTRICT_MAPPING, OFFSEASON_TEAMS
 from src.tba.read_tba import (
+    MatchDict,
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
     get_event_rankings as get_event_rankings_tba,
@@ -26,7 +20,6 @@ from src.tba.read_tba import (
     get_matches as get_matches_tba,
     get_teams as get_teams_tba,
 )
-from src.tba.read_tba import MatchDict
 
 OS = Optional[str]
 OI = Optional[int]

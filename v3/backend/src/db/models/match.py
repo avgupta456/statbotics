@@ -6,7 +6,7 @@ from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS, MOB
+from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS
 
 
 class MatchORM(Base, ModelORM):
