@@ -2,9 +2,6 @@ from typing import Any, Dict, List, Optional
 
 from src.tba.types import BreakdownDict
 
-# TODO: check error correction magnitudes for outliers
-# TODO: rename comp to match_comp, revisit fields to match TBA
-
 empty_breakdown: BreakdownDict = {
     "score": 0,
     "no_foul_points": 0,
@@ -14,17 +11,19 @@ empty_breakdown: BreakdownDict = {
     "endgame_points": 0,
     "rp_1": False,
     "rp_2": False,
-    "comp_1": 0,
-    "comp_2": 0,
-    "comp_3": 0,
-    "comp_4": 0,
-    "comp_5": 0,
-    "comp_6": 0,
-    "comp_7": 0,
-    "comp_8": 0,
-    "comp_9": 0,
-    "comp_10": 0,
     "tiebreaker": 0,
+    "match_comp_1": 0,
+    "match_comp_2": 0,
+    "match_comp_3": 0,
+    "match_comp_4": 0,
+    "match_comp_5": 0,
+    "match_comp_6": 0,
+    "match_comp_7": 0,
+    "match_comp_8": 0,
+    "match_comp_9": 0,
+    "match_comp_10": 0,
+    "match_comp_11": 0,
+    "match_comp_12": 0,
 }
 
 INVALID_MATCH_KEYS = ["2016capl_f1m1", "2016milsu_qf4m1", "2016mndu2_f1m2"]
@@ -45,7 +44,6 @@ def clean_breakdown_2016(
     # some 2016 offseason events don't have autoBouldersLow/High
     auto_boulder_points = breakdown.get("autoBoulderPoints", 0)
     if 5 * auto_low_boulders + 10 * auto_high_boulders != auto_boulder_points:
-        # print("Auto Boulders", key)
         auto_high_boulders = auto_boulder_points // 10
         auto_low_boulders = (auto_boulder_points - 10 * auto_high_boulders) // 5
 
@@ -87,17 +85,19 @@ def clean_breakdown_2016(
         "endgame_points": endgame_points,
         "rp_1": rp_1,
         "rp_2": rp_2,
-        "comp_1": auto_reach_points,
-        "comp_2": auto_crossing_points,
-        "comp_3": auto_low_boulders,
-        "comp_4": auto_high_boulders,
-        "comp_5": teleop_crossing_points,
-        "comp_6": teleop_low_boulders,
-        "comp_7": teleop_high_boulders,
-        "comp_8": challenge_points,
-        "comp_9": scale_points,
-        "comp_10": 0,
         "tiebreaker": tiebreaker,
+        "match_comp_1": auto_reach_points,
+        "match_comp_2": auto_crossing_points,
+        "match_comp_3": auto_low_boulders,
+        "match_comp_4": auto_high_boulders,
+        "match_comp_5": teleop_crossing_points,
+        "match_comp_6": teleop_low_boulders,
+        "match_comp_7": teleop_high_boulders,
+        "match_comp_8": challenge_points,
+        "match_comp_9": scale_points,
+        "match_comp_10": 0,
+        "match_comp_11": 0,
+        "match_comp_12": 0,
     }
 
 
@@ -148,17 +148,19 @@ def clean_breakdown_2017(
         "endgame_points": takeoff_points,
         "rp_1": rp_1,
         "rp_2": rp_2,
-        "comp_1": auto_mobility_points,
-        "comp_2": auto_fuel_low,
-        "comp_3": auto_fuel_high,
-        "comp_4": auto_rotor_points,
-        "comp_5": teleop_fuel_low,
-        "comp_6": teleop_fuel_high,
-        "comp_7": teleop_rotor_points,
-        "comp_8": takeoff_points,
-        "comp_9": 0,
-        "comp_10": 0,
         "tiebreaker": tiebreaker,
+        "match_comp_1": auto_mobility_points,
+        "match_comp_2": auto_fuel_low,
+        "match_comp_3": auto_fuel_high,
+        "match_comp_4": auto_rotor_points,
+        "match_comp_5": teleop_fuel_low,
+        "match_comp_6": teleop_fuel_high,
+        "match_comp_7": teleop_rotor_points,
+        "match_comp_8": takeoff_points,
+        "match_comp_9": 0,
+        "match_comp_10": 0,
+        "match_comp_11": 0,
+        "match_comp_12": 0,
     }
 
 
@@ -173,8 +175,12 @@ def clean_breakdown_2018(
     auto_switch_secs = breakdown.get("autoSwitchOwnershipSec", 0)
     auto_scale_secs = breakdown.get("autoScaleOwnershipSec", 0)
 
-    teleop_switch_secs = breakdown.get("teleopSwitchOwnershipSec", 0)
-    teleop_scale_secs = breakdown.get("teleopScaleOwnershipSec", 0)
+    teleop_switch_secs = breakdown.get("teleopSwitchOwnershipSec", 0) + +breakdown.get(
+        "teleopSwitchBoostSec", 0
+    )
+    teleop_scale_secs = breakdown.get("teleopScaleOwnershipSec", 0) + breakdown.get(
+        "teleopScaleBoostSec", 0
+    )
 
     vault_points = breakdown.get("vaultPoints", 0)
 
@@ -214,17 +220,19 @@ def clean_breakdown_2018(
         "endgame_points": endgame_points,
         "rp_1": rp_1,
         "rp_2": rp_2,
-        "comp_1": auto_run_points,
-        "comp_2": auto_switch_secs,
-        "comp_3": auto_scale_secs,
-        "comp_4": teleop_switch_secs,
-        "comp_5": teleop_scale_secs,
-        "comp_6": vault_points,
-        "comp_7": endgame_points,
-        "comp_8": 0,
-        "comp_9": 0,
-        "comp_10": 0,
         "tiebreaker": tiebreaker_points,
+        "match_comp_1": auto_run_points,
+        "match_comp_2": auto_switch_secs,
+        "match_comp_3": auto_scale_secs,
+        "match_comp_4": teleop_switch_secs,
+        "match_comp_5": teleop_scale_secs,
+        "match_comp_6": vault_points,
+        "match_comp_7": endgame_points,
+        "match_comp_8": 0,
+        "match_comp_9": 0,
+        "match_comp_10": 0,
+        "match_comp_11": 0,
+        "match_comp_12": 0,
     }
 
 
@@ -311,17 +319,19 @@ def clean_breakdown_2019(
         "endgame_points": hab_climb_points,
         "rp_1": rp_1,
         "rp_2": rp_2,
-        "comp_1": sandstorm_points,
-        "comp_2": bay_hatch,
-        "comp_3": bay_cargo,
-        "comp_4": rocket_hatch_low,
-        "comp_5": rocket_hatch_mid,
-        "comp_6": rocket_hatch_top,
-        "comp_7": rocket_cargo_low,
-        "comp_8": rocket_cargo_mid,
-        "comp_9": rocket_cargo_top,
-        "comp_10": hab_climb_points,
         "tiebreaker": tiebreaker,
+        "match_comp_1": sandstorm_points,
+        "match_comp_2": bay_hatch,
+        "match_comp_3": bay_cargo,
+        "match_comp_4": rocket_hatch_low,
+        "match_comp_5": rocket_hatch_mid,
+        "match_comp_6": rocket_hatch_top,
+        "match_comp_7": rocket_cargo_low,
+        "match_comp_8": rocket_cargo_mid,
+        "match_comp_9": rocket_cargo_top,
+        "match_comp_10": hab_climb_points,
+        "match_comp_11": 0,
+        "match_comp_12": 0,
     }
 
 
@@ -371,17 +381,19 @@ def clean_breakdown_2020(
         "endgame_points": endgame_points,
         "rp_1": rp_1,
         "rp_2": rp_2,
-        "comp_1": auto_init_line_points,
-        "comp_2": auto_cells_bottom,
-        "comp_3": auto_cells_outer,
-        "comp_4": auto_cells_inner,
-        "comp_5": teleop_cells_bottom,
-        "comp_6": teleop_cells_outer,
-        "comp_7": teleop_cells_inner,
-        "comp_8": control_panel_points,
-        "comp_9": endgame_points,
-        "comp_10": 0,
         "tiebreaker": tiebreaker,
+        "match_comp_1": auto_init_line_points,
+        "match_comp_2": auto_cells_bottom,
+        "match_comp_3": auto_cells_outer,
+        "match_comp_4": auto_cells_inner,
+        "match_comp_5": teleop_cells_bottom,
+        "match_comp_6": teleop_cells_outer,
+        "match_comp_7": teleop_cells_inner,
+        "match_comp_8": control_panel_points,
+        "match_comp_9": endgame_points,
+        "match_comp_10": 0,
+        "match_comp_11": 0,
+        "match_comp_12": 0,
     }
 
 
@@ -421,13 +433,15 @@ def clean_breakdown_2022(
     initial_auto_cargo = 2 * auto_cargo_lower + 4 * auto_cargo_upper
     actual_auto_cargo_points = breakdown.get("autoCargoPoints", 0)
     auto_cargo_error = actual_auto_cargo_points - initial_auto_cargo
-    if initial_auto_cargo != actual_auto_cargo_points:
+    if auto_cargo_error != 0:
         if auto_cargo_lower > auto_cargo_upper:
             auto_cargo_lower += auto_cargo_error / 2
         else:
             auto_cargo_upper += auto_cargo_error / 4
 
     auto_cargo_points = round(2 * auto_cargo_lower + 4 * auto_cargo_upper)
+    auto_cargo_lower = round(auto_cargo_lower)
+    auto_cargo_upper = round(auto_cargo_upper)
 
     teleop_cargo_lower = (
         breakdown.get("teleopCargoLowerBlue", 0)
@@ -448,11 +462,13 @@ def clean_breakdown_2022(
     teleop_cargo_error = actual_teleop_cargo_points - initial_teleop_cargo
     if teleop_cargo_error != 0:
         if teleop_cargo_lower > teleop_cargo_upper:
-            teleop_cargo_lower += teleop_cargo_error / 1
+            teleop_cargo_lower += teleop_cargo_error
         else:
             teleop_cargo_upper += teleop_cargo_error / 2
 
     teleop_cargo_points = round(teleop_cargo_lower + 2 * teleop_cargo_upper)
+    teleop_cargo_lower = round(teleop_cargo_lower)
+    teleop_cargo_upper = round(teleop_cargo_upper)
 
     endgame_points = breakdown.get("endgamePoints", 0)
 
@@ -473,17 +489,19 @@ def clean_breakdown_2022(
         "endgame_points": endgame_points,
         "rp_1": rp_1,
         "rp_2": rp_2,
-        "comp_1": auto_taxi_points,
-        "comp_2": auto_cargo_lower,
-        "comp_3": auto_cargo_upper,
-        "comp_4": teleop_cargo_lower,
-        "comp_5": teleop_cargo_upper,
-        "comp_6": 0,
-        "comp_7": 0,
-        "comp_8": 0,
-        "comp_9": endgame_points,
-        "comp_10": 0,
         "tiebreaker": tiebreaker,
+        "match_comp_1": auto_taxi_points,
+        "match_comp_2": auto_cargo_lower,
+        "match_comp_3": auto_cargo_upper,
+        "match_comp_4": teleop_cargo_lower,
+        "match_comp_5": teleop_cargo_upper,
+        "match_comp_6": endgame_points,
+        "match_comp_7": 0,
+        "match_comp_8": 0,
+        "match_comp_9": 0,
+        "match_comp_10": 0,
+        "match_comp_11": 0,
+        "match_comp_12": 0,
     }
 
 
@@ -505,6 +523,8 @@ def clean_breakdown_2023(
     no_foul_points: int,
     foul_points: int,
 ) -> BreakdownDict:
+    auto_mobility_points = breakdown.get("autoMobilityPoints", 0)
+
     auto_charge_station_points = breakdown.get("autoChargeStationPoints", 0)
 
     auto_com = breakdown.get("autoCommunity", {})
@@ -525,8 +545,6 @@ def clean_breakdown_2023(
     atcu = count_pieces_2023(auto_t, teleop_t, "Cube", "auto")
     atco = count_pieces_2023(auto_t, teleop_t, "Cone", "auto")
     auto_com_points = 3 * (abcu + abco) + 4 * (amcu + amco) + 6 * (atcu + atco)
-
-    auto_mobility_points = breakdown.get("autoMobilityPoints", 0)
 
     tbcu = count_pieces_2023(auto_b, teleop_b, "Cube", "teleop")
     tbco = count_pieces_2023(auto_b, teleop_b, "Cone", "teleop")
@@ -565,17 +583,19 @@ def clean_breakdown_2023(
         "endgame_points": endgame_points,
         "rp_1": rp_1,
         "rp_2": rp_2,
-        "comp_1": auto_charge_station_points,
-        "comp_2": auto_mobility_points,
-        "comp_3": abcu,
-        "comp_4": abco,
-        "comp_5": amcu,
-        "comp_6": amco,
-        "comp_7": atcu,
-        "comp_8": atco,
-        "comp_9": link_points,
-        "comp_10": endgame_charge_station_points + endgame_park_points,
         "tiebreaker": tiebreaker,
+        "match_comp_1": auto_mobility_points,
+        "match_comp_2": auto_charge_station_points,
+        "match_comp_3": abcu + tbcu,  # num bottom cubes (auto or teleop)
+        "match_comp_4": abco + tbco,
+        "match_comp_5": amcu + tmcu,
+        "match_comp_6": amco + tmco,
+        "match_comp_7": atcu + ttcu,
+        "match_comp_8": atco + ttco,
+        "match_comp_9": abcu + abco + amcu + amco + atcu + atco,  # total auto pieces
+        "match_comp_10": link_points,
+        "match_comp_11": endgame_charge_station_points,
+        "match_comp_12": endgame_park_points,
     }
 
 
@@ -620,9 +640,8 @@ def clean_breakdown(
         teleop_points = out["teleop_points"] or 0
         endgame_points = out["endgame_points"] or 0
         no_foul_points = out["no_foul_points"] or 0
-        if auto_points + teleop_points + endgame_points != no_foul_points:
-            print(key, auto_points, teleop_points, endgame_points, no_foul_points)
-            if not offseason:
-                assert auto_points + teleop_points + endgame_points == no_foul_points
+
+        if not offseason:
+            assert auto_points + teleop_points + endgame_points == no_foul_points
 
     return out
