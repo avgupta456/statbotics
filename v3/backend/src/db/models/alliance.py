@@ -30,7 +30,6 @@ class AllianceORM(Base, ModelORM):
     offseason: MB = mapped_column(Boolean, index=True)
     week: MI = mapped_column(Integer, index=True)
     elim: MB = mapped_column(Boolean, index=True)
-    alliance_num: MOI = mapped_column(Integer, index=True)
 
     time: MI = mapped_column(Integer)
 
