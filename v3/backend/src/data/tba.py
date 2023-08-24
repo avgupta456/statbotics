@@ -16,7 +16,7 @@ from src.db.models import (
     TeamEvent,
     match_dict_to_objs,
 )
-from src.tba.constants import DISTRICT_MAPPING
+from src.tba.constants import DISTRICT_MAPPING, OFFSEASON_TEAMS
 from src.tba.read_tba import (
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
@@ -374,13 +374,14 @@ def process_year(
     # Just a dictionary of teams mapping to their offseason status
     for team in offseason_teams:
         team_obj = teams_dict[team]
+        offseason = offseason_teams[team] or team in OFFSEASON_TEAMS
         competing_this_week = team_competing_this_week_dict.get(team, False)
         next_event = team_next_event_dict.get(team, (None, None, None))
         team_year_obj = TeamYear(
             id=None,
             year=year_num,
             team=team,
-            offseason=offseason_teams[team],
+            offseason=offseason,
             name=team_obj.name,
             state=team_obj.state,
             country=team_obj.country,
