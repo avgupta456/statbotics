@@ -19,7 +19,7 @@ class AllianceORM(Base, ModelORM):
     match: MS = mapped_column(String(20), index=True)
 
     year: MI = mapped_column(Integer, index=True)
-    event: MS = mapped_column(String(20), index=True)
+    event: MS = mapped_column(String(12), index=True)
 
     PrimaryKeyConstraint(alliance, match)
     ForeignKeyConstraint(["year"], ["years.year"])

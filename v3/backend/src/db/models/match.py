@@ -15,7 +15,7 @@ class MatchORM(Base, ModelORM):
     __tablename__ = "matches"
     key: MS = mapped_column(String(20), index=True)
     year: MI = mapped_column(Integer, index=True)
-    event: MS = mapped_column(String(20), index=True)
+    event: MS = mapped_column(String(12), index=True)
 
     PrimaryKeyConstraint(key)
     ForeignKeyConstraint(["year"], ["years.year"])

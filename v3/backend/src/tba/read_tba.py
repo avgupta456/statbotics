@@ -245,20 +245,10 @@ def get_matches(
 
         breakdown = match.get("score_breakdown", {}) or {}
         red_breakdown = clean_breakdown(
-            match["key"],
-            year,
-            offseason,
-            breakdown.get("red", None),
-            breakdown.get("blue", None),
-            red_score,
+            match["key"], year, offseason, breakdown.get("red", None), red_score
         )
         blue_breakdown = clean_breakdown(
-            match["key"],
-            year,
-            offseason,
-            breakdown.get("blue", None),
-            breakdown.get("red", None),
-            blue_score,
+            match["key"], year, offseason, breakdown.get("blue", None), blue_score
         )
 
         video = None

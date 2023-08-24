@@ -92,8 +92,6 @@ DISTRICT_MAPPING: Dict[str, str] = {
 
 # BLACKLISTS
 
-YEAR_BLACKLIST: List[int] = [2021]
-
 # 2005va, 2007ga no matches, 2004va quals + elims mismatch
 # Rest are incomplete/invalid offseason events
 EVENT_BLACKLIST: List[str] = [
@@ -102,7 +100,6 @@ EVENT_BLACKLIST: List[str] = [
     "2007ga",
     "2008cal",  # very incomplete
     "2016cafc2",  # "" team
-    "2019lafwbb3",  # too long key, can add back later
     "2022zhha",  # no matches
 ]
 

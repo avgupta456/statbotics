@@ -42,8 +42,8 @@ def get_team_years_dict(year: int) -> Dict[int, Dict[str, TeamYear]]:
 def reset_all_years(start_year: int, end_year: int):
     timer = Timer()
 
-    start_year = 2016
-    end_year = 2016
+    start_year = 2023
+    end_year = 2023
 
     clean_db()
     timer.print("Clean DB")

@@ -17,7 +17,7 @@ class TeamMatchORM(Base, ModelORM):
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
     team: MS = mapped_column(String(6), index=True)
     year: MI = mapped_column(Integer, index=True)
-    event: MS = mapped_column(String(20), index=True)
+    event: MS = mapped_column(String(12), index=True)
     match: MS = mapped_column(String(20), index=True)
     alliance: MS = mapped_column(String(6), index=True)
 
