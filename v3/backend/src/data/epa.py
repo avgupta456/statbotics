@@ -883,10 +883,7 @@ def post_process(end_year: int):
     for team in all_teams:
         years: Dict[int, float] = {}
 
-        team.active = False
         for team_year in team_team_years[team.team]:
-            if team_year.year == end_year:
-                team.active = True
             if team_year.norm_epa_end is not None:
                 years[team_year.year] = team_year.norm_epa_end
 

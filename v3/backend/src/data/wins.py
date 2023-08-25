@@ -3,6 +3,7 @@ from typing import List, Dict, Tuple
 
 from src.data.utils import objs_type
 from src.db.models import Team, TeamYear
+from src.constants import CURR_YEAR
 
 
 def winrate(wins: int, ties: int, count: int) -> float:
@@ -54,25 +55,20 @@ def process_year(objs: objs_type) -> objs_type:
             if t is None:
                 continue
 
-            dq = t in dqs  # count WLT, skip RPs for DQs
-            surrogate = t in surrogates  # skip everything for surrogates
-
-            if surrogate:
-                continue
+            ty_full_record[t] = tuple(sum(x) for x in zip(ty_full_record[t], update))
 
             if not offseason:
                 ty_record[t] = tuple(sum(x) for x in zip(ty_record[t], update))
 
-            te_record[(t, event)] = tuple(
-                sum(x) for x in zip(te_record[(t, event)], update)
-            )
-            ty_full_record[t] = tuple(sum(x) for x in zip(ty_full_record[t], update))
-
-            if not elim:
-                te_qual_record[(t, event)] = tuple(
-                    sum(x) for x in zip(te_qual_record[(t, event)], update)
+            if t not in dqs and t not in surrogates:
+                # DQ, surrogate only affect TeamEvent records
+                te_record[(t, event)] = tuple(
+                    sum(x) for x in zip(te_record[(t, event)], update)
                 )
-                if not dq:
+                if not elim:
+                    te_qual_record[(t, event)] = tuple(
+                        sum(x) for x in zip(te_qual_record[(t, event)], update)
+                    )
                     te_rps[(t, event)] = tuple(
                         sum(x) for x in zip(te_rps[(t, event)], rp_update)
                     )
@@ -125,6 +121,7 @@ def process_year(objs: objs_type) -> objs_type:
 def post_process(teams: List[Team], all_team_years: List[TeamYear]) -> List[Team]:
     t_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     t_full_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
+    t_active: Dict[str, bool] = defaultdict(lambda: False)
 
     for team_year in all_team_years:
         team = team_year.team
@@ -142,6 +139,9 @@ def post_process(teams: List[Team], all_team_years: List[TeamYear]) -> List[Team
             sum(x) for x in zip(t_full_record[team], full_update)
         )
 
+        if team_year.year == CURR_YEAR:
+            t_active[team] = True
+
     for team in teams:
         team.wins, team.losses, team.ties, team.count = t_record[team.team]
         team.winrate = winrate(team.wins, team.ties, team.count)
@@ -153,5 +153,7 @@ def post_process(teams: List[Team], all_team_years: List[TeamYear]) -> List[Team
             team.full_count,
         ) = t_full_record[team.team]
         team.full_winrate = winrate(team.full_wins, team.full_ties, team.full_count)
+
+        team.active = t_active[team.team]
 
     return teams
