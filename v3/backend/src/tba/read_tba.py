@@ -174,7 +174,7 @@ def get_event_rankings(
     return out, new_etag
 
 
-def get_matches(
+def get_event_matches(
     year: int,
     event: str,
     offseason: bool,
@@ -185,8 +185,10 @@ def get_matches(
     out: List[MatchDict] = []
     query_str = "event/" + str(event) + "/matches"
     matches, new_etag = get_tba(query_str, etag=etag, cache=cache)
+
     if type(matches) is bool:
         return out, new_etag
+
     for match in matches:
         red_teams: List[str] = match["alliances"]["red"]["team_keys"]
         red_dq_teams: List[str] = match["alliances"]["red"]["dq_team_keys"]
@@ -254,11 +256,10 @@ def get_matches(
         video = None
         if "videos" in match:
             if len(match["videos"]) > 0:
-                if match["videos"][0]["type"] != "youtube":
-                    continue
-                video = match["videos"][0]["key"].split("&")[0].split("?")[0]
-                if len(video) > 20:
-                    video = None
+                if match["videos"][0]["type"] == "youtube":
+                    video = match["videos"][0]["key"].split("&")[0].split("?")[0]
+                    if len(video) > 20:
+                        video = None
 
         time: int = match["time"] or get_match_time(
             match["comp_level"],
@@ -295,4 +296,5 @@ def get_matches(
             "blue_score_breakdown": blue_breakdown,
         }
         out.append(match_data)
+
     return out, new_etag

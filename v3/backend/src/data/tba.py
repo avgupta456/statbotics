@@ -17,7 +17,7 @@ from src.tba.read_tba import (
     get_event_rankings as get_event_rankings_tba,
     get_event_teams as get_event_teams_tba,
     get_events as get_events_tba,
-    get_matches as get_matches_tba,
+    get_event_matches as get_event_matches_tba,
     get_teams as get_teams_tba,
 )
 
@@ -104,7 +104,7 @@ def check_year_partial(
             continue
 
         prev_etag = etags_dict.get(event_obj.key + "/matches", default_etag).etag
-        _, new_etag = get_matches_tba(
+        _, new_etag = get_event_matches_tba(
             year_num,
             event_obj.key,
             event_obj.offseason,
@@ -224,7 +224,7 @@ def process_year(
         event_key, event_time = event_obj.key, event_obj.time
 
         matches, new_etag = call_tba(
-            lambda etag, cache: get_matches_tba(
+            lambda etag, cache: get_event_matches_tba(
                 year_num, event_key, event_obj.offseason, event_time, etag, cache
             ),
             event_key + "/matches",
