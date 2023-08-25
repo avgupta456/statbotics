@@ -45,9 +45,9 @@ class TeamMatchORM(Base, ModelORM):
     status: MS = mapped_column(String(10))
 
     epa: MF = mapped_column(Float, default=0)
-    auto_epa: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_epa: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    # auto_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    # teleop_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    # endgame_epa: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_epa: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa: MOF = mapped_column(Float, nullable=True, default=None)
 

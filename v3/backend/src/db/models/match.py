@@ -68,12 +68,12 @@ class MatchORM(Base, ModelORM):
     """EPA"""
     epa_winner: MS = mapped_column(String(4), default="tie")
     epa_win_prob: MF = mapped_column(Float, default=0.5)
-    red_epa_sum: MF = mapped_column(Float, default=0)
-    blue_epa_sum: MF = mapped_column(Float, default=0)
-    red_rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    red_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    red_score_pred: MF = mapped_column(Float, default=0)
+    blue_score_pred: MF = mapped_column(Float, default=0)
+    red_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Match = generate_attr_class("Match", MatchORM)
@@ -88,7 +88,7 @@ class Match(_Match, Model):
 
     def __str__(self: "Match") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"
+        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_score_pred}_{self.blue_score_pred}_{self.predicted_time}"
 
     """HELPER FUNCTIONS"""
 

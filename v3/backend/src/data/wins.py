@@ -118,12 +118,18 @@ def process_year(objs: objs_type) -> objs_type:
     return objs
 
 
-def post_process(teams: List[Team], all_team_years: List[TeamYear]) -> List[Team]:
+def post_process(
+    teams: List[Team], all_team_years: Dict[int, Dict[str, TeamYear]]
+) -> List[Team]:
     t_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     t_full_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     t_active: Dict[str, bool] = defaultdict(lambda: False)
 
-    for team_year in all_team_years:
+    all_team_years_list: List[TeamYear] = []
+    for team_years_dict in all_team_years.values():
+        all_team_years_list += list(team_years_dict.values())
+
+    for team_year in all_team_years_list:
         team = team_year.team
 
         update = (team_year.wins, team_year.losses, team_year.ties, team_year.count)

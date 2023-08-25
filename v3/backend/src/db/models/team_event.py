@@ -66,23 +66,23 @@ class TeamEventORM(Base, ModelORM):
     epa_max: MF = mapped_column(Float, default=0)
     epa_diff: MF = mapped_column(Float, default=0)
 
-    auto_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
+    # auto_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    # auto_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
+    # auto_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    # auto_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    # auto_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
-    teleop_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
+    # teleop_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    # teleop_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
+    # teleop_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    # teleop_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    # teleop_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
-    endgame_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
+    # endgame_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
+    # endgame_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
+    # endgame_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    # endgame_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    # endgame_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     rp_1_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
@@ -95,8 +95,8 @@ class TeamEventORM(Base, ModelORM):
     rp_2_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     # TODO: populate unitless_epa_end, make not nullable
-    unitless_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    norm_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    # unitless_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    # norm_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)

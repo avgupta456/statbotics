@@ -8,9 +8,7 @@ from scipy.stats import expon, exponnorm  # type: ignore
 from src.constants import CURR_YEAR
 from src.data.nepa import epa_to_unitless_epa
 from src.data.utils import objs_type
-from src.db.models import TeamEvent, TeamYear
-from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
-from src.db.write.main import update_teams as update_teams_db
+from src.db.models import Team, TeamEvent, TeamYear
 from src.utils.utils import get_team_event_key, get_team_match_key
 
 # HELPER FUNCTIONS
@@ -82,8 +80,8 @@ def percent_func(year: int, x: int) -> float:
 
 # MAIN FUNCTION
 def process_year(
-    year_num: int, team_years_all: Dict[int, Dict[str, TeamYear]], objs: objs_type
-) -> Tuple[objs_type, Dict[int, Dict[str, TeamYear]]]:
+    objs: objs_type, all_team_years: Dict[int, Dict[str, TeamYear]]
+) -> objs_type:
     year = objs[0]
     team_years = list(objs[1].values())
     events = list(objs[2].values())
@@ -92,6 +90,8 @@ def process_year(
     alliances = list(objs[5].values())
     team_matches = list(objs[6].values())
     etags = list(objs[7].values())
+
+    year_num = year.year
 
     NUM_TEAMS = 2 if year_num <= 2004 else 3
     USE_COMPONENTS = year_num >= 2016
@@ -102,15 +102,6 @@ def process_year(
     TOTAL_SD = year.score_sd or 0
     INIT_EPA = TOTAL_MEAN / NUM_TEAMS - INIT_PENALTY * TOTAL_SD
 
-    AUTO_MEAN = year.auto_mean or 0
-    INIT_AUTO_EPA = INIT_EPA * AUTO_MEAN / max(1, TOTAL_MEAN)
-
-    TELEOP_MEAN = year.teleop_mean or 0
-    INIT_TELEOP_EPA = INIT_EPA * TELEOP_MEAN / max(1, TOTAL_MEAN)
-
-    ENDGAME_MEAN = year.endgame_mean or 0
-    INIT_ENDGAME_EPA = INIT_EPA * ENDGAME_MEAN / max(1, TOTAL_MEAN)
-
     RP1_MEAN = year.rp_1_mean or sigmoid(MIN_RP_EPA * NUM_TEAMS)
     RP2_MEAN = year.rp_2_mean or sigmoid(MIN_RP_EPA * NUM_TEAMS)
 
@@ -119,9 +110,6 @@ def process_year(
 
     team_counts: Dict[str, int] = defaultdict(int)  # for updating epa
     team_epas: Dict[str, float] = defaultdict(lambda: INIT_EPA)  # most recent epa
-    team_auto_epas: Dict[str, float] = defaultdict(lambda: INIT_AUTO_EPA)
-    team_teleop_epas: Dict[str, float] = defaultdict(lambda: INIT_TELEOP_EPA)
-    team_endgame_epas: Dict[str, float] = defaultdict(lambda: INIT_ENDGAME_EPA)
     team_rp_1_epas: Dict[str, float] = defaultdict(lambda: RP1_SEED)
     team_rp_2_epas: Dict[str, float] = defaultdict(lambda: RP2_SEED)
 
@@ -130,13 +118,11 @@ def process_year(
     team_matches_dict: Dict[str, List[float]] = defaultdict(list)
     team_match_ids: Dict[str, float] = {}
     team_match_ids_post: Dict[str, float] = {}
-    component_team_events_dict: Dict[
-        str, List[Tuple[float, float, float, float, float, bool]]
-    ] = {}
-    component_team_matches_dict: Dict[
-        str, List[Tuple[float, float, float, float, float]]
-    ] = defaultdict(list)
-    component_team_match_ids: Dict[str, Tuple[float, float, float, float, float]] = {}
+    component_team_events_dict: Dict[str, List[Tuple[float, float, bool]]] = {}
+    component_team_matches_dict: Dict[str, List[Tuple[float, float]]] = defaultdict(
+        list
+    )
+    component_team_match_ids: Dict[str, Tuple[float, float]] = {}
 
     # INITIALIZE
     for team_year in team_years:
@@ -147,7 +133,7 @@ def process_year(
             # For 2022 and 2023, use past two years team competed (up to 4 years)
             past_epas: List[float] = []
             for past_year in range(year_num - 1, year_num - 5, -1):
-                past_team_year = team_years_all.get(past_year, {}).get(num, None)
+                past_team_year = all_team_years.get(past_year, {}).get(num, None)
                 if past_team_year is not None:
                     prev_norm_epa = past_team_year.norm_epa_end or NORM_MEAN
                     new_epa = norm_epa_to_next_season_epa(
@@ -158,13 +144,13 @@ def process_year(
             epa_2yr = past_epas[1] if len(past_epas) > 1 else None
         else:
             # Otherwise use the two most recent years (regardless of team activity)
-            team_year_1 = team_years_all.get(year_num - 1, {}).get(num, None)
+            team_year_1 = all_team_years.get(year_num - 1, {}).get(num, None)
             if team_year_1 is not None:
                 prev_norm_epa = team_year_1.norm_epa_end or NORM_MEAN
                 epa_1yr = norm_epa_to_next_season_epa(
                     prev_norm_epa, TOTAL_MEAN, TOTAL_SD, NUM_TEAMS
                 )
-            team_year_2 = team_years_all.get(year_num - 2, {}).get(num, None)
+            team_year_2 = all_team_years.get(year_num - 2, {}).get(num, None)
             if team_year_2 is not None:
                 prev_norm_epa = team_year_2.norm_epa_end or NORM_MEAN
                 epa_2yr = norm_epa_to_next_season_epa(
@@ -175,6 +161,7 @@ def process_year(
         epa_2yr = epa_2yr or INIT_EPA
         epa_prior = YEAR_ONE_WEIGHT * epa_1yr + (1 - YEAR_ONE_WEIGHT) * epa_2yr
         epa_prior = (1 - MEAN_REVERSION) * epa_prior + MEAN_REVERSION * INIT_EPA
+
         team_epas[num] = epa_prior
         team_year.epa_start = round(epa_prior, 2)
         team_year.epa_pre_champs = round(epa_prior, 2)
@@ -187,13 +174,6 @@ def process_year(
         team_year.unitless_epa_end = round(unitless_epa, 0)
 
         if USE_COMPONENTS:
-            team_auto_epas[num] = epa_prior * AUTO_MEAN / TOTAL_MEAN
-            team_teleop_epas[num] = epa_prior * TELEOP_MEAN / TOTAL_MEAN
-            team_endgame_epas[num] = epa_prior * ENDGAME_MEAN / TOTAL_MEAN
-            team_year.auto_epa_start = round(team_auto_epas[num], 2)
-            team_year.teleop_epa_start = round(team_teleop_epas[num], 2)
-            team_year.endgame_epa_start = round(team_endgame_epas[num], 2)
-
             rp_factor = (epa_prior - TOTAL_MEAN / NUM_TEAMS) / (TOTAL_SD)
             team_rp_1_epas[num] = max(MIN_RP_EPA, RP1_SEED + 0.25 * rp_factor)
             team_rp_2_epas[num] = max(MIN_RP_EPA, RP2_SEED + 0.25 * rp_factor)
@@ -240,39 +220,25 @@ def process_year(
         red_epa_sum = sum(red_epa_pre.values())
         blue_epa_sum = sum(blue_epa_pre.values())
 
-        match.red_epa_sum = round(red_epa_sum, 2)
-        match.blue_epa_sum = round(blue_epa_sum, 2)
+        match.red_score_pred = round(red_epa_sum, 2)
+        match.blue_score_pred = round(blue_epa_sum, 2)
 
-        red_auto_epa_pre: Dict[str, float] = {}
-        blue_auto_epa_pre: Dict[str, float] = {}
-        red_endgame_epa_pre: Dict[str, float] = {}
-        blue_endgame_epa_pre: Dict[str, float] = {}
         red_rp_1_epa_pre: Dict[str, float] = {}
         blue_rp_1_epa_pre: Dict[str, float] = {}
         red_rp_2_epa_pre: Dict[str, float] = {}
         blue_rp_2_epa_pre: Dict[str, float] = {}
         if USE_COMPONENTS:
             for team in red:
-                red_auto_epa_pre[team] = team_auto_epas[team]
-                red_endgame_epa_pre[team] = team_endgame_epas[team]
                 red_rp_1_epa_pre[team] = team_rp_1_epas[team]
                 red_rp_2_epa_pre[team] = team_rp_2_epas[team]
                 component_team_match_ids[get_team_match_key(team, match.key)] = (
-                    team_auto_epas[team],
-                    team_teleop_epas[team],
-                    team_endgame_epas[team],
                     team_rp_1_epas[team],
                     team_rp_2_epas[team],
                 )
             for team in blue:
-                blue_auto_epa_pre[team] = team_auto_epas[team]
-                blue_endgame_epa_pre[team] = team_endgame_epas[team]
                 blue_rp_1_epa_pre[team] = team_rp_1_epas[team]
                 blue_rp_2_epa_pre[team] = team_rp_2_epas[team]
                 component_team_match_ids[get_team_match_key(team, match.key)] = (
-                    team_auto_epas[team],
-                    team_teleop_epas[team],
-                    team_endgame_epas[team],
                     team_rp_1_epas[team],
                     team_rp_2_epas[team],
                 )
@@ -282,12 +248,12 @@ def process_year(
             red_rp_2_epa_sum = sum(list(red_rp_2_epa_pre.values()))
             blue_rp_2_epa_sum = sum(list(blue_rp_2_epa_pre.values()))
 
-            match.red_rp_1_prob = round(sigmoid(red_rp_1_epa_sum), 4)
-            match.blue_rp_1_prob = round(sigmoid(blue_rp_1_epa_sum), 4)
-            match.red_rp_2_prob = round(sigmoid(red_rp_2_epa_sum), 4)
-            match.blue_rp_2_prob = round(sigmoid(blue_rp_2_epa_sum), 4)
+            match.red_rp_1_pred = round(sigmoid(red_rp_1_epa_sum), 4)
+            match.blue_rp_1_pred = round(sigmoid(blue_rp_1_epa_sum), 4)
+            match.red_rp_2_pred = round(sigmoid(red_rp_2_epa_sum), 4)
+            match.blue_rp_2_pred = round(sigmoid(blue_rp_2_epa_sum), 4)
 
-        norm_diff = (match.red_epa_sum - match.blue_epa_sum) / TOTAL_SD
+        norm_diff = (match.red_score_pred - match.blue_score_pred) / TOTAL_SD
         win_prob = 1 / (1 + 10 ** (K * norm_diff))
 
         match.epa_win_prob = round(win_prob, 4)
@@ -314,9 +280,9 @@ def process_year(
         # UPDATE EPA
         weight = ELIM_WEIGHT if match.elim else 1
         red_score = match.red_no_foul or match.red_score or 0
-        red_pred = match.red_epa_sum
+        red_pred = match.red_score_pred
         blue_score = match.blue_no_foul or match.blue_score or 0
-        blue_pred = match.blue_epa_sum
+        blue_pred = match.blue_score_pred
 
         # Track surrogates and DQs for RP calculations
         red_dqs = match.get_red_dqs()
@@ -379,21 +345,21 @@ def process_year(
         if not match.elim and USE_COMPONENTS:
             rp_1_new_acc = 0
             rp_1_new_mse = 0
-            if (match.red_rp_1 or 0) == round(match.red_rp_1_prob or 0):
+            if (match.red_rp_1 or 0) == round(match.red_rp_1_pred or 0):
                 rp_1_new_acc += 1
-            if (match.blue_rp_1 or 0) == round(match.blue_rp_1_prob or 0):
+            if (match.blue_rp_1 or 0) == round(match.blue_rp_1_pred or 0):
                 rp_1_new_acc += 1
-            rp_1_new_mse += ((match.red_rp_1 or 0) - (match.red_rp_1_prob or 0)) ** 2
-            rp_1_new_mse += ((match.blue_rp_1 or 0) - (match.blue_rp_1_prob or 0)) ** 2
+            rp_1_new_mse += ((match.red_rp_1 or 0) - (match.red_rp_1_pred or 0)) ** 2
+            rp_1_new_mse += ((match.blue_rp_1 or 0) - (match.blue_rp_1_pred or 0)) ** 2
 
             rp_2_new_acc = 0
             rp_2_new_mse = 0
-            if (match.red_rp_2 or 0) == round(match.red_rp_2_prob or 0):
+            if (match.red_rp_2 or 0) == round(match.red_rp_2_pred or 0):
                 rp_2_new_acc += 1
-            if (match.blue_rp_2 or 0) == round(match.blue_rp_2_prob or 0):
+            if (match.blue_rp_2 or 0) == round(match.blue_rp_2_pred or 0):
                 rp_2_new_acc += 1
-            rp_2_new_mse += ((match.red_rp_2 or 0) - (match.red_rp_2_prob or 0)) ** 2
-            rp_2_new_mse += ((match.blue_rp_2 or 0) - (match.blue_rp_2_prob or 0)) ** 2
+            rp_2_new_mse += ((match.red_rp_2 or 0) - (match.red_rp_2_pred or 0)) ** 2
+            rp_2_new_mse += ((match.blue_rp_2 or 0) - (match.blue_rp_2_pred or 0)) ** 2
 
             _a, _m, _c = rp_1_event_stats[event_key]
             rp_1_event_stats[event_key] = (_a + rp_1_new_acc, _m + rp_1_new_mse, _c + 2)
@@ -460,12 +426,7 @@ def process_year(
             team_match.post_epa = round(team_match_ids_post.get(match_key, -1), 2)
 
         if USE_COMPONENTS:
-            auto, teleop, endgame, rp_1, rp_2 = component_team_match_ids.get(
-                match_key, (-1, -1, -1, -1, -1)
-            )
-            team_match.auto_epa = round(auto, 2)
-            team_match.teleop_epa = round(teleop, 2)
-            team_match.endgame_epa = round(endgame, 2)
+            rp_1, rp_2 = component_team_match_ids.get(match_key, (-1, -1))
             team_match.rp_1_epa = round(rp_1, 4)
             team_match.rp_2_epa = round(rp_2, 4)
 
@@ -496,63 +457,20 @@ def process_year(
             # Default if no matches played
             upcoming_component_epas = [
                 (
-                    team_auto_epas[team_event.team],
-                    team_teleop_epas[team_event.team],
-                    team_endgame_epas[team_event.team],
                     team_rp_1_epas[team_event.team],
                     team_rp_2_epas[team_event.team],
                     False,
                 )
             ]
 
-            component_epas = [
-                obj[0:5]
-                for obj in component_team_events_dict.get(key, upcoming_component_epas)
-            ]
             qual_component_epas = [
-                obj[0:5]
+                obj[:2]
                 for obj in component_team_events_dict.get(key, upcoming_component_epas)
                 if not obj[-1]
             ]
 
-            auto_epas = [obj[0] for obj in component_epas]
-            teleop_epas = [obj[1] for obj in component_epas]
-            endgame_epas = [obj[2] for obj in component_epas]
-
-            auto_qual_epas = [obj[0] for obj in qual_component_epas]
-            teleop_qual_epas = [obj[1] for obj in qual_component_epas]
-            endgame_qual_epas = [obj[2] for obj in qual_component_epas]
-            rp_1_qual_epas = [obj[3] for obj in qual_component_epas]
-            rp_2_qual_epas = [obj[4] for obj in qual_component_epas]
-
-            team_event.auto_epa_start = round(auto_epas[0], 2)
-            team_event.auto_epa_end = round(auto_epas[-1], 2)
-            team_event.auto_epa_max = round(max(auto_epas), 2)
-            team_event.auto_epa_mean = round(sum(auto_epas) / len(auto_epas), 2)
-            auto_epa_pre_elim = auto_epas[0]
-            if len(auto_qual_epas) > 0:
-                auto_epa_pre_elim = auto_qual_epas[-1]
-            team_event.auto_epa_pre_elim = round(auto_epa_pre_elim, 2)
-
-            team_event.teleop_epa_start = round(teleop_epas[0], 2)
-            team_event.teleop_epa_end = round(teleop_epas[-1], 2)
-            team_event.teleop_epa_max = round(max(teleop_epas), 2)
-            team_event.teleop_epa_mean = round(sum(teleop_epas) / len(teleop_epas), 2)
-            teleop_epa_pre_elim = teleop_epas[0]
-            if len(teleop_qual_epas) > 0:
-                teleop_epa_pre_elim = teleop_qual_epas[-1]
-            team_event.teleop_epa_pre_elim = round(teleop_epa_pre_elim, 2)
-
-            team_event.endgame_epa_start = round(endgame_epas[0], 2)
-            team_event.endgame_epa_end = round(endgame_epas[-1], 2)
-            team_event.endgame_epa_max = round(max(endgame_epas), 2)
-            team_event.endgame_epa_mean = round(
-                sum(endgame_epas) / len(endgame_epas), 2
-            )
-            endgame_epa_pre_elim = endgame_epas[0]
-            if len(endgame_qual_epas) > 0:
-                endgame_epa_pre_elim = endgame_qual_epas[-1]
-            team_event.endgame_epa_pre_elim = round(endgame_epa_pre_elim, 2)
+            rp_1_qual_epas = [obj[0] for obj in qual_component_epas]
+            rp_2_qual_epas = [obj[1] for obj in qual_component_epas]
 
             if len(rp_1_qual_epas) > 0:
                 team_event.rp_1_epa_start = round(rp_1_qual_epas[0], 4)
@@ -613,11 +531,6 @@ def process_year(
     country_year_epas: Dict[str, List[float]] = defaultdict(list)  # for rank/percentile
     state_year_epas: Dict[str, List[float]] = defaultdict(list)
     district_year_epas: Dict[str, List[float]] = defaultdict(list)
-    year_auto_epas: List[float] = []
-    year_teleop_epas: List[float] = []
-    year_endgame_epas: List[float] = []
-    year_rp_1_epas: List[float] = []
-    year_rp_2_epas: List[float] = []
     to_remove: List[str] = []
     for team in team_years_dict:
         curr_team_epas = team_matches_dict[team]
@@ -680,19 +593,10 @@ def process_year(
         if curr_component_team_epas == []:
             curr_component_team_epas = [
                 [
-                    team_auto_epas[team],
-                    team_teleop_epas[team],
-                    team_endgame_epas[team],
                     team_rp_1_epas[team],
                     team_rp_2_epas[team],
                 ]
             ]
-
-        curr_auto_team_epas = [x[0] for x in curr_component_team_epas]
-        curr_teleop_team_epas = [x[1] for x in curr_component_team_epas]
-        curr_endgame_team_epas = [x[2] for x in curr_component_team_epas]
-        curr_rp_1_team_epas = [x[3] for x in curr_component_team_epas]
-        curr_rp_2_team_epas = [x[4] for x in curr_component_team_epas]
 
         n = len(curr_team_epas)
         obj.epa_max = round(max(curr_team_epas[min(n - 1, 8) :]), 2)
@@ -705,51 +609,16 @@ def process_year(
         epa_index = year_epas.index(obj.epa_end)
         obj.norm_epa_end = round(get_norm_epa(obj.epa_end, epa_index), 0)
 
-        if USE_COMPONENTS:
-            year_auto_epas.append(round(curr_auto_team_epas[-1], 2))
-            obj.auto_epa_max = round(max(curr_auto_team_epas[min(n - 1, 8) :]), 2)
-            obj.auto_epa_mean = round(sum(curr_auto_team_epas) / n, 2)
-            obj.auto_epa_end = round(team_auto_epas[team], 2)
-
-            year_teleop_epas.append(round(curr_teleop_team_epas[-1], 2))
-            obj.teleop_epa_max = round(max(curr_teleop_team_epas[min(n - 1, 8) :]), 2)
-            obj.teleop_epa_mean = round(sum(curr_teleop_team_epas) / n, 2)
-            obj.teleop_epa_end = round(team_teleop_epas[team], 2)
-
-            year_endgame_epas.append(round(curr_endgame_team_epas[-1], 2))
-            obj.endgame_epa_max = round(max(curr_endgame_team_epas[min(n - 1, 8) :]), 2)
-            obj.endgame_epa_mean = round(sum(curr_endgame_team_epas) / n, 2)
-            obj.endgame_epa_end = round(team_endgame_epas[team], 2)
-
-            year_rp_1_epas.append(round(curr_rp_1_team_epas[-1], 4))
-            obj.rp_1_epa_max = round(max(curr_rp_1_team_epas[min(n - 1, 8) :]), 4)
-            obj.rp_1_epa_mean = round(sum(curr_rp_1_team_epas) / n, 4)
-            obj.rp_1_epa_end = round(team_rp_1_epas[team], 4)
-
-            year_rp_2_epas.append(round(curr_rp_2_team_epas[-1], 4))
-            obj.rp_2_epa_max = round(max(curr_rp_2_team_epas[min(n - 1, 8) :]), 4)
-            obj.rp_2_epa_mean = round(sum(curr_rp_2_team_epas) / n, 4)
-            obj.rp_2_epa_end = round(team_rp_2_epas[team], 4)
-
         pre_champs = obj.epa_start or 0
-        auto_pre_champs = obj.auto_epa_start or 0
-        teleop_pre_champs = obj.teleop_epa_start or 0
-        endgame_pre_champs = obj.endgame_epa_start or 0
         rp_1_pre_champs = obj.rp_1_epa_start or 0
         rp_2_pre_champs = obj.rp_2_epa_start or 0
         for team_event in sorted(team_team_events[team], key=lambda t: t.sort()):
             if event_types[team_event.event] < 3:
                 pre_champs = team_event.epa_end
-                auto_pre_champs = team_event.auto_epa_end or 0
-                teleop_pre_champs = team_event.teleop_epa_end or 0
-                endgame_pre_champs = team_event.endgame_epa_end or 0
                 rp_1_pre_champs = team_event.rp_1_epa_end or 0
                 rp_2_pre_champs = team_event.rp_2_epa_end or 0
         obj.epa_pre_champs = round(pre_champs, 2)
         if USE_COMPONENTS:
-            obj.auto_epa_pre_champs = round(auto_pre_champs, 2)
-            obj.teleop_epa_pre_champs = round(teleop_pre_champs, 2)
-            obj.endgame_epa_pre_champs = round(endgame_pre_champs, 2)
             obj.rp_1_epa_pre_champs = round(rp_1_pre_champs, 4)
             obj.rp_2_epa_pre_champs = round(rp_2_pre_champs, 4)
 
@@ -784,47 +653,6 @@ def process_year(
         year.epa_25p = round(year_epas[round(0.25 * len(year_epas))], 2)
         year.epa_75p = round(year_epas[round(0.75 * len(year_epas))], 2)
 
-        if USE_COMPONENTS:
-            year_auto_epas.sort(reverse=True)
-            year.auto_epa_1p = round(
-                year_auto_epas[round(0.01 * len(year_auto_epas))], 2
-            )
-            year.auto_epa_10p = round(
-                year_auto_epas[round(0.1 * len(year_auto_epas))], 2
-            )
-            year.auto_epa_25p = round(
-                year_auto_epas[round(0.25 * len(year_auto_epas))], 2
-            )
-            year.auto_epa_75p = round(
-                year_auto_epas[round(0.75 * len(year_auto_epas))], 2
-            )
-            year_teleop_epas.sort(reverse=True)
-            year.teleop_epa_1p = round(
-                year_teleop_epas[round(0.01 * len(year_teleop_epas))], 2
-            )
-            year.teleop_epa_10p = round(
-                year_teleop_epas[round(0.1 * len(year_teleop_epas))], 2
-            )
-            year.teleop_epa_25p = round(
-                year_teleop_epas[round(0.25 * len(year_teleop_epas))], 2
-            )
-            year.teleop_epa_75p = round(
-                year_teleop_epas[round(0.75 * len(year_teleop_epas))], 2
-            )
-            year_endgame_epas.sort(reverse=True)
-            year.endgame_epa_1p = round(
-                year_endgame_epas[round(0.01 * len(year_endgame_epas))], 2
-            )
-            year.endgame_epa_10p = round(
-                year_endgame_epas[round(0.1 * len(year_endgame_epas))], 2
-            )
-            year.endgame_epa_25p = round(
-                year_endgame_epas[round(0.25 * len(year_endgame_epas))], 2
-            )
-            year.endgame_epa_75p = round(
-                year_endgame_epas[round(0.75 * len(year_endgame_epas))], 2
-            )
-
         year.epa_acc = acc
         year.epa_mse = mse
         year.count = count
@@ -848,8 +676,6 @@ def process_year(
         year.rp_2_champs_mse = champs_rp_2_mse
         year.rp_champs_count = champs_rp_1_count
 
-    team_years_all[year_num] = team_years_dict
-
     out_team_years_dict = {ty.pk(): ty for ty in team_years}
     out_events_dict = {e.pk(): e for e in events}
     out_team_events_dict = {te.pk(): te for te in team_events}
@@ -859,28 +685,26 @@ def process_year(
     out_etags_dict = {e.pk(): e for e in etags}
 
     return (
-        (
-            year,
-            out_team_years_dict,
-            out_events_dict,
-            out_team_events_dict,
-            out_matches_dict,
-            out_alliances_dict,
-            out_team_matches_dict,
-            out_etags_dict,
-        ),
-        team_years_all,
+        year,
+        out_team_years_dict,
+        out_events_dict,
+        out_team_events_dict,
+        out_matches_dict,
+        out_alliances_dict,
+        out_team_matches_dict,
+        out_etags_dict,
     )
 
 
-def post_process(end_year: int):
+def post_process(
+    teams: List[Team], all_team_years: Dict[int, Dict[str, TeamYear]]
+) -> List[Team]:
     team_team_years: Dict[str, List[TeamYear]] = defaultdict(list)
-    all_team_years = get_team_years_db()
-    for team_year in all_team_years:
-        team_team_years[team_year.team].append(team_year)
+    for team_years in all_team_years.values():
+        for team_year in team_years.values():
+            team_team_years[team_year.team].append(team_year)
 
-    all_teams = get_teams_db()
-    for team in all_teams:
+    for team in teams:
         years: Dict[int, float] = {}
 
         for team_year in team_team_years[team.team]:
@@ -889,9 +713,9 @@ def post_process(end_year: int):
 
         keys, values = years.keys(), years.values()
 
-        # get recent epas (last five years)
+        # get recent epas (last four years)
         recent: List[float] = []
-        for year in range(end_year - 5, end_year + 1):
+        for year in range(CURR_YEAR - 4, CURR_YEAR + 1):
             if year in keys:
                 recent.append(years[year])
         r_y, y = len(recent), len(keys)
@@ -901,4 +725,4 @@ def post_process(end_year: int):
         team.norm_epa_mean = None if y == 0 else round(sum(values) / y)
         team.norm_epa_max = None if y == 0 else round(max(values))
 
-    update_teams_db(all_teams, False)
+    return teams

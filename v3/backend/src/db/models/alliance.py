@@ -74,22 +74,23 @@ class AllianceORM(Base, ModelORM):
     rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
 
-    epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_1_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_3_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_4_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_5_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_6_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_7_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_8_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_9_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_10_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+
+    # auto_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # teleop_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # endgame_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_1_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_3_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_4_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_5_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_6_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_7_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_8_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_9_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
+    # comp_10_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Alliance = generate_attr_class("Alliance", AllianceORM)
@@ -107,7 +108,9 @@ class Alliance(_Alliance, Model):
 
     def __str__(self: "Alliance") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.match}_{self.alliance}_{self.score}_{self.teleop}_{self.epa_sum}"
+        return (
+            f"{self.match}_{self.alliance}_{self.score}_{self.teleop}_{self.score_pred}"
+        )
 
     """HELPER FUNCTIONS"""
 
