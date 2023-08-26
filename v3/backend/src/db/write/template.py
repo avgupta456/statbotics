@@ -23,6 +23,7 @@ CUTOFF = 1000
 def update_template(
     orm_type: Type[TModelORM], obj_type: Type[TModel]
 ) -> Callable[[List[TModel], bool], None]:
+    # TODO: Explore SQLAlchemy 2 ORM for bulk upserts
     def upsert(items: List[obj_type], insert_only: bool = False) -> None:
         def _insert(session: SessionType, data: List[Dict[str, Any]]):
             for i in range(0, len(data), CUTOFF):

@@ -4,6 +4,7 @@ from typing import Callable, Dict, List, Optional
 from src.db.models import TeamMatch
 from src.data.utils import objs_type
 from src.utils.utils import get_team_event_key
+from src.epa.unitless import epa_to_unitless_epa, get_epa_to_norm_epa_func
 
 
 def process_arr(
@@ -20,31 +21,89 @@ def process_arr(
 
 
 def process_year(objs: objs_type) -> objs_type:
-    year_num = objs[0].year
+    year = objs[0]
+
+    year_num = year.year
     USE_COMPONENTS = year_num >= 2016
+
+    mean = year.score_mean or 0
+    sd = year.score_sd or 0
 
     team_team_matches_dict: Dict[str, List[TeamMatch]] = defaultdict(list)
     team_event_team_matches_dict: Dict[str, List[TeamMatch]] = defaultdict(list)
 
-    for team_match in objs[6].values():
+    for team_match in sorted(objs[6].values(), key=lambda tm: tm.sort()):
         team_team_matches_dict[team_match.team].append(team_match)
         team_event_key = get_team_event_key(team_match.team, team_match.event)
         team_event_team_matches_dict[team_event_key].append(team_match)
 
     # TEAM YEARS
+    total_epas: List[float] = []
+    country_epas: Dict[str, List[float]] = defaultdict(list)
+    district_epas: Dict[str, List[float]] = defaultdict(list)
+    state_epas: Dict[str, List[float]] = defaultdict(list)
     for ty in objs[1].values():
         ms = team_team_matches_dict[ty.team]
 
-        ty.epa_start, ty.epa_end, ty.epa_max = process_arr(
+        ty.epa_pre_champs, ty.epa_end, ty.epa_max = process_arr(
             ms, lambda m: m.epa, ty.epa_start
         )
 
         if USE_COMPONENTS:
-            ty.rp_1_epa_start, ty.rp_1_epa_end, ty.rp_1_epa_max = process_arr(
+            ty.rp_1_epa_pre_champs, ty.rp_1_epa_end, ty.rp_1_epa_max = process_arr(
                 ms, lambda m: m.rp_1_epa, ty.rp_1_epa_start or 0
             )
-            ty.rp_2_epa_start, ty.rp_2_epa_end, ty.rp_2_epa_max = process_arr(
+            ty.rp_2_epa_pre_champs, ty.rp_2_epa_end, ty.rp_2_epa_max = process_arr(
                 ms, lambda m: m.rp_2_epa, ty.rp_2_epa_start or 0
             )
+
+        if not ty.offseason:
+            total_epas.append(ty.epa_end)
+            country_epas[ty.country or ""].append(ty.epa_end)
+            district_epas[ty.district or ""].append(ty.epa_end)
+            state_epas[ty.state or ""].append(ty.epa_end)
+
+    total_epas.sort(reverse=True)
+    country_epas = {k: sorted(v, reverse=True) for k, v in country_epas.items()}
+    district_epas = {k: sorted(v, reverse=True) for k, v in district_epas.items()}
+    state_epas = {k: sorted(v, reverse=True) for k, v in state_epas.items()}
+
+    epa_to_norm_epa = get_epa_to_norm_epa_func(total_epas)
+    for ty in objs[1].values():
+        if ty.offseason:
+            continue
+
+        epa = ty.epa_end
+        ty.total_epa_rank = total_epas.index(epa) + 1
+        ty.total_team_count = len(total_epas)
+        ty.total_epa_percentile = round(1 - ty.total_epa_rank / ty.total_team_count, 4)
+
+        country_epas_ = country_epas[ty.country or ""]
+        ty.country_epa_rank = country_epas_.index(epa) + 1
+        ty.country_team_count = len(country_epas_)
+        ty.country_epa_percentile = round(
+            1 - ty.country_epa_rank / ty.country_team_count, 4
+        )
+
+        district_epas_ = district_epas[ty.district or ""]
+        ty.district_epa_rank = district_epas_.index(epa) + 1
+        ty.district_team_count = len(district_epas_)
+        ty.district_epa_percentile = round(
+            1 - ty.district_epa_rank / ty.district_team_count, 4
+        )
+
+        state_epas_ = state_epas[ty.state or ""]
+        ty.state_epa_rank = state_epas_.index(epa) + 1
+        ty.state_team_count = len(state_epas_)
+        ty.state_epa_percentile = round(1 - ty.state_epa_rank / ty.state_team_count, 4)
+
+        unitless_epa: float = epa_to_unitless_epa(ty.epa_end, mean, sd)
+        ty.unitless_epa_end = round(unitless_epa, 0)
+
+        assert ty.total_epa_rank is not None
+        norm_epa: float = epa_to_norm_epa(ty.epa_end, ty.total_epa_rank)
+        ty.norm_epa_end = round(norm_epa, 4)
+
+    # TODO: Events, TeamEvents
 
     return objs

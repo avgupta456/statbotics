@@ -91,13 +91,13 @@ class TeamYearORM(Base, ModelORM):
     country_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
     country_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
 
-    state_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
-    state_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
-    state_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
-
     district_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
     district_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
     district_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
+
+    state_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
+    state_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
+    state_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
 
 
 _TeamYear = generate_attr_class("TeamYear", TeamYearORM)

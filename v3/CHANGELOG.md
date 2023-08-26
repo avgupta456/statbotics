@@ -16,3 +16,5 @@ A semi-comprehensive list of changes for the 2024 season!
 - Don't update EPA after a placeholder match (often seen in underfull elimination brackets)
 - Don't artificially restrict teams to positive EPA.
 - Remove epa_mean and epa_diff from TeamYear objects.
+- Create TeamYear and TeamEvent entries for offseason teams.
+- Precompute Unitless and Norm EPA instead of interpolating on the fly.
