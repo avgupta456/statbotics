@@ -68,13 +68,9 @@ class AllianceORM(Base, ModelORM):
     match_comp_12: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """EPA"""
-    # TODO: implement all of these, make non-nullable
-    epa_winner: MOS = mapped_column(String(4), nullable=True, default=None)
-    epa_win_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_prob: MOF = mapped_column(Float, nullable=True, default=None)
-
-    score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_winner: MOS = mapped_column(String(4), default="tie")
+    epa_win_prob: MOF = mapped_column(Float, default=0.5)
+    score_pred: MOF = mapped_column(Float, default=0)
     rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
@@ -105,6 +101,9 @@ class Alliance(_Alliance, Model):
 
     def pk(self: "Alliance") -> str:
         return f"{self.match}_{self.alliance}"
+
+    def __hash__(self: "Alliance") -> int:
+        return hash(self.pk())
 
     def __str__(self: "Alliance") -> str:
         # Only refresh DB if these change (during 1 min partial update)

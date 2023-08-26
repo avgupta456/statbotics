@@ -67,6 +67,9 @@ class TeamMatch(_TeamMatch, Model):
     def pk(self: "TeamMatch") -> str:
         return f"{self.team}_{self.match}"
 
+    def __hash__(self: "TeamMatch") -> int:
+        return hash(self.pk())
+
     def __str__(self: "TeamMatch") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.match}_{self.status}_{self.epa}_{self.post_epa}"

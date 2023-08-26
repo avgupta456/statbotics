@@ -117,6 +117,9 @@ class TeamEvent(_TeamEvent, Model):
     def pk(self: "TeamEvent") -> str:
         return f"{self.team}_{self.event}"
 
+    def __hash__(self: "TeamEvent") -> int:
+        return hash(self.pk())
+
     def __str__(self: "TeamEvent") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.event}_{self.status}_{self.count}_{self.rank}"

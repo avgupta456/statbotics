@@ -40,38 +40,31 @@ class TeamYearORM(Base, ModelORM):
     epa_start: MF = mapped_column(Float, default=0)
     epa_pre_champs: MF = mapped_column(Float, default=0)
     epa_end: MF = mapped_column(Float, index=True, default=0)
-    epa_mean: MF = mapped_column(Float, default=0)
     epa_max: MF = mapped_column(Float, default=0)
-    epa_diff: MF = mapped_column(Float, default=0)
 
     # auto_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
     # auto_epa_pre_champs: MOF = mapped_column(Float, nullable=True, default=None)
     # auto_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     # auto_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     # teleop_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
     # teleop_epa_pre_champs: MOF = mapped_column(Float, nullable=True, default=None)
     # teleop_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     # teleop_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     # endgame_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
     # endgame_epa_pre_champs: MOF = mapped_column(Float, nullable=True, default=None)
     # endgame_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     # endgame_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     rp_1_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_epa_pre_champs: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     rp_2_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa_pre_champs: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
     unitless_epa_end: MF = mapped_column(Float, default=0)
@@ -127,6 +120,9 @@ class TeamYear(_TeamYear, Model):
 
     def pk(self: "TeamYear") -> str:
         return f"{self.team}_{self.year}"
+
+    def __hash__(self: "TeamYear") -> int:
+        return hash(self.pk())
 
     def __str__(self: "TeamYear") -> str:
         # Only refresh DB if these change (during 1 min partial update)

@@ -50,6 +50,9 @@ class Team(_Team, Model):
     def pk(self: "Team") -> str:
         return self.team
 
+    def __hash__(self: "Team") -> int:
+        return hash(self.pk())
+
     def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.team}_{self.count}"

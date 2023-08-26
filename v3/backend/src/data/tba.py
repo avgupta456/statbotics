@@ -14,10 +14,10 @@ from src.tba.read_tba import (
     MatchDict,
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
+    get_event_matches as get_event_matches_tba,
     get_event_rankings as get_event_rankings_tba,
     get_event_teams as get_event_teams_tba,
     get_events as get_events_tba,
-    get_event_matches as get_event_matches_tba,
     get_teams as get_teams_tba,
 )
 

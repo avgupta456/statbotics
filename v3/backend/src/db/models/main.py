@@ -25,6 +25,14 @@ class Model:
     def pk(self) -> str:
         raise NotImplementedError()
 
+    def __hash__(self) -> int:
+        return hash(self.pk())
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Model):
+            return False
+        return self.pk() == other.pk()
+
     def __str__(self):
         return self.__repr__()
 

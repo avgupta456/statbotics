@@ -1,9 +1,9 @@
 from collections import defaultdict
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
 
+from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.models import Team, TeamYear
-from src.constants import CURR_YEAR
 
 
 def winrate(wins: int, ties: int, count: int) -> float:

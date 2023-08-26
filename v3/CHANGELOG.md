@@ -11,3 +11,8 @@ A semi-comprehensive list of changes for the 2024 season!
 - Refactor the TBA sync process to check for new events and team events more frequently. More consistently use ETags to reduce unnecessary data transfer.
 - Add official_winner column to Match and Alliance objects to handle tiebreakers and 2015 correctly.
 - Standardize vocabulary. Replace "draw" with "tie", "qual(s)/elim(s)/playoff" with "qual/elim", "fouls/no_fouls" with "foul/no_foul"
+- Count wins using the official match outcome (handles match tiebreakers, 2015)
+- Improve backend code readability and add type hints.
+- Don't update EPA after a placeholder match (often seen in underfull elimination brackets)
+- Don't artificially restrict teams to positive EPA.
+- Remove epa_mean and epa_diff from TeamYear objects.

@@ -3,19 +3,15 @@ from typing import Dict, List, Optional
 
 from src.constants import CURR_YEAR
 from src.data.avg import process_year as process_year_avg
-from src.data.epa import (
-    process_year as process_year_epa,
+from src.data.epa.main import (
     post_process as post_process_epa,
+    process_year as process_year_epa,
 )
 from src.data.tba import (
     check_year_partial as check_year_partial_tba,
     load_teams as load_teams_tba,
     post_process as post_process_tba,
     process_year as process_year_tba,
-)
-from src.data.wins import (
-    post_process as post_process_wins,
-    process_year as process_year_wins,
 )
 from src.data.utils import (
     Timer,
@@ -24,13 +20,17 @@ from src.data.utils import (
     read_objs as read_objs_db,
     write_objs as write_objs_db,
 )
+from src.data.wins import (
+    post_process as post_process_wins,
+    process_year as process_year_wins,
+)
 from src.db.main import clean_db
-from src.db.models import TeamYear, Team
+from src.db.models import Team, TeamYear
 from src.db.read import (
     get_etags as get_etags_db,
     get_events as get_events_db,
-    get_teams as get_teams_db,
     get_team_years as get_team_years_db,
+    get_teams as get_teams_db,
 )
 from src.db.write.main import update_teams as update_teams_db
 
@@ -113,8 +113,8 @@ def post_process(
 def reset_all_years():
     timer = Timer()
 
-    start_year = 2002  # 2002
-    end_year = 2003  # CURR_YEAR
+    start_year = 2016  # 2002
+    end_year = 2016  # CURR_YEAR
 
     clean_db()
     timer.print("Clean DB")

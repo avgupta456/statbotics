@@ -9,14 +9,15 @@ from src.db.read import get_team_years as get_team_years_db
 
 
 def epa_to_unitless_epa(epa: float, mean: float, sd: float) -> float:
-    return 1500 + 250 * (epa - mean / 3) / sd
+    return (epa - mean / 3) / sd
 
 
-@lru_cache()
+@lru_cache(maxsize=None)
 def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
     if year == CURR_YEAR:
         return lambda epa: epa
 
+    # TODO: Remove DB query
     team_years = get_team_years_db(year=year)
     if len(team_years) == 0:
         raise ValueError("No team years found for year " + str(year))
@@ -29,7 +30,9 @@ def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
 
     keys: List[float] = []
     values: List[float] = []
-    for norm_epa in range(1200, 2400):
+    for norm_epa in range(-100, 400):
+        norm_epa /= 100
+
         keys.append(max(0, spline(norm_epa)))  # type: ignore
         values.append(norm_epa)  # type: ignore
 
@@ -37,6 +40,6 @@ def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
         try:
             return values[bisect.bisect_left(keys, epa)]
         except IndexError:
-            return 2400
+            return 4
 
     return epa_to_norm_epa

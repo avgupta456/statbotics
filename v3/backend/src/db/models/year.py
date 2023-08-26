@@ -141,6 +141,9 @@ class Year(_Year, Model):
     def pk(self: "Year") -> str:
         return str(self.year)
 
+    def __hash__(self: "Year") -> int:
+        return hash(self.pk())
+
     def __str__(self: "Year") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.year}_{self.count}"

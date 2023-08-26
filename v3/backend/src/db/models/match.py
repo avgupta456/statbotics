@@ -86,6 +86,9 @@ class Match(_Match, Model):
     def pk(self: "Match") -> str:
         return self.key
 
+    def __hash__(self: "Match") -> int:
+        return hash(self.pk())
+
     def __str__(self: "Match") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_score_pred}_{self.blue_score_pred}_{self.predicted_time}"
