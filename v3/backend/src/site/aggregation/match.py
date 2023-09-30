@@ -113,6 +113,7 @@ async def get_noteworthy_matches(
     district: Optional[str],
     elim: Optional[bool],
     week: Optional[int],
+    no_cache: bool = False,
 ) -> Tuple[bool, Dict[str, List[APIMatch]]]:
     match_objs = _get_noteworthy_matches(
         year=year,

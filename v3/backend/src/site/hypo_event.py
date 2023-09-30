@@ -8,7 +8,9 @@ from src.utils.hypothetical import decompress, get_cheesy_schedule
 # TODO: Avoid code duplication with Database schema, EPA calculations, etc.
 
 
-async def read_hypothetical_event(event_id: str) -> Dict[str, Any]:
+async def read_hypothetical_event(
+    event_id: str, no_cache: bool = False
+) -> Dict[str, Any]:
     # TODO: allow decompress string teams
     year, teams, seed = decompress(event_id)
 
@@ -35,12 +37,12 @@ async def read_hypothetical_event(event_id: str) -> Dict[str, Any]:
         epa_mean=0,
     )
 
-    year_obj: Optional[APIYear] = await get_year(year=year)
+    year_obj: Optional[APIYear] = await get_year(year=year, no_cache=no_cache)
     if year_obj is None:
         raise Exception("Year not found")
 
     team_years: List[APITeamYear] = await get_team_years(
-        year=year, teams=[str(x) for x in teams]
+        year=year, teams=[str(x) for x in teams], no_cache=no_cache
     )
 
     team_years_dict = {x.num: x for x in team_years}
