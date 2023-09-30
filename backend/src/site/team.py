@@ -27,8 +27,10 @@ router = APIRouter()
 
 @router.get("/teams/all")
 @async_fail_gracefully
-async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
-    teams: List[APITeam] = await get_teams()
+async def read_all_teams(
+    response: Response, no_cache: bool = False
+) -> List[Dict[str, Any]]:
+    teams: List[APITeam] = await get_teams(no_cache=no_cache)
     return [
         {"num": x.num, "team": x.team, "active": x.active}
         for x in teams
@@ -38,8 +40,10 @@ async def read_all_teams(response: Response) -> List[Dict[str, Any]]:
 
 @router.get("/team/{team_num}")
 @async_fail_gracefully
-async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
-    team: Optional[APITeam] = await get_team(team=team_num)
+async def read_team(
+    response: Response, team_num: int, no_cache: bool = False
+) -> Dict[str, Any]:
+    team: Optional[APITeam] = await get_team(team=team_num, no_cache=no_cache)
     if team is None or team.offseason:
         raise Exception("Team not found")
 
@@ -48,8 +52,12 @@ async def read_team(response: Response, team_num: int) -> Dict[str, Any]:
 
 @router.get("/team/{team_num}/years")
 @async_fail_gracefully
-async def read_team_years(response: Response, team_num: int) -> List[Dict[str, Any]]:
-    team_years: List[APITeamYear] = await get_team_years(team=team_num)
+async def read_team_years(
+    response: Response, team_num: int, no_cache: bool = False
+) -> List[Dict[str, Any]]:
+    team_years: List[APITeamYear] = await get_team_years(
+        team=team_num, no_cache=no_cache
+    )
     return [
         {
             "year": x.year,
@@ -84,15 +92,16 @@ async def read_team_years(response: Response, team_num: int) -> List[Dict[str, A
 @router.get("/team/{team_num}/{year}")
 @async_fail_gracefully
 async def read_team_year(
-    response: Response, team_num: int, year: int
+    response: Response, team_num: int, year: int, no_cache: bool = False
 ) -> Dict[str, Any]:
-    year_obj: Optional[APIYear] = await get_year(year=year)
+    year_obj: Optional[APIYear] = await get_year(year=year, no_cache=no_cache)
     if year_obj is None:
         raise Exception("Year not found")
 
     team_year: Optional[APITeamYear] = await get_team_year(
         team=team_num,
         year=year,
+        no_cache=no_cache,
     )
     if team_year is None or team_year.offseason:
         raise Exception("TeamYear not found")
@@ -103,13 +112,14 @@ async def read_team_year(
         score_sd=year_obj.score_sd,
         team=team_num,
         offseason=None,
+        no_cache=no_cache,
     )
 
     matches: List[APIMatch] = await get_matches(
-        team=team_num, year=year, offseason=None
+        team=team_num, year=year, offseason=None, no_cache=no_cache
     )
     team_matches: List[APITeamMatch] = await get_team_matches(
-        team=team_num, year=year, offseason=None
+        team=team_num, year=year, offseason=None, no_cache=no_cache
     )
 
     out = {
