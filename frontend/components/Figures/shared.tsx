@@ -1,4 +1,4 @@
 export type LineData = {
-  id: string;
+  id: string | number;
   data: { x: number; label: string; y: number }[];
 };

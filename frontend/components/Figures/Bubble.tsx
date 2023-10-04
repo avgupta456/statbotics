@@ -4,12 +4,13 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HC_more from "highcharts/highcharts-more";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ColumnBar, getColumnOptionsDict } from "../columns";
 import { filterData } from "../filter";
 import { FilterBar } from "../filterBar";
 import { formatNumber } from "../utils";
+import { useColors } from "./use-colors";
 
 if (typeof Highcharts === "object") {
   HC_more(Highcharts);
@@ -21,6 +22,7 @@ type ScatterData = {
   z: number;
   num: string; // to handle offseason
   labelInt: number;
+  color: string;
 };
 
 const BubbleChart = ({
@@ -79,12 +81,16 @@ const BubbleChart = ({
   const yAxis = columnOptionsDict[columns.y];
   const zAxis = columnOptionsDict[columns.z];
 
+  /** Maps team num to hex color code */
+  const colors = useColors(filteredData.map((datum) => datum.num));
+
   const scatterData: ScatterData[] = filteredData.map((datum) => ({
     x: xAxis.accessor(datum),
     y: yAxis.accessor(datum),
     z: zAxis.accessor(datum),
     num: formatNumber(datum.num),
     labelInt: 0,
+    color: colors.get(datum.num) ?? "#3b82f6",
   }));
 
   const xs = scatterData.map((datum) => datum.x);
@@ -130,6 +136,7 @@ const BubbleChart = ({
     y: datum.y,
     z: datum.z,
     num: datum.num,
+    color: datum.color,
     labelInt: datum.x > xCutoff || datum.y > yCutoff || datum.z > zCutoff ? 1 : 0,
   }));
 
@@ -208,7 +215,6 @@ const BubbleChart = ({
       bubble: {
         minSize: zAxis.label === "Constant" ? 10 : 1,
         maxSize: zAxis.label === "Constant" ? 10 : 15,
-        color: "#3b82f6",
       },
       line: {
         lineWidth: 1,
