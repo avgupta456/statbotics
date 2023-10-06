@@ -54,11 +54,7 @@ export function useColors(teams: number[]): Map<number, string | undefined> {
       const newColors = new Map<number, string>();
 
       for (const teamColors of Object.values(json.teams)) {
-        if (teamColors.colors) {
-          newColors.set(teamColors.teamNumber, teamColors.colors.primaryHex);
-        } else {
-          newColors.set(teamColors.teamNumber, undefined);
-        }
+        newColors.set(teamColors.teamNumber, teamColors.colors?.primaryHex ?? undefined);
       }
 
       setColors(newColors);
