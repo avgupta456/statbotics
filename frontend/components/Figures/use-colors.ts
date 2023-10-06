@@ -22,8 +22,6 @@ export function useColors(teams: number[]): Map<number, string | undefined> {
     const fetchColors = async () => {
       const colorsUrl = new URL("https://frc-colors.com/api/v1/team");
 
-      console.log(teams.map((num) => colors.has(num)));
-
       if (teams.length > 100) {
         setColors(new Map());
         return;
