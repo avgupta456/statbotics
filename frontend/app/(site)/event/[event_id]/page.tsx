@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { BsTwitch } from "react-icons/bs";
 
 import Image from "next/image";
@@ -9,23 +11,6 @@ import { formatEventName, log, round } from "../../../../utils";
 import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 import { Data } from "./types";
-
-/*
-export async function generateMetadata({ params }) {
-  const { event_id } = params;
-  const data: Data = await getData(event_id);
-  if (!data) {
-    return { title: "Statbotics" };
-  } else {
-    return { title: `${data.year.year} ${data.event.name} - Statbotics` };
-  }
-}
-*/
-
-export async function generateMetadata({ params }) {
-  const { event_id } = params;
-  return { title: `${event_id} - Statbotics` };
-}
 
 async function getData(event_id: string) {
   const start = performance.now();
@@ -57,18 +42,33 @@ async function getHypotheticalData(event_id: string) {
 // do not cache this page
 export const revalidate = 0;
 
-async function Page({ params }: { params: { event_id: string } }) {
+const Page = ({ params }: { params: { event_id: string } }) => {
   const { event_id } = params;
 
-  let data: Data | undefined;
-  let hypothetical = false;
+  const hypothetical = event_id.length > 10;
+  const [data, setData] = useState<Data | undefined>();
 
-  if (event_id.length <= 10) {
-    data = await getData(event_id);
-  } else {
-    data = await getHypotheticalData(event_id);
-    hypothetical = true;
-  }
+  console.log("HERE", event_id, data);
+
+  useEffect(() => {
+    const getEventData = async (event_id: string, hypothetical: boolean) => {
+      if (data) {
+        return;
+      }
+
+      if (hypothetical) {
+        setData(await getHypotheticalData(event_id));
+      } else {
+        setData(await getData(event_id));
+      }
+    };
+
+    getEventData(event_id, hypothetical);
+  }, [event_id, hypothetical, data]);
+
+  useEffect(() => {
+    document.title = `${event_id} - Statbotics`;
+  }, [event_id]);
 
   if (!data) {
     return <NotFound type="Event" />;
@@ -109,6 +109,6 @@ async function Page({ params }: { params: { event_id: string } }) {
       <Tabs eventId={event_id} year={data.year.year} data={data} />
     </div>
   );
-}
+};
 
 export default Page;
