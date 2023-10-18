@@ -78,6 +78,7 @@ def percent_func(year: int, x: int) -> float:
 # TODO: I removed nonlinear sum_func, but it might be useful
 # In general, model overpredicts when 2+ strong teams
 
+
 # MAIN FUNCTION
 def process_year(
     year_num: int,
