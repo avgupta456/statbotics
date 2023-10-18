@@ -1,6 +1,6 @@
 from typing import Dict, Tuple
 
-from src.constants import CURR_YEAR
+from src.constants import CURR_YEAR, MAX_YEAR
 from src.data.avg import process_year as process_year_avg
 from src.data.epa import (
     post_process as post_process_epa,
@@ -51,7 +51,7 @@ def reset_all_years(start_year: int, end_year: int):
 
     for year_num in range(start_year, end_year + 1):
         objs, new_etags = time_func(
-            str(year_num) + " TBA", process_year_tba, year_num, teams, [], False, year_num < end_year  # type: ignore
+            str(year_num) + " TBA", process_year_tba, year_num, teams, [], False, year_num < CURR_YEAR  # type: ignore
         )
         year = time_func(
             str(year_num) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
@@ -104,9 +104,9 @@ def reset_curr_year(curr_year: int, mock: bool = False):
     objs = out[1:]
 
     # Changed to False to prevent deleting data without a backup
-    time_func("Write", write_objs, curr_year, *objs, new_etags, curr_year, False)  # type: ignore
+    time_func(str(curr_year) + " Write", write_objs, curr_year, *objs, new_etags, curr_year, False)  # type: ignore
 
-    if curr_year == CURR_YEAR:
+    if curr_year == MAX_YEAR:
         time_func("Post TBA", post_process_tba)
         time_func("Post EPA", lambda: post_process_epa(curr_year))
 
