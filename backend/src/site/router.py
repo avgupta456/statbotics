@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.constants import CURR_YEAR
+from src.constants import CURR_YEAR, MAX_YEAR
 from src.data.main import reset_curr_year, update_curr_year
 from src.site.event import router as event_router
 from src.site.match import router as match_router
@@ -24,7 +24,8 @@ async def read_root():
 
 @router.get("/reset_curr_year")
 async def reset_curr_year_endpoint():
-    reset_curr_year(curr_year=CURR_YEAR)
+    for year in range(CURR_YEAR, MAX_YEAR + 1):
+        reset_curr_year(curr_year=year)
     return {"status": "success"}
 
 

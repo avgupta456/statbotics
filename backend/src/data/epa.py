@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 import numpy as np
 from scipy.stats import expon, exponnorm  # type: ignore
 
-from src.constants import CURR_YEAR
+from src.constants import MAX_YEAR
 from src.data.nepa import epa_to_unitless_epa
 from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import get_team_years as get_team_years_db, get_teams as get_teams_db
@@ -753,7 +753,7 @@ def process_year(
     for team in team_years_dict:
         curr_team_epas = team_matches_dict[team]
         if curr_team_epas == []:
-            if year.year == CURR_YEAR:
+            if year.year == MAX_YEAR:
                 curr_team_epas = [team_epas[team]]
             else:
                 to_remove.append(team)

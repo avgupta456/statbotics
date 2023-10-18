@@ -2,6 +2,7 @@ import statistics
 from typing import List
 
 from src.db.models import Event, Match, Year
+from src.constants import MAX_YEAR
 
 
 def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
@@ -42,6 +43,16 @@ def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
         year.no_fouls_mean = round(sum(no_fouls) / len(no_fouls), 2)
         year.rp_1_mean = round(sum(rp_1s) / len(rp_1s), 2)
         year.rp_2_mean = round(sum(rp_2s) / len(rp_2s), 2)
+    elif year.year == MAX_YEAR:
+        year.score_mean = 30
+        year.score_sd = 10
+        year.auto_mean = 10
+        year.teleop_mean = 10
+        year.endgame_mean = 10
+        year.fouls_mean = 0
+        year.no_fouls_mean = 30
+        year.rp_1_mean = 0.5
+        year.rp_2_mean = 0.5
 
     if year.year < 2016:
         year.auto_mean = None
