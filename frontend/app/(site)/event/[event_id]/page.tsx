@@ -48,8 +48,6 @@ const Page = ({ params }: { params: { event_id: string } }) => {
   const hypothetical = event_id.length > 10;
   const [data, setData] = useState<Data | undefined>();
 
-  console.log("HERE", event_id, data);
-
   useEffect(() => {
     const getEventData = async (event_id: string, hypothetical: boolean) => {
       if (data) {
