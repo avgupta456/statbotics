@@ -10,13 +10,9 @@ CRDB_USER = os.getenv("CRDB_USER", "")
 CRDB_PWD = os.getenv("CRDB_PWD", "")
 CRDB_HOST = os.getenv("CRDB_HOST", "")
 CRDB_CLUSTER = os.getenv("CRDB_CLUSTER", "")
-LOCAL_DB = os.getenv("LOCAL_DB", "True") == "True"
-# LOCAL_DB = False
 
 CONN_STR = (
-    "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
-    if LOCAL_DB
-    else (
+    (
         "cockroachdb://"
         + CRDB_USER
         + ":"
@@ -26,6 +22,8 @@ CONN_STR = (
         + "/statbotics2?sslmode=verify-full&sslrootcert=root.crt&options=--cluster%3D"
         + CRDB_CLUSTER
     )
+    if PROD
+    else "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
 )
 
 # CONFIG
