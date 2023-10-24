@@ -20,12 +20,12 @@ async function fetchColors(
   teams: number[],
   colors: Map<number, string | undefined> = new Map()
 ): Promise<Map<number, string | undefined>> {
-  const colorsUrl = new URL("https://frc-colors.com/api/v1/team");
-
   if (teams.length > 100) {
     // Too many teams to fetch in a single request
     return new Map();
   }
+
+  const colorsUrl = new URL("https://frc-colors.com/api/v1/team");
 
   if (teams.every((num) => colors.has(num))) {
     return colors;
