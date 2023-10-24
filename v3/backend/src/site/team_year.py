@@ -27,7 +27,7 @@ async def read_team_years(
         limit=limit,
         metric=metric,
     )
-    team_years = [x for x in team_years if x.count > 0 or year == CURR_YEAR]
+    team_years = [x for x in team_years if x.count > 0 or year >= CURR_YEAR]
 
     out = {
         "team_years": [x.to_dict() for x in team_years],

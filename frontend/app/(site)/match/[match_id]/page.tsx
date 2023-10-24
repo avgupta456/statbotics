@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 import Link from "next/link";
@@ -11,22 +13,6 @@ import Summary from "./summary";
 import MatchTable from "./table";
 import { Data } from "./types";
 import Video from "./video";
-
-/*
-export async function generateMetadata({ params }) {
-  const { match_id } = params;
-  const data: Data = await getData(match_id);
-  if (!data) {
-    return { title: "Statbotics" };
-  } else {
-    return { title: `${data.match.match_name} (${data.event.name}) - Statbotics` };
-  }
-}*/
-
-export async function generateMetadata({ params }) {
-  const { match_id } = params;
-  return { title: `${match_id} - Statbotics` };
-}
 
 async function getData(match_id: string) {
   const start = performance.now();
@@ -43,9 +29,25 @@ async function getData(match_id: string) {
 // do not cache this page
 export const revalidate = 0;
 
-async function Page({ params }: { params: { match_id: string } }) {
+const Page = ({ params }: { params: { match_id: string } }) => {
   const { match_id } = params;
-  const data: Data = await getData(match_id);
+  const [data, setData] = useState<Data | undefined>();
+
+  useEffect(() => {
+    const getMatchData = async (match_id: string) => {
+      if (data) {
+        return;
+      }
+
+      setData(await getData(match_id));
+    };
+
+    getMatchData(match_id);
+  }, [match_id, data]);
+
+  useEffect(() => {
+    document.title = `${match_id} - Statbotics`;
+  }, [match_id]);
 
   if (!data) {
     return <NotFound type="Match" />;
@@ -97,6 +99,6 @@ async function Page({ params }: { params: { match_id: string } }) {
       </div>
     </div>
   );
-}
+};
 
 export default Page;

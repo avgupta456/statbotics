@@ -14,7 +14,7 @@ def epa_to_unitless_epa(epa: float, mean: float, sd: float) -> float:
 
 @lru_cache()
 def get_epa_to_norm_epa_func(year: int) -> Callable[[float], float]:
-    if year == CURR_YEAR:
+    if year >= CURR_YEAR:
         return lambda epa: epa
 
     team_years = get_team_years_db(year=year)

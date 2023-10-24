@@ -47,7 +47,7 @@ def get_event_status(matches: List[Dict[str, Any]], year: int) -> str:
             num_upcoming_matches += 1
 
     event_status = "Completed"
-    if year == CURR_YEAR:
+    if year >= CURR_YEAR:
         if num_matches == 0:
             event_status = "Upcoming"
         elif (

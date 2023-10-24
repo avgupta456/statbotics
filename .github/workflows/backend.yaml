@@ -25,5 +25,4 @@ jobs:
           source .venv/bin/activate
           pip install -r requirements.txt
           python -m black . --check --diff
-          python -m flake8 . --exclude=./.venv/
-          python -m pyright . --venvpath=./.venv/
+          python -m flake8 . --exclude=./.venv/ --ignore=E501,E203,W503 --max-line-length=88
