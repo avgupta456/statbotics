@@ -41,6 +41,7 @@ const BubbleChart = ({
   setFilters: (filters: { [key: string]: any }) => void;
 }) => {
   const [width, setWidth] = useState(0);
+  const [showColors, setShowColors] = useState(false);
 
   // update width on resize
   useEffect(() => {
@@ -90,7 +91,7 @@ const BubbleChart = ({
     z: zAxis.accessor(datum),
     num: formatNumber(datum.num),
     labelInt: 0,
-    color: colors.get(datum.num) ?? "#3b82f6",
+    color: showColors ? colors.get(datum.num) ?? "#3b82f6" : "#3b82f6",
   }));
 
   const xs = scatterData.map((datum) => datum.x);
@@ -257,6 +258,10 @@ const BubbleChart = ({
             currColumnOptions={columnOptions}
             columns={columns}
             setColumns={setColumns}
+            includeColors={data.length > 0 && data.length < 100}
+            loadingColors={colors.size === 0}
+            showColors={showColors}
+            setShowColors={setShowColors}
           />
         </div>
       </div>

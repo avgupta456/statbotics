@@ -64,10 +64,16 @@ export function useColors(teams: number[]): Map<number, string | undefined> {
   const [colors, setColors] = useState<Map<number, string | undefined>>(new Map());
 
   useEffect(() => {
+    const teamsInColors = Array.from(colors.keys());
+    // check if we already have all the colors (or if we have too many teams to fetch)
+    if (teams.length > 100 || teams.every((num) => teamsInColors.includes(num))) {
+      return;
+    }
+
     fetchColors(teams, colors).then((newColors) => {
       setColors(newColors);
     });
-  }, [teams]);
+  }, [colors, teams]);
 
   return colors;
 }
