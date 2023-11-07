@@ -8,6 +8,7 @@ import React from "react";
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 
 import { round } from "../../utils";
+import { useColors } from "./colors";
 
 const BestFitLine = ({ nodes, xScale, yScale }) => {
   nodes.sort((a, b) => a.data["x"] - b.data["x"]);
@@ -39,12 +40,15 @@ const BestFitLine = ({ nodes, xScale, yScale }) => {
 const ScatterPlot = ({
   data,
   axis,
-  getColor,
+  showColors,
 }: {
   data: any[];
   axis: string;
-  getColor: (teamNum: number) => string;
+  showColors: boolean;
 }) => {
+  const defaultColor = "rgb(55,126,184)";
+  const getColor = useColors(defaultColor, showColors);
+
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveScatterPlot

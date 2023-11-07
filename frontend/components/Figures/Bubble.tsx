@@ -4,13 +4,13 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HC_more from "highcharts/highcharts-more";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { ColumnBar, getColumnOptionsDict } from "../columns";
 import { filterData } from "../filter";
 import { FilterBar } from "../filterBar";
 import { formatNumber } from "../utils";
-import { useColors } from "./use-colors";
+import { ColorsContext, useColors } from "./colors";
 
 if (typeof Highcharts === "object") {
   HC_more(Highcharts);
@@ -83,7 +83,8 @@ const BubbleChart = ({
   const zAxis = columnOptionsDict[columns.z];
 
   /** Maps team num to hex color code */
-  const colors = useColors(filteredData.map((datum) => datum.num));
+  const { isLoading: loadingColors } = useContext(ColorsContext);
+  const getColor = useColors("#3b82f6", showColors);
 
   const scatterData: ScatterData[] = filteredData.map((datum) => ({
     x: xAxis.accessor(datum),
@@ -91,7 +92,7 @@ const BubbleChart = ({
     z: zAxis.accessor(datum),
     num: formatNumber(datum.num),
     labelInt: 0,
-    color: showColors ? colors.get(datum.num) ?? "#3b82f6" : "#3b82f6",
+    color: getColor(datum.num),
   }));
 
   const xs = scatterData.map((datum) => datum.x);
@@ -259,7 +260,7 @@ const BubbleChart = ({
             columns={columns}
             setColumns={setColumns}
             includeColors={data.length > 0 && data.length < 100}
-            loadingColors={colors.size === 0}
+            loadingColors={loadingColors}
             showColors={showColors}
             setShowColors={setShowColors}
           />

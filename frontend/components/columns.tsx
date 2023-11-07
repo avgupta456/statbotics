@@ -94,15 +94,14 @@ export const ColumnBar = ({
       {includeColors && (
         <>
           <div className="w-0.5 h-10 mr-2 bg-gray-500 rounded" />
-          <div
-            className={classnames(
-              "h-10 p-2 rounded bg-gray-100 flex items-center justify-center",
-              !loadingColors ? "cursor-pointer hover:bg-gray-200" : "cursor-progress opacity-50"
-            )}
-            onClick={() => !loadingColors && setShowColors(!showColors)}
+          <button
+            className="h-10 p-2 rounded bg-gray-100 flex items-center justify-center disabled:cursor-progress disabled:opacity-50 hover:bg-gray-200 disabled:bg-gray-100"
+            type="button"
+            disabled={loadingColors}
+            onClick={() => setShowColors((value) => !value)}
           >
             {showColors ? "Hide" : "Use"} Team Colors
-          </div>
+          </button>
         </>
       )}
     </div>
