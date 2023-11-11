@@ -77,7 +77,6 @@ export const ColorsProvider = ({ children, teams }: Props) => {
 
   const value = useMemo(() => ({ isLoading, colors }), [isLoading, colors]);
 
-  // @ts-expect-error
   return <ColorsContext.Provider value={value}>{children}</ColorsContext.Provider>;
 };
 
