@@ -43,9 +43,15 @@ const EventsLayout = ({
 
   const N = filteredData?.length;
 
+  // ex: 2024-01-01
+  const today = new Date().toISOString().split("T")[0];
+
   const ongoingEvents = filteredData
     ?.filter(
-      (event) => event.status === "Ongoing" && (event.year !== CURR_YEAR || event.week >= CURR_WEEK)
+      (event) =>
+        event.status === "Ongoing" &&
+        (event.year !== CURR_YEAR || event.week >= CURR_WEEK) &&
+        event.end_date >= today
     )
     .sort((a, b) => (b.epa_mean > a.epa_mean ? 1 : -1));
   const ongoingN = ongoingEvents.length;
@@ -53,7 +59,9 @@ const EventsLayout = ({
   const upcomingEvents = filteredData
     ?.filter(
       (event) =>
-        event.status === "Upcoming" && (event.year !== CURR_YEAR || event.week >= CURR_WEEK)
+        event.status === "Upcoming" &&
+        (event.year !== CURR_YEAR || event.week >= CURR_WEEK) &&
+        event.end_date >= today
     )
     .sort((a, b) => (a.week === b.week ? (b.epa_mean > a.epa_mean ? 1 : -1) : a.week - b.week));
   const upcomingN = upcomingEvents.length;
