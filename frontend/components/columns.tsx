@@ -2,7 +2,7 @@ import React from "react";
 import Select from "react-select";
 
 import { RPMapping } from "../constants";
-import { round } from "../utils";
+import { classnames, round } from "../utils";
 
 export const getColumnOptions = (year: number) => [
   { label: "Constant", accessor: (datum) => 1 },
@@ -41,11 +41,19 @@ export const ColumnBar = ({
   currColumnOptions,
   columns,
   setColumns,
+  includeColors = false,
+  loadingColors = false,
+  showColors = false,
+  setShowColors = () => {},
 }: {
   year: number;
   currColumnOptions: string[];
   columns: any;
   setColumns: any;
+  includeColors?: boolean;
+  loadingColors?: boolean;
+  showColors?: boolean;
+  setShowColors?: any;
 }) => {
   const columnKeys = Object.keys(columns);
 
@@ -83,6 +91,19 @@ export const ColumnBar = ({
           />
         </div>
       ))}
+      {includeColors && (
+        <>
+          <div className="w-0.5 h-10 mr-2 bg-gray-500 rounded" />
+          <button
+            className="h-10 p-2 rounded bg-gray-100 flex items-center justify-center disabled:cursor-progress disabled:opacity-50 hover:bg-gray-200 disabled:bg-gray-100"
+            type="button"
+            disabled={loadingColors}
+            onClick={() => setShowColors((value) => !value)}
+          >
+            {showColors ? "Hide" : "Use"} Team Colors
+          </button>
+        </>
+      )}
     </div>
   );
 };

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BsTwitch } from "react-icons/bs";
 
 import Image from "next/image";
 import Link from "next/link";
 
+import { ColorsProvider } from "../../../../components/Figures/colors";
 import { BACKEND_URL } from "../../../../constants";
 import { formatEventName, log, round } from "../../../../utils";
 import NotFound from "../../shared/notFound";
@@ -104,7 +105,9 @@ const Page = ({ params }: { params: { event_id: string } }) => {
           )}
         </div>
       </div>
-      <Tabs eventId={event_id} year={data.year.year} data={data} />
+      <ColorsProvider teams={data?.team_events.map((x) => x.num) ?? []}>
+        <Tabs eventId={event_id} year={data.year.year} data={data} />
+      </ColorsProvider>
     </div>
   );
 };
