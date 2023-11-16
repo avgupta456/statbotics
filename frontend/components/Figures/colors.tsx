@@ -31,13 +31,21 @@ type ColorData = {
 };
 
 async function fetchColors(teams: number[]): Promise<TeamColors | undefined> {
-  if (teams.length > 100) {
+  const uniqueTeams = new Set(
+    // Convert offseason robots represented with really large numbers to their main team number
+    // ex. team 1234B as 123400001
+    teams.map((num) => num.toString().replace(/(\d+)0000\d+$/, "$1"))
+  );
+
+  if (uniqueTeams.size > 100) {
     return undefined;
   }
 
   const colorsUrl = new URL("https://frc-colors.com/api/v1/team");
 
-  colorsUrl.search = new URLSearchParams(teams.map((num) => ["team", num.toString()])).toString();
+  colorsUrl.search = new URLSearchParams(
+    Array.from(uniqueTeams).map((num) => ["team", num.toString()])
+  ).toString();
 
   const request = fetch(colorsUrl.toString());
 
