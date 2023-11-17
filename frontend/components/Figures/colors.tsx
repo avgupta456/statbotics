@@ -1,3 +1,5 @@
+import colorLuminance from "color-luminance";
+
 import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from "react";
 
 type TeamColors = Map<number, string | undefined>;
@@ -78,7 +80,28 @@ export const ColorsProvider = ({ children, teams }: Props) => {
   useEffect(() => {
     setIsLoading(true);
     fetchColors(teams).then((newColors) => {
-      setColors(newColors);
+      const filteredColors: TeamColors = new Map();
+
+      for (const [team, color] of newColors) {
+        if (!color) {
+          filteredColors.set(team, undefined);
+          continue;
+        }
+
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
+
+        const luminance = colorLuminance([r, g, b]);
+
+        if (luminance > 0.9 * 255) {
+          continue;
+        }
+
+        filteredColors.set(team, color);
+      }
+
+      setColors(filteredColors);
       setIsLoading(false);
     });
   }, [teams]);
