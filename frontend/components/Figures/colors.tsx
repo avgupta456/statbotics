@@ -1,6 +1,8 @@
-import colorLuminance from "color-luminance";
-
 import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from "react";
+
+function colorLuminance(r: number, g: number, b: number) {
+  return r * 0.299 + g * 0.587 + b * 0.114;
+}
 
 type TeamColors = Map<number, string | undefined>;
 
@@ -92,7 +94,7 @@ export const ColorsProvider = ({ children, teams }: Props) => {
         const g = parseInt(color.slice(3, 5), 16);
         const b = parseInt(color.slice(5, 7), 16);
 
-        const luminance = colorLuminance([r, g, b]);
+        const luminance = colorLuminance(r, g, b);
 
         if (luminance > 0.9 * 255) {
           continue;
