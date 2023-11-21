@@ -84,7 +84,7 @@ export const ColorsProvider = ({ children, teams }: Props) => {
     fetchColors(teams).then((newColors) => {
       const filteredColors: TeamColors = new Map();
 
-      for (const [team, color] of newColors) {
+      for (const [team, color] of Array.from(newColors)) {
         if (!color) {
           filteredColors.set(team, undefined);
           continue;
