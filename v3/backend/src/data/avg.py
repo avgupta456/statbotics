@@ -1,12 +1,13 @@
 import statistics
 from typing import List
 
+from src.types.enums import MatchStatus
 from src.db.models import Alliance, Year
 
 
 def process_year(year: Year, alliances: List[Alliance]) -> Year:
     week_one_alliances = [
-        a for a in alliances if a.week == 1 and a.status == "Completed"
+        a for a in alliances if a.week == 1 and a.status == MatchStatus.COMPLETED
     ]
 
     score_arr: List[int] = []

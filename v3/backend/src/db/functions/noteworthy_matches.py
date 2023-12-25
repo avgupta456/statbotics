@@ -4,6 +4,7 @@ from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
+from src.types.enums import MatchStatus
 from src.db.main import Session
 from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
@@ -26,7 +27,7 @@ def get_noteworthy_matches(
             EventORM.week,
         ).filter(
             (MatchORM.year == year)
-            & (MatchORM.status == "Completed")
+            & (MatchORM.status == MatchStatus.COMPLETED)
             & (MatchORM.offseason == False)  # noqa: E712
             & (MatchORM.event == EventORM.key)
         )
@@ -61,7 +62,7 @@ def get_noteworthy_matches(
         )
 
         combined_score_matches = (
-            matches.add_columns((red_score_col + blue_score_col).label("sum_score"))
+            matches.add_columns((red_score_col + blue_score_col).label("sum_score"))  # type: ignore
             .order_by(desc("sum_score"), asc(MatchORM.time))  # type: ignore
             .limit(30)
             .all()

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
+from src.types.enums import EventStatus, MatchStatus, MatchWinner, CompLevel
 from src.constants import CURR_WEEK, CURR_YEAR
 from src.data.utils import objs_type
 from src.db.functions import (
@@ -12,6 +13,7 @@ from src.db.models import ETag, Event, Team, TeamEvent, TeamYear, match_dict_to_
 from src.tba.constants import DISTRICT_MAPPING, OFFSEASON_TEAMS
 from src.tba.read_tba import (
     MatchDict,
+    EventDict,
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
     get_event_matches as get_event_matches_tba,
@@ -44,33 +46,37 @@ def load_teams(cache: bool = True) -> List[Team]:
     return team_objs
 
 
-def get_event_status(matches: List[MatchDict], year: int) -> str:
+def get_event_status(matches: List[MatchDict], year: int) -> EventStatus:
     num_matches = len(matches)
-    num_qual_matches = len([m for m in matches if m["comp_level"] == "qm"])
-    finals_matches = [m for m in matches if m["comp_level"] == "f"]
+    num_qual_matches = len([m for m in matches if m["comp_level"] == CompLevel.QUAL])
+    finals_matches = [m for m in matches if m["comp_level"] == CompLevel.FINAL]
 
-    red_final_match_wins = len([m for m in finals_matches if m["winner"] == "red"])
-    blue_final_match_wins = len([m for m in finals_matches if m["winner"] == "blue"])
+    red_final_match_wins = len(
+        [m for m in finals_matches if m["winner"] == MatchWinner.RED]
+    )
+    blue_final_match_wins = len(
+        [m for m in finals_matches if m["winner"] == MatchWinner.BLUE]
+    )
     max_finals_winner = max(red_final_match_wins, blue_final_match_wins)
 
     num_upcoming_matches = 0
     for match in matches:
-        if match["status"] == "Upcoming":
+        if match["status"] == MatchStatus.UPCOMING:
             num_upcoming_matches += 1
 
     elim_started = num_matches > num_qual_matches
     finals_finished = num_upcoming_matches == 0 and max_finals_winner >= 2
 
-    event_status = "Completed"
+    event_status: EventStatus = EventStatus.COMPLETED
     if year == CURR_YEAR:
         if num_matches == 0:
-            event_status = "Upcoming"
+            event_status = EventStatus.UPCOMING
         elif not elim_started or not finals_finished:
-            event_status = "Ongoing"
+            event_status = EventStatus.ONGOING
         else:
-            event_status = "Completed"
+            event_status = EventStatus.COMPLETED
     elif num_matches == 0:
-        return "Invalid"
+        return EventStatus.INVALID
     return event_status
 
 
@@ -91,7 +97,7 @@ def check_year_partial(
         return True  # If any new events
 
     for event_obj in event_objs:
-        if event_obj.status == "Completed":
+        if event_obj.status == EventStatus.COMPLETED:
             continue
 
         start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
@@ -169,10 +175,13 @@ def process_year(
     offseason_teams: Dict[str, bool] = {}
 
     if not partial:
-        districts, _ = call_tba(
-            lambda etag, cache: get_districts_tba(year_num, etag=etag, cache=cache),
-            str(year_num) + "/districts",
-        )
+
+        def get_districts_tba_year(
+            etag: OS, cache: bool
+        ) -> Tuple[List[Tuple[str, str]], OS]:
+            return get_districts_tba(year_num, etag=etag, cache=cache)
+
+        districts, _ = call_tba(get_districts_tba_year, str(year_num) + "/districts")
 
         for district_key, district_abbrev in districts:
             curr_district_teams, _ = get_district_teams_tba(district_key, cache=cache)
@@ -181,15 +190,15 @@ def process_year(
                     district_abbrev, district_abbrev
                 )
 
-    events, _ = call_tba(
-        lambda etag, cache: get_events_tba(year_num, etag=etag, cache=cache),
-        str(year_num) + "/events",
-    )
+    def get_events_tba_year(etag: OS, cache: bool) -> Tuple[List[EventDict], OS]:
+        return get_events_tba(year_num, etag=etag, cache=cache)
+
+    events, _ = call_tba(get_events_tba_year, str(year_num) + "/events")
 
     for event in events:
         key = event["key"]
         curr_obj = event_objs_dict.get(key, None)
-        curr_status = "Upcoming" if curr_obj is None else curr_obj.status
+        curr_status = EventStatus.UPCOMING if curr_obj is None else curr_obj.status
         event_objs_dict[key] = Event(
             key=key,
             year=year_num,
@@ -202,14 +211,14 @@ def process_year(
             end_date=event["end_date"],
             type=event["type"],
             week=event["week"],
-            offseason=event["type"] > 10,
+            offseason=event["type"].is_offseason(),
             video=event["video"],
             status=curr_status,
         )
 
     for event_obj in event_objs_dict.values():
         if partial:
-            if event_obj.status == "Completed":
+            if event_obj.status == EventStatus.COMPLETED:
                 continue
 
             start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
@@ -222,12 +231,14 @@ def process_year(
 
         event_key, event_time = event_obj.key, event_obj.time
 
-        matches, new_etag = call_tba(
-            lambda etag, cache: get_event_matches_tba(
+        def get_event_matches_tba_year(
+            etag: OS, cache: bool
+        ) -> Tuple[List[MatchDict], OS]:
+            return get_event_matches_tba(
                 year_num, event_key, event_obj.offseason, event_time, etag, cache
-            ),
-            event_key + "/matches",
-        )
+            )
+
+        matches, new_etag = call_tba(get_event_matches_tba_year, event_key + "/matches")
 
         if partial and not new_etag:
             continue
@@ -258,7 +269,7 @@ def process_year(
                 team_competing_this_week_dict[team] = True
 
             # Store closest upcoming/ongoing event
-            if event_week >= CURR_WEEK and event_status != "Completed":
+            if event_week >= CURR_WEEK and event_status != EventStatus.COMPLETED:
                 # event is upcoming or ongoing
                 if team not in team_next_event_dict:
                     # first event for team
@@ -275,19 +286,22 @@ def process_year(
                 # event is closer than previous closest event
                 team_first_event_dict[team] = (event_key, event_week)
 
-        if event_status == "Invalid":
+        if event_status == EventStatus.INVALID:
             continue
 
-        elif event_status == "Upcoming":
+        elif event_status == EventStatus.UPCOMING:
+
+            def get_event_teams_tba_year(etag: OS, cache: bool) -> Tuple[List[str], OS]:
+                return get_event_teams_tba(event_key, etag, cache)
+
             temp_event_teams, _ = call_tba(
-                lambda etag, cache: get_event_teams_tba(event_key, etag, cache),
-                event_key + "/teams",
+                get_event_teams_tba_year, event_key + "/teams"
             )
 
             for team in temp_event_teams:
                 add_team_event(team, event_obj.offseason)
 
-        elif event_status in ["Ongoing", "Completed"]:
+        elif event_status in [EventStatus.ONGOING, EventStatus.COMPLETED]:
             # Update event_obj, accumulate match_obj, alliance_objs, team_match_objs
             for match in matches:
                 (
@@ -298,7 +312,7 @@ def process_year(
                     match, year_num, event_obj.week, event_obj.offseason
                 )
 
-                current_match += match_obj.status == "Completed"
+                current_match += match_obj.status == MatchStatus.COMPLETED
                 qual_matches += not match_obj.elim
 
                 # Replace even if present, since may be Upcoming -> Completed
@@ -310,10 +324,12 @@ def process_year(
                     add_team_event(team_match_obj.team, event_obj.offseason)
                     team_match_objs_dict[team_match_obj.pk()] = team_match_obj
 
-            rankings, _ = call_tba(
-                lambda etag, cache: get_event_rankings_tba(event_key, etag, cache),
-                event_key + "/rankings",
-            )
+            def get_event_rankings_tba_year(
+                etag: OS, cache: bool
+            ) -> Tuple[Dict[str, int], OS]:
+                return get_event_rankings_tba(event_key, etag, cache)
+
+            rankings, _ = call_tba(get_event_rankings_tba_year, event_key + "/rankings")
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:

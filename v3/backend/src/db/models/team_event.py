@@ -1,13 +1,14 @@
 from typing import Any, Dict, Tuple
 
 import attr
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Boolean, Float, Integer, String, Enum
+from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.types.enums import EventStatus, EventType
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
+from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS, values_callable
 
 
 class TeamEventORM(Base, ModelORM):
@@ -35,11 +36,14 @@ class TeamEventORM(Base, ModelORM):
     country: MOS = mapped_column(String(30), nullable=True)
     district: MOS = mapped_column(String(10), nullable=True)
     state: MOS = mapped_column(String(10), nullable=True)
-    type: MI = mapped_column(Integer)
+    type: Mapped[EventType] = mapped_column(
+        Enum(EventType, values_callable=values_callable)
+    )
     week: MI = mapped_column(Integer)
 
-    # Choices are "Upcoming", "Ongoing", "Completed"
-    status: MS = mapped_column(String(10))
+    status: Mapped[EventStatus] = mapped_column(
+        Enum(EventStatus, values_callable=values_callable)
+    )
     first_event: MB = mapped_column(Boolean)
 
     """STATS"""

@@ -123,23 +123,6 @@ def process_year(objs: objs_type) -> objs_type:
     year.epa_75p = sorted_epas[int(len(sorted_epas) * 0.25)]
     year.epa_25p = sorted_epas[int(len(sorted_epas) * 0.75)]
 
-    # EVENTS
-    for e in objs[2].values():
-        tes = sorted(
-            event_team_events_dict[e.key], key=lambda te: te.epa_end, reverse=True
-        )
-
-        if len(tes) > 0:
-            e.epa_max = max([te.epa_end for te in tes])
-            e.epa_mean = statistics.mean([te.epa_end for te in tes])
-            e.epa_sd = statistics.stdev([te.epa_end for te in tes])
-
-        if len(tes) >= 8:
-            e.epa_top8 = tes[7].epa_end
-
-        if len(tes) >= 24:
-            e.epa_top24 = tes[23].epa_end
-
     # TEAM EVENTS
     for te in sorted(objs[3].values(), key=lambda te: te.week):
         team_event_key = get_team_event_key(te.team, te.event)
@@ -176,5 +159,22 @@ def process_year(objs: objs_type) -> objs_type:
                 te.rp_2_epa_end = round(rp_2_epas[-1], 4)
                 te.rp_2_epa_mean = round(statistics.mean(rp_2_epas), 4)
                 te.rp_2_epa_max = round(max(rp_2_epas), 4)
+
+    # EVENTS
+    for e in objs[2].values():
+        tes = sorted(
+            event_team_events_dict[e.key], key=lambda te: te.epa_end, reverse=True
+        )
+
+        if len(tes) > 0:
+            e.epa_max = max([te.epa_end for te in tes])
+            e.epa_mean = statistics.mean([te.epa_end for te in tes])
+            e.epa_sd = statistics.stdev([te.epa_end for te in tes])
+
+        if len(tes) >= 8:
+            e.epa_top8 = tes[7].epa_end
+
+        if len(tes) >= 24:
+            e.epa_top24 = tes[23].epa_end
 
     return objs

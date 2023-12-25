@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
+from src.types.enums import MatchStatus, AllianceColor, MatchWinner
 from src.data.utils import objs_type
 from src.db.models import TeamYear
 from src.epa.constants import ELIM_WEIGHT, RP_PERCENT
@@ -15,6 +16,10 @@ from src.utils.utils import get_alliance_key, get_team_match_key
 def process_year(
     objs: objs_type, all_team_years: Dict[int, Dict[str, TeamYear]]
 ) -> objs_type:
+    # TODO: Figure out why performance is worse than prod
+    # TODO: Component EPAs
+    # TODO: Error bars
+
     year = objs[0]
     team_years = objs[1]
     events = objs[2]
@@ -73,11 +78,15 @@ def process_year(
 
         for t in red:
             red_epa_pre[t] = (team_epas[t].epa, team_epas[t].rp_1, team_epas[t].rp_2)
-            alliance_ids[get_alliance_key(m.key, "red")].append(team_epas[t])
+            alliance_ids[get_alliance_key(m.key, AllianceColor.RED)].append(
+                team_epas[t]
+            )
             team_match_ids[get_team_match_key(t, m.key)] = team_epas[t]
         for t in blue:
             blue_epa_pre[t] = (team_epas[t].epa, team_epas[t].rp_1, team_epas[t].rp_2)
-            alliance_ids[get_alliance_key(m.key, "blue")].append(team_epas[t])
+            alliance_ids[get_alliance_key(m.key, AllianceColor.BLUE)].append(
+                team_epas[t]
+            )
             team_match_ids[get_team_match_key(t, m.key)] = team_epas[t]
 
         red_epa_sum = sum([x[0] for x in red_epa_pre.values()])
@@ -101,9 +110,9 @@ def process_year(
         win_prob = 1 / (1 + 10 ** (K * norm_diff))
 
         m.epa_win_prob = round(win_prob, 4)
-        m.epa_winner = "red" if win_prob >= 0.5 else "blue"
+        m.epa_winner = MatchWinner.RED if win_prob >= 0.5 else MatchWinner.BLUE
 
-        if m.status != "Completed":
+        if m.status != MatchStatus.COMPLETED:
             continue
 
         weight = ELIM_WEIGHT if m.elim else 1
@@ -118,7 +127,9 @@ def process_year(
 
         # If any, do not update EPA values
         placeholder_match = len(set(OFFSEASON_TEAMS).intersection(set(red + blue))) > 0
-        elim_dq = m.elim and (len(m.get_red_dqs()) == 3 or len(m.get_blue_dqs()) == 3)
+        elim_dq = m.elim and (
+            len(m.get_red_dqs()) == NUM_TEAMS or len(m.get_blue_dqs()) == NUM_TEAMS
+        )
         offseason_event = event_offseason[m.event]
         skip_update = placeholder_match or elim_dq or offseason_event
 
@@ -152,9 +163,11 @@ def process_year(
 
     # ALLIANCES
     for a in alliances.values():
-        is_red = a.alliance == "red"
+        is_red = a.alliance == AllianceColor.RED
         m = matches[a.match]
-        a.epa_win_prob = m.epa_win_prob if is_red else round(1 - m.epa_win_prob, 4)
+        if m.epa_win_prob is not None:
+            a.epa_win_prob = m.epa_win_prob if is_red else round(1 - m.epa_win_prob, 4)
+        a.epa_winner = m.epa_winner
         a.score_pred = m.red_score_pred if is_red else m.blue_score_pred
         if USE_COMPONENTS:
             a.rp_1_pred = m.red_rp_1_pred if is_red else m.blue_rp_1_pred
@@ -165,7 +178,7 @@ def process_year(
         team_match_key = get_team_match_key(team_match.team, team_match.match)
         rating = team_match_ids.get(team_match_key, None)
         team_match.epa = round(rating.epa if rating else -1, 2)
-        if team_match.status == "Completed":
+        if team_match.status == MatchStatus.COMPLETED:
             team_match.post_epa = round(team_match_ids_post.get(team_match_key, -1), 2)
 
         if USE_COMPONENTS:

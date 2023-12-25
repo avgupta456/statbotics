@@ -1,13 +1,14 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import attr
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Boolean, Float, Integer, String, Enum
+from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.types.enums import AllianceColor, MatchStatus, MatchWinner
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS
+from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS, values_callable
 
 
 class AllianceORM(Base, ModelORM):
@@ -15,7 +16,9 @@ class AllianceORM(Base, ModelORM):
 
     __tablename__ = "alliances"
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
-    alliance: MS = mapped_column(String(4), index=True)
+    alliance: Mapped[AllianceColor] = mapped_column(
+        Enum(AllianceColor, values_callable=values_callable), index=True
+    )
     match: MS = mapped_column(String(20), index=True)
 
     year: MI = mapped_column(Integer, index=True)
@@ -33,8 +36,9 @@ class AllianceORM(Base, ModelORM):
 
     time: MI = mapped_column(Integer)
 
-    # Choices are "Upcoming", "Completed"
-    status: MS = mapped_column(String(10), index=True)
+    status: Mapped[MatchStatus] = mapped_column(
+        Enum(MatchStatus, values_callable=values_callable), index=True
+    )
 
     team_1: MS = mapped_column(String(6), index=True)
     team_2: MS = mapped_column(String(6), index=True)
@@ -43,7 +47,9 @@ class AllianceORM(Base, ModelORM):
     surrogate: MS = mapped_column(String(20))
 
     """OUTCOME"""
-    winner: MOS = mapped_column(String(4), nullable=True, default=None)
+    winner: Mapped[Optional[MatchWinner]] = mapped_column(
+        Enum(MatchWinner, values_callable=values_callable), nullable=True, default=None
+    )
     score: MOI = mapped_column(Integer, nullable=True, default=None)
     no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
     foul: MOI = mapped_column(Integer, nullable=True, default=None)
@@ -67,9 +73,11 @@ class AllianceORM(Base, ModelORM):
     match_comp_12: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """EPA"""
-    epa_winner: MOS = mapped_column(String(4), default="tie")
-    epa_win_prob: MOF = mapped_column(Float, default=0.5)
-    score_pred: MOF = mapped_column(Float, default=0)
+    epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
+        Enum(MatchWinner, values_callable=values_callable), nullable=True, default=None
+    )
+    epa_win_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    score_pred: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
 

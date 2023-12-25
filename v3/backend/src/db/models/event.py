@@ -1,13 +1,14 @@
 from typing import Any, Dict
 
 import attr
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Boolean, Float, Integer, String, Enum
+from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.types.enums import EventType, EventStatus
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MI, MOF, MOI, MOS, MS
+from src.db.models.types import MB, MI, MOF, MOI, MOS, MS, values_callable
 
 
 class EventORM(Base, ModelORM):
@@ -29,18 +30,18 @@ class EventORM(Base, ModelORM):
     start_date: MS = mapped_column(String(10))
     end_date: MS = mapped_column(String(10))
 
-    # 0 is regional, 1 is district, 2 is district champ,
-    # 3 is worlds division, 4 is einsteins/FOC
-    # 99 is offseason, 100 is preseason
-    type: MI = mapped_column(Integer)
+    type: Mapped[EventType] = mapped_column(
+        Enum(EventType, values_callable=values_callable)
+    )
     week: MI = mapped_column(Integer)
     offseason: MB = mapped_column(Boolean)
 
     # Link to livestream, full link (unlike Match) to handle Twitch/YT
     video: MOS = mapped_column(String(50), nullable=True)
 
-    # Choices are "Upcoming", "Ongoing", "Completed", "Invalid"
-    status: MS = mapped_column(String(10))
+    status: Mapped[EventStatus] = mapped_column(
+        Enum(EventStatus, values_callable=values_callable)
+    )
 
     # -1 = upcoming event, 0 = schedule release, x = match x concluded
     current_match: MOI = mapped_column(Integer, nullable=True, default=None)

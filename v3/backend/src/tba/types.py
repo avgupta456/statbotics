@@ -1,4 +1,5 @@
 from typing import Optional, TypedDict
+from src.types.enums import EventType, CompLevel, MatchStatus, MatchWinner
 
 
 class TeamDict(TypedDict):
@@ -20,7 +21,7 @@ class EventDict(TypedDict):
     start_date: str
     end_date: str
     time: int
-    type: int
+    type: EventType
     week: int
     video: Optional[str]
 
@@ -52,10 +53,10 @@ class BreakdownDict(TypedDict):
 class MatchDict(TypedDict):
     event: str
     key: str
-    comp_level: str
+    comp_level: CompLevel
     set_number: int
     match_number: int
-    status: str
+    status: MatchStatus
     video: Optional[str]
     red_1: str
     red_2: str
@@ -67,7 +68,7 @@ class MatchDict(TypedDict):
     blue_3: Optional[str]
     blue_dq: str
     blue_surrogate: str
-    winner: Optional[str]
+    winner: Optional[MatchWinner]
     time: int
     predicted_time: Optional[int]
     red_score: Optional[int]

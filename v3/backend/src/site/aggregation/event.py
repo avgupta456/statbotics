@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import List, Optional, Tuple
 
+from src.types.enums import EventStatus
 from src.db.models import Event
 from src.db.read import get_event as _get_event, get_events as _get_events
 from src.site.models import APIEvent
@@ -8,7 +9,7 @@ from src.utils.alru_cache import alru_cache
 
 
 def get_event_status_str(event: Event) -> str:
-    if event.status != "Ongoing":
+    if event.status != EventStatus.ONGOING:
         return event.status
 
     if event.current_match is None or event.qual_matches is None:

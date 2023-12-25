@@ -1,13 +1,14 @@
 from typing import Any, Dict
 
 import attr
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Boolean, Float, Integer, String, Enum
+from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.types.enums import MatchStatus, AllianceColor
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MS
+from src.db.models.types import MB, MF, MI, MOF, MOI, MS, values_callable
 
 
 class TeamMatchORM(Base, ModelORM):
@@ -19,7 +20,9 @@ class TeamMatchORM(Base, ModelORM):
     year: MI = mapped_column(Integer, index=True)
     event: MS = mapped_column(String(12), index=True)
     match: MS = mapped_column(String(20), index=True)
-    alliance: MS = mapped_column(String(6), index=True)
+    alliance: Mapped[AllianceColor] = mapped_column(
+        Enum(AllianceColor, values_callable=values_callable), index=True
+    )
 
     PrimaryKeyConstraint(team, match)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -41,8 +44,9 @@ class TeamMatchORM(Base, ModelORM):
     dq: MB = mapped_column(Boolean)
     surrogate: MB = mapped_column(Boolean)
 
-    # Choices are "Upcoming", "Completed"
-    status: MS = mapped_column(String(10))
+    status: Mapped[MatchStatus] = mapped_column(
+        Enum(MatchStatus, values_callable=values_callable)
+    )
 
     epa: MF = mapped_column(Float, default=0)
     # auto_epa: MOF = mapped_column(Float, nullable=True, default=None)

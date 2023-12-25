@@ -16,6 +16,10 @@ def get_match_name(key: str) -> str:
 
     if "qm" in key:
         return "Qual " + key.split("qm")[1]
+    elif "ef" in key:
+        set_num = key.split("ef")[1].split("m")[0]
+        match_num = key.split("ef")[1].split("m")[1]
+        return "Eighths " + set_num + " Match " + match_num
     elif "qf" in key:
         set_num = key.split("qf")[1].split("m")[0]
         match_num = key.split("qf")[1].split("m")[1]

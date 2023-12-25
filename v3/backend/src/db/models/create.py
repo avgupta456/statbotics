@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+from src.types.enums import AllianceColor, CompLevel
 from src.db.models.alliance import Alliance
 from src.db.models.match import Match
 from src.db.models.team_match import TeamMatch
@@ -9,7 +10,7 @@ from src.tba.read_tba import MatchDict
 def match_dict_to_objs(
     data: MatchDict, year: int, week: int, offseason: bool
 ) -> Tuple[Match, List[Alliance], List[TeamMatch]]:
-    elim = data["comp_level"] != "qm"
+    elim = data["comp_level"] != CompLevel.QUAL
 
     red_breakdown = data["red_score_breakdown"]
     blue_breakdown = data["blue_score_breakdown"]
@@ -54,13 +55,13 @@ def match_dict_to_objs(
     alliances: List[Alliance] = []
     team_matches: List[TeamMatch] = []
 
-    for alliance in ["red", "blue"]:
+    for alliance in [AllianceColor.RED, AllianceColor.BLUE]:
         breakdown = data["red_score_breakdown"]
         team_1, team_2, team_3 = data["red_1"], data["red_2"], data["red_3"]
         dq, surrogate = data["red_dq"], data["red_surrogate"]
         score = data["red_score"]
 
-        if alliance == "blue":
+        if alliance == AllianceColor.BLUE:
             breakdown = data["blue_score_breakdown"]
             team_1, team_2, team_3 = data["blue_1"], data["blue_2"], data["blue_3"]
             dq, surrogate = data["blue_dq"], data["blue_surrogate"]

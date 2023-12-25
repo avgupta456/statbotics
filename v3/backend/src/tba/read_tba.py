@@ -1,7 +1,9 @@
 import time
+from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, cast
 
+from src.types.enums import EventType, MatchStatus, MatchWinner, CompLevel
 from src.tba.breakdown import clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
@@ -84,22 +86,34 @@ def get_events(
 
         # renames district divisions to district championship
         # renames festival of championships to einsteins
-        event_type: int = event["event_type"]
-        if event_type == 5:
-            event_type = 2
-        if event_type == 6:
-            event_type = 4
+
+        event_type_int = int(event["event_type"])
+        event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
+        event_type_dict[0] = EventType.REGIONAL
+        event_type_dict[1] = EventType.DISTRICT
+        event_type_dict[2] = EventType.DISTRICT_CMP
+        event_type_dict[3] = EventType.CHAMPS_DIV
+        event_type_dict[4] = EventType.EINSTEIN
+        event_type_dict[
+            5
+        ] = EventType.DISTRICT_CMP  # rename district divisions to district championship
+        event_type_dict[
+            6
+        ] = EventType.EINSTEIN  # rename festival of championships to einsteins
+        event_type_dict[99] = EventType.OFFSEASON
+        event_type_dict[100] = EventType.PRESEASON
+        event_type = event_type_dict[event_type_int]
 
         # assigns worlds to week 8
-        if event_type >= 3:
+        if event_type.is_champs():
             event["week"] = 8
 
         # assigns preseason to week 0
-        if event_type == 100:
+        if event_type == EventType.PRESEASON:
             event["week"] = 0
 
         # assigns offseasons to week 9
-        if event_type == 99:
+        if event_type == EventType.OFFSEASON:
             event["week"] = 9
 
         # filter out incomplete events
@@ -107,7 +121,11 @@ def get_events(
             continue
 
         # bug in TBA API
-        if event_type < 3 and year != 2016:
+        if year != 2016 and event_type in [
+            EventType.REGIONAL,
+            EventType.DISTRICT,
+            EventType.DISTRICT_CMP,
+        ]:
             event["week"] += 1
 
         video: Optional[str] = None
@@ -216,21 +234,25 @@ def get_event_matches(
         raw_red_score: int = match["alliances"]["red"]["score"]
         raw_blue_score: int = match["alliances"]["blue"]["score"]
 
-        status = "Completed" if min(raw_red_score, raw_blue_score) >= 0 else "Upcoming"
+        status = (
+            MatchStatus.COMPLETED
+            if min(raw_red_score, raw_blue_score) >= 0
+            else MatchStatus.UPCOMING
+        )
 
         red_score = None
         blue_score = None
         winner = None
-        if status == "Completed":
+        if status == MatchStatus.COMPLETED:
             red_score = raw_red_score
             blue_score = raw_blue_score
 
             if match["winning_alliance"] == "red":
-                winner = "red"
+                winner = MatchWinner.RED
             elif match["winning_alliance"] == "blue":
-                winner = "blue"
+                winner = MatchWinner.BLUE
             elif match["winning_alliance"] == "" and red_score == blue_score:
-                winner = "tie"
+                winner = MatchWinner.TIE
 
             if year == 2015 and match["comp_level"] != "f":
                 winner = None
@@ -261,10 +283,22 @@ def get_event_matches(
             event_time,
         )
 
+        comp_level = CompLevel.INVALID
+        if match["comp_level"] == "qm":
+            comp_level = CompLevel.QUAL
+        elif match["comp_level"] == "ef":
+            comp_level = CompLevel.EIGHTH
+        elif match["comp_level"] == "qf":
+            comp_level = CompLevel.QUARTER
+        elif match["comp_level"] == "sf":
+            comp_level = CompLevel.SEMI
+        elif match["comp_level"] == "f":
+            comp_level = CompLevel.FINAL
+
         match_data: MatchDict = {
             "event": event,
             "key": cast(str, match["key"]),
-            "comp_level": cast(str, match["comp_level"]),
+            "comp_level": comp_level,
             "set_number": cast(int, match["set_number"]),
             "match_number": cast(int, match["match_number"]),
             "status": status,
