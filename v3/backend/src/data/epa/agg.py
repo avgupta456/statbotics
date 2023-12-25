@@ -54,7 +54,7 @@ def process_year(objs: objs_type) -> objs_type:
         ms = team_team_matches_dict[ty.team]
 
         ty.epa_pre_champs, ty.epa_end, ty.epa_max = process_year_epas(
-            ms, lambda m: m.epa, ty.epa_start
+            ms, lambda m: m.post_epa, ty.epa_start
         )
 
         if USE_COMPONENTS:

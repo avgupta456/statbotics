@@ -70,9 +70,6 @@ def process_year(
     for m in sorted_matches:
         red, blue = m.get_teams()
 
-        red = red[:NUM_TEAMS]
-        blue = blue[:NUM_TEAMS]
-
         red_epa_pre: Dict[str, Tuple[float, float, float]] = {}
         blue_epa_pre: Dict[str, Tuple[float, float, float]] = {}
 
@@ -88,6 +85,10 @@ def process_year(
                 team_epas[t]
             )
             team_match_ids[get_team_match_key(t, m.key)] = team_epas[t]
+            team_match_ids_post[get_team_match_key(t, m.key)] = team_epas[t].epa
+
+        red = red[:NUM_TEAMS]
+        blue = blue[:NUM_TEAMS]
 
         red_epa_sum = sum([x[0] for x in red_epa_pre.values()])
         blue_epa_sum = sum([x[0] for x in blue_epa_pre.values()])
@@ -120,6 +121,7 @@ def process_year(
 
         red_err = (m.red_no_foul or m.red_score or 0) - m.red_score_pred
         blue_err = (m.blue_no_foul or m.blue_score or 0) - m.blue_score_pred
+        # TODO: don't run RP calc if not USE_COMPONENTS
         red_rp_1_err = (m.red_rp_1 or 0) - (m.red_rp_1_pred or 0)
         red_rp_2_err = (m.red_rp_2 or 0) - (m.red_rp_2_pred or 0)
         blue_rp_1_err = (m.blue_rp_1 or 0) - (m.blue_rp_1_pred or 0)
@@ -140,7 +142,6 @@ def process_year(
             for t in teams:
                 team_count = team_epas[t].count
                 percent = percent_func(year_num, team_count)
-
                 epa_alpha = weight * percent / NUM_TEAMS
                 new_epa = epa_pre[t][0] + err * epa_alpha
 
@@ -158,7 +159,7 @@ def process_year(
 
                 team_match_ids_post[get_team_match_key(t, m.key)] = new_epa
 
-                if not skip_update:
+                if not m.elim and not skip_update:
                     team_epas[t].count += 1
 
     # ALLIANCES

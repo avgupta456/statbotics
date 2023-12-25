@@ -20,8 +20,10 @@ def get_epa_to_norm_epa_func(year_epas: List[float]) -> Callable[[float], float]
     exponnorm_disrib = None if total_N == 0 else exponnorm(*exponnorm.fit(year_epas))
     expon_distrib = None if cutoff_N == 0 else expon(*expon.fit(year_epas[:cutoff_N]))
 
+    sorted_year_epas = sorted(year_epas)
+
     def get_norm_epa(epa: float) -> float:
-        i = bisect_left(year_epas, epa)
+        i = bisect_left(sorted_year_epas, epa)
         exponnorm_value: float = exponnorm_disrib.cdf(epa)
         percentile = exponnorm_value
         if i < cutoff_N:

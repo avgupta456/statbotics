@@ -33,7 +33,9 @@ def get_constants(year: Year) -> Tuple[int, float, float, float, float, float]:
 def norm_epa_to_next_season_epa(
     norm_epa: float, curr_mean: float, curr_sd: float, curr_num_teams: int
 ) -> float:
-    return curr_mean / curr_num_teams + curr_sd * (norm_epa - NORM_MEAN) / NORM_SD
+    return max(
+        curr_mean / curr_num_teams + curr_sd * (norm_epa - NORM_MEAN) / NORM_SD, 0
+    )
 
 
 def get_init_epa(
@@ -41,7 +43,7 @@ def get_init_epa(
 ) -> Rating:
     num_teams, curr_mean, curr_sd, init_epa, rp_1_seed, rp_2_seed = get_constants(year)
 
-    norm_epa_1 = norm_epa_2 = NORM_MEAN + -INIT_PENALTY * NORM_SD
+    norm_epa_1 = norm_epa_2 = NORM_MEAN - INIT_PENALTY * NORM_SD
     if team_year_1 is not None and team_year_1.norm_epa_end is not None:
         norm_epa_1 = team_year_1.norm_epa_end
     if team_year_2 is not None and team_year_2.norm_epa_end is not None:
