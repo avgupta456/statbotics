@@ -79,6 +79,9 @@ def process_year(
                 team_epas[t]
             )
             team_match_ids[get_team_match_key(t, m.key)] = team_epas[t]
+            team_match_ids_post[get_team_match_key(t, m.key)] = team_epas[
+                t
+            ].epa  # overwritten later
         for t in blue:
             blue_epa_pre[t] = (team_epas[t].epa, team_epas[t].rp_1, team_epas[t].rp_2)
             alliance_ids[get_alliance_key(m.key, AllianceColor.BLUE)].append(
