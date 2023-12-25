@@ -160,7 +160,6 @@ all_headers[2023] = "Team\tMob\tAuto CS\tALCu\tALCo\tAMCu\tAMCo\tAHCu\tAHCo\tTLC
 def expand_breakdown(
     year: int, breakdown: Dict[str, int | float], opp_breakdown: Dict[str, int | float]
 ) -> Any:
-    # mean flag denotes if individual breakdown or week 1 mean
     if year == 2016:
         breakdown["defenses"] = (
             breakdown["auto_crossing_points"] / 10

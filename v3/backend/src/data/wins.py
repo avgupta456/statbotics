@@ -28,7 +28,7 @@ def process_year(objs: objs_type) -> objs_type:
         status = a_obj.status
         alliance = a_obj.alliance
         offseason = a_obj.offseason
-        winner = a_obj.official_winner
+        winner = a_obj.winner
 
         if status != "Completed" or winner is None:
             continue

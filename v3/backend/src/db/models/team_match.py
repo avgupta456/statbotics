@@ -41,7 +41,7 @@ class TeamMatchORM(Base, ModelORM):
     dq: MB = mapped_column(Boolean)
     surrogate: MB = mapped_column(Boolean)
 
-    # Choices are 'Upcoming', 'Completed'
+    # Choices are "Upcoming", "Completed"
     status: MS = mapped_column(String(10))
 
     epa: MF = mapped_column(Float, default=0)

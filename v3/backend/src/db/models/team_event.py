@@ -38,7 +38,7 @@ class TeamEventORM(Base, ModelORM):
     type: MI = mapped_column(Integer)
     week: MI = mapped_column(Integer)
 
-    # Choices are 'Upcoming', 'Ongoing', 'Completed'
+    # Choices are "Upcoming", "Ongoing", "Completed"
     status: MS = mapped_column(String(10))
     first_event: MB = mapped_column(Boolean)
 

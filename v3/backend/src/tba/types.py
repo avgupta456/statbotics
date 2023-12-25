@@ -67,7 +67,6 @@ class MatchDict(TypedDict):
     blue_3: Optional[str]
     blue_dq: str
     blue_surrogate: str
-    official_winner: Optional[str]
     winner: Optional[str]
     time: int
     predicted_time: Optional[int]

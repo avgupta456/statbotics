@@ -9,31 +9,31 @@ from src.utils.alru_cache import alru_cache
 
 def unpack_year(year: Year) -> APIYear:
     total_stats = PercentileStats(
-        p99=year.epa_1p or 0,
-        p90=year.epa_10p or 0,
-        p75=year.epa_25p or 0,
-        p25=year.epa_75p or 0,
+        p99=year.epa_99p or 0,
+        p90=year.epa_90p or 0,
+        p75=year.epa_75p or 0,
+        p25=year.epa_25p or 0,
     )
 
     auto_stats = PercentileStats(
-        p99=year.auto_epa_1p or 0,
-        p90=year.auto_epa_10p or 0,
-        p75=year.auto_epa_25p or 0,
-        p25=year.auto_epa_75p or 0,
+        p99=year.auto_epa_99p or 0,
+        p90=year.auto_epa_90p or 0,
+        p75=year.auto_epa_75p or 0,
+        p25=year.auto_epa_25p or 0,
     )
 
     teleop_stats = PercentileStats(
-        p99=year.teleop_epa_1p or 0,
-        p90=year.teleop_epa_10p or 0,
-        p75=year.teleop_epa_25p or 0,
-        p25=year.teleop_epa_75p or 0,
+        p99=year.teleop_epa_99p or 0,
+        p90=year.teleop_epa_90p or 0,
+        p75=year.teleop_epa_75p or 0,
+        p25=year.teleop_epa_25p or 0,
     )
 
     endgame_stats = PercentileStats(
-        p99=year.endgame_epa_1p or 0,
-        p90=year.endgame_epa_10p or 0,
-        p75=year.endgame_epa_25p or 0,
-        p25=year.endgame_epa_75p or 0,
+        p99=year.endgame_epa_99p or 0,
+        p90=year.endgame_epa_90p or 0,
+        p75=year.endgame_epa_75p or 0,
+        p25=year.endgame_epa_25p or 0,
     )
 
     foul_rate = (year.foul_mean or 0) / (year.no_foul_mean or 1)

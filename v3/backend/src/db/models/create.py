@@ -55,20 +55,16 @@ def match_dict_to_objs(
     team_matches: List[TeamMatch] = []
 
     for alliance in ["red", "blue"]:
-        breakdown = (
-            data["red_score_breakdown"]
-            if alliance == "red"
-            else data["blue_score_breakdown"]
-        )
+        breakdown = data["red_score_breakdown"]
+        team_1, team_2, team_3 = data["red_1"], data["red_2"], data["red_3"]
+        dq, surrogate = data["red_dq"], data["red_surrogate"]
+        score = data["red_score"]
 
-        team_1 = data["red_1"] if alliance == "red" else data["blue_1"]
-        team_2 = data["red_2"] if alliance == "red" else data["blue_2"]
-        team_3 = data["red_3"] if alliance == "red" else data["blue_3"]
-        dq = data["red_dq"] if alliance == "red" else data["blue_dq"]
-        surrogate = (
-            data["red_surrogate"] if alliance == "red" else data["blue_surrogate"]
-        )
-        score = data["red_score"] if alliance == "red" else data["blue_score"]
+        if alliance == "blue":
+            breakdown = data["blue_score_breakdown"]
+            team_1, team_2, team_3 = data["blue_1"], data["blue_2"], data["blue_3"]
+            dq, surrogate = data["blue_dq"], data["blue_surrogate"]
+            score = data["blue_score"]
 
         alliances.append(
             Alliance(
@@ -87,7 +83,6 @@ def match_dict_to_objs(
                 team_3=team_3,
                 dq=dq,
                 surrogate=surrogate,
-                official_winner=data["official_winner"],
                 winner=data["winner"],
                 score=score,
                 no_foul=breakdown["no_foul_points"],

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
@@ -33,7 +33,7 @@ class MatchORM(Base, ModelORM):
     time: MI = mapped_column(Integer)  # Enforces ordering
     predicted_time: MOI = mapped_column(Integer, nullable=True)  # For display
 
-    # Choices are 'Upcoming', 'Completed'
+    # Choices are "Upcoming", "Completed"
     status: MS = mapped_column(String(10), index=True)
     video: MOS = mapped_column(String(20), nullable=True)
 
@@ -50,7 +50,6 @@ class MatchORM(Base, ModelORM):
     blue_surrogate: MS = mapped_column(String(20))
 
     """OUTCOME"""
-    official_winner: MOS = mapped_column(String(4), nullable=True, default=None)
     winner: MOS = mapped_column(String(4), nullable=True, default=None)
 
     red_score: MOI = mapped_column(Integer, nullable=True, default=None)
@@ -115,3 +114,18 @@ class Match(_Match, Model):
 
     def get_teams(self: "Match") -> List[List[str]]:
         return [self.get_red(), self.get_blue()]
+
+    def get_winner(self: "Match") -> Optional[str]:
+        # For calculating win prediction metrics
+        if self.winner is not None:
+            return self.winner
+
+        if self.red_score is None or self.blue_score is None:
+            return None
+
+        if self.red_score > self.blue_score:
+            return "red"
+        elif self.blue_score > self.red_score:
+            return "blue"
+        else:
+            return "tie"

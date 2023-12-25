@@ -71,7 +71,6 @@ def get_event_status(matches: List[MatchDict], year: int) -> str:
             event_status = "Completed"
     elif num_matches == 0:
         return "Invalid"
-
     return event_status
 
 
@@ -236,7 +235,6 @@ def process_year(
         current_match = 0 if len(matches) > 0 else -1
         qual_matches = 0 if len(matches) > 0 else -1
 
-        # "Completed", "Upcoming", "Ongoing", or "Invalid"
         event_status = get_event_status(matches, year_num)
         event_obj.status = event_status
 

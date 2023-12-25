@@ -221,26 +221,19 @@ def get_event_matches(
         red_score = None
         blue_score = None
         winner = None
-        official_winner = None
         if status == "Completed":
             red_score = raw_red_score
             blue_score = raw_blue_score
-            if red_score > blue_score:
-                winner = "red"
-            elif blue_score > red_score:
-                winner = "blue"
-            else:
-                winner = "tie"
 
             if match["winning_alliance"] == "red":
-                official_winner = "red"
+                winner = "red"
             elif match["winning_alliance"] == "blue":
-                official_winner = "blue"
+                winner = "blue"
             elif match["winning_alliance"] == "" and red_score == blue_score:
-                official_winner = "tie"
+                winner = "tie"
 
             if year == 2015 and match["comp_level"] != "f":
-                official_winner = None
+                winner = None
 
         red_teams = [team[3:] for team in red_teams]
         blue_teams = [team[3:] for team in blue_teams]
@@ -286,7 +279,6 @@ def get_event_matches(
             "blue_3": blue_teams[2] if len(blue_teams) > 2 else None,
             "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
             "blue_surrogate": ",".join([t[3:] for t in blue_surrogate_teams]),
-            "official_winner": official_winner,
             "winner": winner,
             "time": time,
             "predicted_time": cast(Optional[int], match["predicted_time"]),

@@ -33,7 +33,7 @@ class AllianceORM(Base, ModelORM):
 
     time: MI = mapped_column(Integer)
 
-    # Choices are 'Upcoming', 'Completed'
+    # Choices are "Upcoming", "Completed"
     status: MS = mapped_column(String(10), index=True)
 
     team_1: MS = mapped_column(String(6), index=True)
@@ -43,7 +43,6 @@ class AllianceORM(Base, ModelORM):
     surrogate: MS = mapped_column(String(20))
 
     """OUTCOME"""
-    official_winner: MOS = mapped_column(String(4), nullable=True, default=None)
     winner: MOS = mapped_column(String(4), nullable=True, default=None)
     score: MOI = mapped_column(Integer, nullable=True, default=None)
     no_foul: MOI = mapped_column(Integer, nullable=True, default=None)

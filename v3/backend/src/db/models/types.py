@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import Optional, Any
 
 from sqlalchemy.orm import Mapped
+
 
 MF = Mapped[float]
 MOF = Mapped[Optional[float]]
@@ -13,3 +14,7 @@ MOB = Mapped[Optional[bool]]
 
 MS = Mapped[str]
 MOS = Mapped[Optional[str]]
+
+
+def values_callable(x: Any) -> Any:
+    return [e.value for e in x]

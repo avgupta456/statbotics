@@ -107,6 +107,11 @@ def clean_breakdown(
         rp_2_points = data["capturePoints"]
         no_foul_points -= rp_1_points + rp_2_points
 
+        all_endgame_robots = sum(
+            int(data[f"towerFace{x}"] in ["Challenged", "Scaled"])
+            for x in ["A", "B", "C"]
+        )
+
         if key not in ["2016capl_f1m1", "2016milsu_qf4m1", "2016mndu2_f1m2"]:
             assert auto_points + teleop_points + endgame_points == no_foul_points
 
@@ -120,6 +125,7 @@ def clean_breakdown(
         out["challenge_points"] = challenge_points
         out["scale_points"] = scale_points
         out["no_foul_points"] = no_foul_points
+        out["all_endgame_robots"] = all_endgame_robots
 
         out["rp_1"] = rp_1
         out["rp_2"] = rp_2

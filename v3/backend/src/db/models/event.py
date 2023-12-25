@@ -39,7 +39,7 @@ class EventORM(Base, ModelORM):
     # Link to livestream, full link (unlike Match) to handle Twitch/YT
     video: MOS = mapped_column(String(50), nullable=True)
 
-    # Choices are 'Upcoming', 'Ongoing', 'Completed'
+    # Choices are "Upcoming", "Ongoing", "Completed", "Invalid"
     status: MS = mapped_column(String(10))
 
     # -1 = upcoming event, 0 = schedule release, x = match x concluded
