@@ -2,6 +2,7 @@ from collections import defaultdict
 import statistics
 from typing import Callable, Dict, List, Optional
 
+from src.types.enums import AllianceColor
 from src.db.models import TeamMatch, TeamEvent
 from src.data.utils import objs_type
 from src.utils.utils import get_team_event_key
@@ -43,6 +44,20 @@ def process_year(objs: objs_type) -> objs_type:
         team_event_key = get_team_event_key(team_match.team, team_match.event)
         team_event_team_matches_dict[team_event_key].append(team_match)
 
+    # ALLIANCES
+    matches = objs[4]
+    alliances = objs[5]
+    for a in alliances.values():
+        is_red = a.alliance == AllianceColor.RED
+        m = matches[a.match]
+        if m.epa_win_prob is not None:
+            a.epa_win_prob = m.epa_win_prob if is_red else round(1 - m.epa_win_prob, 4)
+        a.epa_winner = m.epa_winner
+        a.score_pred = m.epa_red_score_pred if is_red else m.epa_blue_score_pred
+        if USE_COMPONENTS:
+            a.rp_1_pred = m.epa_red_rp_1_pred if is_red else m.epa_blue_rp_1_pred
+            a.rp_2_pred = m.epa_red_rp_2_pred if is_red else m.epa_blue_rp_2_pred
+
     # TEAM YEARS
     total_epas: List[float] = []
     country_epas: Dict[str, List[float]] = defaultdict(list)
@@ -53,27 +68,15 @@ def process_year(objs: objs_type) -> objs_type:
 
         ms = team_team_matches_dict[ty.team]
 
-        ty.epa_pre_champs, ty.epa_end, ty.epa_max = process_year_epas(
+        ty.epa_pre_champs, ty.epa, ty.epa_max = process_year_epas(
             ms, lambda m: m.post_epa, ty.epa_start
         )
 
-        if USE_COMPONENTS:
-            (
-                ty.rp_1_epa_pre_champs,
-                ty.rp_1_epa_end,
-                ty.rp_1_epa_max,
-            ) = process_year_epas(ms, lambda m: m.rp_1_epa, ty.rp_1_epa_start or 0)
-            (
-                ty.rp_2_epa_pre_champs,
-                ty.rp_2_epa_end,
-                ty.rp_2_epa_max,
-            ) = process_year_epas(ms, lambda m: m.rp_2_epa, ty.rp_2_epa_start or 0)
-
         if not ty.offseason:
-            total_epas.append(ty.epa_end)
-            country_epas[ty.country or ""].append(ty.epa_end)
-            district_epas[ty.district or ""].append(ty.epa_end)
-            state_epas[ty.state or ""].append(ty.epa_end)
+            total_epas.append(ty.epa)
+            country_epas[ty.country or ""].append(ty.epa)
+            district_epas[ty.district or ""].append(ty.epa)
+            state_epas[ty.state or ""].append(ty.epa)
 
     total_epas.sort(reverse=True)
     country_epas = {k: sorted(v, reverse=True) for k, v in country_epas.items()}
@@ -82,16 +85,16 @@ def process_year(objs: objs_type) -> objs_type:
 
     epa_to_norm_epa = get_epa_to_norm_epa_func(total_epas)
     for ty in objs[1].values():
-        unitless_epa: float = epa_to_unitless_epa(ty.epa_end, mean, sd)
-        ty.unitless_epa_end = round(unitless_epa, 0)
+        unitless_epa: float = epa_to_unitless_epa(ty.epa, mean, sd)
+        ty.unitless_epa = round(unitless_epa, 0)
 
-        norm_epa: float = epa_to_norm_epa(ty.epa_end)
-        ty.norm_epa_end = round(norm_epa, 4)
+        norm_epa: float = epa_to_norm_epa(ty.epa)
+        ty.norm_epa = round(norm_epa)
 
         if ty.offseason:
             continue
 
-        epa = ty.epa_end
+        epa = ty.epa
         ty.total_epa_rank = total_epas.index(epa) + 1
         ty.total_team_count = len(total_epas)
         ty.total_epa_percentile = round(1 - ty.total_epa_rank / ty.total_team_count, 4)
@@ -125,6 +128,12 @@ def process_year(objs: objs_type) -> objs_type:
 
     # TEAM EVENTS
     for te in sorted(objs[3].values(), key=lambda te: te.week):
+        unitless_epa: float = epa_to_unitless_epa(te.epa, mean, sd)
+        te.unitless_epa = round(unitless_epa, 0)
+
+        norm_epa: float = epa_to_norm_epa(te.epa)
+        te.norm_epa = round(norm_epa)
+
         team_event_key = get_team_event_key(te.team, te.event)
         tms = sorted(
             team_event_team_matches_dict[team_event_key], key=lambda tm: tm.time
@@ -135,46 +144,27 @@ def process_year(objs: objs_type) -> objs_type:
 
         if len(tms) > 0:
             te.epa_start = round(tms[0].epa, 2)
-            te.epa_end = round(tms[-1].epa, 2)
             te.epa_mean = round(statistics.mean([tm.epa for tm in tms]), 2)
             te.epa_max = round(max([tm.epa for tm in tms]), 2)
-            te.epa_diff = round(te.epa_end - te.epa_start, 2)
 
-            curr_epas[te.team] = te.epa_end  # for next event epa_start
+            curr_epas[te.team] = te.epa  # for next event epa_start
 
         if len(qual_tms) > 0:
             te.epa_pre_elim = round(qual_tms[-1].epa, 2)
 
-        if USE_COMPONENTS:
-            rp_1_epas = [tm.rp_1_epa for tm in tms if tm.rp_1_epa is not None]
-            if len(rp_1_epas) > 0:
-                te.rp_1_epa_start = round(rp_1_epas[0], 4)
-                te.rp_1_epa_end = round(rp_1_epas[-1], 4)
-                te.rp_1_epa_mean = round(statistics.mean(rp_1_epas), 4)
-                te.rp_1_epa_max = round(max(rp_1_epas), 4)
-
-            rp_2_epas = [tm.rp_2_epa for tm in tms if tm.rp_2_epa is not None]
-            if len(rp_2_epas) > 0:
-                te.rp_2_epa_start = round(rp_2_epas[0], 4)
-                te.rp_2_epa_end = round(rp_2_epas[-1], 4)
-                te.rp_2_epa_mean = round(statistics.mean(rp_2_epas), 4)
-                te.rp_2_epa_max = round(max(rp_2_epas), 4)
-
     # EVENTS
     for e in objs[2].values():
-        tes = sorted(
-            event_team_events_dict[e.key], key=lambda te: te.epa_end, reverse=True
-        )
+        tes = sorted(event_team_events_dict[e.key], key=lambda te: te.epa, reverse=True)
 
         if len(tes) > 0:
-            e.epa_max = max([te.epa_end for te in tes])
-            e.epa_mean = statistics.mean([te.epa_end for te in tes])
-            e.epa_sd = statistics.stdev([te.epa_end for te in tes])
+            e.epa_max = max([te.epa for te in tes])
+            e.epa_mean = statistics.mean([te.epa for te in tes])
+            e.epa_sd = statistics.stdev([te.epa for te in tes])
 
         if len(tes) >= 8:
-            e.epa_top8 = tes[7].epa_end
+            e.epa_top8 = tes[7].epa
 
         if len(tes) >= 24:
-            e.epa_top24 = tes[23].epa_end
+            e.epa_top24 = tes[23].epa
 
     return objs

@@ -1,27 +1,31 @@
+import math
 from typing import Any, Tuple
 
+import numpy as np
 import scipy.stats  # type: ignore
 
-import numpy as np
+
+def normal_prob_gt_0(mean: float, sd: float) -> float:
+    # NOTE: Unused in favor of t_prob_gt_0()
+    return 0.5 * (1 + math.erf(mean / (sd * np.sqrt(2))))
 
 
-class Logistic:
-    def __init__(self, mean: float) -> None:
-        self.mean = mean
+# 10 / 3 represent the asymptote of the sample size of the moving average
+# 1 / (1 - p) where p = 0.7, the decay rate of the EWMA. By the Bayesian
+# conjugate prior of the normal distribution, the posterior predictive of
+# the mean is a t-distribution with equal degrees of freedom
+distrib = scipy.stats.t(10 / 3)
 
-    @staticmethod
-    def update_mean(mean: float, x: float, alpha: float) -> float:
-        new_mean = x
-        return (1 - alpha) * mean + alpha * new_mean
 
-    def add_obs(self, x: float, alpha: float) -> None:
-        self.mean = self.update_mean(self.mean, x, alpha)
+def t_prob_gt_0(mean: float, sd: float) -> float:
+    # TODO: precompute 1000 values of this function to speed up
+    return distrib.cdf(mean / sd)  # type: ignore
 
 
 class SkewNormal:
     # all inputs are 1d np arrays, does not handle covariance between variables
     # skew is only computed on total, and assumed equal for all variables
-    def __init__(self, mean: Any, var: Any, skew_index: int) -> None:
+    def __init__(self, mean: Any, var: Any, skew_index: int):
         self.mean = mean
         self.var = var
         self.skew = 0
@@ -54,9 +58,10 @@ class SkewNormal:
         new_skew = (x - mean) * (x - new_mean) * (x - new_mean) / (new_var ** (3 / 2))
         return (1 - alpha) * skew + alpha * new_skew
 
-    def add_obs(self, x: Any, alpha: float) -> None:
+    def add_obs(self, x: Any, alpha: float, only_pos: bool = False) -> None:
+
         mean, var, skew, n = self.mean, self.var, self.skew, self.n
-        skew_i = self.skew_i  # takes one measurement of skew for all variables
+        skew_i = self.skew_i
 
         new_mean = self.update_mean(mean, x, alpha)
         new_var = self.update_var(var, mean, new_mean, x, alpha)
@@ -64,6 +69,9 @@ class SkewNormal:
             skew, new_var[skew_i], mean[skew_i], new_mean[skew_i], x[skew_i], alpha
         )
         new_n = n * (1 - alpha) + 1
+
+        if only_pos:
+            new_mean = np.maximum(new_mean, 0)
 
         self.mean = new_mean
         self.var = new_var
@@ -108,9 +116,12 @@ class SkewNormal:
         return f"SkewNormal(mean={self.mean}, var={self.var}, skew={self.skew})"
 
 
-def sigmoid(x: float) -> float:
+# used for 2018 switch/scale power
+# -2 instead of -4 since both alliances contribute
+def zero_sigmoid(x: float) -> float:
+    return 1 / (1 + np.exp(-2 * x))
+
+
+# used for ILS ranking point system
+def unit_sigmoid(x: float) -> float:
     return 1 / (1 + np.exp(-4 * (x - 0.5)))
-
-
-def inv_sigmoid(x: float) -> float:
-    return 0.5 + np.log(x / (1 - x)) / 4

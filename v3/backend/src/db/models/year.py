@@ -1,3 +1,7 @@
+from typing import Any
+
+import numpy as np
+
 from sqlalchemy import Float, Integer
 from sqlalchemy.orm import mapped_column
 
@@ -16,25 +20,45 @@ class YearORM(Base, ModelORM):
     score_mean: MF = mapped_column(Float, default=0)
     score_sd: MF = mapped_column(Float, default=0)
     foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    foul_sd: MOF = mapped_column(Float, nullable=True, default=None)
     no_foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    no_foul_sd: MOF = mapped_column(Float, nullable=True, default=None)
     auto_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_sd: MOF = mapped_column(Float, nullable=True, default=None)
     teleop_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_sd: MOF = mapped_column(Float, nullable=True, default=None)
     endgame_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_sd: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_sd: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_sd: MOF = mapped_column(Float, nullable=True, default=None)
     tiebreaker_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_3_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_4_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_5_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_6_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_7_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_8_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_9_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_10_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_11_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    match_comp_12_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    tiebreaker_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_11_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_11_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_12_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_12_sd: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
@@ -42,96 +66,136 @@ class YearORM(Base, ModelORM):
     epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
     epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # auto_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # teleop_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # endgame_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_1_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_1_epa_00p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_1_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_1_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_1_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_2_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_2_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_2_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_2_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_2_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_3_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_3_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_3_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_3_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_epa_00p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_4_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_4_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_4_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_4_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_5_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_5_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_5_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_5_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_6_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_6_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_6_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_6_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_7_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_7_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_7_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_7_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_8_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_8_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_8_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_8_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_9_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_9_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_9_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_9_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    # comp_10_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_10_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_10_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_10_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
-    """WIN PROB"""
-    epa_qual_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_qual_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    qual_count: MI = mapped_column(Integer, default=0)
-    epa_elim_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_elim_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    elim_count: MI = mapped_column(Integer, default=0)
-    epa_champs_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    champs_count: MI = mapped_column(Integer, default=0)
+    comp_9_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_10_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_11_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_11_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_11_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_11_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_12_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_12_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_12_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_12_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """WIN PROB PRED"""
+    count: MI = mapped_column(Integer, default=0)
+    epa_conf: MOF = mapped_column(Float, nullable=True, default=None)
     epa_acc: MOF = mapped_column(Float, nullable=True, default=None)
     epa_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    count: MI = mapped_column(Integer, default=0)
+    champs_count: MI = mapped_column(Integer, default=0)
+    epa_champs_conf: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_mse: MOF = mapped_column(Float, nullable=True, default=None)
+    champs_elim_count: MI = mapped_column(Integer, default=0)
+    epa_champs_elim_conf: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_elim_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_elim_mse: MOF = mapped_column(Float, nullable=True, default=None)
 
-    """RP PROB"""
-    rp_1_champs_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_champs_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_champs_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_champs_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_champs_count: MI = mapped_column(Integer, default=0)
-    rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_mse: MOF = mapped_column(Float, nullable=True, default=None)
+    """SCORE PRED"""
+
+    epa_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_score_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_score_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_elim_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_elim_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_elim_score_error: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """RP PRED"""
     rp_count: MI = mapped_column(Integer, default=0)
+    epa_rp_1_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_1_ll: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_1_f1: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_ll: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_f1: MOF = mapped_column(Float, nullable=True, default=None)
+    champs_rp_count: MI = mapped_column(Integer, default=0)
+    epa_champs_rp_1_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_1_ll: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_1_f1: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_2_ll: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_2_f1: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Year = generate_attr_class("Year", YearORM)
@@ -146,4 +210,57 @@ class Year(_Year, Model):
 
     def __str__(self: "Year") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.year}_{self.count}"
+        return "_".join([str(self.year), str(self.count)])
+
+    def get_foul_rate(self: "Year") -> float:
+        return (self.foul_mean or 0) / (self.no_foul_mean or 1)
+
+    def get_mean_components(self: "Year") -> Any:
+        if self.year < 2016:
+            return np.array([self.score_mean])
+        return np.array(
+            [
+                self.no_foul_mean,
+                self.auto_mean,
+                self.teleop_mean,
+                self.endgame_mean,
+                self.tiebreaker_mean,
+                self.comp_1_mean,
+                self.comp_2_mean,
+                self.comp_3_mean,
+                self.comp_4_mean,
+                self.comp_5_mean,
+                self.comp_6_mean,
+                self.comp_7_mean,
+                self.comp_8_mean,
+                self.comp_9_mean,
+                self.comp_10_mean,
+                self.comp_11_mean,
+                self.comp_12_mean,
+            ]
+        )
+
+    def get_sd_components(self: "Year") -> Any:
+        if self.year < 2016:
+            return np.array([self.score_sd])
+        return np.array(
+            [
+                self.no_foul_sd,
+                self.auto_sd,
+                self.teleop_sd,
+                self.endgame_sd,
+                self.tiebreaker_sd,
+                self.comp_1_sd,
+                self.comp_2_sd,
+                self.comp_3_sd,
+                self.comp_4_sd,
+                self.comp_5_sd,
+                self.comp_6_sd,
+                self.comp_7_sd,
+                self.comp_8_sd,
+                self.comp_9_sd,
+                self.comp_10_sd,
+                self.comp_11_sd,
+                self.comp_12_sd,
+            ]
+        )

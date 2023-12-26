@@ -49,12 +49,24 @@ class TeamMatchORM(Base, ModelORM):
     )
 
     epa: MF = mapped_column(Float, default=0)
-    # auto_epa: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    auto_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    teleop_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    endgame_epa: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_epa: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa: MOF = mapped_column(Float, nullable=True, default=None)
-
+    tiebreaker_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_11_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_12_epa: MOF = mapped_column(Float, nullable=True, default=None)
     post_epa: MOF = mapped_column(Float, nullable=True, default=None)
 
 
@@ -76,4 +88,6 @@ class TeamMatch(_TeamMatch, Model):
 
     def __str__(self: "TeamMatch") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.team}_{self.match}_{self.status}_{self.epa}_{self.post_epa}"
+        return "_".join(
+            [self.team, self.match, str(self.status), str(self.epa), str(self.post_epa)]
+        )

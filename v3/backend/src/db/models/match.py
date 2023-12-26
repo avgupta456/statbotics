@@ -62,25 +62,23 @@ class MatchORM(Base, ModelORM):
     red_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
     red_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
-    red_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     blue_score: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
-    blue_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
         Enum(MatchWinner, values_callable=values_callable), nullable=True, default=None
     )
     epa_win_prob: MOF = mapped_column(Float, nullable=True, default=None)
-    red_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    red_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Match = generate_attr_class("Match", MatchORM)
@@ -98,7 +96,17 @@ class Match(_Match, Model):
 
     def __str__(self: "Match") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_score_pred}_{self.blue_score_pred}_{self.predicted_time}"
+        return "_".join(
+            [
+                self.key,
+                self.status,
+                str(self.red_score),
+                str(self.blue_score),
+                str(self.epa_red_score_pred),
+                str(self.epa_blue_score_pred),
+                str(self.predicted_time),
+            ]
+        )
 
     """HELPER FUNCTIONS"""
 

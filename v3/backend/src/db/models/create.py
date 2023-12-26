@@ -44,12 +44,10 @@ def match_dict_to_objs(
         red_no_foul=red_breakdown["no_foul_points"],
         red_rp_1=red_breakdown["rp_1"],
         red_rp_2=red_breakdown["rp_2"],
-        red_tiebreaker=red_breakdown["tiebreaker"],
         blue_score=data["blue_score"],
         blue_no_foul=blue_breakdown["no_foul_points"],
         blue_rp_1=blue_breakdown["rp_1"],
         blue_rp_2=blue_breakdown["rp_2"],
-        blue_tiebreaker=blue_breakdown["tiebreaker"],
     )
 
     alliances: List[Alliance] = []
@@ -94,18 +92,18 @@ def match_dict_to_objs(
                 rp_1=breakdown["rp_1"],
                 rp_2=breakdown["rp_2"],
                 tiebreaker=breakdown["tiebreaker"],
-                match_comp_1=breakdown["match_comp_1"],
-                match_comp_2=breakdown["match_comp_2"],
-                match_comp_3=breakdown["match_comp_3"],
-                match_comp_4=breakdown["match_comp_4"],
-                match_comp_5=breakdown["match_comp_5"],
-                match_comp_6=breakdown["match_comp_6"],
-                match_comp_7=breakdown["match_comp_7"],
-                match_comp_8=breakdown["match_comp_8"],
-                match_comp_9=breakdown["match_comp_9"],
-                match_comp_10=breakdown["match_comp_10"],
-                match_comp_11=breakdown["match_comp_11"],
-                match_comp_12=breakdown["match_comp_12"],
+                comp_1=breakdown["comp_1"],
+                comp_2=breakdown["comp_2"],
+                comp_3=breakdown["comp_3"],
+                comp_4=breakdown["comp_4"],
+                comp_5=breakdown["comp_5"],
+                comp_6=breakdown["comp_6"],
+                comp_7=breakdown["comp_7"],
+                comp_8=breakdown["comp_8"],
+                comp_9=breakdown["comp_9"],
+                comp_10=breakdown["comp_10"],
+                comp_11=breakdown["comp_11"],
+                comp_12=breakdown["comp_12"],
             )
         )
 

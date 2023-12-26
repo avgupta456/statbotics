@@ -114,7 +114,7 @@ def reset_all_years():
     timer = Timer()
 
     start_year = 2002  # 2002
-    end_year = 2006  # CURR_YEAR
+    end_year = 2002  # CURR_YEAR
 
     clean_db()
     timer.print("Clean DB")

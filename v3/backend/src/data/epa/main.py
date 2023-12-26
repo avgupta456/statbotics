@@ -32,8 +32,8 @@ def post_process(
         years: Dict[int, float] = {}
 
         for team_year in team_team_years[team.team]:
-            if team_year.norm_epa_end is not None:
-                years[team_year.year] = team_year.norm_epa_end
+            if team_year.norm_epa is not None:
+                years[team_year.year] = team_year.norm_epa
 
         keys, values = years.keys(), years.values()
 

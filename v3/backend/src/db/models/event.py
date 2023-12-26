@@ -57,10 +57,17 @@ class EventORM(Base, ModelORM):
     """STATS"""
     epa_acc: MOF = mapped_column(Float, nullable=True, default=None)
     epa_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_mse: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_score_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_1_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_1_ll: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_1_f1: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_ll: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_2_f1: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Event = generate_attr_class("Event", EventORM)
@@ -80,4 +87,6 @@ class Event(_Event, Model):
 
     def __str__(self: "Event") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.key}_{self.status}_{self.current_match}_{self.qual_matches}"
+        return "_".join(
+            [self.key, self.status, str(self.current_match), str(self.qual_matches)]
+        )

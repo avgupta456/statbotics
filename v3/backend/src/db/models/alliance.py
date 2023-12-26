@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 import attr
+import numpy as np
 from sqlalchemy import Boolean, Float, Integer, String, Enum
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
@@ -59,18 +60,18 @@ class AllianceORM(Base, ModelORM):
     rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
     tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_1: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_2: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_3: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_4: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_5: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_6: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_7: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_8: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_9: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_10: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_11: MOI = mapped_column(Integer, nullable=True, default=None)
-    match_comp_12: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_1: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_2: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_3: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_4: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_5: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_6: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_7: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_8: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_9: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_10: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_11: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_12: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """EPA"""
     epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
@@ -80,20 +81,6 @@ class AllianceORM(Base, ModelORM):
     score_pred: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
-
-    # auto_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_1_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_2_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_3_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_4_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_5_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_6_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_7_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_8_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_9_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
-    # comp_10_epa_sum: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Alliance = generate_attr_class("Alliance", AllianceORM)
@@ -114,8 +101,14 @@ class Alliance(_Alliance, Model):
 
     def __str__(self: "Alliance") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return (
-            f"{self.match}_{self.alliance}_{self.score}_{self.teleop}_{self.score_pred}"
+        return "_".join(
+            [
+                self.match,
+                self.alliance,
+                str(self.score),
+                str(self.teleop),
+                str(self.score_pred),
+            ]
         )
 
     """HELPER FUNCTIONS"""
@@ -128,3 +121,28 @@ class Alliance(_Alliance, Model):
 
     def get_dqs(self: "Alliance") -> List[str]:
         return [x for x in self.dq.split(",") if x != ""]
+
+    def get_breakdown(self: "Alliance") -> Any:
+        if self.year < 2016:
+            return np.array([self.score or 0])
+        return np.array(
+            [
+                self.no_foul or 0,
+                self.auto or 0,
+                self.teleop or 0,
+                self.endgame or 0,
+                self.tiebreaker or 0,
+                self.comp_1 or 0,
+                self.comp_2 or 0,
+                self.comp_3 or 0,
+                self.comp_4 or 0,
+                self.comp_5 or 0,
+                self.comp_6 or 0,
+                self.comp_7 or 0,
+                self.comp_8 or 0,
+                self.comp_9 or 0,
+                self.comp_10 or 0,
+                self.comp_11 or 0,
+                self.comp_12 or 0,
+            ]
+        )

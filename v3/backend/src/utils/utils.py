@@ -1,13 +1,17 @@
+def get_team_year_key(team: str, year: int) -> str:
+    return team + "_" + str(year)
+
+
 def get_team_event_key(team: str, event: str) -> str:
-    return team + "-" + event
+    return team + "_" + event
 
 
 def get_alliance_key(match: str, alliance: str) -> str:
-    return match + "-" + alliance
+    return match + "_" + alliance
 
 
 def get_team_match_key(team: str, match: str) -> str:
-    return team + "-" + match
+    return team + "_" + match
 
 
 def get_match_name(key: str) -> str:
