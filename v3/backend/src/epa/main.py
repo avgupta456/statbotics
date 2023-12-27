@@ -5,6 +5,12 @@ def k_func(year: int) -> float:
     return -5 / 8 if year >= 2008 else -5 / 12
 
 
+def margin_func(year: int, x: int) -> float:
+    if year in [2002, 2003]:
+        return 1
+    return 0
+
+
 def percent_func(year: int, x: int) -> float:
     if year <= 2010:
         return 0.3

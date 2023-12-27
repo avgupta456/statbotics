@@ -1,16 +1,19 @@
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
+from src.types.enums import MatchStatus, MatchWinner
 from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.models import Team, TeamYear
+from src.utils.utils import r
 
 
 def winrate(wins: int, ties: int, count: int) -> float:
-    return round((wins + ties / 2) / max(1, count), 4)
+    return r((wins + ties / 2) / max(1, count), 4)
 
 
 TRecord = Tuple[int, int, int, int]
+TRP = Tuple[int, int]
 
 
 def process_year(objs: objs_type) -> objs_type:
@@ -20,7 +23,7 @@ def process_year(objs: objs_type) -> objs_type:
     ty_full_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     te_record: Dict[Tuple[str, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     te_qual_record: Dict[Tuple[str, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    te_rps: Dict[Tuple[str, str], Tuple[int, int]] = defaultdict(lambda: (0, 0))
+    te_rps: Dict[Tuple[str, str], TRP] = defaultdict(lambda: (0, 0))
 
     for a_obj in objs[5].values():
         elim = a_obj.elim
@@ -28,21 +31,18 @@ def process_year(objs: objs_type) -> objs_type:
         status = a_obj.status
         alliance = a_obj.alliance
         offseason = a_obj.offseason
-        winner = a_obj.official_winner
+        winner = a_obj.winner
 
-        if status != "Completed" or winner is None:
+        if status != MatchStatus.COMPLETED or winner is None:
             continue
 
         win_update = 1 if alliance == winner else 0
-        tie_update = 1 if winner == "tie" else 0
+        tie_update = 1 if winner == MatchWinner.TIE else 0
         loss_update = 1 - win_update - tie_update
 
         rp_1 = a_obj.rp_1 or 0
         rp_2 = a_obj.rp_2 or 0
         total_rps = 2 * win_update + 1 * tie_update + rp_1 + rp_2
-
-        update = (win_update, loss_update, tie_update, 1)
-        rp_update = (total_rps, 1)
 
         teams = [a_obj.team_1, a_obj.team_2, a_obj.team_3]
         dqs = a_obj.dq.split(",")
@@ -55,22 +55,39 @@ def process_year(objs: objs_type) -> objs_type:
             if t is None:
                 continue
 
-            ty_full_record[t] = tuple(sum(x) for x in zip(ty_full_record[t], update))
+            ty_full_record[t] = (
+                ty_full_record[t][0] + win_update,
+                ty_full_record[t][1] + loss_update,
+                ty_full_record[t][2] + tie_update,
+                ty_full_record[t][3] + 1,
+            )
 
             if not offseason:
-                ty_record[t] = tuple(sum(x) for x in zip(ty_record[t], update))
+                ty_record[t] = (
+                    ty_record[t][0] + win_update,
+                    ty_record[t][1] + loss_update,
+                    ty_record[t][2] + tie_update,
+                    ty_record[t][3] + 1,
+                )
 
             if t not in dqs and t not in surrogates:
                 # DQ, surrogate only affect TeamEvent records
-                te_record[(t, event)] = tuple(
-                    sum(x) for x in zip(te_record[(t, event)], update)
+                te_record[(t, event)] = (
+                    te_record[(t, event)][0] + win_update,
+                    te_record[(t, event)][1] + loss_update,
+                    te_record[(t, event)][2] + tie_update,
+                    te_record[(t, event)][3] + 1,
                 )
                 if not elim:
-                    te_qual_record[(t, event)] = tuple(
-                        sum(x) for x in zip(te_qual_record[(t, event)], update)
+                    te_qual_record[(t, event)] = (
+                        te_qual_record[(t, event)][0] + win_update,
+                        te_qual_record[(t, event)][1] + loss_update,
+                        te_qual_record[(t, event)][2] + tie_update,
+                        te_qual_record[(t, event)][3] + 1,
                     )
-                    te_rps[(t, event)] = tuple(
-                        sum(x) for x in zip(te_rps[(t, event)], rp_update)
+                    te_rps[(t, event)] = (
+                        te_rps[(t, event)][0] + total_rps,
+                        te_rps[(t, event)][1] + 1,
                     )
 
     for team_year in objs[1].values():
@@ -113,7 +130,7 @@ def process_year(objs: objs_type) -> objs_type:
 
         total_rps, count = te_rps[(team_event.team, team_event.event)]
         team_event.rps = total_rps
-        team_event.rps_per_match = round(total_rps / max(1, count), 4)
+        team_event.rps_per_match = r(total_rps / max(1, count), 4)
 
     return objs
 
@@ -132,17 +149,18 @@ def post_process(
     for team_year in all_team_years_list:
         team = team_year.team
 
-        update = (team_year.wins, team_year.losses, team_year.ties, team_year.count)
-        t_record[team] = tuple(sum(x) for x in zip(t_record[team], update))
-
-        full_update = (
-            team_year.full_wins,
-            team_year.full_losses,
-            team_year.full_ties,
-            team_year.full_count,
+        t_record[team] = (
+            t_record[team][0] + team_year.wins,
+            t_record[team][1] + team_year.losses,
+            t_record[team][2] + team_year.ties,
+            t_record[team][3] + team_year.count,
         )
-        t_full_record[team] = tuple(
-            sum(x) for x in zip(t_full_record[team], full_update)
+
+        t_full_record[team] = (
+            t_full_record[team][0] + team_year.full_wins,
+            t_full_record[team][1] + team_year.full_losses,
+            t_full_record[team][2] + team_year.full_ties,
+            t_full_record[team][3] + team_year.full_count,
         )
 
         if team_year.year == CURR_YEAR:

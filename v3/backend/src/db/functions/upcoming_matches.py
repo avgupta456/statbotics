@@ -5,6 +5,7 @@ from sqlalchemy import func, text
 from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
+from src.types.enums import EventStatus
 from src.constants import CURR_YEAR
 from src.db.main import Session
 from src.db.models.event import EventORM
@@ -40,7 +41,7 @@ def get_upcoming_matches(
 
         matches = matches.filter(
             (MatchORM.year == CURR_YEAR)
-            & (MatchORM.status == "Upcoming")
+            & (MatchORM.status == EventStatus.UPCOMING)
             & (MatchORM.predicted_time > curr_timestamp)
             & (MatchORM.predicted_time < curr_timestamp + 60 * minutes)
             & (MatchORM.event == EventORM.key)

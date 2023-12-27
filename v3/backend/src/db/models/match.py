@@ -1,12 +1,13 @@
-from typing import List
+from typing import List, Optional
 
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Boolean, Float, Integer, String, Enum
+from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.types.enums import CompLevel, MatchStatus, MatchWinner
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS
+from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS, values_callable
 
 
 class MatchORM(Base, ModelORM):
@@ -26,15 +27,18 @@ class MatchORM(Base, ModelORM):
     week: MI = mapped_column(Integer, index=True)
     elim: MB = mapped_column(Boolean, index=True)
 
-    comp_level: MS = mapped_column(String(10))
+    comp_level: Mapped[CompLevel] = mapped_column(
+        Enum(CompLevel, values_callable=values_callable)
+    )
     set_number: MI = mapped_column(Integer)
     match_number: MI = mapped_column(Integer)
 
     time: MI = mapped_column(Integer)  # Enforces ordering
     predicted_time: MOI = mapped_column(Integer, nullable=True)  # For display
 
-    # Choices are 'Upcoming', 'Completed'
-    status: MS = mapped_column(String(10), index=True)
+    status: Mapped[MatchStatus] = mapped_column(
+        Enum(MatchStatus, values_callable=values_callable), index=True
+    )
     video: MOS = mapped_column(String(20), nullable=True)
 
     red_1: MS = mapped_column(String(6), index=True)
@@ -50,30 +54,31 @@ class MatchORM(Base, ModelORM):
     blue_surrogate: MS = mapped_column(String(20))
 
     """OUTCOME"""
-    official_winner: MOS = mapped_column(String(4), nullable=True, default=None)
-    winner: MOS = mapped_column(String(4), nullable=True, default=None)
+    winner: Mapped[Optional[MatchWinner]] = mapped_column(
+        Enum(MatchWinner, values_callable=values_callable), nullable=True, default=None
+    )
 
     red_score: MOI = mapped_column(Integer, nullable=True, default=None)
     red_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
     red_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
-    red_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     blue_score: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
-    blue_tiebreaker: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
-    epa_winner: MS = mapped_column(String(4), default="tie")
-    epa_win_prob: MF = mapped_column(Float, default=0.5)
-    red_score_pred: MF = mapped_column(Float, default=0)
-    blue_score_pred: MF = mapped_column(Float, default=0)
-    red_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
+        Enum(MatchWinner, values_callable=values_callable), nullable=True, default=None
+    )
+    epa_win_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Match = generate_attr_class("Match", MatchORM)
@@ -91,7 +96,17 @@ class Match(_Match, Model):
 
     def __str__(self: "Match") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_score_pred}_{self.blue_score_pred}_{self.predicted_time}"
+        return "_".join(
+            [
+                self.key,
+                self.status,
+                str(self.red_score),
+                str(self.blue_score),
+                str(self.epa_red_score_pred),
+                str(self.epa_blue_score_pred),
+                str(self.predicted_time),
+            ]
+        )
 
     """HELPER FUNCTIONS"""
 
@@ -115,3 +130,18 @@ class Match(_Match, Model):
 
     def get_teams(self: "Match") -> List[List[str]]:
         return [self.get_red(), self.get_blue()]
+
+    def get_winner(self: "Match") -> Optional[MatchWinner]:
+        # For calculating win prediction metrics
+        if self.winner is not None:
+            return self.winner
+
+        if self.red_score is None or self.blue_score is None:
+            return None
+
+        if self.red_score > self.blue_score:
+            return MatchWinner.RED
+        elif self.blue_score > self.red_score:
+            return MatchWinner.BLUE
+        else:
+            return MatchWinner.TIE

@@ -55,4 +55,4 @@ class Team(_Team, Model):
 
     def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.team}_{self.count}"
+        return "_".join([self.team, str(self.count)])

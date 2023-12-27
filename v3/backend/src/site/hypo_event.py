@@ -1,6 +1,7 @@
 import random
 from typing import Any, Dict, List, Optional
 
+from src.types.enums import MatchWinner
 from src.site.aggregation import get_team_years, get_year, team_year_to_team_event
 from src.site.models import APIEvent, APIMatch, APITeamMatch, APITeamYear, APIYear
 from src.utils.hypothetical import decompress, get_cheesy_schedule
@@ -95,14 +96,14 @@ async def read_hypothetical_event(
                 red_epa_pred=sum(x.total_epa for x in red_team_objs),
                 blue_epa_pred=sum(x.total_epa for x in blue_team_objs),
                 epa_win_prob=win_prob,
-                pred_winner="red" if win_prob > 0.5 else "blue",
+                pred_winner=MatchWinner.RED if win_prob > 0.5 else MatchWinner.BLUE,
             )
         )
 
         for team in red_teams + blue_teams:
             team_matches.append(
                 APITeamMatch(
-                    alliance="red" if team in red_teams else "blue",
+                    alliance=MatchWinner.RED if team in red_teams else MatchWinner.BLUE,
                     num=team,
                     match=f"{event_id}_qm{i+1}",
                     time=0,

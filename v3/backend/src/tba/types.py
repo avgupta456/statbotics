@@ -1,4 +1,5 @@
-from typing import Optional, TypedDict
+from typing import Optional, TypedDict, Union
+from src.types.enums import EventType, CompLevel, MatchStatus, MatchWinner
 
 
 class TeamDict(TypedDict):
@@ -20,7 +21,7 @@ class EventDict(TypedDict):
     start_date: str
     end_date: str
     time: int
-    type: int
+    type: EventType
     week: int
     video: Optional[str]
 
@@ -34,28 +35,67 @@ class BreakdownDict(TypedDict):
     endgame_points: Optional[int]
     rp_1: Optional[bool]
     rp_2: Optional[bool]
-    match_comp_1: Optional[int]
-    match_comp_2: Optional[int]
-    match_comp_3: Optional[int]
-    match_comp_4: Optional[int]
-    match_comp_5: Optional[int]
-    match_comp_6: Optional[int]
-    match_comp_7: Optional[int]
-    match_comp_8: Optional[int]
-    match_comp_9: Optional[int]
-    match_comp_10: Optional[int]
-    match_comp_11: Optional[int]
-    match_comp_12: Optional[int]
     tiebreaker: Optional[int]
+    comp_1: Optional[Union[int, float]]
+    comp_2: Optional[Union[int, float]]
+    comp_3: Optional[Union[int, float]]
+    comp_4: Optional[Union[int, float]]
+    comp_5: Optional[Union[int, float]]
+    comp_6: Optional[Union[int, float]]
+    comp_7: Optional[Union[int, float]]
+    comp_8: Optional[Union[int, float]]
+    comp_9: Optional[Union[int, float]]
+    comp_10: Optional[Union[int, float]]
+    comp_11: Optional[Union[int, float]]
+    comp_12: Optional[Union[int, float]]
+    comp_13: Optional[Union[int, float]]
+    comp_14: Optional[Union[int, float]]
+    comp_15: Optional[Union[int, float]]
+    comp_16: Optional[Union[int, float]]
+    comp_17: Optional[Union[int, float]]
+    comp_18: Optional[Union[int, float]]
+    incomplete_breakdown: Optional[bool]
+
+
+empty_breakdown: BreakdownDict = {
+    "score": 0,
+    "no_foul_points": None,
+    "foul_points": None,
+    "auto_points": None,
+    "teleop_points": None,
+    "endgame_points": None,
+    "rp_1": False,
+    "rp_2": False,
+    "tiebreaker": None,
+    "comp_1": None,
+    "comp_2": None,
+    "comp_3": None,
+    "comp_4": None,
+    "comp_5": None,
+    "comp_6": None,
+    "comp_7": None,
+    "comp_8": None,
+    "comp_9": None,
+    "comp_10": None,
+    "comp_11": None,
+    "comp_12": None,
+    "comp_13": None,
+    "comp_14": None,
+    "comp_15": None,
+    "comp_16": None,
+    "comp_17": None,
+    "comp_18": None,
+    "incomplete_breakdown": True,
+}
 
 
 class MatchDict(TypedDict):
     event: str
     key: str
-    comp_level: str
+    comp_level: CompLevel
     set_number: int
     match_number: int
-    status: str
+    status: MatchStatus
     video: Optional[str]
     red_1: str
     red_2: str
@@ -67,8 +107,7 @@ class MatchDict(TypedDict):
     blue_3: Optional[str]
     blue_dq: str
     blue_surrogate: str
-    official_winner: Optional[str]
-    winner: Optional[str]
+    winner: Optional[MatchWinner]
     time: int
     predicted_time: Optional[int]
     red_score: Optional[int]

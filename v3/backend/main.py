@@ -1,6 +1,10 @@
+from typing import Any, Callable
+
 from dotenv import load_dotenv  # type: ignore
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pyinstrument import Profiler
 
 load_dotenv()
 
@@ -34,6 +38,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+if not PROD:
+
+    @app.middleware("http")
+    async def profile_request(request: Request, call_next: Callable[[Any], Any]):
+        profiling = request.query_params.get("profile", False)
+        if profiling:
+            profiler = Profiler(interval=0.001, async_mode="enabled")
+            profiler.start()
+            await call_next(request)
+            profiler.stop()
+            return HTMLResponse(profiler.output_html())
+        else:
+            return await call_next(request)
 
 
 router = APIRouter()

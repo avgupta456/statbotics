@@ -1,41 +1,159 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from src.tba.types import BreakdownDict
+from src.tba.types import BreakdownDict, empty_breakdown
 
-empty_breakdown: BreakdownDict = {
-    "score": 0,
-    "no_foul_points": 0,
-    "foul_points": 0,
-    "auto_points": 0,
-    "teleop_points": 0,
-    "endgame_points": 0,
-    "rp_1": False,
-    "rp_2": False,
-    "tiebreaker": 0,
-    "match_comp_1": 0,
-    "match_comp_2": 0,
-    "match_comp_3": 0,
-    "match_comp_4": 0,
-    "match_comp_5": 0,
-    "match_comp_6": 0,
-    "match_comp_7": 0,
-    "match_comp_8": 0,
-    "match_comp_9": 0,
-    "match_comp_10": 0,
-    "match_comp_11": 0,
-    "match_comp_12": 0,
+all_keys = {
+    2002: ["no_foul_points"],
+    2003: ["no_foul_points"],
+    2004: ["no_foul_points"],
+    2005: ["no_foul_points"],
+    2006: ["no_foul_points"],
+    2007: ["no_foul_points"],
+    2008: ["no_foul_points"],
+    2009: ["no_foul_points"],
+    2010: ["no_foul_points"],
+    2011: ["no_foul_points"],
+    2012: ["no_foul_points"],
+    2013: ["no_foul_points"],
+    2014: ["no_foul_points"],
+    2015: ["no_foul_points"],
+    2016: [
+        "no_foul_points",
+        "auto_points",
+        "teleop_points",
+        "endgame_points",
+        "tiebreaker_points",
+        "auto_reach_points",
+        "auto_crossing_points",
+        "auto_low_boulders",
+        "auto_high_boulders",
+        "teleop_crossing_points",
+        "teleop_low_boulders",
+        "teleop_high_boulders",
+        "challenge_points",
+        "scale_points",
+        "defenses",
+        "boulders",
+    ],
+    2017: [
+        "no_foul_points",
+        "auto_points",
+        "teleop_points",
+        "endgame_points",
+        "tiebreaker_points",
+        "auto_mobility_points",
+        "auto_fuel_low",
+        "auto_fuel_high",
+        "auto_rotor_points",
+        "teleop_fuel_low",
+        "teleop_fuel_high",
+        "teleop_rotor_points",
+        "takeoff_points",
+        "kpa",
+    ],
+    2018: [
+        "no_foul_points",
+        "auto_points",
+        "teleop_points",
+        "endgame_points",
+        "tiebreaker_points",
+        "auto_run_points",
+        "auto_switch_secs",
+        "auto_scale_secs",
+        "teleop_switch_secs",
+        "teleop_scale_secs",
+        "vault_points",
+        "switch_power",
+        "scale_power",
+        "opp_switch_power",
+    ],
+    2019: [
+        "no_foul_points",
+        "auto_points",
+        "teleop_points",
+        "endgame_points",
+        "tiebreaker_points",
+        "sandstorm_points",
+        "bay_hatch",
+        "bay_cargo",
+        "rocket_hatch_low",
+        "rocket_hatch_mid",
+        "rocket_hatch_top",
+        "rocket_cargo_low",
+        "rocket_cargo_mid",
+        "rocket_cargo_top",
+        "hab_climb_points",
+        "pieces",
+    ],
+    2020: [
+        "no_foul_points",
+        "auto_points",
+        "teleop_points",
+        "endgame_points",
+        "tiebreaker_points",
+        "auto_init_line_points",
+        "auto_cells_bottom",
+        "auto_cells_outer",
+        "auto_cells_inner",
+        "teleop_cells_bottom",
+        "teleop_cells_outer",
+        "teleop_cells_inner",
+        "control_panel_points",
+        "endgame_points",
+        "cells",
+    ],
+    2021: ["no_foul_points"],
+    2022: [
+        "no_foul_points",
+        "auto_points",
+        "teleop_points",
+        "endgame_points",
+        "auto_taxi_points",
+        "auto_cargo_lower",
+        "auto_cargo_upper",
+        "teleop_cargo_lower",
+        "teleop_cargo_upper",
+        "endgame_points",
+        "cargo",
+    ],
+    2023: [
+        "no_foul_points",
+        "auto_points",
+        "teleop_points",
+        "endgame_points",
+        "tiebreaker_points",
+        "auto_mobility_points",
+        "auto_charge_station_points",
+        "auto_low_cubes",
+        "auto_low_cones",
+        "auto_mid_cubes",
+        "auto_mid_cones",
+        "auto_high_cubes",
+        "auto_high_cones",
+        "teleop_low_cubes",
+        "teleop_low_cones",
+        "teleop_mid_cubes",
+        "teleop_mid_cones",
+        "teleop_high_cubes",
+        "teleop_high_cones",
+        "links",
+        "endgame_charge_station_points",
+        "endgame_park_points",
+        "charge_station_points",
+    ],
 }
-
-INVALID_MATCH_KEYS = ["2016capl_f1m1", "2016milsu_qf4m1", "2016mndu2_f1m2"]
 
 
 def clean_breakdown_2016(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
     foul_points: int,
 ) -> BreakdownDict:
+    incomplete = False
+
     auto_reach_points = breakdown.get("autoReachPoints", 0)
     auto_crossing_points = breakdown.get("autoCrossingPoints", 0)
     auto_low_boulders = breakdown.get("autoBouldersLow", 0)
@@ -51,8 +169,21 @@ def clean_breakdown_2016(
     teleop_low_boulders = breakdown.get("teleopBouldersLow", 0)
     teleop_high_boulders = breakdown.get("teleopBouldersHigh", 0)
 
+    if key == "2016mndu2_f1m2" and alliance == "blue":
+        teleop_crossing_points += 15
+        no_foul_points -= 10
+        foul_points += 10
+
     challenge_points = breakdown.get("teleopChallengePoints", 0)
     scale_points = breakdown.get("teleopScalePoints", 0)
+
+    defenses = auto_crossing_points / 10 + teleop_crossing_points / 5
+    boulders = (
+        auto_low_boulders
+        + auto_high_boulders
+        + teleop_low_boulders
+        + teleop_high_boulders
+    )
 
     auto_points = (
         auto_reach_points
@@ -72,9 +203,21 @@ def clean_breakdown_2016(
 
     rp_1_points = breakdown.get("breachPoints", 0)
     rp_2_points = breakdown.get("capturePoints", 0)
+
+    if (key == "2016capl_f1m1" and alliance == "blue") or (
+        key == "2016milsu_qf4m1" and alliance == "blue"
+    ):
+        rp_2 = False
+        rp_2_points = 0
+        incomplete = True
+
     no_foul_points -= rp_1_points + rp_2_points
 
     tiebreaker = breakdown.get("autoPoints", 0)
+
+    incomplete = incomplete or (
+        auto_points + teleop_points + endgame_points != no_foul_points
+    )
 
     return {
         "score": score,
@@ -86,23 +229,31 @@ def clean_breakdown_2016(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker,
-        "match_comp_1": auto_reach_points,
-        "match_comp_2": auto_crossing_points,
-        "match_comp_3": auto_low_boulders,
-        "match_comp_4": auto_high_boulders,
-        "match_comp_5": teleop_crossing_points,
-        "match_comp_6": teleop_low_boulders,
-        "match_comp_7": teleop_high_boulders,
-        "match_comp_8": challenge_points,
-        "match_comp_9": scale_points,
-        "match_comp_10": 0,
-        "match_comp_11": 0,
-        "match_comp_12": 0,
+        "comp_1": auto_reach_points,
+        "comp_2": auto_crossing_points,
+        "comp_3": auto_low_boulders,
+        "comp_4": auto_high_boulders,
+        "comp_5": teleop_crossing_points,
+        "comp_6": teleop_low_boulders,
+        "comp_7": teleop_high_boulders,
+        "comp_8": challenge_points,
+        "comp_9": scale_points,
+        "comp_10": defenses,
+        "comp_11": boulders,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+        "incomplete_breakdown": incomplete,
     }
 
 
 def clean_breakdown_2017(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
@@ -129,6 +280,19 @@ def clean_breakdown_2017(
     teleop_kpa_9ths = auto_kpa_9ths % 9 + teleop_fuel_low + 3 * teleop_fuel_high
     teleop_points = teleop_rotor_points + teleop_kpa_9ths // 9
 
+    kpa = auto_kpa_9ths // 9 + teleop_kpa_9ths // 9
+    num_rotors = teleop_rotor_points // 40
+    gears = (
+        (1 if num_rotors >= 1 else 0)
+        + (2 if num_rotors >= 2 else 0)
+        + (4 if num_rotors >= 3 else 0)
+        + (6 if num_rotors >= 4 else 0)
+    )
+
+    # Alliances often scored 3.x rotors, but truncated
+    if num_rotors == 3:
+        gears += 2
+
     rp_1 = bool(breakdown.get("kPaRankingPointAchieved", False))
     rp_2 = bool(breakdown.get("rotorRankingPointAchieved", False))
 
@@ -138,6 +302,8 @@ def clean_breakdown_2017(
     no_foul_points -= rp_1_points + rp_2_points
 
     tiebreaker = no_foul_points + foul_points
+
+    incomplete = auto_points + teleop_points + takeoff_points != no_foul_points
 
     return {
         "score": score,
@@ -149,23 +315,31 @@ def clean_breakdown_2017(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker,
-        "match_comp_1": auto_mobility_points,
-        "match_comp_2": auto_fuel_low,
-        "match_comp_3": auto_fuel_high,
-        "match_comp_4": auto_rotor_points,
-        "match_comp_5": teleop_fuel_low,
-        "match_comp_6": teleop_fuel_high,
-        "match_comp_7": teleop_rotor_points,
-        "match_comp_8": takeoff_points,
-        "match_comp_9": 0,
-        "match_comp_10": 0,
-        "match_comp_11": 0,
-        "match_comp_12": 0,
+        "comp_1": auto_mobility_points,
+        "comp_2": auto_fuel_low,
+        "comp_3": auto_fuel_high,
+        "comp_4": auto_rotor_points,
+        "comp_5": teleop_fuel_low,
+        "comp_6": teleop_fuel_high,
+        "comp_7": teleop_rotor_points,
+        "comp_8": takeoff_points,
+        "comp_9": kpa,
+        "comp_10": gears,
+        "comp_11": None,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+        "incomplete_breakdown": incomplete,
     }
 
 
 def clean_breakdown_2018(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
@@ -211,6 +385,8 @@ def clean_breakdown_2018(
 
     tiebreaker_points = endgame_points
 
+    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
+
     return {
         "score": score,
         "no_foul_points": no_foul_points,
@@ -221,18 +397,25 @@ def clean_breakdown_2018(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker_points,
-        "match_comp_1": auto_run_points,
-        "match_comp_2": auto_switch_secs,
-        "match_comp_3": auto_scale_secs,
-        "match_comp_4": teleop_switch_secs,
-        "match_comp_5": teleop_scale_secs,
-        "match_comp_6": vault_points,
-        "match_comp_7": endgame_points,
-        "match_comp_8": 0,
-        "match_comp_9": 0,
-        "match_comp_10": 0,
-        "match_comp_11": 0,
-        "match_comp_12": 0,
+        "comp_1": auto_run_points,
+        "comp_2": auto_switch_secs,
+        "comp_3": auto_scale_secs,
+        "comp_4": teleop_switch_secs,
+        "comp_5": teleop_scale_secs,
+        "comp_6": vault_points,
+        "comp_7": None,
+        "comp_8": None,
+        "comp_9": None,
+        "comp_10": None,
+        "comp_11": None,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+        "incomplete_breakdown": incomplete,
     }
 
 
@@ -279,6 +462,7 @@ def count_pieces_2019(
 
 def clean_breakdown_2019(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
@@ -305,10 +489,26 @@ def clean_breakdown_2019(
 
     hab_climb_points = breakdown.get("habClimbPoints", 0)
 
+    pieces = (
+        bay_hatch
+        + bay_cargo
+        + rocket_hatch_low
+        + rocket_hatch_mid
+        + rocket_hatch_top
+        + rocket_cargo_low
+        + rocket_cargo_mid
+        + rocket_cargo_top
+    )
+
     rp_1 = bool(breakdown.get("habDockingRankingPoint", False))
     rp_2 = bool(breakdown.get("completeRocketRankingPoint", False))
 
     tiebreaker = cargo_points
+
+    incomplete = (
+        sandstorm_points + hatch_points + cargo_points + hab_climb_points
+        != no_foul_points
+    )
 
     return {
         "score": score,
@@ -320,23 +520,31 @@ def clean_breakdown_2019(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker,
-        "match_comp_1": sandstorm_points,
-        "match_comp_2": bay_hatch,
-        "match_comp_3": bay_cargo,
-        "match_comp_4": rocket_hatch_low,
-        "match_comp_5": rocket_hatch_mid,
-        "match_comp_6": rocket_hatch_top,
-        "match_comp_7": rocket_cargo_low,
-        "match_comp_8": rocket_cargo_mid,
-        "match_comp_9": rocket_cargo_top,
-        "match_comp_10": hab_climb_points,
-        "match_comp_11": 0,
-        "match_comp_12": 0,
+        "comp_1": sandstorm_points,
+        "comp_2": bay_hatch,
+        "comp_3": bay_cargo,
+        "comp_4": rocket_hatch_low,
+        "comp_5": rocket_hatch_mid,
+        "comp_6": rocket_hatch_top,
+        "comp_7": rocket_cargo_low,
+        "comp_8": rocket_cargo_mid,
+        "comp_9": rocket_cargo_top,
+        "comp_10": hab_climb_points,
+        "comp_11": pieces,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+        "incomplete_breakdown": incomplete,
     }
 
 
 def clean_breakdown_2020(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
@@ -364,6 +572,15 @@ def clean_breakdown_2020(
 
     endgame_points = breakdown.get("endgamePoints", 0)
 
+    cells = (
+        auto_cells_bottom
+        + auto_cells_outer
+        + auto_cells_inner
+        + teleop_cells_bottom
+        + teleop_cells_outer
+        + teleop_cells_inner
+    )
+
     rp_1 = bool(breakdown.get("shieldOperationalRankingPoint", False))
     rp_2 = bool(breakdown.get("shieldEnergizedRankingPoint", False))
 
@@ -371,6 +588,8 @@ def clean_breakdown_2020(
     teleop_points = teleop_cell_points + control_panel_points
 
     tiebreaker = auto_points
+
+    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
 
     return {
         "score": score,
@@ -382,33 +601,44 @@ def clean_breakdown_2020(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker,
-        "match_comp_1": auto_init_line_points,
-        "match_comp_2": auto_cells_bottom,
-        "match_comp_3": auto_cells_outer,
-        "match_comp_4": auto_cells_inner,
-        "match_comp_5": teleop_cells_bottom,
-        "match_comp_6": teleop_cells_outer,
-        "match_comp_7": teleop_cells_inner,
-        "match_comp_8": control_panel_points,
-        "match_comp_9": endgame_points,
-        "match_comp_10": 0,
-        "match_comp_11": 0,
-        "match_comp_12": 0,
+        "comp_1": auto_init_line_points,
+        "comp_2": auto_cells_bottom,
+        "comp_3": auto_cells_outer,
+        "comp_4": auto_cells_inner,
+        "comp_5": teleop_cells_bottom,
+        "comp_6": teleop_cells_outer,
+        "comp_7": teleop_cells_inner,
+        "comp_8": control_panel_points,
+        "comp_9": endgame_points,
+        "comp_10": cells,
+        "comp_11": None,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+        "incomplete_breakdown": incomplete,
     }
 
 
 def clean_breakdown_2021(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
     foul_points: int,
 ) -> BreakdownDict:
-    return clean_breakdown_2020(key, breakdown, score, no_foul_points, foul_points)
+    return clean_breakdown_2020(
+        key, alliance, breakdown, score, no_foul_points, foul_points
+    )
 
 
 def clean_breakdown_2022(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
@@ -472,6 +702,10 @@ def clean_breakdown_2022(
 
     endgame_points = breakdown.get("endgamePoints", 0)
 
+    cargo = (
+        auto_cargo_lower + auto_cargo_upper + teleop_cargo_lower + teleop_cargo_upper
+    )
+
     rp_1 = bool(breakdown.get("cargoBonusRankingPoint", False))
     rp_2 = bool(breakdown.get("hangarBonusRankingPoint", False))
 
@@ -479,6 +713,8 @@ def clean_breakdown_2022(
     teleop_points = teleop_cargo_points
 
     tiebreaker = no_foul_points
+
+    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
 
     return {
         "score": score,
@@ -490,18 +726,25 @@ def clean_breakdown_2022(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker,
-        "match_comp_1": auto_taxi_points,
-        "match_comp_2": auto_cargo_lower,
-        "match_comp_3": auto_cargo_upper,
-        "match_comp_4": teleop_cargo_lower,
-        "match_comp_5": teleop_cargo_upper,
-        "match_comp_6": endgame_points,
-        "match_comp_7": 0,
-        "match_comp_8": 0,
-        "match_comp_9": 0,
-        "match_comp_10": 0,
-        "match_comp_11": 0,
-        "match_comp_12": 0,
+        "comp_1": auto_taxi_points,
+        "comp_2": auto_cargo_lower,
+        "comp_3": auto_cargo_upper,
+        "comp_4": teleop_cargo_lower,
+        "comp_5": teleop_cargo_upper,
+        "comp_6": endgame_points,
+        "comp_7": cargo,
+        "comp_8": None,
+        "comp_9": None,
+        "comp_10": None,
+        "comp_11": None,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+        "incomplete_breakdown": incomplete,
     }
 
 
@@ -518,6 +761,7 @@ def count_pieces_2023(
 
 def clean_breakdown_2023(
     key: str,
+    alliance: str,
     breakdown: Dict[str, Any],
     score: int,
     no_foul_points: int,
@@ -565,6 +809,8 @@ def clean_breakdown_2023(
     endgame_charge_station_points = breakdown.get("endGameChargeStationPoints", 0)
     endgame_park_points = breakdown.get("endGameParkPoints", 0)
 
+    charge_station_points = auto_charge_station_points + endgame_charge_station_points
+
     rp_1 = bool(breakdown.get("sustainabilityBonusAchieved", False))
     rp_2 = bool(breakdown.get("activationBonusAchieved", False))
 
@@ -573,6 +819,8 @@ def clean_breakdown_2023(
     endgame_points = endgame_charge_station_points + endgame_park_points
 
     tiebreaker = no_foul_points
+
+    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
 
     return {
         "score": score,
@@ -584,23 +832,31 @@ def clean_breakdown_2023(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker,
-        "match_comp_1": auto_mobility_points,
-        "match_comp_2": auto_charge_station_points,
-        "match_comp_3": abcu + tbcu,  # num bottom cubes (auto or teleop)
-        "match_comp_4": abco + tbco,
-        "match_comp_5": amcu + tmcu,
-        "match_comp_6": amco + tmco,
-        "match_comp_7": atcu + ttcu,
-        "match_comp_8": atco + ttco,
-        "match_comp_9": abcu + abco + amcu + amco + atcu + atco,  # total auto pieces
-        "match_comp_10": link_points,
-        "match_comp_11": endgame_charge_station_points,
-        "match_comp_12": endgame_park_points,
+        "comp_1": auto_mobility_points,
+        "comp_2": auto_charge_station_points,
+        "comp_3": abcu,
+        "comp_4": abco,
+        "comp_5": amcu,
+        "comp_6": amco,
+        "comp_7": atcu,
+        "comp_8": atco,
+        "comp_9": tbcu,
+        "comp_10": tbco,
+        "comp_11": tmcu,
+        "comp_12": tmco,
+        "comp_13": ttcu,
+        "comp_14": ttco,
+        "comp_15": link_points,
+        "comp_16": endgame_charge_station_points,
+        "comp_17": endgame_park_points,
+        "comp_18": charge_station_points,
+        "incomplete_breakdown": incomplete,
     }
 
 
 def clean_breakdown(
     key: str,
+    alliance: str,
     year: int,
     offseason: bool,
     breakdown: Optional[Dict[str, Any]],
@@ -614,7 +870,14 @@ def clean_breakdown(
     foul_points = breakdown.get("foulPoints", 0) + breakdown.get("adjustPoints", 0)
     no_foul_points = score - foul_points
 
-    inputs = (key, breakdown, score, no_foul_points, foul_points)
+    inputs = (
+        key,
+        alliance,
+        breakdown,
+        score,
+        no_foul_points,
+        foul_points,
+    )
 
     if year == 2016:
         out = clean_breakdown_2016(*inputs)
@@ -635,7 +898,7 @@ def clean_breakdown(
     else:
         out["no_foul_points"] = score
 
-    if year >= 2016 and key not in INVALID_MATCH_KEYS:
+    if year >= 2016:
         auto_points = out["auto_points"] or 0
         teleop_points = out["teleop_points"] or 0
         endgame_points = out["endgame_points"] or 0
@@ -645,3 +908,35 @@ def clean_breakdown(
             assert auto_points + teleop_points + endgame_points == no_foul_points
 
     return out
+
+
+def post_clean_breakdown(
+    key: str, year: int, red_breakdown: BreakdownDict, blue_breakdown: BreakdownDict
+) -> Tuple[BreakdownDict, BreakdownDict]:
+    if year == 2018:
+        # "comp_1": auto_run_points,
+        # "comp_2": auto_switch_secs,
+        # "comp_3": auto_scale_secs,
+        # "comp_4": teleop_switch_secs,
+        # "comp_5": teleop_scale_secs,
+        # "comp_6": vault_points,
+        # "comp_7": switch_power,
+        # "comp_8": scale_power,
+        # "comp_9": opp_switch_power,
+        red_switch_secs = red_breakdown["comp_4"] or 0
+        blue_switch_secs = blue_breakdown["comp_4"] or 0
+        red_scale_secs = red_breakdown["comp_5"] or 0
+        blue_scale_secs = blue_breakdown["comp_5"] or 0
+        red_opp_switch_secs = 145 - (blue_breakdown["comp_4"] or 0)
+        blue_opp_switch_secs = 145 - (red_breakdown["comp_4"] or 0)
+        total_scale_secs = max(1, red_scale_secs + blue_scale_secs)
+
+        red_breakdown["comp_7"] = min(1, red_switch_secs / 145)
+        red_breakdown["comp_8"] = min(1, red_scale_secs / total_scale_secs)
+        red_breakdown["comp_9"] = min(1, red_opp_switch_secs / 145)
+
+        blue_breakdown["comp_7"] = min(1, blue_switch_secs / 145)
+        blue_breakdown["comp_8"] = min(1, blue_scale_secs / total_scale_secs)
+        blue_breakdown["comp_9"] = min(1, blue_opp_switch_secs / 145)
+
+    return red_breakdown, blue_breakdown

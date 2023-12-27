@@ -113,8 +113,8 @@ def post_process(
 def reset_all_years():
     timer = Timer()
 
-    start_year = 2016  # 2002
-    end_year = 2016  # CURR_YEAR
+    start_year = 2014  # 2002
+    end_year = 2023  # CURR_YEAR
 
     clean_db()
     timer.print("Clean DB")
@@ -125,6 +125,9 @@ def reset_all_years():
     all_team_years: Dict[int, Dict[str, TeamYear]] = {}
     for year_num in range(start_year, end_year + 1):
         objs = create_objs(year_num)
+        if year_num == 2021:
+            continue
+
         teams = process_year(year_num, False, True, teams, objs, all_team_years)
         all_team_years[year_num] = {ty.team: ty for ty in objs[1].values()}
 

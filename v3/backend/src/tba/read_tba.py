@@ -1,8 +1,10 @@
 import time
+from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, cast
 
-from src.tba.breakdown import clean_breakdown
+from src.types.enums import EventType, MatchStatus, MatchWinner, CompLevel
+from src.tba.breakdown import clean_breakdown, post_clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
@@ -84,22 +86,34 @@ def get_events(
 
         # renames district divisions to district championship
         # renames festival of championships to einsteins
-        event_type: int = event["event_type"]
-        if event_type == 5:
-            event_type = 2
-        if event_type == 6:
-            event_type = 4
+
+        event_type_int = int(event["event_type"])
+        event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
+        event_type_dict[0] = EventType.REGIONAL
+        event_type_dict[1] = EventType.DISTRICT
+        event_type_dict[2] = EventType.DISTRICT_CMP
+        event_type_dict[3] = EventType.CHAMPS_DIV
+        event_type_dict[4] = EventType.EINSTEIN
+        event_type_dict[
+            5
+        ] = EventType.DISTRICT_CMP  # rename district divisions to district championship
+        event_type_dict[
+            6
+        ] = EventType.EINSTEIN  # rename festival of championships to einsteins
+        event_type_dict[99] = EventType.OFFSEASON
+        event_type_dict[100] = EventType.PRESEASON
+        event_type = event_type_dict[event_type_int]
 
         # assigns worlds to week 8
-        if event_type >= 3:
+        if event_type.is_champs():
             event["week"] = 8
 
         # assigns preseason to week 0
-        if event_type == 100:
+        if event_type == EventType.PRESEASON:
             event["week"] = 0
 
         # assigns offseasons to week 9
-        if event_type == 99:
+        if event_type == EventType.OFFSEASON:
             event["week"] = 9
 
         # filter out incomplete events
@@ -107,7 +121,11 @@ def get_events(
             continue
 
         # bug in TBA API
-        if event_type < 3 and year != 2016:
+        if year != 2016 and event_type in [
+            EventType.REGIONAL,
+            EventType.DISTRICT,
+            EventType.DISTRICT_CMP,
+        ]:
             event["week"] += 1
 
         video: Optional[str] = None
@@ -216,41 +234,47 @@ def get_event_matches(
         raw_red_score: int = match["alliances"]["red"]["score"]
         raw_blue_score: int = match["alliances"]["blue"]["score"]
 
-        status = "Completed" if min(raw_red_score, raw_blue_score) >= 0 else "Upcoming"
+        status = (
+            MatchStatus.COMPLETED
+            if min(raw_red_score, raw_blue_score) >= 0
+            else MatchStatus.UPCOMING
+        )
 
         red_score = None
         blue_score = None
         winner = None
-        official_winner = None
-        if status == "Completed":
+        if status == MatchStatus.COMPLETED:
             red_score = raw_red_score
             blue_score = raw_blue_score
-            if red_score > blue_score:
-                winner = "red"
-            elif blue_score > red_score:
-                winner = "blue"
-            else:
-                winner = "tie"
 
             if match["winning_alliance"] == "red":
-                official_winner = "red"
+                winner = MatchWinner.RED
             elif match["winning_alliance"] == "blue":
-                official_winner = "blue"
+                winner = MatchWinner.BLUE
             elif match["winning_alliance"] == "" and red_score == blue_score:
-                official_winner = "tie"
+                winner = MatchWinner.TIE
 
             if year == 2015 and match["comp_level"] != "f":
-                official_winner = None
+                winner = None
 
         red_teams = [team[3:] for team in red_teams]
         blue_teams = [team[3:] for team in blue_teams]
 
         breakdown = match.get("score_breakdown", {}) or {}
         red_breakdown = clean_breakdown(
-            match["key"], year, offseason, breakdown.get("red", None), red_score
+            match["key"], "red", year, offseason, breakdown.get("red", None), red_score
         )
         blue_breakdown = clean_breakdown(
-            match["key"], year, offseason, breakdown.get("blue", None), blue_score
+            match["key"],
+            "blue",
+            year,
+            offseason,
+            breakdown.get("blue", None),
+            blue_score,
+        )
+
+        red_breakdown, blue_breakdown = post_clean_breakdown(
+            match["key"], year, red_breakdown, blue_breakdown
         )
 
         video = None
@@ -268,10 +292,22 @@ def get_event_matches(
             event_time,
         )
 
+        comp_level = CompLevel.INVALID
+        if match["comp_level"] == "qm":
+            comp_level = CompLevel.QUAL
+        elif match["comp_level"] == "ef":
+            comp_level = CompLevel.EIGHTH
+        elif match["comp_level"] == "qf":
+            comp_level = CompLevel.QUARTER
+        elif match["comp_level"] == "sf":
+            comp_level = CompLevel.SEMI
+        elif match["comp_level"] == "f":
+            comp_level = CompLevel.FINAL
+
         match_data: MatchDict = {
             "event": event,
             "key": cast(str, match["key"]),
-            "comp_level": cast(str, match["comp_level"]),
+            "comp_level": comp_level,
             "set_number": cast(int, match["set_number"]),
             "match_number": cast(int, match["match_number"]),
             "status": status,
@@ -286,7 +322,6 @@ def get_event_matches(
             "blue_3": blue_teams[2] if len(blue_teams) > 2 else None,
             "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
             "blue_surrogate": ",".join([t[3:] for t in blue_surrogate_teams]),
-            "official_winner": official_winner,
             "winner": winner,
             "time": time,
             "predicted_time": cast(Optional[int], match["predicted_time"]),

@@ -1,13 +1,14 @@
 from typing import Any, Dict, Tuple
 
 import attr
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Boolean, Float, Integer, String, Enum
+from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.types.enums import EventStatus, EventType
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
+from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS, values_callable
 
 
 class TeamEventORM(Base, ModelORM):
@@ -35,11 +36,14 @@ class TeamEventORM(Base, ModelORM):
     country: MOS = mapped_column(String(30), nullable=True)
     district: MOS = mapped_column(String(10), nullable=True)
     state: MOS = mapped_column(String(10), nullable=True)
-    type: MI = mapped_column(Integer)
+    type: Mapped[EventType] = mapped_column(
+        Enum(EventType, values_callable=values_callable)
+    )
     week: MI = mapped_column(Integer)
 
-    # Choices are 'Upcoming', 'Ongoing', 'Completed'
-    status: MS = mapped_column(String(10))
+    status: Mapped[EventStatus] = mapped_column(
+        Enum(EventStatus, values_callable=values_callable)
+    )
     first_event: MB = mapped_column(Boolean)
 
     """STATS"""
@@ -56,47 +60,68 @@ class TeamEventORM(Base, ModelORM):
     rps: MI = mapped_column(Integer, default=0)
     rps_per_match: MF = mapped_column(Float, default=0)
     rank: MOI = mapped_column(Integer, nullable=True, default=None)
-    num_teams: MI = mapped_column(Integer, default=0)
+    num_teams: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
     epa_pre_elim: MF = mapped_column(Float, default=0)
-    epa_end: MF = mapped_column(Float, default=0)
     epa_mean: MF = mapped_column(Float, default=0)
     epa_max: MF = mapped_column(Float, default=0)
-    epa_diff: MF = mapped_column(Float, default=0)
 
-    # auto_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    # auto_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
+    epa: MF = mapped_column(Float, index=True, default=0)
+    epa_sd: MF = mapped_column(Float, default=0)
+    epa_skew: MF = mapped_column(Float, default=0)
+    auto_epa: MOF = mapped_column(Float, default=None)
+    auto_epa_sd: MOF = mapped_column(Float, default=None)
+    teleop_epa: MOF = mapped_column(Float, default=None)
+    teleop_epa_sd: MOF = mapped_column(Float, default=None)
+    endgame_epa: MOF = mapped_column(Float, default=None)
+    endgame_epa_sd: MOF = mapped_column(Float, default=None)
+    rp_1_epa: MOF = mapped_column(Float, default=None)
+    rp_1_epa_sd: MOF = mapped_column(Float, default=None)
+    rp_2_epa: MOF = mapped_column(Float, default=None)
+    rp_2_epa_sd: MOF = mapped_column(Float, default=None)
+    tiebreaker_epa: MOF = mapped_column(Float, default=None)
+    tiebreaker_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_1_epa: MOF = mapped_column(Float, default=None)
+    comp_1_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_2_epa: MOF = mapped_column(Float, default=None)
+    comp_2_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_3_epa: MOF = mapped_column(Float, default=None)
+    comp_3_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_4_epa: MOF = mapped_column(Float, default=None)
+    comp_4_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_5_epa: MOF = mapped_column(Float, default=None)
+    comp_5_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_6_epa: MOF = mapped_column(Float, default=None)
+    comp_6_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_7_epa: MOF = mapped_column(Float, default=None)
+    comp_7_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_8_epa: MOF = mapped_column(Float, default=None)
+    comp_8_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_9_epa: MOF = mapped_column(Float, default=None)
+    comp_9_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_10_epa: MOF = mapped_column(Float, default=None)
+    comp_10_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_11_epa: MOF = mapped_column(Float, default=None)
+    comp_11_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_12_epa: MOF = mapped_column(Float, default=None)
+    comp_12_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_13_epa: MOF = mapped_column(Float, default=None)
+    comp_13_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_14_epa: MOF = mapped_column(Float, default=None)
+    comp_14_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_15_epa: MOF = mapped_column(Float, default=None)
+    comp_15_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_16_epa: MOF = mapped_column(Float, default=None)
+    comp_16_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_17_epa: MOF = mapped_column(Float, default=None)
+    comp_17_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_18_epa: MOF = mapped_column(Float, default=None)
+    comp_18_epa_sd: MOF = mapped_column(Float, default=None)
 
-    # teleop_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    # teleop_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
-
-    # endgame_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_pre_elim: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    # endgame_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
-
-    rp_1_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
-
-    rp_2_epa_start: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
-
-    # TODO: populate unitless_epa_end, make not nullable
-    # unitless_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
-    # norm_epa_end: MOF = mapped_column(Float, nullable=True, default=None)
+    unitless_epa: MF = mapped_column(Float, default=0)
+    norm_epa: MOF = mapped_column(Float, default=0)
 
 
 _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
@@ -122,4 +147,6 @@ class TeamEvent(_TeamEvent, Model):
 
     def __str__(self: "TeamEvent") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.team}_{self.event}_{self.status}_{self.count}_{self.rank}"
+        return "_".join(
+            [self.team, self.event, str(self.status), str(self.count), str(self.rank)]
+        )

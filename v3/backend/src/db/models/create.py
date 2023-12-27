@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+from src.types.enums import AllianceColor, CompLevel
 from src.db.models.alliance import Alliance
 from src.db.models.match import Match
 from src.db.models.team_match import TeamMatch
@@ -9,7 +10,7 @@ from src.tba.read_tba import MatchDict
 def match_dict_to_objs(
     data: MatchDict, year: int, week: int, offseason: bool
 ) -> Tuple[Match, List[Alliance], List[TeamMatch]]:
-    elim = data["comp_level"] != "qm"
+    elim = data["comp_level"] != CompLevel.QUAL
 
     red_breakdown = data["red_score_breakdown"]
     blue_breakdown = data["blue_score_breakdown"]
@@ -43,32 +44,26 @@ def match_dict_to_objs(
         red_no_foul=red_breakdown["no_foul_points"],
         red_rp_1=red_breakdown["rp_1"],
         red_rp_2=red_breakdown["rp_2"],
-        red_tiebreaker=red_breakdown["tiebreaker"],
         blue_score=data["blue_score"],
         blue_no_foul=blue_breakdown["no_foul_points"],
         blue_rp_1=blue_breakdown["rp_1"],
         blue_rp_2=blue_breakdown["rp_2"],
-        blue_tiebreaker=blue_breakdown["tiebreaker"],
     )
 
     alliances: List[Alliance] = []
     team_matches: List[TeamMatch] = []
 
-    for alliance in ["red", "blue"]:
-        breakdown = (
-            data["red_score_breakdown"]
-            if alliance == "red"
-            else data["blue_score_breakdown"]
-        )
+    for alliance in [AllianceColor.RED, AllianceColor.BLUE]:
+        breakdown = data["red_score_breakdown"]
+        team_1, team_2, team_3 = data["red_1"], data["red_2"], data["red_3"]
+        dq, surrogate = data["red_dq"], data["red_surrogate"]
+        score = data["red_score"]
 
-        team_1 = data["red_1"] if alliance == "red" else data["blue_1"]
-        team_2 = data["red_2"] if alliance == "red" else data["blue_2"]
-        team_3 = data["red_3"] if alliance == "red" else data["blue_3"]
-        dq = data["red_dq"] if alliance == "red" else data["blue_dq"]
-        surrogate = (
-            data["red_surrogate"] if alliance == "red" else data["blue_surrogate"]
-        )
-        score = data["red_score"] if alliance == "red" else data["blue_score"]
+        if alliance == AllianceColor.BLUE:
+            breakdown = data["blue_score_breakdown"]
+            team_1, team_2, team_3 = data["blue_1"], data["blue_2"], data["blue_3"]
+            dq, surrogate = data["blue_dq"], data["blue_surrogate"]
+            score = data["blue_score"]
 
         alliances.append(
             Alliance(
@@ -87,7 +82,6 @@ def match_dict_to_objs(
                 team_3=team_3,
                 dq=dq,
                 surrogate=surrogate,
-                official_winner=data["official_winner"],
                 winner=data["winner"],
                 score=score,
                 no_foul=breakdown["no_foul_points"],
@@ -98,18 +92,25 @@ def match_dict_to_objs(
                 rp_1=breakdown["rp_1"],
                 rp_2=breakdown["rp_2"],
                 tiebreaker=breakdown["tiebreaker"],
-                match_comp_1=breakdown["match_comp_1"],
-                match_comp_2=breakdown["match_comp_2"],
-                match_comp_3=breakdown["match_comp_3"],
-                match_comp_4=breakdown["match_comp_4"],
-                match_comp_5=breakdown["match_comp_5"],
-                match_comp_6=breakdown["match_comp_6"],
-                match_comp_7=breakdown["match_comp_7"],
-                match_comp_8=breakdown["match_comp_8"],
-                match_comp_9=breakdown["match_comp_9"],
-                match_comp_10=breakdown["match_comp_10"],
-                match_comp_11=breakdown["match_comp_11"],
-                match_comp_12=breakdown["match_comp_12"],
+                comp_1=breakdown["comp_1"],
+                comp_2=breakdown["comp_2"],
+                comp_3=breakdown["comp_3"],
+                comp_4=breakdown["comp_4"],
+                comp_5=breakdown["comp_5"],
+                comp_6=breakdown["comp_6"],
+                comp_7=breakdown["comp_7"],
+                comp_8=breakdown["comp_8"],
+                comp_9=breakdown["comp_9"],
+                comp_10=breakdown["comp_10"],
+                comp_11=breakdown["comp_11"],
+                comp_12=breakdown["comp_12"],
+                comp_13=breakdown["comp_13"],
+                comp_14=breakdown["comp_14"],
+                comp_15=breakdown["comp_15"],
+                comp_16=breakdown["comp_16"],
+                comp_17=breakdown["comp_17"],
+                comp_18=breakdown["comp_18"],
+                incomplete_breakdown=breakdown["incomplete_breakdown"],
             )
         )
 
