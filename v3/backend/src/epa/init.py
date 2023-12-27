@@ -41,26 +41,28 @@ def norm_epa_to_next_season_epa(
 def get_init_epa(
     year: Year, team_year_1: Optional[TeamYear], team_year_2: Optional[TeamYear]
 ) -> Rating:
-    num_teams, curr_mean, curr_sd, _rp_1_seed, _rp_2_seed = get_constants(year)
+    num_teams, year_mean, year_sd, _rp_1_seed, _rp_2_seed = get_constants(year)
 
-    norm_epa_1 = norm_epa_2 = NORM_MEAN - INIT_PENALTY * NORM_SD
+    INIT_EPA = NORM_MEAN - INIT_PENALTY * NORM_SD
+    norm_epa_1 = norm_epa_2 = INIT_EPA
     if team_year_1 is not None and team_year_1.norm_epa is not None:
         norm_epa_1 = team_year_1.norm_epa
     if team_year_2 is not None and team_year_2.norm_epa is not None:
         norm_epa_2 = team_year_2.norm_epa
 
     prev_norm_epa = YEAR_ONE_WEIGHT * norm_epa_1 + (1 - YEAR_ONE_WEIGHT) * norm_epa_2
-    curr_norm_epa = (1 - MEAN_REVERSION) * prev_norm_epa + MEAN_REVERSION * NORM_MEAN
+    curr_norm_epa = (1 - MEAN_REVERSION) * prev_norm_epa + MEAN_REVERSION * INIT_EPA
 
     curr_epa_z_score = (curr_norm_epa - NORM_MEAN) / NORM_SD
 
     # enforces starting EPA >= 0
-    curr_epa_z_score = max(-curr_mean / num_teams / curr_sd, curr_epa_z_score)
+    curr_epa_z_score = max(-year_mean / num_teams / year_sd, curr_epa_z_score)
 
     mean = year.get_mean_components()
-    sd = year.get_sd_components()
+    sd_frac = (year_sd or 0) / (year_mean or 1)
+    sd = mean * sd_frac
 
-    curr_epa_mean = mean / num_teams + curr_sd * curr_epa_z_score
+    curr_epa_mean = mean / num_teams + sd * curr_epa_z_score
     curr_epa_sd = sd / num_teams
 
     return Rating(SkewNormal(curr_epa_mean, curr_epa_sd, 0), 0, 0)

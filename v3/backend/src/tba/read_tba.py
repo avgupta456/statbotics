@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple, cast
 
 from src.types.enums import EventType, MatchStatus, MatchWinner, CompLevel
-from src.tba.breakdown import clean_breakdown
+from src.tba.breakdown import clean_breakdown, post_clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
@@ -262,10 +262,19 @@ def get_event_matches(
 
         breakdown = match.get("score_breakdown", {}) or {}
         red_breakdown = clean_breakdown(
-            match["key"], year, offseason, breakdown.get("red", None), red_score
+            match["key"], "red", year, offseason, breakdown.get("red", None), red_score
         )
         blue_breakdown = clean_breakdown(
-            match["key"], year, offseason, breakdown.get("blue", None), blue_score
+            match["key"],
+            "blue",
+            year,
+            offseason,
+            breakdown.get("blue", None),
+            blue_score,
+        )
+
+        red_breakdown, blue_breakdown = post_clean_breakdown(
+            match["key"], year, red_breakdown, blue_breakdown
         )
 
         video = None

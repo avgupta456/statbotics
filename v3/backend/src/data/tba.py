@@ -10,7 +10,7 @@ from src.db.functions import (
     update_team_offseason,
 )
 from src.db.models import ETag, Event, Team, TeamEvent, TeamYear, match_dict_to_objs
-from src.tba.constants import DISTRICT_MAPPING, OFFSEASON_TEAMS
+from src.tba.constants import DISTRICT_MAPPING, PLACEHOLDER_TEAMS
 from src.tba.read_tba import (
     MatchDict,
     EventDict,
@@ -365,6 +365,9 @@ def process_year(
                 num_teams=len(rankings),
             )
 
+            if team_event_obj.num_teams == 0:
+                team_event_obj.num_teams = None
+
             team_event_objs_dict[team_event_obj.pk()] = team_event_obj
 
         event_obj.current_match = current_match
@@ -381,7 +384,7 @@ def process_year(
     # Just a dictionary of teams mapping to their offseason status
     for team in offseason_teams:
         team_obj = teams_dict[team]
-        offseason = offseason_teams[team] or team in OFFSEASON_TEAMS
+        offseason = offseason_teams[team] or team in PLACEHOLDER_TEAMS
         competing_this_week = team_competing_this_week_dict.get(team, False)
         next_event = team_next_event_dict.get(team, (None, None, None))
         team_year_obj = TeamYear(

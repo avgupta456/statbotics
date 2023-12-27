@@ -79,7 +79,7 @@ all_keys[2019] = [
     "rocket_cargo_top",
     "hab_climb_points",
     # computed
-    "rocket_mid_top",
+    "rocket",
     "hatch",
     "cargo",
     "auto_points",
@@ -259,8 +259,10 @@ def expand_breakdown(
         breakdown["endgame_points"] = breakdown["endgame_points"]
 
     elif year == 2019:
-        breakdown["rocket_mid_top"] = (
-            breakdown["rocket_hatch_mid"]
+        breakdown["rocket"] = (
+            breakdown["rocket_hatch_low"]
+            + breakdown["rocket_cargo_low"]
+            + breakdown["rocket_hatch_mid"]
             + breakdown["rocket_cargo_mid"]
             + breakdown["rocket_hatch_top"]
             + breakdown["rocket_cargo_top"]
@@ -514,13 +516,13 @@ def get_pred_rps(
         hab_points_mean = breakdown_mean[keys.index("hab_climb_points")]
         hab_points_sd = breakdown_sd[keys.index("hab_climb_points")]
 
-        rocket_mid_top_mean = breakdown_mean[keys.index("rocket_mid_top")]
-        rocket_mid_top_sd = breakdown_sd[keys.index("rocket_mid_top")]
+        rocket_mean = breakdown_mean[keys.index("rocket")]
+        rocket_sd = breakdown_sd[keys.index("rocket")]
 
         rp_1 = t_prob_gt_0(hab_points_mean - 15 * DISCOUNT, hab_points_sd)
 
         # assume bottom is easy, top is attempted less since no incentive
-        rp_2 = t_prob_gt_0(rocket_mid_top_mean - 8 * DISCOUNT, rocket_mid_top_sd)
+        rp_2 = t_prob_gt_0(rocket_mean - 12 * DISCOUNT, rocket_sd)
 
     elif year == 2020:
         endgame_points_mean = breakdown_mean[keys.index("endgame_points")]

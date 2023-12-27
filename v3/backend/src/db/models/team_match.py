@@ -67,6 +67,12 @@ class TeamMatchORM(Base, ModelORM):
     comp_10_epa: MOF = mapped_column(Float, nullable=True, default=None)
     comp_11_epa: MOF = mapped_column(Float, nullable=True, default=None)
     comp_12_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_13_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_14_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_15_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_16_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_17_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_18_epa: MOF = mapped_column(Float, nullable=True, default=None)
     post_epa: MOF = mapped_column(Float, nullable=True, default=None)
 
 

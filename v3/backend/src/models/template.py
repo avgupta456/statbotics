@@ -2,9 +2,14 @@ from typing import Dict, Tuple
 
 from src.models.types import Attribution, MatchPred, AlliancePred
 from src.db.models import Year, TeamYear, Match, Alliance, TeamMatch, TeamEvent
+from src.tba.constants import PLACEHOLDER_TEAMS
 
 
 class Model:
+    year_obj: Year
+    year_num: int
+    num_teams: int
+
     def __init__(self):
         pass
 
@@ -14,7 +19,9 @@ class Model:
         all_team_years: Dict[int, Dict[str, TeamYear]],
         team_years: Dict[str, TeamYear],
     ) -> None:
-        pass
+        self.year_obj = year
+        self.year_num = year.year
+        self.num_teams = 2 if year.year <= 2004 else 3
 
     def predict_match(self, match: Match) -> Tuple[float, AlliancePred, AlliancePred]:
         raise NotImplementedError
@@ -70,12 +77,23 @@ class Model:
         attributions = self.attribute_match(
             match, red_alliance, blue_alliance, red_pred, blue_pred
         )
+
+        # Don't update if 1) placeholder match, 2) elim dq, 3) offseason
+        teams = set(match.get_red() + match.get_blue())
+        placeholder_match = len(set(PLACEHOLDER_TEAMS).intersection(teams)) > 0
+        elim_dq = match.elim and (
+            len(match.get_red_dqs()) >= self.num_teams
+            or len(match.get_blue_dqs()) >= self.num_teams
+        )
+        skip_update = placeholder_match or elim_dq or match.offseason
+
         for team, attr in attributions.items():
             team_match = team_matches[team]
             team_event = team_events[team]
             team_year = team_years[team]
             self.pre_record_team(team, team_match, team_event, team_year)
-            self.update_team(team, attr, match, team_match)
+            if not skip_update:
+                self.update_team(team, attr, match, team_match)
             self.post_record_team(team, team_match, team_event, team_year)
 
         self.record_match(match, match_pred)

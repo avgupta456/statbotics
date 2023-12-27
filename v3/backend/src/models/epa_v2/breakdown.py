@@ -1,191 +1,21 @@
-from collections import defaultdict
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 
-from src.models.epa_v2.math import t_prob_gt_0, unit_sigmoid, zero_sigmoid
+from src.models.epa_v2.math import t_prob_gt_0, zero_sigmoid
+from src.tba.breakdown import all_keys
 
-# Always put total_points first
-all_keys: Dict[int, List[str]] = defaultdict(lambda: ["no_foul_points", "foul_points"])
-all_keys[2016] = [
-    "no_foul_points",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-    "auto_reach_points",
-    "auto_crossing_points",
-    "auto_low_boulders",
-    "auto_high_boulders",
-    "teleop_crossing_points",
-    "teleop_low_boulders",
-    "teleop_high_boulders",
-    "challenge_points",
-    "scale_points",
-    "defenses",
-    "boulders",
-    "empty",
-]
-all_keys[2017] = [
-    "no_foul_points",
-    "foul_points",
-    "auto_mobility_points",
-    "auto_fuel_low",
-    "auto_fuel_high",
-    "auto_rotor_points",
-    "teleop_fuel_low",
-    "teleop_fuel_high",
-    "teleop_rotor_points",
-    "takeoff_points",
-    # computed
-    "kpa",
-    "gears",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-]
-all_keys[2018] = [
-    "no_foul_points",
-    "foul_points",
-    "auto_run_points",
-    "auto_switch_secs",
-    "auto_scale_secs",
-    "teleop_switch_secs",
-    "teleop_scale_secs",
-    "vault_points",
-    "endgame_points",
-    # computed
-    "switch_power",
-    "scale_power",
-    "opp_switch_power",
-    "rp_1_power",
-    "rp_2_power",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-]
-all_keys[2019] = [
-    "no_foul_points",
-    "foul_points",
-    "sandstorm_points",
-    "bay_hatch",
-    "bay_cargo",
-    "rocket_hatch_low",
-    "rocket_hatch_mid",
-    "rocket_hatch_top",
-    "rocket_cargo_low",
-    "rocket_cargo_mid",
-    "rocket_cargo_top",
-    "hab_climb_points",
-    # computed
-    "rocket_mid_top",
-    "hatch",
-    "cargo",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-]
-all_keys[2020] = [
-    "no_foul_points",
-    "foul_points",
-    "auto_init_line_points",
-    "auto_cells_bottom",
-    "auto_cells_outer",
-    "auto_cells_inner",
-    "teleop_cells_bottom",
-    "teleop_cells_outer",
-    "teleop_cells_inner",
-    "control_panel_points",
-    "endgame_points",
-    # computed
-    "cells",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-]
-all_keys[2022] = [
-    "no_foul_points",
-    "foul_points",
-    "auto_taxi_points",
-    "auto_cargo_lower",
-    "auto_cargo_upper",
-    "teleop_cargo_lower",
-    "teleop_cargo_upper",
-    "endgame_points",
-    # computed
-    "cargo",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-]
-all_keys[2023] = [
-    "no_foul_points",
-    "foul_points",
-    "auto_mobility_points",
-    "auto_charge_station_points",
-    "auto_low_cubes",
-    "auto_low_cones",
-    "auto_mid_cubes",
-    "auto_mid_cones",
-    "auto_high_cubes",
-    "auto_high_cones",
-    "teleop_low_cubes",
-    "teleop_low_cones",
-    "teleop_mid_cubes",
-    "teleop_mid_cones",
-    "teleop_high_cubes",
-    "teleop_high_cones",
-    "links",
-    "endgame_charge_station_points",
-    "endgame_park_points",
-    # computed
-    "charge_station_points",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-]
+for year in range(2002, 2024):
+    if len(all_keys[year]) > 23:
+        # 5 standard (total, auto, teleop, endgame, tiebreaker) + 18 components
+        raise ValueError(f"Too many keys for year {year}")
+    all_keys[year] += ["empty"] * (23 - len(all_keys[year]))
 
 
 def expand_breakdown(
     year: int, breakdown: Dict[str, int | float], opp_breakdown: Dict[str, int | float]
 ) -> Any:
-    if year == 2017:
-        breakdown["kpa"] = (
-            breakdown["auto_fuel_low"] / 3
-            + breakdown["auto_fuel_high"]
-            + breakdown["teleop_fuel_low"] / 9
-            + breakdown["teleop_fuel_high"] / 3
-        )
-
-        num_rotors = breakdown["teleop_rotor_points"] // 40
-        num_gears = (
-            (1 if num_rotors >= 1 else 0)
-            + (2 if num_rotors >= 2 else 0)
-            + (4 if num_rotors >= 3 else 0)
-            + (6 if num_rotors >= 4 else 0)
-        )
-
-        # Alliances often scored 3.x rotors, but truncated
-        if num_rotors == 3:
-            num_gears += 2
-
-        breakdown["gears"] = num_gears
-
-        breakdown["auto_points"] = (
-            breakdown["auto_mobility_points"]
-            + breakdown["auto_fuel_low"] / 3
-            + breakdown["auto_fuel_high"]
-            + breakdown["auto_rotor_points"]
-        )
-
-        breakdown["teleop_points"] = (
-            breakdown["teleop_fuel_low"] / 9
-            + breakdown["teleop_fuel_high"] / 3
-            + breakdown["teleop_rotor_points"]
-        )
-
-        breakdown["endgame_points"] = breakdown["takeoff_points"]
-
-    elif year == 2018:
+    if year == 2018:
         my_switch_secs = breakdown["teleop_switch_secs"]
         my_scale_secs = breakdown["teleop_scale_secs"]
         my_opp_switch_secs = 145 - opp_breakdown["teleop_switch_secs"]
@@ -196,133 +26,6 @@ def expand_breakdown(
         breakdown["switch_power"] = min(1, my_switch_secs / 145)
         breakdown["scale_power"] = min(1, my_scale_secs / total_scale_secs)
         breakdown["opp_switch_power"] = min(1, my_opp_switch_secs / 145)
-
-        breakdown["rp_1_power"] = breakdown["rp_1"]
-        breakdown["rp_2_power"] = breakdown["rp_2"]
-
-        breakdown["auto_points"] = (
-            breakdown["auto_run_points"]
-            + 2 * breakdown["auto_switch_secs"]
-            + 2 * breakdown["auto_scale_secs"]
-        )
-
-        breakdown["teleop_points"] = (
-            breakdown["teleop_switch_secs"]
-            + breakdown["teleop_scale_secs"]
-            + breakdown["vault_points"]
-        )
-
-        breakdown["endgame_points"] = breakdown["endgame_points"]
-
-    elif year == 2019:
-        breakdown["rocket_mid_top"] = (
-            breakdown["rocket_hatch_mid"]
-            + breakdown["rocket_cargo_mid"]
-            + breakdown["rocket_hatch_top"]
-            + breakdown["rocket_cargo_top"]
-        )
-
-        breakdown["hatch"] = (
-            breakdown["bay_hatch"]
-            + breakdown["rocket_hatch_low"]
-            + breakdown["rocket_hatch_mid"]
-            + breakdown["rocket_hatch_top"]
-        )
-
-        breakdown["cargo"] = (
-            breakdown["bay_cargo"]
-            + breakdown["rocket_cargo_low"]
-            + breakdown["rocket_cargo_mid"]
-            + breakdown["rocket_cargo_top"]
-        )
-
-        breakdown["auto_points"] = breakdown["sandstorm_points"]
-
-        breakdown["teleop_points"] = (
-            2 * breakdown["bay_hatch"]
-            + 3 * breakdown["bay_cargo"]
-            + 2 * breakdown["rocket_hatch_low"]
-            + 2 * breakdown["rocket_hatch_mid"]
-            + 2 * breakdown["rocket_hatch_top"]
-            + 3 * breakdown["rocket_cargo_low"]
-            + 3 * breakdown["rocket_cargo_mid"]
-            + 3 * breakdown["rocket_cargo_top"]
-        )
-
-        breakdown["endgame_points"] = breakdown["hab_climb_points"]
-
-    elif year == 2020:
-        breakdown["cells"] = (
-            breakdown["auto_cells_bottom"]
-            + breakdown["auto_cells_outer"]
-            + breakdown["auto_cells_inner"]
-            + breakdown["teleop_cells_bottom"]
-            + breakdown["teleop_cells_outer"]
-            + breakdown["teleop_cells_inner"]
-        )
-
-        breakdown["auto_points"] = (
-            breakdown["auto_init_line_points"]
-            + 2 * breakdown["auto_cells_bottom"]
-            + 4 * breakdown["auto_cells_outer"]
-            + 6 * breakdown["auto_cells_inner"]
-        )
-
-        breakdown["teleop_points"] = (
-            breakdown["teleop_cells_bottom"]
-            + 2 * breakdown["teleop_cells_outer"]
-            + 3 * breakdown["teleop_cells_inner"]
-        )
-
-    elif year == 2022:
-        breakdown["cargo"] = (
-            breakdown["auto_cargo_lower"]
-            + breakdown["auto_cargo_upper"]
-            + breakdown["teleop_cargo_lower"]
-            + breakdown["teleop_cargo_upper"]
-        )
-
-        breakdown["auto_points"] = (
-            breakdown["auto_taxi_points"]
-            + 2 * breakdown["auto_cargo_lower"]
-            + 4 * breakdown["auto_cargo_upper"]
-        )
-
-        breakdown["teleop_points"] = (
-            1 * breakdown["teleop_cargo_lower"] + 2 * breakdown["teleop_cargo_upper"]
-        )
-
-    elif year == 2023:
-        breakdown["charge_station_points"] = (
-            breakdown["auto_charge_station_points"]
-            + breakdown["endgame_charge_station_points"]
-        )
-
-        breakdown["auto_points"] = (
-            breakdown["auto_mobility_points"]
-            + breakdown["auto_charge_station_points"]
-            + 3 * breakdown["auto_low_cubes"]
-            + 3 * breakdown["auto_low_cones"]
-            + 4 * breakdown["auto_mid_cubes"]
-            + 4 * breakdown["auto_mid_cones"]
-            + 6 * breakdown["auto_high_cubes"]
-            + 6 * breakdown["auto_high_cones"]
-        )
-
-        breakdown["teleop_points"] = (
-            2 * breakdown["teleop_low_cubes"]
-            + 2 * breakdown["teleop_low_cones"]
-            + 3 * breakdown["teleop_mid_cubes"]
-            + 3 * breakdown["teleop_mid_cones"]
-            + 5 * breakdown["teleop_high_cubes"]
-            + 5 * breakdown["teleop_high_cones"]
-            + 5 * breakdown["links"]
-        )
-
-        breakdown["endgame_points"] = (
-            breakdown["endgame_charge_station_points"]
-            + breakdown["endgame_park_points"]
-        )
 
     return np.array([breakdown[k] for k in all_keys[year]])
 
@@ -335,13 +38,7 @@ def post_process_breakdown(
     keys = all_keys[year]
     total_change = 0
 
-    if year == 2016:
-        # rp_2_power = breakdown[keys.index("rp_2_power")]
-        # new_rp_2_power = unit_sigmoid(rp_2_power)
-
-        # breakdown[keys.index("rp_2_power")] = new_rp_2_power
-        pass
-    elif year == 2018:
+    if year == 2018:
         my_switch_power = breakdown[keys.index("switch_power")]
         opp_opp_switch_power = opp_breakdown[keys.index("opp_switch_power")]
         new_switch_power = zero_sigmoid(my_switch_power - opp_opp_switch_power)
@@ -354,17 +51,9 @@ def post_process_breakdown(
         opp_switch_power = opp_breakdown[keys.index("switch_power")]
         new_opp_switch_power = zero_sigmoid(my_opp_switch_power - opp_switch_power)
 
-        rp_1_power = breakdown[keys.index("rp_1_power")]
-        new_rp_1_power = unit_sigmoid(rp_1_power)
-
-        rp_2_power = breakdown[keys.index("rp_2_power")]
-        new_rp_2_power = unit_sigmoid(rp_2_power)
-
         breakdown[keys.index("switch_power")] = new_switch_power
         breakdown[keys.index("scale_power")] = new_scale_power
         breakdown[keys.index("opp_switch_power")] = new_opp_switch_power
-        breakdown[keys.index("rp_1_power")] = new_rp_1_power
-        breakdown[keys.index("rp_2_power")] = new_rp_2_power
 
     elif year == 2023:
         # ahcui = Auto High CUbes Index, etc
@@ -529,7 +218,6 @@ def get_score_from_breakdown(
     # TODO: Compute and return standard deviation as well
 
     score = 0
-
     keys = all_keys[year]
     if year == 2016:
         score += min(6, breakdown[keys.index("auto_reach_points")])
@@ -540,7 +228,6 @@ def get_score_from_breakdown(
         score += 2 * breakdown[keys.index("teleop_low_boulders")]
         score += 5 * breakdown[keys.index("teleop_high_boulders")]
         score += min(45, breakdown[keys.index("endgame_points")])
-
         if elim:
             score += rp_1_pred * 20
             score += rp_2_pred * 25
@@ -650,13 +337,5 @@ def post_process_attrib(year: int, epa: Any, attrib: Any, elim: bool) -> Any:
             + attrib[teleop_index]
             + epa[keys.index("endgame_points")]
         )
-
-        if elim:
-            # Don't update RP score during elim match
-            rp_1_index = keys.index("rp_1_power")
-            attrib[rp_1_index] = epa[rp_1_index]
-
-            rp_2_index = keys.index("rp_2_power")
-            attrib[rp_2_index] = epa[rp_2_index]
 
     return attrib

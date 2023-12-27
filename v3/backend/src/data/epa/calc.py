@@ -102,11 +102,11 @@ def process_year(
     #         rating = get_init_epa(year, past_team_year_1, past_team_year_2)
 
     #         team_epas[num] = rating
-    #         team_year.epa_start = round(rating.epa.mean[0], 2)
+    #         team_year.epa_start = r(rating.epa.mean[0], 2)
 
     #         if USE_COMPONENTS:
-    #             team_year.rp_1_epa_start = round(rating.rp_1 or -1, 4)
-    #             team_year.rp_2_epa_start = round(rating.rp_2 or -1, 4)
+    #             team_year.rp_1_epa_start = r(rating.rp_1 or -1, 4)
+    #             team_year.rp_2_epa_start = r(rating.rp_2 or -1, 4)
 
     #     # MATCHES
     #     sorted_matches = sorted(matches.values(), key=lambda m: m.sort())
@@ -137,8 +137,8 @@ def process_year(
     #         red_epa_sum = sum([x.epa.mean[0] for x in red_epa_pre.values()])
     #         blue_epa_sum = sum([x.epa.mean[0] for x in blue_epa_pre.values()])
 
-    #         m.red_score_pred = round(red_epa_sum, 2)
-    #         m.blue_score_pred = round(blue_epa_sum, 2)
+    #         m.red_score_pred = r(red_epa_sum, 2)
+    #         m.blue_score_pred = r(blue_epa_sum, 2)
 
     #         if USE_COMPONENTS:
     #             red_rp_1_epa_sum = sum([x.rp_1 or 0 for x in red_epa_pre.values()])
@@ -146,15 +146,15 @@ def process_year(
     #             red_rp_2_epa_sum = sum([x.rp_2 or 0 for x in red_epa_pre.values()])
     #             blue_rp_2_epa_sum = sum([x.rp_2 or 0 for x in blue_epa_pre.values()])
 
-    #             m.red_rp_1_pred = round(sigmoid(red_rp_1_epa_sum), 4)
-    #             m.blue_rp_1_pred = round(sigmoid(blue_rp_1_epa_sum), 4)
-    #             m.red_rp_2_pred = round(sigmoid(red_rp_2_epa_sum), 4)
-    #             m.blue_rp_2_pred = round(sigmoid(blue_rp_2_epa_sum), 4)
+    #             m.red_rp_1_pred = r(sigmoid(red_rp_1_epa_sum), 4)
+    #             m.blue_rp_1_pred = r(sigmoid(blue_rp_1_epa_sum), 4)
+    #             m.red_rp_2_pred = r(sigmoid(red_rp_2_epa_sum), 4)
+    #             m.blue_rp_2_pred = r(sigmoid(blue_rp_2_epa_sum), 4)
 
     #         norm_diff = (m.red_score_pred - m.blue_score_pred) / sd
     #         win_prob = 1 / (1 + 10 ** (K * norm_diff))
 
-    #         m.epa_win_prob = round(win_prob, 4)
+    #         m.epa_win_prob = r(win_prob, 4)
     #         m.epa_winner = MatchWinner.RED if win_prob >= 0.5 else MatchWinner.BLUE
 
     #         if m.status != MatchStatus.COMPLETED:
@@ -172,7 +172,7 @@ def process_year(
     #         blue_rp_2_err = (m.blue_rp_2 or 0) - (m.blue_rp_2_pred or 0)
 
     #         # If any, do not update EPA values
-    #         placeholder_match = len(set(OFFSEASON_TEAMS).intersection(set(red + blue))) > 0
+    #         placeholder_match = len(set(PLACEHOLDER_TEAMS).intersection(set(red + blue))) > 0
     #         elim_dq = m.elim and (
     #             len(m.get_red_dqs()) == NUM_TEAMS or len(m.get_blue_dqs()) == NUM_TEAMS
     #         )
@@ -209,12 +209,12 @@ def process_year(
     # for team_match in team_matches.values():
     #     team_match_key = get_team_match_key(team_match.team, team_match.match)
     #     rating = team_match_ids.get(team_match_key, None)
-    #     team_match.epa = round(rating.epa.mean[0] if rating else -1, 2)
+    #     team_match.epa = r(rating.epa.mean[0] if rating else -1, 2)
     #     if team_match.status == MatchStatus.COMPLETED:
-    #         team_match.post_epa = round(team_match_ids_post.get(team_match_key, -1), 2)
+    #         team_match.post_epa = r(team_match_ids_post.get(team_match_key, -1), 2)
 
     #     if USE_COMPONENTS:
-    #         team_match.rp_1_epa = round(rating.rp_1 or -1 if rating else -1, 4)
-    #         team_match.rp_2_epa = round(rating.rp_2 or -1 if rating else -1, 4)
+    #         team_match.rp_1_epa = r(rating.rp_1 or -1 if rating else -1, 4)
+    #         team_match.rp_2_epa = r(rating.rp_2 or -1 if rating else -1, 4)
 
     # return objs

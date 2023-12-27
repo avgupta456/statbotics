@@ -20,45 +20,31 @@ class YearORM(Base, ModelORM):
     score_mean: MF = mapped_column(Float, default=0)
     score_sd: MF = mapped_column(Float, default=0)
     foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    foul_sd: MOF = mapped_column(Float, nullable=True, default=None)
     no_foul_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    no_foul_sd: MOF = mapped_column(Float, nullable=True, default=None)
     auto_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    auto_sd: MOF = mapped_column(Float, nullable=True, default=None)
     teleop_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    teleop_sd: MOF = mapped_column(Float, nullable=True, default=None)
     endgame_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    endgame_sd: MOF = mapped_column(Float, nullable=True, default=None)
     rp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_1_sd: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    rp_2_sd: MOF = mapped_column(Float, nullable=True, default=None)
     tiebreaker_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    tiebreaker_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_1_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_1_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_2_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_2_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_3_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_3_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_4_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_4_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_5_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_5_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_6_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_6_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_7_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_7_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_8_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_8_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_9_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_9_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_10_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_10_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_11_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_11_sd: MOF = mapped_column(Float, nullable=True, default=None)
     comp_12_mean: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_12_sd: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_13_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_14_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_15_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_16_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_17_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_18_mean: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
@@ -151,6 +137,36 @@ class YearORM(Base, ModelORM):
     comp_12_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
     comp_12_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
+    comp_13_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_13_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_13_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_13_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_14_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_14_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_14_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_14_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_15_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_15_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_15_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_15_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_16_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_16_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_16_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_16_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_17_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_17_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_17_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_17_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_18_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_18_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_18_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_18_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
     """WIN PROB PRED"""
     count: MI = mapped_column(Integer, default=0)
     epa_conf: MOF = mapped_column(Float, nullable=True, default=None)
@@ -237,30 +253,11 @@ class Year(_Year, Model):
                 self.comp_10_mean,
                 self.comp_11_mean,
                 self.comp_12_mean,
-            ]
-        )
-
-    def get_sd_components(self: "Year") -> Any:
-        if self.year < 2016:
-            return np.array([self.score_sd])
-        return np.array(
-            [
-                self.no_foul_sd,
-                self.auto_sd,
-                self.teleop_sd,
-                self.endgame_sd,
-                self.tiebreaker_sd,
-                self.comp_1_sd,
-                self.comp_2_sd,
-                self.comp_3_sd,
-                self.comp_4_sd,
-                self.comp_5_sd,
-                self.comp_6_sd,
-                self.comp_7_sd,
-                self.comp_8_sd,
-                self.comp_9_sd,
-                self.comp_10_sd,
-                self.comp_11_sd,
-                self.comp_12_sd,
+                self.comp_13_mean,
+                self.comp_14_mean,
+                self.comp_15_mean,
+                self.comp_16_mean,
+                self.comp_17_mean,
+                self.comp_18_mean,
             ]
         )

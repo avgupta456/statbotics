@@ -7,6 +7,7 @@ from src.data.epa.calc import process_year as process_year_calc
 from src.data.epa.metrics import process_year as process_year_metrics
 from src.data.utils import objs_type
 from src.db.models import Team, TeamYear
+from src.utils.utils import r
 
 
 # MAIN FUNCTION
@@ -44,9 +45,9 @@ def post_process(
                 recent.append(years[year])
         r_y, y = len(recent), len(keys)
 
-        team.norm_epa = None if y == 0 else round(years[max(keys)])
-        team.norm_epa_recent = None if r_y == 0 else round(sum(recent) / r_y)
-        team.norm_epa_mean = None if y == 0 else round(sum(values) / y)
-        team.norm_epa_max = None if y == 0 else round(max(values))
+        team.norm_epa = None if y == 0 else r(years[max(keys)])
+        team.norm_epa_recent = None if r_y == 0 else r(sum(recent) / r_y)
+        team.norm_epa_mean = None if y == 0 else r(sum(values) / y)
+        team.norm_epa_max = None if y == 0 else r(max(values))
 
     return teams

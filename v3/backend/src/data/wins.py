@@ -5,10 +5,11 @@ from src.types.enums import MatchStatus, MatchWinner
 from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.models import Team, TeamYear
+from src.utils.utils import r
 
 
 def winrate(wins: int, ties: int, count: int) -> float:
-    return round((wins + ties / 2) / max(1, count), 4)
+    return r((wins + ties / 2) / max(1, count), 4)
 
 
 TRecord = Tuple[int, int, int, int]
@@ -129,7 +130,7 @@ def process_year(objs: objs_type) -> objs_type:
 
         total_rps, count = te_rps[(team_event.team, team_event.event)]
         team_event.rps = total_rps
-        team_event.rps_per_match = round(total_rps / max(1, count), 4)
+        team_event.rps_per_match = r(total_rps / max(1, count), 4)
 
     return objs
 

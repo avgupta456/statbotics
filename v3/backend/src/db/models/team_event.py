@@ -60,7 +60,7 @@ class TeamEventORM(Base, ModelORM):
     rps: MI = mapped_column(Integer, default=0)
     rps_per_match: MF = mapped_column(Float, default=0)
     rank: MOI = mapped_column(Integer, nullable=True, default=None)
-    num_teams: MI = mapped_column(Integer, default=0)
+    num_teams: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
@@ -107,6 +107,18 @@ class TeamEventORM(Base, ModelORM):
     comp_11_epa_sd: MOF = mapped_column(Float, default=None)
     comp_12_epa: MOF = mapped_column(Float, default=None)
     comp_12_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_13_epa: MOF = mapped_column(Float, default=None)
+    comp_13_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_14_epa: MOF = mapped_column(Float, default=None)
+    comp_14_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_15_epa: MOF = mapped_column(Float, default=None)
+    comp_15_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_16_epa: MOF = mapped_column(Float, default=None)
+    comp_16_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_17_epa: MOF = mapped_column(Float, default=None)
+    comp_17_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_18_epa: MOF = mapped_column(Float, default=None)
+    comp_18_epa_sd: MOF = mapped_column(Float, default=None)
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)

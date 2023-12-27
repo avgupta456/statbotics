@@ -1,4 +1,4 @@
-from typing import Optional, TypedDict
+from typing import Optional, TypedDict, Union
 from src.types.enums import EventType, CompLevel, MatchStatus, MatchWinner
 
 
@@ -36,18 +36,57 @@ class BreakdownDict(TypedDict):
     rp_1: Optional[bool]
     rp_2: Optional[bool]
     tiebreaker: Optional[int]
-    comp_1: Optional[int]
-    comp_2: Optional[int]
-    comp_3: Optional[int]
-    comp_4: Optional[int]
-    comp_5: Optional[int]
-    comp_6: Optional[int]
-    comp_7: Optional[int]
-    comp_8: Optional[int]
-    comp_9: Optional[int]
-    comp_10: Optional[int]
-    comp_11: Optional[int]
-    comp_12: Optional[int]
+    comp_1: Optional[Union[int, float]]
+    comp_2: Optional[Union[int, float]]
+    comp_3: Optional[Union[int, float]]
+    comp_4: Optional[Union[int, float]]
+    comp_5: Optional[Union[int, float]]
+    comp_6: Optional[Union[int, float]]
+    comp_7: Optional[Union[int, float]]
+    comp_8: Optional[Union[int, float]]
+    comp_9: Optional[Union[int, float]]
+    comp_10: Optional[Union[int, float]]
+    comp_11: Optional[Union[int, float]]
+    comp_12: Optional[Union[int, float]]
+    comp_13: Optional[Union[int, float]]
+    comp_14: Optional[Union[int, float]]
+    comp_15: Optional[Union[int, float]]
+    comp_16: Optional[Union[int, float]]
+    comp_17: Optional[Union[int, float]]
+    comp_18: Optional[Union[int, float]]
+    incomplete_breakdown: Optional[bool]
+
+
+empty_breakdown: BreakdownDict = {
+    "score": 0,
+    "no_foul_points": None,
+    "foul_points": None,
+    "auto_points": None,
+    "teleop_points": None,
+    "endgame_points": None,
+    "rp_1": False,
+    "rp_2": False,
+    "tiebreaker": None,
+    "comp_1": None,
+    "comp_2": None,
+    "comp_3": None,
+    "comp_4": None,
+    "comp_5": None,
+    "comp_6": None,
+    "comp_7": None,
+    "comp_8": None,
+    "comp_9": None,
+    "comp_10": None,
+    "comp_11": None,
+    "comp_12": None,
+    "comp_13": None,
+    "comp_14": None,
+    "comp_15": None,
+    "comp_16": None,
+    "comp_17": None,
+    "comp_18": None,
+    "incomplete_breakdown": True,
+}
 
 
 class MatchDict(TypedDict):

@@ -92,7 +92,7 @@ DISTRICT_MAPPING: Dict[str, str] = {
 
 # TEAMS
 
-OFFSEASON_TEAMS = [
+PLACEHOLDER_TEAMS = [
     "9999",
     "9998",
     "9997",

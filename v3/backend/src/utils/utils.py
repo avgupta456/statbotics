@@ -56,3 +56,7 @@ def get_match_number(key: str) -> int:
         return 300 + int(key.split("f")[1].split("m")[1])
 
     raise Exception("Invalid match key")
+
+
+def r(x: float, n: int = 0) -> float:
+    return int(x * (10**n) + 0.5) / (10**n)

@@ -5,6 +5,7 @@ from src.db.models import Match
 
 from src.types.enums import MatchStatus, MatchWinner
 from src.data.utils import objs_type
+from src.utils.utils import r
 
 
 def calc_binary_metrics(
@@ -57,8 +58,8 @@ def process_year(objs: objs_type) -> objs_type:
     count, acc, mse = calc_binary_metrics(matches, get_pred, get_actual, get_season)
     year.count = count
     if count > 0:
-        year.epa_acc = round(acc / count, 4)
-        year.epa_mse = round(mse / count, 4)
+        year.epa_acc = r(acc / count, 4)
+        year.epa_mse = r(mse / count, 4)
 
     # EVENTS
 
@@ -66,7 +67,7 @@ def process_year(objs: objs_type) -> objs_type:
         ms = event_matches_dict[event.key]
         count, acc, mse = calc_binary_metrics(ms, get_pred, get_actual, get_season)
         if count > 0:
-            event.epa_acc = round(acc / count, 4)
-            event.epa_mse = round(mse / count, 4)
+            event.epa_acc = r(acc / count, 4)
+            event.epa_mse = r(mse / count, 4)
 
     return objs

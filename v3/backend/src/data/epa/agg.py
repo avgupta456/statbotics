@@ -7,6 +7,7 @@ from src.db.models import TeamMatch, TeamEvent
 from src.data.utils import objs_type
 from src.utils.utils import get_team_event_key
 from src.epa.unitless import epa_to_unitless_epa, get_epa_to_norm_epa_func
+from src.utils.utils import r
 
 
 def process_year_epas(
@@ -51,7 +52,7 @@ def process_year(objs: objs_type) -> objs_type:
         is_red = a.alliance == AllianceColor.RED
         m = matches[a.match]
         if m.epa_win_prob is not None:
-            a.epa_win_prob = m.epa_win_prob if is_red else round(1 - m.epa_win_prob, 4)
+            a.epa_win_prob = m.epa_win_prob if is_red else r(1 - m.epa_win_prob, 4)
         a.epa_winner = m.epa_winner
         a.score_pred = m.epa_red_score_pred if is_red else m.epa_blue_score_pred
         if USE_COMPONENTS:
@@ -86,10 +87,10 @@ def process_year(objs: objs_type) -> objs_type:
     epa_to_norm_epa = get_epa_to_norm_epa_func(total_epas)
     for ty in objs[1].values():
         unitless_epa: float = epa_to_unitless_epa(ty.epa, mean, sd)
-        ty.unitless_epa = round(unitless_epa, 0)
+        ty.unitless_epa = r(unitless_epa)
 
         norm_epa: float = epa_to_norm_epa(ty.epa)
-        ty.norm_epa = round(norm_epa)
+        ty.norm_epa = r(norm_epa)
 
         if ty.offseason:
             continue
@@ -97,26 +98,26 @@ def process_year(objs: objs_type) -> objs_type:
         epa = ty.epa
         ty.total_epa_rank = total_epas.index(epa) + 1
         ty.total_team_count = len(total_epas)
-        ty.total_epa_percentile = round(1 - ty.total_epa_rank / ty.total_team_count, 4)
+        ty.total_epa_percentile = r(1 - ty.total_epa_rank / ty.total_team_count, 4)
 
         country_epas_ = country_epas[ty.country or ""]
         ty.country_epa_rank = country_epas_.index(epa) + 1
         ty.country_team_count = len(country_epas_)
-        ty.country_epa_percentile = round(
+        ty.country_epa_percentile = r(
             1 - ty.country_epa_rank / ty.country_team_count, 4
         )
 
         district_epas_ = district_epas[ty.district or ""]
         ty.district_epa_rank = district_epas_.index(epa) + 1
         ty.district_team_count = len(district_epas_)
-        ty.district_epa_percentile = round(
+        ty.district_epa_percentile = r(
             1 - ty.district_epa_rank / ty.district_team_count, 4
         )
 
         state_epas_ = state_epas[ty.state or ""]
         ty.state_epa_rank = state_epas_.index(epa) + 1
         ty.state_team_count = len(state_epas_)
-        ty.state_epa_percentile = round(1 - ty.state_epa_rank / ty.state_team_count, 4)
+        ty.state_epa_percentile = r(1 - ty.state_epa_rank / ty.state_team_count, 4)
 
     # YEAR
     year = objs[0]
@@ -129,10 +130,10 @@ def process_year(objs: objs_type) -> objs_type:
     # TEAM EVENTS
     for te in sorted(objs[3].values(), key=lambda te: te.week):
         unitless_epa: float = epa_to_unitless_epa(te.epa, mean, sd)
-        te.unitless_epa = round(unitless_epa, 0)
+        te.unitless_epa = r(unitless_epa)
 
         norm_epa: float = epa_to_norm_epa(te.epa)
-        te.norm_epa = round(norm_epa)
+        te.norm_epa = r(norm_epa)
 
         team_event_key = get_team_event_key(te.team, te.event)
         tms = sorted(
@@ -140,17 +141,17 @@ def process_year(objs: objs_type) -> objs_type:
         )
         qual_tms = [tm for tm in tms if not tm.elim]
 
-        te.epa_start = round(curr_epas[te.team], 2)
+        te.epa_start = r(curr_epas[te.team], 2)
 
         if len(tms) > 0:
-            te.epa_start = round(tms[0].epa, 2)
-            te.epa_mean = round(statistics.mean([tm.epa for tm in tms]), 2)
-            te.epa_max = round(max([tm.epa for tm in tms]), 2)
+            te.epa_start = r(tms[0].epa, 2)
+            te.epa_mean = r(statistics.mean([tm.epa for tm in tms]), 2)
+            te.epa_max = r(max([tm.epa for tm in tms]), 2)
 
             curr_epas[te.team] = te.epa  # for next event epa_start
 
         if len(qual_tms) > 0:
-            te.epa_pre_elim = round(qual_tms[-1].epa, 2)
+            te.epa_pre_elim = r(qual_tms[-1].epa, 2)
 
     # EVENTS
     for e in objs[2].values():

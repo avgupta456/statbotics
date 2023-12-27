@@ -18,6 +18,9 @@ class Logistic:
         self.mean = self.update_mean(self.mean, x, alpha)
 
 
+MAX_SKEW = 0.95
+
+
 class SkewNormal:
     # all inputs are 1d np arrays, does not handle covariance between variables
     # skew is only computed on total, and assumed equal for all variables
@@ -52,7 +55,8 @@ class SkewNormal:
         # Note: unsure of exact derivation of this formula
         # https://stats.stackexchange.com/questions/6874/exponential-weighted-moving-skewness-kurtosis
         new_skew = (x - mean) * (x - new_mean) * (x - new_mean) / (new_var ** (3 / 2))
-        return (1 - alpha) * skew + alpha * new_skew
+        new_mean_skew = (1 - alpha) * skew + alpha * new_skew
+        return min(max(new_mean_skew, -MAX_SKEW), MAX_SKEW)
 
     def add_obs(self, x: Any, alpha: float) -> None:
         mean, var, skew, n = self.mean, self.var, self.skew, self.n
@@ -72,7 +76,7 @@ class SkewNormal:
 
     def get_distrib(self) -> Any:
         # https://en.wikipedia.org/wiki/Skew_normal_distribution
-        skew = min(max(self.skew, -0.9), 0.9)
+        skew = min(max(self.skew, -MAX_SKEW), MAX_SKEW)
         abs_skew = abs(skew)
         sign_skew = 1 if skew >= 0 else -1
 

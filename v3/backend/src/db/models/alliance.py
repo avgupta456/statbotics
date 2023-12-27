@@ -60,18 +60,25 @@ class AllianceORM(Base, ModelORM):
     rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
     tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_1: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_2: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_3: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_4: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_5: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_6: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_7: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_8: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_9: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_10: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_11: MOI = mapped_column(Integer, nullable=True, default=None)
-    comp_12: MOI = mapped_column(Integer, nullable=True, default=None)
+    comp_1: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_2: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_3: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_4: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_5: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_6: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_7: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_8: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_9: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_10: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_11: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_12: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_13: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_14: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_15: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_16: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_17: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_18: MOF = mapped_column(Float, nullable=True, default=None)
+    incomplete_breakdown: MOB = mapped_column(Boolean, nullable=True, default=None)
 
     """EPA"""
     epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
@@ -144,5 +151,11 @@ class Alliance(_Alliance, Model):
                 self.comp_10 or 0,
                 self.comp_11 or 0,
                 self.comp_12 or 0,
+                self.comp_13 or 0,
+                self.comp_14 or 0,
+                self.comp_15 or 0,
+                self.comp_16 or 0,
+                self.comp_17 or 0,
+                self.comp_18 or 0,
             ]
         )
