@@ -239,6 +239,8 @@ class Year(_Year, Model):
                 self.auto_mean,
                 self.teleop_mean,
                 self.endgame_mean,
+                self.rp_1_mean,
+                self.rp_2_mean,
                 self.tiebreaker_mean,
                 self.comp_1_mean,
                 self.comp_2_mean,

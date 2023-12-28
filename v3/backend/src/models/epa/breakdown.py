@@ -1,14 +1,8 @@
 from typing import Any, Tuple
 
 from src.db.models import Year
-from src.models.epa.math import t_prob_gt_0, zero_sigmoid
+from src.models.epa.math import t_prob_gt_0, unit_sigmoid, zero_sigmoid
 from src.tba.breakdown import all_keys
-
-for year in range(2002, 2024):
-    if len(all_keys[year]) > 23:
-        # 5 standard (total, auto, teleop, endgame, tiebreaker) + 18 components
-        raise ValueError(f"Too many keys for year {year}")
-    all_keys[year] += ["empty"] * (23 - len(all_keys[year]))
 
 
 def post_process_breakdown(
@@ -18,6 +12,10 @@ def post_process_breakdown(
 
     keys = all_keys[year]
     total_change = 0
+
+    if year >= 2016:
+        breakdown[keys.index("rp_1")] = unit_sigmoid(breakdown[keys.index("rp_1")])
+        breakdown[keys.index("rp_2")] = unit_sigmoid(breakdown[keys.index("rp_2")])
 
     if year == 2018:
         my_switch_power = breakdown[keys.index("switch_power")]
@@ -101,26 +99,16 @@ def get_pred_rps(
     year: int, week: int, breakdown_mean: Any, breakdown_sd: Any
 ) -> Tuple[float, float]:
     DISCOUNT = 0.85  # Teams try harder when near the threshold
-
     keys = all_keys[year]
-
     rp_1, rp_2 = 0, 0
-
     if year == 2016:
-        defenses_mean = breakdown_mean[keys.index("defenses")]
-        defenses_sd = breakdown_sd[keys.index("defenses")]
-
         boulders_mean = breakdown_mean[keys.index("boulders")]
         boulders_sd = breakdown_sd[keys.index("boulders")]
 
-        rp_1 = t_prob_gt_0(defenses_mean - 8 * DISCOUNT, defenses_sd)
-
-        # rp_2_power only captures if three robots challenge
-        rp_2 = breakdown_mean[keys.index("rp_2_power")]
-        if week < 8:
-            rp_2 *= t_prob_gt_0(boulders_mean - 8 * DISCOUNT, boulders_sd)
-        else:
-            rp_2 *= t_prob_gt_0(boulders_mean - 10 * DISCOUNT, boulders_sd)
+        rp_1 = breakdown_mean[keys]
+        rp_2 = t_prob_gt_0(boulders_mean - 8 * DISCOUNT, boulders_sd)
+        if week >= 8:
+            rp_2 = t_prob_gt_0(boulders_mean - 10 * DISCOUNT, boulders_sd)
 
     elif year == 2017:
         kpa_mean = breakdown_mean[keys.index("kpa")]
@@ -133,56 +121,37 @@ def get_pred_rps(
         rp_2 = t_prob_gt_0(gears_mean - 13 * DISCOUNT, gears_sd)
 
     elif year == 2018:
-        rp_1 = breakdown_mean[keys.index("rp_1_power")]
-        rp_2 = breakdown_mean[keys.index("rp_2_power")]
+        rp_1 = breakdown_mean[keys.index("rp_1")]
+        rp_2 = breakdown_mean[keys.index("rp_2")]
 
     elif year == 2019:
-        hab_points_mean = breakdown_mean[keys.index("hab_climb_points")]
-        hab_points_sd = breakdown_sd[keys.index("hab_climb_points")]
+        rocket_mean = breakdown_mean[keys.index("rocket")]
+        rocket_sd = breakdown_sd[keys.index("rocket")]
 
-        rocket_mid_top_mean = breakdown_mean[keys.index("rocket_mid_top")]
-        rocket_mid_top_sd = breakdown_sd[keys.index("rocket_mid_top")]
-
-        rp_1 = t_prob_gt_0(hab_points_mean - 15 * DISCOUNT, hab_points_sd)
-
+        rp_1 = breakdown_mean[keys.index("rp_1")]
         # assume bottom is easy, top is attempted less since no incentive
-        rp_2 = t_prob_gt_0(rocket_mid_top_mean - 8 * DISCOUNT, rocket_mid_top_sd)
+        rp_2 = t_prob_gt_0(rocket_mean - 12 * DISCOUNT, rocket_sd)
 
     elif year == 2020:
-        endgame_points_mean = breakdown_mean[keys.index("endgame_points")]
-        endgame_points_sd = breakdown_sd[keys.index("endgame_points")]
-
-        cells_mean = breakdown_mean[keys.index("cells")]
-        cells_sd = breakdown_sd[keys.index("cells")]
-
-        rp_1 = t_prob_gt_0(endgame_points_mean - 65 * DISCOUNT, cells_sd)
-        rp_2 = t_prob_gt_0(cells_mean - 49 * DISCOUNT, endgame_points_sd)
+        rp_1 = breakdown_mean[keys.index("rp_1")]
+        rp_2 = breakdown_mean[keys.index("rp_2")]
 
     elif year == 2022:
         cargo_mean = breakdown_mean[keys.index("cargo")]
         cargo_sd = breakdown_sd[keys.index("cargo")]
 
-        endgame_points_mean = breakdown_mean[keys.index("endgame_points")]
-        endgame_points_sd = breakdown_sd[keys.index("endgame_points")]
-
         rp_1 = t_prob_gt_0(cargo_mean - 20 * DISCOUNT, cargo_sd)
-        rp_2 = t_prob_gt_0(endgame_points_mean - 16 * DISCOUNT, endgame_points_sd)
+        rp_2 = breakdown_mean[keys.index("rp_2")]
 
     elif year == 2023:
         links_mean = breakdown_mean[keys.index("links")]
         links_sd = breakdown_sd[keys.index("links")]
 
-        charge_station_points_mean = breakdown_mean[keys.index("charge_station_points")]
-        charge_station_points_sd = breakdown_sd[keys.index("charge_station_points")]
-
-        if week < 8:
-            rp_1 = t_prob_gt_0(links_mean - 4 * DISCOUNT, links_sd)
-        else:
+        rp_1 = t_prob_gt_0(links_mean - 4 * DISCOUNT, links_sd)
+        if week >= 8:
             rp_1 = t_prob_gt_0(links_mean - 5 * DISCOUNT, links_sd)
 
-        rp_2 = t_prob_gt_0(
-            charge_station_points_mean - 26 * DISCOUNT, charge_station_points_sd
-        )
+        rp_2 = breakdown_mean[keys.index("rp_2")]
 
     return rp_1, rp_2
 

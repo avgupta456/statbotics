@@ -138,6 +138,8 @@ class Alliance(_Alliance, Model):
                 self.auto or 0,
                 self.teleop or 0,
                 self.endgame or 0,
+                int(self.rp_1 or False),
+                int(self.rp_2 or False),
                 self.tiebreaker or 0,
                 self.comp_1 or 0,
                 self.comp_2 or 0,

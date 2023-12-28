@@ -55,15 +55,21 @@ class EventORM(Base, ModelORM):
     epa_sd: MOF = mapped_column(Float, nullable=True, default=None)
 
     """STATS"""
+    count: MI = mapped_column(Integer, default=0)
+    epa_conf: MOF = mapped_column(Float, nullable=True, default=None)
     epa_acc: MOF = mapped_column(Float, nullable=True, default=None)
     epa_mse: MOF = mapped_column(Float, nullable=True, default=None)
+
     epa_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
     epa_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
     epa_score_error: MOF = mapped_column(Float, nullable=True, default=None)
+
+    rp_count: MI = mapped_column(Integer, default=0)
     epa_rp_1_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_1_ll: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_1_f1: MOF = mapped_column(Float, nullable=True, default=None)
+
     epa_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_2_ll: MOF = mapped_column(Float, nullable=True, default=None)

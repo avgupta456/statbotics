@@ -62,7 +62,7 @@ class SkewNormal:
         new_skew = (1 - alpha) * skew + alpha * new_skew
         return min(max(new_skew, -MAX_SKEW), MAX_SKEW)
 
-    def add_obs(self, x: Any, alpha: float, only_pos: bool = False) -> None:
+    def add_obs(self, x: Any, alpha: float) -> None:
         mean, var, skew, n = self.mean, self.var, self.skew, self.n
         skew_i = self.skew_i
 
@@ -72,9 +72,6 @@ class SkewNormal:
             skew, new_var[skew_i], mean[skew_i], new_mean[skew_i], x[skew_i], alpha
         )
         new_n = n * (1 - alpha) + 1
-
-        if only_pos:
-            new_mean = np.maximum(new_mean, 0)
 
         self.mean = new_mean
         self.var = new_var
@@ -123,6 +120,10 @@ class SkewNormal:
 # -2 instead of -4 since both alliances contribute
 def zero_sigmoid(x: float) -> float:
     return 1 / (1 + np.exp(-2 * x))
+
+
+def inv_zero_sigmoid(x: float) -> float:
+    return np.log(x / (1 - x)) / 2
 
 
 # used for ILS ranking point system

@@ -22,6 +22,8 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "rp_1",
+        "rp_2",
         "tiebreaker_points",
         "auto_reach_points",
         "auto_crossing_points",
@@ -40,6 +42,8 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "rp_1",
+        "rp_2",
         "tiebreaker_points",
         "auto_mobility_points",
         "auto_fuel_low",
@@ -57,6 +61,8 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "rp_1",
+        "rp_2",
         "tiebreaker_points",
         "auto_run_points",
         "auto_switch_secs",
@@ -74,6 +80,8 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "rp_1",
+        "rp_2",
         "tiebreaker_points",
         "sandstorm_points",
         "bay_hatch",
@@ -85,6 +93,7 @@ all_keys = {
         "rocket_cargo_mid",
         "rocket_cargo_top",
         "hab_climb_points",
+        "rocket",
         "pieces",
     ],
     2020: [
@@ -92,6 +101,8 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "rp_1",
+        "rp_2",
         "tiebreaker_points",
         "auto_init_line_points",
         "auto_cells_bottom",
@@ -110,6 +121,8 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "rp_1",
+        "rp_2",
         "tiebreaker_points",
         "auto_taxi_points",
         "auto_cargo_lower",
@@ -124,6 +137,8 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "rp_1",
+        "rp_2",
         "tiebreaker_points",
         "auto_mobility_points",
         "auto_charge_station_points",
@@ -145,6 +160,13 @@ all_keys = {
         "charge_station_points",
     ],
 }
+
+
+for year in range(2002, 2024):
+    if len(all_keys[year]) > 25:
+        # 7 standard (total, auto, teleop, endgame, rp_1, rp_2, tiebreaker) + 18 components
+        raise ValueError(f"Too many keys for year {year}")
+    all_keys[year] += ["empty"] * (23 - len(all_keys[year]))
 
 
 def clean_breakdown_2016(
@@ -492,16 +514,16 @@ def clean_breakdown_2019(
 
     hab_climb_points = breakdown.get("habClimbPoints", 0)
 
-    pieces = (
-        bay_hatch
-        + bay_cargo
-        + rocket_hatch_low
+    rocket = (
+        rocket_hatch_low
         + rocket_hatch_mid
         + rocket_hatch_top
         + rocket_cargo_low
         + rocket_cargo_mid
         + rocket_cargo_top
     )
+
+    pieces = bay_hatch + bay_cargo + rocket
 
     rp_1 = bool(breakdown.get("habDockingRankingPoint", False))
     rp_2 = bool(breakdown.get("completeRocketRankingPoint", False))
@@ -533,8 +555,8 @@ def clean_breakdown_2019(
         "comp_8": rocket_cargo_mid,
         "comp_9": rocket_cargo_top,
         "comp_10": hab_climb_points,
-        "comp_11": pieces,
-        "comp_12": None,
+        "comp_11": rocket,
+        "comp_12": pieces,
         "comp_13": None,
         "comp_14": None,
         "comp_15": None,
