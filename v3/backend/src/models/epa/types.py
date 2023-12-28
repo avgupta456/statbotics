@@ -1,12 +1,6 @@
 from typing import Optional, Any
 
-from src.epa.math import SkewNormal
-
-
-# Rating is represented by a n-dimensional SkewNormal distribution for continuous EPA
-# and two Logistic distributions for RP1 and RP2. For some years, RP1 and RP2 are
-# replaced by a function of the continuous EPAs. Pre 2016, epa is a 1-dimensional
-# SkewNormal and rp_1 and rp_2 are None.
+from src.models.epa.math import SkewNormal
 
 
 class Rating:
@@ -22,5 +16,8 @@ class Rating:
         self.rp_2 = rp_2
         self.count = 0
 
-    def add_obs(self, epa: Any, alpha: float):
+    def add_obs(self, epa: Any, alpha: float, elim: bool):
         self.epa.add_obs(epa, alpha)
+
+        if not elim:
+            self.count += 1

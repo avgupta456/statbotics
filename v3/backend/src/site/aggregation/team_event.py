@@ -3,7 +3,7 @@ from typing import Callable, List, Optional, Tuple
 
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
-from src.epa.unitless import (
+from src.models.epa.unitless import (
     epa_to_unitless_epa as _epa_to_unitless_epa,
     get_epa_to_norm_epa_func,
 )

@@ -1,9 +1,9 @@
 from functools import lru_cache
 from typing import Optional, Tuple
 
-from src.epa.math import SkewNormal
+from src.models.epa.math import SkewNormal
 from src.db.models import TeamYear, Year
-from src.epa.constants import (
+from src.models.epa.constants import (
     INIT_PENALTY,
     MEAN_REVERSION,
     MIN_RP_EPA,
@@ -11,8 +11,8 @@ from src.epa.constants import (
     NORM_MEAN,
     NORM_SD,
 )
-from src.epa.math import inv_sigmoid, sigmoid
-from src.epa.types import Rating
+from src.models.epa.math import inv_unit_sigmoid, unit_sigmoid
+from src.models.epa.types import Rating
 
 
 @lru_cache(maxsize=None)
@@ -21,11 +21,11 @@ def get_constants(year: Year) -> Tuple[int, float, float, float, float]:
     curr_mean = year.no_foul_mean or year.score_mean or 0
     curr_sd = year.score_sd or 0
 
-    rp_1_mean = year.rp_1_mean or sigmoid(MIN_RP_EPA * num_teams)
-    rp_2_mean = year.rp_2_mean or sigmoid(MIN_RP_EPA * num_teams)
+    rp_1_mean = year.rp_1_mean or unit_sigmoid(MIN_RP_EPA * num_teams)
+    rp_2_mean = year.rp_2_mean or unit_sigmoid(MIN_RP_EPA * num_teams)
 
-    rp_1_seed = inv_sigmoid(rp_1_mean) / num_teams
-    rp_2_seed = inv_sigmoid(rp_2_mean) / num_teams
+    rp_1_seed = inv_unit_sigmoid(rp_1_mean) / num_teams
+    rp_2_seed = inv_unit_sigmoid(rp_2_mean) / num_teams
 
     return num_teams, curr_mean, curr_sd, rp_1_seed, rp_2_seed
 

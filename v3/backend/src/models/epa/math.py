@@ -22,6 +22,9 @@ def t_prob_gt_0(mean: float, sd: float) -> float:
     return distrib.cdf(mean / sd)  # type: ignore
 
 
+MAX_SKEW = 0.95
+
+
 class SkewNormal:
     # all inputs are 1d np arrays, does not handle covariance between variables
     # skew is only computed on total, and assumed equal for all variables
@@ -56,10 +59,10 @@ class SkewNormal:
         # Note: unsure of exact derivation of this formula
         # https://stats.stackexchange.com/questions/6874/exponential-weighted-moving-skewness-kurtosis
         new_skew = (x - mean) * (x - new_mean) * (x - new_mean) / (new_var ** (3 / 2))
-        return (1 - alpha) * skew + alpha * new_skew
+        new_skew = (1 - alpha) * skew + alpha * new_skew
+        return min(max(new_skew, -MAX_SKEW), MAX_SKEW)
 
     def add_obs(self, x: Any, alpha: float, only_pos: bool = False) -> None:
-
         mean, var, skew, n = self.mean, self.var, self.skew, self.n
         skew_i = self.skew_i
 
@@ -80,7 +83,7 @@ class SkewNormal:
 
     def get_distrib(self) -> Any:
         # https://en.wikipedia.org/wiki/Skew_normal_distribution
-        skew = min(max(self.skew, -0.9), 0.9)
+        skew = self.skew
         abs_skew = abs(skew)
         sign_skew = 1 if skew >= 0 else -1
 
@@ -125,3 +128,7 @@ def zero_sigmoid(x: float) -> float:
 # used for ILS ranking point system
 def unit_sigmoid(x: float) -> float:
     return 1 / (1 + np.exp(-4 * (x - 0.5)))
+
+
+def inv_unit_sigmoid(x: float) -> float:
+    return 0.5 + np.log(x / (1 - x)) / 4

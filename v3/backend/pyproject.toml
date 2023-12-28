@@ -25,6 +25,7 @@ pyright = "^1.1.324"
 
 [tool.poetry.group.dev.dependencies]
 pyinstrument = "^4.6.1"
+vulture = "^2.10"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

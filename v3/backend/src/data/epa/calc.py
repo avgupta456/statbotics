@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Dict
 
-from src.models.epa_v2.main import EPAV2
+from src.models.epa.main import EPA
 
 from src.data.utils import objs_type
 from src.db.models import TeamYear, TeamMatch, Alliance, TeamEvent
@@ -39,7 +39,7 @@ def process_year(
             team_year_key = get_team_year_key(team, match.year)
             match_team_years[match.key][team] = team_years[team_year_key]
 
-    model = EPAV2()
+    model = EPA()
 
     model.start_season(year, all_team_years, team_years)
     for curr_match in sorted(matches.values(), key=lambda m: m.time):

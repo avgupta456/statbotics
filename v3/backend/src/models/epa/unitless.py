@@ -4,7 +4,7 @@ from bisect import bisect_left
 from typing import Callable, List
 
 from scipy.stats import expon, exponnorm
-from src.epa.constants import NORM_MEAN, NORM_SD
+from src.models.epa.constants import NORM_MEAN, NORM_SD
 
 
 def epa_to_unitless_epa(epa: float, mean: float, sd: float) -> float:

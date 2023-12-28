@@ -1,6 +1,6 @@
 from typing import Any, Tuple
 
-from src.models.epa_v2.math import t_prob_gt_0, zero_sigmoid
+from src.models.epa.math import t_prob_gt_0, zero_sigmoid
 from src.tba.breakdown import all_keys
 from src.db.models import Year
 
@@ -37,60 +37,60 @@ def post_process_breakdown(
         breakdown[keys.index("opp_switch_power")] = new_opp_switch_power
 
     elif year == 2023:
-        # ahcui = Auto High CUbes Index, etc
-        ahcui = keys.index("auto_high_cubes")
-        ahcoi = keys.index("auto_high_cones")
-        thcui = keys.index("teleop_high_cubes")
-        thcoi = keys.index("teleop_high_cones")
+        # atcui = Auto Top CUbes Index, etc
+        atcui = keys.index("auto_top_cubes")
+        atcoi = keys.index("auto_top_cones")
+        ttcui = keys.index("teleop_top_cubes")
+        ttcoi = keys.index("teleop_top_cones")
         amcui = keys.index("auto_mid_cubes")
         amcoi = keys.index("auto_mid_cones")
         tmcui = keys.index("teleop_mid_cubes")
         tmcoi = keys.index("teleop_mid_cones")
-        alcui = keys.index("auto_low_cubes")
-        alcoi = keys.index("auto_low_cones")
-        tlcui = keys.index("teleop_low_cubes")
-        tlcoi = keys.index("teleop_low_cones")
+        abcui = keys.index("auto_bot_cubes")
+        abcoi = keys.index("auto_bot_cones")
+        tbcui = keys.index("teleop_bot_cubes")
+        tbcoi = keys.index("teleop_bot_cones")
 
-        auto_high = breakdown[ahcui] + breakdown[ahcoi]
-        teleop_high = breakdown[thcui] + breakdown[thcoi]
-        total_high = auto_high + teleop_high
+        auto_top = breakdown[atcui] + breakdown[atcoi]
+        teleop_top = breakdown[ttcui] + breakdown[ttcoi]
+        total_top = auto_top + teleop_top
 
-        if total_high > 9:
+        if total_top > 9:
             teleop_mid = breakdown[tmcui] + breakdown[tmcoi]
-            extra_high = total_high - 9
-            breakdown[thcui] *= (9 - auto_high) / teleop_high
-            breakdown[thcoi] *= (9 - auto_high) / teleop_high
-            breakdown[tmcui] *= (teleop_mid + extra_high) / teleop_mid
-            breakdown[tmcoi] *= (teleop_mid + extra_high) / teleop_mid
+            extra_top = total_top - 9
+            breakdown[ttcui] *= (9 - auto_top) / teleop_top
+            breakdown[ttcoi] *= (9 - auto_top) / teleop_top
+            breakdown[tmcui] *= (teleop_mid + extra_top) / teleop_mid
+            breakdown[tmcoi] *= (teleop_mid + extra_top) / teleop_mid
 
-            # each game piece moving from high to mid is 2 points lost
-            total_change -= extra_high * 2
+            # each game piece moving from top to mid is 2 points lost
+            total_change -= extra_top * 2
 
         auto_mid = breakdown[amcui] + breakdown[amcoi]
         teleop_mid = breakdown[tmcui] + breakdown[tmcoi]
         total_mid = auto_mid + teleop_mid
         if total_mid > 9:
-            teleop_low = breakdown[tlcui] + breakdown[tlcoi]
+            teleop_bot = breakdown[tbcui] + breakdown[tbcoi]
             extra_mid = total_mid - 9
             breakdown[tmcui] *= (9 - auto_mid) / teleop_mid
             breakdown[tmcoi] *= (9 - auto_mid) / teleop_mid
-            breakdown[tlcui] *= (teleop_low + extra_mid) / teleop_low
-            breakdown[tlcoi] *= (teleop_low + extra_mid) / teleop_low
+            breakdown[tbcui] *= (teleop_bot + extra_mid) / teleop_bot
+            breakdown[tbcoi] *= (teleop_bot + extra_mid) / teleop_bot
 
-            # each game piece moving from mid to low is 1 point lost
+            # each game piece moving from mid to bottom is 1 point lost
             total_change -= extra_mid
 
-        auto_low = breakdown[alcui] + breakdown[alcoi]
-        teleop_low = breakdown[tlcui] + breakdown[tlcoi]
-        total_low = auto_low + teleop_low
-        if total_low > 9 and total_mid > 9 and total_high > 9:
-            extra_low = total_low - 9
-            breakdown[tlcui] *= (9 - auto_low) / teleop_low
-            breakdown[tlcoi] *= (9 - auto_low) / teleop_low
+        auto_bot = breakdown[abcui] + breakdown[abcoi]
+        teleop_bot = breakdown[tbcui] + breakdown[tbcoi]
+        total_bot = auto_bot + teleop_bot
+        if total_bot > 9 and total_mid > 9 and total_top > 9:
+            extra_bot = total_bot - 9
+            breakdown[tbcui] *= (9 - auto_bot) / teleop_bot
+            breakdown[tbcoi] *= (9 - auto_bot) / teleop_bot
             # supercharge counts as mid cubes
-            breakdown[tmcui] += extra_low
-            # each game piece moving from low to supercharge is 1 point gained
-            total_change += extra_low
+            breakdown[tmcui] += extra_bot
+            # each game piece moving from bottom to supercharge is 1 point gained
+            total_change += extra_bot
 
     breakdown[0] += total_change
 
@@ -286,18 +286,18 @@ def get_score_from_breakdown(
         score += breakdown[keys.index("auto_mobility_points")]
         score += breakdown[keys.index("auto_charge_station_points")]
         # row counts already enforced in post_process_breakdown()
-        score += 3 * breakdown[keys.index("auto_low_cubes")]
-        score += 3 * breakdown[keys.index("auto_low_cones")]
+        score += 3 * breakdown[keys.index("auto_bot_cubes")]
+        score += 3 * breakdown[keys.index("auto_bot_cones")]
         score += 4 * breakdown[keys.index("auto_mid_cubes")]
         score += 4 * breakdown[keys.index("auto_mid_cones")]
-        score += 6 * breakdown[keys.index("auto_high_cubes")]
-        score += 6 * breakdown[keys.index("auto_high_cones")]
-        score += 2 * breakdown[keys.index("teleop_low_cubes")]
-        score += 2 * breakdown[keys.index("teleop_low_cones")]
+        score += 6 * breakdown[keys.index("auto_top_cubes")]
+        score += 6 * breakdown[keys.index("auto_top_cones")]
+        score += 2 * breakdown[keys.index("teleop_bot_cubes")]
+        score += 2 * breakdown[keys.index("teleop_bot_cones")]
         score += 3 * breakdown[keys.index("teleop_mid_cubes")]
         score += 3 * breakdown[keys.index("teleop_mid_cones")]
-        score += 5 * breakdown[keys.index("teleop_high_cubes")]
-        score += 5 * breakdown[keys.index("teleop_high_cones")]
+        score += 5 * breakdown[keys.index("teleop_top_cubes")]
+        score += 5 * breakdown[keys.index("teleop_top_cones")]
         score += 5 * min(9, breakdown[keys.index("links")])
         score += min(30, breakdown[keys.index("endgame_charge_station_points")])
     else:

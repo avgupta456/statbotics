@@ -7,20 +7,30 @@ from src.types.enums import MatchWinner
 from src.db.models import TeamYear, Year, Match, TeamMatch, Alliance, TeamEvent
 from src.models.types import Attribution, AlliancePred, MatchPred
 from src.utils.utils import r
-from src.models.epa_v2.breakdown import (
+from src.models.epa.breakdown import (
     # get_pred_rps,
     get_score_from_breakdown,
     post_process_attrib,
     post_process_breakdown,
 )
 from src.models.template import Model
-from src.epa.main import k_func, margin_func
-from src.epa.init import get_init_epa
-from src.epa.types import Rating
+from src.models.epa.init import get_init_epa
+from src.models.epa.types import Rating
+from src.models.epa.constants import ELIM_WEIGHT
 
 
-class EPAV2(Model):
+class EPA(Model):
     k: float
+
+    @staticmethod
+    def k_func(year: int) -> float:
+        return -5 / 8 if year >= 2008 else -5 / 12
+
+    @staticmethod
+    def margin_func(year: int, x: int) -> float:
+        if year in [2002, 2003]:
+            return 1
+        return 0
 
     @staticmethod
     def percent_func(year: int, x: int) -> float:
@@ -35,10 +45,9 @@ class EPAV2(Model):
         team_years: Dict[str, TeamYear],
     ) -> None:
         super().start_season(year, all_team_years, team_years)
-        self.k = k_func(self.year_num)
+        self.k = EPA.k_func(self.year_num)
 
         init_rating = get_init_epa(year, None, None)
-        self.counts: Dict[str, int] = defaultdict(int)
         self.epas: Dict[str, Rating] = defaultdict(lambda: init_rating)
 
         for team_year in team_years.values():
@@ -140,7 +149,7 @@ class EPAV2(Model):
             my_err = bd - pred_bd
             opp_err = opp_bd - opp_pred_bd
             for t in teams:
-                margin = margin_func(self.year_num, self.counts[t])
+                margin = EPA.margin_func(self.year_num, self.epas[t].count)
                 err = (my_err - margin * opp_err) / (1 + margin)
                 attrib = self.epas[t].epa.mean + err / self.num_teams
                 attrib = post_process_attrib(
@@ -153,14 +162,11 @@ class EPAV2(Model):
     def update_team(
         self, team: str, attrib: Attribution, match: Match, team_match: TeamMatch
     ) -> None:
-        weight = 1 / 3 if match.elim else 1
-        percent = self.percent_func(self.year_num, self.counts[team])
+        weight = ELIM_WEIGHT if match.elim else 1
+        percent = EPA.percent_func(self.year_num, self.epas[team].count)
         alpha = percent * weight
 
-        self.epas[team].add_obs(attrib.epa, alpha)
-
-        if not match.elim:
-            self.counts[team] += 1
+        self.epas[team].add_obs(attrib.epa, alpha, match.elim)
 
     def pre_record_team(
         self,
