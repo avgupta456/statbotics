@@ -4,10 +4,10 @@ from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from src.types.enums import MatchStatus
 from src.db.main import Session
 from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
+from src.types.enums import MatchStatus
 
 
 def get_noteworthy_matches(

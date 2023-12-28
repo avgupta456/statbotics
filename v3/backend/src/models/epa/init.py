@@ -1,17 +1,16 @@
 from functools import lru_cache
 from typing import Optional, Tuple
 
-from src.models.epa.math import SkewNormal
 from src.db.models import TeamYear, Year
 from src.models.epa.constants import (
     INIT_PENALTY,
     MEAN_REVERSION,
     MIN_RP_EPA,
-    YEAR_ONE_WEIGHT,
     NORM_MEAN,
     NORM_SD,
+    YEAR_ONE_WEIGHT,
 )
-from src.models.epa.math import inv_unit_sigmoid, unit_sigmoid
+from src.models.epa.math import SkewNormal, inv_unit_sigmoid, unit_sigmoid
 from src.models.epa.types import Rating
 
 

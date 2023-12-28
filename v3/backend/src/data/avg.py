@@ -1,8 +1,8 @@
 import statistics
-from typing import List, Tuple, Callable, Optional
+from typing import Callable, List, Optional, Tuple
 
-from src.types.enums import MatchStatus
 from src.db.models import Alliance, Year
+from src.types.enums import MatchStatus
 from src.utils.utils import r
 
 

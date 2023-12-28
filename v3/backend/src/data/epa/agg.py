@@ -1,13 +1,12 @@
-from collections import defaultdict
 import statistics
+from collections import defaultdict
 from typing import Callable, Dict, List, Optional
 
-from src.types.enums import AllianceColor
-from src.db.models import TeamMatch, TeamEvent
 from src.data.utils import objs_type
-from src.utils.utils import get_team_event_key
+from src.db.models import TeamEvent, TeamMatch
 from src.models.epa.unitless import epa_to_unitless_epa, get_epa_to_norm_epa_func
-from src.utils.utils import r
+from src.types.enums import AllianceColor
+from src.utils.utils import get_team_event_key, r
 
 
 def process_year_epas(

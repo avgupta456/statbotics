@@ -1,7 +1,6 @@
 from typing import Any
 
 import numpy as np
-
 from sqlalchemy import Float, Integer
 from sqlalchemy.orm import mapped_column
 

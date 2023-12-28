@@ -4,6 +4,7 @@ from bisect import bisect_left
 from typing import Callable, List
 
 from scipy.stats import expon, exponnorm
+
 from src.models.epa.constants import NORM_MEAN, NORM_SD
 
 

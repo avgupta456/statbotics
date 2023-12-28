@@ -1,10 +1,10 @@
 from typing import List, Tuple
 
-from src.types.enums import AllianceColor, CompLevel
 from src.db.models.alliance import Alliance
 from src.db.models.match import Match
 from src.db.models.team_match import TeamMatch
 from src.tba.read_tba import MatchDict
+from src.types.enums import AllianceColor, CompLevel
 
 
 def match_dict_to_objs(

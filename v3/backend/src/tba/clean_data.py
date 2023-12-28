@@ -1,7 +1,7 @@
 from typing import Optional
 
-from src.types.enums import CompLevel
 from src.tba.constants import CANADA_MAPPING, DISTRICT_MAPPING, USA_MAPPING
+from src.types.enums import CompLevel
 
 
 def clean_state(state: str) -> Optional[str]:

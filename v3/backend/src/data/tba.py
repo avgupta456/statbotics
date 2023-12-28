@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
-from src.types.enums import EventStatus, MatchStatus, MatchWinner, CompLevel
 from src.constants import CURR_WEEK, CURR_YEAR
 from src.data.utils import objs_type
 from src.db.functions import (
@@ -12,8 +11,8 @@ from src.db.functions import (
 from src.db.models import ETag, Event, Team, TeamEvent, TeamYear, match_dict_to_objs
 from src.tba.constants import DISTRICT_MAPPING, PLACEHOLDER_TEAMS
 from src.tba.read_tba import (
-    MatchDict,
     EventDict,
+    MatchDict,
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
     get_event_matches as get_event_matches_tba,
@@ -22,6 +21,7 @@ from src.tba.read_tba import (
     get_events as get_events_tba,
     get_teams as get_teams_tba,
 )
+from src.types.enums import CompLevel, EventStatus, MatchStatus, MatchWinner
 
 OS = Optional[str]
 OI = Optional[int]

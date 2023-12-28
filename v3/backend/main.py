@@ -2,8 +2,8 @@ from typing import Any, Callable
 
 from dotenv import load_dotenv  # type: ignore
 from fastapi import APIRouter, FastAPI, Request
-from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pyinstrument import Profiler
 
 load_dotenv()

@@ -1,9 +1,9 @@
 import random
 from typing import Any, Dict, List, Optional
 
-from src.types.enums import MatchWinner
 from src.site.aggregation import get_team_years, get_year, team_year_to_team_event
 from src.site.models import APIEvent, APIMatch, APITeamMatch, APITeamYear, APIYear
+from src.types.enums import MatchWinner
 from src.utils.hypothetical import decompress, get_cheesy_schedule
 
 # TODO: Avoid code duplication with Database schema, EPA calculations, etc.

@@ -1,11 +1,10 @@
 from collections import defaultdict
 from typing import Dict
 
-from src.models.epa.main import EPA
-
 from src.data.utils import objs_type
-from src.db.models import TeamYear, TeamMatch, Alliance, TeamEvent
-from src.utils.utils import get_team_match_key, get_team_event_key, get_team_year_key
+from src.db.models import Alliance, TeamEvent, TeamMatch, TeamYear
+from src.models.epa.main import EPA
+from src.utils.utils import get_team_event_key, get_team_match_key, get_team_year_key
 
 
 def process_year(

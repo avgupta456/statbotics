@@ -1,10 +1,10 @@
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
-from src.types.enums import MatchStatus, MatchWinner
 from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.models import Team, TeamYear
+from src.types.enums import MatchStatus, MatchWinner
 from src.utils.utils import r
 
 

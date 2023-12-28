@@ -1,7 +1,7 @@
 from typing import Dict, Tuple
 
-from src.models.types import Attribution, MatchPred, AlliancePred
-from src.db.models import Year, TeamYear, Match, Alliance, TeamMatch, TeamEvent
+from src.db.models import Alliance, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.models.types import AlliancePred, Attribution, MatchPred
 from src.tba.constants import PLACEHOLDER_TEAMS
 
 

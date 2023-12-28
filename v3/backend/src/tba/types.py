@@ -1,5 +1,6 @@
 from typing import Optional, TypedDict, Union
-from src.types.enums import EventType, CompLevel, MatchStatus, MatchWinner
+
+from src.types.enums import CompLevel, EventType, MatchStatus, MatchWinner
 
 
 class TeamDict(TypedDict):

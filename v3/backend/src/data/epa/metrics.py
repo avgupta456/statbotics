@@ -1,10 +1,9 @@
 from collections import defaultdict
-from typing import Callable, List, Optional, Dict
+from typing import Callable, Dict, List, Optional
 
-from src.db.models import Match
-
-from src.types.enums import MatchStatus, MatchWinner
 from src.data.utils import objs_type
+from src.db.models import Match
+from src.types.enums import MatchStatus, MatchWinner
 from src.utils.utils import r
 
 

@@ -2,14 +2,14 @@ from typing import Any, Dict, List, Optional
 
 import attr
 import numpy as np
-from sqlalchemy import Boolean, Float, Integer, String, Enum
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
-from src.types.enums import AllianceColor, MatchStatus, MatchWinner
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS, values_callable
+from src.types.enums import AllianceColor, MatchStatus, MatchWinner
 
 
 class AllianceORM(Base, ModelORM):

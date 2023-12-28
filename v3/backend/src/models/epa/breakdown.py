@@ -1,8 +1,8 @@
 from typing import Any, Tuple
 
+from src.db.models import Year
 from src.models.epa.math import t_prob_gt_0, zero_sigmoid
 from src.tba.breakdown import all_keys
-from src.db.models import Year
 
 for year in range(2002, 2024):
     if len(all_keys[year]) > 23:

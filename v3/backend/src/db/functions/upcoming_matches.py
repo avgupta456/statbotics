@@ -5,11 +5,11 @@ from sqlalchemy import func, text
 from sqlalchemy.orm import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from src.types.enums import EventStatus
 from src.constants import CURR_YEAR
 from src.db.main import Session
 from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
+from src.types.enums import EventStatus
 
 
 def get_upcoming_matches(

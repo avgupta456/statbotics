@@ -3,20 +3,19 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from src.types.enums import MatchWinner
-from src.db.models import TeamYear, Year, Match, TeamMatch, Alliance, TeamEvent
-from src.models.types import Attribution, AlliancePred, MatchPred
-from src.utils.utils import r
-from src.models.epa.breakdown import (
-    # get_pred_rps,
+from src.db.models import Alliance, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.models.epa.breakdown import (  # get_pred_rps,
     get_score_from_breakdown,
     post_process_attrib,
     post_process_breakdown,
 )
-from src.models.template import Model
+from src.models.epa.constants import ELIM_WEIGHT
 from src.models.epa.init import get_init_epa
 from src.models.epa.types import Rating
-from src.models.epa.constants import ELIM_WEIGHT
+from src.models.template import Model
+from src.models.types import AlliancePred, Attribution, MatchPred
+from src.types.enums import MatchWinner
+from src.utils.utils import r
 
 
 class EPA(Model):
