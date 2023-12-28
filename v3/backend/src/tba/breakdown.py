@@ -63,6 +63,7 @@ all_keys = {
         "teleop_switch_secs",
         "teleop_scale_secs",
         "vault_points",
+        "auto_scale_power",
         "switch_power",
         "scale_power",
         "opp_switch_power",
@@ -108,6 +109,7 @@ all_keys = {
         "auto_points",
         "teleop_points",
         "endgame_points",
+        "tiebreaker_points",
         "auto_taxi_points",
         "auto_cargo_lower",
         "auto_cargo_upper",
@@ -846,7 +848,7 @@ def clean_breakdown_2023(
         "comp_12": tmco,
         "comp_13": ttcu,
         "comp_14": ttco,
-        "comp_15": link_points,
+        "comp_15": links,
         "comp_16": endgame_charge_station_points,
         "comp_17": endgame_park_points,
         "comp_18": charge_station_points,
@@ -920,23 +922,37 @@ def post_clean_breakdown(
         # "comp_4": teleop_switch_secs,
         # "comp_5": teleop_scale_secs,
         # "comp_6": vault_points,
-        # "comp_7": switch_power,
-        # "comp_8": scale_power,
-        # "comp_9": opp_switch_power,
+        # "comp_7": auto_scale_power,
+        # "comp_8": switch_power,
+        # "comp_9": scale_power,
+        # "comp_10": opp_switch_power,
+        red_auto_scale_secs = red_breakdown["comp_3"] or 0
+        blue_auto_scale_secs = blue_breakdown["comp_3"] or 0
         red_switch_secs = red_breakdown["comp_4"] or 0
         blue_switch_secs = blue_breakdown["comp_4"] or 0
         red_scale_secs = red_breakdown["comp_5"] or 0
         blue_scale_secs = blue_breakdown["comp_5"] or 0
         red_opp_switch_secs = 145 - (blue_breakdown["comp_4"] or 0)
         blue_opp_switch_secs = 145 - (red_breakdown["comp_4"] or 0)
-        total_scale_secs = max(1, red_scale_secs + blue_scale_secs)
 
-        red_breakdown["comp_7"] = min(1, red_switch_secs / 145)
-        red_breakdown["comp_8"] = min(1, red_scale_secs / total_scale_secs)
-        red_breakdown["comp_9"] = min(1, red_opp_switch_secs / 145)
+        red_breakdown["comp_7"] = min(
+            1, max(0, (15 + red_auto_scale_secs - blue_auto_scale_secs) / 30)
+        )
+        blue_breakdown["comp_7"] = min(
+            1, max(0, (15 + blue_auto_scale_secs - red_auto_scale_secs) / 30)
+        )
 
-        blue_breakdown["comp_7"] = min(1, blue_switch_secs / 145)
-        blue_breakdown["comp_8"] = min(1, blue_scale_secs / total_scale_secs)
-        blue_breakdown["comp_9"] = min(1, blue_opp_switch_secs / 145)
+        red_breakdown["comp_8"] = min(1, red_switch_secs / 145)
+        blue_breakdown["comp_8"] = min(1, blue_switch_secs / 145)
+
+        red_breakdown["comp_9"] = min(
+            1, max(0, (145 + red_scale_secs - blue_scale_secs) / 290)
+        )
+        blue_breakdown["comp_9"] = min(
+            1, max(0, (145 + blue_scale_secs - red_scale_secs) / 290)
+        )
+
+        red_breakdown["comp_10"] = min(1, red_opp_switch_secs / 145)
+        blue_breakdown["comp_10"] = min(1, blue_opp_switch_secs / 145)
 
     return red_breakdown, blue_breakdown

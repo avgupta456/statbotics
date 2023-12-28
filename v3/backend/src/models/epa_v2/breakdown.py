@@ -1,33 +1,14 @@
-from typing import Any, Dict, Tuple
-
-import numpy as np
+from typing import Any, Tuple
 
 from src.models.epa_v2.math import t_prob_gt_0, zero_sigmoid
 from src.tba.breakdown import all_keys
+from src.db.models import Year
 
 for year in range(2002, 2024):
     if len(all_keys[year]) > 23:
         # 5 standard (total, auto, teleop, endgame, tiebreaker) + 18 components
         raise ValueError(f"Too many keys for year {year}")
     all_keys[year] += ["empty"] * (23 - len(all_keys[year]))
-
-
-def expand_breakdown(
-    year: int, breakdown: Dict[str, int | float], opp_breakdown: Dict[str, int | float]
-) -> Any:
-    if year == 2018:
-        my_switch_secs = breakdown["teleop_switch_secs"]
-        my_scale_secs = breakdown["teleop_scale_secs"]
-        my_opp_switch_secs = 145 - opp_breakdown["teleop_switch_secs"]
-
-        opp_scale_secs = opp_breakdown["teleop_scale_secs"]
-        total_scale_secs = max(1, my_scale_secs + opp_scale_secs)
-
-        breakdown["switch_power"] = min(1, my_switch_secs / 145)
-        breakdown["scale_power"] = min(1, my_scale_secs / total_scale_secs)
-        breakdown["opp_switch_power"] = min(1, my_opp_switch_secs / 145)
-
-    return np.array([breakdown[k] for k in all_keys[year]])
 
 
 def post_process_breakdown(
@@ -207,6 +188,7 @@ def get_pred_rps(
 
 
 def get_score_from_breakdown(
+    key: str,
     year: int,
     breakdown: Any,
     opp_breakdown: Any,
@@ -220,6 +202,8 @@ def get_score_from_breakdown(
     score = 0
     keys = all_keys[year]
     if year == 2016:
+        score = breakdown[keys.index("no_foul_points")]
+        """
         score += min(6, breakdown[keys.index("auto_reach_points")])
         score += breakdown[keys.index("auto_crossing_points")]
         score += 5 * breakdown[keys.index("auto_low_boulders")]
@@ -228,11 +212,13 @@ def get_score_from_breakdown(
         score += 2 * breakdown[keys.index("teleop_low_boulders")]
         score += 5 * breakdown[keys.index("teleop_high_boulders")]
         score += min(45, breakdown[keys.index("endgame_points")])
+        """
         if elim:
             score += rp_1_pred * 20
             score += rp_2_pred * 25
-
     elif year == 2017:
+        score = breakdown[keys.index("no_foul_points")]
+        """
         score += min(15, breakdown[keys.index("auto_mobility_points")])
         score += breakdown[keys.index("auto_fuel_low")] / 3
         score += breakdown[keys.index("auto_fuel_high")]
@@ -241,11 +227,10 @@ def get_score_from_breakdown(
         score += breakdown[keys.index("teleop_fuel_high")] / 3
         score += min(160, breakdown[keys.index("teleop_rotor_points")])
         score += min(150, breakdown[keys.index("takeoff_points")])
-
+        """
         if elim:
             score += rp_1_pred * 20
             score += rp_2_pred * 100
-
     elif year == 2018:
         score += min(15, breakdown[keys.index("auto_run_points")])
         score += 2 * min(15, breakdown[keys.index("auto_switch_secs")])
@@ -260,8 +245,9 @@ def get_score_from_breakdown(
         )
         score += min(45, breakdown[keys.index("vault_points")])
         score += min(90, breakdown[keys.index("endgame_points")])
-
     elif year == 2019:
+        score = breakdown[keys.index("no_foul_points")]
+        """
         score += breakdown[keys.index("sandstorm_points")]
         score += 2 * min(8, breakdown[keys.index("bay_hatch")])
         score += 3 * min(8, breakdown[keys.index("bay_cargo")])
@@ -272,8 +258,10 @@ def get_score_from_breakdown(
         score += 3 * min(4, breakdown[keys.index("rocket_cargo_mid")])
         score += 3 * min(4, breakdown[keys.index("rocket_cargo_top")])
         score += min(36, breakdown[keys.index("hab_climb_points")])
-
+        """
     elif year == 2020:
+        score = breakdown[keys.index("no_foul_points")]
+        """
         score += breakdown[keys.index("auto_init_line_points")]
         score += 2 * breakdown[keys.index("auto_cells_bottom")]
         score += 4 * breakdown[keys.index("auto_cells_outer")]
@@ -283,15 +271,17 @@ def get_score_from_breakdown(
         score += 3 * breakdown[keys.index("teleop_cells_inner")]
         score += min(20, breakdown[keys.index("control_panel_points")])
         score += min(90, breakdown[keys.index("endgame_points")])
-
+        """
     elif year == 2022:
+        score = breakdown[keys.index("no_foul_points")]
+        """
         score += breakdown[keys.index("auto_taxi_points")]
         score += 2 * breakdown[keys.index("auto_cargo_lower")]
         score += 4 * breakdown[keys.index("auto_cargo_upper")]
         score += 1 * breakdown[keys.index("teleop_cargo_lower")]
         score += 2 * breakdown[keys.index("teleop_cargo_upper")]
         score += min(45, breakdown[keys.index("endgame_points")])
-
+        """
     elif year == 2023:
         score += breakdown[keys.index("auto_mobility_points")]
         score += breakdown[keys.index("auto_charge_station_points")]
@@ -310,30 +300,34 @@ def get_score_from_breakdown(
         score += 5 * breakdown[keys.index("teleop_high_cones")]
         score += 5 * min(9, breakdown[keys.index("links")])
         score += min(30, breakdown[keys.index("endgame_charge_station_points")])
-
     else:
         score += breakdown[keys.index("no_foul_points")]
 
     return score
 
 
-def post_process_attrib(year: int, epa: Any, attrib: Any, elim: bool) -> Any:
-    keys = all_keys[year]
-    if year == 2018:
+def post_process_attrib(year: Year, epa: Any, attrib: Any, elim: bool) -> Any:
+    keys = all_keys[year.year]
+    if year.year == 2018:
         # Overwrite total points using switch/scale power
+        auto_index = keys.index("auto_points")
         teleop_index = keys.index("teleop_points")
         no_foul_index = keys.index("no_foul_points")
 
+        attrib[auto_index] = (
+            epa[keys.index("auto_run_points")]
+            + 2 * epa[keys.index("auto_switch_secs")]
+            + 30 * zero_sigmoid(epa[keys.index("auto_scale_power")] - year.comp_7_mean)
+        )
+
         attrib[teleop_index] = (
-            145 * epa[keys.index("switch_power")]
-            + 145 * epa[keys.index("scale_power")]
+            145 * zero_sigmoid(epa[keys.index("switch_power")] - year.comp_8_mean)
+            + 145 * zero_sigmoid(epa[keys.index("scale_power")] - year.comp_9_mean)
             + epa[keys.index("vault_points")]
         )
 
         attrib[no_foul_index] = (
-            epa[keys.index("auto_run_points")]
-            + 2 * epa[keys.index("auto_switch_secs")]
-            + 4 * epa[keys.index("auto_scale_secs")]
+            attrib[auto_index]
             + attrib[teleop_index]
             + epa[keys.index("endgame_points")]
         )

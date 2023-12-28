@@ -83,11 +83,23 @@ class EPAV2(Model):
         elim = match.elim
 
         red_score = get_score_from_breakdown(
-            self.year_num, breakdowns[0], breakdowns[1], rp_1s[0], rp_2s[0], elim
+            match.key,
+            self.year_num,
+            breakdowns[0],
+            breakdowns[1],
+            rp_1s[0],
+            rp_2s[0],
+            elim,
         )
 
         blue_score = get_score_from_breakdown(
-            self.year_num, breakdowns[1], breakdowns[0], rp_1s[1], rp_2s[1], elim
+            match.key,
+            self.year_num,
+            breakdowns[1],
+            breakdowns[0],
+            rp_1s[1],
+            rp_2s[1],
+            elim,
         )
 
         # Could also use variance to get win probability
@@ -132,7 +144,7 @@ class EPAV2(Model):
                 err = (my_err - margin * opp_err) / (1 + margin)
                 attrib = self.epas[t].epa.mean + err / self.num_teams
                 attrib = post_process_attrib(
-                    self.year_num, self.epas[t].epa.mean, attrib, match.elim
+                    self.year_obj, self.epas[t].epa.mean, attrib, match.elim
                 )
                 out[t] = Attribution(attrib)
 

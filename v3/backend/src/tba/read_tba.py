@@ -251,7 +251,7 @@ def get_event_matches(
                 winner = MatchWinner.RED
             elif match["winning_alliance"] == "blue":
                 winner = MatchWinner.BLUE
-            elif match["winning_alliance"] == "" and red_score == blue_score:
+            else:
                 winner = MatchWinner.TIE
 
             if year == 2015 and match["comp_level"] != "f":

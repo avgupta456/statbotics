@@ -680,8 +680,15 @@ def post_process_attrib(year: int, epa: Any, attrib: Any, elim: bool) -> Any:
     keys = all_keys[year]
     if year == 2018:
         # Overwrite total points using switch/scale power
+        auto_index = keys.index("auto_points")
         teleop_index = keys.index("teleop_points")
         no_foul_index = keys.index("no_foul_points")
+
+        attrib[auto_index] = (
+            epa[keys.index("auto_run_points")]
+            + 2 * epa[keys.index("auto_switch_secs")]
+            + 30 * epa[keys.index("auto_scale_power")]
+        )
 
         attrib[teleop_index] = (
             145 * epa[keys.index("switch_power")]
@@ -690,9 +697,7 @@ def post_process_attrib(year: int, epa: Any, attrib: Any, elim: bool) -> Any:
         )
 
         attrib[no_foul_index] = (
-            epa[keys.index("auto_run_points")]
-            + 2 * epa[keys.index("auto_switch_secs")]
-            + 4 * epa[keys.index("auto_scale_secs")]
+            attrib[auto_index]
             + attrib[teleop_index]
             + epa[keys.index("endgame_points")]
         )
