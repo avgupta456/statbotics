@@ -12,7 +12,7 @@ from src.models.epa.breakdown import (
 )
 from src.models.epa.constants import ELIM_WEIGHT
 from src.models.epa.init import get_init_epa
-from src.models.epa.math import SkewNormal
+from src.models.epa.math import SkewNormal, t_prob_gt_0
 from src.models.template import Model
 from src.models.types import AlliancePred, Attribution, MatchPred
 from src.types.enums import MatchWinner
@@ -112,12 +112,28 @@ class EPA(Model):
             elim,
         )
 
-        # Could also use variance to get win probability
-        # But this is simpler, less noisy, and more tested
-        # TODO: try to use variance to get win probability
+        # Assumes 100% correlation on each alliance
+        red_sd = np.sum([np.sqrt(self.epas[t].var[0]) for t in red_teams])
+        blue_sd = np.sum([np.sqrt(self.epas[t].var[0]) for t in blue_teams])
 
+        corr = 0.5
+        if self.year_num in [2002, 2003, 2018]:
+            corr = 1
+        elif self.year_num in [2015]:
+            corr = 0
+
+        total_sd = np.sqrt(red_sd**2 + blue_sd**2 + corr * 2 * red_sd * blue_sd)
+
+        if self.year_num == 2018:
+            # Your variance affects your score and your opponent's score
+            total_sd *= 2
+
+        win_prob = t_prob_gt_0(red_score - blue_score, total_sd)
+
+        """
         norm_diff = (red_score - blue_score) / self.year_obj.score_sd
         win_prob = 1 / (1 + 10 ** (self.k * norm_diff))
+        """
 
         foul_rate = self.year_obj.get_foul_rate()
         red_score_with_fouls = red_score * (1 + foul_rate)

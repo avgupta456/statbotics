@@ -7,7 +7,6 @@ from src.db.models import Match
 from src.types.enums import MatchStatus, MatchWinner
 from src.utils.utils import r
 
-
 EPS = 1e-6
 
 

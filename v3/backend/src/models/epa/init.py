@@ -5,27 +5,20 @@ from src.db.models import TeamYear, Year
 from src.models.epa.constants import (
     INIT_PENALTY,
     MEAN_REVERSION,
-    MIN_RP_EPA,
     NORM_MEAN,
     NORM_SD,
     YEAR_ONE_WEIGHT,
 )
-from src.models.epa.math import SkewNormal, inv_unit_sigmoid, unit_sigmoid
+from src.models.epa.math import SkewNormal, inv_unit_sigmoid
 
 
 @lru_cache(maxsize=None)
-def get_constants(year: Year) -> Tuple[int, float, float, float, float]:
+def get_constants(year: Year) -> Tuple[int, float, float]:
     num_teams = 2 if year.year <= 2004 else 3
     curr_mean = year.no_foul_mean or year.score_mean or 0
     curr_sd = year.score_sd or 0
 
-    rp_1_mean = year.rp_1_mean or unit_sigmoid(MIN_RP_EPA * num_teams)
-    rp_2_mean = year.rp_2_mean or unit_sigmoid(MIN_RP_EPA * num_teams)
-
-    rp_1_seed = inv_unit_sigmoid(rp_1_mean) / num_teams
-    rp_2_seed = inv_unit_sigmoid(rp_2_mean) / num_teams
-
-    return num_teams, curr_mean, curr_sd, rp_1_seed, rp_2_seed
+    return num_teams, curr_mean, curr_sd
 
 
 def norm_epa_to_next_season_epa(
@@ -39,7 +32,7 @@ def norm_epa_to_next_season_epa(
 def get_init_epa(
     year: Year, team_year_1: Optional[TeamYear], team_year_2: Optional[TeamYear]
 ) -> SkewNormal:
-    num_teams, year_mean, year_sd, _rp_1_seed, _rp_2_seed = get_constants(year)
+    num_teams, year_mean, year_sd = get_constants(year)
 
     INIT_EPA = NORM_MEAN - INIT_PENALTY * NORM_SD
     norm_epa_1 = norm_epa_2 = INIT_EPA
@@ -59,6 +52,11 @@ def get_init_epa(
     mean = year.get_mean_components()
     sd_frac = (year_sd or 0) / (year_mean or 1)
     sd = mean * sd_frac
+
+    if year.year >= 2016:
+        # For ranking points, take inv sigmoid since later we will apply sigmoid
+        mean[4] = max(-1, inv_unit_sigmoid(mean[4]))
+        mean[5] = max(-1, inv_unit_sigmoid(mean[5]))
 
     curr_epa_mean = mean / num_teams + sd * curr_epa_z_score
     curr_epa_sd = sd / num_teams

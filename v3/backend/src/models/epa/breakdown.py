@@ -105,7 +105,7 @@ def get_pred_rps(
         boulders_mean = breakdown_mean[keys.index("boulders")]
         boulders_sd = breakdown_sd[keys.index("boulders")]
 
-        rp_1 = breakdown_mean[keys]
+        rp_1 = breakdown_mean[keys.index("rp_1")]
         rp_2 = t_prob_gt_0(boulders_mean - 8 * DISCOUNT, boulders_sd)
         if week >= 8:
             rp_2 = t_prob_gt_0(boulders_mean - 10 * DISCOUNT, boulders_sd)
@@ -165,9 +165,6 @@ def get_score_from_breakdown(
     rp_2_pred: float,
     elim: bool,
 ) -> float:
-    # Applies caps to components, but EPAs still use the uncapped values
-    # TODO: Compute and return standard deviation as well
-
     score = 0
     keys = all_keys[year]
     if year == 2016:
@@ -203,7 +200,10 @@ def get_score_from_breakdown(
     elif year == 2018:
         score += min(15, breakdown[keys.index("auto_run_points")])
         score += 2 * min(15, breakdown[keys.index("auto_switch_secs")])
-        score += 2 * min(15, breakdown[keys.index("auto_scale_secs")])
+        score += 30 * zero_sigmoid(
+            breakdown[keys.index("auto_scale_power")]
+            - opp_breakdown[keys.index("auto_scale_power")]
+        )
         score += 145 * zero_sigmoid(
             breakdown[keys.index("switch_power")]
             - opp_breakdown[keys.index("opp_switch_power")]
