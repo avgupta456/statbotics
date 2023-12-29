@@ -17,14 +17,18 @@ distrib = exponnorm(1.6, -0.3, 0.2)
 
 
 def get_epa_to_norm_epa_func(year_epas: List[float]) -> Callable[[float], float]:
-    total_N, cutoff_N = len(year_epas), int(len(year_epas) / 10)
-    exponnorm_disrib = None if total_N == 0 else exponnorm(*exponnorm.fit(year_epas))
-    expon_distrib = None if cutoff_N == 0 else expon(*expon.fit(year_epas[:cutoff_N]))
+    desc_sorted_epas = sorted(year_epas, reverse=True)
+    total_N, cutoff_N = len(desc_sorted_epas), int(len(desc_sorted_epas) / 10)
+    exponnorm_disrib = expon_distrib = None
+    if total_N > 0:
+        exponnorm_disrib = exponnorm(*exponnorm.fit(desc_sorted_epas))
+    if cutoff_N > 0:
+        expon_distrib = expon(*expon.fit(desc_sorted_epas[:cutoff_N]))
 
-    sorted_epas = sorted(year_epas)
+    sorted_epas = desc_sorted_epas[::-1]
 
     def _get_norm_epa(epa: float) -> float:
-        i = bisect_left(sorted_epas, epa)
+        i = total_N - bisect_left(sorted_epas, epa)
         exponnorm_value: float = exponnorm_disrib.cdf(epa)
         percentile = exponnorm_value
         if i < cutoff_N:

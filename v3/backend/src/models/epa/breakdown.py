@@ -301,4 +301,12 @@ def post_process_attrib(year: Year, epa: Any, attrib: Any, elim: bool) -> Any:
             + epa[keys.index("endgame_points")]
         )
 
+    if year.year >= 2016 and elim:
+        # Don't update RP score during elim match
+        rp_1_index = keys.index("rp_1")
+        attrib[rp_1_index] = epa[rp_1_index]
+
+        rp_2_index = keys.index("rp_2")
+        attrib[rp_2_index] = epa[rp_2_index]
+
     return attrib

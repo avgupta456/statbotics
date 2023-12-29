@@ -36,9 +36,9 @@ class EPA(Model):
 
     @staticmethod
     def percent_func(year: int, x: int) -> float:
-        if year <= 2010:
-            return 0.3
-        return min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
+        if year <= 2015:
+            return 1 / 2 * min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
+        return 2 / 3 * min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
 
     def start_season(
         self,
@@ -103,15 +103,10 @@ class EPA(Model):
         # Assumes 100% correlation on each alliance
         red_sd = np.sum([np.sqrt(self.epas[t].var[0]) for t in red_teams])
         blue_sd = np.sum([np.sqrt(self.epas[t].var[0]) for t in blue_teams])
-
-        corr = 0.5
-        # Assume baseline 50% correlation, more or less depending on year
-        if year in [2002, 2003, 2018]:
-            corr = 1
-        elif year in [2015]:
-            corr = 0
-
-        total_sd = np.sqrt(red_sd**2 + blue_sd**2 + corr * 2 * red_sd * blue_sd)
+        corr = 0
+        if year == 2018:
+            corr = 0.5
+        total_sd = np.sqrt(red_sd**2 + blue_sd**2 + 2 * corr * red_sd * blue_sd)
 
         if year == 2018:
             # Your variance affects your score and your opponent's score
