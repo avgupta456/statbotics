@@ -929,8 +929,11 @@ def clean_breakdown(
         endgame_points = out["endgame_points"] or 0
         no_foul_points = out["no_foul_points"] or 0
 
-        if not offseason:
-            assert auto_points + teleop_points + endgame_points == no_foul_points
+        error = no_foul_points - (auto_points + teleop_points + endgame_points)
+        if not offseason and error != 0:
+            out["incomplete_breakdown"] = True
+            out["teleop_points"] = (out["teleop_points"] or 0) + error
+            print("ERROR", key, alliance, error)
 
     return out
 
