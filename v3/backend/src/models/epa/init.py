@@ -2,6 +2,7 @@ from functools import lru_cache
 from typing import Optional, Tuple
 
 from src.db.models import TeamYear, Year
+from src.constants import EPS
 from src.models.epa.constants import (
     INIT_PENALTY,
     MEAN_REVERSION,
@@ -55,8 +56,8 @@ def get_init_epa(
 
     if year.year >= 2016:
         # For ranking points, take inv sigmoid since later we will apply sigmoid
-        mean[4] = max(-1, inv_unit_sigmoid(mean[4]))
-        mean[5] = max(-1, inv_unit_sigmoid(mean[5]))
+        mean[4] = max(-1, inv_unit_sigmoid(max(EPS, min(1 - EPS, mean[4]))))
+        mean[5] = max(-1, inv_unit_sigmoid(max(EPS, min(1 - EPS, mean[5]))))
 
     curr_epa_mean = mean / num_teams + sd * curr_epa_z_score
     curr_epa_sd = sd / num_teams

@@ -1,14 +1,14 @@
-import math
+# import math
 from typing import Any, Tuple
 
 import numpy as np
 import scipy.stats  # type: ignore
 
-
+"""
+# NOTE: Unused in favor of t_prob_gt_0()
 def normal_prob_gt_0(mean: float, sd: float) -> float:
-    # NOTE: Unused in favor of t_prob_gt_0()
     return 0.5 * (1 + math.erf(mean / (sd * np.sqrt(2))))
-
+"""
 
 # 10 / 3 represent the asymptote of the sample size of the moving average
 # 1 / (1 - p) where p = 0.7, the decay rate of the EWMA. By the Bayesian
@@ -18,7 +18,6 @@ distrib = scipy.stats.t(10 / 3)
 
 
 def t_prob_gt_0(mean: float, sd: float) -> float:
-    # TODO: precompute 1000 values of this function to speed up
     return distrib.cdf(mean / sd)  # type: ignore
 
 
@@ -126,7 +125,7 @@ def inv_zero_sigmoid(x: float) -> float:
     return np.log(x / (1 - x)) / 2
 
 
-# used for ILS ranking point system
+# used for ranking point system
 def unit_sigmoid(x: float) -> float:
     return 1 / (1 + np.exp(-4 * (x - 0.5)))
 

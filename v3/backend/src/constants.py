@@ -32,3 +32,8 @@ CONN_STR = (
 
 CURR_YEAR = 2023
 CURR_WEEK = 8
+
+
+# MISC
+
+EPS = 1e-6

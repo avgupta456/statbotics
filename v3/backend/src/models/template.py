@@ -42,20 +42,12 @@ class Model:
         raise NotImplementedError
 
     def pre_record_team(
-        self,
-        team: str,
-        team_match: TeamMatch,
-        team_event: TeamEvent,
-        team_year: TeamYear,
+        self, team: str, tm: TeamMatch, te: TeamEvent, ty: TeamYear
     ) -> None:
         pass
 
     def post_record_team(
-        self,
-        team: str,
-        team_match: TeamMatch,
-        team_event: TeamEvent,
-        team_year: TeamYear,
+        self, team: str, tm: TeamMatch, te: TeamEvent, ty: TeamYear
     ) -> None:
         pass
 

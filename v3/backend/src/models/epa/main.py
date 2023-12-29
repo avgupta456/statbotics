@@ -22,9 +22,11 @@ from src.utils.utils import r
 class EPA(Model):
     k: float
 
+    """
     @staticmethod
     def k_func(year: int) -> float:
         return -5 / 8 if year >= 2008 else -5 / 12
+    """
 
     @staticmethod
     def margin_func(year: int, x: int) -> float:
@@ -45,7 +47,7 @@ class EPA(Model):
         team_years: Dict[str, TeamYear],
     ) -> None:
         super().start_season(year, all_team_years, team_years)
-        self.k = EPA.k_func(self.year_num)
+        # self.k = EPA.k_func(self.year_num)
 
         init_rating = get_init_epa(year, None, None)
         self.epas: Dict[str, SkewNormal] = defaultdict(lambda: init_rating)
@@ -69,7 +71,9 @@ class EPA(Model):
             team_year.epa_start = r(rating.mean[0], 2)
 
     def predict_match(self, match: Match) -> Tuple[float, AlliancePred, AlliancePred]:
-        rp_1s: List[float] = []  # TODO: refactor
+        year, week, key, elim = self.year_num, match.week, match.key, match.elim
+
+        rp_1s: List[float] = []
         rp_2s: List[float] = []
         breakdowns: List[Any] = []
 
@@ -80,36 +84,20 @@ class EPA(Model):
             pred_sd = np.array([np.sqrt(self.epas[t].var) for t in teams]).sum(axis=0)  # type: ignore
             opp_pred_mean = np.array([self.epas[t].mean for t in opp_teams]).sum(axis=0)  # type: ignore
 
-            pred_mean = post_process_breakdown(
-                self.year_num, match.key, pred_mean, opp_pred_mean
-            )
+            pred_mean = post_process_breakdown(year, key, pred_mean, opp_pred_mean)
 
-            rp_1, rp_2 = get_pred_rps(self.year_num, match.week, pred_mean, pred_sd)
+            rp_1, rp_2 = get_pred_rps(year, week, pred_mean, pred_sd)
 
             rp_1s.append(rp_1)
             rp_2s.append(rp_2)
             breakdowns.append(pred_mean)
 
-        elim = match.elim
-
         red_score = get_score_from_breakdown(
-            match.key,
-            self.year_num,
-            breakdowns[0],
-            breakdowns[1],
-            rp_1s[0],
-            rp_2s[0],
-            elim,
+            key, year, breakdowns[0], breakdowns[1], rp_1s[0], rp_2s[0], elim
         )
 
         blue_score = get_score_from_breakdown(
-            match.key,
-            self.year_num,
-            breakdowns[1],
-            breakdowns[0],
-            rp_1s[1],
-            rp_2s[1],
-            elim,
+            key, year, breakdowns[1], breakdowns[0], rp_1s[1], rp_2s[1], elim
         )
 
         # Assumes 100% correlation on each alliance
@@ -117,14 +105,15 @@ class EPA(Model):
         blue_sd = np.sum([np.sqrt(self.epas[t].var[0]) for t in blue_teams])
 
         corr = 0.5
-        if self.year_num in [2002, 2003, 2018]:
+        # Assume baseline 50% correlation, more or less depending on year
+        if year in [2002, 2003, 2018]:
             corr = 1
-        elif self.year_num in [2015]:
+        elif year in [2015]:
             corr = 0
 
         total_sd = np.sqrt(red_sd**2 + blue_sd**2 + corr * 2 * red_sd * blue_sd)
 
-        if self.year_num == 2018:
+        if year == 2018:
             # Your variance affects your score and your opponent's score
             total_sd *= 2
 
@@ -187,78 +176,51 @@ class EPA(Model):
         if not match.elim:
             self.counts[team] += 1
 
-    def pre_record_team(
-        self,
-        team: str,
-        team_match: TeamMatch,
-        team_event: TeamEvent,
-        team_year: TeamYear,
-    ):
-        team_match.epa = r(self.epas[team].mean[0], 2)
+    def pre_record_team(self, team: str, tm: TeamMatch, te: TeamEvent, ty: TeamYear):
+        rounded_mean: Any = np.round(self.epas[team].mean, 2)
+        tm.epa = rounded_mean[0]
 
         if self.year_num >= 2016:
-            team_match.auto_epa = r(self.epas[team].mean[1], 2)
-            team_match.teleop_epa = r(self.epas[team].mean[2], 2)
-            team_match.endgame_epa = r(self.epas[team].mean[3], 2)
-            team_match.tiebreaker_epa = r(self.epas[team].mean[4], 2)
+            tm.auto_epa = rounded_mean[1]
+            tm.teleop_epa = rounded_mean[2]
+            tm.endgame_epa = rounded_mean[3]
+            tm.rp_1_epa = rounded_mean[4]
+            tm.rp_2_epa = rounded_mean[5]
+            tm.tiebreaker_epa = rounded_mean[6]
             for i in range(1, 19):
-                new_value = r(self.epas[team].mean[i + 4], 2)
-                setattr(team_match, f"comp_{i}_epa", new_value)
+                new_value = rounded_mean[i + 6]
+                setattr(tm, f"comp_{i}_epa", new_value)
 
-    def post_record_team(
-        self,
-        team: str,
-        team_match: TeamMatch,
-        team_event: TeamEvent,
-        team_year: TeamYear,
-    ):
-        # TODO: refactor to vectorize
-        team_match.post_epa = r(self.epas[team].mean[0], 2)
+    def post_record_team(self, team: str, tm: TeamMatch, te: TeamEvent, ty: TeamYear):
+        rounded_mean: Any = np.round(self.epas[team].mean, 2)
+        rounded_sd: Any = np.round(np.sqrt(self.epas[team].var), 2)
 
-        team_event.epa = r(self.epas[team].mean[0], 2)
-        team_event.epa_sd = r(np.sqrt(self.epas[team].var[0]), 2)
-        team_event.epa_skew = r(self.epas[team].skew, 4)
+        tm.post_epa = rounded_mean[0]
 
-        team_year.epa = r(self.epas[team].mean[0], 2)
-        team_year.epa_sd = r(np.sqrt(self.epas[team].var[0]), 2)
-        team_year.epa_skew = r(self.epas[team].skew, 4)
+        ty.epa = te.epa = rounded_mean[0]
+        ty.epa_sd = te.epa_sd = rounded_sd[0]
+        ty.epa_skew = te.epa_skew = r(self.epas[team].skew, 4)
 
         if self.year_num >= 2016:
-            team_event.auto_epa = r(self.epas[team].mean[1], 2)
-            team_event.auto_epa_sd = r(np.sqrt(self.epas[team].var[1]), 2)
-            team_event.teleop_epa = r(self.epas[team].mean[2], 2)
-            team_event.teleop_epa_sd = r(np.sqrt(self.epas[team].var[2]), 2)
-            team_event.endgame_epa = r(self.epas[team].mean[3], 2)
-            team_event.endgame_epa_sd = r(np.sqrt(self.epas[team].var[3]), 2)
-            team_event.rp_1_epa = r(self.epas[team].mean[4], 2)
-            team_event.rp_1_epa_sd = r(np.sqrt(self.epas[team].var[4]), 2)
-            team_event.rp_2_epa = r(self.epas[team].mean[5], 2)
-            team_event.rp_2_epa_sd = r(np.sqrt(self.epas[team].var[5]), 2)
-            team_event.tiebreaker_epa = r(self.epas[team].mean[6], 2)
-            team_event.tiebreaker_epa_sd = r(np.sqrt(self.epas[team].var[6]), 2)
+            ty.auto_epa = te.auto_epa = rounded_mean[1]
+            ty.auto_epa_sd = te.auto_epa_sd = rounded_sd[1]
+            ty.teleop_epa = te.teleop_epa = rounded_mean[2]
+            ty.teleop_epa_sd = te.teleop_epa_sd = rounded_sd[2]
+            ty.endgame_epa = te.endgame_epa = rounded_mean[3]
+            ty.endgame_epa_sd = te.endgame_epa_sd = rounded_sd[3]
+            ty.rp_1_epa = te.rp_1_epa = rounded_mean[4]
+            ty.rp_1_epa_sd = te.rp_1_epa_sd = rounded_sd[4]
+            ty.rp_2_epa = te.rp_2_epa = rounded_mean[5]
+            ty.rp_2_epa_sd = te.rp_2_epa_sd = rounded_sd[5]
+            ty.tiebreaker_epa = te.tiebreaker_epa = rounded_mean[6]
+            ty.tiebreaker_epa_sd = te.tiebreaker_epa_sd = rounded_sd[6]
             for i in range(1, 19):
-                new_value = r(self.epas[team].mean[i + 6], 2)
-                setattr(team_event, f"comp_{i}_epa", new_value)
-                new_sd = r(np.sqrt(self.epas[team].var[i + 6]), 2)
-                setattr(team_event, f"comp_{i}_epa_sd", new_sd)
-
-            team_year.auto_epa = r(self.epas[team].mean[1], 2)
-            team_year.auto_epa_sd = r(np.sqrt(self.epas[team].var[1]), 2)
-            team_year.teleop_epa = r(self.epas[team].mean[2], 2)
-            team_year.teleop_epa_sd = r(np.sqrt(self.epas[team].var[2]), 2)
-            team_year.endgame_epa = r(self.epas[team].mean[3], 2)
-            team_year.endgame_epa_sd = r(np.sqrt(self.epas[team].var[3]), 2)
-            team_year.rp_1_epa = r(self.epas[team].mean[4], 2)
-            team_year.rp_1_epa_sd = r(np.sqrt(self.epas[team].var[4]), 2)
-            team_year.rp_2_epa = r(self.epas[team].mean[5], 2)
-            team_year.rp_2_epa_sd = r(np.sqrt(self.epas[team].var[5]), 2)
-            team_year.tiebreaker_epa = r(self.epas[team].mean[6], 2)
-            team_year.tiebreaker_epa_sd = r(np.sqrt(self.epas[team].var[6]), 2)
-            for i in range(1, 19):
-                new_value = r(self.epas[team].mean[i + 6], 2)
-                setattr(team_year, f"comp_{i}_epa", new_value)
-                new_sd = r(np.sqrt(self.epas[team].var[i + 6]), 2)
-                setattr(team_year, f"comp_{i}_epa_sd", new_sd)
+                new_value = rounded_mean[i + 6]
+                setattr(ty, f"comp_{i}_epa", new_value)
+                setattr(te, f"comp_{i}_epa", new_value)
+                new_sd = rounded_sd[i + 6]
+                setattr(ty, f"comp_{i}_epa_sd", new_sd)
+                setattr(te, f"comp_{i}_epa_sd", new_sd)
 
     def record_match(self, match: Match, match_pred: MatchPred) -> None:
         match.epa_win_prob = r(match_pred.win_prob, 4)
