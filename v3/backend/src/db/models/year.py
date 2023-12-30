@@ -175,10 +175,6 @@ class YearORM(Base, ModelORM):
     epa_champs_conf: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_acc: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_mse: MOF = mapped_column(Float, nullable=True, default=None)
-    champs_elim_count: MI = mapped_column(Integer, default=0)
-    epa_champs_elim_conf: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_elim_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_elim_mse: MOF = mapped_column(Float, nullable=True, default=None)
 
     """SCORE PRED"""
 
@@ -188,9 +184,6 @@ class YearORM(Base, ModelORM):
     epa_champs_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_score_error: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_elim_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_elim_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_elim_score_error: MOF = mapped_column(Float, nullable=True, default=None)
 
     """RP PRED"""
     rp_count: MI = mapped_column(Integer, default=0)

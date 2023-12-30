@@ -318,11 +318,11 @@ def clean_breakdown_2017(
     if num_rotors == 3:
         gears += 2
 
-    rp_1 = bool(breakdown.get("kPaRankingPointAchieved", False))
-    rp_2 = bool(breakdown.get("rotorRankingPointAchieved", False))
+    rp_1 = bool(breakdown.get("rotorRankingPointAchieved", False))
+    rp_2 = bool(breakdown.get("kPaRankingPointAchieved", False))
 
-    rp_1_points = breakdown.get("kPaBonusPoints", 0)
-    rp_2_points = breakdown.get("rotorBonusPoints", 0)
+    rp_1_points = breakdown.get("rotorBonusPoints", 0)
+    rp_2_points = breakdown.get("kPaBonusPoints", 0)
 
     no_foul_points -= rp_1_points + rp_2_points
 
@@ -385,8 +385,8 @@ def clean_breakdown_2018(
 
     endgame_points = breakdown.get("endgamePoints", 0)
 
-    rp_1 = bool(breakdown.get("faceTheBossRankingPoint", False))
-    rp_2 = bool(breakdown.get("autoQuestRankingPoint", False))
+    rp_1 = bool(breakdown.get("autoQuestRankingPoint", False))
+    rp_2 = bool(breakdown.get("faceTheBossRankingPoint", False))
 
     error = no_foul_points - (
         auto_run_points
@@ -525,8 +525,8 @@ def clean_breakdown_2019(
 
     pieces = bay_hatch + bay_cargo + rocket
 
-    rp_1 = bool(breakdown.get("habDockingRankingPoint", False))
-    rp_2 = bool(breakdown.get("completeRocketRankingPoint", False))
+    rp_1 = bool(breakdown.get("completeRocketRankingPoint", False))
+    rp_2 = bool(breakdown.get("habDockingRankingPoint", False))
 
     tiebreaker = cargo_points
 
@@ -606,8 +606,8 @@ def clean_breakdown_2020(
         + teleop_cells_inner
     )
 
-    rp_1 = bool(breakdown.get("shieldOperationalRankingPoint", False))
-    rp_2 = bool(breakdown.get("shieldEnergizedRankingPoint", False))
+    rp_1 = bool(breakdown.get("shieldEnergizedRankingPoint", False))
+    rp_2 = bool(breakdown.get("shieldOperationalRankingPoint", False))
 
     auto_points = auto_init_line_points + auto_cell_points
     teleop_points = teleop_cell_points + control_panel_points

@@ -169,34 +169,14 @@ def get_score_from_breakdown(
     keys = all_keys[year]
     if year == 2016:
         score = breakdown[keys.index("no_foul_points")]
-        """
-        score += min(6, breakdown[keys.index("auto_reach_points")])
-        score += breakdown[keys.index("auto_crossing_points")]
-        score += 5 * breakdown[keys.index("auto_low_boulders")]
-        score += 10 * breakdown[keys.index("auto_high_boulders")]
-        score += breakdown[keys.index("teleop_crossing_points")]
-        score += 2 * breakdown[keys.index("teleop_low_boulders")]
-        score += 5 * breakdown[keys.index("teleop_high_boulders")]
-        score += min(45, breakdown[keys.index("endgame_points")])
-        """
         if elim:
             score += rp_1_pred * 20
             score += rp_2_pred * 25
     elif year == 2017:
         score = breakdown[keys.index("no_foul_points")]
-        """
-        score += min(15, breakdown[keys.index("auto_mobility_points")])
-        score += breakdown[keys.index("auto_fuel_low")] / 3
-        score += breakdown[keys.index("auto_fuel_high")]
-        score += min(20, breakdown[keys.index("auto_rotor_points")])
-        score += breakdown[keys.index("teleop_fuel_low")] / 9
-        score += breakdown[keys.index("teleop_fuel_high")] / 3
-        score += min(160, breakdown[keys.index("teleop_rotor_points")])
-        score += min(150, breakdown[keys.index("takeoff_points")])
-        """
         if elim:
-            score += rp_1_pred * 20
-            score += rp_2_pred * 100
+            score += rp_1_pred * 100
+            score += rp_2_pred * 20
     elif year == 2018:
         score += min(15, breakdown[keys.index("auto_run_points")])
         score += 2 * min(15, breakdown[keys.index("auto_switch_secs")])
@@ -216,41 +196,10 @@ def get_score_from_breakdown(
         score += min(90, breakdown[keys.index("endgame_points")])
     elif year == 2019:
         score = breakdown[keys.index("no_foul_points")]
-        """
-        score += breakdown[keys.index("sandstorm_points")]
-        score += 2 * min(8, breakdown[keys.index("bay_hatch")])
-        score += 3 * min(8, breakdown[keys.index("bay_cargo")])
-        score += 2 * min(4, breakdown[keys.index("rocket_hatch_low")])
-        score += 2 * min(4, breakdown[keys.index("rocket_hatch_mid")])
-        score += 2 * min(4, breakdown[keys.index("rocket_hatch_top")])
-        score += 3 * min(4, breakdown[keys.index("rocket_cargo_low")])
-        score += 3 * min(4, breakdown[keys.index("rocket_cargo_mid")])
-        score += 3 * min(4, breakdown[keys.index("rocket_cargo_top")])
-        score += min(36, breakdown[keys.index("hab_climb_points")])
-        """
     elif year == 2020:
         score = breakdown[keys.index("no_foul_points")]
-        """
-        score += breakdown[keys.index("auto_init_line_points")]
-        score += 2 * breakdown[keys.index("auto_cells_bottom")]
-        score += 4 * breakdown[keys.index("auto_cells_outer")]
-        score += 6 * breakdown[keys.index("auto_cells_inner")]
-        score += breakdown[keys.index("teleop_cells_bottom")]
-        score += 2 * breakdown[keys.index("teleop_cells_outer")]
-        score += 3 * breakdown[keys.index("teleop_cells_inner")]
-        score += min(20, breakdown[keys.index("control_panel_points")])
-        score += min(90, breakdown[keys.index("endgame_points")])
-        """
     elif year == 2022:
         score = breakdown[keys.index("no_foul_points")]
-        """
-        score += breakdown[keys.index("auto_taxi_points")]
-        score += 2 * breakdown[keys.index("auto_cargo_lower")]
-        score += 4 * breakdown[keys.index("auto_cargo_upper")]
-        score += 1 * breakdown[keys.index("teleop_cargo_lower")]
-        score += 2 * breakdown[keys.index("teleop_cargo_upper")]
-        score += min(45, breakdown[keys.index("endgame_points")])
-        """
     elif year == 2023:
         score += breakdown[keys.index("auto_mobility_points")]
         score += breakdown[keys.index("auto_charge_station_points")]
