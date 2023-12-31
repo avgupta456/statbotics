@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 
 from src.constants import CURR_YEAR
 from src.data.avg import process_year as process_year_avg
+from src.data.colors import post_process as post_process_colors
 from src.data.epa.main import (
     post_process as post_process_epa,
     process_year as process_year_epa,
@@ -88,6 +89,7 @@ def process_year(
 def post_process(
     teams: List[Team],
     all_team_years: Optional[Dict[int, Dict[str, TeamYear]]],
+    colors: bool = False,  # default don't update colors
 ):
     timer = Timer()
 
@@ -108,6 +110,12 @@ def post_process(
 
     post_process_tba()  # updates DB directly
     timer.print("Post TBA")
+
+    if colors:
+        teams = get_teams_db()
+        teams = post_process_colors(teams, use_cache=True)
+        update_teams_db(teams, False)
+        timer.print("Post Colors")
 
 
 def reset_all_years():
@@ -131,7 +139,7 @@ def reset_all_years():
         teams = process_year(year_num, False, True, teams, objs, all_team_years)
         all_team_years[year_num] = {ty.team: ty for ty in objs[1].values()}
 
-    post_process(teams, all_team_years)
+    post_process(teams, all_team_years, colors=True)
 
 
 def update_curr_year(partial: bool):
@@ -161,3 +169,16 @@ def update_curr_year(partial: bool):
     if not partial:
         # triggers loading all team years
         post_process(teams, None)
+
+
+def update_colors(use_cache: bool = False):
+    timer = Timer()
+
+    teams = get_teams_db()
+    timer.print("Load Teams")
+
+    teams = post_process_colors(teams, use_cache)
+    timer.print("Update Colors")
+
+    update_teams_db(teams, False)
+    timer.print("Update DB")
