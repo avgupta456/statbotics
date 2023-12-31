@@ -1,9 +1,10 @@
-from typing import Any
+from typing import Any, Dict
 
 import numpy as np
 from sqlalchemy import Float, Integer
 from sqlalchemy.orm import mapped_column
 
+from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MF, MI, MOF
@@ -255,3 +256,105 @@ class Year(_Year, Model):
                 self.comp_18_mean,
             ]
         )
+
+    def to_dict(self) -> Dict[str, Any]:
+        clean: Dict[str, Any] = {
+            "year": self.year,
+            "score_mean": self.score_mean,
+            "score_sd": self.score_sd,
+            "percentiles": {
+                "total_points": {
+                    99: self.epa_99p,
+                    90: self.epa_90p,
+                    75: self.epa_75p,
+                    25: self.epa_25p,
+                },
+            },
+            "breakdown": {},
+            "metrics": {
+                "win_prob": {
+                    "season": {
+                        "count": self.count,
+                        "conf": self.epa_conf,
+                        "acc": self.epa_acc,
+                        "mse": self.epa_mse,
+                    },
+                    "champs": {
+                        "count": self.champs_count,
+                        "conf": self.epa_champs_conf,
+                        "acc": self.epa_champs_acc,
+                        "mse": self.epa_champs_mse,
+                    },
+                },
+            },
+        }
+
+        if self.year >= 2016:
+            clean["breakdown"] = {
+                "foul_mean": self.foul_mean,
+                "no_foul_mean": self.no_foul_mean,
+            }
+            for k in ["auto", "teleop", "endgame", "rp_1", "rp_2", "tiebreaker"] + [
+                f"comp_{i}" for i in range(1, 19)
+            ]:
+                if k not in key_to_name[self.year]:
+                    continue
+                name = key_to_name[self.year][k]
+                clean["breakdown"][f"{name}_mean"] = getattr(self, f"{k}_mean")
+                if k != "tiebreaker":
+                    clean["percentiles"][name] = {
+                        99: getattr(self, f"{k}_epa_99p"),
+                        90: getattr(self, f"{k}_epa_90p"),
+                        75: getattr(self, f"{k}_epa_75p"),
+                        25: getattr(self, f"{k}_epa_25p"),
+                    }
+
+            clean["metrics"]["score_pred"] = {
+                "season": {
+                    "count": 2 * self.count,
+                    "rmse": self.epa_score_rmse,
+                    "mae": self.epa_score_mae,
+                    "error": self.epa_score_error,
+                },
+                "champs": {
+                    "count": 2 * self.champs_count,
+                    "rmse": self.epa_champs_score_rmse,
+                    "mae": self.epa_champs_score_mae,
+                    "error": self.epa_champs_score_error,
+                },
+            }
+
+            clean["metrics"]["rp_pred"] = {
+                "season": {
+                    "count": self.rp_count,
+                    key_to_name[self.year]["rp_1"]: {
+                        "error": self.epa_rp_1_error,
+                        "acc": self.epa_rp_1_acc,
+                        "ll": self.epa_rp_1_ll,
+                        "f1": self.epa_rp_1_f1,
+                    },
+                    key_to_name[self.year]["rp_2"]: {
+                        "error": self.epa_rp_2_error,
+                        "acc": self.epa_rp_2_acc,
+                        "ll": self.epa_rp_2_ll,
+                        "f1": self.epa_rp_2_f1,
+                    },
+                },
+                "champs": {
+                    "count": self.champs_rp_count,
+                    key_to_name[self.year]["rp_1"]: {
+                        "error": self.epa_champs_rp_1_error,
+                        "acc": self.epa_champs_rp_1_acc,
+                        "ll": self.epa_champs_rp_1_ll,
+                        "f1": self.epa_champs_rp_1_f1,
+                    },
+                    key_to_name[self.year]["rp_2"]: {
+                        "error": self.epa_champs_rp_2_error,
+                        "acc": self.epa_champs_rp_2_acc,
+                        "ll": self.epa_champs_rp_2_ll,
+                        "f1": self.epa_champs_rp_2_f1,
+                    },
+                },
+            }
+
+        return clean
