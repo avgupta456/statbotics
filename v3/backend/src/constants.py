@@ -24,7 +24,7 @@ CONN_STR = (
         + CRDB_CLUSTER
     )
     if PROD
-    else "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
+    else "cockroachdb://root@localhost:26257/statbotics3?sslmode=disable"
 )
 
 # API
