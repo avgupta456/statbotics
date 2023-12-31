@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import attr
 from sqlalchemy import Boolean, Enum, Float, Integer, String
