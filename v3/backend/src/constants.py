@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 # GLOBAL
 
@@ -23,8 +24,12 @@ CONN_STR = (
         + CRDB_CLUSTER
     )
     if PROD
-    else "cockroachdb://root@localhost:26257/statbotics2?sslmode=disable"
+    else "cockroachdb://root@localhost:26257/statbotics3?sslmode=disable"
 )
+
+# API
+
+AUTH_KEY_BLACKLIST: List[str] = []
 
 # CONFIG
 
@@ -34,3 +39,8 @@ CURR_WEEK = 1
 
 # MAX_TEAM = 9316   # (2023)
 MAX_TEAM = 9650  # (2024)
+
+
+# MISC
+
+EPS = 1e-6

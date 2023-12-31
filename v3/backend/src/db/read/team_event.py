@@ -1,27 +1,28 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.team_event import TeamEvent, TeamEventORM
+from src.db.read.main import common_filters
 
 
-def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
+def get_team_event(team: str, event: str) -> Optional[TeamEvent]:
     def callback(session: SessionType):
-        data = session.query(TeamEventORM).filter(  # type: ignore
+        data = session.query(TeamEventORM).filter(
             TeamEventORM.team == team, TeamEventORM.event == event
         )
-        out_data: Optional[TeamEventORM] = data.first()  # type: ignore
+        out_data: Optional[TeamEventORM] = data.first()
         if out_data is None:
             return None
-        return TeamEvent.from_dict(out_data.__dict__)  # type: ignore
+        return TeamEvent.from_dict(out_data.__dict__)
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_team_events(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
@@ -35,44 +36,35 @@ def get_team_events(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[TeamEvent]:
+    @common_filters(TeamEventORM, TeamEvent, metric, ascending, limit, offset)
     def callback(session: SessionType):
-        data = session.query(TeamEventORM)  # type: ignore
+        data = session.query(TeamEventORM)
         if team is not None:
-            data = data.filter(TeamEventORM.team == team)  # type: ignore
+            data = data.filter(TeamEventORM.team == team)
         if year is not None:
-            data = data.filter(TeamEventORM.year == year)  # type: ignore
+            data = data.filter(TeamEventORM.year == year)
         if event is not None:
-            data = data.filter(TeamEventORM.event == event)  # type: ignore
+            data = data.filter(TeamEventORM.event == event)
         if country is not None:
-            data = data.filter(TeamEventORM.country == country)  # type: ignore
+            data = data.filter(TeamEventORM.country == country)
         if district is not None:
-            data = data.filter(TeamEventORM.district == district)  # type: ignore
+            data = data.filter(TeamEventORM.district == district)
         if state is not None:
-            data = data.filter(TeamEventORM.state == state)  # type: ignore
+            data = data.filter(TeamEventORM.state == state)
         if type is not None:
-            data = data.filter(TeamEventORM.type == type)  # type: ignore
+            data = data.filter(TeamEventORM.type == type)
         if week is not None:
-            data = data.filter(TeamEventORM.week == week)  # type: ignore
+            data = data.filter(TeamEventORM.week == week)
         if offseason is not None:
-            data = data.filter(TeamEventORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(TeamEventORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(TeamEventORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(TeamEventORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
-        out_data: List[TeamEventORM] = data.all()  # type: ignore
-        return [TeamEvent.from_dict(x.__dict__) for x in out_data]  # type: ignore
+            data = data.filter(TeamEventORM.offseason == offseason)
+
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_team_events() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(TeamEventORM).count()  # type: ignore
+        return session.query(TeamEventORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

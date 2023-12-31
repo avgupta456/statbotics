@@ -1,8 +1,19 @@
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
+from src.api.query import (
+    active_query,
+    ascending_query,
+    country_query,
+    district_query,
+    limit_query,
+    metric_query,
+    offseason_query,
+    offset_query,
+    state_query,
+)
 from src.db.models import Team
 from src.db.read import get_team, get_teams
 from src.utils.alru_cache import alru_cache
@@ -15,33 +26,35 @@ router = APIRouter()
 
 
 @router.get("/")
-async def read_root():
+async def read_root_team():
     return {"name": "Team Router"}
 
 
-@alru_cache(ttl=timedelta(hours=1))
-async def get_team_cached(team: str) -> Optional[Team]:
-    return (True, get_team(team=team))  # type: ignore
+@alru_cache(ttl=timedelta(minutes=5))
+async def get_team_cached(team: str) -> Tuple[bool, Optional[Team]]:
+    return (True, get_team(team=team))
 
 
-@alru_cache(ttl=timedelta(hours=1))
+@alru_cache(ttl=timedelta(minutes=5))
 async def get_teams_cached(
     country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
     active: Optional[bool] = None,
+    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
-) -> List[Team]:
-    return (  # type: ignore
+) -> Tuple[bool, List[Team]]:
+    return (
         True,
         get_teams(
             country=country,
             district=district,
             state=state,
             active=active,
+            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -52,8 +65,8 @@ async def get_teams_cached(
 
 @router.get(
     "/team/{team}",
-    description="Get a single Team object containing team name, location, normalized EPA statistics, and winrate.",
-    response_description="A Team object.",
+    summary="Query a single team",
+    description="Returns a single Team object. Requires a team number (no prefix).",
 )
 @async_fail_gracefully_api_singular
 async def read_team(
@@ -64,62 +77,36 @@ async def read_team(
     if team_obj is None:
         raise Exception("Team not found")
 
-    return team_obj.as_dict()
-
-
-@router.get(
-    "/teams/district/{district}",
-    description="Get a list of Team objects from a single district. Specify lowercase district abbreviation, ex: fnc, fim",
-    response_description="A list of Team objects. See /team/{team} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_teams_district(
-    response: Response,
-    district: str,
-) -> List[Dict[str, Any]]:
-    teams: List[Team] = await get_teams_cached(district=district)
-    return [team.as_dict() for team in teams]
-
-
-@router.get(
-    "/teams/state/{state}",
-    description="Get a list of Team objects from a single state. Specify uppercase state abbreviation, ex: NC, CA",
-    response_description="A list of Team objects. See /team/{team} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_teams_state(
-    response: Response,
-    state: str,
-) -> List[Dict[str, Any]]:
-    teams: List[Team] = await get_teams_cached(state=state)
-    return [team.as_dict() for team in teams]
+    return team_obj.to_dict()
 
 
 @router.get(
     "/teams",
-    description="Get a list of Team objects with optional filters.",
-    response_description="A list of Team objects. See /team/{team} for more information.",
+    summary="Query multiple teams",
+    description="Returns up to 1000 teams at a time. Specify limit and offset to page through results.",
 )
 @async_fail_gracefully_api_plural
 async def read_teams(
     response: Response,
-    country: Optional[str] = None,
-    district: Optional[str] = None,
-    state: Optional[str] = None,
-    active: Optional[bool] = None,
-    metric: str = "team",
-    ascending: bool = True,
-    limit: int = 100,
-    offset: int = 0,
+    country: Optional[str] = country_query,
+    district: Optional[str] = district_query,
+    state: Optional[str] = state_query,
+    active: Optional[bool] = active_query,
+    offseason: Optional[bool] = offseason_query,
+    metric: str = metric_query,
+    ascending: bool = ascending_query,
+    limit: int = limit_query,
+    offset: int = offset_query,
 ) -> List[Dict[str, Any]]:
     teams: List[Team] = await get_teams_cached(
         country=country,
         district=district,
         state=state,
         active=active,
+        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,
         offset=offset,
     )
-    return [team.as_dict() for team in teams]
+    return [team.to_dict() for team in teams]

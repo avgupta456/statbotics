@@ -1,86 +1,60 @@
-from typing import Any, Dict, Optional
-
-import attr
-from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
+from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
-from src.db.models.main import Model, ModelORM
+from src.db.models.main import Model, ModelORM, generate_attr_class
+from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
 
 
 class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team = Column(Integer, index=True)
+    team: MS = mapped_column(String(6), index=True, primary_key=True)
 
-    PrimaryKeyConstraint(team)
+    """NO DEFAULTS"""
+    name: MS = mapped_column(String(100))
+    country: MOS = mapped_column(String(30), nullable=True)
+    state: MOS = mapped_column(String(10), nullable=True)
+    rookie_year: MOI = mapped_column(Integer, nullable=True)
 
     """GENERAL"""
-    name = Column(String(100))
-    offseason = Column(Boolean)
-    state = Column(String(10))
-    country = Column(String(30))
-    district = Column(String(10))
-    rookie_year = Column(Integer)
-    active = Column(Boolean)
-
-    """EPA"""
-    norm_epa = Column(Float)
-    norm_epa_recent = Column(Float)
-    norm_epa_mean = Column(Float)
-    norm_epa_max = Column(Float)
+    offseason: MB = mapped_column(Boolean, default=True)
+    district: MOS = mapped_column(String(10), nullable=True, default=None)
+    active: MB = mapped_column(Boolean, default=False)
+    primary_color: MOS = mapped_column(String(7), nullable=True, default=None)
+    secondary_color: MOS = mapped_column(String(7), nullable=True, default=None)
 
     """STATS"""
-    wins = Column(Integer)
-    losses = Column(Integer)
-    ties = Column(Integer)
-    count = Column(Integer)
-    winrate = Column(Float)
+    wins: MI = mapped_column(Integer, default=0)
+    losses: MI = mapped_column(Integer, default=0)
+    ties: MI = mapped_column(Integer, default=0)
+    count: MI = mapped_column(Integer, default=0)
+    winrate: MF = mapped_column(Float, default=0)
 
-    full_wins = Column(Integer)
-    full_losses = Column(Integer)
-    full_ties = Column(Integer)
-    full_count = Column(Integer)
-    full_winrate = Column(Float)
+    full_wins: MI = mapped_column(Integer, default=0)
+    full_losses: MI = mapped_column(Integer, default=0)
+    full_ties: MI = mapped_column(Integer, default=0)
+    full_count: MI = mapped_column(Integer, default=0)
+    full_winrate: MF = mapped_column(Float, default=0)
+
+    """EPA"""
+    norm_epa: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_recent: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
+    norm_epa_max: MOF = mapped_column(Float, nullable=True, default=None)
 
 
-@attr.s(auto_attribs=True, slots=True)
-class Team(Model):
-    team: int
-    name: str
-    offseason: bool
-    state: Optional[str] = None
-    country: Optional[str] = None
-    district: Optional[str] = None
-    rookie_year: Optional[int] = None
-    active: Optional[bool] = None
+_Team = generate_attr_class("Team", TeamORM)
 
-    norm_epa: Optional[float] = None
-    norm_epa_recent: Optional[float] = None
-    norm_epa_mean: Optional[float] = None
-    norm_epa_max: Optional[float] = None
 
-    wins: int = 0
-    losses: int = 0
-    ties: int = 0
-    count: int = 0
-    winrate: float = 0
+class Team(_Team, Model):
+    def pk(self: "Team") -> str:
+        return self.team
 
-    full_wins: int = 0
-    full_losses: int = 0
-    full_ties: int = 0
-    full_count: int = 0
-    full_winrate: float = 0
+    def __hash__(self: "Team") -> int:
+        return hash(self.pk())
 
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "Team":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return Team(**dict)
-
-    def as_dict(self: "Team") -> Dict[str, Any]:
-        return attr.asdict(self)  # type: ignore
-
-    def __str__(self: "Team"):
+    def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.team}_{self.count}"
+        return "_".join([self.team, str(self.count)])

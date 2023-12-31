@@ -1,8 +1,10 @@
-from typing import Dict, Tuple
+from collections import defaultdict
+from typing import Dict, List, Optional
 
-from src.constants import CURR_YEAR, MAX_YEAR
+from src.constants import CURR_YEAR
 from src.data.avg import process_year as process_year_avg
-from src.data.epa import (
+from src.data.colors import post_process as post_process_colors
+from src.data.epa.main import (
     post_process as post_process_epa,
     process_year as process_year_epa,
 )
@@ -11,163 +13,171 @@ from src.data.tba import (
     load_teams as load_teams_tba,
     post_process as post_process_tba,
     process_year as process_year_tba,
-    process_year_partial as process_year_partial_tba,
 )
-from src.data.utils import (  # print_table_stats,
+from src.data.utils import (
+    Timer,
+    create_objs,
     objs_type,
-    read_objs,
-    time_func,
-    write_objs,
+    read_objs as read_objs_db,
+    write_objs as write_objs_db,
+)
+from src.data.wins import (
+    post_process as post_process_wins,
+    process_year as process_year_wins,
 )
 from src.db.main import clean_db
-from src.db.models import TeamYear
+from src.db.models import Team, TeamYear
 from src.db.read import (
     get_etags as get_etags_db,
     get_events as get_events_db,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
-    get_year as get_year_db,
 )
 from src.db.write.main import update_teams as update_teams_db
 
 
-def reset_all_years(start_year: int, end_year: int):
-    time_func("Clean DB", clean_db)
-    teams = time_func("Load Teams", load_teams_tba, cache=True)  # type: ignore
-    time_func("Update DB", update_teams_db, teams, True)  # type: ignore
+def process_year(
+    year_num: int,
+    partial: bool,
+    cache: bool,
+    teams: List[Team],
+    objs: objs_type,
+    all_team_years: Optional[Dict[int, Dict[str, TeamYear]]],
+) -> List[Team]:
+    timer = Timer()
 
-    team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
-    year_epa_stats: Dict[int, Tuple[float, float]] = {}
-    for year in range(max(2002, start_year - 4), start_year):
-        teams_dict = {t.team: t for t in get_team_years_db(year=year)}
-        team_years_dict[year] = teams_dict
+    orig_objs = (
+        objs[0],
+        {**objs[1]},
+        {**objs[2]},
+        {**objs[3]},
+        {**objs[4]},
+        {**objs[5]},
+        {**objs[6]},
+        {**objs[7]},
+    )
 
-        year_epa_stats[year] = (0, 0)
-        year_obj = get_year_db(year=year)
-        if year_obj is not None:
-            num_teams = 2 if year <= 2004 else 3
-            mean, sd = year_obj.score_mean, year_obj.score_sd
-            year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
+    if all_team_years is None:
+        all_team_years = defaultdict(dict)
+        for year in range(max(2002, year_num - 4), year_num):
+            team_years = get_team_years_db(year=year)
+            for ty in team_years:
+                all_team_years[ty.year][ty.team] = ty
 
+    # TODO: temporarily year_num < end_year replaced with True
+    new_teams, objs = process_year_tba(year_num, teams, objs, partial, cache)
+    teams += new_teams
+    timer.print(str(year_num) + " TBA")
+
+    year_obj = process_year_avg(objs[0], list(objs[5].values()))
+    timer.print(str(year_num) + " AVG")
+
+    objs = (year_obj, *objs[1:])
+
+    objs = process_year_wins(objs)
+    timer.print(str(year_num) + " Wins")
+
+    objs = process_year_epa(objs, all_team_years)
+    timer.print(str(year_num) + " EPA")
+
+    write_objs_db(year_num, objs, orig_objs if partial else None, True)
+    timer.print(str(year_num) + " Write")
+
+    return teams
+
+
+def post_process(
+    teams: List[Team],
+    all_team_years: Optional[Dict[int, Dict[str, TeamYear]]],
+    colors: bool = False,  # default don't update colors
+):
+    timer = Timer()
+
+    if all_team_years is None:
+        all_team_years = defaultdict(dict)
+        all_team_years_list = get_team_years_db()
+        for ty in all_team_years_list:
+            all_team_years[ty.year][ty.team] = ty
+
+    teams = post_process_wins(teams, all_team_years)
+    timer.print("Post Wins")
+
+    teams = post_process_epa(teams, all_team_years)
+    timer.print("Post EPA")
+
+    update_teams_db(teams, True)
+    timer.print("Update DB")
+
+    post_process_tba()  # updates DB directly
+    timer.print("Post TBA")
+
+    if colors:
+        teams = get_teams_db()
+        teams = post_process_colors(teams, use_cache=True)
+        update_teams_db(teams, False)
+        timer.print("Post Colors")
+
+
+def reset_all_years():
+    timer = Timer()
+
+    start_year = 2002
+    end_year = CURR_YEAR
+
+    clean_db()
+    timer.print("Clean DB")
+
+    teams = load_teams_tba(cache=True)
+    timer.print("Load Teams")
+
+    all_team_years: Dict[int, Dict[str, TeamYear]] = {}
     for year_num in range(start_year, end_year + 1):
-        objs, new_etags = time_func(
-            str(year_num) + " TBA", process_year_tba, year_num, teams, [], False, year_num < CURR_YEAR  # type: ignore
-        )
-        year = time_func(
-            str(year_num) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
-        )
-        objs: objs_type = (year, *objs[1:])
+        objs = create_objs(year_num)
+        if year_num == 2021:
+            continue
 
-        out = time_func(str(year_num) + " EPA", process_year_epa, year_num, team_years_dict, *objs, year_epa_stats)  # type: ignore
-        team_years_dict = out[0]
-        objs = out[1:]
+        teams = process_year(year_num, False, True, teams, objs, all_team_years)
+        all_team_years[year_num] = {ty.team: ty for ty in objs[1].values()}
 
-        time_func(str(year_num) + " Write", write_objs, year_num, *objs, new_etags, end_year, True)  # type: ignore
-
-        num_teams = 2 if year_num <= 2004 else 3
-        new_mean = (objs[0].score_mean or 0) / num_teams
-        new_sd = (objs[0].score_sd or 0) / num_teams
-        year_epa_stats[year_num] = (new_mean, new_sd)
-
-    time_func("Post TBA", post_process_tba)
-    time_func("Post EPA", lambda: post_process_epa(end_year))
-    # print_table_stats()
+    post_process(teams, all_team_years, colors=True)
 
 
-def reset_curr_year(curr_year: int, mock: bool = False):
-    teams = time_func("Load Teams", get_teams_db)
-    etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
+def update_curr_year(partial: bool):
+    year = CURR_YEAR
+    timer = Timer()
 
-    team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
-    year_epa_stats: Dict[int, Tuple[float, float]] = {}
-    for year in range(max(2002, curr_year - 4), curr_year):
-        teams_dict = {t.team: t for t in get_team_years_db(year=year)}
-        team_years_dict[year] = teams_dict
+    teams = get_teams_db()
+    timer.print("Load Teams")
 
-        year_epa_stats[year] = (0, 0)
-        year_obj = get_year_db(year=year)
-        if year_obj is not None:
-            num_teams = 2 if year <= 2004 else 3
-            mean, sd = year_obj.score_mean, year_obj.score_sd
-            year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
+    if partial:
+        event_objs = get_events_db(year=year, offseason=None)
+        etags = get_etags_db(year)
+        is_new_data = check_year_partial_tba(year, event_objs, etags)
+        timer.print("Check TBA")
 
-    objs, new_etags = time_func(
-        str(curr_year) + " TBA", process_year_tba, curr_year, teams, etags, mock, False  # type: ignore
-    )
-    year = time_func(
-        str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
-    )
-    objs = (year, *objs[1:])
-
-    out = time_func(str(curr_year) + " EPA", process_year_epa, curr_year, team_years_dict, *objs, year_epa_stats)  # type: ignore
-    team_years_dict = out[0]
-    objs = out[1:]
-
-    # Changed to False to prevent deleting data without a backup
-    time_func(str(curr_year) + " Write", write_objs, curr_year, *objs, new_etags, curr_year, False)  # type: ignore
-
-    if curr_year == MAX_YEAR:
-        time_func("Post TBA", post_process_tba)
-        time_func("Post EPA", lambda: post_process_epa(curr_year))
-
-
-def update_curr_year(curr_year: int, mock: bool = False, mock_index: int = 0):
-    etags = time_func("Load ETags", get_etags_db, curr_year)  # type: ignore
-
-    if not mock:
-        event_objs = get_events_db(year=curr_year, offseason=None)
-        is_new_data = time_func("Check TBA", check_year_partial_tba, curr_year, event_objs, etags)  # type: ignore
         if not is_new_data:
             return
 
-    objs: objs_type = time_func("Load Objs", read_objs, curr_year)  # type: ignore
+        objs: objs_type = read_objs_db(year)
+        timer.print("Read Objs")
+    else:
+        objs = create_objs(year)
 
-    objs_dict = {}
-    objs_dict[0] = str(objs[0])
-    objs_dict[1] = {str(x.team) + "_" + str(x.year): str(x) for x in objs[1]}
-    objs_dict[2] = {x.key: str(x) for x in objs[2]}
-    objs_dict[3] = {str(x.team) + "_" + x.event: str(x) for x in objs[3]}
-    objs_dict[4] = {x.key: str(x) for x in objs[4]}
-    objs_dict[5] = {str(x.team) + "_" + x.match: str(x) for x in objs[5]}
+    teams = process_year(year, partial, False, teams, objs, None)
 
-    team_years_dict: Dict[int, Dict[int, TeamYear]] = {}  # main dictionary
-    year_epa_stats: Dict[int, Tuple[float, float]] = {}
-    for year in range(max(2002, curr_year - 4), curr_year):
-        teams_dict = {t.team: t for t in get_team_years_db(year=year)}
-        team_years_dict[year] = teams_dict
+    if not partial:
+        # triggers loading all team years
+        post_process(teams, None)
 
-        year_epa_stats[year] = (0, 0)
-        year_obj = get_year_db(year=year)
-        if year_obj is not None:
-            num_teams = 2 if year <= 2004 else 3
-            mean, sd = year_obj.score_mean, year_obj.score_sd
-            year_epa_stats[year] = ((mean or 0) / num_teams, (sd or 0) / num_teams)
 
-    objs, new_etags = time_func(
-        str(curr_year) + " TBA", process_year_partial_tba, curr_year, objs, etags, mock, mock_index  # type: ignore
-    )
-    year = time_func(
-        str(curr_year) + " AVG", process_year_avg, objs[0], objs[2], objs[4]  # type: ignore
-    )
-    objs = (year, *objs[1:])
+def update_colors(use_cache: bool = False):
+    timer = Timer()
 
-    out = time_func(str(curr_year) + " EPA", process_year_epa, curr_year, team_years_dict, *objs, year_epa_stats)  # type: ignore
-    team_years_dict = out[0]
-    objs = out[1:]
+    teams = get_teams_db()
+    timer.print("Load Teams")
 
-    year_obj = objs[0]
-    curr_dict = {str(x.team) + "_" + str(x.year): x for x in objs[1]}
-    ty_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[1].get(k, "")]
-    curr_dict = {x.key: x for x in objs[2]}
-    e_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[2].get(k, "")]
-    curr_dict = {str(x.team) + "_" + x.event: x for x in objs[3]}
-    te_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[3].get(k, "")]
-    curr_dict = {x.key: x for x in objs[4]}
-    m_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[4].get(k, "")]
-    curr_dict = {str(x.team) + "_" + x.match: x for x in objs[5]}
-    tm_objs = [x for k, x in curr_dict.items() if str(x) != objs_dict[5].get(k, "")]
-    new_objs = (year_obj, ty_objs, e_objs, te_objs, m_objs, tm_objs)
+    teams = post_process_colors(teams, use_cache)
+    timer.print("Update Colors")
 
-    # print(len(ty_objs), len(e_objs), len(te_objs), len(m_objs), len(tm_objs))
-
-    time_func("Write", write_objs, curr_year, *new_objs, new_etags, curr_year, False)  # type: ignore
+    update_teams_db(teams, False)
+    timer.print("Update DB")

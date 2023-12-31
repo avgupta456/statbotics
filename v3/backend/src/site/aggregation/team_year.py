@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from src.db.models import TeamYear
 from src.db.read import (
@@ -18,7 +18,7 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
         state=team_year.state,
         country=team_year.country,
         district=team_year.district,
-        is_competing=team_year.is_competing,
+        competing_this_week=team_year.competing_this_week,
         next_event_key=team_year.next_event_key,
         next_event_name=team_year.next_event_name,
         next_event_week=team_year.next_event_week,
@@ -30,14 +30,14 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
         country_epa_count=team_year.country_team_count or -1,
         district_epa_rank=team_year.district_epa_rank or -1,
         district_epa_count=team_year.district_team_count or -1,
-        total_epa=team_year.epa_end or 0,
-        unitless_epa=team_year.unitless_epa_end or 0,
-        norm_epa=team_year.norm_epa_end or 0,
-        auto_epa=team_year.auto_epa_end or 0,
-        teleop_epa=team_year.teleop_epa_end or 0,
-        endgame_epa=team_year.endgame_epa_end or 0,
-        rp_1_epa=team_year.rp_1_epa_end or 0,
-        rp_2_epa=team_year.rp_2_epa_end or 0,
+        total_epa=team_year.epa or 0,
+        unitless_epa=team_year.unitless_epa or 0,
+        norm_epa=team_year.norm_epa or 0,
+        auto_epa=team_year.auto_epa or 0,
+        teleop_epa=team_year.teleop_epa or 0,
+        endgame_epa=team_year.endgame_epa or 0,
+        rp_1_epa=team_year.rp_1_epa or 0,
+        rp_2_epa=team_year.rp_2_epa or 0,
         wins=team_year.wins,
         losses=team_year.losses,
         ties=team_year.ties,
@@ -48,31 +48,31 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
 
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_team_year(
-    team: int, year: int, no_cache: bool = False
-) -> Optional[APITeamYear]:
-    team_year_obj = _get_team_year(team=team, year=year)  # type: ignore
+    team: str, year: int, no_cache: bool = False
+) -> Tuple[bool, Optional[APITeamYear]]:
+    team_year_obj = _get_team_year(team=team, year=year)
 
     # If invalid, do not cache
     if team_year_obj is None:
-        return (False, None)  # type: ignore
+        return (False, None)
 
     # If valid, cache
-    return (True, unpack_team_year(team_year_obj))  # type: ignore
+    return (True, unpack_team_year(team_year_obj))
 
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_years(
-    team: Optional[int] = None,
-    teams: Optional[List[int]] = None,
+    team: Optional[str] = None,
+    teams: Optional[List[str]] = None,
     year: Optional[int] = None,
     limit: Optional[int] = None,
     metric: Optional[str] = None,
     no_cache: bool = False,
-) -> List[APITeamYear]:
+) -> Tuple[bool, List[APITeamYear]]:
     team_year_objs: List[TeamYear] = _get_team_years(
         team=team, teams=teams, year=year, limit=limit, metric=metric
     )
 
     team_years = [unpack_team_year(x) for x in team_year_objs]
 
-    return (True, sorted(team_years, key=lambda x: x.epa_rank or 0))  # type: ignore
+    return (True, sorted(team_years, key=lambda x: x.epa_rank or 0))

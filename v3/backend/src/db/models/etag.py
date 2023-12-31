@@ -1,32 +1,26 @@
-from typing import Any, Dict, Optional
-
-import attr
-from sqlalchemy import Column, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import PrimaryKeyConstraint  # type: ignore
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import mapped_column
 
 from src.db.main import Base
-from src.db.models.main import Model, ModelORM
+from src.db.models.main import Model, ModelORM, generate_attr_class
+from src.db.models.types import MI, MOS, MS
 
 
 class ETagORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "etags"
-    year = Column(Integer, index=True)
-    path = Column(String, index=True)
-
-    PrimaryKeyConstraint(path)
-
-    etag = Column(String)
+    year: MI = mapped_column(Integer, index=True)
+    path: MS = mapped_column(String, index=True, primary_key=True)
+    etag: MOS = mapped_column(String)
 
 
-@attr.s(auto_attribs=True, slots=True)
-class ETag(Model):
-    year: int
-    path: str
-    etag: Optional[str] = None
+_ETag = generate_attr_class("ETag", ETagORM)
 
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "ETag":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return ETag(**dict)
+
+class ETag(_ETag, Model):
+    def pk(self: "ETag") -> str:
+        return f"{self.year}-{self.path}"
+
+    def __hash__(self: "ETag") -> int:
+        return hash(self.pk())

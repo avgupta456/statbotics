@@ -1,25 +1,24 @@
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 import attr
-from sqlalchemy import Boolean, Column, Float, Integer  # type: ignore
-from sqlalchemy.sql.schema import (  # type: ignore
-    ForeignKeyConstraint,
-    PrimaryKeyConstraint,
-)
-from sqlalchemy.sql.sqltypes import String  # type: ignore
+from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
-from src.db.models.main import Model, ModelORM
+from src.db.models.main import Model, ModelORM, generate_attr_class
+from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS, values_callable
+from src.types.enums import EventStatus, EventType
 
 
 class TeamEventORM(Base, ModelORM):
     """DECLARATIONS"""
 
     __tablename__ = "team_events"
-    id = Column(Integer)  # placeholder for backend API
-    team = Column(Integer, index=True)
-    year = Column(Integer, index=True)
-    event = Column(String, index=True)
+    id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
+    team: MS = mapped_column(String(6), index=True)
+    year: MI = mapped_column(Integer, index=True)
+    event: MS = mapped_column(String(12), index=True)
 
     PrimaryKeyConstraint(team, event)
     ForeignKeyConstraint(["team"], ["teams.team"])
@@ -28,169 +27,129 @@ class TeamEventORM(Base, ModelORM):
     ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    time = Column(Integer)
-    offseason = Column(Boolean)
+    time: MI = mapped_column(Integer)
+    offseason: MB = mapped_column(Boolean)
 
     """API COMPLETENESS"""
-    team_name = Column(String(100))
-    event_name = Column(String(100))
-    state = Column(String(10))
-    country = Column(String(30))
-    district = Column(String(10))
-    type = Column(Integer)
-    week = Column(Integer)
+    team_name: MS = mapped_column(String(100))
+    event_name: MS = mapped_column(String(100))
+    country: MOS = mapped_column(String(30), nullable=True)
+    district: MOS = mapped_column(String(10), nullable=True)
+    state: MOS = mapped_column(String(10), nullable=True)
+    type: Mapped[EventType] = mapped_column(
+        Enum(EventType, values_callable=values_callable)
+    )
+    week: MI = mapped_column(Integer)
 
-    # Choices are 'Upcoming', 'Ongoing', 'Completed'
-    status = Column(String(10))
-    first_event = Column(Boolean)
-
-    """EPA"""
-    epa_start = Column(Float)
-    epa_pre_playoffs = Column(Float)
-    epa_end = Column(Float)
-    epa_mean = Column(Float)
-    epa_max = Column(Float)
-    epa_diff = Column(Float)
-
-    auto_epa_start = Column(Float)
-    auto_epa_pre_playoffs = Column(Float)
-    auto_epa_end = Column(Float)
-    auto_epa_mean = Column(Float)
-    auto_epa_max = Column(Float)
-
-    teleop_epa_start = Column(Float)
-    teleop_epa_pre_playoffs = Column(Float)
-    teleop_epa_end = Column(Float)
-    teleop_epa_mean = Column(Float)
-    teleop_epa_max = Column(Float)
-
-    endgame_epa_start = Column(Float)
-    endgame_epa_pre_playoffs = Column(Float)
-    endgame_epa_end = Column(Float)
-    endgame_epa_mean = Column(Float)
-    endgame_epa_max = Column(Float)
-
-    rp_1_epa_start = Column(Float)
-    rp_1_epa_end = Column(Float)
-    rp_1_epa_mean = Column(Float)
-    rp_1_epa_max = Column(Float)
-
-    rp_2_epa_start = Column(Float)
-    rp_2_epa_end = Column(Float)
-    rp_2_epa_mean = Column(Float)
-    rp_2_epa_max = Column(Float)
-
-    # TODO: Add unitless and norm epa
-    # """NORM EPA"""
-    # unitless_epa_end = Column(Float)
-    # norm_epa_end = Column(Float)
+    status: Mapped[EventStatus] = mapped_column(
+        Enum(EventStatus, values_callable=values_callable)
+    )
+    first_event: MB = mapped_column(Boolean)
 
     """STATS"""
-    wins = Column(Integer)
-    losses = Column(Integer)
-    ties = Column(Integer)
-    count = Column(Integer)
-    winrate = Column(Float)
-    qual_wins = Column(Integer)
-    qual_losses = Column(Integer)
-    qual_ties = Column(Integer)
-    qual_count = Column(Integer)
-    qual_winrate = Column(Float)
-    rps = Column(Integer)
-    rps_per_match = Column(Float)
-    rank = Column(Integer)
-    num_teams = Column(Integer)
+    wins: MI = mapped_column(Integer, default=0)
+    losses: MI = mapped_column(Integer, default=0)
+    ties: MI = mapped_column(Integer, default=0)
+    count: MI = mapped_column(Integer, default=0)
+    winrate: MF = mapped_column(Float, default=0)
+    qual_wins: MI = mapped_column(Integer, default=0)
+    qual_losses: MI = mapped_column(Integer, default=0)
+    qual_ties: MI = mapped_column(Integer, default=0)
+    qual_count: MI = mapped_column(Integer, default=0)
+    qual_winrate: MF = mapped_column(Float, default=0)
+    rps: MI = mapped_column(Integer, default=0)
+    rps_per_match: MF = mapped_column(Float, default=0)
+    rank: MOI = mapped_column(Integer, nullable=True, default=None)
+    num_teams: MOI = mapped_column(Integer, nullable=True, default=None)
+    elim_alliance: MOS = mapped_column(String(30), nullable=True, default=None)
+    is_captain: MOB = mapped_column(Boolean, nullable=True, default=None)
+    district_points: MOI = mapped_column(Integer, nullable=True, default=None)
+
+    """EPA"""
+    epa_start: MF = mapped_column(Float, default=0)
+    epa_pre_elim: MF = mapped_column(Float, default=0)
+    epa_mean: MF = mapped_column(Float, default=0)
+    epa_max: MF = mapped_column(Float, default=0)
+
+    epa: MF = mapped_column(Float, index=True, default=0)
+    epa_sd: MF = mapped_column(Float, default=0)
+    epa_skew: MF = mapped_column(Float, default=0)
+    auto_epa: MOF = mapped_column(Float, default=None)
+    auto_epa_sd: MOF = mapped_column(Float, default=None)
+    teleop_epa: MOF = mapped_column(Float, default=None)
+    teleop_epa_sd: MOF = mapped_column(Float, default=None)
+    endgame_epa: MOF = mapped_column(Float, default=None)
+    endgame_epa_sd: MOF = mapped_column(Float, default=None)
+    rp_1_epa: MOF = mapped_column(Float, default=None)
+    rp_1_epa_sd: MOF = mapped_column(Float, default=None)
+    rp_2_epa: MOF = mapped_column(Float, default=None)
+    rp_2_epa_sd: MOF = mapped_column(Float, default=None)
+    tiebreaker_epa: MOF = mapped_column(Float, default=None)
+    tiebreaker_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_1_epa: MOF = mapped_column(Float, default=None)
+    comp_1_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_2_epa: MOF = mapped_column(Float, default=None)
+    comp_2_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_3_epa: MOF = mapped_column(Float, default=None)
+    comp_3_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_4_epa: MOF = mapped_column(Float, default=None)
+    comp_4_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_5_epa: MOF = mapped_column(Float, default=None)
+    comp_5_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_6_epa: MOF = mapped_column(Float, default=None)
+    comp_6_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_7_epa: MOF = mapped_column(Float, default=None)
+    comp_7_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_8_epa: MOF = mapped_column(Float, default=None)
+    comp_8_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_9_epa: MOF = mapped_column(Float, default=None)
+    comp_9_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_10_epa: MOF = mapped_column(Float, default=None)
+    comp_10_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_11_epa: MOF = mapped_column(Float, default=None)
+    comp_11_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_12_epa: MOF = mapped_column(Float, default=None)
+    comp_12_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_13_epa: MOF = mapped_column(Float, default=None)
+    comp_13_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_14_epa: MOF = mapped_column(Float, default=None)
+    comp_14_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_15_epa: MOF = mapped_column(Float, default=None)
+    comp_15_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_16_epa: MOF = mapped_column(Float, default=None)
+    comp_16_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_17_epa: MOF = mapped_column(Float, default=None)
+    comp_17_epa_sd: MOF = mapped_column(Float, default=None)
+    comp_18_epa: MOF = mapped_column(Float, default=None)
+    comp_18_epa_sd: MOF = mapped_column(Float, default=None)
+
+    unitless_epa: MF = mapped_column(Float, default=0)
+    norm_epa: MOF = mapped_column(Float, default=0)
 
 
-@attr.s(auto_attribs=True, slots=True)
-class TeamEvent(Model):
-    id: int
-    team: int
-    year: int
-    event: str
+_TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
 
-    time: int
-    offseason: bool
 
-    team_name: Optional[str] = None
-    event_name: Optional[str] = None
-    state: Optional[str] = None
-    country: Optional[str] = None
-    district: Optional[str] = None
-    type: Optional[int] = None
-    week: Optional[int] = None
-
-    status: Optional[str] = None
-    first_event: Optional[bool] = None
-
-    epa_start: Optional[float] = None
-    epa_pre_playoffs: Optional[float] = None
-    epa_end: Optional[float] = None
-    epa_mean: Optional[float] = None
-    epa_max: Optional[float] = None
-    epa_diff: Optional[float] = None
-
-    auto_epa_start: Optional[float] = None
-    auto_epa_pre_playoffs: Optional[float] = None
-    auto_epa_end: Optional[float] = None
-    auto_epa_mean: Optional[float] = None
-    auto_epa_max: Optional[float] = None
-
-    teleop_epa_start: Optional[float] = None
-    teleop_epa_pre_playoffs: Optional[float] = None
-    teleop_epa_end: Optional[float] = None
-    teleop_epa_mean: Optional[float] = None
-    teleop_epa_max: Optional[float] = None
-
-    endgame_epa_start: Optional[float] = None
-    endgame_epa_pre_playoffs: Optional[float] = None
-    endgame_epa_end: Optional[float] = None
-    endgame_epa_mean: Optional[float] = None
-    endgame_epa_max: Optional[float] = None
-
-    rp_1_epa_start: Optional[float] = None
-    rp_1_epa_end: Optional[float] = None
-    rp_1_epa_mean: Optional[float] = None
-    rp_1_epa_max: Optional[float] = None
-
-    rp_2_epa_start: Optional[float] = None
-    rp_2_epa_end: Optional[float] = None
-    rp_2_epa_mean: Optional[float] = None
-    rp_2_epa_max: Optional[float] = None
-
-    wins: int = 0
-    losses: int = 0
-    ties: int = 0
-    count: int = 0
-    winrate: float = 0
-    qual_wins: int = 0
-    qual_losses: int = 0
-    qual_ties: int = 0
-    qual_count: int = 0
-    qual_winrate: float = 0
-    rps: int = 0
-    rps_per_match: float = 0
-    rank: Optional[int] = None
-    num_teams: Optional[int] = None
-
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "TeamEvent":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return TeamEvent(**dict)
-
-    def as_dict(self: "TeamEvent") -> Dict[str, Any]:
+class TeamEvent(_TeamEvent, Model):
+    def to_dict(self: "TeamEvent") -> Dict[str, Any]:
         return attr.asdict(
-            self,  # type: ignore
+            self,
             filter=attr.filters.exclude(
-                attr.fields(TeamEvent).id, attr.fields(TeamEvent).time  # type: ignore
+                attr.fields(TeamEvent).id, attr.fields(TeamEvent).time
             ),
         )
 
-    """SUPER FUNCTIONS"""
-
-    def sort(self) -> Tuple[int, int]:
+    def sort(self: "TeamEvent") -> Tuple[str, int]:
         return (self.team, self.time)
 
-    def __str__(self: "TeamEvent"):
+    def pk(self: "TeamEvent") -> str:
+        return f"{self.team}_{self.event}"
+
+    def __hash__(self: "TeamEvent") -> int:
+        return hash(self.pk())
+
+    def __str__(self: "TeamEvent") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return f"{self.team}_{self.event}_{self.status}_{self.count}_{self.rank}"
+        return "_".join(
+            [self.team, self.event, str(self.status), str(self.count), str(self.rank)]
+        )

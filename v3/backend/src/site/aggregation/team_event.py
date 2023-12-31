@@ -1,12 +1,12 @@
 from datetime import timedelta
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
-from src.data.nepa import (
+from src.db.models import TeamEvent
+from src.db.read import get_team_events as _get_team_events
+from src.models.epa.unitless import (
     epa_to_unitless_epa as _epa_to_unitless_epa,
     get_epa_to_norm_epa_func,
 )
-from src.db.models import TeamEvent
-from src.db.read import get_team_events as _get_team_events
 from src.site.models import APIEvent, APITeamEvent, APITeamYear
 from src.utils.alru_cache import alru_cache
 
@@ -93,11 +93,11 @@ async def get_team_events(
     score_mean: float,
     score_sd: float,
     event: Optional[str] = None,
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     offseason: Optional[bool] = False,
     epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
-) -> List[APITeamEvent]:
+) -> Tuple[bool, List[APITeamEvent]]:
     team_event_objs: List[TeamEvent] = _get_team_events(
         year=year, team=team, event=event, offseason=offseason
     )
@@ -116,4 +116,4 @@ async def get_team_events(
         )
         for x in team_event_objs
     ]
-    return (True, sorted(team_events, key=lambda x: x.time or 0))  # type: ignore
+    return (True, sorted(team_events, key=lambda x: x.time or 0))

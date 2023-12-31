@@ -2,14 +2,14 @@
 
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "python.defaultInterpreterPath": "./backend/.venv/bin",
+  "python.defaultInterpreterPath": "./v3/backend/.venv/bin",
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.diagnosticMode": "workspace",
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "flake8.interpreter": [
-    "./backend/.venv/bin/python"
+    "./v3/backend/.venv/bin/python"
   ],
   "flake8.args": [
     "--ignore=E501,E203,W503",

@@ -1,16 +1,17 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
 from src.db.models.team import Team, TeamORM
+from src.db.read.main import common_filters
 
 
-def get_team(team: int) -> Optional[Team]:
+def get_team(team: str) -> Optional[Team]:
     def callback(session: SessionType):
-        out_data = session.query(TeamORM).filter(TeamORM.team == team).first()  # type: ignore
-        return Team.from_dict(out_data.__dict__) if out_data else None  # type: ignore
+        out_data = session.query(TeamORM).filter(TeamORM.team == team).first()
+        return Team.from_dict(out_data.__dict__) if out_data else None
 
     return run_transaction(Session, callback)  # type: ignore
 
@@ -26,37 +27,27 @@ def get_teams(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Team]:
+    @common_filters(TeamORM, Team, metric, ascending, limit, offset)
     def callback(session: SessionType):
-        data = session.query(TeamORM)  # type: ignore
+        data = session.query(TeamORM)
         if country is not None:
-            data = data.filter(TeamORM.country == country)  # type: ignore
+            data = data.filter(TeamORM.country == country)
         if district is not None:
-            data = data.filter(TeamORM.district == district)  # type: ignore
+            data = data.filter(TeamORM.district == district)
         if state is not None:
-            data = data.filter(TeamORM.state == state)  # type: ignore
+            data = data.filter(TeamORM.state == state)
         if active is not None:
-            data = data.filter(TeamORM.active == active)  # type: ignore
+            data = data.filter(TeamORM.active == active)
         if offseason is not None:
-            data = data.filter(TeamORM.offseason == offseason)  # type: ignore
-        if metric is not None:
-            data = data.filter(TeamORM.__dict__[metric] != None)  # type: ignore  # noqa: E711
-            if ascending is not None and ascending:
-                data = data.order_by(TeamORM.__dict__[metric].asc())  # type: ignore
-            else:
-                data = data.order_by(TeamORM.__dict__[metric].desc())  # type: ignore
-        if limit is not None:
-            data = data.limit(limit)  # type: ignore
-        if offset is not None:
-            data = data.offset(offset)  # type: ignore
+            data = data.filter(TeamORM.offseason == offseason)
 
-        out_data: List[TeamORM] = data.all()  # type: ignore
-        return [Team.from_dict(x.__dict__) for x in out_data]  # type: ignore
+        return data
 
     return run_transaction(Session, callback)  # type: ignore
 
 
 def get_num_teams() -> int:
     def callback(session: SessionType) -> int:
-        return session.query(TeamORM).count()  # type: ignore
+        return session.query(TeamORM).count()
 
     return run_transaction(Session, callback)  # type: ignore

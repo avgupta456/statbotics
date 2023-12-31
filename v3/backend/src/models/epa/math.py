@@ -1,14 +1,14 @@
-import math
+# import math
 from typing import Any, Tuple
 
 import numpy as np
 import scipy.stats  # type: ignore
 
-
+"""
+# NOTE: Unused in favor of t_prob_gt_0()
 def normal_prob_gt_0(mean: float, sd: float) -> float:
-    # NOTE: Unused in favor of t_prob_gt_0()
     return 0.5 * (1 + math.erf(mean / (sd * np.sqrt(2))))
-
+"""
 
 # 10 / 3 represent the asymptote of the sample size of the moving average
 # 1 / (1 - p) where p = 0.7, the decay rate of the EWMA. By the Bayesian
@@ -18,8 +18,10 @@ distrib = scipy.stats.t(10 / 3)
 
 
 def t_prob_gt_0(mean: float, sd: float) -> float:
-    # TODO: precompute 1000 values of this function to speed up
     return distrib.cdf(mean / sd)  # type: ignore
+
+
+MAX_SKEW = 0.95
 
 
 class SkewNormal:
@@ -56,10 +58,10 @@ class SkewNormal:
         # Note: unsure of exact derivation of this formula
         # https://stats.stackexchange.com/questions/6874/exponential-weighted-moving-skewness-kurtosis
         new_skew = (x - mean) * (x - new_mean) * (x - new_mean) / (new_var ** (3 / 2))
-        return (1 - alpha) * skew + alpha * new_skew
+        new_skew = (1 - alpha) * skew + alpha * new_skew
+        return min(max(new_skew, -MAX_SKEW), MAX_SKEW)
 
-    def add_obs(self, x: Any, alpha: float, only_pos: bool = False) -> None:
-
+    def add_obs(self, x: Any, alpha: float) -> None:
         mean, var, skew, n = self.mean, self.var, self.skew, self.n
         skew_i = self.skew_i
 
@@ -70,9 +72,6 @@ class SkewNormal:
         )
         new_n = n * (1 - alpha) + 1
 
-        if only_pos:
-            new_mean = np.maximum(new_mean, 0)
-
         self.mean = new_mean
         self.var = new_var
         self.skew = new_skew
@@ -80,7 +79,7 @@ class SkewNormal:
 
     def get_distrib(self) -> Any:
         # https://en.wikipedia.org/wiki/Skew_normal_distribution
-        skew = min(max(self.skew, -0.9), 0.9)
+        skew = self.skew
         abs_skew = abs(skew)
         sign_skew = 1 if skew >= 0 else -1
 
@@ -122,6 +121,14 @@ def zero_sigmoid(x: float) -> float:
     return 1 / (1 + np.exp(-2 * x))
 
 
-# used for ILS ranking point system
+def inv_zero_sigmoid(x: float) -> float:
+    return np.log(x / (1 - x)) / 2
+
+
+# used for ranking point system
 def unit_sigmoid(x: float) -> float:
     return 1 / (1 + np.exp(-4 * (x - 0.5)))
+
+
+def inv_unit_sigmoid(x: float) -> float:
+    return 0.5 + np.log(x / (1 - x)) / 4

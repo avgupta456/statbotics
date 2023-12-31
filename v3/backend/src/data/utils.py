@@ -1,11 +1,23 @@
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Dict, Optional, Tuple
 
 from src.db.functions import clear_year
-from src.db.models import ETag, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import (
+    Alliance,
+    ETag,
+    Event,
+    Match,
+    TeamEvent,
+    TeamMatch,
+    TeamYear,
+    Year,
+)
 from src.db.read import (
+    get_alliances as get_alliances_db,
+    get_etags as get_etags_db,
     get_events as get_events_db,
     get_matches as get_matches_db,
+    get_num_alliances as get_num_alliances_db,
     get_num_etags as get_num_etags_db,
     get_num_events as get_num_events_db,
     get_num_matches as get_num_matches_db,
@@ -20,6 +32,7 @@ from src.db.read import (
     get_year as get_year_db,
 )
 from src.db.write.main import (
+    update_alliances as update_alliances_db,
     update_etags as update_etags_db,
     update_events as update_events_db,
     update_matches as update_matches_db,
@@ -31,12 +44,18 @@ from src.db.write.main import (
 
 objs_type = Tuple[
     Year,
-    List[TeamYear],
-    List[Event],
-    List[TeamEvent],
-    List[Match],
-    List[TeamMatch],
+    Dict[str, TeamYear],
+    Dict[str, Event],
+    Dict[str, TeamEvent],
+    Dict[str, Match],
+    Dict[str, Alliance],
+    Dict[str, TeamMatch],
+    Dict[str, ETag],
 ]
+
+
+def create_objs(year: int) -> objs_type:
+    return (Year(year=year), {}, {}, {}, {}, {}, {}, {})
 
 
 def read_objs(year: int) -> objs_type:
@@ -44,43 +63,49 @@ def read_objs(year: int) -> objs_type:
     if year_obj is None:
         raise Exception("Year not found")
 
-    team_year_objs: List[TeamYear] = get_team_years_db(year=year)
-    event_objs: List[Event] = get_events_db(year=year, offseason=None)
-    team_event_objs: List[TeamEvent] = get_team_events_db(year=year, offseason=None)
-    match_objs: List[Match] = get_matches_db(year=year, offseason=None)
-    team_match_objs: List[TeamMatch] = get_team_matches_db(year=year, offseason=None)
-    original_objs: objs_type = (
+    return (
         year_obj,
-        team_year_objs,
-        event_objs,
-        team_event_objs,
-        match_objs,
-        team_match_objs,
+        {t.pk(): t for t in get_team_years_db(year=year)},
+        {e.pk(): e for e in get_events_db(year=year, offseason=None)},
+        {te.pk(): te for te in get_team_events_db(year=year, offseason=None)},
+        {m.pk(): m for m in get_matches_db(year=year, offseason=None)},
+        {a.pk(): a for a in get_alliances_db(year=year, offseason=None)},
+        {tm.pk(): tm for tm in get_team_matches_db(year=year, offseason=None)},
+        {e.pk(): e for e in get_etags_db(year=year)},
     )
-    return original_objs
 
 
 def write_objs(
     year_num: int,
-    year: Year,
-    team_years: List[TeamYear],
-    events: List[Event],
-    team_events: List[TeamEvent],
-    matches: List[Match],
-    team_matches: List[TeamMatch],
-    etags: List[ETag],
-    end_year: int,
-    clean: bool,
+    objs: objs_type,
+    orig_objs: Optional[objs_type] = None,
+    clean: bool = False,
 ) -> None:
     if clean:
         clear_year(year_num)
-    update_years_db([year], clean)
-    update_team_years_db(team_years, clean)
-    update_events_db(events, clean)
-    update_team_events_db(team_events, clean)
-    update_matches_db(matches, clean)
-    update_team_matches_db(team_matches, clean)
-    update_etags_db(etags, clean)
+
+    if orig_objs is None:
+        # Ensure that all objects are updated
+        orig_objs = create_objs(-1)
+
+    update_years_db([objs[0]], clean)
+
+    for prev, curr, update_func in [
+        (orig_objs[1], objs[1], update_team_years_db),
+        (orig_objs[2], objs[2], update_events_db),
+        (orig_objs[3], objs[3], update_team_events_db),
+        (orig_objs[4], objs[4], update_matches_db),
+        (orig_objs[5], objs[5], update_alliances_db),
+        (orig_objs[6], objs[6], update_team_matches_db),
+        (orig_objs[7], objs[7], update_etags_db),
+    ]:
+        new_objs = [
+            obj
+            for obj in list(curr.values())
+            if str(obj) != str(prev.get(obj.pk(), ""))
+        ]
+
+        update_func(new_objs, clean)  # type: ignore
 
 
 def print_table_stats() -> None:
@@ -90,15 +115,16 @@ def print_table_stats() -> None:
     print("Num Events:", get_num_events_db())
     print("Num Team Events:", get_num_team_events_db())
     print("Num Matches:", get_num_matches_db())
+    print("Num Alliances", get_num_alliances_db())
     print("Num Team Matches:", get_num_team_matches_db())
     print("Num ETags", get_num_etags_db())
 
 
-def time_func(
-    label: str, func: Callable[..., Any], *args: List[Any], **kwargs: Dict[str, Any]
-) -> Any:
-    start = datetime.now()
-    output = func(*args, **kwargs)
-    end = datetime.now()
-    print(label, "\t", end - start)
-    return output
+class Timer:
+    def __init__(self):
+        self.start = datetime.now()
+
+    def print(self, label: str) -> None:
+        end = datetime.now()
+        print(label, "\t", end - self.start)
+        self.start = end

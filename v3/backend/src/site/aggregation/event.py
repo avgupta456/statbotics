@@ -1,15 +1,19 @@
 from datetime import timedelta
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from src.db.models import Event
 from src.db.read import get_event as _get_event, get_events as _get_events
 from src.site.models import APIEvent
+from src.types.enums import EventStatus
 from src.utils.alru_cache import alru_cache
 
 
 def get_event_status_str(event: Event) -> str:
-    if event.status != "Ongoing":
+    if event.status != EventStatus.ONGOING:
         return event.status
+
+    if event.current_match is None or event.qual_matches is None:
+        return ""
 
     if event.qual_matches == 0:
         return "Scheduled Unreleased"
@@ -42,22 +46,24 @@ def unpack_event(event: Event) -> APIEvent:
         epa_acc=event.epa_acc,
         epa_mse=event.epa_mse,
         epa_max=event.epa_max,
-        epa_top8=event.epa_top8,
-        epa_top24=event.epa_top24,
+        epa_top_8=event.epa_top_8,
+        epa_top_24=event.epa_top_24,
         epa_mean=event.epa_mean,
     )
 
 
 @alru_cache(ttl=timedelta(minutes=1))
-async def get_event(event: str, no_cache: bool = False) -> Optional[APIEvent]:
+async def get_event(
+    event: str, no_cache: bool = False
+) -> Tuple[bool, Optional[APIEvent]]:
     event_obj = _get_event(event_id=event)
 
     # If invalid, do not cache
     if event_obj is None:
-        return (False, None)  # type: ignore
+        return (False, None)
 
     # If valid, cache
-    return (True, unpack_event(event_obj))  # type: ignore
+    return (True, unpack_event(event_obj))
 
 
 @alru_cache(ttl=timedelta(minutes=1))
@@ -65,8 +71,8 @@ async def get_events(
     year: Optional[int] = None,
     offseason: Optional[bool] = False,
     no_cache: bool = False,
-) -> List[APIEvent]:
+) -> Tuple[bool, List[APIEvent]]:
     event_objs: List[Event] = _get_events(year=year, offseason=offseason)
 
     events = [unpack_event(event) for event in event_objs]
-    return (True, events)  # type: ignore
+    return (True, events)

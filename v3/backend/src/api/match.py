@@ -1,8 +1,20 @@
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
+from src.api.query import (
+    ascending_query,
+    elim_query,
+    event_query,
+    limit_query,
+    metric_query,
+    offseason_query,
+    offset_query,
+    team_query,
+    week_query,
+    year_query,
+)
 from src.db.models import Match
 from src.db.read import get_match, get_matches
 from src.utils.alru_cache import alru_cache
@@ -15,35 +27,37 @@ router = APIRouter()
 
 
 @router.get("/")
-async def read_root():
+async def read_root_match():
     return {"name": "Match Router"}
 
 
-@alru_cache(ttl=timedelta(hours=1))
-async def get_match_cached(match: str) -> Optional[Match]:
-    return (True, get_match(match=match))  # type: ignore
+@alru_cache(ttl=timedelta(minutes=5))
+async def get_match_cached(match: str) -> Tuple[bool, Optional[Match]]:
+    return (True, get_match(match=match))
 
 
-@alru_cache(ttl=timedelta(hours=1))
+@alru_cache(ttl=timedelta(minutes=5))
 async def get_matches_cached(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
-    elims: Optional[bool] = None,
+    elim: Optional[bool] = None,
+    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
-) -> List[Match]:
+) -> Tuple[bool, List[Match]]:
     return (
-        True,  # type: ignore
+        True,
         get_matches(
             team=team,
             year=year,
             event=event,
             week=week,
-            elims=elims,
+            elim=elim,
+            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -54,8 +68,8 @@ async def get_matches_cached(
 
 @router.get(
     "/match/{match}",
-    description="Get a single Match object containing teams, score prediction, and actual results. Specify match key ex: 2019ncwak_f1m1",
-    response_description="A Match object.",
+    summary="Query a single match",
+    description="Returns a single Match object. Requires a match key, e.g. `2019ncwak_f1m1`.",
 )
 @async_fail_gracefully_api_singular
 async def read_match(response: Response, match: str) -> Dict[str, Any]:
@@ -63,73 +77,38 @@ async def read_match(response: Response, match: str) -> Dict[str, Any]:
     if match_obj is None:
         raise Exception("Match not found")
 
-    return match_obj.as_dict()
-
-
-@router.get(
-    "/matches/event/{event}",
-    description="Get a list of Match objects for a single event. Specify event key ex: 2019ncwak, 2022cmptx",
-    response_description="A list of Match objects. See /match/{match} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_matches_event(response: Response, event: str) -> List[Dict[str, Any]]:
-    matches: List[Match] = await get_matches_cached(event=event)
-    return [match.as_dict() for match in matches]
-
-
-@router.get(
-    "/matches/team/{team}/year/{year}",
-    description="Get a list of Match objects for a single team in a single year. Specify team number and year, ex: 254, 2019",
-    response_description="A list of Match objects. See /match/{match} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_matches_team_year(
-    response: Response, team: int, year: int
-) -> List[Dict[str, Any]]:
-    matches: List[Match] = await get_matches_cached(team=team, year=year)
-    return [match.as_dict() for match in matches]
-
-
-@router.get(
-    "/matches/team/{team}/event/{event}",
-    description="Get a list of Match objects for a single team in a single event. Specify team number and event key, ex: 5511, 2019ncwak",
-    response_description="A list of Match objects. See /match/{match} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_matches_team_event(
-    response: Response, team: int, event: str
-) -> List[Dict[str, Any]]:
-    matches: List[Match] = await get_matches_cached(team=team, event=event)
-    return [match.as_dict() for match in matches]
+    return match_obj.to_dict()
 
 
 @router.get(
     "/matches",
-    description="Get a list of Matches with optional filters",
-    response_description="A list of Match objects. See /match/{match} for more information.",
+    summary="Query multiple matches",
+    description="Returns up to 1000 matches at a time. Specify limit and offset to page through results.",
 )
 @async_fail_gracefully_api_plural
 async def read_matches(
     response: Response,
-    team: Optional[int] = None,
-    year: Optional[int] = None,
-    event: Optional[str] = None,
-    week: Optional[int] = None,
-    elims: Optional[bool] = None,
-    metric: Optional[str] = None,
-    ascending: Optional[bool] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    team: Optional[str] = team_query,
+    year: Optional[int] = year_query,
+    event: Optional[str] = event_query,
+    week: Optional[int] = week_query,
+    elim: Optional[bool] = elim_query,
+    offseason: Optional[bool] = offseason_query,
+    metric: Optional[str] = metric_query,
+    ascending: Optional[bool] = ascending_query,
+    limit: Optional[int] = limit_query,
+    offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
     matches: List[Match] = await get_matches_cached(
         team=team,
         year=year,
         event=event,
         week=week,
-        elims=elims,
+        elim=elim,
+        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,
         offset=offset,
     )
-    return [match.as_dict() for match in matches]
+    return [match.to_dict() for match in matches]

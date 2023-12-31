@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List
+from typing import List, Optional, Tuple
 
 from src.db.models import Team
 from src.db.read import get_team as _get_team, get_teams as _get_teams
@@ -21,19 +21,19 @@ def unpack_team(team: Team) -> APITeam:
 
 
 @alru_cache(ttl=timedelta(minutes=1))
-async def get_team(team: int) -> APITeam:
+async def get_team(team: str, no_cache: bool = False) -> Tuple[bool, Optional[APITeam]]:
     team_obj = _get_team(team=team)
 
     # If invalid, do not cache
     if team_obj is None:
-        return (False, None)  # type: ignore
+        return (False, None)
 
     # If valid, cache
-    return (True, unpack_team(team_obj))  # type: ignore
+    return (True, unpack_team(team_obj))
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_teams(no_cache: bool = False) -> List[APITeam]:
+async def get_teams(no_cache: bool = False) -> Tuple[bool, List[APITeam]]:
     team_objs: List[Team] = _get_teams()
     teams = [unpack_team(x) for x in team_objs]
-    return (True, sorted(teams, key=lambda x: x.num or 0))  # type: ignore
+    return (True, sorted(teams, key=lambda x: x.num or 0))

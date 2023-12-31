@@ -18,49 +18,27 @@ class APIMatch(APIModel):
     comp_level: str
     set_number: int
     match_number: int
-    playoff: bool
-    red: List[int]
-    blue: List[int]
-    red_surrogates: List[int]
-    blue_surrogates: List[int]
-    red_dqs: List[int]
-    blue_dqs: List[int]
+    elim: bool
+    red: List[str]
+    blue: List[str]
+    red_surrogates: List[str]
+    blue_surrogates: List[str]
+    red_dqs: List[str]
+    blue_dqs: List[str]
 
     # Actual
     red_score: int
-    red_auto: int
-    red_teleop: int
-    red_endgame: int
-    red_1: int
-    red_2: int
-    red_fouls: int
     red_rp_1: int
     red_rp_2: int
-    red_tiebreaker: int
+    red_tiebreaker: float
     blue_score: int
-    blue_auto: int
-    blue_teleop: int
-    blue_endgame: int
-    blue_1: int
-    blue_2: int
-    blue_fouls: int
     blue_rp_1: int
     blue_rp_2: int
-    blue_tiebreaker: int
+    blue_tiebreaker: float
     winner: str
 
     # Predicted
     red_epa_pred: float
-    red_auto_epa_pred: float
-    red_teleop_epa_pred: float
-    red_endgame_epa_pred: float
-    red_rp_1_pred: float
-    red_rp_2_pred: float
     blue_epa_pred: float
-    blue_auto_epa_pred: float
-    blue_teleop_epa_pred: float
-    blue_endgame_epa_pred: float
-    blue_rp_1_pred: float
-    blue_rp_2_pred: float
     epa_win_prob: float
     pred_winner: str

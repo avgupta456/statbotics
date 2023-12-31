@@ -27,7 +27,7 @@ def unpack_match(match: Match) -> APIMatch:
         comp_level=match.comp_level,
         set_number=match.set_number,
         match_number=match.match_number,
-        playoff=match.playoff,
+        elim=match.elim,
         red=match.get_red(),
         blue=match.get_blue(),
         red_surrogates=match.get_red_surrogates(),
@@ -35,68 +35,48 @@ def unpack_match(match: Match) -> APIMatch:
         red_dqs=match.get_red_dqs(),
         blue_dqs=match.get_blue_dqs(),
         red_score=match.red_score or 0,
-        red_auto=match.red_auto or 0,
-        red_teleop=match.red_teleop or 0,
-        red_endgame=match.red_endgame or 0,
-        red_1=(match.red_auto_1 or 0) + (match.red_teleop_1 or 0),
-        red_2=(match.red_auto_2 or 0) + (match.red_teleop_2 or 0),
-        red_fouls=match.red_fouls or 0,
         red_rp_1=match.red_rp_1 or 0,
         red_rp_2=match.red_rp_2 or 0,
         red_tiebreaker=match.red_tiebreaker or 0,
         blue_score=match.blue_score or 0,
-        blue_auto=match.blue_auto or 0,
-        blue_teleop=match.blue_teleop or 0,
-        blue_endgame=match.blue_endgame or 0,
-        blue_1=(match.blue_auto_1 or 0) + (match.blue_teleop_1 or 0),
-        blue_2=(match.blue_auto_2 or 0) + (match.blue_teleop_2 or 0),
-        blue_fouls=match.blue_fouls or 0,
         blue_rp_1=match.blue_rp_1 or 0,
         blue_rp_2=match.blue_rp_2 or 0,
         blue_tiebreaker=match.blue_tiebreaker or 0,
         winner=match.winner or "",
         red_epa_pred=match.red_epa_sum or 0,
-        red_auto_epa_pred=match.red_auto_epa_sum or 0,
-        red_teleop_epa_pred=match.red_teleop_epa_sum or 0,
-        red_endgame_epa_pred=match.red_endgame_epa_sum or 0,
-        red_rp_1_pred=match.red_rp_1_epa_sum or 0,
-        red_rp_2_pred=match.red_rp_2_epa_sum or 0,
         blue_epa_pred=match.blue_epa_sum or 0,
-        blue_auto_epa_pred=match.blue_auto_epa_sum or 0,
-        blue_teleop_epa_pred=match.blue_teleop_epa_sum or 0,
-        blue_endgame_epa_pred=match.blue_endgame_epa_sum or 0,
-        blue_rp_1_pred=match.blue_rp_1_epa_sum or 0,
-        blue_rp_2_pred=match.blue_rp_2_epa_sum or 0,
         epa_win_prob=match.epa_win_prob or 0,
         pred_winner=match.epa_winner or "",
     )
 
 
 @alru_cache(ttl=timedelta(minutes=1))
-async def get_match(match: str, no_cache: bool = False) -> Optional[APIMatch]:
+async def get_match(
+    match: str, no_cache: bool = False
+) -> Tuple[bool, Optional[APIMatch]]:
     match_obj = _get_match(match=match)
 
     # If invalid, do not cache
     if match_obj is None:
-        return (False, None)  # type: ignore
+        return (False, None)
 
     # If valid, cache
-    return (True, unpack_match(match_obj))  # type: ignore
+    return (True, unpack_match(match_obj))
 
 
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_matches(
-    team: Optional[int] = None,
+    team: Optional[str] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     offseason: Optional[bool] = False,
     no_cache: bool = False,
-) -> List[APIMatch]:
+) -> Tuple[bool, List[APIMatch]]:
     match_objs: List[Match] = _get_matches(
         team=team, year=year, event=event, offseason=offseason
     )
     matches = [unpack_match(match) for match in match_objs]
-    return (True, sorted(matches, key=lambda x: x.time))  # type: ignore
+    return (True, sorted(matches, key=lambda x: x.time))
 
 
 @alru_cache(ttl=timedelta(minutes=5))
@@ -104,17 +84,17 @@ async def get_upcoming_matches(
     country: Optional[str],
     state: Optional[str],
     district: Optional[str],
-    playoff: Optional[bool],
+    elim: Optional[bool],
     minutes: int,
     limit: int,
     metric: str,
     no_cache: bool = False,
-) -> List[Tuple[Match, str]]:
+) -> Tuple[bool, List[Tuple[APIMatch, str]]]:
     match_objs: List[Tuple[Match, str]] = _get_upcoming_matches(
         country=country,
         state=state,
         district=district,
-        playoff=playoff,
+        elim=elim,
         minutes=minutes,
         limit=limit,
         metric=metric,
@@ -122,7 +102,7 @@ async def get_upcoming_matches(
 
     matches = [(unpack_match(match), event_name) for (match, event_name) in match_objs]
 
-    return (True, matches)  # type: ignore
+    return (True, matches)
 
 
 @alru_cache(ttl=timedelta(minutes=15))
@@ -131,18 +111,19 @@ async def get_noteworthy_matches(
     country: Optional[str],
     state: Optional[str],
     district: Optional[str],
-    playoff: Optional[bool],
+    elim: Optional[bool],
     week: Optional[int],
-) -> Dict[str, List[Match]]:
+    no_cache: bool = False,
+) -> Tuple[bool, Dict[str, List[APIMatch]]]:
     match_objs = _get_noteworthy_matches(
         year=year,
         country=country,
         state=state,
         district=district,
-        playoff=playoff,
+        elim=elim,
         week=week,
     )
 
     matches = {k: [unpack_match(match) for match in v] for k, v in match_objs.items()}
 
-    return (True, matches)  # type: ignore
+    return (True, matches)

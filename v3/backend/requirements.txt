@@ -30,6 +30,7 @@ pydantic-core==2.10.1
 pydantic==2.4.2
 pyflakes==3.1.0
 pygments==2.16.1
+pyright==1.1.324
 python-dotenv==1.0.0
 requests==2.31.0
 rich==13.6.0

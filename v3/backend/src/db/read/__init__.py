@@ -1,3 +1,4 @@
+from src.db.read.alliance import get_alliance, get_alliances, get_num_alliances
 from src.db.read.etag import get_etags, get_num_etags
 from src.db.read.event import get_event, get_events, get_num_events
 from src.db.read.match import get_match, get_matches, get_num_matches
@@ -12,6 +13,9 @@ from src.db.read.team_year import get_num_team_years, get_team_year, get_team_ye
 from src.db.read.year import get_num_years, get_year, get_years
 
 __all__ = [
+    "get_alliance",
+    "get_alliances",
+    "get_num_alliances",
     "get_etags",
     "get_num_etags",
     "get_event",

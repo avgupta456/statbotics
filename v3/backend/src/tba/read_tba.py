@@ -1,44 +1,35 @@
 import time
+from collections import defaultdict
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, cast
 
-from src.constants import MAX_TEAM
-from src.tba.clean_data import (
-    clean_district,
-    clean_state,
-    get_breakdown,
-    get_match_time,
-)
+from src.tba.breakdown import clean_breakdown, post_clean_breakdown
+from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
 from src.tba.main import get_tba
-from src.tba.mock import (
-    all_mock_events,
-    get_event_rankings as get_event_rankings_mock,
-    get_matches as get_matches_mock,
-)
-
-m_type = List[Dict[str, Any]]
+from src.tba.types import EventDict, MatchDict, TeamDict
+from src.types.enums import CompLevel, EventType, MatchStatus, MatchWinner
+from src.utils.utils import get_team_event_key
 
 
 def get_timestamp_from_str(date: str):
     return int(time.mktime(datetime.strptime(date, "%Y-%m-%d").timetuple()))
 
 
-def get_teams(cache: bool = True) -> List[Dict[str, Any]]:
-    out: List[Dict[str, Any]] = []
+def get_teams(cache: bool = True) -> List[TeamDict]:
+    out: List[TeamDict] = []
     for i in range(20):
         data, _ = get_tba("teams/" + str(i), etag=None, cache=cache)
         if type(data) is bool:
             continue
         for data_team in data:
-            num = data_team["team_number"]
-            new_data = {
+            num = data_team["key"][3:]
+            new_data: TeamDict = {
                 "team": num,
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
-                "offseason": num > MAX_TEAM,
+                "offseason": True,
                 "state": clean_state(data_team["state_prov"]),
-                "district": None,  # added later
                 "country": data_team["country"],
             }
             out.append(new_data)
@@ -59,30 +50,39 @@ def get_districts(
 
 def get_district_teams(
     district: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[List[int], Optional[str]]:
-    out: List[int] = []
+) -> Tuple[Tuple[Dict[str, int], Dict[str, int], Dict[str, int]], Optional[str]]:
+    team_to_points: Dict[str, int] = {}
+    team_to_rank: Dict[str, int] = {}
+    team_event_to_points: Dict[str, int] = {}
     data, new_etag = get_tba(
         "district/" + str(district) + "/rankings", etag=etag, cache=cache
     )
     if type(data) is bool:
-        return out, new_etag
+        return (team_to_points, team_to_rank, team_event_to_points), new_etag
     for team in data:
-        team_num = int(team["team_key"][3:])
-        # points = int(team["point_total"])
-        out.append(team_num)
+        team_num = team["team_key"][3:]
+        points = int(team["point_total"])
+        rank = int(team["rank"])
+        team_to_points[team_num] = points
+        team_to_rank[team_num] = rank
+        for event in team["event_points"]:
+            event_key = event["event_key"]
+            team_event_key = get_team_event_key(team_num, event_key)
+            event_points = int(event["total"])
+            team_event_to_points[team_event_key] = event_points
 
-    return out, new_etag
+    return (team_to_points, team_to_rank, team_event_to_points), new_etag
 
 
 def get_events(
-    year: int, etag: Optional[str] = None, mock: bool = False, cache: bool = True
-) -> Tuple[List[Dict[str, Any]], Optional[str]]:
-    out: List[Dict[str, Any]] = []
+    year: int, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[EventDict], Optional[str]]:
+    out: List[EventDict] = []
     data, new_etag = get_tba("events/" + str(year), etag=etag, cache=cache)
     if type(data) is bool:
         return out, new_etag
     for event in data:
-        key = event["key"]
+        key: str = event["key"]
 
         # filters out partial/missing events
         if key in EVENT_BLACKLIST:
@@ -96,22 +96,34 @@ def get_events(
 
         # renames district divisions to district championship
         # renames festival of championships to einsteins
-        event_type = event["event_type"]
-        if event_type == 5:
-            event_type = 2
-        if event_type == 6:
-            event_type = 4
+
+        event_type_int = int(event["event_type"])
+        event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
+        event_type_dict[0] = EventType.REGIONAL
+        event_type_dict[1] = EventType.DISTRICT
+        event_type_dict[2] = EventType.DISTRICT_CMP
+        event_type_dict[3] = EventType.CHAMPS_DIV
+        event_type_dict[4] = EventType.EINSTEIN
+        event_type_dict[
+            5
+        ] = EventType.DISTRICT_CMP  # rename district divisions to district championship
+        event_type_dict[
+            6
+        ] = EventType.EINSTEIN  # rename festival of championships to einsteins
+        event_type_dict[99] = EventType.OFFSEASON
+        event_type_dict[100] = EventType.PRESEASON
+        event_type = event_type_dict[event_type_int]
 
         # assigns worlds to week 8
-        if event_type >= 3:
+        if event_type.is_champs():
             event["week"] = 8
 
         # assigns preseason to week 0
-        if event_type == 100:
+        if event_type == EventType.PRESEASON:
             event["week"] = 0
 
         # assigns offseasons to week 9
-        if event_type == 99:
+        if event_type == EventType.OFFSEASON:
             event["week"] = 9
 
         # filter out incomplete events
@@ -119,10 +131,14 @@ def get_events(
             continue
 
         # bug in TBA API
-        if event_type < 3 and year != 2016:
+        if year != 2016 and event_type in [
+            EventType.REGIONAL,
+            EventType.DISTRICT,
+            EventType.DISTRICT_CMP,
+        ]:
             event["week"] += 1
 
-        video = None
+        video: Optional[str] = None
         webcasts = event["webcasts"]
         if len(webcasts) > 0:
             video_type = webcasts[0]["type"]
@@ -134,104 +150,63 @@ def get_events(
             if video is not None and len(video) > 50:
                 video = None
 
-        out.append(
-            {
-                "year": year,
-                "key": key,
-                "name": event["name"],
-                "state": clean_state(event["state_prov"]),
-                "country": event["country"],
-                "district": clean_district(event["district"]),
-                "start_date": event["start_date"],
-                "end_date": event["end_date"],
-                "time": get_timestamp_from_str(event["start_date"]),
-                "type": event_type,
-                "week": event["week"],
-                "video": video,
-            }
-        )
+        new_data: EventDict = {
+            "year": year,
+            "key": key,
+            "name": cast(str, event["name"]),
+            "state": clean_state(event["state_prov"]),
+            "country": cast(str, event["country"]),
+            "district": clean_district(event["district"]),
+            "start_date": cast(str, event["start_date"]),
+            "end_date": cast(str, event["end_date"]),
+            "time": get_timestamp_from_str(event["start_date"]),
+            "type": event_type,
+            "week": cast(int, event["week"]),
+            "video": video,
+        }
+
+        out.append(new_data)
 
     return out, new_etag
 
 
-def format_team(team: str) -> int:
-    team = team[3:]
-    if not team[-1].isdigit():
-        team = team[:-1] + "000" + str(ord(team[-1]) - ord("A")).rjust(2, "0")
-    return int(team)
-
-
 def get_event_teams(
-    event: str, etag: Optional[str] = None, mock: bool = False, cache: bool = True
-) -> Tuple[List[int], Optional[str]]:
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[str], Optional[str]]:
     query_str = "event/" + str(event) + "/teams/simple"
     data, new_etag = get_tba(query_str, etag=etag, cache=cache)
     if type(data) is bool:
         return [], new_etag
-    out = [format_team(x["key"]) for x in data]
+    out = [x["key"][3:] for x in data]
     return out, new_etag
 
 
-def get_event_rankings(
-    event: str,
-    etag: Optional[str] = None,
-    mock: bool = False,
-    mock_index: int = 0,
-    cache: bool = True,
-) -> Tuple[Dict[int, int], Optional[str]]:
-    if mock and event in all_mock_events:
-        return get_event_rankings_mock(event, mock_index), None
-
-    out: Dict[int, int] = {}
-    new_etag: Optional[str] = None
-    # queries TBA for rankings, some older events are not populated
-    try:
-        query_str = "event/" + str(event) + "/rankings"
-        data, new_etag = get_tba(query_str, etag=etag, cache=cache)
-        if type(data) is bool:
-            return out, new_etag
-        rankings = data["rankings"]
-        for ranking in rankings:
-            team_num = format_team(ranking["team_key"])
-            out[team_num] = ranking["rank"]
-    except Exception:
-        pass
-
-    return out, new_etag
-
-
-def get_matches(
+def get_event_matches(
     year: int,
     event: str,
+    offseason: bool,
     event_time: int,
     etag: Optional[str] = None,
-    mock: bool = False,
-    mock_index: int = 0,
     cache: bool = True,
-) -> Tuple[List[Dict[str, Any]], Optional[str]]:
-    if mock and event in all_mock_events:
-        return get_matches_mock(year, event, event_time, mock_index), None
-
-    out: m_type = []
+) -> Tuple[List[MatchDict], Optional[str]]:
+    out: List[MatchDict] = []
     query_str = "event/" + str(event) + "/matches"
     matches, new_etag = get_tba(query_str, etag=etag, cache=cache)
+
     if type(matches) is bool:
         return out, new_etag
-    for match in matches:
-        red_teams = match["alliances"]["red"]["team_keys"]
-        red_dq_teams = match["alliances"]["red"]["dq_team_keys"]
-        red_surrogate_teams = match["alliances"]["red"]["surrogate_team_keys"]
-        blue_teams = match["alliances"]["blue"]["team_keys"]
-        blue_dq_teams = match["alliances"]["blue"]["dq_team_keys"]
-        blue_surrogate_teams = match["alliances"]["blue"]["surrogate_team_keys"]
 
-        red_score = match["alliances"]["red"]["score"]
-        blue_score = match["alliances"]["blue"]["score"]
-        winner = "draw"
-        if red_score > blue_score:
-            winner = "red"
-        elif blue_score > red_score:
-            winner = "blue"
+    for match in matches:
+        red_teams: List[str] = match["alliances"]["red"]["team_keys"]
+        red_dq_teams: List[str] = match["alliances"]["red"]["dq_team_keys"]
+        red_surrogate_teams: List[str] = match["alliances"]["red"][
+            "surrogate_team_keys"
+        ]
+        blue_teams: List[str] = match["alliances"]["blue"]["team_keys"]
+        blue_dq_teams: List[str] = match["alliances"]["blue"]["dq_team_keys"]
+        blue_surrogate_teams: List[str] = match["alliances"]["blue"][
+            "surrogate_team_keys"
+        ]
 
         if match["key"] in MATCH_BLACKLIST:
             continue
@@ -245,55 +220,150 @@ def get_matches(
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
             continue
 
-        red_teams = [format_team(team) for team in red_teams]
-        blue_teams = [format_team(team) for team in blue_teams]
+        raw_red_score: int = match["alliances"]["red"]["score"]
+        raw_blue_score: int = match["alliances"]["blue"]["score"]
 
-        breakdown: Dict[str, Any] = match.get("score_breakdown", {}) or {}
-        red_breakdown = get_breakdown(
-            year, breakdown.get("red", None), breakdown.get("blue", None)
+        status = (
+            MatchStatus.COMPLETED
+            if min(raw_red_score, raw_blue_score) >= 0
+            else MatchStatus.UPCOMING
         )
-        blue_breakdown = get_breakdown(
-            year, breakdown.get("blue", None), breakdown.get("red", None)
+
+        red_score = None
+        blue_score = None
+        winner = None
+        if status == MatchStatus.COMPLETED:
+            red_score = raw_red_score
+            blue_score = raw_blue_score
+
+            if match["winning_alliance"] == "red":
+                winner = MatchWinner.RED
+            elif match["winning_alliance"] == "blue":
+                winner = MatchWinner.BLUE
+            else:
+                winner = MatchWinner.TIE
+
+            if year == 2015 and match["comp_level"] != "f":
+                winner = None
+
+        red_teams = [team[3:] for team in red_teams]
+        blue_teams = [team[3:] for team in blue_teams]
+
+        breakdown = match.get("score_breakdown", {}) or {}
+        red_breakdown = clean_breakdown(
+            match["key"], "red", year, offseason, breakdown.get("red", None), red_score
+        )
+        blue_breakdown = clean_breakdown(
+            match["key"],
+            "blue",
+            year,
+            offseason,
+            breakdown.get("blue", None),
+            blue_score,
+        )
+
+        red_breakdown, blue_breakdown = post_clean_breakdown(
+            match["key"], year, red_breakdown, blue_breakdown
         )
 
         video = None
         if "videos" in match:
             if len(match["videos"]) > 0:
-                if match["videos"][0]["type"] != "youtube":
-                    continue
-                video = match["videos"][0]["key"].split("&")[0].split("?")[0]
-                if len(video) > 20:
-                    video = None
+                if match["videos"][0]["type"] == "youtube":
+                    video = match["videos"][0]["key"].split("&")[0].split("?")[0]
+                    if len(video) > 20:
+                        video = None
 
-        match_data: Dict[str, Any] = {
+        time: int = match["time"] or get_match_time(
+            match["comp_level"],
+            match["set_number"],
+            match["match_number"],
+            event_time,
+        )
+
+        comp_level = CompLevel.INVALID
+        if match["comp_level"] == "qm":
+            comp_level = CompLevel.QUAL
+        elif match["comp_level"] == "ef":
+            comp_level = CompLevel.EIGHTH
+        elif match["comp_level"] == "qf":
+            comp_level = CompLevel.QUARTER
+        elif match["comp_level"] == "sf":
+            comp_level = CompLevel.SEMI
+        elif match["comp_level"] == "f":
+            comp_level = CompLevel.FINAL
+
+        match_data: MatchDict = {
             "event": event,
-            "key": match["key"],
-            "comp_level": match["comp_level"],
-            "set_number": match["set_number"],
-            "match_number": match["match_number"],
-            "status": "Completed" if min(red_score, blue_score) >= 0 else "Upcoming",
+            "key": cast(str, match["key"]),
+            "comp_level": comp_level,
+            "set_number": cast(int, match["set_number"]),
+            "match_number": cast(int, match["match_number"]),
+            "status": status,
             "video": video,
-            "red_1": red_teams[0] if len(red_teams) > 0 else None,
-            "red_2": red_teams[1] if len(red_teams) > 1 else None,
+            "red_1": red_teams[0],
+            "red_2": red_teams[1],
             "red_3": red_teams[2] if len(red_teams) > 2 else None,
-            "blue_1": blue_teams[0] if len(blue_teams) > 0 else None,
-            "blue_2": blue_teams[1] if len(blue_teams) > 1 else None,
+            "red_dq": ",".join([t[3:] for t in red_dq_teams]),
+            "red_surrogate": ",".join([t[3:] for t in red_surrogate_teams]),
+            "blue_1": blue_teams[0],
+            "blue_2": blue_teams[1],
             "blue_3": blue_teams[2] if len(blue_teams) > 2 else None,
-            "red_dq": ",".join([str(format_team(t)) for t in red_dq_teams]),
-            "blue_dq": ",".join([str(format_team(t)) for t in blue_dq_teams]),
-            "red_surrogate": ",".join(
-                [str(format_team(t)) for t in red_surrogate_teams]
-            ),
-            "blue_surrogate": ",".join(
-                [str(format_team(t)) for t in blue_surrogate_teams]
-            ),
+            "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
+            "blue_surrogate": ",".join([t[3:] for t in blue_surrogate_teams]),
             "winner": winner,
-            "time": match["time"] or get_match_time(match, event_time),
-            "predicted_time": match["predicted_time"],
+            "time": time,
+            "predicted_time": cast(Optional[int], match["predicted_time"]),
             "red_score": red_score,
             "blue_score": blue_score,
             "red_score_breakdown": red_breakdown,
             "blue_score_breakdown": blue_breakdown,
         }
         out.append(match_data)
+
     return out, new_etag
+
+
+def get_event_rankings(
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[Dict[str, int], Optional[str]]:
+    out: Dict[str, int] = {}
+    new_etag: Optional[str] = None
+    # queries TBA for rankings, some older events are not populated
+    try:
+        query_str = "event/" + str(event) + "/rankings"
+        data, new_etag = get_tba(query_str, etag=etag, cache=cache)
+        if type(data) is bool:
+            return out, new_etag
+        rankings = data["rankings"]
+        for ranking in rankings:
+            team_num = ranking["team_key"][3:]
+            out[team_num] = ranking["rank"]
+    except Exception:
+        pass
+
+    return out, new_etag
+
+
+def get_event_alliances(
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[Tuple[Dict[str, str], Dict[str, bool]], Optional[str]]:
+    alliance_dict: Dict[str, str] = {}
+    captain_dict: Dict[str, bool] = {}
+    new_etag: Optional[str] = None
+    # queries TBA for alliances, some older events are not populated
+    try:
+        query_str = "event/" + str(event) + "/alliances"
+        data, new_etag = get_tba(query_str, etag=etag, cache=cache)
+        if type(data) is bool:
+            return (alliance_dict, captain_dict), new_etag
+        for alliance in data:
+            captain = alliance["picks"][0]
+            for team in alliance["picks"]:
+                team_num = team[3:]
+                alliance_dict[team_num] = alliance["name"]
+                captain_dict[team_num] = team == captain
+    except Exception:
+        pass
+
+    return (alliance_dict, captain_dict), new_etag
