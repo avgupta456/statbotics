@@ -6,10 +6,10 @@ export const BACKEND_URL = PROD ? "https://api.statbotics.io/site" : "http://127
 
 export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
 
-export const CURR_YEAR = 2023;
-export const CURR_WEEK = 8;
+export const CURR_YEAR = 2024;
+export const CURR_WEEK = 1;
 
-export const MAX_TEAM = 9316; // above is offseason
+export const MAX_TEAM = 9650; // above is offseason
 
 export const CORRECT_COLOR = "#86CFA3";
 export const INCORRECT_COLOR = "#F77F84";
@@ -35,6 +35,7 @@ export const RPMapping = {
   2020: ["Generator RP", "Hang RP"],
   2022: ["Cargo RP", "Hanger RP"],
   2023: ["Links RP", "Activation RP"],
+  2024: ["RP 1", "RP 2"],
 };
 
 export const eventNameMap = {

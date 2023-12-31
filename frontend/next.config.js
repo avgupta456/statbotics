@@ -1,10 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false, // Recommended for the `pages` directory, default in `app`.
-  experimental: {
-    // Required:
-    appDir: true,
-  },
+  reactStrictMode: false,
   images: {
     domains: [
       // imgur
@@ -14,7 +10,7 @@ const nextConfig = {
     ],
   },
   env: {
-    PROD: process.env.PROD,
+    PROD: process.env.PROD || "false",
   },
 };
 

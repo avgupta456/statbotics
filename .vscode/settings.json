@@ -1,12 +1,20 @@
 {
+
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "python.defaultInterpreterPath": "./v3/backend/.venv/bin/python",
+  "python.defaultInterpreterPath": "./v3/backend/.venv/bin",
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.diagnosticMode": "workspace",
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
+  "flake8.interpreter": [
+    "./v3/backend/.venv/bin/python"
+  ],
+  "flake8.args": [
+    "--ignore=E501,E203,W503",
+    "--max-line-length=88"
+  ],
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

@@ -17,8 +17,9 @@ async def read_team_years(
     year: int,
     limit: Optional[int] = None,
     metric: Optional[str] = None,
+    no_cache: bool = False,
 ) -> Dict[str, Any]:
-    year_obj: Optional[APIYear] = await get_year(year=year)
+    year_obj: Optional[APIYear] = await get_year(year=year, no_cache=no_cache)
     if year_obj is None:
         raise Exception("Year not found")
 
@@ -26,8 +27,9 @@ async def read_team_years(
         year=year,
         limit=limit,
         metric=metric,
+        no_cache=no_cache,
     )
-    team_years = [x for x in team_years if x.count > 0 or year == CURR_YEAR]
+    team_years = [x for x in team_years if x.count > 0 or year >= CURR_YEAR]
 
     out = {
         "team_years": [x.to_dict() for x in team_years],
@@ -40,7 +42,9 @@ async def read_team_years(
 @router.get("/team_year/{year}/{team}/matches")
 @async_fail_gracefully
 async def read_team_matches(
-    response: Response, year: int, team: int
+    response: Response, year: int, team: int, no_cache: bool = False
 ) -> List[Dict[str, Any]]:
-    team_matches: List[APITeamMatch] = await get_team_matches(team=team, year=year)
+    team_matches: List[APITeamMatch] = await get_team_matches(
+        team=team, year=year, no_cache=no_cache
+    )
     return [x.to_dict() for x in team_matches]

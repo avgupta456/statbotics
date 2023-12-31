@@ -133,6 +133,7 @@ async def get_noteworthy_matches(
     district: Optional[str],
     playoff: Optional[bool],
     week: Optional[int],
+    no_cache: bool = False,
 ) -> Dict[str, List[Match]]:
     match_objs = _get_noteworthy_matches(
         year=year,

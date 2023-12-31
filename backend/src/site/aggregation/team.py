@@ -21,7 +21,7 @@ def unpack_team(team: Team) -> APITeam:
 
 
 @alru_cache(ttl=timedelta(minutes=1))
-async def get_team(team: int) -> APITeam:
+async def get_team(team: int, no_cache: bool = False) -> APITeam:
     team_obj = _get_team(team=team)
 
     # If invalid, do not cache

@@ -19,12 +19,12 @@ def remove_teams_with_no_events() -> None:
 
         # Filter teamYears with no events
         session.query(TeamYearORM).filter(  # type: ignore
-            (TeamYearORM.team.notin_(teams)) & (TeamYearORM.year != CURR_YEAR)  # type: ignore
+            (TeamYearORM.team.notin_(teams)) & (TeamYearORM.year < CURR_YEAR)  # type: ignore
         ).delete()
 
         # Filter teams with no events
         session.query(TeamORM).filter(  # type: ignore
-            (TeamORM.team.notin_(teams)) & (TeamORM.rookie_year != CURR_YEAR)  # type: ignore
+            (TeamORM.team.notin_(teams)) & (TeamORM.rookie_year < CURR_YEAR)  # type: ignore
         ).delete()
 
     return run_transaction(Session, callback)  # type: ignore

@@ -8,6 +8,7 @@ import Navbar from "./navbar";
 export const metadata = {
   title: "Statbotics",
   description: "Modernizing FRC Data Analytics",
+  metadataBase: new URL("https://www.statbotics.io"),
   openGraph: {
     title: "Statbotics",
     description: "Modernizing FRC Data Analytics",

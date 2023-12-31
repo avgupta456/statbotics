@@ -4,6 +4,7 @@ from typing import Callable, List, Optional, Tuple
 from src.db.models import Alliance, Year
 from src.types.enums import MatchStatus
 from src.utils.utils import r
+from src.constants import CURR_YEAR
 
 
 def process_year(year: Year, alliances: List[Alliance]) -> Year:
@@ -24,7 +25,7 @@ def process_year(year: Year, alliances: List[Alliance]) -> Year:
         return r(mean, 2), r(sd, 2)
 
     N = len(week_one_alliances)
-    if year.year == 2024 and N < 100:
+    if year.year == CURR_YEAR and N < 100:
         year.score_mean, year.score_sd = 30, 10
         year.no_foul_mean = 30
         year.foul_mean = 0

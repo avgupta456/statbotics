@@ -8,6 +8,7 @@ import React from "react";
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 
 import { round } from "../../utils";
+import { useColors } from "./colors";
 
 const BestFitLine = ({ nodes, xScale, yScale }) => {
   nodes.sort((a, b) => a.data["x"] - b.data["x"]);
@@ -36,7 +37,18 @@ const BestFitLine = ({ nodes, xScale, yScale }) => {
   );
 };
 
-const ScatterPlot = ({ data, axis }: { data: any[]; axis: string }) => {
+const ScatterPlot = ({
+  data,
+  axis,
+  showColors,
+}: {
+  data: any[];
+  axis: string;
+  showColors: boolean;
+}) => {
+  const defaultColor = "rgb(55,126,184)";
+  const getColor = useColors(defaultColor, showColors);
+
   return (
     <div className="w-full h-[500px] flex">
       <ResponsiveScatterPlot
@@ -46,7 +58,10 @@ const ScatterPlot = ({ data, axis }: { data: any[]; axis: string }) => {
         yScale={{ type: "linear", min: "auto", max: "auto" }}
         tooltip={({ node }) => {
           return (
-            <div className="bg-white rounded shadow p-2" style={{ color: "rgb(55,126,184)" }}>
+            <div
+              className="bg-white rounded shadow p-2"
+              style={{ color: getColor(Number(node["data"]["id"])) }}
+            >
               <div className="text-sm font-bold">{`Team ${node["data"]["id"]}`}</div>
               <div className="text-xs mb-1">{`Rank ${node["data"]["x"]}`}</div>
               <div className="text-sm">{`${axis}: ${round(
@@ -55,7 +70,7 @@ const ScatterPlot = ({ data, axis }: { data: any[]; axis: string }) => {
             </div>
           );
         }}
-        colors="rgb(55,126,184)"
+        colors={(datum) => getColor(Number(datum.serieId))}
         blendMode="multiply"
         axisTop={null}
         axisRight={null}

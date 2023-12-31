@@ -35,6 +35,7 @@ async def get_team_matches(
     team: Optional[int] = None,
     match: Optional[str] = None,
     offseason: Optional[bool] = False,
+    no_cache: bool = False,
 ) -> List[APITeamMatch]:
     team_match_objs: List[TeamMatch] = _get_team_matches(
         team=team, year=year, event=event, match=match, offseason=offseason

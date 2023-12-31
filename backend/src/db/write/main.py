@@ -11,6 +11,9 @@ from src.db.models.year import Year, YearORM
 from src.db.write.template import update_template
 
 
+# TODO: Add method to delete existing data when inserting (not before, currently none)
+
+
 def update_etags(items: List[ETag], only_insert: bool = False) -> None:
     return update_template(ETagORM, ETag)(items, only_insert)
 
