@@ -8,6 +8,19 @@ from src.db.models.alliance import Alliance, AllianceORM
 from src.db.read.main import common_filters
 
 
+def get_alliance(match: str, alliance: str) -> Optional[Alliance]:
+    def callback(session: SessionType):
+        data = session.query(AllianceORM).filter(
+            AllianceORM.match == match, AllianceORM.alliance == alliance
+        )
+        out_data: Optional[AllianceORM] = data.first()
+        if out_data is None:
+            return None
+        return Alliance.from_dict(out_data.__dict__)
+
+    return run_transaction(Session, callback)  # type: ignore
+
+
 def get_alliances(
     team: Optional[str] = None,
     year: Optional[int] = None,

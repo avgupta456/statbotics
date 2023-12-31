@@ -18,3 +18,13 @@ A semi-comprehensive list of changes for the 2024 season!
 - Remove epa_mean and epa_diff from TeamYear objects.
 - Create TeamYear and TeamEvent entries for offseason teams.
 - Precompute Unitless and Norm EPA instead of interpolating on the fly.
+- Record district points and district rank to the TeamEvent and TeamYear objects.
+- Record Alliance name and if team was captain on TeamEvents.
+- Add Component EPAs post 2016. This includes up to 18 components.
+- Use component EPAs to improve RP prediction.
+- Remove margin_func to reduce complexity of EPA model. Reduce learning rate.
+- Estimate standard deviation and skew of EPAs.
+- Use standard deviation to derive win probability.
+- Simplify REST API and add additional documentation
+- Add authentication to API, including interactive documentation.
+- Store primary and secondary color from FRC Colors to reduce website requests.

@@ -1,8 +1,8 @@
 from functools import lru_cache
 from typing import Optional, Tuple
 
-from src.db.models import TeamYear, Year
 from src.constants import EPS
+from src.db.models import TeamYear, Year
 from src.models.epa.constants import (
     INIT_PENALTY,
     MEAN_REVERSION,

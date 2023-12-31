@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 # GLOBAL
 
@@ -27,6 +28,10 @@ CONN_STR = (
         + CRDB_CLUSTER
     )
 )
+
+# API
+
+AUTH_KEY_BLACKLIST: List[str] = []
 
 # CONFIG
 

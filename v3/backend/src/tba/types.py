@@ -55,7 +55,6 @@ class BreakdownDict(TypedDict):
     comp_16: Optional[Union[int, float]]
     comp_17: Optional[Union[int, float]]
     comp_18: Optional[Union[int, float]]
-    incomplete_breakdown: Optional[bool]
 
 
 empty_breakdown: BreakdownDict = {
@@ -86,7 +85,6 @@ empty_breakdown: BreakdownDict = {
     "comp_16": None,
     "comp_17": None,
     "comp_18": None,
-    "incomplete_breakdown": True,
 }
 
 

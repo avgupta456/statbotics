@@ -109,6 +109,9 @@ class TeamYearORM(Base, ModelORM):
     full_count: MI = mapped_column(Integer, default=0)
     full_winrate: MF = mapped_column(Float, default=0)
 
+    district_points: MOI = mapped_column(Integer, nullable=True, default=None)
+    district_rank: MOI = mapped_column(Integer, nullable=True, default=None)
+
     total_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
     total_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
     total_team_count: MOI = mapped_column(Integer, nullable=True, default=None)

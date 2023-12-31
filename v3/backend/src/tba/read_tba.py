@@ -9,6 +9,7 @@ from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLI
 from src.tba.main import get_tba
 from src.tba.types import EventDict, MatchDict, TeamDict
 from src.types.enums import CompLevel, EventType, MatchStatus, MatchWinner
+from src.utils.utils import get_team_event_key
 
 
 def get_timestamp_from_str(date: str):
@@ -49,19 +50,28 @@ def get_districts(
 
 def get_district_teams(
     district: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[List[str], Optional[str]]:
-    out: List[str] = []
+) -> Tuple[Tuple[Dict[str, int], Dict[str, int], Dict[str, int]], Optional[str]]:
+    team_to_points: Dict[str, int] = {}
+    team_to_rank: Dict[str, int] = {}
+    team_event_to_points: Dict[str, int] = {}
     data, new_etag = get_tba(
         "district/" + str(district) + "/rankings", etag=etag, cache=cache
     )
     if type(data) is bool:
-        return out, new_etag
+        return (team_to_points, team_to_rank, team_event_to_points), new_etag
     for team in data:
         team_num = team["team_key"][3:]
-        # points = int(team["point_total"])
-        out.append(team_num)
+        points = int(team["point_total"])
+        rank = int(team["rank"])
+        team_to_points[team_num] = points
+        team_to_rank[team_num] = rank
+        for event in team["event_points"]:
+            event_key = event["event_key"]
+            team_event_key = get_team_event_key(team_num, event_key)
+            event_points = int(event["total"])
+            team_event_to_points[team_event_key] = event_points
 
-    return out, new_etag
+    return (team_to_points, team_to_rank, team_event_to_points), new_etag
 
 
 def get_events(
@@ -168,27 +178,6 @@ def get_event_teams(
     if type(data) is bool:
         return [], new_etag
     out = [x["key"][3:] for x in data]
-    return out, new_etag
-
-
-def get_event_rankings(
-    event: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[Dict[str, int], Optional[str]]:
-    out: Dict[str, int] = {}
-    new_etag: Optional[str] = None
-    # queries TBA for rankings, some older events are not populated
-    try:
-        query_str = "event/" + str(event) + "/rankings"
-        data, new_etag = get_tba(query_str, etag=etag, cache=cache)
-        if type(data) is bool:
-            return out, new_etag
-        rankings = data["rankings"]
-        for ranking in rankings:
-            team_num = ranking["team_key"][3:]
-            out[team_num] = ranking["rank"]
-    except Exception:
-        pass
-
     return out, new_etag
 
 
@@ -333,3 +322,48 @@ def get_event_matches(
         out.append(match_data)
 
     return out, new_etag
+
+
+def get_event_rankings(
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[Dict[str, int], Optional[str]]:
+    out: Dict[str, int] = {}
+    new_etag: Optional[str] = None
+    # queries TBA for rankings, some older events are not populated
+    try:
+        query_str = "event/" + str(event) + "/rankings"
+        data, new_etag = get_tba(query_str, etag=etag, cache=cache)
+        if type(data) is bool:
+            return out, new_etag
+        rankings = data["rankings"]
+        for ranking in rankings:
+            team_num = ranking["team_key"][3:]
+            out[team_num] = ranking["rank"]
+    except Exception:
+        pass
+
+    return out, new_etag
+
+
+def get_event_alliances(
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[Tuple[Dict[str, str], Dict[str, bool]], Optional[str]]:
+    alliance_dict: Dict[str, str] = {}
+    captain_dict: Dict[str, bool] = {}
+    new_etag: Optional[str] = None
+    # queries TBA for alliances, some older events are not populated
+    try:
+        query_str = "event/" + str(event) + "/alliances"
+        data, new_etag = get_tba(query_str, etag=etag, cache=cache)
+        if type(data) is bool:
+            return (alliance_dict, captain_dict), new_etag
+        for alliance in data:
+            captain = alliance["picks"][0]
+            for team in alliance["picks"]:
+                team_num = team[3:]
+                alliance_dict[team_num] = alliance["name"]
+                captain_dict[team_num] = team == captain
+    except Exception:
+        pass
+
+    return (alliance_dict, captain_dict), new_etag

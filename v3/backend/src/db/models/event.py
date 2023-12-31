@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import attr
 from sqlalchemy import Boolean, Enum, Float, Integer, String
@@ -49,8 +49,8 @@ class EventORM(Base, ModelORM):
 
     """EPA"""
     epa_max: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_top8: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_top24: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_top_8: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_top_24: MOF = mapped_column(Float, nullable=True, default=None)
     epa_mean: MOF = mapped_column(Float, nullable=True, default=None)
     epa_sd: MOF = mapped_column(Float, nullable=True, default=None)
 

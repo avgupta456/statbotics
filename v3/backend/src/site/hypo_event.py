@@ -33,8 +33,8 @@ async def read_hypothetical_event(
         epa_acc=0,
         epa_mse=0,
         epa_max=0,
-        epa_top8=0,
-        epa_top24=0,
+        epa_top_8=0,
+        epa_top_24=0,
         epa_mean=0,
     )
 

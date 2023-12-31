@@ -1,6 +1,6 @@
 import statistics
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Tuple
 
 from src.data.utils import objs_type
 from src.db.models import TeamEvent, TeamMatch
@@ -119,12 +119,32 @@ def process_year(objs: objs_type) -> objs_type:
         ty.state_epa_percentile = r(1 - ty.state_epa_rank / ty.state_team_count, 4)
 
     # YEAR
+    def get_percentiles(arr: List[float]) -> Tuple[float, float, float, float]:
+        sorted_arr = sorted(arr)
+        return (
+            sorted_arr[int(len(sorted_arr) * 0.01)],
+            sorted_arr[int(len(sorted_arr) * 0.1)],
+            sorted_arr[int(len(sorted_arr) * 0.25)],
+            sorted_arr[int(len(sorted_arr) * 0.75)],
+        )
+
     year = objs[0]
     sorted_epas = sorted(total_epas, reverse=True)
-    year.epa_99p = sorted_epas[int(len(sorted_epas) * 0.01)]
-    year.epa_90p = sorted_epas[int(len(sorted_epas) * 0.1)]
-    year.epa_75p = sorted_epas[int(len(sorted_epas) * 0.25)]
-    year.epa_25p = sorted_epas[int(len(sorted_epas) * 0.75)]
+    year.epa_99p, year.epa_90p, year.epa_75p, year.epa_25p = get_percentiles(
+        sorted_epas
+    )
+
+    if year.year >= 2016:
+        for key in ["auto", "teleop", "endgame", "rp_1", "rp_2"] + [
+            f"comp_{i}" for i in range(1, 19)
+        ]:
+            raw_epas = [getattr(ty, f"{key}_epa") for ty in objs[1].values()]
+            epas: List[float] = [epa for epa in raw_epas if epa is not None]
+            p99, p90, p75, p25 = get_percentiles(epas)
+            setattr(year, f"{key}_epa_99p", p99)
+            setattr(year, f"{key}_epa_90p", p90)
+            setattr(year, f"{key}_epa_75p", p75)
+            setattr(year, f"{key}_epa_25p", p25)
 
     # TEAM EVENTS
     for te in sorted(objs[3].values(), key=lambda te: te.week):
@@ -162,9 +182,9 @@ def process_year(objs: objs_type) -> objs_type:
             e.epa_sd = statistics.stdev([te.epa for te in tes])
 
         if len(tes) >= 8:
-            e.epa_top8 = tes[7].epa
+            e.epa_top_8 = tes[7].epa
 
         if len(tes) >= 24:
-            e.epa_top24 = tes[23].epa
+            e.epa_top_24 = tes[23].epa
 
     return objs

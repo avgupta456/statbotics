@@ -24,6 +24,6 @@ class APIEvent(APIModel):
     epa_acc: Optional[float]
     epa_mse: Optional[float]
     epa_max: Optional[float]
-    epa_top8: Optional[float]
-    epa_top24: Optional[float]
+    epa_top_8: Optional[float]
+    epa_top_24: Optional[float]
     epa_mean: Optional[float]

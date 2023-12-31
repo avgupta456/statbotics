@@ -17,6 +17,15 @@ class MatchStatus(str, Enum):
     COMPLETED = "Completed"
 
 
+class CompLevel(str, Enum):
+    INVALID = "invalid"
+    QUAL = "qm"
+    EIGHTH = "ef"
+    QUARTER = "qf"
+    SEMI = "sf"
+    FINAL = "f"
+
+
 class EventStatus(str, Enum):
     INVALID = "Invalid"
     UPCOMING = "Upcoming"
@@ -39,12 +48,3 @@ class EventType(str, Enum):
 
     def is_champs(self: "EventType") -> bool:
         return self in (EventType.CHAMPS_DIV, EventType.EINSTEIN)
-
-
-class CompLevel(str, Enum):
-    INVALID = "invalid"
-    QUAL = "qm"
-    EIGHTH = "ef"
-    QUARTER = "qf"
-    SEMI = "sf"
-    FINAL = "f"

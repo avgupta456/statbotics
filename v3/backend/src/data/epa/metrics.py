@@ -4,11 +4,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from src.constants import EPS
 from src.data.utils import objs_type
 from src.db.models import Match
 from src.types.enums import MatchStatus, MatchWinner
 from src.utils.utils import r
-from src.constants import EPS
 
 
 def get_conf(pred: Any) -> float:

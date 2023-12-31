@@ -177,8 +177,6 @@ def clean_breakdown_2016(
     no_foul_points: int,
     foul_points: int,
 ) -> BreakdownDict:
-    incomplete = False
-
     auto_reach_points = breakdown.get("autoReachPoints", 0)
     auto_crossing_points = breakdown.get("autoCrossingPoints", 0)
     auto_low_boulders = breakdown.get("autoBouldersLow", 0)
@@ -234,15 +232,10 @@ def clean_breakdown_2016(
     ):
         rp_2 = False
         rp_2_points = 0
-        incomplete = True
 
     no_foul_points -= rp_1_points + rp_2_points
 
     tiebreaker = breakdown.get("autoPoints", 0)
-
-    incomplete = incomplete or (
-        auto_points + teleop_points + endgame_points != no_foul_points
-    )
 
     return {
         "score": score,
@@ -272,7 +265,6 @@ def clean_breakdown_2016(
         "comp_16": None,
         "comp_17": None,
         "comp_18": None,
-        "incomplete_breakdown": incomplete,
     }
 
 
@@ -328,8 +320,6 @@ def clean_breakdown_2017(
 
     tiebreaker = no_foul_points + foul_points
 
-    incomplete = auto_points + teleop_points + takeoff_points != no_foul_points
-
     return {
         "score": score,
         "no_foul_points": no_foul_points,
@@ -358,7 +348,6 @@ def clean_breakdown_2017(
         "comp_16": None,
         "comp_17": None,
         "comp_18": None,
-        "incomplete_breakdown": incomplete,
     }
 
 
@@ -410,8 +399,6 @@ def clean_breakdown_2018(
 
     tiebreaker_points = endgame_points
 
-    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
-
     return {
         "score": score,
         "no_foul_points": no_foul_points,
@@ -440,7 +427,6 @@ def clean_breakdown_2018(
         "comp_16": None,
         "comp_17": None,
         "comp_18": None,
-        "incomplete_breakdown": incomplete,
     }
 
 
@@ -530,11 +516,6 @@ def clean_breakdown_2019(
 
     tiebreaker = cargo_points
 
-    incomplete = (
-        sandstorm_points + hatch_points + cargo_points + hab_climb_points
-        != no_foul_points
-    )
-
     return {
         "score": score,
         "no_foul_points": no_foul_points,
@@ -563,7 +544,6 @@ def clean_breakdown_2019(
         "comp_16": None,
         "comp_17": None,
         "comp_18": None,
-        "incomplete_breakdown": incomplete,
     }
 
 
@@ -614,8 +594,6 @@ def clean_breakdown_2020(
 
     tiebreaker = auto_points
 
-    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
-
     return {
         "score": score,
         "no_foul_points": no_foul_points,
@@ -644,7 +622,6 @@ def clean_breakdown_2020(
         "comp_16": None,
         "comp_17": None,
         "comp_18": None,
-        "incomplete_breakdown": incomplete,
     }
 
 
@@ -739,8 +716,6 @@ def clean_breakdown_2022(
 
     tiebreaker = no_foul_points
 
-    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
-
     return {
         "score": score,
         "no_foul_points": no_foul_points,
@@ -769,7 +744,6 @@ def clean_breakdown_2022(
         "comp_16": None,
         "comp_17": None,
         "comp_18": None,
-        "incomplete_breakdown": incomplete,
     }
 
 
@@ -845,8 +819,6 @@ def clean_breakdown_2023(
 
     tiebreaker = no_foul_points
 
-    incomplete = auto_points + teleop_points + endgame_points != no_foul_points
-
     return {
         "score": score,
         "no_foul_points": no_foul_points,
@@ -875,7 +847,6 @@ def clean_breakdown_2023(
         "comp_16": endgame_charge_station_points,
         "comp_17": endgame_park_points,
         "comp_18": charge_station_points,
-        "incomplete_breakdown": incomplete,
     }
 
 
@@ -931,7 +902,6 @@ def clean_breakdown(
 
         error = no_foul_points - (auto_points + teleop_points + endgame_points)
         if not offseason and error != 0:
-            out["incomplete_breakdown"] = True
             out["teleop_points"] = (out["teleop_points"] or 0) + error
             print("ERROR", key, alliance, error)
 

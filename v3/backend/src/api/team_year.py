@@ -3,6 +3,18 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
+from src.api.query import (
+    ascending_query,
+    country_query,
+    district_query,
+    limit_query,
+    metric_query,
+    offseason_query,
+    offset_query,
+    state_query,
+    team_query,
+    year_query,
+)
 from src.db.models import TeamYear
 from src.db.read import get_team_year, get_team_years
 from src.utils.alru_cache import alru_cache
@@ -19,19 +31,19 @@ async def read_root_team_year():
     return {"name": "Team Year Router"}
 
 
-@alru_cache(ttl=timedelta(hours=1))
+@alru_cache(ttl=timedelta(minutes=5))
 async def get_team_year_cached(team: str, year: int) -> Tuple[bool, Optional[TeamYear]]:
     return (True, get_team_year(team=team, year=year))
 
 
-@alru_cache(ttl=timedelta(hours=1))
+@alru_cache(ttl=timedelta(minutes=5))
 async def get_team_years_cached(
     team: Optional[str] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
     district: Optional[str] = None,
     state: Optional[str] = None,
-    offseason: Optional[bool] = False,
+    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -56,8 +68,8 @@ async def get_team_years_cached(
 
 @router.get(
     "/team_year/{team}/{year}",
-    description="Get a single TeamYear object containing EPA summary, winrates, and location rankings",
-    response_description="A TeamYear object.",
+    summary="Query a single team year",
+    description="Returns a single Team Year object. Requires a team number and year.",
 )
 @async_fail_gracefully_api_singular
 async def read_team_year(
@@ -73,69 +85,23 @@ async def read_team_year(
 
 
 @router.get(
-    "/team_years/team/{team}",
-    description="Get a list of TeamYear objects for a single team. Specify team number, ex: 254, 1114",
-    response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_team_years_team(
-    response: Response,
-    team: str,
-) -> List[Dict[str, Any]]:
-    team_years: List[TeamYear] = await get_team_years_cached(team=team)
-    return [team_year.to_dict() for team_year in team_years]
-
-
-@router.get(
-    "/team_years/year/{year}/district/{district}",
-    description="Get a list of TeamYear objects from a single district. Specify lowercase district abbreviation, ex: fnc, fim",
-    response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_team_years_district(
-    response: Response,
-    year: int,
-    district: str,
-) -> List[Dict[str, Any]]:
-    team_years: List[TeamYear] = await get_team_years_cached(
-        year=year, district=district
-    )
-    return [team_year.to_dict() for team_year in team_years]
-
-
-@router.get(
-    "/team_years/year/{year}/state/{state}",
-    description="Get a list of TeamYear objects from a single state. Specify lowercase state abbreviation, ex: ca, tx",
-    response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
-)
-@async_fail_gracefully_api_plural
-async def read_team_years_state(
-    response: Response,
-    year: int,
-    state: str,
-) -> List[Dict[str, Any]]:
-    team_years: List[TeamYear] = await get_team_years_cached(year=year, state=state)
-    return [team_year.to_dict() for team_year in team_years]
-
-
-@router.get(
     "/team_years",
-    description="Get a list of TeamYear objects with optional filters.",
-    response_description="A list of TeamYear objects. See /team_year/{team}/{year} for more information.",
+    summary="Query multiple team years",
+    description="Returns up to 1000 team years at a time. Specify limit and offset to page through results.",
 )
 @async_fail_gracefully_api_plural
 async def read_team_years(
     response: Response,
-    team: Optional[str] = None,
-    year: Optional[int] = None,
-    country: Optional[str] = None,
-    district: Optional[str] = None,
-    state: Optional[str] = None,
-    offseason: Optional[bool] = False,
-    metric: Optional[str] = None,
-    ascending: Optional[bool] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    team: Optional[str] = team_query,
+    year: Optional[int] = year_query,
+    country: Optional[str] = country_query,
+    district: Optional[str] = district_query,
+    state: Optional[str] = state_query,
+    offseason: Optional[bool] = offseason_query,
+    metric: Optional[str] = metric_query,
+    ascending: Optional[bool] = ascending_query,
+    limit: Optional[int] = limit_query,
+    offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
     team_years: List[TeamYear] = await get_team_years_cached(
         team=team,

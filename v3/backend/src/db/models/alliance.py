@@ -78,7 +78,6 @@ class AllianceORM(Base, ModelORM):
     comp_16: MOF = mapped_column(Float, nullable=True, default=None)
     comp_17: MOF = mapped_column(Float, nullable=True, default=None)
     comp_18: MOF = mapped_column(Float, nullable=True, default=None)
-    incomplete_breakdown: MOB = mapped_column(Boolean, nullable=True, default=None)
 
     """EPA"""
     epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(

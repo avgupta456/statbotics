@@ -46,8 +46,8 @@ def unpack_event(event: Event) -> APIEvent:
         epa_acc=event.epa_acc,
         epa_mse=event.epa_mse,
         epa_max=event.epa_max,
-        epa_top8=event.epa_top8,
-        epa_top24=event.epa_top24,
+        epa_top_8=event.epa_top_8,
+        epa_top_24=event.epa_top_24,
         epa_mean=event.epa_mean,
     )
 

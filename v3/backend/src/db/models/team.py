@@ -22,6 +22,8 @@ class TeamORM(Base, ModelORM):
     offseason: MB = mapped_column(Boolean, default=True)
     district: MOS = mapped_column(String(10), nullable=True, default=None)
     active: MB = mapped_column(Boolean, default=False)
+    primary_color: MOS = mapped_column(String(7), nullable=True, default=None)
+    secondary_color: MOS = mapped_column(String(7), nullable=True, default=None)
 
     """STATS"""
     wins: MI = mapped_column(Integer, default=0)

@@ -7,7 +7,7 @@ from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS, values_callable
+from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS, values_callable
 from src.types.enums import EventStatus, EventType
 
 
@@ -61,6 +61,9 @@ class TeamEventORM(Base, ModelORM):
     rps_per_match: MF = mapped_column(Float, default=0)
     rank: MOI = mapped_column(Integer, nullable=True, default=None)
     num_teams: MOI = mapped_column(Integer, nullable=True, default=None)
+    elim_alliance: MOS = mapped_column(String(30), nullable=True, default=None)
+    is_captain: MOB = mapped_column(Boolean, nullable=True, default=None)
+    district_points: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)

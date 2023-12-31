@@ -15,6 +15,7 @@ from src.tba.read_tba import (
     MatchDict,
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
+    get_event_alliances as get_event_alliances_tba,
     get_event_matches as get_event_matches_tba,
     get_event_rankings as get_event_rankings_tba,
     get_event_teams as get_event_teams_tba,
@@ -22,6 +23,7 @@ from src.tba.read_tba import (
     get_teams as get_teams_tba,
 )
 from src.types.enums import CompLevel, EventStatus, MatchStatus, MatchWinner
+from src.utils.utils import get_team_event_key
 
 OS = Optional[str]
 OI = Optional[int]
@@ -117,15 +119,18 @@ def check_year_partial(
             prev_etag,
             cache=False,
         )
-        if new_etag == prev_etag and new_etag is not None:
-            continue
+        if new_etag != prev_etag and new_etag is not None:
+            return True  # If any event has new matches, return True
 
         prev_etag = etags_dict.get(event_obj.key + "/rankings", default_etag).etag
         _, new_etag = get_event_rankings_tba(event_obj.key, prev_etag, cache=False)
-        if new_etag == prev_etag and new_etag is not None:
-            continue
+        if new_etag != prev_etag and new_etag is not None:
+            return True  # If any event has new rankings, return True
 
-        return True  # If any event has new matches, return True
+        _, new_etag = get_event_alliances_tba(event_obj.key, prev_etag, cache=False)
+        if new_etag != prev_etag and new_etag is not None:
+            return True  # If any event has new alliances, return True
+
     return False  # Otherwise return False
 
 
@@ -169,10 +174,13 @@ def process_year(
     team_first_event_dict: Dict[str, Tuple[OS, OI]] = {}
 
     # maps team to district_abbrev (or None if not in a district)
-    district_teams: Dict[str, OS] = {}
+    team_to_district: Dict[str, OS] = {}
+    team_to_district_points: Dict[str, int] = {}
+    team_to_district_rank: Dict[str, int] = {}
+    team_event_to_district_points: Dict[str, int] = {}
 
     # maps team to offseason status
-    offseason_teams: Dict[str, bool] = {}
+    team_to_offseason: Dict[str, bool] = {}
 
     if not partial:
 
@@ -184,11 +192,21 @@ def process_year(
         districts, _ = call_tba(get_districts_tba_year, str(year_num) + "/districts")
 
         for district_key, district_abbrev in districts:
-            curr_district_teams, _ = get_district_teams_tba(district_key, cache=cache)
-            for team in curr_district_teams:
-                district_teams[team] = DISTRICT_MAPPING.get(
+            (
+                team_to_points,
+                team_to_rank,
+                team_event_to_points,
+            ), _ = get_district_teams_tba(district_key, cache=cache)
+            for team in team_to_points:
+                team_to_district[team] = DISTRICT_MAPPING.get(
                     district_abbrev, district_abbrev
                 )
+                team_to_district_points[team] = team_to_points[team]
+                team_to_district_rank[team] = team_to_rank[team]
+            for team_event in team_event_to_points:
+                team_event_to_district_points[team_event] = team_event_to_points[
+                    team_event
+                ]
 
     def get_events_tba_year(etag: OS, cache: bool) -> Tuple[List[EventDict], OS]:
         return get_events_tba(year_num, etag=etag, cache=cache)
@@ -251,14 +269,13 @@ def process_year(
 
         event_teams: Set[str] = set()
         rankings: Dict[str, int] = {}
+        alliance_dict: Dict[str, str] = {}
+        captain_dict: Dict[str, bool] = {}
 
         def add_team_event(team: str, offseason: bool):
             event_teams.add(team)
-            if team not in district_teams:
-                district_teams[team] = None
-
-            if not offseason or team not in offseason_teams:
-                offseason_teams[team] = offseason
+            if not offseason or team not in team_to_offseason:
+                team_to_offseason[team] = offseason
 
             event_name = event_obj.name
             event_week = event_obj.week
@@ -331,10 +348,19 @@ def process_year(
 
             rankings, _ = call_tba(get_event_rankings_tba_year, event_key + "/rankings")
 
+            def get_event_alliances_tba_year(
+                etag: OS, cache: bool
+            ) -> Tuple[Tuple[Dict[str, str], Dict[str, bool]], OS]:
+                return get_event_alliances_tba(event_key, etag, cache)
+
+            (alliance_dict, captain_dict), _ = call_tba(
+                get_event_alliances_tba_year, event_key + "/alliances"
+            )
+
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
             if team not in teams_dict:
-                new_team_obj = Team(
+                teams_dict[team] = Team(
                     team=team,
                     name=team,
                     country=None,
@@ -342,9 +368,10 @@ def process_year(
                     rookie_year=None,
                     offseason=True,
                 )
-                teams_dict[team] = new_team_obj
 
             team_obj = teams_dict[team]
+
+            team_event_key = get_team_event_key(team, event_key)
             team_event_obj = TeamEvent(
                 id=None,
                 team=team,
@@ -363,6 +390,9 @@ def process_year(
                 first_event=False,
                 rank=rankings.get(team, None),
                 num_teams=len(rankings),
+                elim_alliance=alliance_dict.get(team, None),
+                is_captain=captain_dict.get(team, None),
+                district_points=team_event_to_district_points.get(team_event_key, None),
             )
 
             if team_event_obj.num_teams == 0:
@@ -380,11 +410,10 @@ def process_year(
             team_first_event_dict[team_event.team][0] == team_event.event
         )
 
-    # NOTE: offseason_teams does not refer to offseason status
-    # Just a dictionary of teams mapping to their offseason status
-    for team in offseason_teams:
+    # iterates over all teams (unrelated to offseason status)
+    for team in team_to_offseason:
         team_obj = teams_dict[team]
-        offseason = offseason_teams[team] or team in PLACEHOLDER_TEAMS
+        offseason = team_to_offseason[team] or team in PLACEHOLDER_TEAMS
         competing_this_week = team_competing_this_week_dict.get(team, False)
         next_event = team_next_event_dict.get(team, (None, None, None))
         team_year_obj = TeamYear(
@@ -395,7 +424,9 @@ def process_year(
             name=team_obj.name,
             state=team_obj.state,
             country=team_obj.country,
-            district=district_teams[team],
+            district=team_to_district.get(team, None),
+            district_points=team_to_district_points.get(team, None),
+            district_rank=team_to_district_rank.get(team, None),
             competing_this_week=competing_this_week,
             next_event_key=next_event[0],
             next_event_name=next_event[1],

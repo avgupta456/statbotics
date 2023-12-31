@@ -77,7 +77,7 @@ class YearORM(Base, ModelORM):
     rp_2_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
     comp_1_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_1_epa_00p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_1_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
     comp_1_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
     comp_1_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 

@@ -110,7 +110,6 @@ def match_dict_to_objs(
                 comp_16=breakdown["comp_16"],
                 comp_17=breakdown["comp_17"],
                 comp_18=breakdown["comp_18"],
-                incomplete_breakdown=breakdown["incomplete_breakdown"],
             )
         )
 
