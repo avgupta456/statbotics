@@ -120,7 +120,7 @@ def process_year(objs: objs_type) -> objs_type:
 
     # YEAR
     def get_percentiles(arr: List[float]) -> Tuple[float, float, float, float]:
-        sorted_arr = sorted(arr)
+        sorted_arr = sorted(arr, reverse=True)
         return (
             sorted_arr[int(len(sorted_arr) * 0.01)],
             sorted_arr[int(len(sorted_arr) * 0.1)],
