@@ -17,11 +17,11 @@ def process_year(year: Year, alliances: List[Alliance]) -> Year:
     ) -> Tuple[float, float]:
         arr: List[Optional[float]] = [accessor(x) for x in week_one_alliances]
         clean_arr: List[float] = [x for x in arr if x is not None]
-        if len(clean_arr) == 0:
+        if len(clean_arr) < 2:
             return 0, 0
 
         mean = statistics.mean(clean_arr)
-        sd = statistics.pstdev(clean_arr)
+        sd = statistics.stdev(clean_arr)
         return r(mean, 2), r(sd, 2)
 
     N = len(week_one_alliances)

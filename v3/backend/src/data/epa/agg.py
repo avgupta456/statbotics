@@ -175,11 +175,11 @@ def process_year(objs: objs_type) -> objs_type:
     # EVENTS
     for e in objs[2].values():
         tes = sorted(event_team_events_dict[e.key], key=lambda te: te.epa, reverse=True)
-
         if len(tes) > 0:
             e.epa_max = max([te.epa for te in tes])
             e.epa_mean = statistics.mean([te.epa for te in tes])
-            e.epa_sd = statistics.stdev([te.epa for te in tes])
+            if len(tes) >= 2:
+                e.epa_sd = statistics.stdev([te.epa for te in tes])
 
         if len(tes) >= 8:
             e.epa_top_8 = tes[7].epa

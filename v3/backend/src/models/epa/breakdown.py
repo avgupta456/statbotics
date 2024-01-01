@@ -153,6 +153,10 @@ def get_pred_rps(
 
         rp_2 = breakdown_mean[keys.index("rp_2")]
 
+    elif year == 2024:
+        rp_1 = breakdown_mean[keys.index("rp_1")]
+        rp_2 = breakdown_mean[keys.index("rp_2")]
+
     return rp_1, rp_2
 
 
@@ -218,8 +222,10 @@ def get_score_from_breakdown(
         score += 5 * breakdown[keys.index("teleop_top_cones")]
         score += 5 * min(9, breakdown[keys.index("links")])
         score += min(30, breakdown[keys.index("endgame_charge_station_points")])
+    elif year == 2024:
+        score = breakdown[keys.index("no_foul_points")]
     else:
-        score += breakdown[keys.index("no_foul_points")]
+        score = breakdown[keys.index("no_foul_points")]
 
     return score
 

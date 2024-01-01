@@ -64,7 +64,6 @@ def process_year(
             for ty in team_years:
                 all_team_years[ty.year][ty.team] = ty
 
-    # TODO: temporarily year_num < end_year replaced with True
     new_teams, objs = process_year_tba(year_num, teams, objs, partial, cache)
     teams += new_teams
     timer.print(str(year_num) + " TBA")
@@ -80,7 +79,7 @@ def process_year(
     objs = process_year_epa(objs, all_team_years)
     timer.print(str(year_num) + " EPA")
 
-    write_objs_db(year_num, objs, orig_objs if partial else None, True)
+    write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
     timer.print(str(year_num) + " Write")
 
     return teams
@@ -105,23 +104,20 @@ def post_process(
     teams = post_process_epa(teams, all_team_years)
     timer.print("Post EPA")
 
-    update_teams_db(teams, True)
+    update_teams_db(teams)
     timer.print("Update DB")
 
     post_process_tba()  # updates DB directly
     timer.print("Post TBA")
 
     if colors:
-        teams = get_teams_db()
-        teams = post_process_colors(teams, use_cache=True)
-        update_teams_db(teams, False)
-        timer.print("Post Colors")
+        update_colors()
 
 
 def reset_all_years():
     timer = Timer()
 
-    start_year = 2002
+    start_year = 2026
     end_year = CURR_YEAR
 
     clean_db()
@@ -163,14 +159,16 @@ def update_curr_year(partial: bool):
     else:
         objs = create_objs(year)
 
-    teams = process_year(year, partial, False, teams, objs, None)
+    # NOTE: Temporarily make cache True (3rd arg)
+    teams = process_year(year, partial, True, teams, objs, None)
 
     if not partial:
         # triggers loading all team years
-        post_process(teams, None)
+        post_process(teams, None, colors=False)
 
 
-def update_colors(use_cache: bool = False):
+def update_colors(use_cache: bool = True):
+    print("HERE BABABSA")
     timer = Timer()
 
     teams = get_teams_db()
@@ -179,5 +177,5 @@ def update_colors(use_cache: bool = False):
     teams = post_process_colors(teams, use_cache)
     timer.print("Update Colors")
 
-    update_teams_db(teams, False)
+    update_teams_db(teams)
     timer.print("Update DB")

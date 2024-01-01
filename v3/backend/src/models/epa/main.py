@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 
 import numpy as np
 
@@ -69,6 +69,8 @@ class EPA(Model):
 
             self.epas[num] = rating
             team_year.epa_start = r(rating.mean[0], 2)
+            # Records TeamYear EPA stats if no matches played yet
+            self.post_record_team(num, None, None, team_year)
 
     def predict_match(self, match: Match) -> Tuple[float, AlliancePred, AlliancePred]:
         year, week, key, elim = self.year_num, match.week, match.key, match.elim
@@ -186,36 +188,66 @@ class EPA(Model):
                 new_value = rounded_mean[i + 6]
                 setattr(tm, f"comp_{i}_epa", new_value)
 
-    def post_record_team(self, team: str, tm: TeamMatch, te: TeamEvent, ty: TeamYear):
+    def post_record_team(
+        self,
+        team: str,
+        tm: Optional[TeamMatch],
+        te: Optional[TeamEvent],
+        ty: Optional[TeamYear],
+    ):
         rounded_mean: Any = np.round(self.epas[team].mean, 2)
         rounded_sd: Any = np.round(np.sqrt(self.epas[team].var), 2)
 
-        tm.post_epa = rounded_mean[0]
+        if tm is not None:
+            tm.post_epa = rounded_mean[0]
 
-        ty.epa = te.epa = rounded_mean[0]
-        ty.epa_sd = te.epa_sd = rounded_sd[0]
-        ty.epa_skew = te.epa_skew = r(self.epas[team].skew, 4)
+        if te is not None:
+            te.epa = rounded_mean[0]
+            te.epa_sd = rounded_sd[0]
+            te.epa_skew = r(self.epas[team].skew, 4)
 
-        if self.year_num >= 2016:
-            ty.auto_epa = te.auto_epa = rounded_mean[1]
-            ty.auto_epa_sd = te.auto_epa_sd = rounded_sd[1]
-            ty.teleop_epa = te.teleop_epa = rounded_mean[2]
-            ty.teleop_epa_sd = te.teleop_epa_sd = rounded_sd[2]
-            ty.endgame_epa = te.endgame_epa = rounded_mean[3]
-            ty.endgame_epa_sd = te.endgame_epa_sd = rounded_sd[3]
-            ty.rp_1_epa = te.rp_1_epa = rounded_mean[4]
-            ty.rp_1_epa_sd = te.rp_1_epa_sd = rounded_sd[4]
-            ty.rp_2_epa = te.rp_2_epa = rounded_mean[5]
-            ty.rp_2_epa_sd = te.rp_2_epa_sd = rounded_sd[5]
-            ty.tiebreaker_epa = te.tiebreaker_epa = rounded_mean[6]
-            ty.tiebreaker_epa_sd = te.tiebreaker_epa_sd = rounded_sd[6]
-            for i in range(1, 19):
-                new_value = rounded_mean[i + 6]
-                setattr(ty, f"comp_{i}_epa", new_value)
-                setattr(te, f"comp_{i}_epa", new_value)
-                new_sd = rounded_sd[i + 6]
-                setattr(ty, f"comp_{i}_epa_sd", new_sd)
-                setattr(te, f"comp_{i}_epa_sd", new_sd)
+            if self.year_num >= 2016:
+                te.auto_epa = rounded_mean[1]
+                te.auto_epa_sd = rounded_sd[1]
+                te.teleop_epa = rounded_mean[2]
+                te.teleop_epa_sd = rounded_sd[2]
+                te.endgame_epa = rounded_mean[3]
+                te.endgame_epa_sd = rounded_sd[3]
+                te.rp_1_epa = rounded_mean[4]
+                te.rp_1_epa_sd = rounded_sd[4]
+                te.rp_2_epa = rounded_mean[5]
+                te.rp_2_epa_sd = rounded_sd[5]
+                te.tiebreaker_epa = rounded_mean[6]
+                te.tiebreaker_epa_sd = rounded_sd[6]
+                for i in range(1, 19):
+                    new_value = rounded_mean[i + 6]
+                    setattr(te, f"comp_{i}_epa", new_value)
+                    new_sd = rounded_sd[i + 6]
+                    setattr(te, f"comp_{i}_epa_sd", new_sd)
+
+        if ty is not None:
+            ty.epa = rounded_mean[0]
+            ty.epa_sd = rounded_sd[0]
+            ty.epa_skew = r(self.epas[team].skew, 4)
+
+            if self.year_num >= 2016:
+                ty.auto_epa = rounded_mean[1]
+                ty.auto_epa_sd = rounded_sd[1]
+                ty.teleop_epa = rounded_mean[2]
+                ty.teleop_epa_sd = rounded_sd[2]
+                ty.endgame_epa = rounded_mean[3]
+                ty.endgame_epa_sd = rounded_sd[3]
+                ty.rp_1_epa = rounded_mean[4]
+                ty.rp_1_epa_sd = rounded_sd[4]
+                ty.rp_2_epa = rounded_mean[5]
+                ty.rp_2_epa_sd = rounded_sd[5]
+                ty.tiebreaker_epa = rounded_mean[6]
+                ty.tiebreaker_epa_sd = rounded_sd[6]
+                for i in range(1, 19):
+                    new_value = rounded_mean[i + 6]
+                    setattr(ty, f"comp_{i}_epa", new_value)
+                    new_sd = rounded_sd[i + 6]
+                    setattr(ty, f"comp_{i}_epa_sd", new_sd)
 
     def record_match(self, match: Match, match_pred: MatchPred) -> None:
         match.epa_win_prob = r(match_pred.win_prob, 4)

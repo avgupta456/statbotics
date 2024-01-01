@@ -55,6 +55,10 @@ def process_year(
             curr_team_events,
             curr_team_years,
         )
-    model.end_season(year, team_years)
+
+    # Records TeamEvent EPA stats if no matches played yet
+    for team_event in team_events.values():
+        if team_event.qual_count == 0:
+            model.post_record_team(team_event.team, None, team_event, None)
 
     return objs

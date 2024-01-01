@@ -50,6 +50,20 @@ def get_districts(
 
 def get_district_teams(
     district: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[str], Optional[str]]:
+    out: List[str] = []
+    data, new_etag = get_tba(
+        "district/" + str(district) + "/teams", etag=etag, cache=cache
+    )
+    if type(data) is bool:
+        return out, new_etag
+    for team in data:
+        out.append(team["key"][3:])
+    return out, new_etag
+
+
+def get_district_rankings(
+    district: str, etag: Optional[str] = None, cache: bool = True
 ) -> Tuple[Tuple[Dict[str, int], Dict[str, int], Dict[str, int]], Optional[str]]:
     team_to_points: Dict[str, int] = {}
     team_to_rank: Dict[str, int] = {}
@@ -57,7 +71,7 @@ def get_district_teams(
     data, new_etag = get_tba(
         "district/" + str(district) + "/rankings", etag=etag, cache=cache
     )
-    if type(data) is bool:
+    if type(data) is bool or data is None:
         return (team_to_points, team_to_rank, team_event_to_points), new_etag
     for team in data:
         team_num = team["team_key"][3:]

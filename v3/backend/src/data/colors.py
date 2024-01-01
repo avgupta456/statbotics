@@ -6,7 +6,7 @@ import requests
 from src.db.models import Team
 
 
-def post_process(teams: List[Team], use_cache: bool = False) -> List[Team]:
+def post_process(teams: List[Team], use_cache: bool = True) -> List[Team]:
     cache: Dict[str, Any] = {}
     if use_cache:
         try:
@@ -16,7 +16,7 @@ def post_process(teams: List[Team], use_cache: bool = False) -> List[Team]:
             pass
 
     for team in teams:
-        print(team)
+        # print(team)
         if team.offseason:
             continue
         if team.team in cache:
@@ -35,8 +35,12 @@ def post_process(teams: List[Team], use_cache: bool = False) -> List[Team]:
         }
 
         if len(cache) % 100 == 0:
-            print("Writing cache")
+            # print("Writing cache")
             with open("cache/colors.json", "w") as f:
                 dump(cache, f)
+
+    # print("Writing cache")
+    with open("cache/colors.json", "w") as f:
+        dump(cache, f)
 
     return teams
