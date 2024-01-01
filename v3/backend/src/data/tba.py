@@ -14,6 +14,7 @@ from src.tba.read_tba import (
     EventDict,
     MatchDict,
     get_district_teams as get_district_teams_tba,
+    get_district_rankings as get_district_rankings_tba,
     get_districts as get_districts_tba,
     get_event_alliances as get_event_alliances_tba,
     get_event_matches as get_event_matches_tba,
@@ -192,15 +193,17 @@ def process_year(
         districts, _ = call_tba(get_districts_tba_year, str(year_num) + "/districts")
 
         for district_key, district_abbrev in districts:
+            district_teams, _ = get_district_teams_tba(district_key, cache=cache)
+            for team in district_teams:
+                team_to_district[team] = DISTRICT_MAPPING.get(
+                    district_abbrev, district_abbrev
+                )
             (
                 team_to_points,
                 team_to_rank,
                 team_event_to_points,
-            ), _ = get_district_teams_tba(district_key, cache=cache)
+            ), _ = get_district_rankings_tba(district_key, cache=cache)
             for team in team_to_points:
-                team_to_district[team] = DISTRICT_MAPPING.get(
-                    district_abbrev, district_abbrev
-                )
                 team_to_district_points[team] = team_to_points[team]
                 team_to_district_rank[team] = team_to_rank[team]
             for team_event in team_event_to_points:

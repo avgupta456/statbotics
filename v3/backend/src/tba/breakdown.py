@@ -691,6 +691,45 @@ def clean_breakdown_2023(
     }
 
 
+def clean_breakdown_2024(
+    key: str,
+    alliance: str,
+    breakdown: Dict[str, Any],
+    score: int,
+    no_foul_points: int,
+    foul_points: int,
+) -> BreakdownDict:
+    return {
+        "score": 30,
+        "no_foul_points": 30,
+        "foul_points": 0,
+        "auto_points": 10,
+        "teleop_points": 10,
+        "endgame_points": 10,
+        "rp_1": False,
+        "rp_2": False,
+        "tiebreaker": 30,
+        "comp_1": 3,
+        "comp_2": 3,
+        "comp_3": 3,
+        "comp_4": 3,
+        "comp_5": 3,
+        "comp_6": 3,
+        "comp_7": 3,
+        "comp_8": 3,
+        "comp_9": 3,
+        "comp_10": 3,
+        "comp_11": None,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+    }
+
+
 def clean_breakdown(
     key: str,
     alliance: str,
@@ -732,6 +771,8 @@ def clean_breakdown(
         out = clean_breakdown_2022(*inputs)
     elif year == 2023:
         out = clean_breakdown_2023(*inputs)
+    elif year == 2024:
+        out = clean_breakdown_2024(*inputs)
     else:
         out["no_foul_points"] = score
 

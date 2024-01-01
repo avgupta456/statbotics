@@ -1,8 +1,9 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
 from src.db.models import Alliance, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.models.types import AlliancePred, Attribution, MatchPred
 from src.tba.constants import PLACEHOLDER_TEAMS
+from src.types.enums import MatchStatus
 
 
 class Model:
@@ -47,7 +48,11 @@ class Model:
         pass
 
     def post_record_team(
-        self, team: str, tm: TeamMatch, te: TeamEvent, ty: TeamYear
+        self,
+        team: str,
+        tm: Optional[TeamMatch],
+        te: Optional[TeamEvent],
+        ty: Optional[TeamYear],
     ) -> None:
         pass
 
@@ -66,6 +71,14 @@ class Model:
         win_prob, red_pred, blue_pred = self.predict_match(match)
         match_pred = MatchPred(win_prob, red_pred, blue_pred)
 
+        for team, team_match in team_matches.items():
+            team_event = team_events[team]
+            team_year = team_years[team]
+            self.pre_record_team(team, team_match, team_event, team_year)
+
+        if match.status == MatchStatus.UPCOMING:
+            return
+
         attributions = self.attribute_match(
             match, red_alliance, blue_alliance, red_pred, blue_pred
         )
@@ -83,12 +96,8 @@ class Model:
             team_match = team_matches[team]
             team_event = team_events[team]
             team_year = team_years[team]
-            self.pre_record_team(team, team_match, team_event, team_year)
             if not skip_update:
                 self.update_team(team, attr, match, team_match)
             self.post_record_team(team, team_match, team_event, team_year)
 
         self.record_match(match, match_pred)
-
-    def end_season(self, year: Year, team_years: Dict[str, TeamYear]) -> None:
-        pass
