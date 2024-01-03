@@ -26,13 +26,14 @@ const theme = createTheme({
 });
 
 function Navbar({ opened, toggle }: { opened: boolean; toggle: () => void }) {
-  // -> colorScheme is 'auto' | 'light' | 'dark'
-  const { colorScheme, setColorScheme } = useMantineColorScheme();
-  // -> computedColorScheme is 'light' | 'dark', argument is the default value
-  const computedColorScheme = useComputedColorScheme("light");
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const { colorScheme: _colorScheme, setColorScheme } = useMantineColorScheme(); // "auto" | "light" | "dark"
+  const colorScheme = useComputedColorScheme("light"); // "light" | "dark"
+
+  console.log(colorScheme);
 
   const toggleColorScheme = () => {
-    setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
+    setColorScheme(colorScheme === "dark" ? "light" : "dark");
   };
 
   const sunIcon = <RxSun className="h-5 w-5 text-yellow-500" stroke={4} />;
@@ -58,19 +59,21 @@ function Navbar({ opened, toggle }: { opened: boolean; toggle: () => void }) {
 
         <div className="flex-grow" />
         <ActionIcon
-          component={Link}
-          href="https://github.com/avgupta456/statbotics"
-          target="_blank"
-          rel="noopener noreferrer"
           variant="subtle"
           color={colorScheme === "dark" ? "gray" : "black"}
           className="mr-2"
           radius="md"
         >
-          <FaGithub className="h-5 w-5" stroke={2} />
+          <Link
+            href="https://github.com/avgupta456/statbotics"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaGithub className="h-5 w-5" stroke={2} />
+          </Link>
         </ActionIcon>
         <ActionIcon variant="subtle" color="gray" onClick={toggleColorScheme} radius="md">
-          {colorScheme === "dark" ? sunIcon : moonIcon}
+          {colorScheme === "light" ? sunIcon : moonIcon}
         </ActionIcon>
       </div>
     </AppShell.Header>
