@@ -1,6 +1,8 @@
 export const PROD = process.env.PROD === "True";
 
-export const BACKEND_URL = PROD ? "https://api.statbotics.io/site" : "http://localhost:8000/site";
+export const BACKEND_URL = PROD
+  ? "https://api.statbotics.io/v3/site"
+  : "http://localhost:8000/v3/site";
 
 export const CURR_YEAR = 2024;
 export const CURR_WEEK = 1;
