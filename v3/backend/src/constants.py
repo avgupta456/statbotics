@@ -36,10 +36,6 @@ AUTH_KEY_BLACKLIST: List[str] = []
 CURR_YEAR = 2024
 CURR_WEEK = 1
 
-# MAX_TEAM = 9316   # (2023)
-MAX_TEAM = 9650  # (2024)
-
-
 # MISC
 
 EPS = 1e-6

@@ -1,14 +1,14 @@
-import random
-from typing import Any, Dict, List, Optional
+# import random
+# from typing import Any, Dict, List, Optional
 
-from src.site.aggregation import get_team_years, get_year, team_year_to_team_event
-from src.site.models import APIEvent, APIMatch, APITeamMatch, APITeamYear, APIYear
-from src.types.enums import MatchWinner
-from src.utils.hypothetical import decompress, get_cheesy_schedule
+# from src.site.aggregation import get_team_years, get_year, team_year_to_team_event
+# from src.site.models import APIEvent, APIMatch, APITeamMatch, APITeamYear, APIYear
+# from src.types.enums import MatchWinner
+# from src.utils.hypothetical import decompress, get_cheesy_schedule
 
 # TODO: Avoid code duplication with Database schema, EPA calculations, etc.
 
-
+"""
 async def read_hypothetical_event(
     event_id: str, no_cache: bool = False
 ) -> Dict[str, Any]:
@@ -130,3 +130,4 @@ async def read_hypothetical_event(
         "team_matches": [x.to_dict() for x in team_matches],
         "year": year_obj.to_dict(),
     }
+"""

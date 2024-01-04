@@ -1,23 +1,24 @@
-from typing import Any, Dict, List, Optional, Tuple
+# from typing import Any, Dict, List, Optional, Tuple
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter  # , Response
 
-from src.constants import CURR_YEAR
-from src.site.aggregation import (
-    get_event,
-    get_match,
-    get_noteworthy_matches,
-    get_team_events,
-    get_team_matches,
-    get_upcoming_matches,
-    get_year,
-)
-from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
-from src.utils.decorators import async_fail_gracefully
+# from src.constants import CURR_YEAR
+# from src.site.aggregation import (
+# get_event,
+# get_match,
+# get_noteworthy_matches,
+# get_team_events,
+# get_team_matches,
+# get_upcoming_matches,
+# get_year,
+# )
+# from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
+# from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
 
 
+"""
 @router.get("/match/{match_id}")
 @async_fail_gracefully
 async def read_match(
@@ -58,8 +59,9 @@ async def read_match(
     }
 
     return out
+"""
 
-
+"""
 @router.get("/upcoming_matches")
 @async_fail_gracefully
 async def read_upcoming_matches(
@@ -101,8 +103,9 @@ async def read_upcoming_matches(
         ],
         "foul_rate": foul_rate,
     }
+"""
 
-
+"""
 @router.get("/noteworthy_matches/{year}")
 @async_fail_gracefully
 async def read_noteworthy_matches(
@@ -136,3 +139,4 @@ async def read_noteworthy_matches(
         "matches": {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()},
         "foul_rate": foul_rate,
     }
+"""

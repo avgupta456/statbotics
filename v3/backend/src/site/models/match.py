@@ -30,11 +30,9 @@ class APIMatch(APIModel):
     red_score: int
     red_rp_1: int
     red_rp_2: int
-    red_tiebreaker: float
     blue_score: int
     blue_rp_1: int
     blue_rp_2: int
-    blue_tiebreaker: float
     winner: str
 
     # Predicted
