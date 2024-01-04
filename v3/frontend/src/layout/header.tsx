@@ -5,11 +5,12 @@ import { RxMoon, RxSun } from "react-icons/rx";
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import {
   AppShell,
-  Autocomplete,
   Burger,
+  Button,
   Group,
   Kbd,
   NavLink as MantineNavLink,
@@ -49,6 +50,8 @@ function NavLink({ href, label }: { href: string; label: string }) {
 }
 
 function Header() {
+  const router = useRouter();
+
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   const searchIcon = (
@@ -133,10 +136,12 @@ function Header() {
       seenTeams.add(team.num);
       return !duplicate;
     })
-    ?.map((team: any, index: number) => ({
-      id: `team-${index}`,
+    ?.sort((a: any, b: any) => a.num - b.num)
+    ?.map((team: any) => ({
+      id: `team-${team.num}`,
       label: `${team.num} | ${team.team}`,
-      url: `/team/${team.num}`,
+      value: `${team.num} | ${team.team}`,
+      onClick: () => router.push(`/team/${team.num}`),
     }));
 
   const seenEvents = new Set();
@@ -148,16 +153,14 @@ function Header() {
     })
     ?.map((event: any) => ({ ...event, year: parseInt(event.key.slice(0, 4)) }))
     ?.sort((a, b) => b.year - a.year)
-    ?.map((event: any, index: number) => ({
-      id: `event-${index}`,
+    ?.map((event: any) => ({
+      id: `event-${event.key}`,
       label: `${event.key.slice(0, 4)} ${event.name}`,
-      description: `${event.key.slice(0, 4)} ${event.name}`,
-      url: `/event/${event.key}`,
+      value: `${event.key.slice(0, 4)} ${event.name}`,
+      onClick: () => router.push(`/event/${event.key}`),
     }));
 
   const allOptions = [...teamOptions, ...eventOptions];
-
-  const [hideKbd, setHideKbd] = useState(false);
 
   return (
     <AppShell.Header>
@@ -165,7 +168,6 @@ function Header() {
         // not rendered, but allows keyboard navigation with Ctrl+K
         actions={allOptions}
         nothingFound="Nothing found..."
-        highlightQuery
         limit={20}
         scrollable
         maxHeight={350}
@@ -319,28 +321,19 @@ function Header() {
               </Menu.Dropdown>
             </Menu>
           </div>
-          <Autocomplete
-            data={[
-              { group: "Teams", items: teamOptions.map((team) => team.label) },
-              { group: "Events", items: eventOptions.map((event) => event.label) },
-            ]}
-            onFocus={() => setHideKbd(true)}
-            onBlur={() => setHideKbd(false)}
-            limit={20}
-            maxDropdownHeight={350}
-            placeholder="Search"
-            leftSection={<IconSearch className="h-5 w-5" stroke={1.5} />}
-            rightSection={
-              <Kbd
-                size="xs"
-                onClick={spotlight.open}
-                className={classnames(hideKbd ? "hidden" : "", "cursor-pointer")}
-              >
-                Ctrl + K
-              </Kbd>
+          <Button
+            justify="space-between"
+            leftSection={
+              <div className="flex items-center">
+                <IconSearch className="mr-2 h-5 w-5" stroke={1.5} />
+                Search
+              </div>
             }
-            rightSectionWidth={72}
-            className="mr-4"
+            rightSection={<Kbd size="xs">Ctrl + K</Kbd>}
+            onClick={spotlight.open}
+            variant="light"
+            color="gray"
+            className="mantine-focus-never mr-4 w-60 border border-gray-500 font-thin text-gray-500"
           />
           <Link
             href="https://github.com/avgupta456/statbotics"
