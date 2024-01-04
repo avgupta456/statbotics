@@ -1,8 +1,6 @@
 export const PROD = process.env.PROD === "True";
 
-export const BACKEND_URL = PROD
-  ? "https://api.statbotics.io/site"
-  : "http://localhost:8000/site";
+export const BACKEND_URL = PROD ? "https://api.statbotics.io/site" : "http://localhost:8000/site";
 
 export const CURR_YEAR = 2024;
 export const CURR_WEEK = 1;
@@ -37,8 +35,7 @@ export const RPMapping = {
 
 // TODO: Move to backend
 export const eventNameMap = {
-  "FIRST in Michigan State Championship presented by DTE Foundation":
-    "FiM Champs - Overall",
+  "FIRST in Michigan State Championship presented by DTE Foundation": "FiM Champs - Overall",
   "FIRST in Michigan State Championship presented by DTE Foundation - DTE ENERGY FOUNDATION Division":
     "FiM Champs - DTE Energy Foundation Division",
   "FIRST in Michigan State Championship presented by DTE Foundation - FORD Division":
@@ -48,19 +45,15 @@ export const eventNameMap = {
   "FIRST in Michigan State Championship presented by DTE Foundation - CONSUMERS ENERGY Division":
     "FiM Champs - Consumers Energy Division",
   "New England FIRST District Championship": "NE Champs - Overall",
-  "New England FIRST District Championship - WILSON Division":
-    "NE Champs - Wilson Division",
-  "New England FIRST District Championship - MEIR Division":
-    "NE Champs - Meir Division",
-  "FIRST In Texas District Championship presented by Phillips 66":
-    "FIT Champs - Overall",
+  "New England FIRST District Championship - WILSON Division": "NE Champs - Wilson Division",
+  "New England FIRST District Championship - MEIR Division": "NE Champs - Meir Division",
+  "FIRST In Texas District Championship presented by Phillips 66": "FIT Champs - Overall",
   "FIRST In Texas District Championship presented by Phillips 66 - APOLLO Division":
     "FIT Champs - Apollo Division",
   "FIRST In Texas District Championship presented by Phillips 66 - MERCURY Division":
     "FIT Champs - Mercury Division",
   "FIRST Ontario Provincial Championship": "Ontario Champs - Overall",
-  "FIRST Ontario Provincial Championship - SCIENCE Division":
-    "Ontario Champs - Science Division",
+  "FIRST Ontario Provincial Championship - SCIENCE Division": "Ontario Champs - Science Division",
   "FIRST Ontario Provincial Championship - TECHNOLOGY Division":
     "Ontario Champs - Technology Division",
 };

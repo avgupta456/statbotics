@@ -15,7 +15,7 @@ const theme = createTheme({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <MantineProvider theme={theme} defaultColorScheme="light">
-      <AppShell header={{ height: 60 }} padding="md" transitionDuration={0}>
+      <AppShell header={{ height: 60 }} padding={0} transitionDuration={0}>
         <Header />
         <AppShell.Main>
           <Component {...pageProps} />

@@ -181,6 +181,7 @@ function Header() {
             position="bottom"
             width={200}
             openDelay={100}
+            shadow="md"
             classNames={{ label: "w-20" }}
           >
             <Menu.Target>
@@ -239,7 +240,7 @@ function Header() {
           </div>
           <div className="flex-grow" />
           <div className="mr-4 flex w-auto">
-            <Menu trigger="click-hover" position="bottom" width={200} openDelay={100}>
+            <Menu trigger="click-hover" position="bottom" width={200} openDelay={100} shadow="md">
               <Menu.Target>
                 <Text
                   className={classnames(
@@ -265,7 +266,7 @@ function Header() {
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>
-            <Menu trigger="click-hover" position="bottom" width={200} openDelay={100}>
+            <Menu trigger="click-hover" position="bottom" width={200} openDelay={100} shadow="md">
               <Menu.Target>
                 <Text
                   className={classnames(

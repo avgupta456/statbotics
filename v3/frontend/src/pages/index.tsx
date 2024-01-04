@@ -7,7 +7,7 @@ import { classnames } from "../utils/utils";
 
 export default function Home() {
   return (
-    <div className="container mx-auto flex w-full flex-grow flex-wrap items-center p-4">
+    <div className="container mx-auto flex h-full w-full items-center p-4 pt-[100px]">
       <div className="relative hidden h-[400px] w-1/2 lg:block">
         <Image
           src="/spline.png"
@@ -18,7 +18,7 @@ export default function Home() {
           className="object-contain"
         />
       </div>
-      <div className="flex w-full flex-col items-center justify-center p-4 pb-12 text-gray-800 lg:h-[400px] lg:w-1/2">
+      <div className="flex w-full flex-col items-center justify-center p-4 pb-12 lg:h-[400px] lg:w-1/2">
         <div
           className={classnames(
             "flex flex-col items-center text-2xl sm:text-4xl md:text-5xl",
