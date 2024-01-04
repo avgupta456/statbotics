@@ -15,8 +15,6 @@ class APITeamEvent(APIModel):
     num_teams: int
     # For simulation initial conditions
     start_total_epa: float
-    start_rp_1_epa: float
-    start_rp_2_epa: float
     # For tables and figures
     total_epa: float
     unitless_epa: float

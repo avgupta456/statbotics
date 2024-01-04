@@ -1,24 +1,25 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List  # , Optional
 
 from fastapi import APIRouter, Response
 
 from src.site.aggregation import (
-    get_event,
+    # get_event,
     get_events,
-    get_matches,
-    get_team_events,
-    get_team_matches,
-    get_year,
+    # get_matches,
+    # get_team_events,
+    # get_team_matches,
+    # get_year,
 )
-from src.site.hypo_event import read_hypothetical_event as _read_hypothetical_event
-from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
-from src.utils.decorators import async_fail_gracefully
+
+# from src.site.hypo_event import read_hypothetical_event as _read_hypothetical_event
+from src.site.models import APIEvent  # , APIMatch, APITeamEvent, APITeamMatch, APIYear
+from src.utils.decorators import async_fail_gracefully_api_plural
 
 router = APIRouter()
 
 
 @router.get("/events/all")
-@async_fail_gracefully
+@async_fail_gracefully_api_plural
 async def read_all_events(
     response: Response, no_cache: bool = False
 ) -> List[Dict[str, Any]]:
@@ -26,6 +27,7 @@ async def read_all_events(
     return [{"key": event.key, "name": event.name} for event in events]
 
 
+"""
 @router.get("/events/{year}")
 @async_fail_gracefully
 async def read_events(
@@ -39,8 +41,9 @@ async def read_events(
         year=year, offseason=None, no_cache=no_cache
     )
     return {"year": year_obj.to_dict(), "events": [x.to_dict() for x in events]}
+"""
 
-
+"""
 @router.get("/event/{event_id}")
 @async_fail_gracefully
 async def read_event(
@@ -78,8 +81,9 @@ async def read_event(
     }
 
     return out
+"""
 
-
+"""
 @router.get("/event/{event_id}/team_matches/{team}")
 @async_fail_gracefully
 async def read_team_matches(
@@ -89,11 +93,13 @@ async def read_team_matches(
         event=event_id, team=team, no_cache=no_cache
     )
     return [x.to_dict() for x in team_matches]
+"""
 
-
+"""
 @router.get("/event/hypothetical/{event_id}")
 @async_fail_gracefully
 async def read_hypothetical_event(
     response: Response, event_id: str, no_cache: bool = False
 ) -> Dict[str, Any]:
     return await _read_hypothetical_event(event_id, no_cache=no_cache)
+"""

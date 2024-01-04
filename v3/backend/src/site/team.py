@@ -1,32 +1,32 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List  # , Optional
 
 from fastapi import APIRouter, Response
 
 from src.site.aggregation import (
-    get_matches,
-    get_team,
-    get_team_events,
-    get_team_matches,
-    get_team_year,
-    get_team_years,
+    # get_matches,
+    # get_team,
+    # get_team_events,
+    # get_team_matches,
+    # get_team_year,
+    # get_team_years,
     get_teams,
-    get_year,
+    # get_year,
 )
 from src.site.models import (
-    APIMatch,
+    # APIMatch,
     APITeam,
-    APITeamEvent,
-    APITeamMatch,
-    APITeamYear,
-    APIYear,
+    # APITeamEvent,
+    # APITeamMatch,
+    # APITeamYear,
+    # APIYear,
 )
-from src.utils.decorators import async_fail_gracefully
+from src.utils.decorators import async_fail_gracefully_api_plural
 
 router = APIRouter()
 
 
 @router.get("/teams/all")
-@async_fail_gracefully
+@async_fail_gracefully_api_plural
 async def read_all_teams(
     response: Response, no_cache: bool = False
 ) -> List[Dict[str, Any]]:
@@ -38,6 +38,7 @@ async def read_all_teams(
     ]
 
 
+"""
 @router.get("/team/{team_num}")
 @async_fail_gracefully
 async def read_team(
@@ -48,8 +49,9 @@ async def read_team(
         raise Exception("Team not found")
 
     return team.to_dict()
+"""
 
-
+"""
 @router.get("/team/{team_num}/years")
 @async_fail_gracefully
 async def read_team_years(
@@ -85,8 +87,9 @@ async def read_team_years(
         }
         for x in team_years
     ]
+"""
 
-
+"""
 @router.get("/team/{team_num}/{year}")
 @async_fail_gracefully
 async def read_team_year(
@@ -129,3 +132,4 @@ async def read_team_year(
     }
 
     return out
+"""

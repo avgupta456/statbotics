@@ -3,19 +3,13 @@ from typing import Callable, List, Optional, Tuple
 
 from src.db.models import TeamEvent
 from src.db.read import get_team_events as _get_team_events
-from src.models.epa.unitless import (
-    epa_to_unitless_epa as _epa_to_unitless_epa,
-    get_epa_to_norm_epa_func,
-)
-from src.site.models import APIEvent, APITeamEvent, APITeamYear
+
+# from src.site.models import APIEvent, APITeamEvent, APITeamYear
+from src.site.models import APITeamEvent
 from src.utils.alru_cache import alru_cache
 
 
-def unpack_team_event(
-    team_event: TeamEvent,
-    epa_to_unitless_epa: Callable[[float], float],
-    epa_to_norm_epa: Callable[[float], float],
-) -> APITeamEvent:
+def unpack_team_event(team_event: TeamEvent) -> APITeamEvent:
     return APITeamEvent(
         num=team_event.team,
         team=team_event.team_name or str(team_event.team),
@@ -26,16 +20,14 @@ def unpack_team_event(
         first_event=bool(team_event.first_event),
         num_teams=team_event.num_teams or -1,
         start_total_epa=team_event.epa_start or 0,
-        start_rp_1_epa=team_event.rp_1_epa_start or 0,
-        start_rp_2_epa=team_event.rp_2_epa_start or 0,
-        total_epa=team_event.epa_end or 0,
-        unitless_epa=epa_to_unitless_epa(team_event.epa_end or 0),
-        norm_epa=epa_to_norm_epa(team_event.epa_end or 0),
-        auto_epa=team_event.auto_epa_end or 0,
-        teleop_epa=team_event.teleop_epa_end or 0,
-        endgame_epa=team_event.endgame_epa_end or 0,
-        rp_1_epa=team_event.rp_1_epa_end or 0,
-        rp_2_epa=team_event.rp_2_epa_end or 0,
+        total_epa=team_event.epa or 0,
+        unitless_epa=team_event.unitless_epa or 0,
+        norm_epa=team_event.norm_epa or 0,
+        auto_epa=team_event.auto_epa or 0,
+        teleop_epa=team_event.teleop_epa or 0,
+        endgame_epa=team_event.endgame_epa or 0,
+        rp_1_epa=team_event.rp_1_epa or 0,
+        rp_2_epa=team_event.rp_2_epa or 0,
         wins=team_event.wins,
         losses=team_event.losses,
         ties=team_event.ties,
@@ -51,6 +43,7 @@ def unpack_team_event(
     )
 
 
+"""
 def team_year_to_team_event(team_year: APITeamYear, event: APIEvent) -> APITeamEvent:
     return APITeamEvent(
         num=team_year.num,
@@ -62,8 +55,6 @@ def team_year_to_team_event(team_year: APITeamYear, event: APIEvent) -> APITeamE
         first_event=False,
         num_teams=0,
         start_total_epa=team_year.total_epa,
-        start_rp_1_epa=team_year.rp_1_epa,
-        start_rp_2_epa=team_year.rp_2_epa,
         total_epa=team_year.total_epa,
         unitless_epa=team_year.unitless_epa,
         norm_epa=team_year.norm_epa,
@@ -85,13 +76,12 @@ def team_year_to_team_event(team_year: APITeamYear, event: APIEvent) -> APITeamE
         rps_per_match=0,
         offseason=event.offseason,
     )
+"""
 
 
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_team_events(
     year: int,
-    score_mean: float,
-    score_sd: float,
     event: Optional[str] = None,
     team: Optional[str] = None,
     offseason: Optional[bool] = False,
@@ -101,19 +91,5 @@ async def get_team_events(
     team_event_objs: List[TeamEvent] = _get_team_events(
         year=year, team=team, event=event, offseason=offseason
     )
-
-    if epa_to_norm_epa is None:
-        epa_to_norm_epa = get_epa_to_norm_epa_func(year)
-
-    def epa_to_unitless_epa(epa: float) -> float:
-        return _epa_to_unitless_epa(epa, score_mean, score_sd)
-
-    team_events = [
-        unpack_team_event(
-            x,
-            epa_to_unitless_epa,
-            epa_to_norm_epa,
-        )
-        for x in team_event_objs
-    ]
+    team_events = [unpack_team_event(x) for x in team_event_objs]
     return (True, sorted(team_events, key=lambda x: x.time or 0))

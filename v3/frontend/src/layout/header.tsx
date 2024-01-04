@@ -91,7 +91,7 @@ function Header() {
     if (!res.ok) {
       return undefined;
     }
-    const data = (await res.json())?.data;
+    const data = await res.json();
     setWithExpiry("full_team_list", data, 60 * 60 * 24 * 7); // 1 week expiry
     return data;
   }
@@ -110,7 +110,7 @@ function Header() {
     if (!res.ok) {
       return undefined;
     }
-    const data = (await res.json())?.data;
+    const data = await res.json();
     setWithExpiry("full_event_list", data, 60 * 60 * 24 * 7); // 1 week expiry
     return data;
   }
