@@ -5,7 +5,7 @@ import { Button } from "@mantine/core";
 
 import { classnames } from "../utils/utils";
 
-export default function Home() {
+export default function LandingPage() {
   return (
     <div className="container mx-auto flex h-full w-full items-center p-4 pt-[100px]">
       <div className="relative hidden h-[400px] w-1/2 lg:block">

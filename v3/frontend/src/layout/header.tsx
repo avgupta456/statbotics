@@ -41,7 +41,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
       classNames={{
         label: "text-base font-light",
         root: classnames(
-          "rounded",
+          "rounded h-9",
           colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
         ),
       }}
@@ -246,7 +246,7 @@ function Header() {
               <Menu.Target>
                 <Text
                   className={classnames(
-                    "cursor-pointer rounded px-3 py-2 text-base font-light",
+                    "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
                     colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
                   )}
                 >
@@ -272,7 +272,7 @@ function Header() {
               <Menu.Target>
                 <Text
                   className={classnames(
-                    "cursor-pointer rounded px-3 py-2 text-base font-light",
+                    "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
                     colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
                   )}
                 >
