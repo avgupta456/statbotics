@@ -108,9 +108,6 @@ def get_events(
         if event["key"] in DISTRICT_OVERRIDES:
             event["district"] = DISTRICT_OVERRIDES[event["key"]]
 
-        # renames district divisions to district championship
-        # renames festival of championships to einsteins
-
         event_type_int = int(event["event_type"])
         event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
         event_type_dict[0] = EventType.REGIONAL
@@ -118,12 +115,10 @@ def get_events(
         event_type_dict[2] = EventType.DISTRICT_CMP
         event_type_dict[3] = EventType.CHAMPS_DIV
         event_type_dict[4] = EventType.EINSTEIN
-        event_type_dict[
-            5
-        ] = EventType.DISTRICT_CMP  # rename district divisions to district championship
-        event_type_dict[
-            6
-        ] = EventType.EINSTEIN  # rename festival of championships to einsteins
+        # rename district divisions to district championship
+        event_type_dict[5] = EventType.DISTRICT_CMP
+        # rename festival of championships to einsteins
+        event_type_dict[6] = EventType.EINSTEIN
         event_type_dict[99] = EventType.OFFSEASON
         event_type_dict[100] = EventType.PRESEASON
         event_type = event_type_dict[event_type_int]

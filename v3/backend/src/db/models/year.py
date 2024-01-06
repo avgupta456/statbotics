@@ -312,10 +312,10 @@ class Year(_Year, Model):
                 clean["breakdown"][f"{name}_mean"] = getattr(self, f"{key}_mean")
                 if key != "tiebreaker":
                     clean["percentiles"][name] = {
-                        99: getattr(self, f"{key}_epa_99p"),
-                        90: getattr(self, f"{key}_epa_90p"),
-                        75: getattr(self, f"{key}_epa_75p"),
-                        25: getattr(self, f"{key}_epa_25p"),
+                        "p99": getattr(self, f"{key}_epa_99p"),
+                        "p90": getattr(self, f"{key}_epa_90p"),
+                        "p75": getattr(self, f"{key}_epa_75p"),
+                        "p25": getattr(self, f"{key}_epa_25p"),
                     }
 
             clean["metrics"]["rp_pred"] = {

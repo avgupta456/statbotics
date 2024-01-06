@@ -154,7 +154,12 @@ export default function TeamsPage() {
     error,
   ]);
 
-  const data: TeamYearData[] | undefined = teamYearDataDict[year] || teamYearMiniDataDict[year];
+  let data: TeamYearData[] | undefined = teamYearDataDict[year] || teamYearMiniDataDict[year];
+  if (data) {
+    data = data.sort(
+      (a, b) => (a?.epa?.ranks?.total?.rank ?? 0) - (b?.epa?.ranks?.total?.rank ?? 0),
+    );
+  }
   const loading = data?.length === 0;
 
   const defaultColDef = useMemo(
@@ -189,21 +194,26 @@ export default function TeamsPage() {
     numberOfInputs: 0,
   }));
 
+  const getWLT = (params: any) => {
+    const record = params?.data?.record?.season;
+    if (!record) {
+      return { wins: 0, losses: 0, ties: 0 };
+    }
+    const wins = record?.wins || 0;
+    const losses = record?.losses || 0;
+    const ties = record?.ties || 0;
+    return { wins, losses, ties };
+  };
+
   const recordGetter = (params: any) => {
-    const wins = params?.data?.wins || 0;
-    const losses = params?.data?.losses || 0;
-    const ties = params?.data?.ties || 0;
+    const { wins, losses, ties } = getWLT(params);
     return `${wins}-${losses}-${ties}`;
   };
 
   const winRateGetter = (params: any) => {
-    const wins = params?.data?.wins || 0;
-    const losses = params?.data?.losses || 0;
-    const ties = params?.data?.ties || 0;
+    const { wins, losses, ties } = getWLT(params);
     const total = wins + losses + ties;
-    if (total === 0) {
-      return 0;
-    }
+    if (total === 0) return 0;
     return (wins + ties / 2) / total;
   };
 
@@ -316,28 +326,28 @@ export default function TeamsPage() {
       headerClass: "ag-text-center !border-r-2 !border-gray-200",
       children: [
         {
-          field: "auto_epa",
+          field: "epa.breakdown.auto_points.mean",
           headerName: "Auto",
           headerTooltip: "Auto EPA",
           minWidth: 100,
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "auto_stats" },
+          cellRendererParams: { percentileKey: "auto_points" },
         },
         {
-          field: "teleop_epa",
+          field: "epa.breakdown.teleop_points.mean",
           headerName: "Teleop",
           headerTooltip: "Teleop EPA",
           minWidth: 100,
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "teleop_stats" },
+          cellRendererParams: { percentileKey: "teleop_points" },
         },
         {
-          field: "endgame_epa",
+          field: "epa.breakdown.endgame_points.mean",
           headerName: "Endgame",
           headerTooltip: "Endgame EPA",
           minWidth: 100,
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "endgame_stats" },
+          cellRendererParams: { percentileKey: "endgame_points" },
         },
       ],
     },
@@ -351,23 +361,27 @@ export default function TeamsPage() {
           minWidth: 100,
           valueGetter: recordGetter,
           // sort record by win rate column
-          comparator: (
-            valueA: number,
-            valueB: number,
-            nodeA: any,
-            nodeB: any,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-            isDescending: boolean,
-          ) => {
+          // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+          comparator: (_a: any, _b: any, nodeA: any, nodeB: any, _c: any) => {
             const winRateA = winRateGetter(nodeA);
             const winRateB = winRateGetter(nodeB);
             return winRateA - winRateB;
           },
         },
-        { field: "count", headerName: "Matches", minWidth: 100, columnGroupShow: "open" },
-        { field: "wins", headerName: "Wins", minWidth: 100, columnGroupShow: "open" },
-        { field: "losses", headerName: "Losses", minWidth: 100, columnGroupShow: "open" },
-        { field: "ties", headerName: "Ties", minWidth: 100, columnGroupShow: "open" },
+        {
+          field: "record.season.count",
+          headerName: "Matches",
+          minWidth: 100,
+          columnGroupShow: "open",
+        },
+        { field: "record.season.wins", headerName: "Wins", minWidth: 100, columnGroupShow: "open" },
+        {
+          field: "record.season.losses",
+          headerName: "Losses",
+          minWidth: 100,
+          columnGroupShow: "open",
+        },
+        { field: "record.season.ties", headerName: "Ties", minWidth: 100, columnGroupShow: "open" },
         {
           colId: "win_rate",
           headerName: "Win Rate",

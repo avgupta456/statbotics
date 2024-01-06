@@ -27,6 +27,7 @@ async def read_team_years(
 
     team_years: List[TeamYear] = await get_team_years_cached(
         year=year,
+        offseason=False,
         limit=limit,
         metric=metric,
         site=True,

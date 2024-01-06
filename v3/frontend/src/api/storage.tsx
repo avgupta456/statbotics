@@ -44,7 +44,7 @@ async function query(
 ) {
   const cacheRawData = await getWithExpiry(storageKey);
   const cacheData = cacheRawData ? decompress(cacheRawData) : null;
-  if (cacheData && cacheData?.length > minLength) {
+  if (cacheData && (minLength === 0 || cacheData?.length > minLength)) {
     log(`Used Local Storage: ${storageKey}`);
     return cacheData;
   }
@@ -62,8 +62,8 @@ async function query(
   const strData = pako.inflate(buffer, { to: "string" });
   const data = JSON.parse(strData);
 
-  log(`Compressed size: ${apiPath}, ${round(buffer.byteLength / 1024, 2)}kb`);
-  log(`Uncompressed size: ${apiPath}, ${round(strData.length / 1024, 2)}kb`);
+  // log(`Uncompressed size: ${apiPath}, ${round(strData.length / 1024, 2)}kb`);
+  // log(`Compressed size: ${apiPath}, ${round(buffer.byteLength / 1024, 2)}kb`);
 
   return data;
 }
