@@ -32,7 +32,9 @@ async def read_root_match():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_match_cached(match: str) -> Tuple[bool, Optional[Match]]:
+async def get_match_cached(
+    match: str, no_cache: bool = False
+) -> Tuple[bool, Optional[Match]]:
     return (True, get_match(match=match))
 
 
@@ -48,7 +50,12 @@ async def get_matches_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Match]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_matches(

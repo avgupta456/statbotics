@@ -1,10 +1,10 @@
 import statistics
 from typing import Callable, List, Optional, Tuple
 
+from src.constants import CURR_YEAR
 from src.db.models import Alliance, Year
 from src.types.enums import MatchStatus
 from src.utils.utils import r
-from src.constants import CURR_YEAR
 
 
 def process_year(year: Year, alliances: List[Alliance]) -> Year:

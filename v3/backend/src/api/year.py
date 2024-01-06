@@ -21,7 +21,9 @@ async def read_root_year():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_year_cached(year: int) -> Tuple[bool, Optional[Year]]:
+async def get_year_cached(
+    year: int, no_cache: bool = False
+) -> Tuple[bool, Optional[Year]]:
     return (True, get_year(year=year))
 
 
@@ -31,7 +33,12 @@ async def get_years_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Year]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_years(metric=metric, ascending=ascending, limit=limit, offset=offset),

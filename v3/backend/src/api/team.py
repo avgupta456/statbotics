@@ -31,7 +31,9 @@ async def read_root_team():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_team_cached(team: str) -> Tuple[bool, Optional[Team]]:
+async def get_team_cached(
+    team: str, no_cache: bool = False
+) -> Tuple[bool, Optional[Team]]:
     return (True, get_team(team=team))
 
 
@@ -46,7 +48,12 @@ async def get_teams_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Team]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_teams(

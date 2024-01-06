@@ -1,14 +1,14 @@
 from typing import Any, Dict, Tuple
 
-from src.breakdown import key_to_name
-from src.models.epa.math import get_skew_normal_95_conf_interval
 from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS, values_callable
+from src.models.epa.math import get_skew_normal_95_conf_interval
 from src.types.enums import EventStatus, EventType
 
 

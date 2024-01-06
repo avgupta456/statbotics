@@ -264,10 +264,10 @@ class Year(_Year, Model):
             "score_sd": self.score_sd,
             "percentiles": {
                 "total_points": {
-                    99: self.epa_99p,
-                    90: self.epa_90p,
-                    75: self.epa_75p,
-                    25: self.epa_25p,
+                    "p99": self.epa_99p,
+                    "p90": self.epa_90p,
+                    "p75": self.epa_75p,
+                    "p25": self.epa_25p,
                 },
             },
             "breakdown": {},

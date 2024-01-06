@@ -33,7 +33,10 @@ async def read_root_event():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_event_cached(event: str) -> Tuple[bool, Optional[Event]]:
+async def get_event_cached(
+    event: str,
+    no_cache: bool = False,
+) -> Tuple[bool, Optional[Event]]:
     return (True, get_event(event_id=event))
 
 
@@ -50,7 +53,12 @@ async def get_events_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Event]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_events(

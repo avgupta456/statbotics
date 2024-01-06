@@ -1,15 +1,15 @@
 from typing import Any, Dict, Tuple
-from src.models.epa.math import get_skew_normal_95_conf_interval
 
-from src.breakdown import key_to_name
-from src.constants import CURR_YEAR
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.breakdown import key_to_name
+from src.constants import CURR_YEAR
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
+from src.models.epa.math import get_skew_normal_95_conf_interval
 
 
 class TeamYearORM(Base, ModelORM):

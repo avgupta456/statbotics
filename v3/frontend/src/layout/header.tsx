@@ -93,16 +93,16 @@ function Header() {
   const seenTeams = new Set();
   const teamOptions = teams
     ?.filter((team: any) => {
-      const duplicate = seenTeams.has(team.num);
-      seenTeams.add(team.num);
+      const duplicate = seenTeams.has(team.team);
+      seenTeams.add(team.team);
       return !duplicate;
     })
-    ?.sort((a: any, b: any) => a.num - b.num)
+    ?.sort((a: any, b: any) => a.team - b.team)
     ?.map((team: any) => ({
-      id: `team-${team.num}`,
-      label: `${team.num} | ${team.team}`,
-      value: `${team.num} | ${team.team}`,
-      onClick: () => router.push(`/team/${team.num}`),
+      id: `team-${team.team}`,
+      label: `${team.team} | ${team.name}`,
+      value: `${team.team} | ${team.name}`,
+      onClick: () => router.push(`/team/${team.name}`),
     }));
 
   const seenEvents = new Set();

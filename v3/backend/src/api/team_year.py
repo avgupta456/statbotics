@@ -32,7 +32,9 @@ async def read_root_team_year():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_team_year_cached(team: str, year: int) -> Tuple[bool, Optional[TeamYear]]:
+async def get_team_year_cached(
+    team: str, year: int, no_cache: bool = False
+) -> Tuple[bool, Optional[TeamYear]]:
     return (True, get_team_year(team=team, year=year))
 
 
@@ -48,7 +50,12 @@ async def get_team_years_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[TeamYear]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_team_years(

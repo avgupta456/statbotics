@@ -35,7 +35,9 @@ async def read_root_alliance():
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_alliance_cached(
-    match: str, alliance: str
+    match: str,
+    alliance: str,
+    no_cache: bool = False,
 ) -> Tuple[bool, Optional[Alliance]]:
     return (True, get_alliance(match=match, alliance=alliance))
 
@@ -54,7 +56,12 @@ async def get_alliances_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Alliance]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_alliances(

@@ -1,6 +1,6 @@
 # import math
-from typing import Any, Tuple, Optional
 from functools import lru_cache
+from typing import Any, Optional, Tuple
 
 import numpy as np
 import scipy.stats  # type: ignore

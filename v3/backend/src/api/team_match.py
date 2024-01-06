@@ -34,7 +34,7 @@ async def read_root_team_match():
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_match_cached(
-    team: str, match: str
+    team: str, match: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamMatch]]:
     return (True, get_team_match(team=team, match=match))
 
@@ -52,7 +52,12 @@ async def get_team_matches_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[TeamMatch]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_team_matches(

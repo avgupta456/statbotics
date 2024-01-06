@@ -13,8 +13,8 @@ from src.tba.constants import DISTRICT_MAPPING, PLACEHOLDER_TEAMS
 from src.tba.read_tba import (
     EventDict,
     MatchDict,
-    get_district_teams as get_district_teams_tba,
     get_district_rankings as get_district_rankings_tba,
+    get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
     get_event_alliances as get_event_alliances_tba,
     get_event_matches as get_event_matches_tba,

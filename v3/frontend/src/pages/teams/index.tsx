@@ -20,6 +20,7 @@ import {
   STATE_PROV_FULL_NAMES,
 } from "../../utils/geography";
 import { classnames, round } from "../../utils/utils";
+import BubbleChart from "./bubble";
 
 // TODO: Enable query params for year, country, state, district
 // TODO: Add query param for active tab
@@ -27,7 +28,7 @@ import { classnames, round } from "../../utils/utils";
 function EPACellRenderer({ value, percentileKey }: { value: number; percentileKey: string }) {
   const { colorScheme } = useMantineColorScheme();
   const { yearDataDict, year } = useApp();
-  const percentiles: EPAPercentiles = yearDataDict[year]?.[percentileKey] ?? {};
+  const percentiles: EPAPercentiles = yearDataDict[year]?.percentiles?.[percentileKey] ?? {};
 
   // if value is undefined, return a dash, careful not to turn 0 into a dash
   if (value === undefined || value === null) {
@@ -155,7 +156,6 @@ export default function TeamsPage() {
 
   const data: TeamYearData[] | undefined = teamYearDataDict[year] || teamYearMiniDataDict[year];
   const loading = data?.length === 0;
-  console.log(data);
 
   const defaultColDef = useMemo(
     () => ({
@@ -202,9 +202,9 @@ export default function TeamsPage() {
     const ties = params?.data?.ties || 0;
     const total = wins + losses + ties;
     if (total === 0) {
-      return "0%";
+      return 0;
     }
-    return `${((wins + ties / 2) / total) * 100}%`;
+    return (wins + ties / 2) / total;
   };
 
   const countryFormatter = (params: any) => {
@@ -237,7 +237,7 @@ export default function TeamsPage() {
       pinned: "left",
     },
     {
-      field: "num",
+      field: "team",
       headerName: "Number",
       maxWidth: 120,
       filterParams: {
@@ -252,7 +252,7 @@ export default function TeamsPage() {
       headerClass: "ag-text-center !border-r-2 !border-gray-200",
       children: [
         {
-          field: "team",
+          field: "name",
           headerName: "Name",
           minWidth: 200,
           filter: false,
@@ -301,13 +301,13 @@ export default function TeamsPage() {
       headerName: "Total EPA",
       headerClass: "ag-text-center !border-r-2 !border-gray-200",
       children: [
-        { field: "epa_rank", headerName: "EPA Rank" },
-        { field: "unitless_epa", headerName: "Unitless EPA" },
+        { field: "epa.ranks.total.rank", headerName: "EPA Rank" },
+        { field: "epa.unitless", headerName: "Unitless EPA" },
         {
-          field: "total_epa",
+          field: "epa.total.mean",
           headerName: "EPA",
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "total_stats" },
+          cellRendererParams: { percentileKey: "total_points" },
         },
       ],
     },
@@ -317,19 +317,25 @@ export default function TeamsPage() {
       children: [
         {
           field: "auto_epa",
-          headerName: "Auto EPA",
+          headerName: "Auto",
+          headerTooltip: "Auto EPA",
+          minWidth: 100,
           cellRenderer: EPACellRenderer,
           cellRendererParams: { percentileKey: "auto_stats" },
         },
         {
           field: "teleop_epa",
-          headerName: "Teleop EPA",
+          headerName: "Teleop",
+          headerTooltip: "Teleop EPA",
+          minWidth: 100,
           cellRenderer: EPACellRenderer,
           cellRendererParams: { percentileKey: "teleop_stats" },
         },
         {
           field: "endgame_epa",
-          headerName: "Endgame EPA",
+          headerName: "Endgame",
+          headerTooltip: "Endgame EPA",
+          minWidth: 100,
           cellRenderer: EPACellRenderer,
           cellRendererParams: { percentileKey: "endgame_stats" },
         },
@@ -339,16 +345,35 @@ export default function TeamsPage() {
       headerName: "Match Stats",
       headerClass: "ag-text-center",
       children: [
-        { colId: "record", headerName: "Record", valueGetter: recordGetter },
-        { field: "count", headerName: "Matches", columnGroupShow: "open" },
-        { field: "wins", headerName: "Wins", columnGroupShow: "open" },
-        { field: "losses", headerName: "Losses", columnGroupShow: "open" },
-        { field: "ties", headerName: "Ties", columnGroupShow: "open" },
+        {
+          colId: "record",
+          headerName: "Record",
+          minWidth: 100,
+          valueGetter: recordGetter,
+          // sort record by win rate column
+          comparator: (
+            valueA: number,
+            valueB: number,
+            nodeA: any,
+            nodeB: any,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+            isDescending: boolean,
+          ) => {
+            const winRateA = winRateGetter(nodeA);
+            const winRateB = winRateGetter(nodeB);
+            return winRateA - winRateB;
+          },
+        },
+        { field: "count", headerName: "Matches", minWidth: 100, columnGroupShow: "open" },
+        { field: "wins", headerName: "Wins", minWidth: 100, columnGroupShow: "open" },
+        { field: "losses", headerName: "Losses", minWidth: 100, columnGroupShow: "open" },
+        { field: "ties", headerName: "Ties", minWidth: 100, columnGroupShow: "open" },
         {
           colId: "win_rate",
           headerName: "Win Rate",
-
+          filter: "agNumberColumnFilter",
           valueGetter: winRateGetter,
+          valueFormatter: (params: any) => `${round((params?.value ?? 0) * 100, 1)}%`,
           columnGroupShow: "open",
         },
       ],
@@ -419,7 +444,9 @@ export default function TeamsPage() {
           </div>
         </TabPanel>
         <TabPanel value="bubble" loading={loading} error={error}>
-          Bubble Chart
+          <div className="block h-[400px] w-[400px]">
+            <BubbleChart width={400} height={400} />
+          </div>
         </TabPanel>
         <TabPanel value="figures" loading={loading} error={error}>
           Figures
