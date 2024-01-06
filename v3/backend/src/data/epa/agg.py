@@ -61,8 +61,8 @@ def process_year(objs: objs_type) -> objs_type:
     # TEAM YEARS
     total_epas: List[float] = []
     country_epas: Dict[str, List[float]] = defaultdict(list)
-    district_epas: Dict[str, List[float]] = defaultdict(list)
     state_epas: Dict[str, List[float]] = defaultdict(list)
+    district_epas: Dict[str, List[float]] = defaultdict(list)
     for ty in objs[1].values():
         curr_epas[ty.team] = ty.epa_start
 
@@ -80,8 +80,8 @@ def process_year(objs: objs_type) -> objs_type:
 
     total_epas.sort(reverse=True)
     country_epas = {k: sorted(v, reverse=True) for k, v in country_epas.items()}
-    district_epas = {k: sorted(v, reverse=True) for k, v in district_epas.items()}
     state_epas = {k: sorted(v, reverse=True) for k, v in state_epas.items()}
+    district_epas = {k: sorted(v, reverse=True) for k, v in district_epas.items()}
 
     epa_to_norm_epa = get_epa_to_norm_epa_func(total_epas)
     for ty in objs[1].values():
@@ -106,17 +106,17 @@ def process_year(objs: objs_type) -> objs_type:
             1 - ty.country_epa_rank / ty.country_team_count, 4
         )
 
+        state_epas_ = state_epas[ty.state or ""]
+        ty.state_epa_rank = state_epas_.index(epa) + 1
+        ty.state_team_count = len(state_epas_)
+        ty.state_epa_percentile = r(1 - ty.state_epa_rank / ty.state_team_count, 4)
+
         district_epas_ = district_epas[ty.district or ""]
         ty.district_epa_rank = district_epas_.index(epa) + 1
         ty.district_team_count = len(district_epas_)
         ty.district_epa_percentile = r(
             1 - ty.district_epa_rank / ty.district_team_count, 4
         )
-
-        state_epas_ = state_epas[ty.state or ""]
-        ty.state_epa_rank = state_epas_.index(epa) + 1
-        ty.state_team_count = len(state_epas_)
-        ty.state_epa_percentile = r(1 - ty.state_epa_rank / ty.state_team_count, 4)
 
     # YEAR
     def get_percentiles(arr: List[float]) -> Tuple[float, float, float, float]:
@@ -177,9 +177,9 @@ def process_year(objs: objs_type) -> objs_type:
         tes = sorted(event_team_events_dict[e.key], key=lambda te: te.epa, reverse=True)
         if len(tes) > 0:
             e.epa_max = max([te.epa for te in tes])
-            e.epa_mean = statistics.mean([te.epa for te in tes])
+            e.epa_mean = r(statistics.mean([te.epa for te in tes]), 2)
             if len(tes) >= 2:
-                e.epa_sd = statistics.stdev([te.epa for te in tes])
+                e.epa_sd = r(statistics.stdev([te.epa for te in tes]), 2)
 
         if len(tes) >= 8:
             e.epa_top_8 = tes[7].epa

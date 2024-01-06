@@ -38,8 +38,8 @@ async def get_team_cached(team: str) -> Tuple[bool, Optional[Team]]:
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_teams_cached(
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     active: Optional[bool] = None,
     offseason: Optional[bool] = None,
     metric: Optional[str] = None,
@@ -51,8 +51,8 @@ async def get_teams_cached(
         True,
         get_teams(
             country=country,
-            district=district,
             state=state,
+            district=district,
             active=active,
             offseason=offseason,
             metric=metric,
@@ -89,8 +89,8 @@ async def read_team(
 async def read_teams(
     response: Response,
     country: Optional[str] = country_query,
-    district: Optional[str] = district_query,
     state: Optional[str] = state_query,
+    district: Optional[str] = district_query,
     active: Optional[bool] = active_query,
     offseason: Optional[bool] = offseason_query,
     metric: str = metric_query,
@@ -100,8 +100,8 @@ async def read_teams(
 ) -> List[Dict[str, Any]]:
     teams: List[Team] = await get_teams_cached(
         country=country,
-        district=district,
         state=state,
+        district=district,
         active=active,
         offseason=offseason,
         metric=metric,

@@ -21,8 +21,8 @@ def get_event(event_id: str) -> Optional[Event]:
 def get_events(
     year: Optional[int] = None,
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     type: Optional[str] = None,
     week: Optional[int] = None,
     offseason: Optional[bool] = False,
@@ -38,10 +38,10 @@ def get_events(
             data = data.filter(EventORM.year == year)
         if country is not None:
             data = data.filter(EventORM.country == country)
-        if district is not None:
-            data = data.filter(EventORM.district == district)
         if state is not None:
             data = data.filter(EventORM.state == state)
+        if district is not None:
+            data = data.filter(EventORM.district == district)
         if type is not None:
             data = data.filter(EventORM.type == type)
         if week is not None:

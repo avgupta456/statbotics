@@ -29,8 +29,8 @@ def get_teams(cache: bool = True) -> List[TeamDict]:
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
                 "offseason": True,
-                "state": clean_state(data_team["state_prov"]),
                 "country": data_team["country"],
+                "state": clean_state(data_team["state_prov"]),
             }
             out.append(new_data)
     return out
@@ -168,8 +168,8 @@ def get_events(
             "year": year,
             "key": key,
             "name": cast(str, event["name"]),
-            "state": clean_state(event["state_prov"]),
             "country": cast(str, event["country"]),
+            "state": clean_state(event["state_prov"]),
             "district": clean_district(event["district"]),
             "start_date": cast(str, event["start_date"]),
             "end_date": cast(str, event["end_date"]),

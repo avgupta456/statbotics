@@ -10,8 +10,8 @@ class APITeam(APIModel):
     num: str
     team: str
     active: bool
-    state: Optional[str]
     country: Optional[str]
+    state: Optional[str]
     district: Optional[str]
     rookie_year: int
     offseason: bool

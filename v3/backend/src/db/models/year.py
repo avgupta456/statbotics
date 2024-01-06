@@ -257,7 +257,7 @@ class Year(_Year, Model):
             ]
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self: "Year") -> Dict[str, Any]:
         clean: Dict[str, Any] = {
             "year": self.year,
             "score_mean": self.score_mean,
@@ -286,6 +286,20 @@ class Year(_Year, Model):
                         "mse": self.epa_champs_mse,
                     },
                 },
+                "score_pred": {
+                    "season": {
+                        "count": 2 * self.count,
+                        "rmse": self.epa_score_rmse,
+                        "mae": self.epa_score_mae,
+                        "error": self.epa_score_error,
+                    },
+                    "champs": {
+                        "count": 2 * self.champs_count,
+                        "rmse": self.epa_champs_score_rmse,
+                        "mae": self.epa_champs_score_mae,
+                        "error": self.epa_champs_score_error,
+                    },
+                },
             },
         }
 
@@ -308,21 +322,6 @@ class Year(_Year, Model):
                         75: getattr(self, f"{k}_epa_75p"),
                         25: getattr(self, f"{k}_epa_25p"),
                     }
-
-            clean["metrics"]["score_pred"] = {
-                "season": {
-                    "count": 2 * self.count,
-                    "rmse": self.epa_score_rmse,
-                    "mae": self.epa_score_mae,
-                    "error": self.epa_score_error,
-                },
-                "champs": {
-                    "count": 2 * self.champs_count,
-                    "rmse": self.epa_champs_score_rmse,
-                    "mae": self.epa_champs_score_mae,
-                    "error": self.epa_champs_score_error,
-                },
-            }
 
             clean["metrics"]["rp_pred"] = {
                 "season": {

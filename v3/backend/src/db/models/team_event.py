@@ -34,8 +34,8 @@ class TeamEventORM(Base, ModelORM):
     team_name: MS = mapped_column(String(100))
     event_name: MS = mapped_column(String(100))
     country: MOS = mapped_column(String(30), nullable=True)
-    district: MOS = mapped_column(String(10), nullable=True)
     state: MOS = mapped_column(String(10), nullable=True)
+    district: MOS = mapped_column(String(10), nullable=True)
     type: Mapped[EventType] = mapped_column(
         Enum(EventType, values_callable=values_callable)
     )

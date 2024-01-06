@@ -27,8 +27,8 @@ class TeamYearORM(Base, ModelORM):
     offseason: MB = mapped_column(Boolean)
     name: MS = mapped_column(String(100))
     country: MOS = mapped_column(String(30))
-    district: MOS = mapped_column(String(10))
     state: MOS = mapped_column(String(10))
+    district: MOS = mapped_column(String(10))
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
     competing_this_week: MB = mapped_column(Boolean)
@@ -120,13 +120,13 @@ class TeamYearORM(Base, ModelORM):
     country_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
     country_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
 
-    district_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
-    district_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
-    district_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
-
     state_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
     state_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
     state_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
+
+    district_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
+    district_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
+    district_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
 
 
 _TeamYear = generate_attr_class("TeamYear", TeamYearORM)

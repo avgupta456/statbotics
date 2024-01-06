@@ -26,8 +26,8 @@ def get_team_events(
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     type: Optional[int] = None,
     week: Optional[int] = None,
     offseason: Optional[bool] = False,
@@ -47,10 +47,10 @@ def get_team_events(
             data = data.filter(TeamEventORM.event == event)
         if country is not None:
             data = data.filter(TeamEventORM.country == country)
-        if district is not None:
-            data = data.filter(TeamEventORM.district == district)
         if state is not None:
             data = data.filter(TeamEventORM.state == state)
+        if district is not None:
+            data = data.filter(TeamEventORM.district == district)
         if type is not None:
             data = data.filter(TeamEventORM.type == type)
         if week is not None:

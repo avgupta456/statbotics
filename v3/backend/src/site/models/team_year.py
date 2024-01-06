@@ -19,10 +19,10 @@ class APITeamYear(APIModel):
     next_event_week: Optional[int]
     epa_rank: int
     epa_count: int
-    state_epa_rank: int
-    state_epa_count: int
     country_epa_rank: int
     country_epa_count: int
+    state_epa_rank: int
+    state_epa_count: int
     district_epa_rank: int
     district_epa_count: int
     total_epa: float
