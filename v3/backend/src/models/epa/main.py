@@ -36,9 +36,10 @@ class EPA(Model):
 
     @staticmethod
     def percent_func(year: int, x: int) -> float:
+        prev = min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
         if year <= 2015:
-            return 1 / 2 * min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
-        return 2 / 3 * min(0.5, max(0.3, 0.5 - 0.2 / 6 * (x - 6)))
+            return 1 / 2 * prev
+        return 2 / 3 * prev
 
     def start_season(
         self,
@@ -114,7 +115,9 @@ class EPA(Model):
             # Your variance affects your score and your opponent's score
             total_sd *= 2
 
-        win_prob = t_prob_gt_0(red_score - blue_score, total_sd)
+        avg_n = np.mean([self.epas[t].n for t in red_teams + blue_teams])
+
+        win_prob = t_prob_gt_0(red_score - blue_score, total_sd, avg_n)
 
         """
         norm_diff = (red_score - blue_score) / self.year_obj.score_sd
@@ -167,9 +170,7 @@ class EPA(Model):
     ) -> None:
         weight = ELIM_WEIGHT if match.elim else 1
         percent = EPA.percent_func(self.year_num, self.counts[team])
-        alpha = percent * weight
-
-        self.epas[team].add_obs(attrib.epa, alpha)
+        self.epas[team].add_obs(attrib.epa, percent, weight)
         if not match.elim:
             self.counts[team] += 1
 
@@ -205,6 +206,7 @@ class EPA(Model):
             te.epa = rounded_mean[0]
             te.epa_sd = rounded_sd[0]
             te.epa_skew = r(self.epas[team].skew, 4)
+            te.epa_n = r(self.epas[team].n, 4)
 
             if self.year_num >= 2016:
                 te.auto_epa = rounded_mean[1]
@@ -229,6 +231,7 @@ class EPA(Model):
             ty.epa = rounded_mean[0]
             ty.epa_sd = rounded_sd[0]
             ty.epa_skew = r(self.epas[team].skew, 4)
+            ty.epa_n = r(self.epas[team].n, 4)
 
             if self.year_num >= 2016:
                 ty.auto_epa = rounded_mean[1]

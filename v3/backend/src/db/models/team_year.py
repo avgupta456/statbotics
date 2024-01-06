@@ -1,6 +1,8 @@
 from typing import Any, Dict, Tuple
+from src.models.epa.math import get_skew_normal_95_conf_interval
 
-import attr
+from src.breakdown import key_to_name
+from src.constants import CURR_YEAR
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
@@ -44,6 +46,7 @@ class TeamYearORM(Base, ModelORM):
     epa: MF = mapped_column(Float, index=True, default=0)
     epa_sd: MF = mapped_column(Float, default=0)
     epa_skew: MF = mapped_column(Float, default=0)
+    epa_n: MF = mapped_column(Float, default=0)
     auto_epa: MOF = mapped_column(Float, default=None)
     auto_epa_sd: MOF = mapped_column(Float, default=None)
     teleop_epa: MOF = mapped_column(Float, default=None)
@@ -133,17 +136,6 @@ _TeamYear = generate_attr_class("TeamYear", TeamYearORM)
 
 
 class TeamYear(_TeamYear, Model):
-    def to_dict(self: "TeamYear") -> Dict[str, Any]:
-        return attr.asdict(
-            self,
-            filter=attr.filters.exclude(
-                attr.fields(TeamYear).id,
-                attr.fields(TeamYear).next_event_key,
-                attr.fields(TeamYear).next_event_name,
-                attr.fields(TeamYear).next_event_week,
-            ),
-        )
-
     def sort(self: "TeamYear") -> Tuple[str, int]:
         return (self.team, self.year)
 
@@ -156,3 +148,90 @@ class TeamYear(_TeamYear, Model):
     def __str__(self: "TeamYear") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return "_".join([self.team, str(self.year), str(self.count)])
+
+    def to_dict(self: "TeamYear") -> Dict[str, Any]:
+        lower, upper = get_skew_normal_95_conf_interval(
+            0, 1, self.epa_skew, self.epa_n, 2
+        )
+
+        clean: Dict[str, Any] = {
+            "team": self.team,
+            "year": self.year,
+            "name": self.name,
+            "country": self.country,
+            "state": self.state,
+            "district": self.district,
+            "offseason": self.offseason,
+            "epa": {
+                "total": {
+                    "mean": self.epa,
+                    "sd": self.epa_sd,
+                },
+                "unitless": self.unitless_epa,
+                "norm": self.norm_epa,
+                "conf": [lower, upper],
+                "breakdown": {},
+                "stats": {
+                    "start": self.epa_start,
+                    "pre_champs": self.epa_pre_champs,
+                    "max": self.epa_max,
+                },
+                "ranks": {
+                    "total": {
+                        "rank": self.total_epa_rank,
+                        "percentile": self.total_epa_percentile,
+                        "team_count": self.total_team_count,
+                    },
+                    "country": {
+                        "rank": self.country_epa_rank,
+                        "percentile": self.country_epa_percentile,
+                        "team_count": self.country_team_count,
+                    },
+                    "state": {
+                        "rank": self.state_epa_rank,
+                        "percentile": self.state_epa_percentile,
+                        "team_count": self.state_team_count,
+                    },
+                    "district": {
+                        "rank": self.district_epa_rank,
+                        "percentile": self.district_epa_percentile,
+                        "team_count": self.district_team_count,
+                    },
+                },
+            },
+            "record": {
+                "season": {
+                    "wins": self.wins,
+                    "losses": self.losses,
+                    "ties": self.ties,
+                    "count": self.count,
+                    "winrate": self.winrate,
+                },
+                "full": {
+                    "wins": self.full_wins,
+                    "losses": self.full_losses,
+                    "ties": self.full_ties,
+                    "count": self.full_count,
+                    "winrate": self.full_winrate,
+                },
+            },
+            "district_points": self.district_points,
+            "district_rank": self.district_rank,
+        }
+
+        if self.year >= 2016:
+            for key, name in key_to_name[self.year].items():
+                clean["epa"]["breakdown"][name] = {
+                    "mean": getattr(self, f"{key}_epa"),
+                    "sd": getattr(self, f"{key}_epa_sd"),
+                }
+
+        if self.year == CURR_YEAR:
+            clean["competing"] = {
+                "this_week": self.competing_this_week,
+                "next_event_key": self.next_event_key,
+                "next_event_name": self.next_event_name,
+                "next_event_week": self.next_event_week,
+            }
+
+        return clean

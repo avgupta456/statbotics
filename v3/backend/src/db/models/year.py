@@ -308,19 +308,14 @@ class Year(_Year, Model):
                 "foul_mean": self.foul_mean,
                 "no_foul_mean": self.no_foul_mean,
             }
-            for k in ["auto", "teleop", "endgame", "rp_1", "rp_2", "tiebreaker"] + [
-                f"comp_{i}" for i in range(1, 19)
-            ]:
-                if k not in key_to_name[self.year]:
-                    continue
-                name = key_to_name[self.year][k]
-                clean["breakdown"][f"{name}_mean"] = getattr(self, f"{k}_mean")
-                if k != "tiebreaker":
+            for key, name in key_to_name[self.year].items():
+                clean["breakdown"][f"{name}_mean"] = getattr(self, f"{key}_mean")
+                if key != "tiebreaker":
                     clean["percentiles"][name] = {
-                        99: getattr(self, f"{k}_epa_99p"),
-                        90: getattr(self, f"{k}_epa_90p"),
-                        75: getattr(self, f"{k}_epa_75p"),
-                        25: getattr(self, f"{k}_epa_25p"),
+                        99: getattr(self, f"{key}_epa_99p"),
+                        90: getattr(self, f"{key}_epa_90p"),
+                        75: getattr(self, f"{key}_epa_75p"),
+                        25: getattr(self, f"{key}_epa_25p"),
                     }
 
             clean["metrics"]["rp_pred"] = {
