@@ -20,13 +20,13 @@ from src.site.models import (
     # APITeamYear,
     # APIYear,
 )
-from src.utils.decorators import async_fail_gracefully_api_plural
+from src.utils.decorators import async_fail_gracefully_plural
 
 router = APIRouter()
 
 
 @router.get("/teams/all")
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_all_teams(
     response: Response, no_cache: bool = False
 ) -> List[Dict[str, Any]]:

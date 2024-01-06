@@ -1,18 +1,17 @@
-# from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter  # , Response
+from fastapi import APIRouter, Response
 
-# from src.constants import CURR_YEAR
-# from src.site.aggregation import get_team_matches, get_team_years, get_year
-# from src.site.models import APITeamMatch, APITeamYear, APIYear
-# from src.utils.decorators import async_fail_gracefully
+from src.constants import CURR_YEAR
+from src.site.aggregation import get_team_years, get_year  # get_team_matches
+from src.site.models import APITeamYear, APIYear  # APITeamMatch
+from src.utils.decorators import async_fail_gracefully_singular
 
 router = APIRouter()
 
 
-"""
 @router.get("/team_years/{year}")
-@async_fail_gracefully
+@async_fail_gracefully_singular
 async def read_team_years(
     response: Response,
     year: int,
@@ -38,7 +37,7 @@ async def read_team_years(
     }
 
     return out
-"""
+
 
 """
 @router.get("/team_year/{year}/{team}/matches")

@@ -20,8 +20,8 @@ from src.db.models import TeamMatch
 from src.db.read import get_team_match, get_team_matches
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -76,7 +76,7 @@ async def get_team_matches_cached(
     summary="Query a single team match",
     description="Returns a single Team Match object. Requires a team number and match key, e.g. `5511` and `2019ncwak_f1m1`.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_team_match(response: Response, team: str, match: str) -> Dict[str, Any]:
     team_match_obj: Optional[TeamMatch] = await get_team_match_cached(
         team=team, match=match
@@ -92,7 +92,7 @@ async def read_team_match(response: Response, team: str, match: str) -> Dict[str
     summary="Query multiple team matches",
     description="Returns up to 1000 team matches at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_team_matches(
     response: Response,
     team: Optional[str] = team_query,

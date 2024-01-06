@@ -9,8 +9,13 @@ const config: Config = {
         gradientBlue: "#0D37F1",
         gradientRed: "#F50608",
       },
+      fontSize: {
+        xxs: "0.625rem",
+        xxxs: "0.5rem",
+      },
     },
   },
+  // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/typography")],
 };
 export default config;

@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, List
 from fastapi import Response, status
 
 
-def async_fail_gracefully_api_singular(func: Callable[..., Any]):
+def async_fail_gracefully_singular(func: Callable[..., Any]):
     @wraps(func)  # needed to play nice with FastAPI decorator
     async def wrapper(
         response: Response, *args: List[Any], **kwargs: Dict[str, Any]
@@ -20,7 +20,7 @@ def async_fail_gracefully_api_singular(func: Callable[..., Any]):
     return wrapper
 
 
-def async_fail_gracefully_api_plural(func: Callable[..., Any]):
+def async_fail_gracefully_plural(func: Callable[..., Any]):
     @wraps(func)  # needed to play nice with FastAPI decorator
     async def wrapper(
         response: Response, *args: List[Any], **kwargs: Dict[str, Any]

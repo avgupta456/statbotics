@@ -13,13 +13,13 @@ from src.site.aggregation import (
 
 # from src.site.hypo_event import read_hypothetical_event as _read_hypothetical_event
 from src.site.models import APIEvent  # , APIMatch, APITeamEvent, APITeamMatch, APIYear
-from src.utils.decorators import async_fail_gracefully_api_plural
+from src.utils.decorators import async_fail_gracefully_plural
 
 router = APIRouter()
 
 
 @router.get("/events/all")
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_all_events(
     response: Response, no_cache: bool = False
 ) -> List[Dict[str, Any]]:

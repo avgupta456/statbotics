@@ -18,8 +18,8 @@ from src.db.models import Team
 from src.db.read import get_team, get_teams
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -68,7 +68,7 @@ async def get_teams_cached(
     summary="Query a single team",
     description="Returns a single Team object. Requires a team number (no prefix).",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_team(
     response: Response,
     team: str,
@@ -85,7 +85,7 @@ async def read_team(
     summary="Query multiple teams",
     description="Returns up to 1000 teams at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_teams(
     response: Response,
     country: Optional[str] = country_query,

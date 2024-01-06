@@ -19,8 +19,8 @@ from src.db.models import TeamYear
 from src.db.read import get_team_year, get_team_years
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -71,7 +71,7 @@ async def get_team_years_cached(
     summary="Query a single team year",
     description="Returns a single Team Year object. Requires a team number and year.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_team_year(
     response: Response,
     team: str,
@@ -89,7 +89,7 @@ async def read_team_year(
     summary="Query multiple team years",
     description="Returns up to 1000 team years at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_team_years(
     response: Response,
     team: Optional[str] = team_query,

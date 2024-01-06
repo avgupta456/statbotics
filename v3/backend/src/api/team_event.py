@@ -22,8 +22,8 @@ from src.db.models import TeamEvent
 from src.db.read import get_team_event, get_team_events
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -82,7 +82,7 @@ async def get_team_events_cached(
     summary="Query a single team event",
     description="Returns a single Team Event object. Requires a team number and event key, e.g. `5511` and `2019ncwak`.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_team_event(response: Response, team: str, event: str) -> Dict[str, Any]:
     team_event_obj: Optional[TeamEvent] = await get_team_event_cached(
         team=team, event=event
@@ -98,7 +98,7 @@ async def read_team_event(response: Response, team: str, event: str) -> Dict[str
     summary="Query multiple team events",
     description="Returns up to 1000 team events at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_team_events(
     response: Response,
     team: Optional[str] = team_query,

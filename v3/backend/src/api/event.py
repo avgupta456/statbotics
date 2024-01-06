@@ -20,8 +20,8 @@ from src.db.models import Event
 from src.db.read import get_event, get_events
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -74,7 +74,7 @@ async def get_events_cached(
     summary="Query a single event",
     description="Returns a single Event object. Requires an event key, e.g. `2019ncwak`.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_event(response: Response, event: str) -> Dict[str, Any]:
     event_obj: Optional[Event] = await get_event_cached(event=event)
     if event_obj is None:
@@ -88,7 +88,7 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
     summary="Query multiple events",
     description="Returns up to 1000 events at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_events(
     response: Response,
     year: Optional[int] = year_query,
