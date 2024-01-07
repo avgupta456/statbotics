@@ -109,7 +109,7 @@ class TeamMatch(_TeamMatch, Model):
             "dq": self.dq,
             "surrogate": self.surrogate,
             "status": self.status,
-            "epa": {"total": self.epa, "post": self.post_epa, "breakdown": {}},
+            "epa": {"total_points": self.epa, "post": self.post_epa, "breakdown": {}},
         }
 
         if self.year >= 2016:

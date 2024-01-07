@@ -6,8 +6,7 @@ import { createContext, useContext } from "react";
 import { EventData, TeamYearData, YearData } from "../types";
 import { CURR_YEAR } from "../utils/constants";
 
-// eslint-disable-next-line import/prefer-default-export
-export const AppContext = createContext({
+export const DataContext = createContext({
   teamYearMiniDataDict: {},
   setTeamYearMiniDataDict: (teamYearMiniDataDict: { [key: number]: TeamYearData }) => {},
   teamYearDataDict: {},
@@ -31,10 +30,10 @@ export const AppContext = createContext({
   setYear: (year: number) => void;
 });
 
-export const useApp = () => {
-  const context = useContext(AppContext);
+export const useData = () => {
+  const context = useContext(DataContext);
   if (context === undefined) {
-    throw new Error("useApp must be used within a AppProvider");
+    throw new Error("useData must be used within a DataProvider");
   }
   return context;
 };

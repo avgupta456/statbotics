@@ -177,7 +177,7 @@ class TeamEvent(_TeamEvent, Model):
             "status": self.status,
             "first_event": self.first_event,
             "epa": {
-                "total": {
+                "total_points": {
                     "mean": self.epa,
                     "sd": self.epa_sd,
                 },

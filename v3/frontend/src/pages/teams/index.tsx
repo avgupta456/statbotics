@@ -9,7 +9,8 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 
 import getTeamYearData from "../../api/teams";
-import { useApp } from "../../contexts/appContext";
+import { useData } from "../../contexts/dataContext";
+import { usePreferences } from "../../contexts/preferencesContext";
 import TabPanel from "../../layout/tabs";
 import { EPAPercentiles, TeamYearData, YearData } from "../../types";
 import { CURR_YEAR, YEAR_OPTIONS } from "../../utils/constants";
@@ -25,74 +26,178 @@ import BubbleChart from "./bubble";
 // TODO: Enable query params for year, country, state, district
 // TODO: Add query param for active tab
 
-function EPACellRenderer({ value, percentileKey }: { value: number; percentileKey: string }) {
-  const { colorScheme } = useMantineColorScheme();
-  const { yearDataDict, year } = useApp();
-  const percentiles: EPAPercentiles = yearDataDict[year]?.percentiles?.[percentileKey] ?? {};
+function getColorSubTemplate(percentiles: EPAPercentiles, colorOptions: string[], value: number) {
+  if (percentiles?.p99 && value > percentiles?.p99) {
+    return colorOptions?.[0];
+  }
+  if (percentiles?.p90 && value > percentiles?.p90) {
+    return colorOptions?.[1];
+  }
+  if (percentiles?.p75 && value > percentiles?.p75) {
+    return colorOptions?.[2];
+  }
+  if (percentiles?.p25 && value < percentiles?.p25) {
+    return colorOptions?.[4];
+  }
+  return colorOptions?.[3];
+}
 
-  // if value is undefined, return a dash, careful not to turn 0 into a dash
+function getColorTemplate(
+  colorScheme: string,
+  percentiles: EPAPercentiles,
+  colorOptions: string[],
+  value: number,
+) {
+  if (colorScheme === "light") {
+    return getColorSubTemplate(percentiles, colorOptions, value);
+  }
+  return getColorSubTemplate(percentiles, colorOptions.slice(5), value);
+}
+
+function EPACellRenderer({ data, epaKey, value }: { data: any; epaKey: string; value: number }) {
   if (value === undefined || value === null) {
     return <div className="flex h-full w-full items-center justify-center">-</div>;
   }
 
-  let color = "text-gray-800";
-  if (colorScheme === "light") {
-    if (value > percentiles?.p99 ?? 1000) {
-      color = "text-blue-800 bg-blue-200";
-    } else if (value > percentiles?.p90 ?? 1000) {
-      color = "text-green-800 bg-green-100";
-    } else if (value > percentiles?.p75 ?? 1000) {
-      color = "text-green-800 bg-green-50";
-    } else if (value < percentiles?.p25 ?? -1000) {
-      color = "text-red-700 bg-red-100";
-    }
-  } else {
-    color = "text-gray-200";
-    if (value > percentiles?.p99 ?? 1000) {
-      color = "text-blue-200 bg-blue-800";
-    } else if (value > percentiles?.p90 ?? 1000) {
-      color = "text-green-100 bg-green-800";
-    } else if (value > percentiles?.p75 ?? 1000) {
-      color = "text-green-100 bg-green-600";
-    } else if (value < percentiles?.p25 ?? -1000) {
-      color = "text-red-100 bg-red-700";
-    }
+  const { colorScheme } = useMantineColorScheme();
+  const { EPACellFormat } = usePreferences();
+  const { yearDataDict, year } = useData();
+
+  const mean = value;
+  const sd = data?.epa?.breakdown?.[epaKey]?.sd || data?.epa?.[epaKey]?.sd || 0;
+  const [rawLower, rawUpper] = data?.epa?.conf ?? [0, 0];
+  const lower = mean + rawLower * sd;
+  const upper = mean + rawUpper * sd;
+  const adjSd = (upper - lower) / 2;
+
+  const percentiles: EPAPercentiles = yearDataDict[year]?.percentiles?.[epaKey] ?? {};
+
+  if (EPACellFormat === "Plaintext") {
+    return <div>{round(value, 1)}</div>;
   }
 
-  const lowerBound = round(value * 0.9, 1);
-  const upperBound = round(value * 1.1, 1);
+  const color = getColorTemplate(
+    colorScheme,
+    percentiles,
+    [
+      "bg-blue-200 text-blue-800", // light p99
+      "bg-green-200 text-green-800", // light p90
+      "bg-green-100 text-green-800", // light p75
+      "", // light middle
+      "bg-red-200 text-red-700", // light p25
+      "bg-blue-500 text-white", // dark p99
+      "bg-green-600 text-white", // dark p90
+      "bg-green-300 text-green-800", // dark p75
+      "", // dark middle
+      "bg-red-400 text-white", // dark p25
+    ],
+    value,
+  );
 
+  if (EPACellFormat === "Highlight (mean only)") {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}>
+          {round(value, 1)}
+        </div>
+      </div>
+    );
+  }
+
+  if (EPACellFormat === "Highlight (with interval)") {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Tooltip
+          label={`${round(lower, 1)} - ${round(upper, 1)}`}
+          classNames={{
+            tooltip: "text-xs",
+          }}
+        >
+          <div
+            className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}
+          >
+            {round(value, 0)}
+            <p className="ml-1 text-xs">±{round(adjSd, 0)}</p>
+          </div>
+        </Tooltip>
+      </div>
+    );
+  }
+
+  const borderColor = getColorTemplate(
+    colorScheme,
+    percentiles,
+    [
+      "border border-blue-500",
+      "border border-green-500",
+      "border border-green-500",
+      "border border-gray-500",
+      "border border-red-500",
+      "border border-blue-500",
+      "border border-green-800",
+      "border border-green-800",
+      "border border-gray-500",
+      "border border-red-500",
+    ],
+    value,
+  );
+
+  const shifted = EPACellFormat === "Error Bars (shifted)";
+
+  const minValue = 0;
+  const maxValue = 1.5 * (percentiles?.p99 ?? 100);
+  const valueRange = maxValue - minValue;
+  const midValue = minValue + valueRange / 2;
+
+  // TODO: Fix size math (percents messed up right now)
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div
+      className="relative flex h-full w-full items-center justify-center"
+      style={{
+        marginLeft: shifted ? `${(100 * (value - midValue)) / valueRange}%` : "",
+      }}
+    >
+      <div
+        className={classnames(
+          "absolute right-1/2 top-1/2 mr-[12px] h-[1.5px] transform",
+          borderColor,
+        )}
+        style={{
+          width: `calc(${(100 * (value - lower)) / valueRange}% - 6px)`,
+        }}
+      />
       <Tooltip
-        label={`${round(lowerBound, 0)} - ${round(upperBound, 0)}`}
+        label={`${round(lower, 1)} - ${round(upper, 1)}`}
         classNames={{
           tooltip: "text-xs",
         }}
       >
-        <div className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}>
+        <div
+          className={classnames(
+            "flex h-6 w-6 items-center justify-center rounded-full",
+            color,
+            borderColor,
+          )}
+        >
           {round(value, 0)}
-          <p className="ml-1 text-xs">±{round(value * 0.1, 0)}</p>
         </div>
       </Tooltip>
+      <div
+        className={classnames(
+          "absolute left-1/2 top-1/2 ml-[12px] h-[1.5px] transform",
+          borderColor,
+        )}
+        style={{
+          width: `calc(${(100 * (upper - value)) / valueRange}% - 6px)`,
+        }}
+      />
     </div>
   );
-
-  /*
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <Tooltip.Floating label={`${lowerBound} - ${upperBound}`}>
-        <div className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}>
-          {round(value, 1)}
-        </div>
-      </Tooltip.Floating>
-    </div>
-  );
-  */
 }
 
 export default function TeamsPage() {
   const { colorScheme } = useMantineColorScheme();
+  const { EPACellFormat, setEPACellFormat } = usePreferences();
   // const router = useRouter();
 
   const {
@@ -103,7 +208,7 @@ export default function TeamsPage() {
     setyearDataDict,
     year,
     setYear,
-  } = useApp();
+  } = useData();
 
   const [error, setError] = useState(false);
   const [loadingMini, setLoadingMini] = useState(false);
@@ -236,6 +341,7 @@ export default function TeamsPage() {
     return fullDistrict || district;
   };
 
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const [columnDefs, setColumnDefs] = useState<any>([
     {
       headerName: "Rank",
@@ -244,6 +350,7 @@ export default function TeamsPage() {
       minWidth: 80,
       maxWidth: 80,
       filter: false,
+      sortable: false,
       pinned: "left",
     },
     {
@@ -311,13 +418,15 @@ export default function TeamsPage() {
       headerName: "Total EPA",
       headerClass: "ag-text-center !border-r-2 !border-gray-200",
       children: [
-        { field: "epa.ranks.total.rank", headerName: "EPA Rank" },
-        { field: "epa.unitless", headerName: "Unitless EPA" },
+        { field: "epa.ranks.total.rank", headerName: "EPA Rank", sortingOrder: ["desc", null] },
+        { field: "epa.unitless", headerName: "Unitless EPA", sortingOrder: ["desc", null] },
         {
-          field: "epa.total.mean",
+          field: "epa.total_points.mean",
           headerName: "EPA",
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "total_points" },
+          cellRendererParams: { epaKey: "total_points" },
+          resizable: true,
+          sortingOrder: ["desc", null],
         },
       ],
     },
@@ -331,7 +440,9 @@ export default function TeamsPage() {
           headerTooltip: "Auto EPA",
           minWidth: 100,
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "auto_points" },
+          cellRendererParams: { epaKey: "auto_points" },
+          resizable: true,
+          sortingOrder: ["desc", null],
         },
         {
           field: "epa.breakdown.teleop_points.mean",
@@ -339,7 +450,9 @@ export default function TeamsPage() {
           headerTooltip: "Teleop EPA",
           minWidth: 100,
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "teleop_points" },
+          cellRendererParams: { epaKey: "teleop_points" },
+          resizable: true,
+          sortingOrder: ["desc", null],
         },
         {
           field: "epa.breakdown.endgame_points.mean",
@@ -347,7 +460,9 @@ export default function TeamsPage() {
           headerTooltip: "Endgame EPA",
           minWidth: 100,
           cellRenderer: EPACellRenderer,
-          cellRendererParams: { percentileKey: "endgame_points" },
+          cellRendererParams: { epaKey: "endgame_points" },
+          resizable: true,
+          sortingOrder: ["desc", null],
         },
       ],
     },
@@ -410,7 +525,12 @@ export default function TeamsPage() {
       </div>
       <Tabs
         variant="pills"
-        classNames={{ list: "border-b pb-px border-gray-200" }}
+        classNames={{
+          list: classnames(
+            "border-b pb-px",
+            colorScheme === "light" ? "border-gray-200" : "border-gray-600",
+          ),
+        }}
         defaultValue="insights"
         // value={router.query.activeTab as string}
         // onChange={(value) => router.push(`/teams/${value}`)}
@@ -434,6 +554,18 @@ export default function TeamsPage() {
                 onChange={(e) => setQuickFilterText(e.target.value)}
                 placeholder="Search"
               />
+              <Select
+                data={[
+                  "Error Bars (shifted)",
+                  "Error Bars (centered)",
+                  "Highlight (with interval)",
+                  "Highlight (mean only)",
+                  "Plaintext",
+                ]}
+                value={EPACellFormat}
+                onChange={setEPACellFormat}
+                allowDeselect={false}
+              />
             </div>
             <div className="border-box h-full w-full">
               <div
@@ -451,7 +583,7 @@ export default function TeamsPage() {
                   // domLayout="autoHeight"
                   pagination
                   paginationPageSize={10}
-                  paginationPageSizeSelector={[10, 50, 100]}
+                  paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
                 />
               </div>
             </div>

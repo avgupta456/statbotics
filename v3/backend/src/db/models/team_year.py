@@ -163,7 +163,7 @@ class TeamYear(_TeamYear, Model):
             "district": self.district,
             "offseason": self.offseason,
             "epa": {
-                "total": {
+                "total_points": {
                     "mean": self.epa,
                     "sd": self.epa_sd,
                 },
