@@ -16,15 +16,15 @@ import {
   NavLink as MantineNavLink,
   Menu,
   Text,
-  useMantineColorScheme,
 } from "@mantine/core";
 import { Spotlight, spotlight } from "@mantine/spotlight";
 
 import { getEventData, getTeamData } from "../api/header";
+import { usePreferences } from "../contexts/preferencesContext";
 import { classnames, loaderProp } from "../utils/utils";
 
 function NavLink({ href, label }: { href: string; label: string }) {
-  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const { colorScheme, setColorScheme } = usePreferences();
 
   useEffect(() => {
     if (colorScheme === "auto") {
@@ -51,7 +51,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
 function Header() {
   const router = useRouter();
 
-  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const { colorScheme, setColorScheme } = usePreferences();
 
   const searchIcon = (
     <IconSearch

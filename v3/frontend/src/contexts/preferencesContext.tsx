@@ -4,9 +4,13 @@
 import { createContext, useContext } from "react";
 
 export const PreferencesContext = createContext({
+  colorScheme: "light",
+  setColorScheme: (colorScheme: string) => {},
   EPACellFormat: "full_error_bars",
   setEPACellFormat: (EPACellFormat: string) => {},
 } as {
+  colorScheme: string;
+  setColorScheme: any;
   EPACellFormat: string;
   setEPACellFormat: any;
 });

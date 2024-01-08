@@ -13,3 +13,8 @@
 .ag-header-group-cell.ag-text-center {
   justify-content: center;
 }
+
+.col-border {
+  border-left: 1px solid var(--ag-border-color) !important;
+  border-right: 1px solid var(--ag-border-color) !important;
+}
