@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Select, Textarea } from "@mantine/core";
 
@@ -7,6 +7,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 
 import { usePreferences } from "../../contexts/preferencesContext";
+import { TeamYearData } from "../../types";
 import {
   COUNTRIES,
   COUNTRY_FLAGS,
@@ -280,6 +281,33 @@ export default function TeamYearTable({ data }: { data: any }) {
     },
   ]);
 
+  const EPAColumns = ["total_points", "auto_points", "teleop_points", "endgame_points"];
+  const [EPAContext, setEPAContext] = useState({});
+
+  const updateContext = (newData: TeamYearData[]) => {
+    const newContext: any = {};
+    EPAColumns.forEach((k) => {
+      const means = newData.map((d) => d?.epa?.breakdown?.[k]?.mean || d?.epa?.[k]?.mean);
+      const sds = newData.map((d) => d?.epa?.breakdown?.[k]?.sd || d?.epa?.[k]?.sd);
+      const lowBounds = newData.map((d) => d?.epa?.conf?.[0]);
+      const highBounds = newData.map((d) => d?.epa?.conf?.[1]);
+      const maxValues = means.map((m, i) => m + highBounds[i] * sds[i]);
+      const maxErrors = sds.map((s, i) => s * Math.max(highBounds[i], -lowBounds[i]));
+      newContext[k] = {
+        minValue: 0,
+        maxValue: Math.max(...maxValues),
+        maxError: Math.max(...maxErrors),
+      };
+    });
+    setEPAContext(newContext);
+  };
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      updateContext(data);
+    }
+  }, [data]);
+
   return (
     <div className="mt-4 h-full w-full">
       <div className="flex flex-row items-center justify-between">
@@ -315,6 +343,7 @@ export default function TeamYearTable({ data }: { data: any }) {
           pagination
           paginationPageSize={10}
           paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
+          context={EPAContext}
         />
       </div>
     </div>

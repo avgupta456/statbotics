@@ -38,10 +38,12 @@ export function EPACellRenderer({
   data,
   epaKey,
   value,
+  context,
 }: {
   data: any;
   epaKey: string;
   value: number;
+  context?: any;
 }) {
   if (value === undefined || value === null) {
     return <div className="flex h-full w-full items-center justify-center">-</div>;
@@ -116,10 +118,14 @@ export function EPACellRenderer({
 
   const shifted = EPACellFormat === "Error Bars (shifted)";
 
-  const minValue = 0;
-  const maxValue = 1.5 * (percentiles?.p99 ?? 100);
-  const valueRange = maxValue - minValue;
-  const midValue = minValue + valueRange / 2;
+  let valueRange = 2 * (context?.[epaKey]?.maxError ?? 10);
+  let midValue = 0;
+  if (shifted) {
+    const minValue = context?.[epaKey]?.minValue ?? 0;
+    const maxValue = context?.[epaKey]?.maxValue ?? 100;
+    valueRange = maxValue - minValue;
+    midValue = minValue + valueRange / 2;
+  }
 
   // multiply by 2 since the element is centered in the remaining space
   const leftMargin = shifted ? (100 * 2 * (value - midValue)) / valueRange : 0;
@@ -129,7 +135,7 @@ export function EPACellRenderer({
 
   return (
     <div
-      className="relative flex h-full w-auto items-center justify-center"
+      className="relative flex h-full w-auto min-w-[24px] items-center justify-center"
       style={{ marginLeft: `${leftMargin}%` }}
     >
       <div
