@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { createRef, useEffect, useMemo, useState } from "react";
+import { BiShow } from "react-icons/bi";
+import { MdCloudDownload } from "react-icons/md";
 
-import { Select, Textarea } from "@mantine/core";
+import { Select, Tooltip } from "@mantine/core";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -20,7 +22,7 @@ import { EPACellRenderer } from "./template";
 export default function TeamYearTable({ data }: { data: any }) {
   const { colorScheme, EPACellFormat, setEPACellFormat } = usePreferences();
 
-  const [quickFilterText, setQuickFilterText] = useState("");
+  const [quickFilterText, setQuickFilterText] = useState<string | null>(null);
 
   const defaultColDef = useMemo(
     () => ({
@@ -141,6 +143,7 @@ export default function TeamYearTable({ data }: { data: any }) {
             maxNumConditions: 1,
           },
           sortable: false,
+          getQuickFilterText: (params: any) => `country_${params?.value}`,
         },
         {
           field: "state",
@@ -154,6 +157,7 @@ export default function TeamYearTable({ data }: { data: any }) {
             debounceMs: 200,
           },
           sortable: false,
+          getQuickFilterText: (params: any) => `state_${params?.value}`,
         },
         {
           field: "district",
@@ -166,6 +170,7 @@ export default function TeamYearTable({ data }: { data: any }) {
             maxNumConditions: 1,
           },
           sortable: false,
+          getQuickFilterText: (params: any) => `district_${params?.value}`,
         },
       ],
     },
@@ -308,13 +313,57 @@ export default function TeamYearTable({ data }: { data: any }) {
     }
   }, [data]);
 
+  const gridRef = createRef<any>();
+
+  const exportCSV = () => {
+    gridRef.current.api.exportDataAsCsv({ skipColumnGroupHeaders: true, allColumns: true });
+  };
+
   return (
     <div className="mt-4 h-full w-full">
-      <div className="flex flex-row items-center justify-between">
-        <Textarea
+      <div className="mb-2 flex flex-row items-center justify-center gap-4">
+        <Tooltip label="Clear filters">
+          <div className="cursor-pointer">
+            <BiShow
+              className="h-6 w-6 text-gray-600"
+              onClick={() => {
+                setQuickFilterText(null);
+                gridRef?.current?.api?.setFilterModel(null);
+              }}
+            />
+          </div>
+        </Tooltip>
+        <Tooltip label="Download CSV">
+          <div className="cursor-pointer">
+            <MdCloudDownload className="h-6 w-6 text-gray-600" onClick={exportCSV} />
+          </div>
+        </Tooltip>
+        <Select
+          data={[
+            {
+              group: "Countries",
+              items: COUNTRIES.map((c) => ({ value: `country_${c}`, label: c })),
+            },
+            {
+              group: "Districts",
+              items: Object.values(DISTRICT_FULL_NAMES).map((d) => ({
+                value: `district_${d}`,
+                label: d,
+              })),
+            },
+            {
+              group: "States/Provinces",
+              items: Object.values(STATE_PROV_FULL_NAMES).map((s) => ({
+                value: `state_${s}`,
+                label: s,
+              })),
+            },
+          ]}
           value={quickFilterText}
-          onChange={(e) => setQuickFilterText(e.target.value)}
-          placeholder="Search"
+          onChange={setQuickFilterText}
+          placeholder="Search locations"
+          clearable
+          searchable
         />
         <Select
           data={[
@@ -336,10 +385,11 @@ export default function TeamYearTable({ data }: { data: any }) {
         )}
       >
         <AgGridReact
+          ref={gridRef}
           rowData={data}
           defaultColDef={defaultColDef}
           columnDefs={columnDefs}
-          quickFilterText={quickFilterText}
+          quickFilterText={quickFilterText ?? undefined}
           pagination
           paginationPageSize={10}
           paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
