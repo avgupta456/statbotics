@@ -81,7 +81,7 @@ export function LocationFilter({
 
 // COLUMN DEFS
 
-export const countryDef = {
+export const getCountryDef = (hidden: boolean) => ({
   field: "country",
   headerName: "Country",
   minWidth: 150,
@@ -92,9 +92,10 @@ export const countryDef = {
   },
   sortable: false,
   getQuickFilterText: (params: any) => `country_${params?.value}`,
-};
+  hide: hidden,
+});
 
-export const stateDef = {
+export const getStateDef = (hidden: boolean) => ({
   field: "state",
   headerName: "State/Prov",
   minWidth: 150,
@@ -106,9 +107,10 @@ export const stateDef = {
   },
   sortable: false,
   getQuickFilterText: (params: any) => `state_${params?.value}`,
-};
+  hide: hidden,
+});
 
-export const districtDef = {
+export const getDistrictDef = (hidden: boolean) => ({
   field: "district",
   headerName: "District",
   minWidth: 150,
@@ -119,4 +121,5 @@ export const districtDef = {
   },
   sortable: false,
   getQuickFilterText: (params: any) => `district_${params?.value}`,
-};
+  hide: hidden,
+});

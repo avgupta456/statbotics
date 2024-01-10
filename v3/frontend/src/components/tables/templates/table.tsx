@@ -204,6 +204,7 @@ export default function Table({
           defaultColDef={defaultColDef}
           columnDefs={columnDefs}
           quickFilterText={quickFilterText ?? undefined}
+          includeHiddenColumnsInQuickFilter
           pagination
           paginationPageSize={10}
           paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}

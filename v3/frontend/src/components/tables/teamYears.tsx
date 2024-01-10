@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { useData } from "../../contexts/dataContext";
 import { CURR_YEAR } from "../../utils/constants";
 import { EPATotalRankDef, UnitlessEPADef, getEPADef } from "./templates/epa";
-import { countryDef, districtDef, stateDef } from "./templates/locations";
+import { getCountryDef, getDistrictDef, getStateDef } from "./templates/locations";
 import { nameDef, nextEventDef, nextEventWeekDef, rankDef, teamDef } from "./templates/misc";
 import { recordDef, winRateDef } from "./templates/record";
 import Table from "./templates/table";
 
-export default function TeamYearTable({ data }: { data: any[] }) {
+export default function TeamYearsTable({ data }: { data: any[] | undefined }) {
   const { year } = useData();
   const [expanded, setExpanded] = useState(false);
 
@@ -17,6 +17,9 @@ export default function TeamYearTable({ data }: { data: any[] }) {
       rankDef,
       teamDef,
       nameDef,
+      getCountryDef(true),
+      getStateDef(true),
+      getDistrictDef(true),
       EPATotalRankDef,
       getEPADef("total_points", "Total", "Total EPA", false),
       newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
@@ -31,9 +34,9 @@ export default function TeamYearTable({ data }: { data: any[] }) {
       rankDef,
       teamDef,
       nameDef,
-      countryDef,
-      stateDef,
-      districtDef,
+      getCountryDef(false),
+      getStateDef(false),
+      getDistrictDef(false),
       EPATotalRankDef,
       getEPADef("total_points", "Total", "Total EPA", false),
       newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
@@ -57,7 +60,7 @@ export default function TeamYearTable({ data }: { data: any[] }) {
 
   return (
     <Table
-      data={data}
+      data={data || []}
       columnDefs={columnDefs}
       EPAColumns={EPAColumns}
       showLocationQuickFilter

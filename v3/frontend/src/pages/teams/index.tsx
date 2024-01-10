@@ -5,7 +5,8 @@ import { MdBubbleChart, MdInsights, MdOutlineTableChart } from "react-icons/md";
 import { Select, Tabs } from "@mantine/core";
 
 import getTeamYearData from "../../api/teams";
-import TeamYearTable from "../../components/tables/teamYears";
+import TeamYearsTable from "../../components/tables/teamYears";
+import TeamYearsBreakdownTable from "../../components/tables/teamYearsBreakdown";
 import { useData } from "../../contexts/dataContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import TabPanel from "../../layout/tabs";
@@ -127,11 +128,13 @@ export default function TeamsPage() {
         </Tabs.List>
         <TabPanel value="insights" error={error}>
           <div className="mt-4 h-full w-full">
-            <TeamYearTable data={data} />
+            <TeamYearsTable data={data} />
           </div>
         </TabPanel>
         <TabPanel value="breakdown" loading={loading} error={error}>
-          Breakdown
+          <div className="mt-4 h-full w-full">
+            <TeamYearsBreakdownTable data={data} />
+          </div>
         </TabPanel>
         <TabPanel value="bubble" loading={loading} error={error}>
           Bubble

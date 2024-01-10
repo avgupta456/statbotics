@@ -1,4 +1,5 @@
 import { CURR_YEAR } from "../utils/constants";
+import processTeamYear from "./process/teamYear";
 import query from "./storage";
 
 export default async function getTeamYearData(year: number, limit?: number | null) {
@@ -10,5 +11,9 @@ export default async function getTeamYearData(year: number, limit?: number | nul
   }
   storageKey += "_v3";
 
-  return query(storageKey, urlSuffix, 0, 60, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
+  const output = await query(storageKey, urlSuffix, 0, 60, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
+
+  output.team_years = output.team_years.map(processTeamYear);
+
+  return output;
 }
