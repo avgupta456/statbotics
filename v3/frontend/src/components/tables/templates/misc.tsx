@@ -30,8 +30,8 @@ export const rankDef = {
   headerName: "Rank",
   colId: "rank",
   valueGetter: (params: any) => params.node.rowIndex + 1,
-  minWidth: 80,
-  maxWidth: 80,
+  minWidth: 70,
+  maxWidth: 70,
   filter: false,
   sortable: false,
   pinned: "left",
@@ -40,7 +40,7 @@ export const rankDef = {
 export const teamDef = {
   field: "team",
   headerName: "Number",
-  maxWidth: 120,
+  maxWidth: 115,
   filterParams: {
     filterOptions: ["equals", "startsWith"],
     maxNumConditions: 1,
@@ -71,8 +71,9 @@ export const nextEventDef = {
 
 export const nextEventWeekDef = {
   field: "competing.next_event_week",
-  headerName: "Next Event Week",
-  minWidth: 200,
+  headerName: "Next Week",
+  minWidth: 120,
+  maxWidth: 120,
   filter: true,
   sortable: true,
 };

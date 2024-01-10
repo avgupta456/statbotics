@@ -190,7 +190,7 @@ export const getEPADef = (
   field: inBreakdown ? `epa.breakdown.${epaKey}.mean` : `epa.${epaKey}.mean`,
   headerName,
   headerTooltip,
-  minWidth: 100,
+  minWidth: 120,
   cellRenderer: EPACellRenderer,
   cellRendererParams: { epaKey },
   resizable: true,

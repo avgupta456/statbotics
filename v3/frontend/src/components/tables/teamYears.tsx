@@ -1,49 +1,57 @@
 import { useEffect, useState } from "react";
 
+import { useData } from "../../contexts/dataContext";
+import { CURR_YEAR } from "../../utils/constants";
 import { EPATotalRankDef, UnitlessEPADef, getEPADef } from "./templates/epa";
 import { countryDef, districtDef, stateDef } from "./templates/locations";
 import { nameDef, nextEventDef, nextEventWeekDef, rankDef, teamDef } from "./templates/misc";
 import { recordDef, winRateDef } from "./templates/record";
 import Table from "./templates/table";
 
-export default function TeamYearTable({ data }: { data: any }) {
+export default function TeamYearTable({ data }: { data: any[] }) {
+  const { year } = useData();
   const [expanded, setExpanded] = useState(false);
 
-  const unexpandedColumnDefs = [
-    rankDef,
-    teamDef,
-    nameDef,
-    EPATotalRankDef,
-    getEPADef("total_points", "Total", "Total EPA", false),
-    recordDef,
-    nextEventDef,
-  ];
+  const getUnexpandedColumnDefs = (newYear: number) =>
+    [
+      rankDef,
+      teamDef,
+      nameDef,
+      EPATotalRankDef,
+      getEPADef("total_points", "Total", "Total EPA", false),
+      newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
+      newYear >= 2016 && getEPADef("teleop_points", "Teleop", "Teleop EPA"),
+      newYear >= 2016 && getEPADef("endgame_points", "Endgame", "Endgame EPA"),
+      recordDef,
+      newYear === CURR_YEAR && nextEventDef,
+    ].filter(Boolean);
 
-  const expandedColumnDefs = [
-    rankDef,
-    teamDef,
-    nameDef,
-    countryDef,
-    stateDef,
-    districtDef,
-    EPATotalRankDef,
-    UnitlessEPADef,
-    getEPADef("total_points", "Total", "Total EPA", false),
-    getEPADef("auto_points", "Auto", "Auto EPA"),
-    getEPADef("teleop_points", "Teleop", "Teleop EPA"),
-    getEPADef("endgame_points", "Endgame", "Endgame EPA"),
-    recordDef,
-    winRateDef,
-    nextEventDef,
-    nextEventWeekDef,
-  ];
+  const getExpandedColumnDefs = (newYear: number) =>
+    [
+      rankDef,
+      teamDef,
+      nameDef,
+      countryDef,
+      stateDef,
+      districtDef,
+      EPATotalRankDef,
+      getEPADef("total_points", "Total", "Total EPA", false),
+      newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
+      newYear >= 2016 && getEPADef("teleop_points", "Teleop", "Teleop EPA"),
+      newYear >= 2016 && getEPADef("endgame_points", "Endgame", "Endgame EPA"),
+      UnitlessEPADef,
+      recordDef,
+      winRateDef,
+      newYear === CURR_YEAR && nextEventDef,
+      newYear === CURR_YEAR && nextEventWeekDef,
+    ].filter(Boolean);
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [columnDefs, setColumnDefs] = useState<any>(unexpandedColumnDefs);
+  const [columnDefs, setColumnDefs] = useState<any>(getUnexpandedColumnDefs(year));
 
   useEffect(() => {
-    setColumnDefs(expanded ? expandedColumnDefs : unexpandedColumnDefs);
-  }, [expanded]);
+    setColumnDefs(expanded ? getExpandedColumnDefs(year) : getUnexpandedColumnDefs(year));
+  }, [year, expanded]);
 
   const EPAColumns = ["total_points", "auto_points", "teleop_points", "endgame_points"];
 
