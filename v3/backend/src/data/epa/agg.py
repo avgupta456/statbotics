@@ -82,6 +82,7 @@ def process_year(objs: objs_type) -> objs_type:
     country_epas = {k: sorted(v, reverse=True) for k, v in country_epas.items()}
     state_epas = {k: sorted(v, reverse=True) for k, v in state_epas.items()}
     district_epas = {k: sorted(v, reverse=True) for k, v in district_epas.items()}
+    # TODO: break ties so index doesn't return same for multiple teams
 
     epa_to_norm_epa = get_epa_to_norm_epa_func(total_epas)
     for ty in objs[1].values():

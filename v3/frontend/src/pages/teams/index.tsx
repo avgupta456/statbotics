@@ -126,7 +126,9 @@ export default function TeamsPage() {
           </Tabs.Tab>
         </Tabs.List>
         <TabPanel value="insights" error={error}>
-          <TeamYearTable data={data} />
+          <div className="mt-4 h-full w-full">
+            <TeamYearTable data={data} />
+          </div>
         </TabPanel>
         <TabPanel value="breakdown" loading={loading} error={error}>
           Breakdown

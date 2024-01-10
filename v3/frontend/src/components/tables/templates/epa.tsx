@@ -1,9 +1,9 @@
 import { Tooltip } from "@mantine/core";
 
-import { useData } from "../../contexts/dataContext";
-import { usePreferences } from "../../contexts/preferencesContext";
-import { EPAPercentiles } from "../../types";
-import { classnames, round } from "../../utils/utils";
+import { useData } from "../../../contexts/dataContext";
+import { usePreferences } from "../../../contexts/preferencesContext";
+import { EPAPercentiles } from "../../../types";
+import { classnames, round } from "../../../utils/utils";
 
 function getColorSubTemplate(percentiles: EPAPercentiles, colorOptions: string[], value: number) {
   if (percentiles?.p99 && value > percentiles?.p99) {
@@ -168,3 +168,35 @@ export function EPACellRenderer({
     </div>
   );
 }
+
+export const EPATotalRankDef = {
+  field: "epa.ranks.total.rank",
+  headerName: "EPA Rank",
+  sortingOrder: ["desc", null],
+};
+
+export const UnitlessEPADef = {
+  field: "epa.unitless",
+  headerName: "Unitless EPA",
+  sortingOrder: ["desc", null],
+};
+
+export const getEPADef = (
+  epaKey: string,
+  headerName: string,
+  headerTooltip: string,
+  inBreakdown: boolean = true,
+) => ({
+  field: inBreakdown ? `epa.breakdown.${epaKey}.mean` : `epa.${epaKey}.mean`,
+  headerName,
+  headerTooltip,
+  minWidth: 100,
+  cellRenderer: EPACellRenderer,
+  cellRendererParams: { epaKey },
+  resizable: true,
+  sortingOrder: ["desc", null],
+  filterParams: {
+    filterOptions: ["greaterThan", "lessThan", "inRange"],
+    maxNumConditions: 1,
+  },
+});

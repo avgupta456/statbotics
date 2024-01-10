@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mantine/core": "^7.4.0",
-    "@mantine/hooks": "^7.4.0",
-    "@mantine/spotlight": "^7.4.0",
+    "@mantine/core": "^7.4.1",
+    "@mantine/hooks": "^7.4.1",
+    "@mantine/spotlight": "^7.4.1",
     "@tailwindcss/typography": "^0.5.10",
     "ag-grid-community": "^31.0.1",
     "ag-grid-react": "^31.0.1",
