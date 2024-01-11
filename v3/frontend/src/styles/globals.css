@@ -17,3 +17,9 @@
 .ag-col-border {
   border-right: 1px solid var(--ag-border-color) !important;
 }
+.ag-header-cell-label {
+  text-align: center;
+  text-overflow: clip;
+  overflow: visible;
+  white-space: normal;
+}

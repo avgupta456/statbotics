@@ -3,7 +3,7 @@ import { Tooltip } from "@mantine/core";
 import { useData } from "../../../contexts/dataContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
 import { EPAPercentiles } from "../../../types";
-import { classnames, round } from "../../../utils/utils";
+import { classnames, roundSigFigs } from "../../../utils/utils";
 
 function getColorSubTemplate(percentiles: EPAPercentiles, colorOptions: string[], value: number) {
   if (percentiles?.p99 && value > percentiles?.p99) {
@@ -62,7 +62,7 @@ export function EPACellRenderer({
   const percentiles: EPAPercentiles = yearDataDict[year]?.percentiles?.[epaKey] ?? {};
 
   if (EPACellFormat === "Plaintext") {
-    return <div>{round(value, 1)}</div>;
+    return <div>{roundSigFigs(value, 2)}</div>;
   }
 
   const color = getColorTemplate(
@@ -87,7 +87,7 @@ export function EPACellRenderer({
     return (
       <div className="flex h-full w-full items-center justify-center">
         <div className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}>
-          {round(value, 1)}
+          {roundSigFigs(value, 2)}
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export function EPACellRenderer({
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Tooltip
-          label={`${round(lower, 1)} - ${round(upper, 1)}`}
+          label={`${roundSigFigs(lower, 2)} - ${roundSigFigs(upper, 2)}`}
           classNames={{
             tooltip: "text-xs",
           }}
@@ -105,8 +105,8 @@ export function EPACellRenderer({
           <div
             className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}
           >
-            {round(value, 0)}
-            <p className="ml-1 text-xs">±{round(adjSd, 0)}</p>
+            {roundSigFigs(value, 1, 0)}
+            <p className="ml-1 text-xs">±{roundSigFigs(adjSd, 1, 1)}</p>
           </div>
         </Tooltip>
       </div>
@@ -146,7 +146,7 @@ export function EPACellRenderer({
         style={{ width: `calc(${leftBarWidth}% - 12px)` }}
       />
       <Tooltip
-        label={`${round(lower, 1)} - ${round(upper, 1)}`}
+        label={`${roundSigFigs(lower, 2)} - ${roundSigFigs(upper, 2)}`}
         classNames={{ tooltip: "text-xs" }}
       >
         <div
@@ -155,7 +155,7 @@ export function EPACellRenderer({
             centerColor,
           )}
         >
-          {round(value, 0)}
+          {roundSigFigs(value, 1, 0)}
         </div>
       </Tooltip>
       <div
@@ -181,15 +181,9 @@ export const UnitlessEPADef = {
   sortingOrder: ["desc", null],
 };
 
-export const getEPADef = (
-  epaKey: string,
-  headerName: string,
-  headerTooltip: string,
-  inBreakdown: boolean = true,
-) => ({
+export const getEPADef = (epaKey: string, headerName: string, inBreakdown: boolean = true) => ({
   field: inBreakdown ? `epa.breakdown.${epaKey}.mean` : `epa.${epaKey}.mean`,
   headerName,
-  headerTooltip,
   minWidth: 120,
   cellRenderer: EPACellRenderer,
   cellRendererParams: { epaKey },

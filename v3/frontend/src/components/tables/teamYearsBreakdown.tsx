@@ -1,21 +1,16 @@
 import { useEffect, useState } from "react";
 
 import { useData } from "../../contexts/dataContext";
-import { EPATotalRankDef, getEPADef } from "./templates/epa";
+import { getEPADef } from "./templates/epa";
 import { getCountryDef, getDistrictDef, getStateDef } from "./templates/locations";
 import { nameDef, rankDef, teamDef } from "./templates/misc";
-import { recordDef } from "./templates/record";
 import Table from "./templates/table";
 
 export default function TeamYearsBreakdownTable({ data }: { data: any[] | undefined }) {
   const { year } = useData();
   const [expanded, setExpanded] = useState(false);
 
-  // TODO: Debug game pieces, links columns
-  // TODO: Add more columns
-  // TODO: Disable 2016-2024 except 2023
-  // TODO: Remove 2002-2015 from options
-  const getUnexpandedColumnDefs = (newYear: number) => {
+  const getColumnDefs = (newYear: number, newExpanded: boolean) => {
     if (newYear === 2023) {
       return [
         rankDef,
@@ -28,15 +23,49 @@ export default function TeamYearsBreakdownTable({ data }: { data: any[] | undefi
           headerName: "Total",
           headerClass: "ag-text-center",
           children: [
-            getEPADef("total_points", "Total", "Total EPA", false),
-            getEPADef("total_pieces", "Game Pieces", "Total Pieces"),
-            getEPADef("links", "Links", "Links"),
-          ],
+            getEPADef("total_points", "Total", false),
+            getEPADef("total_pieces", "Game Pieces"),
+            getEPADef("links", "Links"),
+            newExpanded && getEPADef("grid_points", "Grid Points"),
+          ].filter(Boolean),
         },
-        newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
-        newYear >= 2016 && getEPADef("teleop_points", "Teleop", "Teleop EPA"),
-        newYear >= 2016 && getEPADef("endgame_points", "Endgame", "Endgame EPA"),
-        recordDef,
+        {
+          headerName: "Scoring Period",
+          headerClass: "ag-text-center",
+          children: [
+            getEPADef("auto_pieces", "Auto Pieces"),
+            newExpanded && getEPADef("auto_grid_points", "Auto Points"),
+            getEPADef("teleop_pieces", "Teleop Pieces"),
+            newExpanded && getEPADef("teleop_grid_points", "Teleop Points"),
+          ].filter(Boolean),
+        },
+        {
+          headerName: "Scoring Location",
+          headerClass: "ag-text-center",
+          children: [
+            getEPADef("bottom_pieces", "Bottom Pieces"),
+            getEPADef("middle_pieces", "Middle Pieces"),
+            getEPADef("top_pieces", "Top Pieces"),
+          ].filter(Boolean),
+        },
+        {
+          headerName: "Game Piece Type",
+          headerClass: "ag-text-center",
+          children: [
+            getEPADef("cubes_scored", "Cubes Scored"),
+            newExpanded && getEPADef("cube_points", "Cube Points"),
+            getEPADef("cones_scored", "Cones Scored"),
+            newExpanded && getEPADef("cone_points", "Cone Points"),
+          ].filter(Boolean),
+        },
+        newExpanded && {
+          headerName: "Charge Station",
+          headerClass: "ag-text-center",
+          children: [
+            getEPADef("auto_charge_station_points", "Auto CS"),
+            getEPADef("endgame_charge_station_points", "Endgame CS"),
+          ].filter(Boolean),
+        },
       ].filter(Boolean);
     }
 
@@ -47,52 +76,38 @@ export default function TeamYearsBreakdownTable({ data }: { data: any[] | undefi
       getCountryDef(true),
       getStateDef(true),
       getDistrictDef(true),
-      getEPADef("total_points", "Total", "Total EPA", false),
-    ];
-  };
-
-  const getExpandedColumnDefs = (newYear: number) => {
-    if (newYear === 2023) {
-      [
-        rankDef,
-        teamDef,
-        nameDef,
-        getCountryDef(true),
-        getStateDef(true),
-        getDistrictDef(true),
-        EPATotalRankDef,
-        getEPADef("total_points", "Total", "Total EPA", false),
-        newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
-        newYear >= 2016 && getEPADef("teleop_points", "Teleop", "Teleop EPA"),
-        newYear >= 2016 && getEPADef("endgame_points", "Endgame", "Endgame EPA"),
-      ].filter(Boolean);
-    }
-
-    return [
-      rankDef,
-      teamDef,
-      nameDef,
-      getCountryDef(true),
-      getStateDef(true),
-      getDistrictDef(true),
-      getEPADef("total_points", "Total", "Total EPA", false),
+      getEPADef("total_points", "Total", false),
     ];
   };
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [columnDefs, setColumnDefs] = useState<any>(getUnexpandedColumnDefs(year));
+  const [columnDefs, setColumnDefs] = useState<any>(getColumnDefs(year, false));
 
   useEffect(() => {
-    setColumnDefs(expanded ? getExpandedColumnDefs(year) : getUnexpandedColumnDefs(year));
+    setColumnDefs(getColumnDefs(year, expanded));
   }, [year, expanded]);
 
   const EPAColumns = [
     "total_points",
-    "total_pieces",
-    "links",
     "auto_points",
     "teleop_points",
     "endgame_points",
+    "total_pieces",
+    "links",
+    "grid_points",
+    "auto_pieces",
+    "auto_grid_points",
+    "teleop_pieces",
+    "teleop_grid_points",
+    "bottom_pieces",
+    "middle_pieces",
+    "top_pieces",
+    "cubes_scored",
+    "cube_points",
+    "cones_scored",
+    "cone_points",
+    "auto_charge_station_points",
+    "endgame_charge_station_points",
   ];
 
   return (

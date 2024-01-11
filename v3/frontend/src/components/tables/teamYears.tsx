@@ -12,7 +12,7 @@ export default function TeamYearsTable({ data }: { data: any[] | undefined }) {
   const { year } = useData();
   const [expanded, setExpanded] = useState(false);
 
-  const getUnexpandedColumnDefs = (newYear: number) =>
+  const getColumnDefs = (newYear: number, newExpanded: boolean) =>
     [
       rankDef,
       teamDef,
@@ -21,39 +21,22 @@ export default function TeamYearsTable({ data }: { data: any[] | undefined }) {
       getStateDef(true),
       getDistrictDef(true),
       EPATotalRankDef,
-      getEPADef("total_points", "Total", "Total EPA", false),
-      newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
-      newYear >= 2016 && getEPADef("teleop_points", "Teleop", "Teleop EPA"),
-      newYear >= 2016 && getEPADef("endgame_points", "Endgame", "Endgame EPA"),
+      getEPADef("total_points", "Total", false),
+      newYear >= 2016 && getEPADef("auto_points", "Auto"),
+      newYear >= 2016 && getEPADef("teleop_points", "Teleop"),
+      newYear >= 2016 && getEPADef("endgame_points", "Endgame"),
+      newExpanded && UnitlessEPADef,
       recordDef,
+      newExpanded && winRateDef,
       newYear === CURR_YEAR && nextEventDef,
-    ].filter(Boolean);
-
-  const getExpandedColumnDefs = (newYear: number) =>
-    [
-      rankDef,
-      teamDef,
-      nameDef,
-      getCountryDef(false),
-      getStateDef(false),
-      getDistrictDef(false),
-      EPATotalRankDef,
-      getEPADef("total_points", "Total", "Total EPA", false),
-      newYear >= 2016 && getEPADef("auto_points", "Auto", "Auto EPA"),
-      newYear >= 2016 && getEPADef("teleop_points", "Teleop", "Teleop EPA"),
-      newYear >= 2016 && getEPADef("endgame_points", "Endgame", "Endgame EPA"),
-      UnitlessEPADef,
-      recordDef,
-      winRateDef,
-      newYear === CURR_YEAR && nextEventDef,
-      newYear === CURR_YEAR && nextEventWeekDef,
+      newExpanded && newYear === CURR_YEAR && nextEventWeekDef,
     ].filter(Boolean);
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [columnDefs, setColumnDefs] = useState<any>(getUnexpandedColumnDefs(year));
+  const [columnDefs, setColumnDefs] = useState<any>(getColumnDefs(year, false));
 
   useEffect(() => {
-    setColumnDefs(expanded ? getExpandedColumnDefs(year) : getUnexpandedColumnDefs(year));
+    setColumnDefs(getColumnDefs(year, expanded));
   }, [year, expanded]);
 
   const EPAColumns = ["total_points", "auto_points", "teleop_points", "endgame_points"];

@@ -168,7 +168,6 @@ def update_curr_year(partial: bool):
 
 
 def update_colors(use_cache: bool = True):
-    print("HERE BABABSA")
     timer = Timer()
 
     teams = get_teams_db()

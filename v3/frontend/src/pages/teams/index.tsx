@@ -86,6 +86,17 @@ export default function TeamsPage() {
   }
   const loading = data?.length === 0;
 
+  const [value, setValue] = useState("insights");
+
+  useEffect(() => {
+    if (value === "breakdown" && ![2023].includes(year)) {
+      setValue("insights");
+    }
+  }, [year]);
+
+  // TODO: Update query params on tab change, year change
+  // TODO: Add country, state, district query params
+
   return (
     <div className="p-4">
       <div className="flex w-full items-center justify-center">
@@ -93,7 +104,6 @@ export default function TeamsPage() {
           data={YEAR_OPTIONS}
           value={year.toString()}
           onChange={(newYear: string | null) => (newYear ? setYear(parseInt(newYear)) : CURR_YEAR)}
-          // withCheckIcon={false}
           checkIconPosition="right"
           allowDeselect={false}
           className="mr-4 w-24"
@@ -109,6 +119,8 @@ export default function TeamsPage() {
           ),
         }}
         defaultValue="insights"
+        value={value}
+        onChange={(newValue) => setValue(newValue ?? "insights")}
         // value={router.query.activeTab as string}
         // onChange={(value) => router.push(`/teams/${value}`)}
       >
@@ -116,9 +128,15 @@ export default function TeamsPage() {
           <Tabs.Tab value="insights" leftSection={<MdOutlineTableChart />}>
             Insights
           </Tabs.Tab>
-          <Tabs.Tab value="breakdown" leftSection={<MdOutlineTableChart />}>
-            Breakdown
-          </Tabs.Tab>
+          {year >= 2016 && (
+            <Tabs.Tab
+              value="breakdown"
+              leftSection={<MdOutlineTableChart />}
+              disabled={![2023].includes(year)}
+            >
+              Breakdown
+            </Tabs.Tab>
+          )}
           <Tabs.Tab value="bubble" leftSection={<MdBubbleChart />}>
             Bubble Chart
           </Tabs.Tab>
@@ -131,11 +149,13 @@ export default function TeamsPage() {
             <TeamYearsTable data={data} />
           </div>
         </TabPanel>
-        <TabPanel value="breakdown" loading={loading} error={error}>
-          <div className="mt-4 h-full w-full">
-            <TeamYearsBreakdownTable data={data} />
-          </div>
-        </TabPanel>
+        {year >= 2016 && (
+          <TabPanel value="breakdown" loading={loading} error={error}>
+            <div className="mt-4 h-full w-full">
+              <TeamYearsBreakdownTable data={data} />
+            </div>
+          </TabPanel>
+        )}
         <TabPanel value="bubble" loading={loading} error={error}>
           Bubble
         </TabPanel>

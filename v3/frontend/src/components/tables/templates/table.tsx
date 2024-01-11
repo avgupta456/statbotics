@@ -77,8 +77,8 @@ export default function Table({
   const updateContext = (newData: TeamYearData[]) => {
     const newContext: any = {};
     EPAColumns.forEach((k) => {
-      const means = newData.map((d) => d?.epa?.breakdown?.[k]?.mean || d?.epa?.[k]?.mean);
-      const sds = newData.map((d) => d?.epa?.breakdown?.[k]?.sd || d?.epa?.[k]?.sd);
+      const means = newData.map((d) => d?.epa?.breakdown?.[k]?.mean ?? d?.epa?.[k]?.mean);
+      const sds = newData.map((d) => d?.epa?.breakdown?.[k]?.sd ?? d?.epa?.[k]?.sd);
       const lowBounds = newData.map((d) => d?.epa?.conf?.[0]);
       const highBounds = newData.map((d) => d?.epa?.conf?.[1]);
       const maxValues = means.map((m, i) => m + highBounds[i] * sds[i]);
@@ -112,8 +112,9 @@ export default function Table({
       cellStyle: {
         textAlign: "center",
       },
+      cellClass: EPACellFormat === "Error Bars (shifted)" ? "ag-col-border" : "",
     }),
-    [],
+    [EPACellFormat],
   );
 
   const otherFilterOptions = [];
