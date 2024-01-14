@@ -32,7 +32,6 @@ export const rankDef = {
   valueGetter: (params: any) => params.node.rowIndex + 1,
   minWidth: 70,
   maxWidth: 70,
-  filter: false,
   sortable: false,
   pinned: "left",
 };
@@ -41,11 +40,11 @@ export const teamDef = {
   field: "team",
   headerName: "Number",
   maxWidth: 115,
-  filterParams: {
-    filterOptions: ["equals", "startsWith"],
-    maxNumConditions: 1,
-    debounceMs: 200,
-  },
+  // filterParams: {
+  //   filterOptions: ["equals", "startsWith"],
+  //   maxNumConditions: 1,
+  //   debounceMs: 200,
+  // },
   pinned: "left",
 };
 
@@ -53,7 +52,6 @@ export const nameDef = {
   field: "name",
   headerName: "Name",
   minWidth: 200,
-  filter: false,
   sortable: false,
   // display link to Team page
   cellRenderer: TeamNameCellRenderer,
@@ -63,7 +61,6 @@ export const nextEventDef = {
   field: "competing.next_event_name",
   headerName: "Next Event",
   minWidth: 200,
-  filter: true,
   sortable: true,
   // display link to Event page
   cellRenderer: NextEventCellRenderer,
@@ -74,6 +71,5 @@ export const nextEventWeekDef = {
   headerName: "Next Week",
   minWidth: 120,
   maxWidth: 120,
-  filter: true,
   sortable: true,
 };

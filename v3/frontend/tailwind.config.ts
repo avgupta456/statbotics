@@ -14,6 +14,13 @@ const config: Config = {
         xxxs: "0.5rem",
       },
     },
+    screens: {
+      xs: "480px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1200px",
+    },
   },
   // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/typography")],

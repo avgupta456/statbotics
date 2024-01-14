@@ -1,13 +1,14 @@
 import { createRef, useEffect, useMemo, useState } from "react";
 import { IoMdEye } from "react-icons/io";
-import { MdAdd, MdCloudDownload, MdRemove } from "react-icons/md";
+import { MdAdd, MdCloudDownload, MdRemove, MdSettings } from "react-icons/md";
 
-import { MultiSelect, Select, Tooltip } from "@mantine/core";
+import { MultiSelect, Popover, Select, Tooltip } from "@mantine/core";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 
+import { useLocation } from "../../../contexts/locationContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
 import { TeamYearData } from "../../../types";
 import { classnames } from "../../../utils/utils";
@@ -44,7 +45,7 @@ export default function Table({
 
   // Location Quick Filter
 
-  const [quickFilterText, setQuickFilterText] = useState<string | null>(null);
+  const { location, setLocation } = useLocation();
 
   // Projection Filter, Competing This Week Filter
 
@@ -105,7 +106,7 @@ export default function Table({
       suppressMovable: true,
       suppressStickyLabel: true,
       suppressSpanHeaderHeight: true,
-      filter: true,
+      filter: false,
       flex: 1,
       minWidth: 120,
       headerClass: "ag-text-center",
@@ -125,6 +126,40 @@ export default function Table({
     otherFilterOptions.push("Played this season");
   }
 
+  const EPACellFormatOptions = [
+    "Error Bars (shifted)",
+    "Error Bars (centered)",
+    "Highlight (with interval)",
+    "Highlight (mean only)",
+    "Plaintext",
+  ];
+
+  const mobile = window.innerWidth < 640;
+
+  const [finalColumnDefs, setFinalColumnDefs] = useState<any[]>(columnDefs);
+
+  useEffect(() => {
+    const getMobileWidth = (headerName: string) => {
+      if (headerName === "Name") {
+        return 200;
+      }
+      if (headerName === "Record") {
+        return 100;
+      }
+      return 80;
+    };
+
+    setFinalColumnDefs(
+      mobile
+        ? columnDefs.map((c) => ({
+            ...c,
+            pinned: false,
+            minWidth: getMobileWidth(c.headerName),
+          }))
+        : columnDefs,
+    );
+  }, [mobile, columnDefs]);
+
   return (
     <div>
       <div className="mx-2 mb-2 flex flex-row">
@@ -134,50 +169,64 @@ export default function Table({
               <IoMdEye
                 className="h-6 w-6 text-gray-600"
                 onClick={() => {
-                  setQuickFilterText(null);
+                  setLocation(null);
                   gridRef?.current?.api?.setFilterModel(null);
                 }}
               />
             </div>
           </Tooltip>
-          {showLocationQuickFilter && (
-            <LocationFilter
-              quickFilterText={quickFilterText}
-              setQuickFilterText={setQuickFilterText}
-            />
-          )}
+          {showLocationQuickFilter && <LocationFilter />}
           {(showProjectionsFilter || showCompetingThisWeekFilter) && (
             <MultiSelect
               placeholder={multiSelectValue.length === 0 ? "Other filters" : ""}
               data={otherFilterOptions}
               value={multiSelectValue}
               onChange={setMultiSelectValue}
-              classNames={{ root: "min-w-48 max-w-96" }}
+              classNames={{ root: "min-w-48 max-w-96 hidden lg:block" }}
             />
           )}
         </div>
         <div className="flex-grow" />
         <div className="flex items-center gap-4">
           {EPAColumns.length > 0 && (
-            <Select
-              data={[
-                "Error Bars (shifted)",
-                "Error Bars (centered)",
-                "Highlight (with interval)",
-                "Highlight (mean only)",
-                "Plaintext",
-              ]}
-              value={EPACellFormat}
-              onChange={setEPACellFormat}
-              allowDeselect={false}
-            />
+            <>
+              <div className="lg:hidden">
+                <Popover width={220} position="bottom" shadow="md">
+                  <Popover.Target>
+                    <Tooltip label="Options">
+                      <div className="cursor-pointer">
+                        <MdSettings className="h-6 w-6 cursor-pointer text-gray-600" />
+                      </div>
+                    </Tooltip>
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <Select
+                      data={EPACellFormatOptions}
+                      value={EPACellFormat}
+                      onChange={setEPACellFormat}
+                      allowDeselect={false}
+                      withCheckIcon={false}
+                    />
+                  </Popover.Dropdown>
+                </Popover>
+              </div>
+              <Select
+                data={EPACellFormatOptions}
+                value={EPACellFormat}
+                onChange={setEPACellFormat}
+                allowDeselect={false}
+                className="hidden lg:block"
+              />
+            </>
           )}
           {showDownloadCSV && (
-            <Tooltip label="Download CSV">
-              <div className="cursor-pointer">
-                <MdCloudDownload className="h-6 w-6 text-gray-600" onClick={exportCSV} />
-              </div>
-            </Tooltip>
+            <div className="xs:block hidden">
+              <Tooltip label="Download CSV">
+                <div className="cursor-pointer">
+                  <MdCloudDownload className="h-6 w-6 text-gray-600" onClick={exportCSV} />
+                </div>
+              </Tooltip>
+            </div>
           )}
 
           {showExpand && (
@@ -195,7 +244,8 @@ export default function Table({
       </div>
       <div
         className={classnames(
-          "h-[516px] w-full",
+          "w-full",
+          mobile ? "h-[calc(100vh-215px)]" : "h-[519px]",
           colorScheme === "light" ? "ag-theme-quartz" : "ag-theme-quartz-dark",
         )}
       >
@@ -203,10 +253,10 @@ export default function Table({
           ref={gridRef}
           rowData={cleanData}
           defaultColDef={defaultColDef}
-          columnDefs={columnDefs}
-          quickFilterText={quickFilterText ?? undefined}
+          columnDefs={finalColumnDefs}
+          quickFilterText={location ?? undefined}
           includeHiddenColumnsInQuickFilter
-          pagination
+          pagination={!mobile}
           paginationPageSize={10}
           paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
           context={EPAContext}

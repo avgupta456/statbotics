@@ -42,7 +42,7 @@ export const recordDef = {
 export const winRateDef = {
   colId: "win_rate",
   headerName: "Win Rate",
-  filter: "agNumberColumnFilter",
+  // filter: "agNumberColumnFilter",
   valueGetter: winRateGetter,
   valueFormatter: (params: any) => `${round((params?.value ?? 0) * 100, 1)}%`,
 };

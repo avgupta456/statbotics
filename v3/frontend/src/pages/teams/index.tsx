@@ -1,25 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdBubbleChart, MdInsights, MdOutlineTableChart } from "react-icons/md";
 
-// import { useRouter } from "next/router";
+import { useRouter } from "next/router";
+
 import { Select, Tabs } from "@mantine/core";
 
 import getTeamYearData from "../../api/teams";
 import TeamYearsTable from "../../components/tables/teamYears";
 import TeamYearsBreakdownTable from "../../components/tables/teamYearsBreakdown";
 import { useData } from "../../contexts/dataContext";
+import { LocationContext } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import TabPanel from "../../layout/tabs";
 import { TeamYearData, YearData } from "../../types";
 import { CURR_YEAR, YEAR_OPTIONS } from "../../utils/constants";
+import { parseCountry, parseDistrict, parseState } from "../../utils/geography";
 import { classnames } from "../../utils/utils";
-
-// TODO: Enable query params for year, country, state, district
-// TODO: Add query param for active tab
 
 export default function TeamsPage() {
   const { colorScheme } = usePreferences();
-  // const router = useRouter();
+  const router = useRouter();
+
+  const { isReady } = router;
+  const {
+    year: paramsYear,
+    tab: paramsTab,
+    country: paramsCountry,
+    state: paramsState,
+    district: paramsDistrict,
+  } = router.query;
 
   const {
     teamYearMiniDataDict,
@@ -30,6 +39,45 @@ export default function TeamsPage() {
     year,
     setYear,
   } = useData();
+
+  const [location, setLocation] = useState<string | null>(null);
+  const [_tab, setTab] = useState<string>("insights");
+
+  let tab = _tab;
+  if (tab === "breakdown" && ![2023].includes(year)) {
+    tab = "insights";
+  }
+
+  useEffect(() => {
+    if (isReady) {
+      const paramsYearInt = parseInt(paramsYear as string);
+      if (paramsYearInt >= 2002 && paramsYearInt !== year) {
+        setYear(paramsYearInt);
+      }
+
+      if (
+        paramsTab &&
+        typeof paramsTab === "string" &&
+        ["insights", "breakdown", "bubble", "figures"].includes(paramsTab)
+      ) {
+        setTab(paramsTab as string);
+      }
+
+      // check if paramsCountry in COUNTRIES (case insensitive)
+      const parsedCountry = parseCountry(paramsCountry);
+      const parsedState = parseState(paramsState);
+      const parsedDistrict = parseDistrict(paramsDistrict);
+      if (parsedCountry) {
+        setLocation(`country_${parsedCountry}`);
+      } else if (parsedState) {
+        setLocation(`state_${parsedState}`);
+      } else if (parsedDistrict) {
+        setLocation(`district_${parsedDistrict}`);
+      }
+    }
+  }, [isReady]);
+
+  const memoizedLocation = useMemo(() => ({ location, setLocation }), [location, setLocation]);
 
   const [error, setError] = useState(false);
   const [loadingMini, setLoadingMini] = useState(false);
@@ -64,9 +112,9 @@ export default function TeamsPage() {
       setLoadingFull(false);
     };
 
-    if (!error && !teamYearMiniDataDict[year] && !loadingMini) {
+    if (isReady && !error && !teamYearMiniDataDict[year] && !loadingMini) {
       getMiniDataForYear(year);
-    } else if (!error && !teamYearDataDict[year] && !loadingFull) {
+    } else if (isReady && !error && !teamYearDataDict[year] && !loadingFull) {
       getDataForYear(year);
     }
   }, [
@@ -86,20 +134,9 @@ export default function TeamsPage() {
   }
   const loading = data?.length === 0;
 
-  const [value, setValue] = useState("insights");
-
-  useEffect(() => {
-    if (value === "breakdown" && ![2023].includes(year)) {
-      setValue("insights");
-    }
-  }, [year]);
-
-  // TODO: Update query params on tab change, year change
-  // TODO: Add country, state, district query params
-
   return (
-    <div className="p-4">
-      <div className="flex w-full items-center justify-center">
+    <div className="pt-4 md:p-2 lg:p-4">
+      <div className="mb-2 flex w-full items-center justify-center">
         <Select
           data={YEAR_OPTIONS}
           value={year.toString()}
@@ -110,59 +147,59 @@ export default function TeamsPage() {
         />
         <div className="text-center text-3xl">Teams</div>
       </div>
-      <Tabs
-        variant="pills"
-        classNames={{
-          list: classnames(
-            "border-b pb-px",
-            colorScheme === "light" ? "border-gray-200" : "border-gray-600",
-          ),
-        }}
-        defaultValue="insights"
-        value={value}
-        onChange={(newValue) => setValue(newValue ?? "insights")}
-        // value={router.query.activeTab as string}
-        // onChange={(value) => router.push(`/teams/${value}`)}
-      >
-        <Tabs.List>
-          <Tabs.Tab value="insights" leftSection={<MdOutlineTableChart />}>
-            Insights
-          </Tabs.Tab>
-          {year >= 2016 && (
-            <Tabs.Tab
-              value="breakdown"
-              leftSection={<MdOutlineTableChart />}
-              disabled={![2023].includes(year)}
-            >
-              Breakdown
+      <LocationContext.Provider value={memoizedLocation}>
+        <Tabs
+          variant="pills"
+          classNames={{
+            list: classnames(
+              "border-b pb-px flex-nowrap overflow-x-scroll whitespace-nowrap",
+              colorScheme === "light" ? "border-gray-200" : "border-gray-600",
+            ),
+          }}
+          defaultValue="insights"
+          value={tab}
+          onChange={(newValue) => setTab(newValue ?? "insights")}
+        >
+          <Tabs.List>
+            <Tabs.Tab value="insights" leftSection={<MdOutlineTableChart />}>
+              Insights
             </Tabs.Tab>
-          )}
-          <Tabs.Tab value="bubble" leftSection={<MdBubbleChart />}>
-            Bubble Chart
-          </Tabs.Tab>
-          <Tabs.Tab value="figures" leftSection={<MdInsights />}>
-            Figures
-          </Tabs.Tab>
-        </Tabs.List>
-        <TabPanel value="insights" error={error}>
-          <div className="mt-4 h-full w-full">
-            <TeamYearsTable data={data} />
-          </div>
-        </TabPanel>
-        {year >= 2016 && (
-          <TabPanel value="breakdown" loading={loading} error={error}>
+            {year >= 2016 && (
+              <Tabs.Tab
+                value="breakdown"
+                leftSection={<MdOutlineTableChart />}
+                disabled={![2023].includes(year)}
+              >
+                Breakdown
+              </Tabs.Tab>
+            )}
+            <Tabs.Tab value="bubble" leftSection={<MdBubbleChart />}>
+              Bubble Chart
+            </Tabs.Tab>
+            <Tabs.Tab value="figures" leftSection={<MdInsights />}>
+              Figures
+            </Tabs.Tab>
+          </Tabs.List>
+          <TabPanel value="insights" error={error}>
             <div className="mt-4 h-full w-full">
-              <TeamYearsBreakdownTable data={data} />
+              <TeamYearsTable data={data} />
             </div>
           </TabPanel>
-        )}
-        <TabPanel value="bubble" loading={loading} error={error}>
-          Bubble
-        </TabPanel>
-        <TabPanel value="figures" loading={loading} error={error}>
-          Figures
-        </TabPanel>
-      </Tabs>
+          {year >= 2016 && (
+            <TabPanel value="breakdown" loading={loading} error={error}>
+              <div className="mt-4 h-full w-full">
+                <TeamYearsBreakdownTable data={data} />
+              </div>
+            </TabPanel>
+          )}
+          <TabPanel value="bubble" loading={loading} error={error}>
+            Bubble
+          </TabPanel>
+          <TabPanel value="figures" loading={loading} error={error}>
+            Figures
+          </TabPanel>
+        </Tabs>
+      </LocationContext.Provider>
     </div>
   );
 }

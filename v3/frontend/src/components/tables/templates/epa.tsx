@@ -87,7 +87,7 @@ export function EPACellRenderer({
     return (
       <div className="flex h-full w-full items-center justify-center">
         <div className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}>
-          {roundSigFigs(value, 2)}
+          {roundSigFigs(value, 3, 1)}
         </div>
       </div>
     );
@@ -105,7 +105,7 @@ export function EPACellRenderer({
           <div
             className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}
           >
-            {roundSigFigs(value, 1, 0)}
+            {roundSigFigs(value, 2, 0)}
             <p className="ml-1 text-xs">±{roundSigFigs(adjSd, 1, 1)}</p>
           </div>
         </Tooltip>
@@ -155,7 +155,7 @@ export function EPACellRenderer({
             centerColor,
           )}
         >
-          {roundSigFigs(value, 1, 0)}
+          {roundSigFigs(value, 2, 0)}
         </div>
       </Tooltip>
       <div
@@ -189,8 +189,8 @@ export const getEPADef = (epaKey: string, headerName: string, inBreakdown: boole
   cellRendererParams: { epaKey },
   resizable: true,
   sortingOrder: ["desc", null],
-  filterParams: {
-    filterOptions: ["greaterThan", "lessThan", "inRange"],
-    maxNumConditions: 1,
-  },
+  // filterParams: {
+  //   filterOptions: ["greaterThan", "lessThan", "inRange"],
+  //   maxNumConditions: 1,
+  // },
 });

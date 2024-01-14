@@ -14,6 +14,15 @@ export const COUNTRIES: string[] = [
   "Poland",
 ];
 
+export const parseCountry = (country: undefined | string | string[]) => {
+  if (!country) return null;
+  if (Array.isArray(country)) return null;
+  const countryUpper = country.toUpperCase();
+  const countryMatch = COUNTRIES.find((c) => c.toUpperCase() === countryUpper);
+  if (countryMatch) return countryMatch;
+  return null;
+};
+
 export const COUNTRY_FLAGS: { [key: string]: string } = {
   USA: "🇺🇸 USA",
   Canada: "🇨🇦 Canada",
@@ -24,10 +33,10 @@ export const COUNTRY_FLAGS: { [key: string]: string } = {
   Australia: "🇦🇺 Australia",
 };
 
-export const STATE_PROV_FULL_NAMES: { [key: string]: string } = {
+export const STATE_FULL_NAMES: { [key: string]: string } = {
   AL: "Alabama",
   AK: "Alaska",
-  AS: "American Samoa",
+  // AS: "American Samoa",
   AZ: "Arizona",
   AR: "Arkansas",
   CA: "California",
@@ -37,7 +46,7 @@ export const STATE_PROV_FULL_NAMES: { [key: string]: string } = {
   DC: "District Of Columbia",
   FL: "Florida",
   GA: "Georgia",
-  GU: "Guam",
+  // GU: "Guam",
   HI: "Hawaii",
   ID: "Idaho",
   IL: "Illinois",
@@ -62,12 +71,12 @@ export const STATE_PROV_FULL_NAMES: { [key: string]: string } = {
   NY: "New York",
   NC: "North Carolina",
   ND: "North Dakota",
-  MP: "Northern Mariana Islands",
+  // MP: "Northern Mariana Islands",
   OH: "Ohio",
   OK: "Oklahoma",
   OR: "Oregon",
   PA: "Pennsylvania",
-  PR: "Puerto Rico",
+  // PR: "Puerto Rico",
   RI: "Rhode Island",
   SC: "South Carolina",
   SD: "South Dakota",
@@ -75,26 +84,37 @@ export const STATE_PROV_FULL_NAMES: { [key: string]: string } = {
   TX: "Texas",
   UT: "Utah",
   VT: "Vermont",
-  VI: "Virgin Islands",
+  // VI: "Virgin Islands",
   VA: "Virginia",
   WA: "Washington",
   WV: "West Virginia",
   WI: "Wisconsin",
   WY: "Wyoming",
   // Canada
-  NL: "Newfoundland",
-  PE: "Prince Edward Island",
-  NS: "Nova Scotia",
-  NB: "New Brunswick",
+  // NL: "Newfoundland",
+  // PE: "Prince Edward Island",
+  // NS: "Nova Scotia",
+  // NB: "New Brunswick",
   QC: "Quebec",
   ON: "Ontario",
-  MB: "Manitoba",
-  SK: "Saskatchewan",
+  // MB: "Manitoba",
+  // SK: "Saskatchewan",
   AB: "Alberta",
   BC: "British Columbia",
-  YT: "Yukon",
-  NT: "Northwest Territories",
-  NU: "Nunavut",
+  // YT: "Yukon",
+  // NT: "Northwest Territories",
+  // NU: "Nunavut",
+};
+
+export const parseState = (state: undefined | string | string[]) => {
+  if (!state) return null;
+  if (Array.isArray(state)) return null;
+  const stateUpper = state.toUpperCase();
+  const stateMatch = Object.entries(STATE_FULL_NAMES).find(
+    ([k, v]) => k.toUpperCase() === stateUpper || v.toUpperCase() === stateUpper,
+  );
+  if (stateMatch) return stateMatch[1];
+  return null;
 };
 
 export const DISTRICT_FULL_NAMES: { [key: string]: string } = {
@@ -109,4 +129,15 @@ export const DISTRICT_FULL_NAMES: { [key: string]: string } = {
   fnc: "North Carolina",
   fin: "Indiana",
   isr: "Israel",
+};
+
+export const parseDistrict = (district: undefined | string | string[]) => {
+  if (!district) return null;
+  if (Array.isArray(district)) return null;
+  const districtUpper = district.toUpperCase();
+  const districtMatch = Object.entries(DISTRICT_FULL_NAMES).find(
+    ([k, v]) => k.toUpperCase() === districtUpper || v.toUpperCase() === districtUpper,
+  );
+  if (districtMatch) return districtMatch[1];
+  return null;
 };
