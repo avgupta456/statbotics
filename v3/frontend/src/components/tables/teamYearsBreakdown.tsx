@@ -112,6 +112,7 @@ export default function TeamYearsBreakdownTable({ data }: { data: any[] | undefi
 
   return (
     <Table
+      year={year}
       data={data || []}
       columnDefs={columnDefs}
       EPAColumns={EPAColumns}

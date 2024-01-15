@@ -43,6 +43,7 @@ export default function TeamYearsTable({ data }: { data: any[] | undefined }) {
 
   return (
     <Table
+      year={year}
       data={data || []}
       columnDefs={columnDefs}
       EPAColumns={EPAColumns}

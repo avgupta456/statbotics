@@ -11,10 +11,12 @@ import { AgGridReact } from "ag-grid-react";
 import { useLocation } from "../../../contexts/locationContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
 import { TeamYearData } from "../../../types";
+import { CURR_YEAR } from "../../../utils/constants";
 import { classnames } from "../../../utils/utils";
 import { LocationFilter } from "./locations";
 
 export default function Table({
+  year,
   data,
   columnDefs,
   EPAColumns,
@@ -26,6 +28,7 @@ export default function Table({
   expanded = false,
   setExpanded = () => {},
 }: {
+  year: number;
   data: any[];
   columnDefs: any[];
   EPAColumns: string[];
@@ -176,7 +179,7 @@ export default function Table({
             </div>
           </Tooltip>
           {showLocationQuickFilter && <LocationFilter />}
-          {(showProjectionsFilter || showCompetingThisWeekFilter) && (
+          {year === CURR_YEAR && (showProjectionsFilter || showCompetingThisWeekFilter) && (
             <MultiSelect
               placeholder={multiSelectValue.length === 0 ? "Other filters" : ""}
               data={otherFilterOptions}
@@ -220,7 +223,7 @@ export default function Table({
             </>
           )}
           {showDownloadCSV && (
-            <div className="xs:block hidden">
+            <div className="hidden xs:block">
               <Tooltip label="Download CSV">
                 <div className="cursor-pointer">
                   <MdCloudDownload className="h-6 w-6 text-gray-600" onClick={exportCSV} />
