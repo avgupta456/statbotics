@@ -23,3 +23,10 @@
   overflow: visible;
   white-space: normal;
 }
+
+.mantine-Select-option {
+  &[aria-selected="true"] {
+    background-color: #007aff;
+    color: var(--mantine-color-white);
+  }
+}

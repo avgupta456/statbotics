@@ -2,7 +2,7 @@ import { createRef, useEffect, useMemo, useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { MdAdd, MdCloudDownload, MdRemove, MdSettings } from "react-icons/md";
 
-import { MultiSelect, Popover, Select, Tooltip } from "@mantine/core";
+import { MultiSelect, Popover, Tooltip } from "@mantine/core";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -13,7 +13,8 @@ import { usePreferences } from "../../../contexts/preferencesContext";
 import { TeamYearData } from "../../../types";
 import { CURR_YEAR } from "../../../utils/constants";
 import { classnames } from "../../../utils/utils";
-import { LocationFilter } from "./locations";
+import LocationFilter from "../../location";
+import Select from "../../select";
 
 export default function Table({
   year,
@@ -208,7 +209,6 @@ export default function Table({
                       value={EPACellFormat}
                       onChange={setEPACellFormat}
                       allowDeselect={false}
-                      withCheckIcon={false}
                     />
                   </Popover.Dropdown>
                 </Popover>

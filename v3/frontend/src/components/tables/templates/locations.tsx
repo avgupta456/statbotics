@@ -1,12 +1,4 @@
-import { Select } from "@mantine/core";
-
-import { useLocation } from "../../../contexts/locationContext";
-import {
-  COUNTRIES,
-  COUNTRY_FLAGS,
-  DISTRICT_FULL_NAMES,
-  STATE_FULL_NAMES,
-} from "../../../utils/geography";
+import { COUNTRY_FLAGS, DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../../utils/geography";
 
 // const countryFilter = COUNTRIES.map((country) => ({
 //   displayKey: country,
@@ -40,41 +32,6 @@ export const districtGetter = (params: any) => {
   const fullDistrict = DISTRICT_FULL_NAMES?.[district];
   return fullDistrict || district;
 };
-
-export function LocationFilter() {
-  const { location, setLocation } = useLocation();
-
-  return (
-    <Select
-      data={[
-        {
-          group: "Countries",
-          items: COUNTRIES.map((c) => ({ value: `country_${c}`, label: c })),
-        },
-        {
-          group: "Districts",
-          items: Object.values(DISTRICT_FULL_NAMES).map((d) => ({
-            value: `district_${d}`,
-            label: d,
-          })),
-        },
-        {
-          group: "States/Provinces",
-          items: Object.values(STATE_FULL_NAMES).map((s) => ({
-            value: `state_${s}`,
-            label: s,
-          })),
-        },
-      ]}
-      value={location}
-      onChange={setLocation}
-      placeholder="Search locations"
-      classNames={{ root: "w-40 md:w-48" }}
-      clearable
-      searchable
-    />
-  );
-}
 
 // COLUMN DEFS
 

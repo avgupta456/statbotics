@@ -3,10 +3,11 @@ import { MdBubbleChart, MdInsights, MdOutlineTableChart } from "react-icons/md";
 
 import { useRouter } from "next/router";
 
-import { Select, Tabs } from "@mantine/core";
+import { Tabs } from "@mantine/core";
 
 import getTeamYearData from "../../api/teams";
 import Bubbles from "../../components/figures/bubbles";
+import Select from "../../components/select";
 import TeamYearsTable from "../../components/tables/teamYears";
 import TeamYearsBreakdownTable from "../../components/tables/teamYearsBreakdown";
 import { useData } from "../../contexts/dataContext";
@@ -77,6 +78,29 @@ export default function TeamsPage() {
       }
     }
   }, [isReady]);
+
+  useEffect(() => {
+    if (!isReady) return;
+    // set query params
+    const query: any = {};
+    if (year !== CURR_YEAR) {
+      query.year = year;
+    }
+    if (tab !== "insights") {
+      query.tab = tab;
+    }
+    if (location) {
+      const [locationType, locationName] = location.split("_");
+      if (locationType === "country") {
+        query.country = locationName;
+      } else if (locationType === "state") {
+        query.state = locationName;
+      } else if (locationType === "district") {
+        query.district = locationName;
+      }
+    }
+    router.push({ pathname: "/teams", query }, undefined, { shallow: true });
+  }, [year, tab, location]);
 
   const memoizedLocation = useMemo(() => ({ location, setLocation }), [location, setLocation]);
 

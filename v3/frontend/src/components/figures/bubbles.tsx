@@ -1,14 +1,3 @@
-/* eslint-disable no-console */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable no-unused-vars */
-
-/* eslint-disable no-nested-ternary */
-
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
-/* eslint-disable react/no-array-index-key */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IoMdEye } from "react-icons/io";
 
@@ -29,7 +18,8 @@ import { Zoom } from "@visx/zoom";
 import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../utils/geography";
-import { LocationFilter } from "../tables/templates/locations";
+import LocationFilter from "../location";
+import Select from "../select";
 
 const initialTransform = {
   scaleX: 1,
@@ -59,6 +49,7 @@ type DotsProps = {
   width: number;
   height: number;
   data: Datum[];
+  selectedTeam: string | null;
 };
 
 let tooltipTimeout: number;
@@ -68,6 +59,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
     width,
     height,
     data,
+    selectedTeam,
     hideTooltip,
     showTooltip,
     tooltipOpen,
@@ -167,7 +159,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
       );
     }, [data]);
 
-    const [findTeamIndex, setFindTeamIndex] = useState(5);
+    const findTeamIndex = data.findIndex((d) => d.label === selectedTeam);
 
     const cutoffs = Array.from(Array(21).keys()).map(
       (i) => xMin + yMin + (dataXRange + dataYRange) * ((i - 5) / 10),
@@ -224,13 +216,13 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
                 ))}
                 <g transform={zoom.toString()}>
                   <Group pointerEvents="none">
-                    {data.map((point, i) => {
+                    {data.map((point) => {
                       const z = point?.z ?? 1;
                       const radius =
                         (5 * (z - dataZMin)) / (dataZMax - dataZMin) / zoom.transformMatrix.scaleX;
                       return (
                         <Circle
-                          key={`point-${point.x}-${i}`}
+                          key={`point-${point.label}`}
                           className="dot"
                           cx={xScale(point.x)}
                           cy={yScale(point.y)}
@@ -327,6 +319,8 @@ function Bubbles({
 }) {
   const { location, setLocation } = useLocation();
 
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+
   const getX = (d: any) => d?.epa?.breakdown?.teleop_points?.mean ?? 0;
   const getY = (d: any) => d?.epa?.breakdown?.auto_points?.mean ?? 0;
   const getZ = (d: any) => d?.epa?.breakdown?.endgame_points?.mean ?? 0;
@@ -349,25 +343,29 @@ function Bubbles({
     };
 
     const setAxes = (d: any) => {
+      const name = d?.name;
       const label = d?.team;
       const x = getX(d);
       const y = getY(d);
       const z = getZ(d);
-      return { label, x, y, z };
+      return { name, label, x, y, z };
     };
 
     return data.filter(filterData).map(setAxes);
   }, [data, location]);
 
-  console.log(finalData);
-
   const ResponsiveBubbles = withParentSize(({ parentWidth, parentHeight }) => (
-    <RawBubbles width={parentWidth ?? 0} height={parentHeight ?? 0} data={finalData} />
+    <RawBubbles
+      width={parentWidth ?? 0}
+      height={parentHeight ?? 0}
+      data={finalData}
+      selectedTeam={selectedTeam}
+    />
   ));
 
   return (
     <div>
-      <div className="mx-2 mb-2 flex flex-row">
+      <div className="mx-2 mt-4 flex w-full flex-row justify-center">
         <div className="flex items-center gap-4">
           <Tooltip label="Clear filters">
             <div className="cursor-pointer">
@@ -380,8 +378,16 @@ function Bubbles({
             </div>
           </Tooltip>
           {showLocationQuickFilter && <LocationFilter />}
+          <Select
+            data={finalData.map((d: any) => ({ value: d.label, label: `${d.label} | ${d.name}` }))}
+            value={selectedTeam}
+            onChange={setSelectedTeam}
+            limit={20}
+            placeholder="Find a team"
+            searchable
+            clearable
+          />
         </div>
-        <div className="flex-grow" />
       </div>
       <div className="mt-8 h-[500px] px-8">
         <ResponsiveBubbles />
