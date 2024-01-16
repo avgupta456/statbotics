@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { Tabs } from "@mantine/core";
 
 import getTeamYearData from "../../api/teams";
+import getAxisOptions from "../../components/figures/axisOptions";
 import Bubbles from "../../components/figures/bubbles";
 import Select from "../../components/select";
 import TeamYearsTable from "../../components/tables/teamYears";
@@ -218,7 +219,15 @@ export default function TeamsPage() {
             </TabPanel>
           )}
           <TabPanel value="bubble" loading={loading} error={error}>
-            {data && <Bubbles data={data} />}
+            <Bubbles
+              data={data ?? []}
+              axisOptions={getAxisOptions(year)}
+              defaultAxes={{
+                x: "teleop_points",
+                y: "auto_points",
+                z: "endgame_points",
+              }}
+            />
           </TabPanel>
           <TabPanel value="figures" loading={loading} error={error}>
             Figures

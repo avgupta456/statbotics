@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { IoMdEye } from "react-icons/io";
 
 import { Button, Tooltip } from "@mantine/core";
@@ -7,7 +7,7 @@ import { Axis, Orientation } from "@visx/axis";
 import { RectClipPath } from "@visx/clip-path";
 import { localPoint } from "@visx/event";
 import { Group } from "@visx/group";
-import { withParentSize } from "@visx/responsive";
+import { ParentSize } from "@visx/responsive";
 import { scaleLinear } from "@visx/scale";
 import { Circle, LinePath } from "@visx/shape";
 import { TooltipWithBounds, withTooltip } from "@visx/tooltip";
@@ -40,6 +40,7 @@ const yLabelProps = { ...sharedLabelProps, y: -30 } as const;
 
 type Datum = {
   label: string;
+  included: boolean;
   x: number;
   y: number;
   z?: number;
@@ -49,6 +50,9 @@ type DotsProps = {
   width: number;
   height: number;
   data: Datum[];
+  xLabel: string;
+  yLabel: string;
+  showEqualLines: boolean;
   selectedTeam: string | null;
 };
 
@@ -59,6 +63,9 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
     width,
     height,
     data,
+    xLabel,
+    yLabel,
+    showEqualLines,
     selectedTeam,
     hideTooltip,
     showTooltip,
@@ -79,6 +86,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
     const dataZMax = Math.max(...data.map((d) => d.z ?? 1));
     const dataXRange = dataXMax - dataXMin;
     const dataYRange = dataYMax - dataYMin;
+    const dataZRange = dataZMax - dataZMin;
 
     const buffer = 0.1;
     const xMin = dataXMin - buffer * dataXRange;
@@ -88,11 +96,11 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
 
     const xScale = useMemo(
       () => scaleLinear<number>({ domain: [xMin, xMax], range: [0, width] }),
-      [width],
+      [width, xMin, xMax],
     );
     const yScale = useMemo(
       () => scaleLinear<number>({ domain: [yMin, yMax], range: [height, 0] }),
-      [height],
+      [height, yMin, yMax],
     );
 
     const voronoiLayout = useMemo(
@@ -102,7 +110,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
           y: (d) => yScale(d.y) ?? 0,
           width,
           height,
-        })(data),
+        })(data.filter((d) => d?.included ?? true)),
       [width, height, xScale, yScale, data],
     );
 
@@ -140,24 +148,26 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
       }, 300);
     }, [hideTooltip]);
 
-    const [teamsToLabel, setTeamsToLabel] = useState<number[]>([]);
-
-    useEffect(() => {
-      const teamToIndex = new Map<string, number>();
-      for (let i = 0; i < data.length; i += 1) {
-        teamToIndex.set(data[i].label, i);
-      }
-
-      setTeamsToLabel(
-        [
-          ...data.sort((a, b) => b.x - a.x).slice(0, 10),
-          ...data.sort((a, b) => b.y - a.y).slice(0, 10),
-          ...data.sort((a, b) => b.x + b.y - a.x - a.y).slice(0, 20),
-        ]
-          .map((point) => teamToIndex.get(point.label) ?? 0)
-          .filter((value, index, self) => self.indexOf(value) === index),
-      );
-    }, [data]);
+    const teamToIndex = new Map<string, number>();
+    for (let i = 0; i < data.length; i += 1) {
+      teamToIndex.set(data[i].label, i);
+    }
+    const teamsToLabel = [
+      ...data
+        .filter((d) => d?.included ?? true)
+        .sort((a, b) => b.x - a.x)
+        .slice(0, 10),
+      ...data
+        .filter((d) => d?.included ?? true)
+        .sort((a, b) => b.y - a.y)
+        .slice(0, 10),
+      ...data
+        .filter((d) => d?.included ?? true)
+        .sort((a, b) => b.x + b.y - a.x - a.y)
+        .slice(0, 20),
+    ]
+      .map((point) => teamToIndex.get(point.label) ?? 0)
+      .filter((value, index, self) => self.indexOf(value) === index);
 
     const findTeamIndex = data.findIndex((d) => d.label === selectedTeam);
 
@@ -202,24 +212,27 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
                   onTouchMove={(event) => handleMouseMove(zoom, event)}
                   onTouchEnd={handleMouseLeave}
                 />
-                {cutoffs.map((cutoff) => (
-                  <LinePath
-                    stroke={colorScheme === "light" ? "#ddd" : "#555"}
-                    strokeWidth={1}
-                    data={[
-                      { x: cutoff - 2 * yMax, y: 2 * yMax },
-                      { x: 2 * xMax, y: cutoff - 2 * xMax },
-                    ]}
-                    x={(d) => xScale(d.x) * scaleX + translateX}
-                    y={(d) => yScale(d.y) * scaleY + translateY}
-                  />
-                ))}
+                {showEqualLines &&
+                  cutoffs.map((cutoff) => (
+                    <LinePath
+                      stroke={colorScheme === "light" ? "#ddd" : "#555"}
+                      strokeWidth={1}
+                      data={[
+                        { x: cutoff - 2 * yMax, y: 2 * yMax },
+                        { x: 2 * xMax, y: cutoff - 2 * xMax },
+                      ]}
+                      x={(d) => xScale(d.x) * scaleX + translateX}
+                      y={(d) => yScale(d.y) * scaleY + translateY}
+                    />
+                  ))}
                 <g transform={zoom.toString()}>
                   <Group pointerEvents="none">
                     {data.map((point) => {
+                      if (!(point?.included ?? true)) return null;
+
                       const z = point?.z ?? 1;
-                      const radius =
-                        (5 * (z - dataZMin)) / (dataZMax - dataZMin) / zoom.transformMatrix.scaleX;
+                      const radiusFrac = dataZRange === 0 ? 0.5 : (z - dataZMin) / dataZRange;
+                      const radius = (1 + 4 * radiusFrac) / zoom.transformMatrix.scaleX;
                       return (
                         <Circle
                           key={`point-${point.label}`}
@@ -270,7 +283,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
                   stroke={textColor}
                   tickStroke={textColor}
                   tickLabelProps={{ ...xTickLabelProps, fill: textColor }}
-                  label="Total Points"
+                  label={xLabel}
                   labelProps={{ ...xLabelProps, fill: textColor }}
                 />
                 <Axis
@@ -283,7 +296,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
                   stroke={textColor}
                   tickStroke={textColor}
                   tickLabelProps={{ ...yTickLabelProps, fill: textColor }}
-                  label="Endgame Points"
+                  label={yLabel}
                   labelProps={{ ...yLabelProps, fill: textColor }}
                 />
               </svg>
@@ -298,7 +311,8 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
                 <TooltipWithBounds left={tooltipLeft + 10} top={tooltipTop + 10}>
                   <div className="text-xs text-gray-900">
                     <strong>Team {tooltipData.label}</strong>
-                    <br className="h-1" />({tooltipData.x.toFixed(2)}, {tooltipData.y.toFixed(2)})
+                    <br className="h-1" />({tooltipData.x.toFixed(2)}, {tooltipData.y.toFixed(2)}
+                    {tooltipData.z && `, ${tooltipData.z.toFixed(2)}`})
                   </div>
                 </TooltipWithBounds>
               )}
@@ -312,18 +326,53 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
 
 function Bubbles({
   data,
+  axisOptions,
+  defaultAxes,
   showLocationQuickFilter = true,
 }: {
   data: any[];
+  axisOptions: {
+    key: string;
+    label: string;
+    // eslint-disable-next-line no-unused-vars
+    accessor: (d: any) => number;
+    units: string;
+    group: string;
+  }[];
+  defaultAxes: { x: string; y: string; z: string };
   showLocationQuickFilter?: boolean;
 }) {
   const { location, setLocation } = useLocation();
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
-  const getX = (d: any) => d?.epa?.breakdown?.teleop_points?.mean ?? 0;
-  const getY = (d: any) => d?.epa?.breakdown?.auto_points?.mean ?? 0;
-  const getZ = (d: any) => d?.epa?.breakdown?.endgame_points?.mean ?? 0;
+  const [xKey, setXKey] = useState<string | null>(defaultAxes.x);
+  const [yKey, setYKey] = useState<string | null>(defaultAxes.y);
+  const [zKey, setZKey] = useState<string | null>(defaultAxes.z);
+
+  const getX = useCallback(
+    (d: any) => {
+      const axis = axisOptions.find((a) => a.key === xKey);
+      return axis?.accessor(d) ?? 0;
+    },
+    [xKey, axisOptions],
+  );
+
+  const getY = useCallback(
+    (d: any) => {
+      const axis = axisOptions.find((a) => a.key === yKey);
+      return axis?.accessor(d) ?? 0;
+    },
+    [yKey, axisOptions],
+  );
+
+  const getZ = useCallback(
+    (d: any) => {
+      const axis = axisOptions.find((a) => a.key === zKey);
+      return axis?.accessor(d) ?? 0;
+    },
+    [zKey, axisOptions],
+  );
 
   const finalData = useMemo(() => {
     const filterData = (d: any) => {
@@ -345,52 +394,99 @@ function Bubbles({
     const setAxes = (d: any) => {
       const name = d?.name;
       const label = d?.team;
+      const included = filterData(d);
       const x = getX(d);
       const y = getY(d);
       const z = getZ(d);
-      return { name, label, x, y, z };
+      return { name, label, included, x, y, z };
     };
 
-    return data.filter(filterData).map(setAxes);
-  }, [data, location]);
+    return data.map(setAxes);
+  }, [data, getX, getY, getZ, location]);
 
-  const ResponsiveBubbles = withParentSize(({ parentWidth, parentHeight }) => (
-    <RawBubbles
-      width={parentWidth ?? 0}
-      height={parentHeight ?? 0}
-      data={finalData}
-      selectedTeam={selectedTeam}
-    />
-  ));
+  const xOption = axisOptions.find((a) => a.key === xKey);
+  const yOption = axisOptions.find((a) => a.key === yKey);
+
+  const renderOptions = (options: { key: string; label: string; group: string }[]) => {
+    const groups = new Set(options.map((o) => o.group));
+    return Array.from(groups).map((group) => ({
+      group,
+      items: options
+        .filter((o) => o.group === group)
+        .map((o) => ({ value: o.key, label: o.label })),
+    }));
+  };
 
   return (
     <div>
-      <div className="mx-2 mt-4 flex w-full flex-row justify-center">
-        <div className="flex items-center gap-4">
-          <Tooltip label="Clear filters">
-            <div className="cursor-pointer">
-              <IoMdEye
-                className="h-6 w-6 text-gray-600"
-                onClick={() => {
-                  setLocation(null);
-                }}
-              />
-            </div>
-          </Tooltip>
-          {showLocationQuickFilter && <LocationFilter />}
-          <Select
-            data={finalData.map((d: any) => ({ value: d.label, label: `${d.label} | ${d.name}` }))}
-            value={selectedTeam}
-            onChange={setSelectedTeam}
-            limit={20}
-            placeholder="Find a team"
-            searchable
-            clearable
-          />
-        </div>
+      <div className="mt-4 flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4">
+        <Tooltip label="Clear filters">
+          <div className="cursor-pointer">
+            <IoMdEye
+              className="my-1.5 h-6 w-6 text-gray-600"
+              onClick={() => {
+                setLocation(null);
+              }}
+            />
+          </div>
+        </Tooltip>
+        {showLocationQuickFilter && <LocationFilter />}
+        <Select
+          data={finalData
+            .filter((d: any) => d?.included ?? true)
+            .map((d: any) => ({ value: d.label, label: `${d.label} | ${d.name}` }))}
+          value={selectedTeam}
+          onChange={setSelectedTeam}
+          limit={20}
+          placeholder="Find a team"
+          className="w-40"
+          searchable
+          clearable
+        />
+        <Select
+          data={renderOptions(axisOptions)}
+          value={xKey}
+          onChange={setXKey}
+          limit={20}
+          label="X-axis"
+          className="w-40"
+        />
+        <Select
+          data={renderOptions(axisOptions)}
+          value={yKey}
+          onChange={setYKey}
+          limit={20}
+          label="Y-axis"
+          className="w-40"
+        />
+        <Select
+          data={renderOptions([
+            { key: "constant", label: "Constant", group: "General" },
+            ...axisOptions,
+          ])}
+          value={zKey}
+          onChange={setZKey}
+          limit={20}
+          label="Radius"
+          className="w-40"
+        />
       </div>
-      <div className="mt-8 h-[500px] px-8">
-        <ResponsiveBubbles />
+      <div className="m-4">
+        <div>
+          <ParentSize>
+            {(parent) => (
+              <RawBubbles
+                width={parent.width}
+                height={500}
+                data={finalData}
+                xLabel={xOption?.label ?? ""}
+                yLabel={yOption?.label ?? ""}
+                showEqualLines={xOption?.units === yOption?.units}
+                selectedTeam={selectedTeam}
+              />
+            )}
+          </ParentSize>
+        </div>
       </div>
     </div>
   );
