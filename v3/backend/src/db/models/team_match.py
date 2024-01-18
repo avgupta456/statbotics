@@ -109,10 +109,15 @@ class TeamMatch(_TeamMatch, Model):
             "dq": self.dq,
             "surrogate": self.surrogate,
             "status": self.status,
-            "epa": {"total_points": self.epa, "post": self.post_epa, "breakdown": {}},
+            "epa": {
+                "total_points": self.epa,
+                "post": self.post_epa,
+                "breakdown": {},
+            },
         }
 
         if self.year >= 2016:
+            clean["epa"]["breakdown"]["total_points"] = self.epa
             for key, name in key_to_name[self.year].items():
                 clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
 

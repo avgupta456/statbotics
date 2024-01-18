@@ -305,6 +305,7 @@ class Year(_Year, Model):
 
         if self.year >= 2016:
             clean["breakdown"] = {
+                "total_points_mean": self.score_mean,
                 "foul_mean": self.foul_mean,
                 "no_foul_mean": self.no_foul_mean,
             }

@@ -73,7 +73,7 @@ function Header() {
   );
   const moonIcon = (
     <RxMoon
-      className="h-9 w-9 cursor-pointer rounded p-2 text-blue-600 hover:bg-gray-800"
+      className="h-9 w-9 cursor-pointer"
       stroke={2.5}
       onClick={() => setColorScheme("light")}
     />

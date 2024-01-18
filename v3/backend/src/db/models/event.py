@@ -134,21 +134,19 @@ class Event(_Event, Model):
 
         if self.year >= 2016:
             clean["metrics"]["rp_pred"] = {
-                "season": {
-                    "count": self.rp_count,
-                    key_to_name[self.year]["rp_1"]: {
-                        "error": self.epa_rp_1_error,
-                        "acc": self.epa_rp_1_acc,
-                        "ll": self.epa_rp_1_ll,
-                        "f1": self.epa_rp_1_f1,
-                    },
-                    key_to_name[self.year]["rp_2"]: {
-                        "error": self.epa_rp_2_error,
-                        "acc": self.epa_rp_2_acc,
-                        "ll": self.epa_rp_2_ll,
-                        "f1": self.epa_rp_2_f1,
-                    },
-                }
+                "count": self.rp_count,
+                key_to_name[self.year]["rp_1"]: {
+                    "error": self.epa_rp_1_error,
+                    "acc": self.epa_rp_1_acc,
+                    "ll": self.epa_rp_1_ll,
+                    "f1": self.epa_rp_1_f1,
+                },
+                key_to_name[self.year]["rp_2"]: {
+                    "error": self.epa_rp_2_error,
+                    "acc": self.epa_rp_2_acc,
+                    "ll": self.epa_rp_2_ll,
+                    "f1": self.epa_rp_2_f1,
+                },
             }
 
         return clean

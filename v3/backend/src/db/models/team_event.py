@@ -217,6 +217,10 @@ class TeamEvent(_TeamEvent, Model):
         }
 
         if self.year >= 2016:
+            clean["epa"]["breakdown"]["total_points"] = {
+                "mean": self.epa,
+                "sd": self.epa_sd,
+            }
             for key, name in key_to_name[self.year].items():
                 clean["epa"]["breakdown"][name] = {
                     "mean": getattr(self, f"{key}_epa"),

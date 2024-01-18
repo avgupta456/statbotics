@@ -98,7 +98,7 @@ const axisOptions2023 = [
   },
 ];
 
-const getAxisOptions = (year: number) => {
+export const getAxisOptions = (year: number) => {
   if (year < 2016) {
     return axisOptionsGeneral;
   }
@@ -129,4 +129,10 @@ const getAxisOptions = (year: number) => {
   return axisOptionsGeneral;
 };
 
-export default getAxisOptions;
+export const renderOptions = (options: { key: string; label: string; group: string }[]) => {
+  const groups = new Set(options.map((o) => o.group));
+  return Array.from(groups).map((group) => ({
+    group,
+    items: options.filter((o) => o.group === group).map((o) => ({ value: o.key, label: o.label })),
+  }));
+};

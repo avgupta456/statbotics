@@ -19,7 +19,8 @@ import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../utils/geography";
 import LocationFilter from "../location";
-import Select from "../select";
+import { Select } from "../select";
+import { renderOptions } from "./axisOptions";
 
 const initialTransform = {
   scaleX: 1,
@@ -406,16 +407,6 @@ function Bubbles({
 
   const xOption = axisOptions.find((a) => a.key === xKey);
   const yOption = axisOptions.find((a) => a.key === yKey);
-
-  const renderOptions = (options: { key: string; label: string; group: string }[]) => {
-    const groups = new Set(options.map((o) => o.group));
-    return Array.from(groups).map((group) => ({
-      group,
-      items: options
-        .filter((o) => o.group === group)
-        .map((o) => ({ value: o.key, label: o.label })),
-    }));
-  };
 
   return (
     <div>

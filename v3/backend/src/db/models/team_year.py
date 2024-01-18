@@ -163,10 +163,6 @@ class TeamYear(_TeamYear, Model):
             "district": self.district,
             "offseason": self.offseason,
             "epa": {
-                "total_points": {
-                    "mean": self.epa,
-                    "sd": self.epa_sd,
-                },
                 "unitless": self.unitless_epa,
                 "norm": self.norm_epa,
                 "conf": [lower, upper],
@@ -220,6 +216,10 @@ class TeamYear(_TeamYear, Model):
         }
 
         if self.year >= 2016:
+            clean["epa"]["breakdown"]["total_points"] = {
+                "mean": self.epa,
+                "sd": self.epa_sd,
+            }
             for key, name in key_to_name[self.year].items():
                 clean["epa"]["breakdown"][name] = {
                     "mean": getattr(self, f"{key}_epa"),

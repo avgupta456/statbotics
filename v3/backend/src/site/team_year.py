@@ -3,11 +3,14 @@ from typing import Any, List, Optional
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
-from src.api import get_team_years_cached, get_year_cached  # get_team_matches_cached
+from src.api import get_team_matches_cached, get_team_years_cached, get_year_cached
 from src.constants import CURR_YEAR
-from src.db.models import TeamYear, Year  # TeamMatch
+from src.db.models import TeamMatch, TeamYear, Year
 from src.site.helper import compress
-from src.utils.decorators import async_fail_gracefully_singular
+from src.utils.decorators import (
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
+)
 
 router = APIRouter()
 
@@ -43,14 +46,17 @@ async def read_team_years(
     return compress(out)
 
 
-"""
 @router.get("/team_year/{year}/{team}/matches")
-@async_fail_gracefully
+@async_fail_gracefully_plural
 async def read_team_matches(
-    response: Response, year: int, team: str, no_cache: bool = False
-) -> List[Dict[str, Any]]:
-    team_matches: List[APITeamMatch] = await get_team_matches(
+    response: StreamingResponse, year: int, team: str, no_cache: bool = False
+) -> Any:
+    team_matches: List[TeamMatch] = await get_team_matches_cached(
         team=team, year=year, no_cache=no_cache
     )
-    return [x.to_dict() for x in team_matches]
-"""
+
+    team_matches = sorted(team_matches, key=lambda x: x.time)
+
+    out = [x.to_dict() for x in team_matches]
+
+    return compress(out)

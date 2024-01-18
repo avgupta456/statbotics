@@ -1,8 +1,13 @@
 import { useState } from "react";
 
-import { Select as MantineSelect, SelectProps } from "@mantine/core";
+import {
+  MultiSelect as MantineMultiSelect,
+  Select as MantineSelect,
+  MultiSelectProps,
+  SelectProps,
+} from "@mantine/core";
 
-export default function Select({ value, searchable, ...props }: SelectProps) {
+export function Select({ value, searchable, ...props }: SelectProps) {
   const [searchValue, setSearchValue] = useState<string>("");
 
   return (
@@ -12,6 +17,22 @@ export default function Select({ value, searchable, ...props }: SelectProps) {
       onSearchChange={setSearchValue}
       selectFirstOptionOnChange={value === null && searchValue !== ""}
       withCheckIcon={false}
+      value={value}
+      {...props}
+    />
+  );
+}
+
+export function MultiSelect({ value, searchable, ...props }: MultiSelectProps) {
+  const [searchValue, setSearchValue] = useState<string>("");
+
+  return (
+    <MantineMultiSelect
+      searchable={searchable}
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
+      selectFirstOptionOnChange={searchValue !== ""}
+      withCheckIcon
       value={value}
       {...props}
     />

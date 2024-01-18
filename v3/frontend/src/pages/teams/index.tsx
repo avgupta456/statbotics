@@ -5,17 +5,19 @@ import { useRouter } from "next/router";
 
 import { Tabs } from "@mantine/core";
 
-import getTeamYearData from "../../api/teams";
-import getAxisOptions from "../../components/figures/axisOptions";
+import { getTeamYearData } from "../../api/teams";
+import { getAxisOptions } from "../../components/figures/axisOptions";
 import Bubbles from "../../components/figures/bubbles";
-import Select from "../../components/select";
+import YearLineChart from "../../components/figures/yearLine";
+import { Select } from "../../components/select";
 import TeamYearsTable from "../../components/tables/teamYears";
 import TeamYearsBreakdownTable from "../../components/tables/teamYearsBreakdown";
 import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import TabPanel from "../../layout/tabs";
-import { TeamYearData, YearData } from "../../types";
+import { TeamYearData } from "../../types";
+import { APITeamYear, APIYear } from "../../types/api";
 import { CURR_YEAR, YEAR_OPTIONS } from "../../utils/constants";
 import { parseCountry, parseDistrict, parseState } from "../../utils/geography";
 import { classnames } from "../../utils/utils";
@@ -112,12 +114,15 @@ export default function TeamsPage() {
   useEffect(() => {
     const getMiniDataForYear = async (yearNum: number) => {
       setLoadingMini(true);
-      const data: any = await getTeamYearData(yearNum, 50);
-      const teamYearsData: TeamYearData[] = data?.team_years;
-      const yearData: YearData = data?.year;
+      const data: TeamYearData = await getTeamYearData(yearNum, 50);
+      const teamYearsData: APITeamYear[] = data?.team_years;
+      const yearData: APIYear = data?.year;
       if (teamYearsData && yearData) {
-        setTeamYearMiniDataDict((prev: any) => ({ ...prev, [yearNum]: teamYearsData }));
-        setyearDataDict((prev: any) => ({ ...prev, [yearNum]: yearData }));
+        setTeamYearMiniDataDict((prev: { [key: number]: APITeamYear[] }) => ({
+          ...prev,
+          [yearNum]: teamYearsData,
+        }));
+        setyearDataDict((prev: { [key: number]: APIYear }) => ({ ...prev, [yearNum]: yearData }));
       } else {
         setError(true);
       }
@@ -126,12 +131,15 @@ export default function TeamsPage() {
 
     const getDataForYear = async (yearNum: number) => {
       setLoadingFull(true);
-      const data: any = await getTeamYearData(yearNum);
-      const teamYearsData: TeamYearData[] = data?.team_years;
-      const yearData: YearData = data?.year;
+      const data: TeamYearData = await getTeamYearData(yearNum);
+      const teamYearsData: APITeamYear[] = data?.team_years;
+      const yearData: APIYear = data?.year;
       if (teamYearsData && yearData) {
-        setTeamYearDataDict((prev: any) => ({ ...prev, [yearNum]: teamYearsData }));
-        setyearDataDict((prev: any) => ({ ...prev, [yearNum]: yearData }));
+        setTeamYearDataDict((prev: { [key: number]: APITeamYear[] }) => ({
+          ...prev,
+          [yearNum]: teamYearsData,
+        }));
+        setyearDataDict((prev: { [key: number]: APIYear }) => ({ ...prev, [yearNum]: yearData }));
       } else {
         setError(true);
       }
@@ -152,7 +160,7 @@ export default function TeamsPage() {
     error,
   ]);
 
-  let data: TeamYearData[] | undefined = teamYearDataDict[year] || teamYearMiniDataDict[year];
+  let data = teamYearDataDict[year] || teamYearMiniDataDict[year];
   if (data) {
     data = data.sort(
       (a, b) => (a?.epa?.ranks?.total?.rank ?? 0) - (b?.epa?.ranks?.total?.rank ?? 0),
@@ -230,7 +238,9 @@ export default function TeamsPage() {
             />
           </TabPanel>
           <TabPanel value="figures" loading={loading} error={error}>
-            Figures
+            <div className="mt-4 flex h-auto w-full flex-col items-center justify-center px-2">
+              <YearLineChart year={year} teamYears={data} />
+            </div>
           </TabPanel>
         </Tabs>
       </LocationContext.Provider>

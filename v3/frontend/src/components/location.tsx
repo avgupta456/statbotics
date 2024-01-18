@@ -1,6 +1,6 @@
 import { useLocation } from "../contexts/locationContext";
 import { COUNTRIES, DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../utils/geography";
-import Select from "./select";
+import { Select } from "./select";
 
 export default function LocationFilter() {
   const { location, setLocation } = useLocation();

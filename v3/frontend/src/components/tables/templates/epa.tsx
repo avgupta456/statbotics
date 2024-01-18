@@ -2,7 +2,7 @@ import { Tooltip } from "@mantine/core";
 
 import { useData } from "../../../contexts/dataContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
-import { EPAPercentiles } from "../../../types";
+import { EPAPercentiles } from "../../../types/api";
 import { classnames, roundSigFigs } from "../../../utils/utils";
 
 function getColorSubTemplate(percentiles: EPAPercentiles, colorOptions: string[], value: number) {

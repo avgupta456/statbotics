@@ -10,11 +10,11 @@ import { AgGridReact } from "ag-grid-react";
 
 import { useLocation } from "../../../contexts/locationContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
-import { TeamYearData } from "../../../types";
+import { APITeamYear } from "../../../types/api";
 import { CURR_YEAR } from "../../../utils/constants";
 import { classnames } from "../../../utils/utils";
 import LocationFilter from "../../location";
-import Select from "../../select";
+import { Select } from "../../select";
 
 export default function Table({
   year,
@@ -79,11 +79,11 @@ export default function Table({
 
   const [EPAContext, setEPAContext] = useState({});
 
-  const updateContext = (newData: TeamYearData[]) => {
+  const updateContext = (newData: APITeamYear[]) => {
     const newContext: any = {};
     EPAColumns.forEach((k) => {
-      const means = newData.map((d) => d?.epa?.breakdown?.[k]?.mean ?? d?.epa?.[k]?.mean);
-      const sds = newData.map((d) => d?.epa?.breakdown?.[k]?.sd ?? d?.epa?.[k]?.sd);
+      const means = newData.map((d) => d?.epa?.breakdown?.[k]?.mean);
+      const sds = newData.map((d) => d?.epa?.breakdown?.[k]?.sd);
       const lowBounds = newData.map((d) => d?.epa?.conf?.[0]);
       const highBounds = newData.map((d) => d?.epa?.conf?.[1]);
       const maxValues = means.map((m, i) => m + highBounds[i] * sds[i]);
@@ -231,7 +231,6 @@ export default function Table({
               </Tooltip>
             </div>
           )}
-
           {showExpand && (
             <Tooltip label={expanded ? "Collapse" : "Expand"}>
               <div className="cursor-pointer">
