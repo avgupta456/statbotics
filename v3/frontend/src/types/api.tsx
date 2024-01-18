@@ -70,7 +70,7 @@ export type APITeam = {
   team: string;
   name: string;
   country: string;
-  state: string;
+  state?: string;
   district?: string;
   rookie_year: number;
   offseason: boolean;
@@ -102,7 +102,7 @@ export type APITeamYear = {
   year: number;
   name: string;
   country: string;
-  state: string;
+  state?: string;
   district?: string;
   offseason: boolean;
   epa: {
@@ -118,8 +118,8 @@ export type APITeamYear = {
     ranks: {
       total: EPARank;
       country: EPARank;
-      state: EPARank;
-      district: EPARank;
+      state?: EPARank;
+      district?: EPARank;
     };
   };
   record: {
@@ -128,6 +128,12 @@ export type APITeamYear = {
   };
   district_points?: number;
   district_rank?: number;
+  competing?: {
+    this_week: boolean;
+    next_event_key: string;
+    next_event_name: string;
+    next_event_week: number;
+  };
 };
 
 export type Event = {
@@ -136,7 +142,7 @@ export type Event = {
   name: string;
   time: number;
   country: string;
-  state: string;
+  state?: string;
   district?: string;
   start_date: string;
   end_date: string;
@@ -172,7 +178,7 @@ export type APITeamEvent = {
   team_name: string;
   event_name: string;
   country: string;
-  state: string;
+  state?: string;
   district?: string;
   type: string;
   week: number;

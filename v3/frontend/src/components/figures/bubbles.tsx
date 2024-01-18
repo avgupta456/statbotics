@@ -17,6 +17,7 @@ import { Zoom } from "@visx/zoom";
 
 import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
+import { APITeamYear } from "../../types/api";
 import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../utils/geography";
 import LocationFilter from "../location";
 import { Select } from "../select";
@@ -40,6 +41,7 @@ const xLabelProps = { ...sharedLabelProps, y: 40 } as const;
 const yLabelProps = { ...sharedLabelProps, y: -30 } as const;
 
 type Datum = {
+  name: string;
   label: string;
   included: boolean;
   x: number;
@@ -331,12 +333,12 @@ function Bubbles({
   defaultAxes,
   showLocationQuickFilter = true,
 }: {
-  data: any[];
+  data: APITeamYear[];
   axisOptions: {
     key: string;
     label: string;
     // eslint-disable-next-line no-unused-vars
-    accessor: (d: any) => number;
+    accessor: (d: APITeamYear) => number;
     units: string;
     group: string;
   }[];
@@ -352,7 +354,7 @@ function Bubbles({
   const [zKey, setZKey] = useState<string | null>(defaultAxes.z);
 
   const getX = useCallback(
-    (d: any) => {
+    (d: APITeamYear) => {
       const axis = axisOptions.find((a) => a.key === xKey);
       return axis?.accessor(d) ?? 0;
     },
@@ -360,7 +362,7 @@ function Bubbles({
   );
 
   const getY = useCallback(
-    (d: any) => {
+    (d: APITeamYear) => {
       const axis = axisOptions.find((a) => a.key === yKey);
       return axis?.accessor(d) ?? 0;
     },
@@ -368,7 +370,7 @@ function Bubbles({
   );
 
   const getZ = useCallback(
-    (d: any) => {
+    (d: APITeamYear) => {
       const axis = axisOptions.find((a) => a.key === zKey);
       return axis?.accessor(d) ?? 0;
     },
@@ -376,7 +378,7 @@ function Bubbles({
   );
 
   const finalData = useMemo(() => {
-    const filterData = (d: any) => {
+    const filterData = (d: APITeamYear) => {
       if (!location) return true;
       const prefix = location.split("_")[0];
       const suffix = location.split("_")[1];
@@ -384,15 +386,15 @@ function Bubbles({
         return d?.country === suffix;
       }
       if (prefix === "state") {
-        return STATE_FULL_NAMES[d?.state] === suffix;
+        return STATE_FULL_NAMES[d?.state ?? ""] === suffix;
       }
       if (prefix === "district") {
-        return DISTRICT_FULL_NAMES[d?.district] === suffix;
+        return DISTRICT_FULL_NAMES[d?.district ?? ""] === suffix;
       }
       return false;
     };
 
-    const setAxes = (d: any) => {
+    const setAxes = (d: APITeamYear) => {
       const name = d?.name;
       const label = d?.team;
       const included = filterData(d);
@@ -424,8 +426,8 @@ function Bubbles({
         {showLocationQuickFilter && <LocationFilter />}
         <Select
           data={finalData
-            .filter((d: any) => d?.included ?? true)
-            .map((d: any) => ({ value: d.label, label: `${d.label} | ${d.name}` }))}
+            .filter((d: Datum) => d?.included ?? true)
+            .map((d: Datum) => ({ value: d.label, label: `${d.label} | ${d.name}` }))}
           value={selectedTeam}
           onChange={setSelectedTeam}
           limit={20}

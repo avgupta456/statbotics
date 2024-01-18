@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createContext, useContext } from "react";
 
-import { EventData, YearData } from "../types";
-import { APITeamYear } from "../types/api";
+import { EventData } from "../types";
+import { APITeamYear, APIYear } from "../types/api";
 import { CURR_YEAR } from "../utils/constants";
 
 export const DataContext = createContext({
@@ -15,7 +15,7 @@ export const DataContext = createContext({
   eventDataDict: {},
   setEventDataDict: (eventDataDict: { [key: number]: EventData }) => {},
   yearDataDict: {},
-  setyearDataDict: (yearDataDict: { [key: number]: YearData }) => {},
+  setYearDataDict: (yearDataDict: { [key: number]: APIYear }) => {},
   year: CURR_YEAR,
   setYear: (year: number) => {},
 } as {
@@ -25,8 +25,8 @@ export const DataContext = createContext({
   setTeamYearDataDict: any;
   eventDataDict: { [key: number]: EventData };
   setEventDataDict: any;
-  yearDataDict: { [key: number]: YearData };
-  setyearDataDict: any;
+  yearDataDict: { [key: number]: APIYear };
+  setYearDataDict: any;
   year: number;
   setYear: (year: number) => void;
 });

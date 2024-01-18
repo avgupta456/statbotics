@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 
 import { useData } from "../../contexts/dataContext";
+import { APITeamYear } from "../../types/api";
 import { getEPADef } from "./templates/epa";
 import { getCountryDef, getDistrictDef, getStateDef } from "./templates/locations";
 import { nameDef, rankDef, teamDef } from "./templates/misc";
 import Table from "./templates/table";
 
-export default function TeamYearsBreakdownTable({ data }: { data: any[] | undefined }) {
+export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] | undefined }) {
   const { year } = useData();
   const [expanded, setExpanded] = useState(false);
 
@@ -23,7 +24,7 @@ export default function TeamYearsBreakdownTable({ data }: { data: any[] | undefi
           headerName: "Total",
           headerClass: "ag-text-center",
           children: [
-            getEPADef("total_points", "Total", false),
+            getEPADef("total_points", "Total"),
             getEPADef("total_pieces", "Game Pieces"),
             getEPADef("links", "Links"),
             newExpanded && getEPADef("grid_points", "Grid Points"),
@@ -76,7 +77,7 @@ export default function TeamYearsBreakdownTable({ data }: { data: any[] | undefi
       getCountryDef(true),
       getStateDef(true),
       getDistrictDef(true),
-      getEPADef("total_points", "Total", false),
+      getEPADef("total_points", "Total"),
     ];
   };
 

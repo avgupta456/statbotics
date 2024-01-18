@@ -54,7 +54,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
 
   const selectedTeamNums: string[] = selectedTeams.map((team) => team);
 
-  const lineData: any[] = selectedTeamNums
+  const lineData = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
     .map((teamNum) => {
       const currTeamMatchData = allData[teamNum]?.filter(
@@ -62,8 +62,6 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
       );
       const currTeamYearData = teamYears?.find((teamYear) => teamYear.team === teamNum);
       const N = currTeamMatchData?.length || 0;
-      console.log(currTeamMatchData, yAxis);
-      console.log(currTeamYearData);
       const teamData = {
         id: teamNum,
         data:

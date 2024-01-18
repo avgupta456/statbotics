@@ -2,7 +2,7 @@ import { Tooltip } from "@mantine/core";
 
 import { useData } from "../../../contexts/dataContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
-import { EPAPercentiles } from "../../../types/api";
+import { APITeamYear, EPAPercentiles } from "../../../types/api";
 import { classnames, roundSigFigs } from "../../../utils/utils";
 
 function getColorSubTemplate(percentiles: EPAPercentiles, colorOptions: string[], value: number) {
@@ -40,7 +40,7 @@ export function EPACellRenderer({
   value,
   context,
 }: {
-  data: any;
+  data: APITeamYear;
   epaKey: string;
   value: number;
   context?: any;
@@ -53,7 +53,7 @@ export function EPACellRenderer({
   const { yearDataDict, year } = useData();
 
   const mean = value;
-  const sd = data?.epa?.breakdown?.[epaKey]?.sd || data?.epa?.[epaKey]?.sd || 0;
+  const sd = data?.epa?.breakdown?.[epaKey]?.sd || 0;
   const [rawLower, rawUpper] = data?.epa?.conf ?? [0, 0];
   const lower = mean + rawLower * sd;
   const upper = mean + rawUpper * sd;
@@ -181,8 +181,8 @@ export const UnitlessEPADef = {
   sortingOrder: ["desc", null],
 };
 
-export const getEPADef = (epaKey: string, headerName: string, inBreakdown: boolean = true) => ({
-  field: inBreakdown ? `epa.breakdown.${epaKey}.mean` : `epa.${epaKey}.mean`,
+export const getEPADef = (epaKey: string, headerName: string) => ({
+  field: `epa.breakdown.${epaKey}.mean`,
   headerName,
   minWidth: 120,
   cellRenderer: EPACellRenderer,

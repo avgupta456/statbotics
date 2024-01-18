@@ -16,7 +16,6 @@ import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import TabPanel from "../../layout/tabs";
-import { TeamYearData } from "../../types";
 import { APITeamYear, APIYear } from "../../types/api";
 import { CURR_YEAR, YEAR_OPTIONS } from "../../utils/constants";
 import { parseCountry, parseDistrict, parseState } from "../../utils/geography";
@@ -40,7 +39,7 @@ export default function TeamsPage() {
     setTeamYearMiniDataDict,
     teamYearDataDict,
     setTeamYearDataDict,
-    setyearDataDict,
+    setYearDataDict,
     year,
     setYear,
   } = useData();
@@ -114,7 +113,10 @@ export default function TeamsPage() {
   useEffect(() => {
     const getMiniDataForYear = async (yearNum: number) => {
       setLoadingMini(true);
-      const data: TeamYearData = await getTeamYearData(yearNum, 50);
+      const data: {
+        year: APIYear;
+        team_years: APITeamYear[];
+      } = await getTeamYearData(yearNum, 50);
       const teamYearsData: APITeamYear[] = data?.team_years;
       const yearData: APIYear = data?.year;
       if (teamYearsData && yearData) {
@@ -122,7 +124,7 @@ export default function TeamsPage() {
           ...prev,
           [yearNum]: teamYearsData,
         }));
-        setyearDataDict((prev: { [key: number]: APIYear }) => ({ ...prev, [yearNum]: yearData }));
+        setYearDataDict((prev: { [key: number]: APIYear }) => ({ ...prev, [yearNum]: yearData }));
       } else {
         setError(true);
       }
@@ -131,7 +133,7 @@ export default function TeamsPage() {
 
     const getDataForYear = async (yearNum: number) => {
       setLoadingFull(true);
-      const data: TeamYearData = await getTeamYearData(yearNum);
+      const data = await getTeamYearData(yearNum);
       const teamYearsData: APITeamYear[] = data?.team_years;
       const yearData: APIYear = data?.year;
       if (teamYearsData && yearData) {
@@ -139,7 +141,7 @@ export default function TeamsPage() {
           ...prev,
           [yearNum]: teamYearsData,
         }));
-        setyearDataDict((prev: { [key: number]: APIYear }) => ({ ...prev, [yearNum]: yearData }));
+        setYearDataDict((prev: { [key: number]: APIYear }) => ({ ...prev, [yearNum]: yearData }));
       } else {
         setError(true);
       }

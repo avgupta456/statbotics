@@ -1,6 +1,8 @@
 import Link from "next/link";
 
-export function TeamNameCellRenderer({ value, data }: { value: string; data: any }) {
+import { APITeamYear } from "../../../types/api";
+
+export function TeamNameCellRenderer({ value, data }: { value: string; data: APITeamYear }) {
   const { team, year } = data;
   const link = year ? `/teams/${team}/${year}` : `/teams/${team}`;
 
@@ -11,7 +13,7 @@ export function TeamNameCellRenderer({ value, data }: { value: string; data: any
   );
 }
 
-export function NextEventCellRenderer({ value, data }: { value: string; data: any }) {
+export function NextEventCellRenderer({ value, data }: { value: string; data: APITeamYear }) {
   const nextEventKey = data?.competing?.next_event_key;
 
   if (nextEventKey === null) {

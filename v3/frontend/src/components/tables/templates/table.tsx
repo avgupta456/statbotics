@@ -30,7 +30,7 @@ export default function Table({
   setExpanded = () => {},
 }: {
   year: number;
-  data: any[];
+  data: APITeamYear[];
   columnDefs: any[];
   EPAColumns: string[];
   showLocationQuickFilter: boolean;

@@ -49,8 +49,6 @@ function LineChart({
       ? enableArea
       : !(yAxis.toLowerCase().includes("rp") || yAxis.includes("Norm"));
 
-  console.log(data);
-
   return (
     <div className="flex h-[500px] w-full">
       <ResponsiveLine

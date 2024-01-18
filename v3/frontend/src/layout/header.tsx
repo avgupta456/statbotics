@@ -21,6 +21,7 @@ import { Spotlight, spotlight } from "@mantine/spotlight";
 
 import { getEventData, getTeamData } from "../api/header";
 import { usePreferences } from "../contexts/preferencesContext";
+import { APIShortEvent, APIShortTeam } from "../types/api";
 import { classnames, loaderProp } from "../utils/utils";
 
 function NavLink({ href, label }: { href: string; label: string }) {
@@ -79,8 +80,8 @@ function Header() {
     />
   );
 
-  const [teams, setTeams] = useState([]);
-  const [events, setEvents] = useState([]);
+  const [teams, setTeams] = useState<APIShortTeam[]>([]);
+  const [events, setEvents] = useState<APIShortEvent[]>([]);
 
   useEffect(() => {
     getTeamData().then((data) => setTeams(data));
