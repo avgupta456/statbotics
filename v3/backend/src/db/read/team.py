@@ -18,8 +18,8 @@ def get_team(team: str) -> Optional[Team]:
 
 def get_teams(
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     active: Optional[bool] = None,
     offseason: Optional[bool] = False,
     metric: Optional[str] = None,
@@ -32,10 +32,10 @@ def get_teams(
         data = session.query(TeamORM)
         if country is not None:
             data = data.filter(TeamORM.country == country)
-        if district is not None:
-            data = data.filter(TeamORM.district == district)
         if state is not None:
             data = data.filter(TeamORM.state == state)
+        if district is not None:
+            data = data.filter(TeamORM.district == district)
         if active is not None:
             data = data.filter(TeamORM.active == active)
         if offseason is not None:

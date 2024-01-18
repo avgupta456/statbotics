@@ -19,8 +19,8 @@ from src.db.models import TeamYear
 from src.db.read import get_team_year, get_team_years
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -32,7 +32,9 @@ async def read_root_team_year():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_team_year_cached(team: str, year: int) -> Tuple[bool, Optional[TeamYear]]:
+async def get_team_year_cached(
+    team: str, year: int, no_cache: bool = False
+) -> Tuple[bool, Optional[TeamYear]]:
     return (True, get_team_year(team=team, year=year))
 
 
@@ -41,22 +43,27 @@ async def get_team_years_cached(
     team: Optional[str] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[TeamYear]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_team_years(
             team=team,
             year=year,
             country=country,
-            district=district,
             state=state,
+            district=district,
             offseason=offseason,
             metric=metric,
             ascending=ascending,
@@ -71,7 +78,7 @@ async def get_team_years_cached(
     summary="Query a single team year",
     description="Returns a single Team Year object. Requires a team number and year.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_team_year(
     response: Response,
     team: str,
@@ -89,14 +96,14 @@ async def read_team_year(
     summary="Query multiple team years",
     description="Returns up to 1000 team years at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_team_years(
     response: Response,
     team: Optional[str] = team_query,
     year: Optional[int] = year_query,
     country: Optional[str] = country_query,
-    district: Optional[str] = district_query,
     state: Optional[str] = state_query,
+    district: Optional[str] = district_query,
     offseason: Optional[bool] = offseason_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
@@ -107,8 +114,8 @@ async def read_team_years(
         team=team,
         year=year,
         country=country,
-        district=district,
         state=state,
+        district=district,
         offseason=offseason,
         metric=metric,
         ascending=ascending,

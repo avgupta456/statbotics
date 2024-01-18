@@ -29,8 +29,8 @@ def get_teams(cache: bool = True) -> List[TeamDict]:
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
                 "offseason": True,
-                "state": clean_state(data_team["state_prov"]),
                 "country": data_team["country"],
+                "state": clean_state(data_team["state_prov"]),
             }
             out.append(new_data)
     return out
@@ -108,9 +108,6 @@ def get_events(
         if event["key"] in DISTRICT_OVERRIDES:
             event["district"] = DISTRICT_OVERRIDES[event["key"]]
 
-        # renames district divisions to district championship
-        # renames festival of championships to einsteins
-
         event_type_int = int(event["event_type"])
         event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
         event_type_dict[0] = EventType.REGIONAL
@@ -118,12 +115,10 @@ def get_events(
         event_type_dict[2] = EventType.DISTRICT_CMP
         event_type_dict[3] = EventType.CHAMPS_DIV
         event_type_dict[4] = EventType.EINSTEIN
-        event_type_dict[
-            5
-        ] = EventType.DISTRICT_CMP  # rename district divisions to district championship
-        event_type_dict[
-            6
-        ] = EventType.EINSTEIN  # rename festival of championships to einsteins
+        # rename district divisions to district championship
+        event_type_dict[5] = EventType.DISTRICT_CMP
+        # rename festival of championships to einsteins
+        event_type_dict[6] = EventType.EINSTEIN
         event_type_dict[99] = EventType.OFFSEASON
         event_type_dict[100] = EventType.PRESEASON
         event_type = event_type_dict[event_type_int]
@@ -168,8 +163,8 @@ def get_events(
             "year": year,
             "key": key,
             "name": cast(str, event["name"]),
-            "state": clean_state(event["state_prov"]),
             "country": cast(str, event["country"]),
+            "state": clean_state(event["state_prov"]),
             "district": clean_district(event["district"]),
             "start_date": cast(str, event["start_date"]),
             "end_date": cast(str, event["end_date"]),

@@ -20,8 +20,8 @@ from src.db.models import Event
 from src.db.read import get_event, get_events
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -33,7 +33,10 @@ async def read_root_event():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_event_cached(event: str) -> Tuple[bool, Optional[Event]]:
+async def get_event_cached(
+    event: str,
+    no_cache: bool = False,
+) -> Tuple[bool, Optional[Event]]:
     return (True, get_event(event_id=event))
 
 
@@ -41,8 +44,8 @@ async def get_event_cached(event: str) -> Tuple[bool, Optional[Event]]:
 async def get_events_cached(
     year: Optional[int] = None,
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     type: Optional[str] = None,
     week: Optional[int] = None,
     offseason: Optional[bool] = None,
@@ -50,14 +53,19 @@ async def get_events_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Event]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_events(
             year=year,
             country=country,
-            district=district,
             state=state,
+            district=district,
             type=type,
             week=week,
             offseason=offseason,
@@ -74,7 +82,7 @@ async def get_events_cached(
     summary="Query a single event",
     description="Returns a single Event object. Requires an event key, e.g. `2019ncwak`.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_event(response: Response, event: str) -> Dict[str, Any]:
     event_obj: Optional[Event] = await get_event_cached(event=event)
     if event_obj is None:
@@ -88,13 +96,13 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
     summary="Query multiple events",
     description="Returns up to 1000 events at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_events(
     response: Response,
     year: Optional[int] = year_query,
     country: Optional[str] = country_query,
-    district: Optional[str] = district_query,
     state: Optional[str] = state_query,
+    district: Optional[str] = district_query,
     type: Optional[str] = event_type_query,
     week: Optional[int] = week_query,
     offseason: Optional[bool] = offseason_query,
@@ -106,8 +114,8 @@ async def read_events(
     events = await get_events_cached(
         year=year,
         country=country,
-        district=district,
         state=state,
+        district=district,
         type=type,
         week=week,
         offseason=offseason,

@@ -1,5 +1,6 @@
 # import math
-from typing import Any, Tuple
+from functools import lru_cache
+from typing import Any, Optional, Tuple
 
 import numpy as np
 import scipy.stats  # type: ignore
@@ -10,18 +11,58 @@ def normal_prob_gt_0(mean: float, sd: float) -> float:
     return 0.5 * (1 + math.erf(mean / (sd * np.sqrt(2))))
 """
 
-# 10 / 3 represent the asymptote of the sample size of the moving average
-# 1 / (1 - p) where p = 0.7, the decay rate of the EWMA. By the Bayesian
+# 5 represent the asymptote of the sample size of the moving average
+# 1 / (1 - p) where p = 0.8, the decay rate of the EWMA. By the Bayesian
 # conjugate prior of the normal distribution, the posterior predictive of
 # the mean is a t-distribution with equal degrees of freedom
-distrib = scipy.stats.t(10 / 3)
 
 
-def t_prob_gt_0(mean: float, sd: float) -> float:
-    return distrib.cdf(mean / sd)  # type: ignore
+@lru_cache(maxsize=None)
+def get_t_distrib(int_n: int = 5000) -> Any:
+    n = int_n / 1000
+    return scipy.stats.t(n)
+
+
+def t_prob_gt_0(mean: float, sd: float, n: Any = 5) -> float:
+    t_distrib = get_t_distrib(int(n * 1000))
+    return t_distrib.cdf(mean / sd)  # type: ignore
 
 
 MAX_SKEW = 0.95
+
+
+@lru_cache(maxsize=None)
+def _get_skew_normal_95_conf_interval(skew_int: int) -> Tuple[Any, Any]:
+    skew = skew_int / 1e3  # for better caching
+
+    # https://en.wikipedia.org/wiki/Skew_normal_distribution
+    abs_skew = abs(skew)
+    sign_skew = 1 if skew >= 0 else -1
+
+    c = np.pi / 2
+    numerator = abs_skew ** (2 / 3)
+    denominator = numerator + ((4 - np.pi) / 2) ** (2 / 3)
+    delta = sign_skew * np.sqrt(c * numerator / denominator)
+    a = delta / np.sqrt(1 - delta**2)
+
+    # assumes mean 0, var 1 (rescale after)
+    omega = 1 / np.sqrt(1 - 2 * delta**2 / np.pi)
+    xi = -omega * delta * np.sqrt(2 / np.pi)
+
+    skewnorm_distrib = scipy.stats.skewnorm(a, loc=xi, scale=omega)
+    return skewnorm_distrib.interval(0.95)  # type: ignore
+
+
+def get_skew_normal_95_conf_interval(
+    mean: float, sd: float, skew: float, n: float = 1, n_digits: Optional[int] = None
+) -> Tuple[Any, Any]:
+    lower, upper = _get_skew_normal_95_conf_interval(int(skew * 1e3))
+    lower = mean + lower * sd / np.sqrt(n)
+    upper = mean + upper * sd / np.sqrt(n)
+    if n_digits is not None:
+        lower = np.round(lower, n_digits)  # type: ignore
+        upper = np.round(upper, n_digits)  # type: ignore
+    return lower, upper  # type: ignore
 
 
 class SkewNormal:
@@ -61,21 +102,21 @@ class SkewNormal:
         new_skew = (1 - alpha) * skew + alpha * new_skew
         return min(max(new_skew, -MAX_SKEW), MAX_SKEW)
 
-    def add_obs(self, x: Any, alpha: float) -> None:
+    def add_obs(self, x: Any, percent: float, weight: float) -> None:
         mean, var, skew, n = self.mean, self.var, self.skew, self.n
         skew_i = self.skew_i
 
-        new_mean = self.update_mean(mean, x, alpha)
-        new_var = self.update_var(var, mean, new_mean, x, alpha)
+        new_mean = self.update_mean(mean, x, percent)
+        new_var = self.update_var(var, mean, new_mean, x, percent)
         new_skew = self.update_skew(
-            skew, new_var[skew_i], mean[skew_i], new_mean[skew_i], x[skew_i], alpha
+            skew, new_var[skew_i], mean[skew_i], new_mean[skew_i], x[skew_i], percent
         )
-        new_n = n * (1 - alpha) + 1
+        new_n = n * (1 - percent) + 1
 
-        self.mean = new_mean
-        self.var = new_var
-        self.skew = new_skew
-        self.n = new_n
+        self.mean = weight * new_mean + (1 - weight) * mean
+        self.var = new_var * weight + (1 - weight) * var
+        self.skew = new_skew * weight + (1 - weight) * skew
+        self.n = new_n * weight + (1 - weight) * n
 
     def get_distrib(self) -> Any:
         # https://en.wikipedia.org/wiki/Skew_normal_distribution
@@ -97,19 +138,13 @@ class SkewNormal:
 
         return distrib
 
-    def conf_interval(self, alpha: float = 0.95) -> Tuple[Any, Any]:
-        distrib = self.get_distrib()
-        lower, upper = distrib.interval(alpha)  # type: ignore
-        lower = self.mean + lower * np.sqrt(self.var)
-        upper = self.mean + upper * np.sqrt(self.var)
-        return lower, upper
+    def conf_interval(self) -> Tuple[Any, Any]:
+        return get_skew_normal_95_conf_interval(self.mean, np.sqrt(self.var), self.skew)
 
-    def mean_conf_interval(self, alpha: float = 0.95) -> Any:
-        distrib = self.get_distrib()
-        lower, upper = distrib.interval(alpha)  # type: ignore
-        lower = self.mean + lower * np.sqrt(self.var / self.n)
-        upper = self.mean + upper * np.sqrt(self.var / self.n)
-        return lower, upper
+    def mean_conf_interval(self) -> Any:
+        return get_skew_normal_95_conf_interval(
+            self.mean, np.sqrt(self.var), self.skew, self.n
+        )
 
     def __repr__(self) -> str:
         return f"SkewNormal(mean={self.mean}, var={self.var}, skew={self.skew})"

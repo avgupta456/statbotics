@@ -8,16 +8,16 @@ class TeamDict(TypedDict):
     name: str
     rookie_year: int
     offseason: bool
-    state: Optional[str]
     country: Optional[str]
+    state: Optional[str]
 
 
 class EventDict(TypedDict):
     year: int
     key: str
     name: str
-    state: Optional[str]
     country: Optional[str]
+    state: Optional[str]
     district: Optional[str]
     start_date: str
     end_date: str

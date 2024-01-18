@@ -1,13 +1,14 @@
 from typing import Any, Dict, Tuple
 
-import attr
 from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS, values_callable
+from src.models.epa.math import get_skew_normal_95_conf_interval
 from src.types.enums import EventStatus, EventType
 
 
@@ -34,8 +35,8 @@ class TeamEventORM(Base, ModelORM):
     team_name: MS = mapped_column(String(100))
     event_name: MS = mapped_column(String(100))
     country: MOS = mapped_column(String(30), nullable=True)
-    district: MOS = mapped_column(String(10), nullable=True)
     state: MOS = mapped_column(String(10), nullable=True)
+    district: MOS = mapped_column(String(10), nullable=True)
     type: Mapped[EventType] = mapped_column(
         Enum(EventType, values_callable=values_callable)
     )
@@ -74,6 +75,7 @@ class TeamEventORM(Base, ModelORM):
     epa: MF = mapped_column(Float, index=True, default=0)
     epa_sd: MF = mapped_column(Float, default=0)
     epa_skew: MF = mapped_column(Float, default=0)
+    epa_n: MF = mapped_column(Float, default=0)
     auto_epa: MOF = mapped_column(Float, default=None)
     auto_epa_sd: MOF = mapped_column(Float, default=None)
     teleop_epa: MOF = mapped_column(Float, default=None)
@@ -131,14 +133,6 @@ _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
 
 
 class TeamEvent(_TeamEvent, Model):
-    def to_dict(self: "TeamEvent") -> Dict[str, Any]:
-        return attr.asdict(
-            self,
-            filter=attr.filters.exclude(
-                attr.fields(TeamEvent).id, attr.fields(TeamEvent).time
-            ),
-        )
-
     def sort(self: "TeamEvent") -> Tuple[str, int]:
         return (self.team, self.time)
 
@@ -153,3 +147,84 @@ class TeamEvent(_TeamEvent, Model):
         return "_".join(
             [self.team, self.event, str(self.status), str(self.count), str(self.rank)]
         )
+
+    def to_dict(self: "TeamEvent") -> Dict[str, Any]:
+        lower, upper = get_skew_normal_95_conf_interval(
+            0, 1, self.epa_skew, self.epa_n, 2
+        )
+
+        elim_wins = self.wins - self.qual_wins
+        elim_losses = self.losses - self.qual_losses
+        elim_ties = self.ties - self.qual_ties
+        elim_count = self.count - self.qual_count
+        elim_winrate = 0
+        if elim_count > 0:
+            elim_winrate = (elim_wins + elim_ties / 2) / elim_count
+
+        clean: Dict[str, Any] = {
+            "team": self.team,
+            "year": self.year,
+            "event": self.event,
+            "time": self.time,
+            "offseason": self.offseason,
+            "team_name": self.team_name,
+            "event_name": self.event_name,
+            "country": self.country,
+            "state": self.state,
+            "district": self.district,
+            "type": self.type,
+            "week": self.week,
+            "status": self.status,
+            "first_event": self.first_event,
+            "epa": {
+                "total_points": {
+                    "mean": self.epa,
+                    "sd": self.epa_sd,
+                },
+                "unitless": self.unitless_epa,
+                "norm": self.norm_epa,
+                "conf": [lower, upper],
+                "breakdown": {},
+                "stats": {
+                    "start": self.epa_start,
+                    "pre_elim": self.epa_pre_elim,
+                    "mean": self.epa_mean,
+                    "max": self.epa_max,
+                },
+            },
+            "record": {
+                "qual": {
+                    "wins": self.qual_wins,
+                    "losses": self.qual_losses,
+                    "ties": self.qual_ties,
+                    "count": self.qual_count,
+                    "winrate": self.qual_winrate,
+                    "rps": self.rps,
+                    "rps_per_match": self.rps_per_match,
+                    "rank": self.rank,
+                },
+                "elim": {
+                    "wins": elim_wins,
+                    "losses": elim_losses,
+                    "ties": elim_ties,
+                    "count": elim_count,
+                    "winrate": elim_winrate,
+                    "alliance": self.elim_alliance,
+                    "is_captain": self.is_captain,
+                },
+            },
+            "district_points": self.district_points,
+        }
+
+        if self.year >= 2016:
+            clean["epa"]["breakdown"]["total_points"] = {
+                "mean": self.epa,
+                "sd": self.epa_sd,
+            }
+            for key, name in key_to_name[self.year].items():
+                clean["epa"]["breakdown"][name] = {
+                    "mean": getattr(self, f"{key}_epa"),
+                    "sd": getattr(self, f"{key}_epa_sd"),
+                }
+
+        return clean

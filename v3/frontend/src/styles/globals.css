@@ -4,3 +4,29 @@
 @tailwind components;
 @tailwind utilities;
 
+.ag-header-cell.ag-text-center {
+  .ag-header-cell-label {
+    justify-content: center;
+  }
+}
+
+.ag-header-group-cell.ag-text-center {
+  justify-content: center;
+}
+
+.ag-col-border {
+  border-right: 1px solid var(--ag-border-color) !important;
+}
+.ag-header-cell-label {
+  text-align: center;
+  text-overflow: clip;
+  overflow: visible;
+  white-space: normal;
+}
+
+.mantine-Select-option {
+  &[aria-selected="true"] {
+    background-color: #007aff;
+    color: var(--mantine-color-white);
+  }
+}

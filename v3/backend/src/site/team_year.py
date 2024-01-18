@@ -1,33 +1,39 @@
-# from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
-from fastapi import APIRouter  # , Response
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 
-# from src.constants import CURR_YEAR
-# from src.site.aggregation import get_team_matches, get_team_years, get_year
-# from src.site.models import APITeamMatch, APITeamYear, APIYear
-# from src.utils.decorators import async_fail_gracefully
+from src.api import get_team_matches_cached, get_team_years_cached, get_year_cached
+from src.constants import CURR_YEAR
+from src.db.models import TeamMatch, TeamYear, Year
+from src.site.helper import compress
+from src.utils.decorators import (
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
+)
 
 router = APIRouter()
 
 
-"""
 @router.get("/team_years/{year}")
-@async_fail_gracefully
+@async_fail_gracefully_singular
 async def read_team_years(
-    response: Response,
+    response: StreamingResponse,
     year: int,
     limit: Optional[int] = None,
     metric: Optional[str] = None,
     no_cache: bool = False,
-) -> Dict[str, Any]:
-    year_obj: Optional[APIYear] = await get_year(year=year, no_cache=no_cache)
+) -> Any:
+    year_obj: Optional[Year] = await get_year_cached(year=year, no_cache=no_cache)
     if year_obj is None:
         raise Exception("Year not found")
 
-    team_years: List[APITeamYear] = await get_team_years(
+    team_years: List[TeamYear] = await get_team_years_cached(
         year=year,
+        offseason=False,
         limit=limit,
         metric=metric,
+        site=True,
         no_cache=no_cache,
     )
     team_years = [x for x in team_years if x.count > 0 or year >= CURR_YEAR]
@@ -37,17 +43,20 @@ async def read_team_years(
         "year": year_obj.to_dict(),
     }
 
-    return out
-"""
+    return compress(out)
 
-"""
+
 @router.get("/team_year/{year}/{team}/matches")
-@async_fail_gracefully
+@async_fail_gracefully_plural
 async def read_team_matches(
-    response: Response, year: int, team: str, no_cache: bool = False
-) -> List[Dict[str, Any]]:
-    team_matches: List[APITeamMatch] = await get_team_matches(
+    response: StreamingResponse, year: int, team: str, no_cache: bool = False
+) -> Any:
+    team_matches: List[TeamMatch] = await get_team_matches_cached(
         team=team, year=year, no_cache=no_cache
     )
-    return [x.to_dict() for x in team_matches]
-"""
+
+    team_matches = sorted(team_matches, key=lambda x: x.time)
+
+    out = [x.to_dict() for x in team_matches]
+
+    return compress(out)

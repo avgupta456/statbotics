@@ -1,10 +1,10 @@
 from typing import Any, Dict
 
-import attr
 from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOF, MOI, MS, values_callable
@@ -80,9 +80,6 @@ _TeamMatch = generate_attr_class("TeamMatch", TeamMatchORM)
 
 
 class TeamMatch(_TeamMatch, Model):
-    def to_dict(self: "TeamMatch") -> Dict[str, Any]:
-        return attr.asdict(self, filter=attr.filters.exclude(attr.fields(TeamMatch).id))
-
     def sort(self: "TeamMatch") -> int:
         return self.time
 
@@ -97,3 +94,31 @@ class TeamMatch(_TeamMatch, Model):
         return "_".join(
             [self.team, self.match, str(self.status), str(self.epa), str(self.post_epa)]
         )
+
+    def to_dict(self: "TeamMatch") -> Dict[str, Any]:
+        clean: Dict[str, Any] = {
+            "team": self.team,
+            "match": self.match,
+            "year": self.year,
+            "event": self.event,
+            "alliance": self.alliance,
+            "time": self.time,
+            "offseason": self.offseason,
+            "week": self.week,
+            "elim": self.elim,
+            "dq": self.dq,
+            "surrogate": self.surrogate,
+            "status": self.status,
+            "epa": {
+                "total_points": self.epa,
+                "post": self.post_epa,
+                "breakdown": {},
+            },
+        }
+
+        if self.year >= 2016:
+            clean["epa"]["breakdown"]["total_points"] = self.epa
+            for key, name in key_to_name[self.year].items():
+                clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
+
+        return clean

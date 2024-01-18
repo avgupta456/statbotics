@@ -21,8 +21,8 @@ from src.db.models import Alliance
 from src.db.read import get_alliance, get_alliances
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -35,7 +35,9 @@ async def read_root_alliance():
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_alliance_cached(
-    match: str, alliance: str
+    match: str,
+    alliance: str,
+    no_cache: bool = False,
 ) -> Tuple[bool, Optional[Alliance]]:
     return (True, get_alliance(match=match, alliance=alliance))
 
@@ -54,7 +56,12 @@ async def get_alliances_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Alliance]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_alliances(
@@ -79,7 +86,7 @@ async def get_alliances_cached(
     summary="Query a single alliance",
     description="Returns a single Alliance object. Requires a match key and alliance color, e.g. `2019ncwak_f1m1` and `red`.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_alliance(
     response: Response, match: str, alliance: str
 ) -> Dict[str, Any]:
@@ -97,7 +104,7 @@ async def read_alliance(
     summary="Query multiple alliances",
     description="Returns up to 1000 alliances at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_alliances(
     response: Response,
     team: Optional[str] = team_query,

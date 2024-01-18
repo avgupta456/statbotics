@@ -257,17 +257,17 @@ class Year(_Year, Model):
             ]
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self: "Year") -> Dict[str, Any]:
         clean: Dict[str, Any] = {
             "year": self.year,
             "score_mean": self.score_mean,
             "score_sd": self.score_sd,
             "percentiles": {
                 "total_points": {
-                    99: self.epa_99p,
-                    90: self.epa_90p,
-                    75: self.epa_75p,
-                    25: self.epa_25p,
+                    "p99": self.epa_99p,
+                    "p90": self.epa_90p,
+                    "p75": self.epa_75p,
+                    "p25": self.epa_25p,
                 },
             },
             "breakdown": {},
@@ -286,43 +286,38 @@ class Year(_Year, Model):
                         "mse": self.epa_champs_mse,
                     },
                 },
+                "score_pred": {
+                    "season": {
+                        "count": 2 * self.count,
+                        "rmse": self.epa_score_rmse,
+                        "mae": self.epa_score_mae,
+                        "error": self.epa_score_error,
+                    },
+                    "champs": {
+                        "count": 2 * self.champs_count,
+                        "rmse": self.epa_champs_score_rmse,
+                        "mae": self.epa_champs_score_mae,
+                        "error": self.epa_champs_score_error,
+                    },
+                },
             },
         }
 
         if self.year >= 2016:
             clean["breakdown"] = {
+                "total_points_mean": self.score_mean,
                 "foul_mean": self.foul_mean,
                 "no_foul_mean": self.no_foul_mean,
             }
-            for k in ["auto", "teleop", "endgame", "rp_1", "rp_2", "tiebreaker"] + [
-                f"comp_{i}" for i in range(1, 19)
-            ]:
-                if k not in key_to_name[self.year]:
-                    continue
-                name = key_to_name[self.year][k]
-                clean["breakdown"][f"{name}_mean"] = getattr(self, f"{k}_mean")
-                if k != "tiebreaker":
+            for key, name in key_to_name[self.year].items():
+                clean["breakdown"][f"{name}_mean"] = getattr(self, f"{key}_mean")
+                if key != "tiebreaker":
                     clean["percentiles"][name] = {
-                        99: getattr(self, f"{k}_epa_99p"),
-                        90: getattr(self, f"{k}_epa_90p"),
-                        75: getattr(self, f"{k}_epa_75p"),
-                        25: getattr(self, f"{k}_epa_25p"),
+                        "p99": getattr(self, f"{key}_epa_99p"),
+                        "p90": getattr(self, f"{key}_epa_90p"),
+                        "p75": getattr(self, f"{key}_epa_75p"),
+                        "p25": getattr(self, f"{key}_epa_25p"),
                     }
-
-            clean["metrics"]["score_pred"] = {
-                "season": {
-                    "count": 2 * self.count,
-                    "rmse": self.epa_score_rmse,
-                    "mae": self.epa_score_mae,
-                    "error": self.epa_score_error,
-                },
-                "champs": {
-                    "count": 2 * self.champs_count,
-                    "rmse": self.epa_champs_score_rmse,
-                    "mae": self.epa_champs_score_mae,
-                    "error": self.epa_champs_score_error,
-                },
-            }
 
             clean["metrics"]["rp_pred"] = {
                 "season": {

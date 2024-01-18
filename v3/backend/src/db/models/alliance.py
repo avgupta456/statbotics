@@ -1,11 +1,11 @@
 from typing import Any, Dict, List, Optional
 
-import attr
 import numpy as np
 from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS, values_callable
@@ -93,9 +93,6 @@ _Alliance = generate_attr_class("Alliance", AllianceORM)
 
 
 class Alliance(_Alliance, Model):
-    def to_dict(self: "Alliance") -> Dict[str, Any]:
-        return attr.asdict(self)
-
     def sort(self: "Alliance") -> int:
         return self.time or 0
 
@@ -160,3 +157,45 @@ class Alliance(_Alliance, Model):
                 self.comp_18 or 0,
             ]
         )
+
+    def to_dict(self: "Alliance") -> Dict[str, Any]:
+        clean: Dict[str, Any] = {
+            "match": self.match,
+            "alliance": self.alliance,
+            "year": self.year,
+            "event": self.event,
+            "offseason": self.offseason,
+            "week": self.week,
+            "elim": self.elim,
+            "time": self.time,
+            "status": self.status,
+            "teams": self.get_teams(),
+            "dq": self.get_dqs(),
+            "surrogate": self.get_surrogates(),
+            "pred": {
+                "winner": self.epa_winner,
+                "red_win_prob": self.epa_win_prob,
+                "score": self.score_pred,
+            },
+            "result": {
+                "winner": self.winner,
+                "score": self.score,
+            },
+        }
+
+        if self.year >= 2016:
+            rp_1_name = key_to_name[self.year]["rp_1"]
+            rp_2_name = key_to_name[self.year]["rp_2"]
+
+            clean["pred"][rp_1_name] = self.rp_1_pred
+            clean["pred"][rp_2_name] = self.rp_2_pred
+
+            for k in ["auto", "teleop", "endgame", "rp_1", "rp_2", "tiebreaker"] + [
+                f"comp_{i}" for i in range(1, 19)
+            ]:
+                if k not in key_to_name[self.year]:
+                    continue
+                name = key_to_name[self.year][k]
+                clean["result"][name] = getattr(self, k)
+
+        return clean

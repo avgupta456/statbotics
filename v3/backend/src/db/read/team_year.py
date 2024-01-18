@@ -26,8 +26,8 @@ def get_team_years(
     teams: Optional[List[str]] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
@@ -45,10 +45,10 @@ def get_team_years(
             data = data.filter(TeamYearORM.year == year)
         if country is not None:
             data = data.filter(TeamYearORM.country == country)
-        if district is not None:
-            data = data.filter(TeamYearORM.district == district)
         if state is not None:
             data = data.filter(TeamYearORM.state == state)
+        if district is not None:
+            data = data.filter(TeamYearORM.district == district)
         if offseason is not None:
             data = data.filter(TeamYearORM.offseason == offseason)
 

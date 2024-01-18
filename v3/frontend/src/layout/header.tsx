@@ -16,16 +16,16 @@ import {
   NavLink as MantineNavLink,
   Menu,
   Text,
-  useMantineColorScheme,
 } from "@mantine/core";
 import { Spotlight, spotlight } from "@mantine/spotlight";
 
-import { BACKEND_URL } from "../utils/constants";
-import { getWithExpiry, setWithExpiry } from "../utils/localStorage";
-import { classnames, loaderProp, log, round } from "../utils/utils";
+import { getEventData, getTeamData } from "../api/header";
+import { usePreferences } from "../contexts/preferencesContext";
+import { APIShortEvent, APIShortTeam } from "../types/api";
+import { classnames, loaderProp } from "../utils/utils";
 
 function NavLink({ href, label }: { href: string; label: string }) {
-  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const { colorScheme, setColorScheme } = usePreferences();
 
   useEffect(() => {
     if (colorScheme === "auto") {
@@ -41,7 +41,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
       classNames={{
         label: "text-base font-light",
         root: classnames(
-          "rounded",
+          "rounded h-9",
           colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
         ),
       }}
@@ -52,7 +52,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
 function Header() {
   const router = useRouter();
 
-  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const { colorScheme, setColorScheme } = usePreferences();
 
   const searchIcon = (
     <IconSearch
@@ -74,52 +74,14 @@ function Header() {
   );
   const moonIcon = (
     <RxMoon
-      className="h-9 w-9 cursor-pointer rounded p-2 text-blue-600 hover:bg-gray-800"
+      className="h-9 w-9 cursor-pointer"
       stroke={2.5}
       onClick={() => setColorScheme("light")}
     />
   );
 
-  async function getTeamData() {
-    const cacheData = getWithExpiry("full_team_list");
-    if (cacheData && cacheData?.length > 1000) {
-      log("Used Local Storage: Full Team List");
-      return cacheData;
-    }
-
-    const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/teams/all`, { next: { revalidate: 60 } });
-    log(`/teams/all took ${round(performance.now() - start, 0)}ms`);
-
-    if (!res.ok) {
-      return undefined;
-    }
-    const data = await res.json();
-    setWithExpiry("full_team_list", data, 60 * 60 * 24 * 7); // 1 week expiry
-    return data;
-  }
-
-  async function getEventData() {
-    const cacheData = getWithExpiry("full_event_list");
-    if (cacheData && cacheData?.length > 1000) {
-      log("Used Local Storage: Full Event List");
-      return cacheData;
-    }
-
-    const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/events/all`, { next: { revalidate: 60 } });
-    log(`events/all took ${round(performance.now() - start, 0)}ms`);
-
-    if (!res.ok) {
-      return undefined;
-    }
-    const data = await res.json();
-    setWithExpiry("full_event_list", data, 60 * 60 * 24 * 7); // 1 week expiry
-    return data;
-  }
-
-  const [teams, setTeams] = useState([]);
-  const [events, setEvents] = useState([]);
+  const [teams, setTeams] = useState<APIShortTeam[]>([]);
+  const [events, setEvents] = useState<APIShortEvent[]>([]);
 
   useEffect(() => {
     getTeamData().then((data) => setTeams(data));
@@ -132,16 +94,16 @@ function Header() {
   const seenTeams = new Set();
   const teamOptions = teams
     ?.filter((team: any) => {
-      const duplicate = seenTeams.has(team.num);
-      seenTeams.add(team.num);
+      const duplicate = seenTeams.has(team.team);
+      seenTeams.add(team.team);
       return !duplicate;
     })
-    ?.sort((a: any, b: any) => a.num - b.num)
+    ?.sort((a: any, b: any) => a.team - b.team)
     ?.map((team: any) => ({
-      id: `team-${team.num}`,
-      label: `${team.num} | ${team.team}`,
-      value: `${team.num} | ${team.team}`,
-      onClick: () => router.push(`/team/${team.num}`),
+      id: `team-${team.team}`,
+      label: `${team.team} | ${team.name}`,
+      value: `${team.team} | ${team.name}`,
+      onClick: () => router.push(`/team/${team.name}`),
     }));
 
   const seenEvents = new Set();
@@ -246,7 +208,7 @@ function Header() {
               <Menu.Target>
                 <Text
                   className={classnames(
-                    "cursor-pointer rounded px-3 py-2 text-base font-light",
+                    "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
                     colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
                   )}
                 >
@@ -272,7 +234,7 @@ function Header() {
               <Menu.Target>
                 <Text
                   className={classnames(
-                    "cursor-pointer rounded px-3 py-2 text-base font-light",
+                    "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
                     colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
                   )}
                 >

@@ -1,30 +1,26 @@
-from typing import Any, Dict, List  # , Optional
+from typing import Any, List  # , Optional
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 
-from src.site.aggregation import (
-    # get_event,
-    get_events,
-    # get_matches,
-    # get_team_events,
-    # get_team_matches,
-    # get_year,
+from src.api import (  # get_event,; get_matches,; get_team_events,; get_team_matches,; get_year,
+    get_events_cached,
 )
 
 # from src.site.hypo_event import read_hypothetical_event as _read_hypothetical_event
-from src.site.models import APIEvent  # , APIMatch, APITeamEvent, APITeamMatch, APIYear
-from src.utils.decorators import async_fail_gracefully_api_plural
+from src.db.models import Event  # , APIMatch, APITeamEvent, APITeamMatch, APIYear
+from src.site.helper import compress
+from src.utils.decorators import async_fail_gracefully_plural
 
 router = APIRouter()
 
 
 @router.get("/events/all")
-@async_fail_gracefully_api_plural
-async def read_all_events(
-    response: Response, no_cache: bool = False
-) -> List[Dict[str, Any]]:
-    events: List[APIEvent] = await get_events(no_cache=no_cache)
-    return [{"key": event.key, "name": event.name} for event in events]
+@async_fail_gracefully_plural
+async def read_all_events(response: StreamingResponse, no_cache: bool = False) -> Any:
+    events: List[Event] = await get_events_cached(no_cache=no_cache, site=True)
+    data = [{"key": event.key, "name": event.name} for event in events]
+    return compress(data)
 
 
 """

@@ -1,11 +1,28 @@
+/*
+INFRASTRUCTURE
+*/
+
 export const PROD = process.env.PROD === "True";
 
 export const BACKEND_URL = PROD
   ? "https://api.statbotics.io/v3/site"
   : "http://localhost:8000/v3/site";
 
+/*
+SEASON CONFIG
+*/
+
+export const START_YEAR = 2002;
 export const CURR_YEAR = 2024;
 export const CURR_WEEK = 1;
+
+export const YEAR_OPTIONS = Array.from({ length: CURR_YEAR - START_YEAR + 1 }, (_, i) =>
+  (CURR_YEAR - i).toString(),
+);
+
+/*
+COLORS
+*/
 
 export const CORRECT_COLOR = "#86CFA3";
 export const INCORRECT_COLOR = "#F77F84";
@@ -23,6 +40,10 @@ export const Category10Colors = [
   "#bcbd22",
   "#17becf",
 ];
+
+/*
+HISTORICAL MAPPINGS
+*/
 
 export const RPMapping = {
   2016: ["Breach RP", "Capture RP"],

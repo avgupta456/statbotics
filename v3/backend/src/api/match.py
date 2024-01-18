@@ -19,8 +19,8 @@ from src.db.models import Match
 from src.db.read import get_match, get_matches
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -32,7 +32,9 @@ async def read_root_match():
 
 
 @alru_cache(ttl=timedelta(minutes=5))
-async def get_match_cached(match: str) -> Tuple[bool, Optional[Match]]:
+async def get_match_cached(
+    match: str, no_cache: bool = False
+) -> Tuple[bool, Optional[Match]]:
     return (True, get_match(match=match))
 
 
@@ -48,7 +50,12 @@ async def get_matches_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[Match]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_matches(
@@ -71,7 +78,7 @@ async def get_matches_cached(
     summary="Query a single match",
     description="Returns a single Match object. Requires a match key, e.g. `2019ncwak_f1m1`.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_match(response: Response, match: str) -> Dict[str, Any]:
     match_obj: Optional[Match] = await get_match_cached(match=match)
     if match_obj is None:
@@ -85,7 +92,7 @@ async def read_match(response: Response, match: str) -> Dict[str, Any]:
     summary="Query multiple matches",
     description="Returns up to 1000 matches at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_matches(
     response: Response,
     team: Optional[str] = team_query,

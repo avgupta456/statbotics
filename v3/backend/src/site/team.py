@@ -1,41 +1,30 @@
-from typing import Any, Dict, List  # , Optional
+from typing import Any, List  # , Optional
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 
-from src.site.aggregation import (
-    # get_matches,
-    # get_team,
-    # get_team_events,
-    # get_team_matches,
-    # get_team_year,
-    # get_team_years,
-    get_teams,
-    # get_year,
+from src.api import (  # get_matches,; get_team,; get_team_events,; get_team_matches,; get_team_year,; get_team_years,; get_year,
+    get_teams_cached,
 )
-from src.site.models import (
-    # APIMatch,
-    APITeam,
-    # APITeamEvent,
-    # APITeamMatch,
-    # APITeamYear,
-    # APIYear,
+from src.db.models import (  # APIMatch,; APITeamEvent,; APITeamMatch,; APITeamYear,; APIYear,
+    Team,
 )
-from src.utils.decorators import async_fail_gracefully_api_plural
+from src.site.helper import compress
+from src.utils.decorators import async_fail_gracefully_plural
 
 router = APIRouter()
 
 
 @router.get("/teams/all")
-@async_fail_gracefully_api_plural
-async def read_all_teams(
-    response: Response, no_cache: bool = False
-) -> List[Dict[str, Any]]:
-    teams: List[APITeam] = await get_teams(no_cache=no_cache)
-    return [
-        {"num": x.num, "team": x.team, "active": x.active}
+@async_fail_gracefully_plural
+async def read_all_teams(response: StreamingResponse, no_cache: bool = False) -> Any:
+    teams: List[Team] = await get_teams_cached(site=True, no_cache=no_cache)
+    data = [
+        {"team": x.team, "name": x.name, "active": x.active}
         for x in teams
         if not x.offseason
     ]
+    return compress(data)
 
 
 """

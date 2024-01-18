@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 
 from src.db.models import Alliance, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.models.types import AlliancePred, Attribution, MatchPred

@@ -607,9 +607,9 @@ def clean_breakdown_2023(
     no_foul_points: int,
     foul_points: int,
 ) -> BreakdownDict:
-    auto_mobility_points = breakdown.get("autoMobilityPoints", 0)
-
-    auto_charge_station_points = breakdown.get("autoChargeStationPoints", 0)
+    auto_charge_station_points = breakdown.get("autoMobilityPoints", 0) + breakdown.get(
+        "autoChargeStationPoints", 0
+    )
 
     auto_com = breakdown.get("autoCommunity", {})
     teleop_com = breakdown.get("teleopCommunity", {})
@@ -628,7 +628,6 @@ def clean_breakdown_2023(
     amco = count_pieces_2023(auto_m, teleop_m, "Cone", "auto")
     atcu = count_pieces_2023(auto_t, teleop_t, "Cube", "auto")
     atco = count_pieces_2023(auto_t, teleop_t, "Cone", "auto")
-    auto_com_points = 3 * (abcu + abco) + 4 * (amcu + amco) + 6 * (atcu + atco)
 
     tbcu = count_pieces_2023(auto_b, teleop_b, "Cube", "teleop")
     tbco = count_pieces_2023(auto_b, teleop_b, "Cone", "teleop")
@@ -641,22 +640,33 @@ def clean_breakdown_2023(
     if breakdown.get("teleopGamePieceCount", 0) == 27:
         sc = breakdown.get("extraGamePieceCount", 0)
 
-    teleop_com_points = 2 * (tbcu + tbco) + 3 * (tmcu + tmco + sc) + 5 * (ttcu + ttco)
+    auto_pieces = abcu + abco + amcu + amco + atcu + atco
+    auto_grid_points = 3 * (abcu + abco) + 4 * (amcu + amco) + 6 * (atcu + atco)
+    teleop_pieces = tbcu + tbco + tmcu + tmco + ttcu + ttco
+    teleop_grid_points = 2 * (tbcu + tbco) + 3 * (tmcu + tmco + sc) + 5 * (ttcu + ttco)
+    bottom_pieces = abcu + abco + tbcu + tbco
+    middle_pieces = amcu + amco + tmcu + tmco
+    top_pieces = atcu + atco + ttcu + ttco
+    total_pieces = auto_pieces + teleop_pieces
+    cubes_scored = abcu + amcu + atcu + tbcu + tmcu + ttcu
+    cube_points = 3 * abcu + 4 * amcu + 6 * atcu + 2 * tbcu + 3 * tmcu + 5 * ttcu
+    cones_scored = abco + amco + atco + tbco + tmco + ttco
+    cone_points = 3 * abco + 4 * amco + 6 * atco + 2 * tbco + 3 * tmco + 5 * ttco
+    grid_points = auto_grid_points + teleop_grid_points
 
     links = len(breakdown.get("links", []) or [])
     link_points = 5 * links
 
-    endgame_charge_station_points = breakdown.get("endGameChargeStationPoints", 0)
-    endgame_park_points = breakdown.get("endGameParkPoints", 0)
-
-    charge_station_points = auto_charge_station_points + endgame_charge_station_points
+    endgame_charge_station_points = breakdown.get(
+        "endGameChargeStationPoints", 0
+    ) + breakdown.get("endGameParkPoints", 0)
 
     rp_1 = bool(breakdown.get("sustainabilityBonusAchieved", False))
     rp_2 = bool(breakdown.get("activationBonusAchieved", False))
 
-    auto_points = auto_charge_station_points + auto_com_points + auto_mobility_points
-    teleop_points = teleop_com_points + link_points
-    endgame_points = endgame_charge_station_points + endgame_park_points
+    auto_points = auto_charge_station_points + auto_grid_points
+    teleop_points = teleop_grid_points + link_points
+    endgame_points = endgame_charge_station_points
 
     tiebreaker = no_foul_points
 
@@ -670,24 +680,24 @@ def clean_breakdown_2023(
         "rp_1": rp_1,
         "rp_2": rp_2,
         "tiebreaker": tiebreaker,
-        "comp_1": auto_mobility_points,
-        "comp_2": auto_charge_station_points,
-        "comp_3": abcu,
-        "comp_4": abco,
-        "comp_5": amcu,
-        "comp_6": amco,
-        "comp_7": atcu,
-        "comp_8": atco,
-        "comp_9": tbcu,
-        "comp_10": tbco,
-        "comp_11": tmcu,
-        "comp_12": tmco,
-        "comp_13": ttcu,
-        "comp_14": ttco,
-        "comp_15": links,
+        "comp_1": auto_charge_station_points,
+        "comp_2": auto_pieces,
+        "comp_3": auto_grid_points,
+        "comp_4": teleop_pieces,
+        "comp_5": teleop_grid_points,
+        "comp_6": bottom_pieces,
+        "comp_7": middle_pieces,
+        "comp_8": top_pieces,
+        "comp_9": cubes_scored,
+        "comp_10": cube_points,
+        "comp_11": cones_scored,
+        "comp_12": cone_points,
+        "comp_13": total_pieces,
+        "comp_14": links,
+        "comp_15": grid_points,
         "comp_16": endgame_charge_station_points,
-        "comp_17": endgame_park_points,
-        "comp_18": charge_station_points,
+        "comp_17": None,
+        "comp_18": None,
     }
 
 

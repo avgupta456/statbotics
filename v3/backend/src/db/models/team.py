@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
 
@@ -58,3 +60,41 @@ class Team(_Team, Model):
     def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return "_".join([self.team, str(self.count)])
+
+    def to_dict(self: "Team") -> Dict[str, Any]:
+        return {
+            "team": self.team,
+            "name": self.name,
+            "country": self.country,
+            "state": self.state,
+            "district": self.district,
+            "rookie_year": self.rookie_year,
+            "offseason": self.offseason,
+            "active": self.active,
+            "colors": {
+                "primary": self.primary_color,
+                "secondary": self.secondary_color,
+            },
+            "record": {
+                "season": {
+                    "wins": self.wins,
+                    "losses": self.losses,
+                    "ties": self.ties,
+                    "count": self.count,
+                    "winrate": self.winrate,
+                },
+                "full": {
+                    "wins": self.full_wins,
+                    "losses": self.full_losses,
+                    "ties": self.full_ties,
+                    "count": self.full_count,
+                    "winrate": self.full_winrate,
+                },
+            },
+            "norm_epa": {
+                "current": self.norm_epa,
+                "recent": self.norm_epa_recent,
+                "mean": self.norm_epa_mean,
+                "max": self.norm_epa_max,
+            },
+        }

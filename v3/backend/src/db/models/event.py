@@ -1,10 +1,10 @@
 from typing import Any, Dict
 
-import attr
 from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MI, MOF, MOI, MOS, MS, values_callable
@@ -25,8 +25,8 @@ class EventORM(Base, ModelORM):
     name: MS = mapped_column(String(100))
     time: MI = mapped_column(Integer)
     country: MOS = mapped_column(String(30), nullable=True)
-    district: MOS = mapped_column(String(10), nullable=True)
     state: MOS = mapped_column(String(10), nullable=True)
+    district: MOS = mapped_column(String(10), nullable=True)
     start_date: MS = mapped_column(String(10))
     end_date: MS = mapped_column(String(10))
 
@@ -80,11 +80,6 @@ _Event = generate_attr_class("Event", EventORM)
 
 
 class Event(_Event, Model):
-    def to_dict(self: "Event") -> Dict[str, Any]:
-        return attr.asdict(
-            self, filter=attr.filters.exclude(attr.fields(Event).current_match)
-        )
-
     def pk(self: "Event") -> str:
         return self.key
 
@@ -96,3 +91,62 @@ class Event(_Event, Model):
         return "_".join(
             [self.key, self.status, str(self.current_match), str(self.qual_matches)]
         )
+
+    def to_dict(self: "Event") -> Dict[str, Any]:
+        clean: Dict[str, Any] = {
+            "key": self.key,
+            "year": self.year,
+            "name": self.name,
+            "time": self.time,
+            "country": self.country,
+            "state": self.state,
+            "district": self.district,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+            "type": self.type,
+            "week": self.week,
+            "offseason": self.offseason,
+            "video": self.video,
+            "status": self.status,
+            "qual_matches": self.qual_matches,
+            "epa": {
+                "max": self.epa_max,
+                "top_8": self.epa_top_8,
+                "top_24": self.epa_top_24,
+                "mean": self.epa_mean,
+                "sd": self.epa_sd,
+            },
+            "metrics": {
+                "win_prob": {
+                    "count": self.count,
+                    "conf": self.epa_conf,
+                    "acc": self.epa_acc,
+                    "mse": self.epa_mse,
+                },
+                "score_pred": {
+                    "count": 2 * self.count,
+                    "rmse": self.epa_score_rmse,
+                    "mae": self.epa_score_mae,
+                    "error": self.epa_score_error,
+                },
+            },
+        }
+
+        if self.year >= 2016:
+            clean["metrics"]["rp_pred"] = {
+                "count": self.rp_count,
+                key_to_name[self.year]["rp_1"]: {
+                    "error": self.epa_rp_1_error,
+                    "acc": self.epa_rp_1_acc,
+                    "ll": self.epa_rp_1_ll,
+                    "f1": self.epa_rp_1_f1,
+                },
+                key_to_name[self.year]["rp_2"]: {
+                    "error": self.epa_rp_2_error,
+                    "acc": self.epa_rp_2_acc,
+                    "ll": self.epa_rp_2_ll,
+                    "f1": self.epa_rp_2_f1,
+                },
+            }
+
+        return clean

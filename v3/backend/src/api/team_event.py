@@ -22,8 +22,8 @@ from src.db.models import TeamEvent
 from src.db.read import get_team_event, get_team_events
 from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
-    async_fail_gracefully_api_plural,
-    async_fail_gracefully_api_singular,
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -36,7 +36,7 @@ async def read_root_team_event():
 
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_event_cached(
-    team: str, event: str
+    team: str, event: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamEvent]]:
     return (True, get_team_event(team=team, event=event))
 
@@ -47,8 +47,8 @@ async def get_team_events_cached(
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
-    district: Optional[str] = None,
     state: Optional[str] = None,
+    district: Optional[str] = None,
     type: Optional[int] = None,
     week: Optional[int] = None,
     offseason: Optional[bool] = None,
@@ -56,7 +56,12 @@ async def get_team_events_cached(
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
+    site: bool = False,
+    no_cache: bool = False,
 ) -> Tuple[bool, List[TeamEvent]]:
+    if not site:
+        limit = min(limit or 1000, 1000)
+
     return (
         True,
         get_team_events(
@@ -64,8 +69,8 @@ async def get_team_events_cached(
             year=year,
             event=event,
             country=country,
-            district=district,
             state=state,
+            district=district,
             type=type,
             week=week,
             offseason=offseason,
@@ -82,7 +87,7 @@ async def get_team_events_cached(
     summary="Query a single team event",
     description="Returns a single Team Event object. Requires a team number and event key, e.g. `5511` and `2019ncwak`.",
 )
-@async_fail_gracefully_api_singular
+@async_fail_gracefully_singular
 async def read_team_event(response: Response, team: str, event: str) -> Dict[str, Any]:
     team_event_obj: Optional[TeamEvent] = await get_team_event_cached(
         team=team, event=event
@@ -98,15 +103,15 @@ async def read_team_event(response: Response, team: str, event: str) -> Dict[str
     summary="Query multiple team events",
     description="Returns up to 1000 team events at a time. Specify limit and offset to page through results.",
 )
-@async_fail_gracefully_api_plural
+@async_fail_gracefully_plural
 async def read_team_events(
     response: Response,
     team: Optional[str] = team_query,
     year: Optional[int] = year_query,
     event: Optional[str] = event_query,
     country: Optional[str] = country_query,
-    district: Optional[str] = district_query,
     state: Optional[str] = state_query,
+    district: Optional[str] = district_query,
     type: Optional[int] = event_type_query,
     week: Optional[int] = week_query,
     offseason: Optional[bool] = offseason_query,
@@ -120,8 +125,8 @@ async def read_team_events(
         year=year,
         event=event,
         country=country,
-        district=district,
         state=state,
+        district=district,
         type=type,
         week=week,
         offseason=offseason,

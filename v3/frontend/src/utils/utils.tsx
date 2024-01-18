@@ -7,6 +7,18 @@ export const round = (num: number, digits: number = 1) => {
   return Math.round(num * factor) / factor;
 };
 
+export const roundSigFigs = (num: number, sigFigs: number = 2, maxRound: number = 10) => {
+  // handles positives, negatives and 0.x numbers
+  // If starts with 1, round to sigFigs + 1
+  if (num === 0) return 0;
+  const newSigFigs = sigFigs + (num.toString().startsWith("1") ? 1 : 0);
+  const absNum = Math.abs(num);
+  const digits = Math.floor(Math.log10(absNum)) + 1;
+  // never round to maxRound digits or more (0.xx)
+  const factor = 10 ** Math.min(maxRound, newSigFigs - digits);
+  return Math.round(num * factor) / factor;
+};
+
 export const truncate = (str: string, length: number) => {
   if (str.length > length) {
     return `${str.substring(0, length - 3)}...`;
