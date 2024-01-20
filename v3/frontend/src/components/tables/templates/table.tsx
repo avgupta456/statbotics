@@ -12,7 +12,7 @@ import { usePreferences } from "../../../contexts/preferencesContext";
 import { APITeamYear } from "../../../types/api";
 import { CURR_YEAR } from "../../../utils/constants";
 import { classnames } from "../../../utils/utils";
-import FilterBar from "../../filterBar";
+import FilterBar, { LocationFilter } from "../../filterBar";
 import { Select } from "../../select";
 
 export default function Table({
@@ -48,7 +48,7 @@ export default function Table({
 
   // Location Quick Filter
 
-  const { location } = useLocation();
+  const { location, setLocation } = useLocation();
 
   // Projection Filter, Competing This Week Filter
 
@@ -167,9 +167,14 @@ export default function Table({
     <div>
       <div className="mx-2 mb-2 flex flex-row">
         <FilterBar
-          onClearFilters={() => gridRef?.current?.api?.setFilterModel(null)}
-          showLocationFilter={showLocationQuickFilter}
+          onClearFilters={() => {
+            if (location) {
+              setLocation(null);
+            }
+            gridRef?.current?.api?.setFilterModel(null);
+          }}
         >
+          {showLocationQuickFilter && <LocationFilter />}
           {year === CURR_YEAR && (showProjectionsFilter || showCompetingThisWeekFilter) && (
             <MultiSelect
               placeholder={multiSelectValue.length === 0 ? "Other filters" : ""}

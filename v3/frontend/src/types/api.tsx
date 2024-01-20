@@ -136,7 +136,7 @@ export type APITeamYear = {
   };
 };
 
-export type Event = {
+export type APIEvent = {
   key: string;
   year: number;
   name: string;

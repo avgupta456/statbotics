@@ -18,7 +18,7 @@ import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import { APITeamYear } from "../../types/api";
 import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../utils/geography";
-import FilterBar from "../filterBar";
+import FilterBar, { LocationFilter } from "../filterBar";
 import { Select } from "../select";
 import { renderOptions } from "./axisOptions";
 
@@ -344,7 +344,7 @@ function Bubbles({
   defaultAxes: { x: string; y: string; z: string };
   showLocationQuickFilter?: boolean;
 }) {
-  const { location } = useLocation();
+  const { location, setLocation } = useLocation();
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
@@ -412,9 +412,10 @@ function Bubbles({
   return (
     <div>
       <FilterBar
-        showLocationFilter={showLocationQuickFilter}
-        className="mt-4 flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4"
+        className="flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4"
+        onClearFilters={() => setLocation(null)}
       >
+        {showLocationQuickFilter && <LocationFilter />}
         <Select
           data={finalData
             .filter((d: Datum) => d?.included ?? true)

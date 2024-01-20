@@ -44,17 +44,13 @@ export function LocationFilter() {
 
 export default function FilterBar({
   onClearFilters = () => {},
-  showLocationFilter,
   className = "flex items-center gap-4",
   children,
 }: {
   onClearFilters?: () => void;
-  showLocationFilter: boolean;
   className?: string;
   children: ReactNode;
 }) {
-  const { setLocation } = useLocation();
-
   return (
     <div className={className}>
       <Tooltip label="Clear filters">
@@ -62,15 +58,11 @@ export default function FilterBar({
           <IoMdEye
             className="my-1.5 h-6 w-6 text-gray-600"
             onClick={() => {
-              if (showLocationFilter) {
-                setLocation(null);
-              }
               onClearFilters();
             }}
           />
         </div>
       </Tooltip>
-      {showLocationFilter && <LocationFilter />}
       {children}
     </div>
   );

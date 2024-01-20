@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import { Tabs } from "@mantine/core";
 
-import { getTeamYearData } from "../../api/teams";
+import { getYearTeamYears } from "../../api/teams";
 import { getAxisOptions } from "../../components/figures/axisOptions";
 import Bubbles from "../../components/figures/bubbles";
 import YearLineChart from "../../components/figures/yearLine";
@@ -18,10 +18,7 @@ import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { APITeamYear, APIYear } from "../../types/api";
 
 export default function TeamsPage() {
-  const router = useRouter();
-
-  const { isReady } = router;
-
+  const { isReady } = useRouter();
   const {
     teamYearMiniDataDict,
     setTeamYearMiniDataDict,
@@ -29,6 +26,7 @@ export default function TeamsPage() {
     setTeamYearDataDict,
     setYearDataDict,
     year,
+    setYear,
   } = useData();
 
   const [location, setLocation] = useState<string | null>(null);
@@ -48,12 +46,13 @@ export default function TeamsPage() {
   useEffect(() => {
     const getMiniDataForYear = async (yearNum: number) => {
       setLoadingMini(true);
-      const data: {
+      const {
+        year: yearData,
+        team_years: teamYearsData,
+      }: {
         year: APIYear;
         team_years: APITeamYear[];
-      } = await getTeamYearData(yearNum, 50);
-      const teamYearsData: APITeamYear[] = data?.team_years;
-      const yearData: APIYear = data?.year;
+      } = await getYearTeamYears(yearNum, 50);
       if (teamYearsData && yearData) {
         setTeamYearMiniDataDict((prev: { [key: number]: APITeamYear[] }) => ({
           ...prev,
@@ -68,7 +67,7 @@ export default function TeamsPage() {
 
     const getDataForYear = async (yearNum: number) => {
       setLoadingFull(true);
-      const data = await getTeamYearData(yearNum);
+      const data = await getYearTeamYears(yearNum);
       const teamYearsData: APITeamYear[] = data?.team_years;
       const yearData: APIYear = data?.year;
       if (teamYearsData && yearData) {
@@ -88,14 +87,7 @@ export default function TeamsPage() {
     } else if (isReady && !error && !teamYearDataDict[year] && !loadingFull) {
       getDataForYear(year);
     }
-  }, [
-    teamYearMiniDataDict,
-    setTeamYearMiniDataDict,
-    teamYearDataDict,
-    setTeamYearDataDict,
-    year,
-    error,
-  ]);
+  }, [teamYearMiniDataDict, teamYearDataDict, year]);
 
   let data = teamYearDataDict[year] || teamYearMiniDataDict[year];
   if (data) {
@@ -112,6 +104,10 @@ export default function TeamsPage() {
         setTab={setTab}
         defaultTab="insights"
         tabOptions={["insights", "breakdown", "bubble", "figures"]}
+        year={year}
+        setYear={setYear}
+        location={location}
+        setLocation={setLocation}
       />
       <TabsLayout showYearSelector title="Teams" tab={tab} setTab={setTab} defaultTab="insights">
         <Tabs.List>
@@ -134,14 +130,14 @@ export default function TeamsPage() {
             Figures
           </Tabs.Tab>
         </Tabs.List>
-        <TabPanel value="insights" error={error}>
-          <div className="mt-4 h-full w-full">
+        <TabPanel value="insights" loading={loading} error={error}>
+          <div className="h-full w-full">
             <TeamYearsTable data={data} />
           </div>
         </TabPanel>
         {year >= 2016 && (
           <TabPanel value="breakdown" loading={loading} error={error}>
-            <div className="mt-4 h-full w-full">
+            <div className="h-full w-full">
               <TeamYearsBreakdownTable data={data} />
             </div>
           </TabPanel>
@@ -158,7 +154,7 @@ export default function TeamsPage() {
           />
         </TabPanel>
         <TabPanel value="figures" loading={loading} error={error}>
-          <div className="mt-4 flex h-auto w-full flex-col items-center justify-center px-2">
+          <div className="flex h-auto w-full flex-col items-center justify-center px-2">
             <YearLineChart year={year} teamYears={data} />
           </div>
         </TabPanel>

@@ -4,7 +4,7 @@ import { GiPodium } from "react-icons/gi";
 
 import { Tooltip } from "@mantine/core";
 
-import { getTeamYearMatches } from "../../api/teams";
+import { getTeamYearTeamMatches } from "../../api/teams";
 import { APITeamMatch, APITeamYear } from "../../types/api";
 import { MultiSelect, Select } from "../select";
 import { getAxisOptions, renderOptions } from "./axisOptions";
@@ -34,7 +34,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
     await Promise.all(
       newTeams.map(async (teamNum) => {
         if (!newAllData[teamNum]) {
-          const teamData = await getTeamYearMatches(year, teamNum);
+          const teamData = await getTeamYearTeamMatches(year, teamNum);
           newAllData[teamNum] = teamData;
         }
       }),
@@ -82,15 +82,16 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
 
   return (
     <div className="flex w-full flex-col">
-      <div className="mx-auto mb-4 flex flex-row justify-center md:w-4/5">
+      <div className="mx-auto mb-2 flex flex-row justify-center md:w-4/5">
         <Select
-          className="mr-2 h-10 w-36 flex-shrink-0 text-sm"
+          className="mr-2 h-9 w-36 flex-shrink-0 text-sm"
           data={renderOptions(getAxisOptions(year))}
           value={yAxis?.value}
           onChange={(_value, option) => setYAxis(option)}
         />
         <MultiSelect
-          className="mr-2 h-10 flex-grow text-sm"
+          className="mr-2 h-9 flex-grow text-sm"
+          placeholder={selectedTeams.length === 0 ? "Search teams" : ""}
           data={teamOptions}
           onChange={addTeams}
           value={selectedTeams}
@@ -100,7 +101,10 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
         {topTeams && (
           <Tooltip label="Show Top 3 Teams" className="ml-2">
             <div className="cursor-pointer">
-              <GiPodium className="m-2 h-6 w-6 text-gray-600" onClick={() => addTeams(topTeams)} />
+              <GiPodium
+                className="m-1.5 h-6 w-6 text-gray-600"
+                onClick={() => addTeams(topTeams)}
+              />
             </div>
           </Tooltip>
         )}
@@ -108,7 +112,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
           <Tooltip label="Show % of Season" className="ml-2">
             <div className="cursor-pointer">
               <AiOutlinePercentage
-                className="m-2 h-6 w-6 text-gray-600"
+                className="m-1.5 h-6 w-6 text-gray-600"
                 onClick={() => setXAxis("season")}
               />
             </div>

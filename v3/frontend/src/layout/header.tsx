@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { Spotlight, spotlight } from "@mantine/spotlight";
 
-import { getEventData, getTeamData } from "../api/header";
+import { getAllEvents, getAllTeams } from "../api/header";
 import { usePreferences } from "../contexts/preferencesContext";
 import { APIShortEvent, APIShortTeam } from "../types/api";
 import { classnames, loaderProp } from "../utils/utils";
@@ -74,7 +74,7 @@ function Header() {
   );
   const moonIcon = (
     <RxMoon
-      className="h-9 w-9 cursor-pointer"
+      className="h-9 w-9 cursor-pointer rounded p-2 hover:bg-gray-800"
       stroke={2.5}
       onClick={() => setColorScheme("light")}
     />
@@ -84,11 +84,11 @@ function Header() {
   const [events, setEvents] = useState<APIShortEvent[]>([]);
 
   useEffect(() => {
-    getTeamData().then((data) => setTeams(data));
+    getAllTeams().then((data) => setTeams(data));
   }, []);
 
   useEffect(() => {
-    getEventData().then((data) => setEvents(data));
+    getAllEvents().then((data) => setEvents(data));
   }, []);
 
   const seenTeams = new Set();

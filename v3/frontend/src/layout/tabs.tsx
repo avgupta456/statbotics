@@ -11,14 +11,14 @@ import { classnames } from "../utils/utils";
 export function TabPanel({
   value,
   children,
-  loading = false,
-  error = false,
+  loading,
+  error,
   ...props
 }: {
   value: string;
   children: any;
-  loading?: boolean;
-  error?: boolean;
+  loading: boolean;
+  error: boolean;
   props?: any;
 }) {
   // TODO: Add loading and error states
@@ -89,7 +89,7 @@ export default function TabsLayout({
         variant="pills"
         classNames={{
           list: classnames(
-            "border-b pb-px flex-nowrap overflow-x-scroll whitespace-nowrap",
+            "border-b pb-px flex-nowrap overflow-x-scroll whitespace-nowrap mb-3",
             colorScheme === "light" ? "border-gray-200" : "border-gray-600",
           ),
         }}
