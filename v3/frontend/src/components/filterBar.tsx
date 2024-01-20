@@ -1,8 +1,13 @@
+import { ReactNode } from "react";
+import { IoMdEye } from "react-icons/io";
+
+import { Tooltip } from "@mantine/core";
+
 import { useLocation } from "../contexts/locationContext";
 import { COUNTRIES, DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../utils/geography";
 import { Select } from "./select";
 
-export default function LocationFilter() {
+export function LocationFilter() {
   const { location, setLocation } = useLocation();
 
   return (
@@ -34,5 +39,39 @@ export default function LocationFilter() {
       clearable
       searchable
     />
+  );
+}
+
+export default function FilterBar({
+  onClearFilters = () => {},
+  showLocationFilter,
+  className = "flex items-center gap-4",
+  children,
+}: {
+  onClearFilters?: () => void;
+  showLocationFilter: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  const { setLocation } = useLocation();
+
+  return (
+    <div className={className}>
+      <Tooltip label="Clear filters">
+        <div className="cursor-pointer">
+          <IoMdEye
+            className="my-1.5 h-6 w-6 text-gray-600"
+            onClick={() => {
+              if (showLocationFilter) {
+                setLocation(null);
+              }
+              onClearFilters();
+            }}
+          />
+        </div>
+      </Tooltip>
+      {showLocationFilter && <LocationFilter />}
+      {children}
+    </div>
   );
 }

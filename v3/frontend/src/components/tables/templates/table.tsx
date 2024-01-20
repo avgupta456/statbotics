@@ -1,5 +1,4 @@
 import { createRef, useEffect, useMemo, useState } from "react";
-import { IoMdEye } from "react-icons/io";
 import { MdAdd, MdCloudDownload, MdRemove, MdSettings } from "react-icons/md";
 
 import { MultiSelect, Popover, Tooltip } from "@mantine/core";
@@ -13,7 +12,7 @@ import { usePreferences } from "../../../contexts/preferencesContext";
 import { APITeamYear } from "../../../types/api";
 import { CURR_YEAR } from "../../../utils/constants";
 import { classnames } from "../../../utils/utils";
-import LocationFilter from "../../location";
+import FilterBar from "../../filterBar";
 import { Select } from "../../select";
 
 export default function Table({
@@ -49,7 +48,7 @@ export default function Table({
 
   // Location Quick Filter
 
-  const { location, setLocation } = useLocation();
+  const { location } = useLocation();
 
   // Projection Filter, Competing This Week Filter
 
@@ -167,19 +166,10 @@ export default function Table({
   return (
     <div>
       <div className="mx-2 mb-2 flex flex-row">
-        <div className="flex items-center gap-4">
-          <Tooltip label="Clear filters">
-            <div className="cursor-pointer">
-              <IoMdEye
-                className="h-6 w-6 text-gray-600"
-                onClick={() => {
-                  setLocation(null);
-                  gridRef?.current?.api?.setFilterModel(null);
-                }}
-              />
-            </div>
-          </Tooltip>
-          {showLocationQuickFilter && <LocationFilter />}
+        <FilterBar
+          onClearFilters={() => gridRef?.current?.api?.setFilterModel(null)}
+          showLocationFilter={showLocationQuickFilter}
+        >
           {year === CURR_YEAR && (showProjectionsFilter || showCompetingThisWeekFilter) && (
             <MultiSelect
               placeholder={multiSelectValue.length === 0 ? "Other filters" : ""}
@@ -189,7 +179,7 @@ export default function Table({
               classNames={{ root: "min-w-48 max-w-96 hidden lg:block" }}
             />
           )}
-        </div>
+        </FilterBar>
         <div className="flex-grow" />
         <div className="flex items-center gap-4">
           {EPAColumns.length > 0 && (

@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { IoMdEye } from "react-icons/io";
 
-import { Button, Tooltip } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { Annotation, CircleSubject, Label } from "@visx/annotation";
 import { Axis, Orientation } from "@visx/axis";
 import { RectClipPath } from "@visx/clip-path";
@@ -19,7 +18,7 @@ import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import { APITeamYear } from "../../types/api";
 import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../utils/geography";
-import LocationFilter from "../location";
+import FilterBar from "../filterBar";
 import { Select } from "../select";
 import { renderOptions } from "./axisOptions";
 
@@ -345,7 +344,7 @@ function Bubbles({
   defaultAxes: { x: string; y: string; z: string };
   showLocationQuickFilter?: boolean;
 }) {
-  const { location, setLocation } = useLocation();
+  const { location } = useLocation();
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
@@ -412,18 +411,10 @@ function Bubbles({
 
   return (
     <div>
-      <div className="mt-4 flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4">
-        <Tooltip label="Clear filters">
-          <div className="cursor-pointer">
-            <IoMdEye
-              className="my-1.5 h-6 w-6 text-gray-600"
-              onClick={() => {
-                setLocation(null);
-              }}
-            />
-          </div>
-        </Tooltip>
-        {showLocationQuickFilter && <LocationFilter />}
+      <FilterBar
+        showLocationFilter={showLocationQuickFilter}
+        className="mt-4 flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4"
+      >
         <Select
           data={finalData
             .filter((d: Datum) => d?.included ?? true)
@@ -463,7 +454,7 @@ function Bubbles({
           label="Radius"
           className="w-40"
         />
-      </div>
+      </FilterBar>
       <div className="m-4">
         <div>
           <ParentSize>

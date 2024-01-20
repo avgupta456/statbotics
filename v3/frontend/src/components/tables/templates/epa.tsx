@@ -97,7 +97,7 @@ export function EPACellRenderer({
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Tooltip
-          label={`${roundSigFigs(lower, 2)} - ${roundSigFigs(upper, 2)}`}
+          label={`${roundSigFigs(lower, 2, 2)} - ${roundSigFigs(upper, 2, 2)}`}
           classNames={{
             tooltip: "text-xs",
           }}
@@ -105,8 +105,8 @@ export function EPACellRenderer({
           <div
             className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}
           >
-            {roundSigFigs(value, 2, 0)}
-            <p className="ml-1 text-xs">±{roundSigFigs(adjSd, 1, 1)}</p>
+            {roundSigFigs(value, 2, 1)}
+            <p className="ml-1 text-xs">±{roundSigFigs(adjSd, 1, 0)}</p>
           </div>
         </Tooltip>
       </div>
@@ -146,7 +146,7 @@ export function EPACellRenderer({
         style={{ width: `calc(${leftBarWidth}% - 12px)` }}
       />
       <Tooltip
-        label={`${roundSigFigs(lower, 2)} - ${roundSigFigs(upper, 2)}`}
+        label={`${roundSigFigs(lower, 2, 2)} - ${roundSigFigs(upper, 2, 2)}`}
         classNames={{ tooltip: "text-xs" }}
       >
         <div
