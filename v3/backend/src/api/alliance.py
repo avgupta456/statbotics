@@ -30,7 +30,7 @@ router = APIRouter()
 
 @router.get("/")
 async def read_root_alliance():
-    return {"name": "Alliance Router"}
+    return {"name": "Alliance V3 Router"}
 
 
 @alru_cache(ttl=timedelta(minutes=5))

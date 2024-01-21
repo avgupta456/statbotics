@@ -22,4 +22,4 @@ router.include_router(team_match_router, tags=["TeamMatch"])
 
 @router.get("/")
 async def read_root():
-    return {"name": "API Router"}
+    return {"name": "API V3 Router"}
