@@ -1,20 +1,19 @@
+from typing import Any, Dict, List, Optional
+
 from fastapi import APIRouter, Response
 
-from typing import Any, Dict, List, Optional
+from src.api.team_match import get_team_match_cached, get_team_matches_cached
+from src.api.v2.utils import format_team, inv_format_team
 from src.db.models import TeamMatch
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
 )
-from src.api.team_match import get_team_match_cached, get_team_matches_cached
-
-from src.api.v2.utils import format_team, inv_format_team
 
 router = APIRouter()
 
 
 def get_v2_team_match(team_match: TeamMatch) -> Dict[str, Any]:
-    # TODO: epa_{red,blue}_{auto,teleop,endgame}_score_pred
     return {
         "team": format_team(team_match.team),
         "year": team_match.year,

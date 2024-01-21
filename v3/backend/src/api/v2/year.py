@@ -2,12 +2,14 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.db.models import Year
 from src.api.year import get_year_cached, get_years_cached
+from src.db.models import Year
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
 )
+
+router = APIRouter()
 
 
 def get_v2_year(year: Year) -> Dict[str, Any]:
@@ -99,9 +101,6 @@ def get_v2_year(year: Year) -> Dict[str, Any]:
         "rp_1_mean": year.rp_1_mean,
         "rp_2_mean": year.rp_2_mean,
     }
-
-
-router = APIRouter()
 
 
 @router.get("/")

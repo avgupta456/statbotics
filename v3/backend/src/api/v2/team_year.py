@@ -2,10 +2,10 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.constants import CURR_YEAR
-from src.api.v2.utils import format_team, inv_format_team
-from src.db.models import TeamYear
 from src.api.team_year import get_team_year_cached, get_team_years_cached
+from src.api.v2.utils import format_team, inv_format_team
+from src.constants import CURR_YEAR
+from src.db.models import TeamYear
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
@@ -15,7 +15,6 @@ router = APIRouter()
 
 
 def get_v2_team_year(team_year: TeamYear) -> Dict[str, Any]:
-    # TODO: {auto,teleop,endgame,rp_1,rp_2}_epa_{start,pre_champs,mean,max}, epa_mean
     return {
         "year": team_year.year,
         "team": format_team(team_year.team),

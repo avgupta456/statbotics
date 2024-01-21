@@ -2,9 +2,9 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.v2.utils import format_team, inv_format_team, format_type
-from src.db.models import TeamEvent
 from src.api.team_event import get_team_event_cached, get_team_events_cached
+from src.api.v2.utils import format_team, format_type, inv_format_team
+from src.db.models import TeamEvent
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
@@ -14,7 +14,6 @@ router = APIRouter()
 
 
 def get_v2_team_event(team_event: TeamEvent) -> Dict[str, Any]:
-    # TODO: {auto,teleop,endgame,rp_1,rp_2}_epa_{start,pre_playoffs,mean,max}
     return {
         "team": format_team(team_event.team),
         "year": team_event.year,

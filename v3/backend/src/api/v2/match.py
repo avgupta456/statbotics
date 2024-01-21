@@ -1,15 +1,15 @@
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.models.epa.math import inv_unit_sigmoid
+from src.api.alliance import get_alliances_cached
+from src.api.match import get_match_cached, get_matches_cached
 from src.api.v2.utils import format_team
 from src.db.models import Alliance, Match
-from src.api.match import get_match_cached, get_matches_cached
-from src.api.alliance import get_alliances_cached
+from src.models.epa.math import inv_unit_sigmoid
 from src.utils.decorators import (
-    async_fail_gracefully_singular,
     async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 router = APIRouter()
@@ -18,7 +18,6 @@ router = APIRouter()
 def get_v2_match(
     match: Match, red_alliance: Alliance, blue_alliance: Alliance
 ) -> Dict[str, Any]:
-    # TODO: epa_{red,blue}_{auto,teleop,endgame}_score_pred
     return {
         "key": match.key,
         "year": match.year,

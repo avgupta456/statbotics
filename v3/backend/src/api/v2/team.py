@@ -2,13 +2,15 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
+from src.api.team import get_team_cached, get_teams_cached
 from src.api.v2.utils import format_team, inv_format_team
 from src.db.models import Team
-from src.api.team import get_team_cached, get_teams_cached
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
 )
+
+router = APIRouter()
 
 
 def get_v2_team(team: Team) -> Dict[str, Any]:
@@ -36,9 +38,6 @@ def get_v2_team(team: Team) -> Dict[str, Any]:
         "full_count": team.full_count,
         "full_winrate": team.full_winrate,
     }
-
-
-router = APIRouter()
 
 
 @router.get("/")

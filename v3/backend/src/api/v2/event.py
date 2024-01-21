@@ -2,9 +2,9 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
+from src.api.event import get_event_cached, get_events_cached
 from src.api.v2.utils import format_type
 from src.db.models import Event
-from src.api.event import get_event_cached, get_events_cached
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
@@ -14,7 +14,6 @@ router = APIRouter()
 
 
 def get_v2_event(event: Event) -> Dict[str, Any]:
-    # TODO: rp_1_mse, rp_2_mse
     return {
         "key": event.key,
         "year": event.year,
