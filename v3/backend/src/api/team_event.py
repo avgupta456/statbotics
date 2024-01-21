@@ -31,7 +31,7 @@ router = APIRouter()
 
 @router.get("/")
 async def read_root_team_event():
-    return {"name": "Team Event Router"}
+    return {"name": "Team Event V3 Router"}
 
 
 @alru_cache(ttl=timedelta(minutes=5))
@@ -49,7 +49,7 @@ async def get_team_events_cached(
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    type: Optional[int] = None,
+    type: Optional[str] = None,
     week: Optional[int] = None,
     offseason: Optional[bool] = None,
     metric: Optional[str] = None,
@@ -112,7 +112,7 @@ async def read_team_events(
     country: Optional[str] = country_query,
     state: Optional[str] = state_query,
     district: Optional[str] = district_query,
-    type: Optional[int] = event_type_query,
+    type: Optional[str] = event_type_query,
     week: Optional[int] = week_query,
     offseason: Optional[bool] = offseason_query,
     metric: Optional[str] = metric_query,

@@ -29,7 +29,7 @@ router = APIRouter()
 
 @router.get("/")
 async def read_root_team_match():
-    return {"name": "Team Match Router"}
+    return {"name": "Team Match V3 Router"}
 
 
 @alru_cache(ttl=timedelta(minutes=5))
