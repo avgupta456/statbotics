@@ -101,7 +101,6 @@ def get_info():
 
 app.include_router(router, prefix="/v3", include_in_schema=False)
 app.include_router(api_router, prefix="/v3")
-
 app.include_router(data_router, prefix="/v3/data", include_in_schema=False)
 app.include_router(site_router, prefix="/v3/site", include_in_schema=False)
 
