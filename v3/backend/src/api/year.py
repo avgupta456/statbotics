@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.get("/")
 async def read_root_year():
-    return {"name": "Year Router"}
+    return {"name": "Year V3 Router"}
 
 
 @alru_cache(ttl=timedelta(minutes=5))

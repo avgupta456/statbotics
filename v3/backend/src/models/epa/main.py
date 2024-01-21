@@ -182,8 +182,8 @@ class EPA(Model):
             tm.auto_epa = rounded_mean[1]
             tm.teleop_epa = rounded_mean[2]
             tm.endgame_epa = rounded_mean[3]
-            tm.rp_1_epa = rounded_mean[4]
-            tm.rp_2_epa = rounded_mean[5]
+            tm.rp_1_epa = round(self.epas[team].mean[4], 4)
+            tm.rp_2_epa = round(self.epas[team].mean[5], 4)
             tm.tiebreaker_epa = rounded_mean[6]
             for i in range(1, 19):
                 new_value = rounded_mean[i + 6]
@@ -215,10 +215,10 @@ class EPA(Model):
                 te.teleop_epa_sd = rounded_sd[2]
                 te.endgame_epa = rounded_mean[3]
                 te.endgame_epa_sd = rounded_sd[3]
-                te.rp_1_epa = rounded_mean[4]
-                te.rp_1_epa_sd = rounded_sd[4]
-                te.rp_2_epa = rounded_mean[5]
-                te.rp_2_epa_sd = rounded_sd[5]
+                te.rp_1_epa = round(self.epas[team].mean[4], 4)
+                te.rp_1_epa_sd = round(np.sqrt(self.epas[team].var[4]), 4)
+                te.rp_2_epa = round(self.epas[team].mean[5], 4)
+                te.rp_2_epa_sd = round(np.sqrt(self.epas[team].var[5]), 4)
                 te.tiebreaker_epa = rounded_mean[6]
                 te.tiebreaker_epa_sd = rounded_sd[6]
                 for i in range(1, 19):
@@ -240,10 +240,10 @@ class EPA(Model):
                 ty.teleop_epa_sd = rounded_sd[2]
                 ty.endgame_epa = rounded_mean[3]
                 ty.endgame_epa_sd = rounded_sd[3]
-                ty.rp_1_epa = rounded_mean[4]
-                ty.rp_1_epa_sd = rounded_sd[4]
-                ty.rp_2_epa = rounded_mean[5]
-                ty.rp_2_epa_sd = rounded_sd[5]
+                ty.rp_1_epa = round(self.epas[team].mean[4], 4)
+                ty.rp_1_epa_sd = round(np.sqrt(self.epas[team].var[4]), 4)
+                ty.rp_2_epa = round(self.epas[team].mean[5], 4)
+                ty.rp_2_epa_sd = round(np.sqrt(self.epas[team].var[5]), 4)
                 ty.tiebreaker_epa = rounded_mean[6]
                 ty.tiebreaker_epa_sd = rounded_sd[6]
                 for i in range(1, 19):

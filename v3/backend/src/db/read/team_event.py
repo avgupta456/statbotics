@@ -28,7 +28,7 @@ def get_team_events(
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    type: Optional[int] = None,
+    type: Optional[str] = None,
     week: Optional[int] = None,
     offseason: Optional[bool] = False,
     metric: Optional[str] = None,

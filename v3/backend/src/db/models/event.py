@@ -108,6 +108,7 @@ class Event(_Event, Model):
             "offseason": self.offseason,
             "video": self.video,
             "status": self.status,
+            "current_match": self.current_match,
             "qual_matches": self.qual_matches,
             "epa": {
                 "max": self.epa_max,
