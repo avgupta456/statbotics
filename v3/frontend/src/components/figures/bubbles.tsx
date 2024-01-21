@@ -17,8 +17,7 @@ import { Zoom } from "@visx/zoom";
 import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import { APITeamYear } from "../../types/api";
-import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../utils/geography";
-import FilterBar, { LocationFilter } from "../filterBar";
+import FilterBar, { LocationFilter, filterLocation } from "../filterBar";
 import { Select } from "../select";
 import { renderOptions } from "./axisOptions";
 
@@ -377,26 +376,10 @@ function Bubbles({
   );
 
   const finalData = useMemo(() => {
-    const filterData = (d: APITeamYear) => {
-      if (!location) return true;
-      const prefix = location.split("_")[0];
-      const suffix = location.split("_")[1];
-      if (prefix === "country") {
-        return d?.country === suffix;
-      }
-      if (prefix === "state") {
-        return STATE_FULL_NAMES[d?.state ?? ""] === suffix;
-      }
-      if (prefix === "district") {
-        return DISTRICT_FULL_NAMES[d?.district ?? ""] === suffix;
-      }
-      return false;
-    };
-
     const setAxes = (d: APITeamYear) => {
       const name = d?.name;
       const label = d?.team;
-      const included = filterData(d);
+      const included = filterLocation(location, d);
       const x = getX(d);
       const y = getY(d);
       const z = getZ(d);

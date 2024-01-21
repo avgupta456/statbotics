@@ -69,7 +69,7 @@ export default function TabsLayout({
   const { year, setYear } = useData();
 
   return (
-    <div className="pt-4 md:p-2 lg:p-4">
+    <div className="py-8 md:px-2 lg:px-4">
       {showYearSelector && (
         <div className="mb-2 flex w-full items-center justify-center">
           <Select
@@ -78,7 +78,6 @@ export default function TabsLayout({
             onChange={(newYear: string | null) =>
               newYear ? setYear(parseInt(newYear)) : CURR_YEAR
             }
-            allowDeselect={false}
             className="mr-4 w-24"
           />
           <div className="text-center text-3xl">{title}</div>

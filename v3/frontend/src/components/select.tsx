@@ -17,6 +17,7 @@ export function Select({ value, searchable, ...props }: SelectProps) {
       onSearchChange={setSearchValue}
       selectFirstOptionOnChange={value === null && searchValue !== ""}
       withCheckIcon={false}
+      allowDeselect={false}
       value={value}
       {...props}
     />

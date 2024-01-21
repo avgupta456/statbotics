@@ -1,4 +1,5 @@
-import { PROD } from "./constants";
+import { APIEvent } from "../types/api";
+import { PROD, eventNameMap } from "./constants";
 
 export const classnames = (...args: string[]) => args.join(" ");
 
@@ -33,3 +34,27 @@ export const log = (...args: any[]) => {
 };
 
 export const loaderProp = ({ src }: any) => src;
+
+export const formatEventName = (eventName: string, limit: number = -1) => {
+  const name = eventNameMap[eventName] || eventName;
+  return limit > 0 ? truncate(name, limit) : name;
+};
+
+export const formatOngoingEventStatus = (event: APIEvent) => {
+  if (event.status !== "Ongoing") {
+    return event.status;
+  }
+  if (event.qual_matches === 0) {
+    return "Scheduled Unreleased";
+  }
+  if (event.current_match === 0) {
+    return "Schedule Released";
+  }
+  if (event.current_match < event.qual_matches) {
+    return `Qual ${event.current_match}`;
+  }
+  if (event.current_match === event.qual_matches) {
+    return "Quals Over";
+  }
+  return "Elims Ongoing";
+};

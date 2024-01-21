@@ -4,6 +4,7 @@ import { IoMdEye } from "react-icons/io";
 import { Tooltip } from "@mantine/core";
 
 import { useLocation } from "../contexts/locationContext";
+import { APIEvent, APITeamEvent, APITeamYear } from "../types/api";
 import { COUNTRIES, DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../utils/geography";
 import { Select } from "./select";
 
@@ -41,6 +42,24 @@ export function LocationFilter() {
     />
   );
 }
+
+export const filterLocation = (
+  location: string | null,
+  item: APITeamYear | APITeamEvent | APIEvent,
+) => {
+  if (!location) return true;
+  const [type, value] = location.split("_");
+  if (type === "country" && item.country) {
+    return item.country === value;
+  }
+  if (type === "state" && item.state) {
+    return STATE_FULL_NAMES[item.state] === value;
+  }
+  if (type === "district" && item.district) {
+    return DISTRICT_FULL_NAMES[item.district] === value;
+  }
+  return false;
+};
 
 export default function FilterBar({
   onClearFilters = () => {},
