@@ -10,7 +10,6 @@ from pyinstrument import Profiler
 
 load_dotenv()
 
-
 # flake8: noqa E402
 from src.api.router import router as api_router
 from src.api.v2.router import router as api_v2_router
