@@ -58,7 +58,7 @@ function App({ Component, pageProps }: AppProps) {
   );
 
   const { colorScheme, setColorScheme: _setColorScheme } = useMantineColorScheme();
-  const [EPACellFormat, _setEPACellFormat] = useState("Error Bars (shifted)");
+  const [EPACellFormat, _setEPACellFormat] = useState("Highlight (with interval)");
   // Error Bars (shifted) --> mean-shifted with skew adjusted sd error bars
   // Error Bars (centered) --> skew adjusted sd error bars but no mean-shift
   // Highlight (with interval) --> percentile highlighted with p/m sd

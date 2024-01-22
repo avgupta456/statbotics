@@ -3,7 +3,13 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 
 import { CURR_YEAR } from "../utils/constants";
-import { parseCountry, parseDistrict, parseState } from "../utils/geography";
+import {
+  DISTRICT_FULL_NAMES,
+  STATE_FULL_NAMES,
+  parseCountry,
+  parseDistrict,
+  parseState,
+} from "../utils/geography";
 
 export default function QueryHandler({
   recordTab,
@@ -108,7 +114,18 @@ export default function QueryHandler({
     query.state = undefined;
     query.district = undefined;
     if (recordLocation && location) {
-      const [locationType, locationValue] = location.split("_");
+      const locationType = location.split("_")[0];
+      let locationValue = location.split("_")[1];
+      // check if in STATE_FULL_NAMES, DISTRICT_FULL_NAMES, if so, use abbreviation
+      if (locationType === "state") {
+        locationValue =
+          Object.entries(STATE_FULL_NAMES).find(([, v]) => v === locationValue)?.[0] ??
+          locationValue;
+      } else if (locationType === "district") {
+        locationValue =
+          Object.entries(DISTRICT_FULL_NAMES).find(([, v]) => v === locationValue)?.[0] ??
+          locationValue;
+      }
       query[locationType] = locationValue;
     }
 
