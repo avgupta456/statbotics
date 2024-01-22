@@ -10,6 +10,7 @@ import { getYearEvents } from "../../api/events";
 import FilterBar, { LocationFilter, filterLocation } from "../../components/filterBar";
 import QueryHandler from "../../components/queryHandler";
 import { Select } from "../../components/select";
+import EventsTable from "../../components/tables/eventsTable";
 import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
@@ -168,45 +169,38 @@ export default function EventsPage() {
     if (isReady && !error && !eventDataDict[year] && !loading) {
       getDataForYear(year);
     }
-  }, [eventDataDict, year]);
+  }, [isReady, eventDataDict, year]);
 
-  const [ongoingEvents, upcomingEvents, completedEvents] = useMemo(() => {
-    let filtered = eventDataDict[year];
-    if (!filtered) {
-      return [[], [], []];
+  let data = eventDataDict[year] ?? [];
+
+  const sortEvents = (a: APIEvent, b: APIEvent) => {
+    if (a.week === b.week) {
+      return (b.epa.mean ?? -1) - (a.epa.mean ?? -1);
     }
+    return a.week - b.week;
+  };
 
-    const sortEvents = (a: APIEvent, b: APIEvent) => {
-      if (a.week === b.week) {
-        return (b.epa.mean ?? -1) - (a.epa.mean ?? -1);
-      }
-      return a.week - b.week;
-    };
+  data = data.sort(sortEvents);
 
-    filtered = filtered.sort(sortEvents);
+  if (week !== null) {
+    data = data.filter((event) => event.week === week);
+  }
 
-    if (week !== null) {
-      filtered = filtered.filter((event) => event.week === week);
-    }
+  if (location !== null) {
+    data = data.filter((event) => filterLocation(location, event));
+  }
 
-    if (location !== null) {
-      filtered = filtered.filter((event) => filterLocation(location, event));
-    }
+  if (search !== "") {
+    data = data.filter(
+      (event) =>
+        event.name.toLowerCase().includes(search.toLowerCase()) ||
+        event.key.toLowerCase().includes(search.toLowerCase()),
+    );
+  }
 
-    if (search !== "") {
-      filtered = filtered.filter(
-        (event) =>
-          event.name.toLowerCase().includes(search.toLowerCase()) ||
-          event.key.toLowerCase().includes(search.toLowerCase()),
-      );
-    }
-
-    const ongoing = filtered.filter((event) => event.status === "Ongoing");
-    const upcoming = filtered.filter((event) => event.status === "Upcoming");
-    const completed = filtered.filter((event) => event.status === "Completed");
-
-    return [ongoing, upcoming, completed];
-  }, [eventDataDict, year, week, location, search]);
+  const ongoingEvents = data.filter((event) => event.status === "Ongoing");
+  const upcomingEvents = data.filter((event) => event.status === "Upcoming");
+  const completedEvents = data.filter((event) => event.status === "Completed");
 
   return (
     <LocationContext.Provider value={memoizedLocation}>
@@ -240,15 +234,17 @@ export default function EventsPage() {
               search={search}
               setSearch={setSearch}
             />
-            {[
-              { name: "Ongoing", events: ongoingEvents },
-              { name: "Upcoming", events: upcomingEvents },
-              { name: "Completed", events: completedEvents },
-            ]
-              .filter(({ events }) => events.length > 0)
-              .map(({ name, events }) => (
-                <EventsSection key={name} title={name} events={events} />
-              ))}
+            <div className="p-2 md:p-0">
+              {[
+                { name: "Ongoing", events: ongoingEvents },
+                { name: "Upcoming", events: upcomingEvents },
+                { name: "Completed", events: completedEvents },
+              ]
+                .filter(({ events }) => events.length > 0)
+                .map(({ name, events }) => (
+                  <EventsSection key={name} title={name} events={events} />
+                ))}
+            </div>
           </div>
         </TabPanel>
         <TabPanel value="table" loading={loading} error={error}>
@@ -260,7 +256,8 @@ export default function EventsPage() {
               search={search}
               setSearch={setSearch}
             />
-            <div>TODO</div>
+            <div className="h-4" />
+            <EventsTable data={data} />
           </div>
         </TabPanel>
       </TabsLayout>

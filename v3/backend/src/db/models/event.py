@@ -43,6 +43,8 @@ class EventORM(Base, ModelORM):
         Enum(EventStatus, values_callable=values_callable)
     )
 
+    num_teams: MI = mapped_column(Integer, nullable=False, default=0)
+
     # -1 = upcoming event, 0 = schedule release, x = match x concluded
     current_match: MOI = mapped_column(Integer, nullable=True, default=None)
     qual_matches: MOI = mapped_column(Integer, nullable=True, default=None)
@@ -108,6 +110,7 @@ class Event(_Event, Model):
             "offseason": self.offseason,
             "video": self.video,
             "status": self.status,
+            "num_teams": self.num_teams,
             "current_match": self.current_match,
             "qual_matches": self.qual_matches,
             "epa": {

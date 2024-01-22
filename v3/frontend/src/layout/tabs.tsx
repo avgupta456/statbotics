@@ -69,9 +69,9 @@ export default function TabsLayout({
   const { year, setYear } = useData();
 
   return (
-    <div className="py-8 md:px-2 lg:px-4">
+    <div className="pt-4 md:px-2 lg:px-4">
       {showYearSelector && (
-        <div className="mb-2 flex w-full items-center justify-center">
+        <div className="mb-4 flex w-full items-center justify-center">
           <Select
             data={YEAR_OPTIONS}
             value={year.toString()}

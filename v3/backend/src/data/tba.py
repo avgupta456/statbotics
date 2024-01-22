@@ -403,6 +403,7 @@ def process_year(
 
             team_event_objs_dict[team_event_obj.pk()] = team_event_obj
 
+        event_obj.num_teams = len(event_teams)
         event_obj.current_match = current_match
         event_obj.qual_matches = qual_matches
         event_objs_dict[event_key] = event_obj

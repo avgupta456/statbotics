@@ -5,7 +5,7 @@ import { APITeamYear } from "../../types/api";
 import { CURR_YEAR } from "../../utils/constants";
 import { EPATotalRankDef, UnitlessEPADef, getEPADef } from "./templates/epa";
 import { getCountryDef, getDistrictDef, getStateDef } from "./templates/locations";
-import { nameDef, nextEventDef, nextEventWeekDef, rankDef, teamDef } from "./templates/misc";
+import { nextEventDef, nextEventWeekDef, rankDef, teamNameDef, teamNumDef } from "./templates/misc";
 import { recordDef, winRateDef } from "./templates/record";
 import Table from "./templates/table";
 
@@ -16,8 +16,8 @@ export default function TeamYearsTable({ data }: { data: APITeamYear[] | undefin
   const getColumnDefs = (newYear: number, newExpanded: boolean) =>
     [
       rankDef,
-      teamDef,
-      nameDef,
+      teamNumDef,
+      teamNameDef,
       getCountryDef(!newExpanded),
       getStateDef(!newExpanded),
       getDistrictDef(!newExpanded),
@@ -33,8 +33,7 @@ export default function TeamYearsTable({ data }: { data: APITeamYear[] | undefin
       newExpanded && newYear === CURR_YEAR && nextEventWeekDef,
     ].filter(Boolean);
 
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [columnDefs, setColumnDefs] = useState<any>(getColumnDefs(year, false));
+  const [columnDefs, setColumnDefs] = useState<any>(getColumnDefs(year, expanded));
 
   useEffect(() => {
     setColumnDefs(getColumnDefs(year, expanded));
@@ -44,13 +43,14 @@ export default function TeamYearsTable({ data }: { data: APITeamYear[] | undefin
 
   return (
     <Table
-      year={year}
       data={data || []}
+      dataType="TeamYear"
       columnDefs={columnDefs}
+      offset={222}
       EPAColumns={EPAColumns}
       showLocationQuickFilter
-      showProjectionsFilter
-      showCompetingThisWeekFilter
+      showProjectionsFilter={year === CURR_YEAR}
+      showCompetingThisWeekFilter={year === CURR_YEAR}
       showDownloadCSV
       showExpand
       expanded={expanded}

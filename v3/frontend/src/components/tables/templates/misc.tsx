@@ -38,7 +38,7 @@ export const rankDef = {
   pinned: "left",
 };
 
-export const teamDef = {
+export const teamNumDef = {
   field: "team",
   headerName: "Number",
   maxWidth: 115,
@@ -50,7 +50,7 @@ export const teamDef = {
   pinned: "left",
 };
 
-export const nameDef = {
+export const teamNameDef = {
   field: "name",
   headerName: "Name",
   minWidth: 200,

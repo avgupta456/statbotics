@@ -151,6 +151,7 @@ export type APIEvent = {
   offseason: boolean;
   video?: string;
   status: string;
+  num_teams: number;
   current_match: number;
   qual_matches: number;
   epa: {

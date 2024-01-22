@@ -10,8 +10,8 @@ import { getAxisOptions } from "../../components/figures/axisOptions";
 import Bubbles from "../../components/figures/bubbles";
 import YearLineChart from "../../components/figures/yearLine";
 import QueryHandler from "../../components/queryHandler";
-import TeamYearsTable from "../../components/tables/teamYears";
-import TeamYearsBreakdownTable from "../../components/tables/teamYearsBreakdown";
+import TeamYearsBreakdownTable from "../../components/tables/teamYearsBreakdownTable";
+import TeamYearsTable from "../../components/tables/teamYearsTable";
 import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
@@ -87,7 +87,7 @@ export default function TeamsPage() {
     } else if (isReady && !error && !teamYearDataDict[year] && !loadingFull) {
       getDataForYear(year);
     }
-  }, [teamYearMiniDataDict, teamYearDataDict, year]);
+  }, [isReady, teamYearMiniDataDict, teamYearDataDict, year]);
 
   let data = teamYearDataDict[year] || teamYearMiniDataDict[year];
   if (data) {

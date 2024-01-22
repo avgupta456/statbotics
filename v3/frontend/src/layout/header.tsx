@@ -1,22 +1,13 @@
 import { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa";
-import { MdSearch as IconSearch } from "react-icons/md";
+import { MdMenu as IconMenu, MdSearch as IconSearch } from "react-icons/md";
 import { RxMoon, RxSun } from "react-icons/rx";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import {
-  AppShell,
-  Burger,
-  Button,
-  Group,
-  Kbd,
-  NavLink as MantineNavLink,
-  Menu,
-  Text,
-} from "@mantine/core";
+import { AppShell, Button, Group, Kbd, NavLink as MantineNavLink, Menu, Text } from "@mantine/core";
 import { Spotlight, spotlight } from "@mantine/spotlight";
 
 import { getAllEvents, getAllTeams } from "../api/header";
@@ -151,7 +142,9 @@ function Header() {
             classNames={{ label: "w-20" }}
           >
             <Menu.Target>
-              <Burger size="sm" />
+              <div>
+                <IconMenu className="h-5 w-5" />
+              </div>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item component={Link} href="/teams">
