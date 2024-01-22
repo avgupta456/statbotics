@@ -23,16 +23,6 @@ export const parseCountry = (country: undefined | string | string[]) => {
   return null;
 };
 
-export const COUNTRY_FLAGS: { [key: string]: string } = {
-  USA: "🇺🇸 USA",
-  Canada: "🇨🇦 Canada",
-  Türkiye: "🇹🇷 Türkiye",
-  Mexico: "🇲🇽 Mexico",
-  Israel: "🇮🇱 Israel",
-  Brazil: "🇧🇷 Brazil",
-  Australia: "🇦🇺 Australia",
-};
-
 export const STATE_FULL_NAMES: { [key: string]: string } = {
   AL: "Alabama",
   AK: "Alaska",

@@ -147,10 +147,7 @@ export default function Table({
       if (headerName === "Name" || headerName === "Event Name") {
         return 200;
       }
-      if (headerName === "Record") {
-        return 100;
-      }
-      return 80;
+      return 100;
     };
 
     setFinalColumnDefs(

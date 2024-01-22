@@ -11,6 +11,7 @@ from src.api import (  # get_event,; get_matches,; get_team_events,; get_team_ma
 # from src.site.hypo_event import read_hypothetical_event as _read_hypothetical_event
 from src.db.models import Event, Year  # , APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.site.helper import compress
+from src.types.enums import EventStatus
 from src.utils.decorators import async_fail_gracefully_plural
 
 router = APIRouter()
@@ -34,7 +35,10 @@ async def read_events(
         raise Exception("Year not found")
 
     events: List[Event] = await get_events_cached(year=year, no_cache=no_cache)
-    data = {"year": year_obj.to_dict(), "events": [x.to_dict() for x in events]}
+    data = {
+        "year": year_obj.to_dict(),
+        "events": [x.to_dict() for x in events if x.status != EventStatus.INVALID],
+    }
     return compress(data)
 
 

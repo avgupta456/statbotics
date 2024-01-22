@@ -100,14 +100,18 @@ export default function TeamsPage() {
   return (
     <LocationContext.Provider value={memoizedLocation}>
       <QueryHandler
+        recordTab
         tab={tab}
         setTab={setTab}
         defaultTab="insights"
         tabOptions={["insights", "breakdown", "bubble", "figures"]}
+        recordYear
         year={year}
         setYear={setYear}
+        recordLocation
         location={location}
         setLocation={setLocation}
+        recordWeek={false}
       />
       <TabsLayout showYearSelector title="Teams" tab={tab} setTab={setTab} defaultTab="insights">
         <Tabs.List>

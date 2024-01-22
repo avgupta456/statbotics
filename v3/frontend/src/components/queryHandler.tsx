@@ -6,28 +6,36 @@ import { CURR_YEAR } from "../utils/constants";
 import { parseCountry, parseDistrict, parseState } from "../utils/geography";
 
 export default function QueryHandler({
+  recordTab,
   tab = "",
   setTab = () => {},
   defaultTab = "",
   tabOptions = [],
+  recordYear,
   year = CURR_YEAR,
   setYear = () => {},
+  recordLocation,
   location = null,
   setLocation = () => {},
+  recordWeek,
   week = null,
   setWeek = () => {},
 }: {
+  recordTab: boolean;
   tab?: string;
   // eslint-disable-next-line no-unused-vars
   setTab?: (newTab: string) => void;
   defaultTab?: string;
   tabOptions?: string[];
+  recordYear: boolean;
   year?: number;
   // eslint-disable-next-line no-unused-vars
   setYear?: (newYear: number) => void;
+  recordLocation: boolean;
   location?: string | null;
   // eslint-disable-next-line no-unused-vars
   setLocation?: (newLocation: string | null) => void;
+  recordWeek: boolean;
   week?: number | null;
   // eslint-disable-next-line no-unused-vars
   setWeek?: (newWeek: number | null) => void;
@@ -47,29 +55,31 @@ export default function QueryHandler({
 
   useEffect(() => {
     if (isReady) {
-      if (typeof paramsTab === "string" && tabOptions?.includes(paramsTab)) {
+      if (recordTab && typeof paramsTab === "string" && tabOptions?.includes(paramsTab)) {
         setTab(paramsTab as string);
       }
 
-      if (typeof paramsYear === "string") {
+      if (recordYear && typeof paramsYear === "string") {
         const paramsYearInt = parseInt(paramsYear);
         if (paramsYearInt >= 2002 && paramsYearInt !== year) {
           setYear(paramsYearInt);
         }
       }
 
-      const parsedCountry = parseCountry(paramsCountry);
-      const parsedState = parseState(paramsState);
-      const parsedDistrict = parseDistrict(paramsDistrict);
-      if (parsedCountry) {
-        setLocation(`country_${parsedCountry}`);
-      } else if (parsedState) {
-        setLocation(`state_${parsedState}`);
-      } else if (parsedDistrict) {
-        setLocation(`district_${parsedDistrict}`);
+      if (recordLocation) {
+        const parsedCountry = parseCountry(paramsCountry);
+        const parsedState = parseState(paramsState);
+        const parsedDistrict = parseDistrict(paramsDistrict);
+        if (parsedCountry) {
+          setLocation(`country_${parsedCountry}`);
+        } else if (parsedState) {
+          setLocation(`state_${parsedState}`);
+        } else if (parsedDistrict) {
+          setLocation(`district_${parsedDistrict}`);
+        }
       }
 
-      if (typeof paramsWeek === "string") {
+      if (recordWeek && typeof paramsWeek === "string") {
         const paramsWeekInt = parseInt(paramsWeek);
         if (paramsWeekInt !== week) {
           setWeek(paramsWeekInt);
@@ -82,25 +92,41 @@ export default function QueryHandler({
     if (!isReady) return;
 
     const query: any = {};
-    if (tab && tab !== defaultTab) {
+    if (recordTab && tab && tab !== defaultTab) {
       query.tab = tab;
+    } else {
+      query.tab = undefined;
     }
-    if (year && year !== CURR_YEAR) {
+
+    if (recordYear && year && year !== CURR_YEAR) {
       query.year = year;
+    } else {
+      query.year = undefined;
     }
-    if (location) {
+
+    query.country = undefined;
+    query.state = undefined;
+    query.district = undefined;
+    if (recordLocation && location) {
       const [locationType, locationValue] = location.split("_");
       query[locationType] = locationValue;
     }
-    if (week) {
+
+    if (recordWeek && week) {
       query.week = week;
+    } else {
+      query.week = undefined;
     }
+
+    const cleanQuery: any = Object.fromEntries(
+      Object.entries(query).filter(([, v]) => v !== undefined),
+    );
 
     router.push({
       pathname: router.pathname,
-      query,
+      query: cleanQuery,
     });
-  }, [year, tab, location]);
+  }, [year, tab, location, week]);
 
   return null;
 }

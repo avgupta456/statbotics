@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { APIEvent } from "../../types/api";
 import { getCountryDef, getDistrictDef, getStateDef } from "./templates/locations";
+import { rankDef } from "./templates/misc";
 import Table from "./templates/table";
 
 function EventNameCellRenderer({ value, data }: { value: string; data: APIEvent }) {
@@ -42,6 +43,11 @@ const eventStatusDef = {
   headerName: "Status",
   minWidth: 120,
   sortable: false,
+  filter: true,
+  filterParams: {
+    filterOptions: ["equals"],
+    suppressAndOrCondition: true,
+  },
 };
 
 const eventNumTeamsDef = {
@@ -92,6 +98,7 @@ export default function EventsTable({ data }: { data: APIEvent[] }) {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const getColumnDefs = (newExpanded: boolean) => [
+    rankDef,
     eventNameDef,
     weekDef,
     eventStatusDef,
@@ -117,9 +124,6 @@ export default function EventsTable({ data }: { data: APIEvent[] }) {
       dataType="Event"
       columnDefs={columnDefs}
       offset={262}
-      showLocationQuickFilter={false}
-      showProjectionsFilter={false}
-      showCompetingThisWeekFilter={false}
       showDownloadCSV
       showExpand
       expanded={expanded}

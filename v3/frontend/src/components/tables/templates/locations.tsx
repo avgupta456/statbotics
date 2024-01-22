@@ -1,11 +1,4 @@
-import { COUNTRY_FLAGS, DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../../utils/geography";
-
-export const countryFormatter = (params: any) => {
-  if (COUNTRY_FLAGS?.[params?.value]) {
-    return COUNTRY_FLAGS[params?.value];
-  }
-  return params?.value;
-};
+import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../../utils/geography";
 
 export const stateGetter = (params: any) => {
   const state = params?.data?.state;
@@ -25,7 +18,6 @@ export const getCountryDef = (hidden: boolean) => ({
   field: "country",
   headerName: "Country",
   minWidth: 150,
-  valueFormatter: countryFormatter,
   // filterParams: {
   //   filterOptions: ["empty", ...countryFilter],
   //   maxNumConditions: 1,

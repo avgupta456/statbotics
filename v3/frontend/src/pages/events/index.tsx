@@ -18,7 +18,6 @@ import { APIEvent, APIYear } from "../../types/api";
 import { formatEventName, formatOngoingEventStatus } from "../../utils/utils";
 
 const weekOptions = [
-  { value: "0", label: "Week 0" },
   { value: "1", label: "Week 1" },
   { value: "2", label: "Week 2" },
   { value: "3", label: "Week 3" },
@@ -27,6 +26,7 @@ const weekOptions = [
   { value: "6", label: "Week 6" },
   { value: "7", label: "Week 7" },
   { value: "8", label: "Week 8" },
+  { value: "-1", label: "Season" },
   { value: "9", label: "Offseason" },
 ];
 
@@ -56,7 +56,7 @@ function EventsFilterBar({
     >
       <Select
         className="w-32"
-        value={week?.toString()}
+        value={week?.toString() ?? null}
         onChange={(value) => (value ? setWeek(parseInt(value)) : setWeek(null))}
         data={weekOptions}
         placeholder="All Weeks"
@@ -171,32 +171,44 @@ export default function EventsPage() {
     }
   }, [isReady, eventDataDict, year]);
 
-  let data = eventDataDict[year] ?? [];
+  const [data, setData] = useState<APIEvent[]>([]);
 
-  const sortEvents = (a: APIEvent, b: APIEvent) => {
-    if (a.week === b.week) {
-      return (b.epa.mean ?? -1) - (a.epa.mean ?? -1);
+  useEffect(() => {
+    let filtered = eventDataDict[year] ?? [];
+
+    const sortEvents = (a: APIEvent, b: APIEvent) => {
+      if (a.week === b.week) {
+        return (b.epa.mean ?? -1) - (a.epa.mean ?? -1);
+      }
+      return a.week - b.week;
+    };
+
+    filtered = filtered.sort(sortEvents);
+
+    if (week !== null) {
+      if (week === -1) {
+        filtered = filtered.filter((event) => !event.offseason);
+      } else if (week === 9) {
+        filtered = filtered.filter((event) => event.offseason);
+      } else {
+        filtered = filtered.filter((event) => event.week === week);
+      }
     }
-    return a.week - b.week;
-  };
 
-  data = data.sort(sortEvents);
+    if (location !== null) {
+      filtered = filtered.filter((event) => filterLocation(location, event));
+    }
 
-  if (week !== null) {
-    data = data.filter((event) => event.week === week);
-  }
+    if (search !== "") {
+      filtered = filtered.filter(
+        (event) =>
+          event.name.toLowerCase().includes(search.toLowerCase()) ||
+          event.key.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
 
-  if (location !== null) {
-    data = data.filter((event) => filterLocation(location, event));
-  }
-
-  if (search !== "") {
-    data = data.filter(
-      (event) =>
-        event.name.toLowerCase().includes(search.toLowerCase()) ||
-        event.key.toLowerCase().includes(search.toLowerCase()),
-    );
-  }
+    setData(filtered);
+  }, [eventDataDict, year, week, location, search]);
 
   const ongoingEvents = data.filter((event) => event.status === "Ongoing");
   const upcomingEvents = data.filter((event) => event.status === "Upcoming");
@@ -205,14 +217,18 @@ export default function EventsPage() {
   return (
     <LocationContext.Provider value={memoizedLocation}>
       <QueryHandler
+        recordTab
         tab={tab}
         setTab={setTab}
         defaultTab="summary"
         tabOptions={["summary", "table"]}
+        recordYear
         year={year}
         setYear={setYear}
+        recordLocation
         location={location}
         setLocation={setLocation}
+        recordWeek
         week={week}
         setWeek={setWeek}
       />
