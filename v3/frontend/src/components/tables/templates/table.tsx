@@ -194,7 +194,7 @@ export default function Table({
                   <Popover.Target>
                     <Tooltip label="Options">
                       <div className="cursor-pointer">
-                        <MdSettings className="h-6 w-6 cursor-pointer text-gray-600" />
+                        <MdSettings className="h-6 w-6 cursor-pointer text-zinc-600" />
                       </div>
                     </Tooltip>
                   </Popover.Target>
@@ -221,7 +221,7 @@ export default function Table({
             <div className="hidden xs:block">
               <Tooltip label="Download CSV">
                 <div className="cursor-pointer">
-                  <MdCloudDownload className="h-6 w-6 text-gray-600" onClick={exportCSV} />
+                  <MdCloudDownload className="h-6 w-6 text-zinc-600" onClick={exportCSV} />
                 </div>
               </Tooltip>
             </div>
@@ -230,9 +230,9 @@ export default function Table({
             <Tooltip label={expanded ? "Collapse" : "Expand"}>
               <div className="cursor-pointer">
                 {expanded ? (
-                  <MdRemove className="h-6 w-6 text-gray-600" onClick={() => setExpanded(false)} />
+                  <MdRemove className="h-6 w-6 text-zinc-600" onClick={() => setExpanded(false)} />
                 ) : (
-                  <MdAdd className="h-6 w-6 text-gray-600" onClick={() => setExpanded(true)} />
+                  <MdAdd className="h-6 w-6 text-zinc-600" onClick={() => setExpanded(true)} />
                 )}
               </div>
             </Tooltip>

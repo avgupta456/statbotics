@@ -113,8 +113,8 @@ export function EPACellRenderer({
     );
   }
 
-  const centerColor = color === "" ? "border border-gray-500" : color;
-  const errorColor = color === "" ? "bg-gray-500" : color;
+  const centerColor = color === "" ? "border border-zinc-500" : color;
+  const errorColor = color === "" ? "bg-zinc-500" : color;
 
   const shifted = EPACellFormat === "Error Bars (shifted)";
 

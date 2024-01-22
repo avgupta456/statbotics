@@ -14,7 +14,7 @@ import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { APIEvent, APIYear } from "../../types/api";
-import { formatEventName } from "../../utils/utils";
+import { formatEventName, formatOngoingEventStatus } from "../../utils/utils";
 
 const weekOptions = [
   { value: "0", label: "Week 0" },
@@ -75,13 +75,17 @@ function EventsFilterBar({
 }
 
 function EventCard({ event }: { event: APIEvent }) {
-  let location = event.country;
-  if (event.state) {
-    location = `${event.state}, ${location}`;
-  }
-  if (event.district) {
-    location = `${location} (${event.district.toUpperCase()})`;
-  }
+  const formatDates = (start: Date, end: Date) => {
+    const startMonth = start.toLocaleString("default", { month: "short" });
+    const endMonth = end.toLocaleString("default", { month: "short" });
+    const startDate = start.getDate();
+    const endDate = end.getDate();
+    if (startMonth === endMonth && startDate === endDate) {
+      return `${startMonth} ${startDate}`;
+    }
+    return `${startMonth} ${startDate} to ${endMonth} ${endDate}`;
+  };
+
   return (
     <Link href={`/event/${event.key}`}>
       <div className="m-2 flex h-40 cursor-pointer flex-col rounded border-[1px] p-4 shadow hover:bg-blue-100">
@@ -89,11 +93,9 @@ function EventCard({ event }: { event: APIEvent }) {
           {formatEventName(event.name, 45)}
         </div>
         <div className="mb-2 w-full">
-          {location} - Week {event.week}
+          Week {event.week}, {formatDates(new Date(event.start_date), new Date(event.end_date))}
         </div>
-        {event.status === "Ongoing" && (
-          <div className="w-full">formatOngoingEventStatus(event)</div>
-        )}
+        <div className="w-full">{formatOngoingEventStatus(event)}</div>
       </div>
     </Link>
   );
@@ -176,7 +178,7 @@ export default function EventsPage() {
 
     const sortEvents = (a: APIEvent, b: APIEvent) => {
       if (a.week === b.week) {
-        return (a.epa.mean ?? -1) - (b.epa.mean ?? -1);
+        return (b.epa.mean ?? -1) - (a.epa.mean ?? -1);
       }
       return a.week - b.week;
     };

@@ -102,7 +102,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
           <Tooltip label="Show Top 3 Teams" className="ml-2">
             <div className="cursor-pointer">
               <GiPodium
-                className="m-1.5 h-6 w-6 text-gray-600"
+                className="m-1.5 h-6 w-6 text-zinc-600"
                 onClick={() => addTeams(topTeams)}
               />
             </div>
@@ -112,7 +112,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
           <Tooltip label="Show % of Season" className="ml-2">
             <div className="cursor-pointer">
               <AiOutlinePercentage
-                className="m-1.5 h-6 w-6 text-gray-600"
+                className="m-1.5 h-6 w-6 text-zinc-600"
                 onClick={() => setXAxis("season")}
               />
             </div>
@@ -121,7 +121,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
           <Tooltip label="Show Match Number" className="ml-2">
             <div className="cursor-pointer">
               <AiOutlineNumber
-                className="m-2 h-6 w-6 text-gray-600"
+                className="m-2 h-6 w-6 text-zinc-600"
                 onClick={() => setXAxis("match")}
               />
             </div>

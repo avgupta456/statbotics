@@ -89,7 +89,7 @@ export default function TabsLayout({
         classNames={{
           list: classnames(
             "border-b pb-px flex-nowrap overflow-x-scroll whitespace-nowrap mb-3",
-            colorScheme === "light" ? "border-gray-200" : "border-gray-600",
+            colorScheme === "light" ? "border-zinc-200" : "border-zinc-600",
           ),
         }}
         defaultValue={defaultTab}

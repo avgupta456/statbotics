@@ -75,7 +75,7 @@ export default function FilterBar({
       <Tooltip label="Clear filters">
         <div className="cursor-pointer">
           <IoMdEye
-            className="my-1.5 h-6 w-6 text-gray-600"
+            className="my-1.5 h-6 w-6 text-zinc-600"
             onClick={() => {
               onClearFilters();
             }}

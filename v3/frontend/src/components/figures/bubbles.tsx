@@ -310,7 +310,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
               )}
               {tooltipOpen && tooltipData && tooltipLeft != null && tooltipTop != null && (
                 <TooltipWithBounds left={tooltipLeft + 10} top={tooltipTop + 10}>
-                  <div className="text-xs text-gray-900">
+                  <div className="text-xs text-zinc-900">
                     <strong>Team {tooltipData.label}</strong>
                     <br className="h-1" />({tooltipData.x.toFixed(2)}, {tooltipData.y.toFixed(2)}
                     {tooltipData.z && `, ${tooltipData.z.toFixed(2)}`})
