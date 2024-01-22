@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { IoMdEye } from "react-icons/io";
 
-import { Button, Tooltip } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { Annotation, CircleSubject, Label } from "@visx/annotation";
 import { Axis, Orientation } from "@visx/axis";
 import { RectClipPath } from "@visx/clip-path";
@@ -18,8 +17,7 @@ import { Zoom } from "@visx/zoom";
 import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import { APITeamYear } from "../../types/api";
-import { DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../../utils/geography";
-import LocationFilter from "../location";
+import FilterBar, { LocationFilter, filterLocation } from "../filterBar";
 import { Select } from "../select";
 import { renderOptions } from "./axisOptions";
 
@@ -312,7 +310,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
               )}
               {tooltipOpen && tooltipData && tooltipLeft != null && tooltipTop != null && (
                 <TooltipWithBounds left={tooltipLeft + 10} top={tooltipTop + 10}>
-                  <div className="text-xs text-gray-900">
+                  <div className="text-xs text-zinc-900">
                     <strong>Team {tooltipData.label}</strong>
                     <br className="h-1" />({tooltipData.x.toFixed(2)}, {tooltipData.y.toFixed(2)}
                     {tooltipData.z && `, ${tooltipData.z.toFixed(2)}`})
@@ -378,26 +376,10 @@ function Bubbles({
   );
 
   const finalData = useMemo(() => {
-    const filterData = (d: APITeamYear) => {
-      if (!location) return true;
-      const prefix = location.split("_")[0];
-      const suffix = location.split("_")[1];
-      if (prefix === "country") {
-        return d?.country === suffix;
-      }
-      if (prefix === "state") {
-        return STATE_FULL_NAMES[d?.state ?? ""] === suffix;
-      }
-      if (prefix === "district") {
-        return DISTRICT_FULL_NAMES[d?.district ?? ""] === suffix;
-      }
-      return false;
-    };
-
     const setAxes = (d: APITeamYear) => {
       const name = d?.name;
       const label = d?.team;
-      const included = filterData(d);
+      const included = filterLocation(location, d);
       const x = getX(d);
       const y = getY(d);
       const z = getZ(d);
@@ -412,17 +394,10 @@ function Bubbles({
 
   return (
     <div>
-      <div className="mt-4 flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4">
-        <Tooltip label="Clear filters">
-          <div className="cursor-pointer">
-            <IoMdEye
-              className="my-1.5 h-6 w-6 text-gray-600"
-              onClick={() => {
-                setLocation(null);
-              }}
-            />
-          </div>
-        </Tooltip>
+      <FilterBar
+        className="flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4"
+        onClearFilters={() => setLocation(null)}
+      >
         {showLocationQuickFilter && <LocationFilter />}
         <Select
           data={finalData
@@ -463,7 +438,7 @@ function Bubbles({
           label="Radius"
           className="w-40"
         />
-      </div>
+      </FilterBar>
       <div className="m-4">
         <div>
           <ParentSize>

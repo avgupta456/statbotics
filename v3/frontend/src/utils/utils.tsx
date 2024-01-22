@@ -1,4 +1,5 @@
-import { PROD } from "./constants";
+import { APIEvent } from "../types/api";
+import { PROD, eventNameMap } from "./constants";
 
 export const classnames = (...args: string[]) => args.join(" ");
 
@@ -8,14 +9,11 @@ export const round = (num: number, digits: number = 1) => {
 };
 
 export const roundSigFigs = (num: number, sigFigs: number = 2, maxRound: number = 10) => {
-  // handles positives, negatives and 0.x numbers
-  // If starts with 1, round to sigFigs + 1
   if (num === 0) return 0;
-  const newSigFigs = sigFigs + (num.toString().startsWith("1") ? 1 : 0);
   const absNum = Math.abs(num);
   const digits = Math.floor(Math.log10(absNum)) + 1;
   // never round to maxRound digits or more (0.xx)
-  const factor = 10 ** Math.min(maxRound, newSigFigs - digits);
+  const factor = 10 ** Math.min(maxRound, sigFigs - digits);
   return Math.round(num * factor) / factor;
 };
 
@@ -36,3 +34,27 @@ export const log = (...args: any[]) => {
 };
 
 export const loaderProp = ({ src }: any) => src;
+
+export const formatEventName = (eventName: string, limit: number = -1) => {
+  const name = eventNameMap[eventName] || eventName;
+  return limit > 0 ? truncate(name, limit) : name;
+};
+
+export const formatOngoingEventStatus = (event: APIEvent) => {
+  if (event.status !== "Ongoing") {
+    return event.status;
+  }
+  if (event.qual_matches === 0) {
+    return "Scheduled Unreleased";
+  }
+  if (event.current_match === 0) {
+    return "Schedule Released";
+  }
+  if (event.current_match < event.qual_matches) {
+    return `Qual ${event.current_match}`;
+  }
+  if (event.current_match === event.qual_matches) {
+    return "Quals Over";
+  }
+  return "Elims Ongoing";
+};

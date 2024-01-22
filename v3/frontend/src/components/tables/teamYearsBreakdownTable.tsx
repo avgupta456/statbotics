@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 
 import { useData } from "../../contexts/dataContext";
 import { APITeamYear } from "../../types/api";
+import { CURR_YEAR } from "../../utils/constants";
 import { getEPADef } from "./templates/epa";
 import { getCountryDef, getDistrictDef, getStateDef } from "./templates/locations";
-import { nameDef, rankDef, teamDef } from "./templates/misc";
+import { rankDef, teamNameDef, teamNumDef } from "./templates/misc";
 import Table from "./templates/table";
 
 export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] | undefined }) {
@@ -15,11 +16,11 @@ export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] 
     if (newYear === 2023) {
       return [
         rankDef,
-        teamDef,
-        nameDef,
-        getCountryDef(true),
-        getStateDef(true),
-        getDistrictDef(true),
+        teamNumDef,
+        teamNameDef,
+        getCountryDef(!newExpanded),
+        getStateDef(!newExpanded),
+        getDistrictDef(!newExpanded),
         {
           headerName: "Total",
           headerClass: "ag-text-center",
@@ -72,8 +73,8 @@ export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] 
 
     return [
       rankDef,
-      teamDef,
-      nameDef,
+      teamNumDef,
+      teamNameDef,
       getCountryDef(true),
       getStateDef(true),
       getDistrictDef(true),
@@ -81,8 +82,7 @@ export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] 
     ];
   };
 
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [columnDefs, setColumnDefs] = useState<any>(getColumnDefs(year, false));
+  const [columnDefs, setColumnDefs] = useState<any>(getColumnDefs(year, expanded));
 
   useEffect(() => {
     setColumnDefs(getColumnDefs(year, expanded));
@@ -113,13 +113,14 @@ export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] 
 
   return (
     <Table
-      year={year}
       data={data || []}
+      dataType="TeamYear"
       columnDefs={columnDefs}
+      offset={222}
       EPAColumns={EPAColumns}
       showLocationQuickFilter
-      showProjectionsFilter
-      showCompetingThisWeekFilter
+      showProjectionsFilter={year === CURR_YEAR}
+      showCompetingThisWeekFilter={year === CURR_YEAR}
       showDownloadCSV
       showExpand
       expanded={expanded}

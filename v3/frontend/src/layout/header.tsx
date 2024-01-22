@@ -1,25 +1,16 @@
 import { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa";
-import { MdSearch as IconSearch } from "react-icons/md";
+import { MdMenu as IconMenu, MdSearch as IconSearch } from "react-icons/md";
 import { RxMoon, RxSun } from "react-icons/rx";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import {
-  AppShell,
-  Burger,
-  Button,
-  Group,
-  Kbd,
-  NavLink as MantineNavLink,
-  Menu,
-  Text,
-} from "@mantine/core";
+import { AppShell, Button, Group, Kbd, NavLink as MantineNavLink, Menu, Text } from "@mantine/core";
 import { Spotlight, spotlight } from "@mantine/spotlight";
 
-import { getEventData, getTeamData } from "../api/header";
+import { getAllEvents, getAllTeams } from "../api/header";
 import { usePreferences } from "../contexts/preferencesContext";
 import { APIShortEvent, APIShortTeam } from "../types/api";
 import { classnames, loaderProp } from "../utils/utils";
@@ -42,7 +33,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
         label: "text-base font-light",
         root: classnames(
           "rounded h-9",
-          colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
+          colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
         ),
       }}
     />
@@ -58,7 +49,7 @@ function Header() {
     <IconSearch
       className={classnames(
         "h-9 w-9 cursor-pointer rounded p-2",
-        colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
+        colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
       )}
       stroke={1.5}
       onClick={spotlight.open}
@@ -67,14 +58,14 @@ function Header() {
 
   const sunIcon = (
     <RxSun
-      className="h-9 w-9 cursor-pointer rounded p-2 text-yellow-500 hover:bg-gray-50"
+      className="h-9 w-9 cursor-pointer rounded p-2 text-yellow-500 hover:bg-zinc-600"
       stroke={4}
       onClick={() => setColorScheme("dark")}
     />
   );
   const moonIcon = (
     <RxMoon
-      className="h-9 w-9 cursor-pointer"
+      className="h-9 w-9 cursor-pointer rounded p-2 hover:bg-zinc-800"
       stroke={2.5}
       onClick={() => setColorScheme("light")}
     />
@@ -84,11 +75,11 @@ function Header() {
   const [events, setEvents] = useState<APIShortEvent[]>([]);
 
   useEffect(() => {
-    getTeamData().then((data) => setTeams(data));
+    getAllTeams().then((data) => setTeams(data));
   }, []);
 
   useEffect(() => {
-    getEventData().then((data) => setEvents(data));
+    getAllEvents().then((data) => setEvents(data));
   }, []);
 
   const seenTeams = new Set();
@@ -125,7 +116,9 @@ function Header() {
   const allOptions = [...teamOptions, ...eventOptions];
 
   return (
-    <AppShell.Header>
+    <AppShell.Header
+      className={colorScheme === "dark" ? "border-zinc-700 bg-zinc-900" : "bg-zinc-700 text-white"}
+    >
       <Spotlight
         // not rendered, but allows keyboard navigation with Ctrl+K
         actions={allOptions}
@@ -149,7 +142,9 @@ function Header() {
             classNames={{ label: "w-20" }}
           >
             <Menu.Target>
-              <Burger size="sm" />
+              <div>
+                <IconMenu className="h-5 w-5" />
+              </div>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item component={Link} href="/teams">
@@ -209,7 +204,7 @@ function Header() {
                 <Text
                   className={classnames(
                     "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
-                    colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
+                    colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
                   )}
                 >
                   API
@@ -235,7 +230,7 @@ function Header() {
                 <Text
                   className={classnames(
                     "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
-                    colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
+                    colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
                   )}
                 >
                   More
@@ -294,8 +289,11 @@ function Header() {
             rightSection={<Kbd size="xs">Ctrl + K</Kbd>}
             onClick={spotlight.open}
             variant="light"
-            color="gray"
-            className="mantine-focus-never mr-4 w-60 border border-gray-500 font-thin text-gray-500"
+            color="zinc"
+            className={classnames(
+              "mantine-focus-never mr-4 w-60 border border-zinc-500 font-thin text-zinc-500",
+              colorScheme === "light" ? "bg-zinc-50" : "bg-zinc-800",
+            )}
           />
           <Link
             href="https://github.com/avgupta456/statbotics"
@@ -303,7 +301,7 @@ function Header() {
             rel="noopener noreferrer"
             className={classnames(
               "mr-2 h-9 w-9 rounded p-2",
-              colorScheme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-800",
+              colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
             )}
           >
             <FaGithub className="h-5 w-5" stroke={2} />

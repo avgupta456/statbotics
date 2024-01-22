@@ -1,15 +1,17 @@
-from typing import Any, List  # , Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
 from src.api import (  # get_event,; get_matches,; get_team_events,; get_team_matches,; get_year,
     get_events_cached,
+    get_year_cached,
 )
 
 # from src.site.hypo_event import read_hypothetical_event as _read_hypothetical_event
-from src.db.models import Event  # , APIMatch, APITeamEvent, APITeamMatch, APIYear
+from src.db.models import Event, Year  # , APIMatch, APITeamEvent, APITeamMatch, APIYear
 from src.site.helper import compress
+from src.types.enums import EventStatus
 from src.utils.decorators import async_fail_gracefully_plural
 
 router = APIRouter()
@@ -23,21 +25,22 @@ async def read_all_events(response: StreamingResponse, no_cache: bool = False) -
     return compress(data)
 
 
-"""
 @router.get("/events/{year}")
-@async_fail_gracefully
+@async_fail_gracefully_plural
 async def read_events(
-    response: Response, year: int, no_cache: bool = False
-) -> Dict[str, Any]:
-    year_obj: Optional[APIYear] = await get_year(year=year, no_cache=no_cache)
+    response: StreamingResponse, year: int, no_cache: bool = False
+) -> Any:
+    year_obj: Optional[Year] = await get_year_cached(year=year, no_cache=no_cache)
     if year_obj is None:
         raise Exception("Year not found")
 
-    events: List[APIEvent] = await get_events(
-        year=year, offseason=None, no_cache=no_cache
-    )
-    return {"year": year_obj.to_dict(), "events": [x.to_dict() for x in events]}
-"""
+    events: List[Event] = await get_events_cached(year=year, no_cache=no_cache)
+    data = {
+        "year": year_obj.to_dict(),
+        "events": [x.to_dict() for x in events if x.status != EventStatus.INVALID],
+    }
+    return compress(data)
+
 
 """
 @router.get("/event/{event_id}")

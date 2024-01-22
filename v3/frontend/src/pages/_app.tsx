@@ -12,8 +12,7 @@ import { DataContext } from "../contexts/dataContext";
 import { PreferencesContext } from "../contexts/preferencesContext";
 import Header from "../layout/header";
 import "../styles/globals.css";
-import { EventData } from "../types";
-import { APITeamYear } from "../types/api";
+import { APIEvent, APITeamYear, APIYear } from "../types/api";
 import { CURR_YEAR } from "../utils/constants";
 import NoSSR from "../utils/no-ssr";
 
@@ -27,8 +26,8 @@ function App({ Component, pageProps }: AppProps) {
     [key: number]: APITeamYear[];
   }>({});
   const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: APITeamYear[] }>({});
-  const [eventDataDict, setEventDataDict] = useState<{ [key: number]: EventData }>({});
-  const [yearDataDict, setYearDataDict] = useState<{ [key: number]: EventData }>({});
+  const [eventDataDict, setEventDataDict] = useState<{ [key: number]: APIEvent[] }>({});
+  const [yearDataDict, setYearDataDict] = useState<{ [key: number]: APIYear }>({});
   const [year, setYear] = useState(CURR_YEAR);
 
   const memoizedDataValue = useMemo(
@@ -59,7 +58,7 @@ function App({ Component, pageProps }: AppProps) {
   );
 
   const { colorScheme, setColorScheme: _setColorScheme } = useMantineColorScheme();
-  const [EPACellFormat, _setEPACellFormat] = useState("Error Bars (shifted)");
+  const [EPACellFormat, _setEPACellFormat] = useState("Highlight (with interval)");
   // Error Bars (shifted) --> mean-shifted with skew adjusted sd error bars
   // Error Bars (centered) --> skew adjusted sd error bars but no mean-shift
   // Highlight (with interval) --> percentile highlighted with p/m sd

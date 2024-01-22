@@ -56,8 +56,7 @@ export const RPMapping = {
   2024: ["RP 1", "RP 2"],
 };
 
-// TODO: Move to backend
-export const eventNameMap = {
+export const eventNameMap: { [key: string]: string } = {
   "FIRST in Michigan State Championship presented by DTE Foundation": "FiM Champs - Overall",
   "FIRST in Michigan State Championship presented by DTE Foundation - DTE ENERGY FOUNDATION Division":
     "FiM Champs - DTE Energy Foundation Division",
@@ -81,7 +80,7 @@ export const eventNameMap = {
     "Ontario Champs - Technology Division",
 };
 
-export const divisionToMainEvent = {
+export const divisionToMainEvent: { [key: string]: string } = {
   "2023micmp": "2023micmp",
   "2023micmp1": "2023micmp",
   "2023micmp2": "2023micmp",
@@ -107,7 +106,7 @@ export const divisionToMainEvent = {
   "2023new": "2023cmptx",
 };
 
-export const mainEventToDivisions = {
+export const mainEventToDivisions: { [key: string]: { name: string; key: string }[] } = {
   "2023micmp": [
     { name: "Overall", key: "2023micmp" },
     { name: "DTE Energy Foundation", key: "2023micmp1" },

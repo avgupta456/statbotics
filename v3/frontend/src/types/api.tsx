@@ -136,7 +136,7 @@ export type APITeamYear = {
   };
 };
 
-export type Event = {
+export type APIEvent = {
   key: string;
   year: number;
   name: string;
@@ -147,11 +147,13 @@ export type Event = {
   start_date: string;
   end_date: string;
   type: string;
-  week: string;
+  week: number;
   offseason: boolean;
   video?: string;
   status: string;
-  qual_matches?: boolean;
+  num_teams: number;
+  current_match: number;
+  qual_matches: number;
   epa: {
     max?: number;
     top_8?: number;
