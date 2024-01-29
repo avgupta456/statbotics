@@ -63,7 +63,7 @@ export const filterLocation = (
 
 export default function FilterBar({
   onClearFilters = () => {},
-  className = "flex items-center gap-4",
+  className = "flex items-center gap-2",
   children,
 }: {
   onClearFilters?: () => void;

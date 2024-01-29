@@ -12,46 +12,33 @@ import QueryHandler from "../../components/queryHandler";
 import { Select } from "../../components/select";
 import EventsTable from "../../components/tables/eventsTable";
 import { useData } from "../../contexts/dataContext";
-import { LocationContext } from "../../contexts/locationContext";
+import { LocationContext, useLocation } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { APIEvent, APIYear } from "../../types/api";
+import { weekOptions } from "../../utils/filterOptions";
 import { formatEventName, formatOngoingEventStatus } from "../../utils/utils";
-
-const weekOptions = [
-  { value: "1", label: "Week 1" },
-  { value: "2", label: "Week 2" },
-  { value: "3", label: "Week 3" },
-  { value: "4", label: "Week 4" },
-  { value: "5", label: "Week 5" },
-  { value: "6", label: "Week 6" },
-  { value: "7", label: "Week 7" },
-  { value: "8", label: "Week 8" },
-  { value: "-1", label: "Season" },
-  { value: "9", label: "Offseason" },
-];
 
 function EventsFilterBar({
   week,
   setWeek,
-  setLocation,
   search,
   setSearch,
 }: {
   week: number | null;
   // eslint-disable-next-line no-unused-vars
   setWeek: (value: number | null) => void;
-  // eslint-disable-next-line no-unused-vars
-  setLocation: (value: string | null) => void;
   search: string;
   // eslint-disable-next-line no-unused-vars
   setSearch: (value: string) => void;
 }) {
+  const { setLocation } = useLocation();
   return (
     <FilterBar
-      className="flex w-full flex-row flex-wrap justify-center gap-4 px-4"
+      className="flex w-full flex-row flex-wrap justify-center gap-2 px-4"
       onClearFilters={() => {
         setWeek(null);
         setLocation(null);
+        setSearch("");
       }}
     >
       <Select
@@ -243,13 +230,7 @@ export default function EventsPage() {
         </Tabs.List>
         <TabPanel value="summary" loading={loading} error={error}>
           <div className="h-full w-full">
-            <EventsFilterBar
-              week={week}
-              setWeek={setWeek}
-              setLocation={setLocation}
-              search={search}
-              setSearch={setSearch}
-            />
+            <EventsFilterBar week={week} setWeek={setWeek} search={search} setSearch={setSearch} />
             <div className="p-2 md:p-0">
               {[
                 { name: "Ongoing", events: ongoingEvents },
@@ -265,13 +246,7 @@ export default function EventsPage() {
         </TabPanel>
         <TabPanel value="table" loading={loading} error={error}>
           <div className="h-full w-full">
-            <EventsFilterBar
-              week={week}
-              setWeek={setWeek}
-              setLocation={setLocation}
-              search={search}
-              setSearch={setSearch}
-            />
+            <EventsFilterBar week={week} setWeek={setWeek} search={search} setSearch={setSearch} />
             <div className="h-4" />
             <EventsTable data={data} />
           </div>

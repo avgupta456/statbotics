@@ -395,7 +395,7 @@ function Bubbles({
   return (
     <div>
       <FilterBar
-        className="flex w-full flex-row flex-wrap items-end justify-center gap-4 px-4"
+        className="flex w-full flex-row flex-wrap items-end justify-center gap-2 px-4"
         onClearFilters={() => setLocation(null)}
       >
         {showLocationQuickFilter && <LocationFilter />}
