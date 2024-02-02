@@ -3,6 +3,7 @@ import { BsTwitch } from "react-icons/bs";
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { getUpcomingMatches } from "../../api/matches";
 import MatchTable from "../../components/matchTable";
@@ -66,6 +67,7 @@ function UpcomingMatch({ match }: { match: UpcomingMatchObj }) {
 }
 
 export default function UpcomingMatches() {
+  const { isReady } = useRouter();
   const { location } = useLocation();
   const [elim, setElim] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<string | null>(null);
@@ -84,8 +86,9 @@ export default function UpcomingMatches() {
       setData(upcomingMatches);
       setLoading(false);
     };
-
-    getData();
+    if (isReady) {
+      getData();
+    }
   }, [location, elim, timeRange, sort, refresh]);
 
   return (

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useRouter } from "next/router";
+
 import { Button } from "@mantine/core";
 
 import { getNoteworthyMatches } from "../../api/matches";
@@ -91,6 +93,7 @@ function NoteworthySection({
 }
 
 export default function NoteworthyMatches() {
+  const { isReady } = useRouter();
   const { year } = useData();
   const { location } = useLocation();
   const [elim, setElim] = useState<string | null>(null);
@@ -107,7 +110,9 @@ export default function NoteworthyMatches() {
       setLoading(false);
     };
 
-    getData();
+    if (isReady) {
+      getData();
+    }
   }, [year, location, elim, week]);
 
   // eslint-disable-next-line no-console
