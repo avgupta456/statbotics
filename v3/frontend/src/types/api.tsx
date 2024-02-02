@@ -234,7 +234,7 @@ export type APIMatch = {
   predicted_time: number;
   status: string;
   video?: string;
-  teams: {
+  alliances: {
     red: {
       team_keys: string[];
       scurrogate_team_keys: string[];
@@ -246,8 +246,9 @@ export type APIMatch = {
       dq_team_keys: string[];
     };
   };
-  preds: {
+  pred: {
     winner: string;
+    red_win_prob: number;
     red_score: number;
     blue_score: number;
     [key: string]: any; // number
@@ -259,32 +260,6 @@ export type APIMatch = {
     red_no_foul: number;
     blue_no_foul: number;
     [key: string]: any; // boolean
-  };
-};
-
-export type APIAlliance = {
-  match: string;
-  alliance: string;
-  year: number;
-  event: string;
-  offseason: boolean;
-  week: number;
-  elim: boolean;
-  time: number;
-  status: string;
-  teams: string[];
-  dq: string[];
-  surrogate: string[];
-  pred: {
-    winner: string;
-    red_win_prob: number;
-    score: number;
-    [key: string]: any; // number
-  };
-  result: {
-    winner: string;
-    score: number;
-    [key: string]: any; // number
   };
 };
 

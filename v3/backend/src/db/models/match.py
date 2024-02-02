@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
@@ -61,13 +63,59 @@ class MatchORM(Base, ModelORM):
 
     red_score: MOI = mapped_column(Integer, nullable=True, default=None)
     red_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_auto: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_teleop: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_endgame: MOI = mapped_column(Integer, nullable=True, default=None)
     red_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    red_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_3: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_4: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_5: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_6: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_7: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_8: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_9: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_10: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_11: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_12: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_13: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_14: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_15: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_16: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_17: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_18: MOF = mapped_column(Float, nullable=True, default=None)
 
     blue_score: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_auto: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_teleop: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_endgame: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    blue_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_3: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_4: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_5: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_6: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_7: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_8: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_9: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_10: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_11: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_12: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_13: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_14: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_15: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_16: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_17: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_18: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
@@ -103,6 +151,8 @@ class Match(_Match, Model):
                 self.status,
                 str(self.red_score),
                 str(self.blue_score),
+                str(self.red_teleop),
+                str(self.blue_teleop),
                 str(self.epa_red_score_pred),
                 str(self.epa_blue_score_pred),
                 str(self.predicted_time),
@@ -147,6 +197,42 @@ class Match(_Match, Model):
         else:
             return MatchWinner.TIE
 
+    def get_breakdown(self: "Match", alliance: str) -> Any:
+        if self.year < 2016:
+            return np.array([getattr(self, f"{alliance}_score") or 0])
+        return np.array(
+            [
+                getattr(self, f"{alliance}_no_foul") or 0,
+                getattr(self, f"{alliance}_auto") or 0,
+                getattr(self, f"{alliance}_teleop") or 0,
+                getattr(self, f"{alliance}_endgame") or 0,
+                int(getattr(self, f"{alliance}_rp_1") or False),
+                int(getattr(self, f"{alliance}_rp_2") or False),
+                getattr(self, f"{alliance}_tiebreaker") or 0,
+                getattr(self, f"{alliance}_comp_1") or 0,
+                getattr(self, f"{alliance}_comp_2") or 0,
+                getattr(self, f"{alliance}_comp_3") or 0,
+                getattr(self, f"{alliance}_comp_4") or 0,
+                getattr(self, f"{alliance}_comp_5") or 0,
+                getattr(self, f"{alliance}_comp_6") or 0,
+                getattr(self, f"{alliance}_comp_7") or 0,
+                getattr(self, f"{alliance}_comp_8") or 0,
+                getattr(self, f"{alliance}_comp_9") or 0,
+                getattr(self, f"{alliance}_comp_10") or 0,
+                getattr(self, f"{alliance}_comp_11") or 0,
+                getattr(self, f"{alliance}_comp_12") or 0,
+                getattr(self, f"{alliance}_comp_13") or 0,
+                getattr(self, f"{alliance}_comp_14") or 0,
+                getattr(self, f"{alliance}_comp_15") or 0,
+                getattr(self, f"{alliance}_comp_16") or 0,
+                getattr(self, f"{alliance}_comp_17") or 0,
+                getattr(self, f"{alliance}_comp_18") or 0,
+            ]
+        )
+
+    def get_breakdowns(self: "Match") -> Tuple[Any, Any]:
+        return self.get_breakdown("red"), self.get_breakdown("blue")
+
     def to_dict(self: "Match") -> Dict[str, Any]:
         clean: Dict[str, Any] = {
             "key": self.key,
@@ -162,7 +248,7 @@ class Match(_Match, Model):
             "predicted_time": self.predicted_time,
             "status": self.status,
             "video": self.video,
-            "teams": {
+            "alliances": {
                 "red": {
                     "team_keys": self.get_red(),
                     "surrogate_team_keys": self.get_red_surrogates(),
@@ -198,9 +284,13 @@ class Match(_Match, Model):
             clean["pred"][f"blue_{rp_1_name}"] = self.epa_blue_rp_1_pred
             clean["pred"][f"blue_{rp_2_name}"] = self.epa_blue_rp_2_pred
 
-            clean["result"][f"red_{rp_1_name}"] = self.red_rp_1
-            clean["result"][f"red_{rp_2_name}"] = self.red_rp_2
-            clean["result"][f"blue_{rp_1_name}"] = self.blue_rp_1
-            clean["result"][f"blue_{rp_2_name}"] = self.blue_rp_2
+            for k in ["auto", "teleop", "endgame", "rp_1", "rp_2", "tiebreaker"] + [
+                f"comp_{i}" for i in range(1, 19)
+            ]:
+                if k not in key_to_name[self.year]:
+                    continue
+                name = key_to_name[self.year][k]
+                clean["result"][f"red_{name}"] = getattr(self, f"red_{k}")
+                clean["result"][f"blue_{name}"] = getattr(self, f"blue_{k}")
 
         return clean

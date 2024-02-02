@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-from src.api.alliance import router as alliance_router
 from src.api.event import router as event_router
 from src.api.match import router as match_router
 from src.api.team import router as team_router
@@ -16,7 +15,6 @@ router.include_router(team_year_router, tags=["TeamYear"])
 router.include_router(event_router, tags=["Event"])
 router.include_router(team_event_router, tags=["TeamEvent"])
 router.include_router(match_router, tags=["Match"])
-router.include_router(alliance_router, tags=["Alliance"])
 router.include_router(team_match_router, tags=["TeamMatch"])
 
 

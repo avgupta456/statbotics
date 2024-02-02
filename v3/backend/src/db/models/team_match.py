@@ -8,7 +8,7 @@ from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOF, MOI, MS, values_callable
-from src.types.enums import AllianceColor, MatchStatus
+from src.types.enums import MatchStatus
 
 
 class TeamMatchORM(Base, ModelORM):
@@ -20,9 +20,7 @@ class TeamMatchORM(Base, ModelORM):
     year: MI = mapped_column(Integer, index=True)
     event: MS = mapped_column(String(12), index=True)
     match: MS = mapped_column(String(20), index=True)
-    alliance: Mapped[AllianceColor] = mapped_column(
-        Enum(AllianceColor, values_callable=values_callable), index=True
-    )
+    alliance: MS = mapped_column(String(4), index=True)
 
     PrimaryKeyConstraint(team, match)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -31,9 +29,6 @@ class TeamMatchORM(Base, ModelORM):
     ForeignKeyConstraint(["match"], ["matches.key"])
     ForeignKeyConstraint(["team", "year"], ["team_years.team", "team_years.year"])
     ForeignKeyConstraint(["team", "event"], ["team_events.team", "team_events.event"])
-    ForeignKeyConstraint(
-        ["match", "alliance"], ["alliances.match", "alliances.alliance"]
-    )
 
     """GENERAL"""
     time: MI = mapped_column(Integer)

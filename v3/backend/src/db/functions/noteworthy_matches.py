@@ -79,8 +79,6 @@ def get_noteworthy_matches(
             .all()
         )
 
-        # TODO: Redo using alliance objects
-        """
         extra = {}
         if year >= 2016:
             high_auto_score_matches = (
@@ -89,7 +87,7 @@ def get_noteworthy_matches(
                         "max_auto_score"
                     )
                 )
-                .order_by(desc("max_auto_score"), asc("time"))
+                .order_by(desc("max_auto_score"), asc("time"))  # type: ignore
                 .limit(30)
                 .all()
             )
@@ -100,7 +98,7 @@ def get_noteworthy_matches(
                         "max_teleop_score"
                     )
                 )
-                .order_by(desc("max_teleop_score"), asc("time"))
+                .order_by(desc("max_teleop_score"), asc("time"))  # type: ignore
                 .limit(30)
                 .all()
             )
@@ -111,7 +109,7 @@ def get_noteworthy_matches(
                         "max_endgame_score"
                     )
                 )
-                .order_by(desc("max_endgame_score"), asc("time"))
+                .order_by(desc("max_endgame_score"), asc("time"))  # type: ignore
                 .limit(30)
                 .all()
             )
@@ -119,18 +117,17 @@ def get_noteworthy_matches(
             extra = {
                 "high_auto_score": [
                     Match.from_dict(match.__dict__)
-                    for (match, *args) in high_auto_score_matches
+                    for (match, *_args) in high_auto_score_matches
                 ],
                 "high_teleop_score": [
                     Match.from_dict(match.__dict__)
-                    for (match, *args) in high_teleop_score_matches
+                    for (match, *_args) in high_teleop_score_matches
                 ],
                 "high_endgame_score": [
                     Match.from_dict(match.__dict__)
-                    for (match, *args) in high_endgame_score_matches
+                    for (match, *_args) in high_endgame_score_matches
                 ],
             }
-            """
 
         return {
             "high_score": [
@@ -145,7 +142,7 @@ def get_noteworthy_matches(
                 Match.from_dict(match.__dict__)
                 for (match, *_args) in high_losing_scores
             ],
-            # **extra,
+            **extra,
         }
 
     return run_transaction(Session, callback)  # type: ignore

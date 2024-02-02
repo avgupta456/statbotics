@@ -13,8 +13,8 @@ import {
 } from "../../utils/filterOptions";
 
 export default function MatchesFilterBar({
-  week,
-  setWeek,
+  week = undefined,
+  setWeek = undefined,
   elim,
   setElim,
   timeRange = undefined,
@@ -23,9 +23,9 @@ export default function MatchesFilterBar({
   setSort = undefined,
   incrementRefresh = undefined,
 }: {
-  week: number | null;
+  week?: number | null;
   // eslint-disable-next-line no-unused-vars
-  setWeek: (value: number | null) => void;
+  setWeek?: (value: number | null) => void;
   elim: string | null;
   // eslint-disable-next-line no-unused-vars
   setElim: (value: string | null) => void;
@@ -42,22 +42,24 @@ export default function MatchesFilterBar({
     <FilterBar
       className="flex w-full flex-row flex-wrap justify-center gap-2 px-4"
       onClearFilters={() => {
-        setWeek(null);
+        if (setWeek) setWeek(null);
         setLocation(null);
         setElim(null);
         if (setTimeRange) setTimeRange(null);
         if (setSort) setSort("time");
       }}
     >
-      <Select
-        className="w-32"
-        value={week?.toString() ?? null}
-        onChange={(value) => (value ? setWeek(parseInt(value)) : setWeek(null))}
-        data={weekOptions}
-        placeholder="All Weeks"
-        allowDeselect={false}
-        clearable
-      />
+      {setWeek && (
+        <Select
+          className="w-32"
+          value={week?.toString() ?? null}
+          onChange={(value) => (value ? setWeek(parseInt(value)) : setWeek(null))}
+          data={weekOptions}
+          placeholder="All Weeks"
+          allowDeselect={false}
+          clearable
+        />
+      )}
       <LocationFilter />
       <Select
         className="w-32"

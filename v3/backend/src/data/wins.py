@@ -25,70 +25,71 @@ def process_year(objs: objs_type) -> objs_type:
     te_qual_record: Dict[Tuple[str, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     te_rps: Dict[Tuple[str, str], TRP] = defaultdict(lambda: (0, 0))
 
-    for a_obj in objs[5].values():
-        elim = a_obj.elim
-        event = a_obj.event
-        status = a_obj.status
-        alliance = a_obj.alliance
-        offseason = a_obj.offseason
-        winner = a_obj.winner
+    for m_obj in objs[4].values():
+        elim = m_obj.elim
+        event = m_obj.event
+        status = m_obj.status
+        offseason = m_obj.offseason
+        winner = m_obj.winner
 
         if status != MatchStatus.COMPLETED or winner is None:
             continue
 
-        win_update = 1 if alliance == winner else 0
-        tie_update = 1 if winner == MatchWinner.TIE else 0
-        loss_update = 1 - win_update - tie_update
+        for alliance in ["red", "blue"]:
+            teams = m_obj.get_red() if alliance == "red" else m_obj.get_blue()
+            if year_num <= 2004:
+                teams = teams[:2]  # 2 team alliances
 
-        rp_1 = a_obj.rp_1 or 0
-        rp_2 = a_obj.rp_2 or 0
-        total_rps = 2 * win_update + 1 * tie_update + rp_1 + rp_2
-
-        teams = [a_obj.team_1, a_obj.team_2, a_obj.team_3]
-        dqs = a_obj.dq.split(",")
-        surrogates = a_obj.surrogate.split(",")
-
-        if year_num <= 2004:
-            teams = teams[:2]  # 2 team alliances
-
-        for t in teams:
-            if t is None:
-                continue
-
-            ty_full_record[t] = (
-                ty_full_record[t][0] + win_update,
-                ty_full_record[t][1] + loss_update,
-                ty_full_record[t][2] + tie_update,
-                ty_full_record[t][3] + 1,
+            dqs = m_obj.get_red_dqs() if alliance == "red" else m_obj.get_blue_dqs()
+            surrogates = (
+                m_obj.get_red_surrogates()
+                if alliance == "red"
+                else m_obj.get_blue_surrogates()
             )
 
-            if not offseason:
-                ty_record[t] = (
-                    ty_record[t][0] + win_update,
-                    ty_record[t][1] + loss_update,
-                    ty_record[t][2] + tie_update,
-                    ty_record[t][3] + 1,
+            win_update = 1 if alliance == winner else 0
+            tie_update = 1 if winner == MatchWinner.TIE else 0
+            loss_update = 1 - win_update - tie_update
+
+            rp_1 = (m_obj.red_rp_1 if alliance == "red" else m_obj.blue_rp_1) or 0
+            rp_2 = (m_obj.red_rp_2 if alliance == "red" else m_obj.blue_rp_2) or 0
+            total_rps = 2 * win_update + 1 * tie_update + rp_1 + rp_2
+
+            for t in teams:
+                ty_full_record[t] = (
+                    ty_full_record[t][0] + win_update,
+                    ty_full_record[t][1] + loss_update,
+                    ty_full_record[t][2] + tie_update,
+                    ty_full_record[t][3] + 1,
                 )
 
-            if t not in dqs and t not in surrogates:
-                # DQ, surrogate only affect TeamEvent records
-                te_record[(t, event)] = (
-                    te_record[(t, event)][0] + win_update,
-                    te_record[(t, event)][1] + loss_update,
-                    te_record[(t, event)][2] + tie_update,
-                    te_record[(t, event)][3] + 1,
-                )
-                if not elim:
-                    te_qual_record[(t, event)] = (
-                        te_qual_record[(t, event)][0] + win_update,
-                        te_qual_record[(t, event)][1] + loss_update,
-                        te_qual_record[(t, event)][2] + tie_update,
-                        te_qual_record[(t, event)][3] + 1,
+                if not offseason:
+                    ty_record[t] = (
+                        ty_record[t][0] + win_update,
+                        ty_record[t][1] + loss_update,
+                        ty_record[t][2] + tie_update,
+                        ty_record[t][3] + 1,
                     )
-                    te_rps[(t, event)] = (
-                        te_rps[(t, event)][0] + total_rps,
-                        te_rps[(t, event)][1] + 1,
+
+                if t not in dqs and t not in surrogates:
+                    # DQ, surrogate only affect TeamEvent records
+                    te_record[(t, event)] = (
+                        te_record[(t, event)][0] + win_update,
+                        te_record[(t, event)][1] + loss_update,
+                        te_record[(t, event)][2] + tie_update,
+                        te_record[(t, event)][3] + 1,
                     )
+                    if not elim:
+                        te_qual_record[(t, event)] = (
+                            te_qual_record[(t, event)][0] + win_update,
+                            te_qual_record[(t, event)][1] + loss_update,
+                            te_qual_record[(t, event)][2] + tie_update,
+                            te_qual_record[(t, event)][3] + 1,
+                        )
+                        te_rps[(t, event)] = (
+                            te_rps[(t, event)][0] + total_rps,
+                            te_rps[(t, event)][1] + 1,
+                        )
 
     for team_year in objs[1].values():
         (

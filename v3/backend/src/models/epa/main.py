@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from src.db.models import Alliance, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.models.epa.breakdown import (
     get_pred_rps,
     get_score_from_breakdown,
@@ -137,17 +137,14 @@ class EPA(Model):
     def attribute_match(
         self,
         match: Match,
-        red_alliance: Alliance,
-        blue_alliance: Alliance,
         red_pred: AlliancePred,
         blue_pred: AlliancePred,
     ) -> Dict[str, Attribution]:
         out: Dict[str, Attribution] = {}
 
-        red_bd = red_alliance.get_breakdown()
-        blue_bd = blue_alliance.get_breakdown()
-        red_teams = red_alliance.get_teams()[: self.num_teams]
-        blue_teams = blue_alliance.get_teams()[: self.num_teams]
+        red_bd, blue_bd = match.get_breakdowns()
+        red_teams = match.get_red()[: self.num_teams]
+        blue_teams = match.get_blue()[: self.num_teams]
         for teams, bd, pred_bd, opp_bd, opp_pred_bd in [
             (red_teams, red_bd, red_pred.breakdown, blue_bd, blue_pred.breakdown),
             (blue_teams, blue_bd, blue_pred.breakdown, red_bd, red_pred.breakdown),

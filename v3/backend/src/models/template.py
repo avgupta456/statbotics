@@ -1,6 +1,6 @@
 from typing import Dict, Optional, Tuple
 
-from src.db.models import Alliance, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.models.types import AlliancePred, Attribution, MatchPred
 from src.tba.constants import PLACEHOLDER_TEAMS
 from src.types.enums import MatchStatus
@@ -28,12 +28,7 @@ class Model:
         raise NotImplementedError
 
     def attribute_match(
-        self,
-        match: Match,
-        red_alliance: Alliance,
-        blue_alliance: Alliance,
-        red_pred: AlliancePred,
-        blue_pred: AlliancePred,
+        self, match: Match, red_pred: AlliancePred, blue_pred: AlliancePred
     ) -> Dict[str, Attribution]:
         raise NotImplementedError
 
@@ -62,8 +57,6 @@ class Model:
     def process_match(
         self,
         match: Match,
-        red_alliance: Alliance,
-        blue_alliance: Alliance,
         team_matches: Dict[str, TeamMatch],
         team_events: Dict[str, TeamEvent],
         team_years: Dict[str, TeamYear],
@@ -79,9 +72,7 @@ class Model:
         if match.status == MatchStatus.UPCOMING:
             return
 
-        attributions = self.attribute_match(
-            match, red_alliance, blue_alliance, red_pred, blue_pred
-        )
+        attributions = self.attribute_match(match, red_pred, blue_pred)
 
         # Don't update if 1) placeholder match, 2) elim dq, 3) offseason
         teams = set(match.get_red() + match.get_blue())
