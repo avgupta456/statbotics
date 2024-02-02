@@ -1,6 +1,15 @@
-# from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
-from fastapi import APIRouter  # , Response
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
+
+from src.site.helper import compress
+from src.db.functions import get_noteworthy_matches, get_upcoming_matches
+
+from src.utils.decorators import (
+    async_fail_gracefully_singular,
+    async_fail_gracefully_plural,
+)
 
 # from src.constants import CURR_YEAR
 # from src.site.aggregation import (
@@ -61,11 +70,11 @@ async def read_match(
     return out
 """
 
-"""
+
 @router.get("/upcoming_matches")
-@async_fail_gracefully
+@async_fail_gracefully_plural
 async def read_upcoming_matches(
-    response: Response,
+    response: StreamingResponse,
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
@@ -74,9 +83,8 @@ async def read_upcoming_matches(
     limit: int = 100,
     metric: str = "predicted_time",
     no_cache: bool = False,
-) -> Dict[str, Any]:
-    upcoming_matches: List[Tuple[APIMatch, str]] = []
-    upcoming_matches = await get_upcoming_matches(
+) -> Any:
+    upcoming_matches = get_upcoming_matches(
         country=country,
         state=state,
         district=district,
@@ -84,32 +92,17 @@ async def read_upcoming_matches(
         minutes=minutes,
         limit=limit,
         metric=metric,
-        no_cache=no_cache,
     )
 
-    year_obj = await get_year(year=CURR_YEAR, no_cache=no_cache)
-    if year_obj is None:
-        raise Exception("Year not found")
+    data = [{"match": m, "event_name": e} for m, e in upcoming_matches]
 
-    foul_rate = year_obj.foul_rate
+    return compress(data)
 
-    return {
-        "matches": [
-            {
-                "match": match.to_dict(),
-                "event_name": event_name,
-            }
-            for (match, event_name) in upcoming_matches
-        ],
-        "foul_rate": foul_rate,
-    }
-"""
 
-"""
 @router.get("/noteworthy_matches/{year}")
-@async_fail_gracefully
+@async_fail_gracefully_singular
 async def read_noteworthy_matches(
-    response: Response,
+    response: StreamingResponse,
     year: int,
     country: Optional[str] = None,
     state: Optional[str] = None,
@@ -117,26 +110,16 @@ async def read_noteworthy_matches(
     elim: Optional[str] = None,
     week: Optional[int] = None,
     no_cache: bool = False,
-) -> Dict[str, Any]:
-    noteworthy_matches: Dict[str, List[APIMatch]] = {}
-    noteworthy_matches = await get_noteworthy_matches(
+) -> Any:
+    noteworthy_matches = get_noteworthy_matches(
         year=year,
         country=country,
         state=state,
         district=district,
         elim={None: None, "qual": False, "elim": True}[elim],
         week=week,
-        no_cache=no_cache,
     )
 
-    year_obj = await get_year(year=year, no_cache=no_cache)
-    if year_obj is None:
-        raise Exception("Year not found")
+    data = {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}
 
-    foul_rate = year_obj.foul_rate
-
-    return {
-        "matches": {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()},
-        "foul_rate": foul_rate,
-    }
-"""
+    return compress(data)

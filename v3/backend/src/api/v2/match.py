@@ -2,10 +2,9 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Response
 
-from src.api.alliance import get_alliances_cached
 from src.api.match import get_match_cached, get_matches_cached
 from src.api.v2.utils import format_team
-from src.db.models import Alliance, Match
+from src.db.models import Match
 from src.models.epa.math import inv_unit_sigmoid
 from src.utils.decorators import (
     async_fail_gracefully_plural,
@@ -15,9 +14,7 @@ from src.utils.decorators import (
 router = APIRouter()
 
 
-def get_v2_match(
-    match: Match, red_alliance: Alliance, blue_alliance: Alliance
-) -> Dict[str, Any]:
+def get_v2_match(match: Match) -> Dict[str, Any]:
     return {
         "key": match.key,
         "year": match.year,
@@ -70,80 +67,25 @@ def get_v2_match(
         "predicted_time": match.predicted_time,
         "red_score": match.red_score,
         "blue_score": match.blue_score,
-        "red_auto": red_alliance.auto,
+        "red_auto": match.red_auto,
         "red_auto_movement": 0,
-        "red_teleop": red_alliance.teleop,
-        "red_endgame": red_alliance.endgame,
-        "red_no_fouls": red_alliance.no_foul,
-        "red_fouls": red_alliance.foul,
-        "red_rp_1": None if red_alliance.rp_1 is None else int(red_alliance.rp_1),
-        "red_rp_2": None if red_alliance.rp_2 is None else int(red_alliance.rp_2),
-        "red_tiebreaker": red_alliance.tiebreaker,
-        "blue_auto": blue_alliance.auto,
+        "red_teleop": match.red_teleop,
+        "red_endgame": match.red_endgame,
+        "red_no_fouls": match.red_no_foul,
+        "red_fouls": match.red_foul,
+        "red_rp_1": None if match.red_rp_1 is None else int(match.red_rp_1),
+        "red_rp_2": None if match.red_rp_2 is None else int(match.red_rp_2),
+        "red_tiebreaker": match.red_tiebreaker,
+        "blue_auto": match.blue_auto,
         "blue_auto_movement": 0,
-        "blue_teleop": blue_alliance.teleop,
-        "blue_endgame": blue_alliance.endgame,
-        "blue_no_fouls": blue_alliance.no_foul,
-        "blue_fouls": blue_alliance.foul,
-        "blue_rp_1": None if blue_alliance.rp_1 is None else int(blue_alliance.rp_1),
-        "blue_rp_2": None if blue_alliance.rp_2 is None else int(blue_alliance.rp_2),
-        "blue_tiebreaker": blue_alliance.tiebreaker,
+        "blue_teleop": match.blue_teleop,
+        "blue_endgame": match.blue_endgame,
+        "blue_no_fouls": match.blue_no_foul,
+        "blue_fouls": match.blue_foul,
+        "blue_rp_1": None if match.blue_rp_1 is None else int(match.blue_rp_1),
+        "blue_rp_2": None if match.blue_rp_2 is None else int(match.blue_rp_2),
+        "blue_tiebreaker": match.blue_tiebreaker,
     }
-
-
-async def get_matches_cached_wrapper(
-    team: Optional[int] = None,
-    year: Optional[int] = None,
-    event: Optional[str] = None,
-    week: Optional[int] = None,
-    elims: Optional[bool] = None,
-    offseason: Optional[bool] = False,
-    metric: Optional[str] = None,
-    ascending: Optional[bool] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
-) -> List[Dict[str, Any]]:
-    if team is not None:
-        raise Exception("Team filter not supported")
-
-    matches: List[Match] = await get_matches_cached(
-        year=year,
-        event=event,
-        week=week,
-        elim=elims,
-        offseason=offseason,
-        metric=metric,
-        ascending=ascending,
-        limit=limit,
-        offset=offset,
-    )
-    alliances: List[Alliance] = await get_alliances_cached(
-        year=year,
-        event=event,
-        week=week,
-        elim=elims,
-        offseason=offseason,
-        metric=metric,
-        ascending=ascending,
-        limit=limit,
-        offset=offset,
-    )
-    match_to_red_alliance: Dict[str, Alliance] = {}
-    match_to_blue_alliance: Dict[str, Alliance] = {}
-    for alliance in alliances:
-        if alliance.alliance == "red":
-            match_to_red_alliance[alliance.match] = alliance
-        elif alliance.alliance == "blue":
-            match_to_blue_alliance[alliance.match] = alliance
-    out_matches: List[Dict[str, Any]] = []
-    for match in matches:
-        red_alliance = match_to_red_alliance.get(match.key)
-        blue_alliance = match_to_blue_alliance.get(match.key)
-        if red_alliance is None or blue_alliance is None:
-            raise Exception("Alliance not found")
-        out_match = get_v2_match(match, red_alliance, blue_alliance)
-        out_matches.append(out_match)
-    return out_matches
 
 
 @router.get("/")
@@ -159,19 +101,9 @@ async def read_v2_match_root():
 @async_fail_gracefully_singular
 async def read_match(response: Response, match: str) -> Dict[str, Any]:
     match_obj: Optional[Match] = await get_match_cached(match=match)
-    alliance_objs: List[Alliance] = await get_alliances_cached(match=match)
-    red_alliances = [x for x in alliance_objs if x.alliance == "red"]
-    if len(red_alliances) != 1:
-        raise Exception("Red alliance not found")
-    red_alliance = red_alliances[0]
-    blue_alliances = [x for x in alliance_objs if x.alliance == "blue"]
-    if len(blue_alliances) != 1:
-        raise Exception("Blue alliance not found")
-    blue_alliance = blue_alliances[0]
     if match_obj is None:
         raise Exception("Match not found")
-
-    return get_v2_match(match_obj, red_alliance, blue_alliance)
+    return get_v2_match(match_obj)
 
 
 @router.get(
@@ -181,7 +113,8 @@ async def read_match(response: Response, match: str) -> Dict[str, Any]:
 )
 @async_fail_gracefully_plural
 async def read_matches_event(response: Response, event: str) -> List[Dict[str, Any]]:
-    return await get_matches_cached_wrapper(event=event)
+    matches = await get_matches_cached(event=event)
+    return [get_v2_match(match) for match in matches]
 
 
 @router.get(
@@ -193,7 +126,8 @@ async def read_matches_event(response: Response, event: str) -> List[Dict[str, A
 async def read_matches_team_year(
     response: Response, team: int, year: int
 ) -> List[Dict[str, Any]]:
-    return await get_matches_cached_wrapper(team=team, year=year)
+    matches = await get_matches_cached(team=str(team), year=year)
+    return [get_v2_match(match) for match in matches]
 
 
 @router.get(
@@ -205,7 +139,8 @@ async def read_matches_team_year(
 async def read_matches_team_event(
     response: Response, team: int, event: str
 ) -> List[Dict[str, Any]]:
-    return await get_matches_cached_wrapper(team=team, event=event)
+    matches = await get_matches_cached(team=str(team), event=event)
+    return [get_v2_match(match) for match in matches]
 
 
 @router.get(
@@ -227,15 +162,17 @@ async def read_matches(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
-    return await get_matches_cached_wrapper(
-        team=team,
+    matches = await get_matches_cached(
+        team=None if team is None else str(team),
         year=year,
         event=event,
         week=week,
-        elims=elims,
+        elim=elims,
         offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,
         offset=offset,
     )
+
+    return [get_v2_match(match) for match in matches]

@@ -34,9 +34,9 @@ def get_upcoming_matches(
             EventORM.state,
             EventORM.district,
         ).add_columns(
-            func.greatest(MatchORM.red_epa_sum, MatchORM.blue_epa_sum).label("max_epa"),
-            (MatchORM.red_epa_sum + MatchORM.blue_epa_sum).label("sum_epa"),
-            func.abs(MatchORM.red_epa_sum - MatchORM.blue_epa_sum).label("diff_epa"),
+            func.greatest(MatchORM.epa_red_score_pred, MatchORM.epa_blue_score_pred).label("max_epa"),  # type: ignore
+            (MatchORM.epa_red_score_pred + MatchORM.epa_blue_score_pred).label("sum_epa"),  # type: ignore
+            func.abs(MatchORM.epa_red_score_pred - MatchORM.epa_blue_score_pred).label("diff_epa"),  # type: ignore
         )
 
         matches = matches.filter(
@@ -63,10 +63,10 @@ def get_upcoming_matches(
 
         if metric in ["max_epa", "sum_epa"]:
             # sort desc
-            matches = matches.order_by(text(f"{metric} DESC"))
-        else:
+            matches = matches.order_by(text(f"matches.{metric} DESC"))
+        elif metric in ["time", "diff_epa"]:
             # sort asc
-            matches = matches.order_by(text(f"{metric} ASC"))
+            matches = matches.order_by(text(f"matches.{metric} ASC"))
 
         matches = matches.limit(limit).all()
 

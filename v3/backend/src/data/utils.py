@@ -3,7 +3,6 @@ from typing import Dict, Optional, Tuple
 
 from src.db.functions import clear_year
 from src.db.models import (
-    Alliance,
     ETag,
     Event,
     Match,
@@ -13,11 +12,9 @@ from src.db.models import (
     Year,
 )
 from src.db.read import (
-    get_alliances as get_alliances_db,
     get_etags as get_etags_db,
     get_events as get_events_db,
     get_matches as get_matches_db,
-    get_num_alliances as get_num_alliances_db,
     get_num_etags as get_num_etags_db,
     get_num_events as get_num_events_db,
     get_num_matches as get_num_matches_db,
@@ -32,7 +29,6 @@ from src.db.read import (
     get_year as get_year_db,
 )
 from src.db.write.main import (
-    update_alliances as update_alliances_db,
     update_etags as update_etags_db,
     update_events as update_events_db,
     update_matches as update_matches_db,
@@ -48,14 +44,13 @@ objs_type = Tuple[
     Dict[str, Event],
     Dict[str, TeamEvent],
     Dict[str, Match],
-    Dict[str, Alliance],
     Dict[str, TeamMatch],
     Dict[str, ETag],
 ]
 
 
 def create_objs(year: int) -> objs_type:
-    return (Year(year=year), {}, {}, {}, {}, {}, {}, {})
+    return (Year(year=year), {}, {}, {}, {}, {}, {})
 
 
 def read_objs(year: int) -> objs_type:
@@ -69,7 +64,6 @@ def read_objs(year: int) -> objs_type:
         {e.pk(): e for e in get_events_db(year=year, offseason=None)},
         {te.pk(): te for te in get_team_events_db(year=year, offseason=None)},
         {m.pk(): m for m in get_matches_db(year=year, offseason=None)},
-        {a.pk(): a for a in get_alliances_db(year=year, offseason=None)},
         {tm.pk(): tm for tm in get_team_matches_db(year=year, offseason=None)},
         {e.pk(): e for e in get_etags_db(year=year)},
     )
@@ -95,9 +89,8 @@ def write_objs(
         (orig_objs[2], objs[2], update_events_db),
         (orig_objs[3], objs[3], update_team_events_db),
         (orig_objs[4], objs[4], update_matches_db),
-        (orig_objs[5], objs[5], update_alliances_db),
-        (orig_objs[6], objs[6], update_team_matches_db),
-        (orig_objs[7], objs[7], update_etags_db),
+        (orig_objs[5], objs[5], update_team_matches_db),
+        (orig_objs[6], objs[6], update_etags_db),
     ]:
         new_objs = [
             obj
@@ -115,7 +108,6 @@ def print_table_stats() -> None:
     print("Num Events:", get_num_events_db())
     print("Num Team Events:", get_num_team_events_db())
     print("Num Matches:", get_num_matches_db())
-    print("Num Alliances", get_num_alliances_db())
     print("Num Team Matches:", get_num_team_matches_db())
     print("Num ETags", get_num_etags_db())
 

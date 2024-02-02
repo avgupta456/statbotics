@@ -5,7 +5,6 @@ from typing import Callable, Dict, List, Optional, Tuple
 from src.data.utils import objs_type
 from src.db.models import TeamEvent, TeamMatch
 from src.models.epa.unitless import epa_to_unitless_epa, get_epa_to_norm_epa_func
-from src.types.enums import AllianceColor
 from src.utils.utils import get_team_event_key, r
 
 
@@ -25,9 +24,6 @@ def process_year_epas(
 def process_year(objs: objs_type) -> objs_type:
     year = objs[0]
 
-    year_num = year.year
-    USE_COMPONENTS = year_num >= 2016
-
     mean = year.score_mean or 0
     sd = year.score_sd or 0
 
@@ -39,30 +35,17 @@ def process_year(objs: objs_type) -> objs_type:
 
     team_team_matches_dict: Dict[str, List[TeamMatch]] = defaultdict(list)
     team_event_team_matches_dict: Dict[str, List[TeamMatch]] = defaultdict(list)
-    for team_match in sorted(objs[6].values(), key=lambda tm: tm.sort()):
+    for team_match in sorted(objs[5].values(), key=lambda tm: tm.sort()):
         team_team_matches_dict[team_match.team].append(team_match)
         team_event_key = get_team_event_key(team_match.team, team_match.event)
         team_event_team_matches_dict[team_event_key].append(team_match)
 
-    # ALLIANCES
-    matches = objs[4]
-    alliances = objs[5]
-    for a in alliances.values():
-        is_red = a.alliance == AllianceColor.RED
-        m = matches[a.match]
-        if m.epa_win_prob is not None:
-            a.epa_win_prob = m.epa_win_prob if is_red else r(1 - m.epa_win_prob, 4)
-        a.epa_winner = m.epa_winner
-        a.score_pred = m.epa_red_score_pred if is_red else m.epa_blue_score_pred
-        if USE_COMPONENTS:
-            a.rp_1_pred = m.epa_red_rp_1_pred if is_red else m.epa_blue_rp_1_pred
-            a.rp_2_pred = m.epa_red_rp_2_pred if is_red else m.epa_blue_rp_2_pred
-
     # TEAM YEARS
-    total_epas: List[float] = []
-    country_epas: Dict[str, List[float]] = defaultdict(list)
-    state_epas: Dict[str, List[float]] = defaultdict(list)
-    district_epas: Dict[str, List[float]] = defaultdict(list)
+    epa_list: List[float] = []
+    total_epas: List[Tuple[str, float]] = []
+    country_epas: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
+    state_epas: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
+    district_epas: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
     for ty in objs[1].values():
         curr_epas[ty.team] = ty.epa_start
 
@@ -73,18 +56,23 @@ def process_year(objs: objs_type) -> objs_type:
         )
 
         if not ty.offseason:
-            total_epas.append(ty.epa)
-            country_epas[ty.country or ""].append(ty.epa)
-            district_epas[ty.district or ""].append(ty.epa)
-            state_epas[ty.state or ""].append(ty.epa)
+            epa_list.append(ty.epa)
+            total_epas.append((ty.team, ty.epa))
+            country_epas[ty.country or ""].append((ty.team, ty.epa))
+            district_epas[ty.district or ""].append((ty.team, ty.epa))
+            state_epas[ty.state or ""].append((ty.team, ty.epa))
 
-    total_epas.sort(reverse=True)
-    country_epas = {k: sorted(v, reverse=True) for k, v in country_epas.items()}
-    state_epas = {k: sorted(v, reverse=True) for k, v in state_epas.items()}
-    district_epas = {k: sorted(v, reverse=True) for k, v in district_epas.items()}
-    # TODO: break ties so index doesn't return same for multiple teams
+    epa_list.sort(reverse=True)
 
-    epa_to_norm_epa = get_epa_to_norm_epa_func(total_epas)
+    def epa_tups_to_teams(v: List[Tuple[str, float]]):
+        return [x[0] for x in sorted(v, reverse=True, key=lambda x: x[1])]
+
+    sorted_teams = epa_tups_to_teams(total_epas)
+    country_sorted_teams = {k: epa_tups_to_teams(v) for k, v in country_epas.items()}
+    state_sorted_teams = {k: epa_tups_to_teams(v) for k, v in state_epas.items()}
+    district_sorted_teams = {k: epa_tups_to_teams(v) for k, v in district_epas.items()}
+
+    epa_to_norm_epa = get_epa_to_norm_epa_func(epa_list)
     for ty in objs[1].values():
         unitless_epa: float = epa_to_unitless_epa(ty.epa, mean, sd)
         ty.unitless_epa = r(unitless_epa)
@@ -95,25 +83,25 @@ def process_year(objs: objs_type) -> objs_type:
         if ty.offseason:
             continue
 
-        epa = ty.epa
-        ty.total_epa_rank = total_epas.index(epa) + 1
+        team = ty.team
+        ty.total_epa_rank = sorted_teams.index(team) + 1
         ty.total_team_count = len(total_epas)
         ty.total_epa_percentile = r(1 - ty.total_epa_rank / ty.total_team_count, 4)
 
-        country_epas_ = country_epas[ty.country or ""]
-        ty.country_epa_rank = country_epas_.index(epa) + 1
+        country_epas_ = country_sorted_teams[ty.country or ""]
+        ty.country_epa_rank = country_epas_.index(team) + 1
         ty.country_team_count = len(country_epas_)
         ty.country_epa_percentile = r(
             1 - ty.country_epa_rank / ty.country_team_count, 4
         )
 
-        state_epas_ = state_epas[ty.state or ""]
-        ty.state_epa_rank = state_epas_.index(epa) + 1
+        state_epas_ = state_sorted_teams[ty.state or ""]
+        ty.state_epa_rank = state_epas_.index(team) + 1
         ty.state_team_count = len(state_epas_)
         ty.state_epa_percentile = r(1 - ty.state_epa_rank / ty.state_team_count, 4)
 
-        district_epas_ = district_epas[ty.district or ""]
-        ty.district_epa_rank = district_epas_.index(epa) + 1
+        district_epas_ = district_sorted_teams[ty.district or ""]
+        ty.district_epa_rank = district_epas_.index(team) + 1
         ty.district_team_count = len(district_epas_)
         ty.district_epa_percentile = r(
             1 - ty.district_epa_rank / ty.district_team_count, 4
@@ -130,7 +118,7 @@ def process_year(objs: objs_type) -> objs_type:
         )
 
     year = objs[0]
-    sorted_epas = sorted(total_epas, reverse=True)
+    sorted_epas = sorted(epa_list, reverse=True)
     year.epa_99p, year.epa_90p, year.epa_75p, year.epa_25p = get_percentiles(
         sorted_epas
     )

@@ -91,6 +91,14 @@ function App({ Component, pageProps }: AppProps) {
     _setEPACellFormat(newEPACellFormat);
   };
 
+  useEffect(() => {
+    if (colorScheme === "dark") {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }, [colorScheme]);
+
   const memoizedPreferencesValue = useMemo(
     () => ({
       colorScheme,

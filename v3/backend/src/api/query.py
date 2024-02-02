@@ -1,6 +1,6 @@
 from fastapi import Query
 
-alliance_query = Query(None, description="Alliance color, e.g. `red` or `blue`.")
+from src.constants import CURR_YEAR
 
 active_query = Query(None, description="Whether the team has played in the last year.")
 
@@ -57,4 +57,4 @@ week_query = Query(
     description="Week of the competition season. 0 is preseason, 8 is CMP, 9 is offseason.",
 )
 
-year_query = Query(None, ge=2002, le=2024, description="Four-digit year")
+year_query = Query(None, ge=2002, le=CURR_YEAR, description="Four-digit year")

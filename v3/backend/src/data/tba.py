@@ -148,7 +148,6 @@ def process_year(
         event_objs_dict,
         team_event_objs_dict,
         match_objs_dict,
-        alliance_objs_dict,
         team_match_objs_dict,
         etags_dict,
     ) = objs
@@ -324,11 +323,7 @@ def process_year(
         elif event_status in [EventStatus.ONGOING, EventStatus.COMPLETED]:
             # Update event_obj, accumulate match_obj, alliance_objs, team_match_objs
             for match in matches:
-                (
-                    match_obj,
-                    curr_alliance_objs,
-                    curr_team_match_objs,
-                ) = match_dict_to_objs(
+                (match_obj, curr_team_match_objs) = match_dict_to_objs(
                     match, year_num, event_obj.week, event_obj.offseason
                 )
 
@@ -337,9 +332,6 @@ def process_year(
 
                 # Replace even if present, since may be Upcoming -> Completed
                 match_objs_dict[match_obj.key] = match_obj
-                for alliance_obj in curr_alliance_objs:
-                    alliance_objs_dict[alliance_obj.pk()] = alliance_obj
-
                 for team_match_obj in curr_team_match_objs:
                     add_team_event(team_match_obj.team, event_obj.offseason)
                     team_match_objs_dict[team_match_obj.pk()] = team_match_obj
@@ -447,7 +439,6 @@ def process_year(
         event_objs_dict,
         team_event_objs_dict,
         match_objs_dict,
-        alliance_objs_dict,
         team_match_objs_dict,
         new_etags_dict,
     )

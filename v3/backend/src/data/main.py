@@ -54,7 +54,6 @@ def process_year(
         {**objs[4]},
         {**objs[5]},
         {**objs[6]},
-        {**objs[7]},
     )
 
     if all_team_years is None:
@@ -68,7 +67,7 @@ def process_year(
     teams += new_teams
     timer.print(str(year_num) + " TBA")
 
-    year_obj = process_year_avg(objs[0], list(objs[5].values()))
+    year_obj = process_year_avg(objs[0], list(objs[4].values()))
     timer.print(str(year_num) + " AVG")
 
     objs = (year_obj, *objs[1:])
