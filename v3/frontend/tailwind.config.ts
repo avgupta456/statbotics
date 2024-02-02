@@ -2,12 +2,21 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         inputBlue: "#2684FF",
         gradientBlue: "#0D37F1",
         gradientRed: "#F50608",
+        matchRed: {
+          DEFAULT: "#FFEEEE",
+          dark: "#FFCCCC",
+        },
+        matchBlue: {
+          DEFAULT: "#EEEEFF",
+          dark: "#CCCCFF",
+        },
       },
       width: {
         "1/9": "11.11111111111111%",

@@ -9,10 +9,6 @@ import { CORRECT_COLOR, INCORRECT_COLOR } from "../utils/constants";
 import { COMP_LEVEL_FULL_NAMES, formatMatch } from "../utils/formatting";
 import { classnames, round } from "../utils/utils";
 
-const lightRed = "#FFEEEE";
-const lightBlue = "#EEEEFF";
-const lightGray = "#F0F0F0";
-
 const timestampToString = (timestamp: number) => {
   const date = new Date(timestamp * 1000);
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -25,7 +21,7 @@ const timestampToString = (timestamp: number) => {
 
 function Video({ match }: { match: APIMatch }) {
   return (
-    <div className="flex h-full w-16 items-center justify-center border-b border-r border-gray-300">
+    <div className="flex h-full w-16 items-center justify-center border-b border-r border-gray-300 dark:border-gray-700">
       {match.video && (
         <Link
           href={`/match/${match.key}`}
@@ -55,7 +51,7 @@ function Title({
     <Link
       href={`/match/${match.key}`}
       className={classnames(
-        "flex h-full cursor-pointer items-center justify-center border-b border-r border-gray-300 text-blue-600 hover:text-blue-700",
+        "flex h-full cursor-pointer items-center justify-center border-b border-r border-gray-300 text-blue-600 hover:text-blue-700 dark:border-gray-700",
         stacked ? "w-2/9" : "w-1/7",
         rawTitle ? "text-xs lg:text-sm" : "",
       )}
@@ -83,9 +79,8 @@ function Alliances({
   return (
     <div className={stacked ? "flex w-1/3 flex-col" : "w-3/7 flex"}>
       <div
-        style={{ backgroundColor: lightRed }}
         className={classnames(
-          "flex items-center justify-center",
+          "bg-matchRed dark:bg-matchRed-dark flex items-center justify-center",
           stacked ? "h-1/2 w-full" : "h-full w-1/2",
         )}
       >
@@ -105,9 +100,8 @@ function Alliances({
         ))}
       </div>
       <div
-        style={{ backgroundColor: lightBlue }}
         className={classnames(
-          "flex items-center justify-center",
+          "bg-matchBlue dark:bg-matchBlue-dark flex items-center justify-center",
           stacked ? "h-1/2 w-full" : "h-full w-1/2",
         )}
       >
@@ -144,14 +138,14 @@ function Scores({
   return match.status === "Completed" ? (
     <>
       <div
-        style={{ backgroundColor: lightRed }}
         className={classnames(
-          "flex h-full items-center justify-center",
+          "bg-matchRed dark:bg-matchRed-dark flex h-full items-center justify-center",
           stacked ? "w-1/9" : "w-1/14",
         )}
       >
         <span
           className={classnames(
+            "text-black",
             match.result.winner === "red" ? "font-bold" : "font-thin",
             alliance === "red" ? "underline" : "",
           )}
@@ -162,14 +156,14 @@ function Scores({
         {year >= 2016 && match.result.red_rp_2 > 0.5 && <sup>●</sup>}
       </div>
       <div
-        style={{ backgroundColor: lightBlue }}
         className={classnames(
-          "flex h-full items-center justify-center",
+          "bg-matchBlue bg-matchBlue-dark flex h-full items-center justify-center",
           stacked ? "w-1/9" : "w-1/14",
         )}
       >
         <span
           className={classnames(
+            "text-black",
             match.result.winner === "blue" ? "font-bold" : "font-thin",
             alliance === "blue" ? "underline" : "",
           )}
@@ -221,13 +215,13 @@ function ScorePreds({
       <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>
         <div
           className={classnames(
-            "flex items-center justify-center border-l-4 border-double border-gray-300",
+            "bg-matchRed dark:bg-matchRed-dark flex items-center justify-center border-l-4 border-double border-gray-300 dark:border-gray-700",
             stacked ? "h-1/2 w-full" : "h-full w-1/2",
           )}
-          style={{ backgroundColor: lightRed }}
         >
           <span
             className={classnames(
+              "text-black",
               match.pred.winner === "red" ? "font-bold" : "font-thin",
               alliance === "red" ? "underline" : "",
             )}
@@ -239,13 +233,13 @@ function ScorePreds({
         </div>
         <div
           className={classnames(
-            "flex items-center justify-center border-l-4 border-double border-gray-300",
+            "bg-matchBlue dark:bg-matchBlue-dark flex items-center justify-center border-l-4 border-double border-gray-300 dark:border-gray-700",
             stacked ? "h-1/2 w-full" : "h-full w-1/2",
           )}
-          style={{ backgroundColor: lightBlue }}
         >
           <span
             className={classnames(
+              "text-black",
               match.pred.winner === "blue" ? "font-bold" : "font-thin",
               alliance === "blue" ? "underline" : "",
             )}
@@ -260,7 +254,9 @@ function ScorePreds({
         <div
           className={classnames(
             "flex items-center justify-center",
-            stacked ? "h-1/2 w-full" : "h-full w-1/2 border-l-4 border-double border-gray-300 ",
+            stacked
+              ? "h-1/2 w-full"
+              : "h-full w-1/2 border-l-4 border-double border-gray-300 dark:border-gray-700",
           )}
         >
           {myAlliance
@@ -281,7 +277,7 @@ function ScorePreds({
                 : "#FFF",
           }}
           className={classnames(
-            "flex items-center justify-center",
+            "flex items-center justify-center text-black",
             stacked ? "h-1/2 w-full" : "h-full w-1/2",
           )}
         >
@@ -373,16 +369,13 @@ function MatchTable({
   return (
     <div
       className={classnames(
-        "flex flex-col border-2 border-gray-300 lg:text-base",
+        "flex flex-col border-2 border-gray-300 lg:text-base dark:border-gray-700",
         stacked ? "min-w-[300px] text-xs md:text-sm" : "min-w-[800px] text-sm",
       )}
       key={`match-table-${matches?.[0]?.key ?? ""}`}
     >
       {showHeaders && (
-        <div
-          style={{ backgroundColor: lightGray }}
-          className="flex h-8 w-full items-center text-center"
-        >
+        <div className="flex h-8 w-full items-center bg-zinc-100 text-center dark:bg-zinc-700">
           {showVideo && <div className="w-16">Video</div>}
           <div className="flex flex-grow">
             {stacked ? (
@@ -410,9 +403,8 @@ function MatchTable({
             <div key={`section-${compLevel}`}>
               {showSubHeaders && (
                 <div
-                  style={{ backgroundColor: lightGray }}
                   className={classnames(
-                    "w-full border-b-2 border-t-2 border-gray-300 text-center",
+                    "w-full border-b-2 border-t-2 border-gray-300 bg-zinc-100 text-center dark:border-gray-700 dark:bg-zinc-700",
                     stacked ? "h-16" : "h-8",
                   )}
                   key={`header-${compLevel}`}

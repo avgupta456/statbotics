@@ -104,7 +104,7 @@ export default function UpcomingMatches() {
           data.map((match) => <UpcomingMatch key={match.match.key} match={match} />)
         ) : (
           <div className="flex w-full flex-grow flex-col items-center justify-center">
-            <div className="mt-4 text-gray-700">
+            <div className="mt-4">
               {loading ? "Loading data, please wait..." : "No upcoming matches"}
             </div>
           </div>

@@ -10,8 +10,6 @@ import { APIMatch } from "../../types/api";
 import { classnames } from "../../utils/utils";
 import MatchesFilterBar from "./filterBar";
 
-const lightGray = "#F0F0F0";
-
 type NoteworthyMatchObjs = {
   high_score: APIMatch[];
   combined_score: APIMatch[];
@@ -54,11 +52,8 @@ function NoteworthySection({
         )}
       </div>
       <div className="scrollbar-hide flex overflow-x-scroll">
-        <div className="flex min-w-[100px] flex-col border-2 border-gray-300 md:min-w-[135px]">
-          <div
-            className="flex h-8 items-center justify-center text-xs md:text-sm lg:text-base"
-            style={{ backgroundColor: lightGray }}
-          >
+        <div className="flex min-w-[100px] flex-col border-2 border-gray-300 md:min-w-[135px] dark:border-gray-700">
+          <div className="flex h-8 items-center justify-center bg-zinc-100 text-xs md:text-sm lg:text-base dark:bg-zinc-700">
             {header}
           </div>
           {matches
@@ -121,8 +116,8 @@ export default function NoteworthyMatches() {
   return (
     <div>
       <MatchesFilterBar week={week} setWeek={setWeek} elim={elim} setElim={setElim} />
-      <div className="flex flex-col">
-        {data !== null && !loading ? (
+      <div className="mt-8 flex flex-col gap-8">
+        {(data?.high_score?.length ?? 0) > 0 && !loading ? (
           <>
             <NoteworthySection
               year={year}
@@ -213,8 +208,8 @@ export default function NoteworthyMatches() {
           </>
         ) : (
           <div className="flex w-full flex-grow flex-col items-center justify-center">
-            <div className="mt-4 text-gray-700">
-              {loading ? "Loading data, please wait..." : "No upcoming matches"}
+            <div className="mt-4">
+              {loading ? "Loading data, please wait..." : "No noteworthy matches"}
             </div>
           </div>
         )}
