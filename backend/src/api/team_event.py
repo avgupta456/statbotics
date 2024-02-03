@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Response, Request
+from fastapi import APIRouter, Response
 
 from src.db.models import TeamEvent
 from src.db.read import get_team_event, get_team_events
@@ -9,7 +9,6 @@ from src.utils.alru_cache import alru_cache
 from src.utils.decorators import (
     async_fail_gracefully_api_plural,
     async_fail_gracefully_api_singular,
-    async_fail_gracefully_api_plural_testing,
 )
 
 router = APIRouter()
@@ -106,11 +105,10 @@ async def read_team_events_team_year(
     description="Get a list of Team Event objects for a single event. Specify event key, ex: 2019ncwak",
     response_description="A list of Team Event objects. See /team_event/{team}/{event} for more information.",
 )
-@async_fail_gracefully_api_plural_testing
+@async_fail_gracefully_api_plural
 async def read_team_events_event(
-    request: Request, response: Response, event: str
+    response: Response, event: str
 ) -> List[Dict[str, Any]]:
-    # print request headers
     team_events: List[TeamEvent] = await get_team_events_cached(event=event)
     return [team_event.as_dict() for team_event in team_events]
 
