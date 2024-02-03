@@ -13,7 +13,7 @@ import { Spotlight, spotlight } from "@mantine/spotlight";
 import { getAllEvents, getAllTeams } from "../api/header";
 import { usePreferences } from "../contexts/preferencesContext";
 import { APIShortEvent, APIShortTeam } from "../types/api";
-import { classnames, loaderProp } from "../utils/utils";
+import { loaderProp } from "../utils/utils";
 
 function NavLink({ href, label }: { href: string; label: string }) {
   const { colorScheme, setColorScheme } = usePreferences();
@@ -31,10 +31,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
       variant="subtle"
       classNames={{
         label: "text-base font-light",
-        root: classnames(
-          "rounded h-9",
-          colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
-        ),
+        root: "rounded h-9 hover:bg-zinc-600 dark:hover:bg-zinc-800",
       }}
     />
   );
@@ -47,10 +44,7 @@ function Header() {
 
   const searchIcon = (
     <IconSearch
-      className={classnames(
-        "h-9 w-9 cursor-pointer rounded p-2",
-        colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
-      )}
+      className="h-9 w-9 cursor-pointer rounded p-2 hover:bg-zinc-600 dark:hover:bg-zinc-800"
       stroke={1.5}
       onClick={spotlight.open}
     />
@@ -94,7 +88,7 @@ function Header() {
       id: `team-${team.team}`,
       label: `${team.team} | ${team.name}`,
       value: `${team.team} | ${team.name}`,
-      onClick: () => router.push(`/team/${team.name}`),
+      onClick: () => router.push(`/team/${team.team}`),
     }));
 
   const seenEvents = new Set();
@@ -116,9 +110,7 @@ function Header() {
   const allOptions = [...teamOptions, ...eventOptions];
 
   return (
-    <AppShell.Header
-      className={colorScheme === "dark" ? "border-zinc-700 bg-zinc-900" : "bg-zinc-700 text-white"}
-    >
+    <AppShell.Header className="bg-zinc-700 text-white dark:border-zinc-700 dark:bg-zinc-900">
       <Spotlight
         // not rendered, but allows keyboard navigation with Ctrl+K
         actions={allOptions}
@@ -201,12 +193,7 @@ function Header() {
           <div className="mr-4 flex w-auto">
             <Menu trigger="click-hover" position="bottom" width={200} openDelay={100} shadow="md">
               <Menu.Target>
-                <Text
-                  className={classnames(
-                    "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
-                    colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
-                  )}
-                >
+                <Text className="flex h-9 cursor-pointer items-center rounded px-3 text-base font-light hover:bg-zinc-600 dark:hover:bg-zinc-800">
                   API
                 </Text>
               </Menu.Target>
@@ -227,12 +214,7 @@ function Header() {
             </Menu>
             <Menu trigger="click-hover" position="bottom" width={200} openDelay={100} shadow="md">
               <Menu.Target>
-                <Text
-                  className={classnames(
-                    "flex h-9 cursor-pointer items-center rounded px-3 text-base font-light",
-                    colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
-                  )}
-                >
+                <Text className="flex h-9 cursor-pointer items-center rounded px-3 text-base font-light hover:bg-zinc-600 dark:hover:bg-zinc-800">
                   More
                 </Text>
               </Menu.Target>
@@ -290,19 +272,13 @@ function Header() {
             onClick={spotlight.open}
             variant="light"
             color="zinc"
-            className={classnames(
-              "mantine-focus-never mr-4 w-60 border border-zinc-500 font-thin text-zinc-500",
-              colorScheme === "light" ? "bg-zinc-50" : "bg-zinc-800",
-            )}
+            className="mantine-focus-never mr-4 w-60 border border-zinc-500 bg-zinc-50 font-thin text-zinc-500 dark:bg-zinc-800"
           />
           <Link
             href="https://github.com/avgupta456/statbotics"
             target="_blank"
             rel="noopener noreferrer"
-            className={classnames(
-              "mr-2 h-9 w-9 rounded p-2",
-              colorScheme === "light" ? "hover:bg-zinc-600" : "hover:bg-zinc-800",
-            )}
+            className="mr-2 flex h-9 cursor-pointer items-center rounded p-2 hover:bg-zinc-600 dark:hover:bg-zinc-800"
           >
             <FaGithub className="h-5 w-5" stroke={2} />
           </Link>

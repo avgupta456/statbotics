@@ -16,7 +16,7 @@ import { LocationContext, useLocation } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { APIEvent, APIYear } from "../../types/api";
 import { weekOptions } from "../../utils/filterOptions";
-import { formatEventName, formatOngoingEventStatus } from "../../utils/utils";
+import { formatEventName, formatOngoingEventStatus } from "../../utils/formatting";
 
 function EventsFilterBar({
   week,
