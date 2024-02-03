@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { AppProps } from "next/app";
+import Head from "next/head";
 
 import { AppShell, MantineProvider, createTheme, useMantineColorScheme } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -125,10 +126,15 @@ function App({ Component, pageProps }: AppProps) {
 
 export default function AppWrapper({ ...props }: AppProps) {
   return (
-    <MantineProvider theme={theme}>
-      <NoSSR>
-        <App {...props} />
-      </NoSSR>
-    </MantineProvider>
+    <div>
+      <Head>
+        <title>Statbotics</title>
+      </Head>
+      <MantineProvider theme={theme}>
+        <NoSSR>
+          <App {...props} />
+        </NoSSR>
+      </MantineProvider>
+    </div>
   );
 }

@@ -21,7 +21,7 @@ const timestampToString = (timestamp: number) => {
 
 function Video({ match }: { match: APIMatch }) {
   return (
-    <div className="flex h-full w-16 items-center justify-center border-b border-r border-gray-300 dark:border-gray-700">
+    <div className="flex h-full w-16 items-center justify-center border-b border-r border-gray-300 dark:border-gray-700 dark:bg-zinc-700">
       {match.video && (
         <Link
           href={`/match/${match.key}`}
@@ -51,7 +51,7 @@ function Title({
     <Link
       href={`/match/${match.key}`}
       className={classnames(
-        "flex h-full cursor-pointer items-center justify-center border-b border-r border-gray-300 text-blue-600 hover:text-blue-700 dark:border-gray-700",
+        "flex h-full cursor-pointer items-center justify-center border-b border-r border-gray-300 text-blue-600 hover:text-blue-700 dark:border-gray-700 dark:bg-zinc-700",
         stacked ? "w-2/9" : "w-1/7",
         rawTitle ? "text-xs lg:text-sm" : "",
       )}
@@ -157,7 +157,7 @@ function Scores({
       </div>
       <div
         className={classnames(
-          "bg-matchBlue bg-matchBlue-dark flex h-full items-center justify-center",
+          "bg-matchBlue dark:bg-matchBlue-dark flex h-full items-center justify-center",
           stacked ? "w-1/9" : "w-1/14",
         )}
       >
@@ -256,7 +256,7 @@ function ScorePreds({
             "flex items-center justify-center",
             stacked
               ? "h-1/2 w-full"
-              : "h-full w-1/2 border-l-4 border-double border-gray-300 dark:border-gray-700",
+              : "h-full w-1/2 border-l-4 border-double border-gray-300 dark:border-gray-700 dark:bg-zinc-700",
           )}
         >
           {myAlliance

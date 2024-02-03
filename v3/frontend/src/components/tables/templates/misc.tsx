@@ -4,7 +4,7 @@ import { APITeamYear } from "../../../types/api";
 
 export function TeamNameCellRenderer({ value, data }: { value: string; data: APITeamYear }) {
   const { team, year } = data;
-  const link = year ? `/teams/${team}/${year}` : `/teams/${team}`;
+  const link = year ? `/team/${team}/${year}` : `/team/${team}`;
 
   return (
     <Link href={link} className="text-blue-500 underline">

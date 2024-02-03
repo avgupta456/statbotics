@@ -198,16 +198,18 @@ function Header() {
                 </Text>
               </Menu.Target>
               <Menu.Dropdown>
+                {/*
                 <Menu.Label>Setup</Menu.Label>
                 <Menu.Item component={Link} href="/api/auth">
                   Get API Key
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Label>Documentation</Menu.Label>
-                <Menu.Item component={Link} href="/api/rest">
+                */}
+                <Menu.Item component={Link} href="/docs/rest">
                   REST API
                 </Menu.Item>
-                <Menu.Item component={Link} href="/api/python">
+                <Menu.Item component={Link} href="/docs/python">
                   Python API
                 </Menu.Item>
               </Menu.Dropdown>
@@ -233,7 +235,7 @@ function Header() {
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Label>Misc</Menu.Label>
-                <Menu.Item component={Link} href="/compare">
+                <Menu.Item component={Link} href="/compare" disabled>
                   Compare Teams
                 </Menu.Item>
                 <Menu.Item component={Link} href="/hypothetical" disabled>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MdBubbleChart, MdInsights, MdOutlineTableChart } from "react-icons/md";
 
+import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { Tabs } from "@mantine/core";
@@ -98,71 +99,76 @@ export default function TeamsPage() {
   const loading = data?.length === 0;
 
   return (
-    <LocationContext.Provider value={memoizedLocation}>
-      <QueryHandler
-        recordTab
-        tab={tab}
-        setTab={setTab}
-        defaultTab="insights"
-        tabOptions={["insights", "breakdown", "bubble", "figures"]}
-        recordYear
-        year={year}
-        setYear={setYear}
-        recordLocation
-        location={location}
-        setLocation={setLocation}
-        recordWeek={false}
-      />
-      <TabsLayout showYearSelector title="Teams" tab={tab} setTab={setTab} defaultTab="insights">
-        <Tabs.List>
-          <Tabs.Tab value="insights" leftSection={<MdOutlineTableChart />}>
-            Insights
-          </Tabs.Tab>
-          {year >= 2016 && (
-            <Tabs.Tab
-              value="breakdown"
-              leftSection={<MdOutlineTableChart />}
-              disabled={![2023].includes(year)}
-            >
-              Breakdown
+    <div>
+      <Head>
+        <title>Teams - Statbotics</title>
+      </Head>
+      <LocationContext.Provider value={memoizedLocation}>
+        <QueryHandler
+          recordTab
+          tab={tab}
+          setTab={setTab}
+          defaultTab="insights"
+          tabOptions={["insights", "breakdown", "bubble", "figures"]}
+          recordYear
+          year={year}
+          setYear={setYear}
+          recordLocation
+          location={location}
+          setLocation={setLocation}
+          recordWeek={false}
+        />
+        <TabsLayout showYearSelector title="Teams" tab={tab} setTab={setTab} defaultTab="insights">
+          <Tabs.List>
+            <Tabs.Tab value="insights" leftSection={<MdOutlineTableChart />}>
+              Insights
             </Tabs.Tab>
-          )}
-          <Tabs.Tab value="bubble" leftSection={<MdBubbleChart />}>
-            Bubble Chart
-          </Tabs.Tab>
-          <Tabs.Tab value="figures" leftSection={<MdInsights />}>
-            Figures
-          </Tabs.Tab>
-        </Tabs.List>
-        <TabPanel value="insights" loading={loading} error={error}>
-          <div className="h-full w-full">
-            <TeamYearsTable data={data} />
-          </div>
-        </TabPanel>
-        {year >= 2016 && (
-          <TabPanel value="breakdown" loading={loading} error={error}>
+            {year >= 2016 && (
+              <Tabs.Tab
+                value="breakdown"
+                leftSection={<MdOutlineTableChart />}
+                disabled={![2023].includes(year)}
+              >
+                Breakdown
+              </Tabs.Tab>
+            )}
+            <Tabs.Tab value="bubble" leftSection={<MdBubbleChart />}>
+              Bubble Chart
+            </Tabs.Tab>
+            <Tabs.Tab value="figures" leftSection={<MdInsights />}>
+              Figures
+            </Tabs.Tab>
+          </Tabs.List>
+          <TabPanel value="insights" loading={loading} error={error}>
             <div className="h-full w-full">
-              <TeamYearsBreakdownTable data={data} />
+              <TeamYearsTable data={data} />
             </div>
           </TabPanel>
-        )}
-        <TabPanel value="bubble" loading={loading} error={error}>
-          <Bubbles
-            data={data ?? []}
-            axisOptions={getAxisOptions(year)}
-            defaultAxes={{
-              x: "teleop_points",
-              y: "auto_points",
-              z: "endgame_points",
-            }}
-          />
-        </TabPanel>
-        <TabPanel value="figures" loading={loading} error={error}>
-          <div className="flex h-auto w-full flex-col items-center justify-center px-2">
-            <YearLineChart year={year} teamYears={data} />
-          </div>
-        </TabPanel>
-      </TabsLayout>
-    </LocationContext.Provider>
+          {year >= 2016 && (
+            <TabPanel value="breakdown" loading={loading} error={error}>
+              <div className="h-full w-full">
+                <TeamYearsBreakdownTable data={data} />
+              </div>
+            </TabPanel>
+          )}
+          <TabPanel value="bubble" loading={loading} error={error}>
+            <Bubbles
+              data={data ?? []}
+              axisOptions={getAxisOptions(year)}
+              defaultAxes={{
+                x: "teleop_points",
+                y: "auto_points",
+                z: "endgame_points",
+              }}
+            />
+          </TabPanel>
+          <TabPanel value="figures" loading={loading} error={error}>
+            <div className="flex h-auto w-full flex-col items-center justify-center px-2">
+              <YearLineChart year={year} teamYears={data} />
+            </div>
+          </TabPanel>
+        </TabsLayout>
+      </LocationContext.Provider>
+    </div>
   );
 }
