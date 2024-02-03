@@ -67,9 +67,6 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
     if event_obj is None:
         raise Exception("Event not found")
 
-    # print request headers
-    print(response.headers)
-
     return event_obj.as_dict()
 
 

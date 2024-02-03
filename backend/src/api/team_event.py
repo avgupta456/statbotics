@@ -109,6 +109,8 @@ async def read_team_events_team_year(
 async def read_team_events_event(
     response: Response, event: str
 ) -> List[Dict[str, Any]]:
+    # print request headers
+    print(response.headers)
     team_events: List[TeamEvent] = await get_team_events_cached(event=event)
     return [team_event.as_dict() for team_event in team_events]
 
