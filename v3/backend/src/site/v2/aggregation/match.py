@@ -10,7 +10,6 @@ from src.utils.utils import get_match_name
 
 
 def unpack_match(match: Match) -> APIMatch:
-    # TODO: take in red_alliance, blue_alliance for components
     return APIMatch(
         year=match.year,
         event=match.event,
