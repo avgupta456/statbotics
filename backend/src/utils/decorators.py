@@ -3,7 +3,7 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, List
 
-from fastapi import Response, status
+from fastapi import Response, status, Request
 
 
 def fail_gracefully(func: Callable[..., Any]):
@@ -68,6 +68,22 @@ def async_fail_gracefully_api_plural(func: Callable[..., Any]):
     ) -> Any:
         try:
             return await func(response, *args, **kwargs)
+        except Exception as e:
+            logging.exception(e)
+            response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return []
+
+    return wrapper
+
+
+def async_fail_gracefully_api_plural_testing(func: Callable[..., Any]):
+    @wraps(func)  # needed to play nice with FastAPI decorator
+    async def wrapper(
+        request: Request, response: Response, *args: List[Any], **kwargs: Dict[str, Any]
+    ) -> Any:
+        print(request.headers)
+        try:
+            return await func(request, response, *args, **kwargs)
         except Exception as e:
             logging.exception(e)
             response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
