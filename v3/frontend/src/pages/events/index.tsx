@@ -15,8 +15,9 @@ import { useData } from "../../contexts/dataContext";
 import { LocationContext, useLocation } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { APIEvent, APIYear } from "../../types/api";
+import { CURR_YEAR } from "../../utils/constants";
 import { weekOptions } from "../../utils/filterOptions";
-import { formatEventName, formatOngoingEventStatus } from "../../utils/utils";
+import { formatEventName, formatOngoingEventStatus } from "../../utils/formatting";
 
 function EventsFilterBar({
   week,
@@ -119,9 +120,10 @@ function EventsSection({ title, events }: { title: string; events: APIEvent[] })
 
 export default function EventsPage() {
   const { isReady } = useRouter();
-  const { eventDataDict, setEventDataDict, setYearDataDict, year, setYear } = useData();
+  const { eventDataDict, setEventDataDict, setYearDataDict } = useData();
 
   const [tab, setTab] = useState<string>("summary");
+  const [year, setYear] = useState<number>(CURR_YEAR);
   const [location, setLocation] = useState<string | null>(null);
   const [week, setWeek] = useState<number | null>(null);
   const [search, setSearch] = useState<string>("");
@@ -219,7 +221,15 @@ export default function EventsPage() {
         week={week}
         setWeek={setWeek}
       />
-      <TabsLayout showYearSelector title="Events" tab={tab} setTab={setTab} defaultTab="summary">
+      <TabsLayout
+        showYearSelector
+        year={year}
+        setYear={setYear}
+        title="Events"
+        tab={tab}
+        setTab={setTab}
+        defaultTab="summary"
+      >
         <Tabs.List>
           <Tabs.Tab value="summary" leftSection={<MdGridView />}>
             Summary
@@ -248,7 +258,7 @@ export default function EventsPage() {
           <div className="h-full w-full">
             <EventsFilterBar week={week} setWeek={setWeek} search={search} setSearch={setSearch} />
             <div className="h-4" />
-            <EventsTable data={data} />
+            <EventsTable year={year} data={data} />
           </div>
         </TabPanel>
       </TabsLayout>

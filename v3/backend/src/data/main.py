@@ -116,7 +116,7 @@ def post_process(
 def reset_all_years():
     timer = Timer()
 
-    start_year = 2022
+    start_year = 2002
     end_year = CURR_YEAR
 
     clean_db()

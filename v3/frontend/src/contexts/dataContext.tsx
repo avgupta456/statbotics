@@ -15,8 +15,6 @@ export const DataContext = createContext({
   setEventDataDict: (eventDataDict: { [key: number]: APIEvent[] }) => {},
   yearDataDict: {},
   setYearDataDict: (yearDataDict: { [key: number]: APIYear }) => {},
-  year: CURR_YEAR,
-  setYear: (year: number) => {},
 } as {
   teamYearMiniDataDict: { [key: number]: APITeamYear[] };
   setTeamYearMiniDataDict: any;
@@ -26,8 +24,6 @@ export const DataContext = createContext({
   setEventDataDict: any;
   yearDataDict: { [key: number]: APIYear };
   setYearDataDict: any;
-  year: number;
-  setYear: (year: number) => void;
 });
 
 export const useData = () => {

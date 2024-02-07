@@ -50,7 +50,8 @@ export function EPACellRenderer({
   }
 
   const { colorScheme, EPACellFormat } = usePreferences();
-  const { yearDataDict, year } = useData();
+  const { yearDataDict } = useData();
+  const { year } = context;
 
   const mean = value;
   const sd = data?.epa?.breakdown?.[epaKey]?.sd || 0;

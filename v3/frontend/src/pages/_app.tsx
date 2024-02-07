@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { AppProps } from "next/app";
+import Head from "next/head";
 
 import { AppShell, MantineProvider, createTheme, useMantineColorScheme } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -13,7 +14,6 @@ import { PreferencesContext } from "../contexts/preferencesContext";
 import Header from "../layout/header";
 import "../styles/globals.css";
 import { APIEvent, APITeamYear, APIYear } from "../types/api";
-import { CURR_YEAR } from "../utils/constants";
 import NoSSR from "../utils/no-ssr";
 
 const theme = createTheme({
@@ -28,7 +28,6 @@ function App({ Component, pageProps }: AppProps) {
   const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: APITeamYear[] }>({});
   const [eventDataDict, setEventDataDict] = useState<{ [key: number]: APIEvent[] }>({});
   const [yearDataDict, setYearDataDict] = useState<{ [key: number]: APIYear }>({});
-  const [year, setYear] = useState(CURR_YEAR);
 
   const memoizedDataValue = useMemo(
     () => ({
@@ -40,8 +39,6 @@ function App({ Component, pageProps }: AppProps) {
       setEventDataDict,
       yearDataDict,
       setYearDataDict,
-      year,
-      setYear,
     }),
     [
       teamYearMiniDataDict,
@@ -52,8 +49,6 @@ function App({ Component, pageProps }: AppProps) {
       setEventDataDict,
       yearDataDict,
       setYearDataDict,
-      year,
-      setYear,
     ],
   );
 
@@ -125,10 +120,15 @@ function App({ Component, pageProps }: AppProps) {
 
 export default function AppWrapper({ ...props }: AppProps) {
   return (
-    <MantineProvider theme={theme}>
-      <NoSSR>
-        <App {...props} />
-      </NoSSR>
-    </MantineProvider>
+    <div>
+      <Head>
+        <title>Statbotics</title>
+      </Head>
+      <MantineProvider theme={theme}>
+        <NoSSR>
+          <App {...props} />
+        </NoSSR>
+      </MantineProvider>
+    </div>
   );
 }

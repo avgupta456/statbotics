@@ -5,7 +5,6 @@ import { IoMdStopwatch } from "react-icons/io";
 import { Tabs } from "@mantine/core";
 
 import QueryHandler from "../../components/queryHandler";
-import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { CURR_YEAR } from "../../utils/constants";
@@ -13,7 +12,7 @@ import NoteworthyMatches from "./noteworthy";
 import UpcomingMatches from "./upcoming";
 
 export default function MatchesPage() {
-  const { year, setYear } = useData();
+  const [year, setYear] = useState(CURR_YEAR);
   const [location, setLocation] = useState<string | null>(null);
   const [_tab, setTab] = useState<string>("upcoming");
 
@@ -40,7 +39,15 @@ export default function MatchesPage() {
         setLocation={setLocation}
         recordWeek={false}
       />
-      <TabsLayout showYearSelector title="Matches" tab={tab} setTab={setTab} defaultTab="upcoming">
+      <TabsLayout
+        showYearSelector
+        year={year}
+        setYear={setYear}
+        title="Matches"
+        tab={tab}
+        setTab={setTab}
+        defaultTab="upcoming"
+      >
         <Tabs.List>
           {year === CURR_YEAR && (
             <Tabs.Tab value="upcoming" leftSection={<IoMdStopwatch />}>
@@ -55,7 +62,7 @@ export default function MatchesPage() {
           <UpcomingMatches />
         </TabPanel>
         <TabPanel value="noteworthy" loading={false} error={false}>
-          <NoteworthyMatches />
+          <NoteworthyMatches year={year} />
         </TabPanel>
       </TabsLayout>
     </LocationContext.Provider>

@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 import { Tabs } from "@mantine/core";
 
 import { Select } from "../components/select";
-import { useData } from "../contexts/dataContext";
 import { usePreferences } from "../contexts/preferencesContext";
 import { CURR_YEAR, YEAR_OPTIONS } from "../utils/constants";
 import { classnames } from "../utils/utils";
@@ -48,6 +47,9 @@ export function TabPanel({
 
 export default function TabsLayout({
   showYearSelector = false,
+  yearOptions = YEAR_OPTIONS,
+  year,
+  setYear,
   title,
   header,
   tab,
@@ -56,6 +58,10 @@ export default function TabsLayout({
   children,
 }: {
   showYearSelector?: boolean;
+  yearOptions?: string[];
+  year: number;
+  // eslint-disable-next-line no-unused-vars
+  setYear: (newYear: number) => void;
   title: string;
   header?: ReactNode;
   tab: string;
@@ -66,14 +72,12 @@ export default function TabsLayout({
 }) {
   const { colorScheme } = usePreferences();
 
-  const { year, setYear } = useData();
-
   return (
     <div className="pt-4 md:px-2 lg:px-4">
       {showYearSelector && (
         <div className="mb-4 flex w-full items-center justify-center">
           <Select
-            data={YEAR_OPTIONS}
+            data={yearOptions}
             value={year.toString()}
             onChange={(newYear: string | null) =>
               newYear ? setYear(parseInt(newYear)) : CURR_YEAR

@@ -15,6 +15,7 @@ import FilterBar, { LocationFilter } from "../../filterBar";
 import { Select } from "../../select";
 
 export default function Table({
+  year,
   data,
   dataType,
   columnDefs,
@@ -28,6 +29,7 @@ export default function Table({
   expanded = false,
   setExpanded = () => {},
 }: {
+  year: number;
   data: any[];
   dataType: "TeamYear" | "Event";
   columnDefs: any[];
@@ -77,10 +79,10 @@ export default function Table({
 
   // EPA Context
 
-  const [EPAContext, setEPAContext] = useState({});
+  const [EPAContext, setEPAContext] = useState({ year });
 
   const updateTeamYearContext = (newData: APITeamYear[]) => {
-    const newContext: any = {};
+    const newContext: any = { year };
     EPAColumns.forEach((k) => {
       const means = newData.map((d) => d?.epa?.breakdown?.[k]?.mean);
       const sds = newData.map((d) => d?.epa?.breakdown?.[k]?.sd);

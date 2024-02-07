@@ -106,11 +106,10 @@ def get_pred_rps(
         rp_2 = breakdown_mean[keys.index("rp_2")]
 
     elif year == 2019:
-        rocket_mean = breakdown_mean[keys.index("rocket")]
-        rocket_sd = breakdown_sd[keys.index("rocket")]
+        rocket_mean = breakdown_mean[keys.index("rocket_pieces")]
+        rocket_sd = breakdown_sd[keys.index("rocket_pieces")]
 
         rp_1 = breakdown_mean[keys.index("rp_1")]
-        # assume bottom is easy, top is attempted less since no incentive
         rp_2 = t_prob_gt_0(rocket_mean - 12 * DISCOUNT, rocket_sd)
 
     elif year == 2020:

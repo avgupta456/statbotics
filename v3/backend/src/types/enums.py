@@ -1,11 +1,6 @@
 from enum import Enum
 
 
-class AllianceColor(str, Enum):
-    RED = "red"
-    BLUE = "blue"
-
-
 class MatchWinner(str, Enum):
     RED = "red"
     BLUE = "blue"

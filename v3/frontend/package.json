@@ -30,11 +30,15 @@
     "ag-grid-community": "^31.0.1",
     "ag-grid-react": "^31.0.1",
     "idb-keyval": "^6.2.1",
+    "katex": "^0.16.9",
     "next": "14.0.4",
     "pako": "^2.1.0",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.12.0",
+    "react-markdown": "^9.0.1",
+    "rehype-katex": "^7.0.0",
+    "remark-math": "^6.0.0",
     "sharp": "^0.33.1"
   },
   "devDependencies": {

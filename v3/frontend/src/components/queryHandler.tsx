@@ -20,6 +20,7 @@ export default function QueryHandler({
   recordWeek,
   week = null,
   setWeek = () => {},
+  query = {},
 }: {
   recordTab: boolean;
   tab?: string;
@@ -39,13 +40,13 @@ export default function QueryHandler({
   week?: number | null;
   // eslint-disable-next-line no-unused-vars
   setWeek?: (newWeek: number | null) => void;
+  query?: any;
 }) {
   const router = useRouter();
 
   const { isReady } = router;
 
   const {
-    tab: paramsTab,
     country: paramsCountry,
     state: paramsState,
     district: paramsDistrict,
@@ -53,10 +54,12 @@ export default function QueryHandler({
     week: paramsWeek,
   } = router.query;
 
+  const paramsTab = window.location.hash.substring(1);
+
   useEffect(() => {
     if (isReady) {
-      if (recordTab && typeof paramsTab === "string" && tabOptions?.includes(paramsTab)) {
-        setTab(paramsTab as string);
+      if (recordTab && tabOptions?.includes(paramsTab)) {
+        setTab(paramsTab);
       }
 
       if (recordYear && typeof paramsYear === "string") {
@@ -91,42 +94,36 @@ export default function QueryHandler({
   useEffect(() => {
     if (!isReady) return;
 
-    const query: any = {};
-    if (recordTab && tab && tab !== defaultTab) {
-      query.tab = tab;
-    } else {
-      query.tab = undefined;
-    }
+    const newHash = recordTab && tab !== defaultTab ? tab : undefined;
 
+    const newQuery: any = { ...query };
     if (recordYear && year && year !== CURR_YEAR) {
-      query.year = year;
-    } else {
-      query.year = undefined;
+      newQuery.year = year;
     }
 
-    query.country = undefined;
-    query.state = undefined;
-    query.district = undefined;
     if (recordLocation && location) {
       const locationType = location.split("_")[0];
       const locationValue = location.split("_")[1];
-      query[locationType] = locationValue;
+      newQuery[locationType] = locationValue;
     }
 
     if (recordWeek && week) {
-      query.week = week;
-    } else {
-      query.week = undefined;
+      newQuery.week = week;
     }
 
     const cleanQuery: any = Object.fromEntries(
-      Object.entries(query).filter(([, v]) => v !== undefined),
+      Object.entries(newQuery).filter(([, v]) => v !== undefined),
     );
 
-    router.push({
-      pathname: router.pathname,
-      query: cleanQuery,
-    });
+    router.replace(
+      {
+        pathname: router.pathname,
+        hash: newHash || "",
+        query: cleanQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
   }, [year, tab, location, week]);
 
   return null;

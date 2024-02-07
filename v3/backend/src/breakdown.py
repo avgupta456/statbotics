@@ -54,9 +54,9 @@ key_to_name = {
         "comp_5": "teleop_scale_secs",
         "comp_6": "vault_points",
         "comp_7": "auto_scale_power",
-        "comp_8": "teleop_scale_power",
-        "comp_9": "switch_power",
-        "comp_10": "scale_power",
+        "comp_8": "switch_power",
+        "comp_9": "scale_power",
+        "comp_10": "opp_switch_power",
     },
     2019: {
         "auto": "auto_points",

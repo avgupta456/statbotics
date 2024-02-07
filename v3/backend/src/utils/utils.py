@@ -9,10 +9,6 @@ def get_team_event_key(team: str, event: str) -> str:
     return team + "_" + event
 
 
-def get_alliance_key(match: str, alliance: str) -> str:
-    return match + "_" + alliance
-
-
 def get_team_match_key(team: str, match: str) -> str:
     return team + "_" + match
 
