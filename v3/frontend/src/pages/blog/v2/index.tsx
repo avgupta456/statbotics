@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import PageLayout from "../shared/pageLayout";
+import PageLayout from "../../../components/blog/pageLayout";
 import SeasonTable from "../table";
 
 export default function V2BlogPage() {

@@ -1,4 +1,4 @@
-"use client";
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
 /* eslint-disable react/no-children-prop */
 import React, { useState } from "react";
@@ -6,8 +6,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import PageLayout from "../shared/pageLayout";
+import PageLayout from "../../../components/blog/pageLayout";
 import SeasonTable from "../table";
+
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
 export default function IntroBlogPage() {
   const [showComparison, setShowComparison] = useState(false);

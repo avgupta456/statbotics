@@ -30,6 +30,7 @@
     "ag-grid-community": "^31.0.1",
     "ag-grid-react": "^31.0.1",
     "idb-keyval": "^6.2.1",
+    "katex": "^0.16.9",
     "next": "14.0.4",
     "pako": "^2.1.0",
     "react": "^18",

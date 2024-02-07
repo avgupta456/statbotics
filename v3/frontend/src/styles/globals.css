@@ -1,3 +1,8 @@
+@layer {
+  @tailwind base;
+}
+@tailwind components;
+@tailwind utilities;
 
 .ag-header-cell.ag-text-center {
   .ag-header-cell-label {
@@ -25,9 +30,3 @@
     color: var(--mantine-color-white);
   }
 }
-
-@layer {
-    @tailwind base;
-}
-@tailwind components;
-@tailwind utilities;

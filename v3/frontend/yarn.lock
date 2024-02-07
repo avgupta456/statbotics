@@ -3123,7 +3123,7 @@ json5@^1.0.2:
     object.assign "^4.1.4"
     object.values "^1.1.6"
 
-katex@^0.16.0:
+katex@^0.16.0, katex@^0.16.9:
   version "0.16.9"
   resolved "https://registry.yarnpkg.com/katex/-/katex-0.16.9.tgz#bc62d8f7abfea6e181250f85a56e4ef292dcb1fa"
   integrity sha512-fsSYjWS0EEOwvy81j3vRA8TEAhQhKiqO+FQaKWp0m39qwOzHVBgAUBIXWj1pB+O2W3fIpNa6Y9KSKCVbfPhyAQ==

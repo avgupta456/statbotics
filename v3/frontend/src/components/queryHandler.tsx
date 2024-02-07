@@ -20,6 +20,7 @@ export default function QueryHandler({
   recordWeek,
   week = null,
   setWeek = () => {},
+  query = {},
 }: {
   recordTab: boolean;
   tab?: string;
@@ -39,6 +40,7 @@ export default function QueryHandler({
   week?: number | null;
   // eslint-disable-next-line no-unused-vars
   setWeek?: (newWeek: number | null) => void;
+  query?: any;
 }) {
   const router = useRouter();
 
@@ -91,36 +93,36 @@ export default function QueryHandler({
   useEffect(() => {
     if (!isReady) return;
 
-    const query: any = {};
+    const newQuery: any = { ...query };
     if (recordTab && tab && tab !== defaultTab) {
-      query.tab = tab;
+      newQuery.tab = tab;
     } else {
-      query.tab = undefined;
+      newQuery.tab = undefined;
     }
 
     if (recordYear && year && year !== CURR_YEAR) {
-      query.year = year;
+      newQuery.year = year;
     } else {
-      query.year = undefined;
+      newQuery.year = undefined;
     }
 
-    query.country = undefined;
-    query.state = undefined;
-    query.district = undefined;
+    newQuery.country = undefined;
+    newQuery.state = undefined;
+    newQuery.district = undefined;
     if (recordLocation && location) {
       const locationType = location.split("_")[0];
       const locationValue = location.split("_")[1];
-      query[locationType] = locationValue;
+      newQuery[locationType] = locationValue;
     }
 
     if (recordWeek && week) {
-      query.week = week;
+      newQuery.week = week;
     } else {
-      query.week = undefined;
+      newQuery.week = undefined;
     }
 
     const cleanQuery: any = Object.fromEntries(
-      Object.entries(query).filter(([, v]) => v !== undefined),
+      Object.entries(newQuery).filter(([, v]) => v !== undefined),
     );
 
     router.push({

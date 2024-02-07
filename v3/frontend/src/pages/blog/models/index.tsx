@@ -2,7 +2,7 @@ import React from "react";
 
 import Link from "next/link";
 
-import PageLayout from "../shared/pageLayout";
+import PageLayout from "../../../components/blog/pageLayout";
 import SeasonTable from "../table";
 
 export const metadata = {

@@ -1,13 +1,11 @@
-"use client";
-
 import React, { useState } from "react";
 
 import Link from "next/link";
 
+import { champsData, seasonData } from "../../components/blog/data";
 import { Select } from "../../components/select";
 import { YEAR_OPTIONS } from "../../utils/constants";
 import { classnames } from "../../utils/utils";
-import { champsData, seasonData } from "./data";
 
 export default function SeasonTable() {
   const orderedMethods = ["wins", "opr", "elo", "combined", "tba", "sykes", "epa"];

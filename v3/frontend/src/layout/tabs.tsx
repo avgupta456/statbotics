@@ -48,6 +48,7 @@ export function TabPanel({
 
 export default function TabsLayout({
   showYearSelector = false,
+  yearOptions = YEAR_OPTIONS,
   title,
   header,
   tab,
@@ -56,6 +57,7 @@ export default function TabsLayout({
   children,
 }: {
   showYearSelector?: boolean;
+  yearOptions?: string[];
   title: string;
   header?: ReactNode;
   tab: string;
@@ -73,7 +75,7 @@ export default function TabsLayout({
       {showYearSelector && (
         <div className="mb-4 flex w-full items-center justify-center">
           <Select
-            data={YEAR_OPTIONS}
+            data={yearOptions}
             value={year.toString()}
             onChange={(newYear: string | null) =>
               newYear ? setYear(parseInt(newYear)) : CURR_YEAR

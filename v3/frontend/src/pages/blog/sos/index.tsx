@@ -4,8 +4,8 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import PageLayout from "../shared/pageLayout";
-import { renderMath, renderMathBlock } from "../shared/utils";
+import PageLayout from "../../../components/blog/pageLayout";
+import { renderMath, renderMathBlock } from "../../../components/blog/utils";
 
 export default function SOSBlogPage() {
   return (
