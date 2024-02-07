@@ -17,6 +17,7 @@ import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { APITeamYear, APIYear } from "../../types/api";
+import { CURR_YEAR } from "../../utils/constants";
 
 export default function TeamsPage() {
   const { isReady } = useRouter();
@@ -26,10 +27,9 @@ export default function TeamsPage() {
     teamYearDataDict,
     setTeamYearDataDict,
     setYearDataDict,
-    year,
-    setYear,
   } = useData();
 
+  const [year, setYear] = useState<number>(CURR_YEAR);
   const [location, setLocation] = useState<string | null>(null);
   const [_tab, setTab] = useState<string>("insights");
 
@@ -118,7 +118,15 @@ export default function TeamsPage() {
           setLocation={setLocation}
           recordWeek={false}
         />
-        <TabsLayout showYearSelector title="Teams" tab={tab} setTab={setTab} defaultTab="insights">
+        <TabsLayout
+          showYearSelector
+          year={year}
+          setYear={setYear}
+          title="Teams"
+          tab={tab}
+          setTab={setTab}
+          defaultTab="insights"
+        >
           <Tabs.List>
             <Tabs.Tab value="insights" leftSection={<MdOutlineTableChart />}>
               Insights
@@ -141,13 +149,13 @@ export default function TeamsPage() {
           </Tabs.List>
           <TabPanel value="insights" loading={loading} error={error}>
             <div className="h-full w-full">
-              <TeamYearsTable data={data} />
+              <TeamYearsTable year={year} data={data} />
             </div>
           </TabPanel>
           {year >= 2016 && (
             <TabPanel value="breakdown" loading={loading} error={error}>
               <div className="h-full w-full">
-                <TeamYearsBreakdownTable data={data} />
+                <TeamYearsBreakdownTable year={year} data={data} />
               </div>
             </TabPanel>
           )}

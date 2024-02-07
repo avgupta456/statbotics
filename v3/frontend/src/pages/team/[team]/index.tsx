@@ -7,18 +7,22 @@ import { useRouter } from "next/router";
 import { Tabs } from "@mantine/core";
 
 import QueryHandler from "../../../components/queryHandler";
-import { useData } from "../../../contexts/dataContext";
 import TabsLayout, { TabPanel } from "../../../layout/tabs";
 import { CURR_YEAR } from "../../../utils/constants";
 
 type TeamData = any;
 type TeamYearData = any;
 
-export default function TeamPage() {
-  const router = useRouter();
-
-  const { team } = router.query;
-  const { year, setYear } = useData();
+export function PageContent({
+  team,
+  paramYear,
+  interpolation,
+}: {
+  team: string;
+  paramYear: number;
+  interpolation: { [key: string]: any };
+}) {
+  const [year, setYear] = useState(paramYear);
   const [tab, setTab] = useState("overview");
 
   const [loading, setLoading] = useState(true);
@@ -27,8 +31,6 @@ export default function TeamPage() {
   const [teamYearDataDict, setTeamYearDataDict] = useState<{
     [key: number]: TeamYearData | undefined;
   }>();
-
-  // console.log(team, year, loading, teamData, teamYearDataDict);
 
   if (!loading && !teamData) {
     return <div>Team not found</div>;
@@ -52,16 +54,16 @@ export default function TeamPage() {
         setTab={setTab}
         defaultTab="overview"
         tabOptions={["overview"]}
-        recordYear
-        year={year}
-        setYear={setYear}
+        recordYear={false}
         recordLocation={false}
         recordWeek={false}
-        query={{ team: team as string }}
+        query={interpolation}
       />
       <TabsLayout
         showYearSelector
         yearOptions={yearOptions}
+        year={year}
+        setYear={setYear}
         title="Team"
         tab={tab}
         setTab={setTab}
@@ -80,4 +82,10 @@ export default function TeamPage() {
       </TabsLayout>
     </>
   );
+}
+
+export default function TeamPage() {
+  const router = useRouter();
+  const { team } = router.query;
+  return <PageContent team={team as string} paramYear={CURR_YEAR} interpolation={{ team }} />;
 }

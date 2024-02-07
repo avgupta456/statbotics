@@ -47,7 +47,6 @@ export default function QueryHandler({
   const { isReady } = router;
 
   const {
-    tab: paramsTab,
     country: paramsCountry,
     state: paramsState,
     district: paramsDistrict,
@@ -55,10 +54,12 @@ export default function QueryHandler({
     week: paramsWeek,
   } = router.query;
 
+  const paramsTab = window.location.hash.substring(1);
+
   useEffect(() => {
     if (isReady) {
-      if (recordTab && typeof paramsTab === "string" && tabOptions?.includes(paramsTab)) {
-        setTab(paramsTab as string);
+      if (recordTab && tabOptions?.includes(paramsTab)) {
+        setTab(paramsTab);
       }
 
       if (recordYear && typeof paramsYear === "string") {
@@ -93,22 +94,13 @@ export default function QueryHandler({
   useEffect(() => {
     if (!isReady) return;
 
-    const newQuery: any = { ...query };
-    if (recordTab && tab && tab !== defaultTab) {
-      newQuery.tab = tab;
-    } else {
-      newQuery.tab = undefined;
-    }
+    const newHash = recordTab && tab !== defaultTab ? tab : undefined;
 
+    const newQuery: any = { ...query };
     if (recordYear && year && year !== CURR_YEAR) {
       newQuery.year = year;
-    } else {
-      newQuery.year = undefined;
     }
 
-    newQuery.country = undefined;
-    newQuery.state = undefined;
-    newQuery.district = undefined;
     if (recordLocation && location) {
       const locationType = location.split("_")[0];
       const locationValue = location.split("_")[1];
@@ -117,18 +109,21 @@ export default function QueryHandler({
 
     if (recordWeek && week) {
       newQuery.week = week;
-    } else {
-      newQuery.week = undefined;
     }
 
     const cleanQuery: any = Object.fromEntries(
       Object.entries(newQuery).filter(([, v]) => v !== undefined),
     );
 
-    router.push({
-      pathname: router.pathname,
-      query: cleanQuery,
-    });
+    router.replace(
+      {
+        pathname: router.pathname,
+        hash: newHash || "",
+        query: cleanQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
   }, [year, tab, location, week]);
 
   return null;

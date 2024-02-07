@@ -6,7 +6,6 @@ import { Button } from "@mantine/core";
 
 import { getNoteworthyMatches } from "../../api/matches";
 import MatchTable from "../../components/matchTable";
-import { useData } from "../../contexts/dataContext";
 import { useLocation } from "../../contexts/locationContext";
 import { APIMatch } from "../../types/api";
 import { classnames } from "../../utils/utils";
@@ -92,9 +91,8 @@ function NoteworthySection({
   );
 }
 
-export default function NoteworthyMatches() {
+export default function NoteworthyMatches({ year }: { year: number }) {
   const { isReady } = useRouter();
-  const { year } = useData();
   const { location } = useLocation();
   const [elim, setElim] = useState<string | null>(null);
   const [week, setWeek] = useState<number | null>(null);

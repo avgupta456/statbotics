@@ -93,7 +93,7 @@ const meanEPADef = {
   sortingOrder: ["desc", null],
 };
 
-export default function EventsTable({ data }: { data: APIEvent[] }) {
+export default function EventsTable({ year, data }: { year: number; data: APIEvent[] }) {
   const [expanded, setExpanded] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
@@ -120,6 +120,7 @@ export default function EventsTable({ data }: { data: APIEvent[] }) {
 
   return (
     <Table
+      year={year}
       data={data || []}
       dataType="Event"
       columnDefs={columnDefs}

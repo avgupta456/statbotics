@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { useData } from "../../contexts/dataContext";
 import { APITeamYear } from "../../types/api";
 import { CURR_YEAR } from "../../utils/constants";
 import { getEPADef } from "./templates/epa";
@@ -8,8 +7,13 @@ import { getCountryDef, getDistrictDef, getStateDef } from "./templates/location
 import { rankDef, teamNameDef, teamNumDef } from "./templates/misc";
 import Table from "./templates/table";
 
-export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] | undefined }) {
-  const { year } = useData();
+export default function TeamYearsBreakdownTable({
+  year,
+  data,
+}: {
+  year: number;
+  data: APITeamYear[] | undefined;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const getColumnDefs = (newYear: number, newExpanded: boolean) => {
@@ -113,6 +117,7 @@ export default function TeamYearsBreakdownTable({ data }: { data: APITeamYear[] 
 
   return (
     <Table
+      year={year}
       data={data || []}
       dataType="TeamYear"
       columnDefs={columnDefs}

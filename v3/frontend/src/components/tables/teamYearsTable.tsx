@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { useData } from "../../contexts/dataContext";
 import { APITeamYear } from "../../types/api";
 import { CURR_YEAR } from "../../utils/constants";
 import { EPATotalRankDef, UnitlessEPADef, getEPADef } from "./templates/epa";
@@ -9,8 +8,13 @@ import { nextEventDef, nextEventWeekDef, rankDef, teamNameDef, teamNumDef } from
 import { recordDef, winRateDef } from "./templates/record";
 import Table from "./templates/table";
 
-export default function TeamYearsTable({ data }: { data: APITeamYear[] | undefined }) {
-  const { year } = useData();
+export default function TeamYearsTable({
+  year,
+  data,
+}: {
+  year: number;
+  data: APITeamYear[] | undefined;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const getColumnDefs = (newYear: number, newExpanded: boolean) =>
@@ -43,6 +47,7 @@ export default function TeamYearsTable({ data }: { data: APITeamYear[] | undefin
 
   return (
     <Table
+      year={year}
       data={data || []}
       dataType="TeamYear"
       columnDefs={columnDefs}

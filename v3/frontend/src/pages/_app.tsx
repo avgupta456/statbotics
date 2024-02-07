@@ -14,7 +14,6 @@ import { PreferencesContext } from "../contexts/preferencesContext";
 import Header from "../layout/header";
 import "../styles/globals.css";
 import { APIEvent, APITeamYear, APIYear } from "../types/api";
-import { CURR_YEAR } from "../utils/constants";
 import NoSSR from "../utils/no-ssr";
 
 const theme = createTheme({
@@ -29,7 +28,6 @@ function App({ Component, pageProps }: AppProps) {
   const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: APITeamYear[] }>({});
   const [eventDataDict, setEventDataDict] = useState<{ [key: number]: APIEvent[] }>({});
   const [yearDataDict, setYearDataDict] = useState<{ [key: number]: APIYear }>({});
-  const [year, setYear] = useState(CURR_YEAR);
 
   const memoizedDataValue = useMemo(
     () => ({
@@ -41,8 +39,6 @@ function App({ Component, pageProps }: AppProps) {
       setEventDataDict,
       yearDataDict,
       setYearDataDict,
-      year,
-      setYear,
     }),
     [
       teamYearMiniDataDict,
@@ -53,8 +49,6 @@ function App({ Component, pageProps }: AppProps) {
       setEventDataDict,
       yearDataDict,
       setYearDataDict,
-      year,
-      setYear,
     ],
   );
 
