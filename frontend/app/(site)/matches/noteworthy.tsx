@@ -169,7 +169,7 @@ const NoteworthyMatches = ({
       }
       setLoading(false);
     });
-  }, [year, actualFilters, currFilters]);
+  }, [year, actualFilters, currYear, currFilters]);
 
   if (error) {
     return (
