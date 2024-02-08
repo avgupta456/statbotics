@@ -31,9 +31,9 @@ def get_v2_match(match: Match) -> Dict[str, Any]:
         "red_dq": match.red_dq,
         "red_surrogate": match.red_surrogate,
         "red_epa_sum": match.epa_red_score_pred,
-        "red_auto_epa_sum": None,
-        "red_teleop_epa_sum": None,
-        "red_endgame_epa_sum": None,
+        "red_auto_epa_sum": match.epa_red_auto_pred,
+        "red_teleop_epa_sum": match.epa_red_teleop_pred,
+        "red_endgame_epa_sum": match.epa_red_endgame_pred,
         "red_rp_1_epa_sum": None
         if match.epa_red_rp_1_pred is None
         else round(inv_unit_sigmoid(match.epa_red_rp_1_pred), 4),
@@ -46,9 +46,9 @@ def get_v2_match(match: Match) -> Dict[str, Any]:
         "blue_dq": match.blue_dq,
         "blue_surrogate": match.blue_surrogate,
         "blue_epa_sum": match.epa_blue_score_pred,
-        "blue_auto_epa_sum": None,
-        "blue_teleop_epa_sum": None,
-        "blue_endgame_epa_sum": None,
+        "blue_auto_epa_sum": match.epa_blue_auto_pred,
+        "blue_teleop_epa_sum": match.epa_blue_teleop_pred,
+        "blue_endgame_epa_sum": match.epa_blue_endgame_pred,
         "blue_rp_1_epa_sum": None
         if match.epa_blue_rp_1_pred is None
         else round(inv_unit_sigmoid(match.epa_blue_rp_1_pred), 4),

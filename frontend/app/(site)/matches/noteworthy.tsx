@@ -137,6 +137,8 @@ const NoteworthyMatches = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState<MatchData>(null);
+
+  const [currYear, setCurrYear] = useState(-1);
   const [currFilters, setCurrFilters] = useState({});
 
   const actualFilters: { [key: string]: any } = Object.keys(defaultFilters).reduce(
@@ -145,7 +147,7 @@ const NoteworthyMatches = ({
   );
 
   useEffect(() => {
-    if (JSON.stringify(currFilters) === JSON.stringify(actualFilters)) {
+    if (year === currYear && JSON.stringify(currFilters) === JSON.stringify(actualFilters)) {
       return;
     }
 
@@ -160,6 +162,7 @@ const NoteworthyMatches = ({
     ).then((data) => {
       if (data) {
         setData(data);
+        setCurrYear(year);
         setCurrFilters(actualFilters);
       } else {
         setError(true);

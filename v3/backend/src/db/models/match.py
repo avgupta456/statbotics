@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-
 from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
@@ -128,6 +127,14 @@ class MatchORM(Base, ModelORM):
     epa_red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """BACKWARDS COMPATIBILITY"""
+    epa_red_auto_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_teleop_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_endgame_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_auto_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_teleop_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_endgame_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Match = generate_attr_class("Match", MatchORM)

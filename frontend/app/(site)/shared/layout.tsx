@@ -4,6 +4,7 @@ import React from "react";
 import Select from "react-select";
 
 import { yearOptions } from "../../../components/filterConstants";
+import { CURR_YEAR } from "../../../constants";
 
 const PageLayout = ({
   title,
@@ -41,7 +42,7 @@ const PageLayout = ({
                 menu: (provided) => ({ ...provided, zIndex: 9999 }),
               }}
               options={filteredYearOptions}
-              onChange={(e) => setYear((parseInt(e?.value) ?? 2023) as number)}
+              onChange={(e) => setYear((parseInt(e?.value) ?? CURR_YEAR) as number)}
               value={{
                 value: year.toString(),
                 label: year === -1 ? "Summary" : year.toString(),

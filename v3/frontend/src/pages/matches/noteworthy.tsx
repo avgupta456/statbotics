@@ -113,9 +113,6 @@ export default function NoteworthyMatches({ year }: { year: number }) {
     }
   }, [year, location, elim, week]);
 
-  // eslint-disable-next-line no-console
-  console.log(data);
-
   return (
     <div>
       <MatchesFilterBar week={week} setWeek={setWeek} elim={elim} setElim={setElim} />
