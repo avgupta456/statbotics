@@ -1,23 +1,32 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 
-from src.constants import CURR_YEAR
-from src.site.aggregation import (
-    get_event,
-    get_match,
-    get_noteworthy_matches,
-    get_team_events,
-    get_team_matches,
-    get_upcoming_matches,
-    get_year,
+from src.db.functions import get_noteworthy_matches, get_upcoming_matches
+from src.site.helper import compress
+from src.utils.decorators import (
+    async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
-from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
-from src.utils.decorators import async_fail_gracefully
+
+# from src.constants import CURR_YEAR
+# from src.site.aggregation import (
+# get_event,
+# get_match,
+# get_noteworthy_matches,
+# get_team_events,
+# get_team_matches,
+# get_upcoming_matches,
+# get_year,
+# )
+# from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
+# from src.utils.decorators import async_fail_gracefully
 
 router = APIRouter()
 
 
+"""
 @router.get("/match/{match_id}")
 @async_fail_gracefully
 async def read_match(
@@ -58,81 +67,58 @@ async def read_match(
     }
 
     return out
+"""
 
 
 @router.get("/upcoming_matches")
-@async_fail_gracefully
+@async_fail_gracefully_plural
 async def read_upcoming_matches(
-    response: Response,
+    response: StreamingResponse,
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    playoff: Optional[str] = None,
+    elim: Optional[str] = None,
     minutes: int = -1,
     limit: int = 100,
     metric: str = "predicted_time",
     no_cache: bool = False,
-) -> Dict[str, Any]:
-    upcoming_matches: List[Tuple[APIMatch, str]] = []
-    upcoming_matches = await get_upcoming_matches(
+) -> Any:
+    upcoming_matches = get_upcoming_matches(
         country=country,
         state=state,
         district=district,
-        playoff={None: None, "quals": False, "elims": True}[playoff],
+        elim={None: None, "qual": False, "elim": True}[elim],
         minutes=minutes,
         limit=limit,
         metric=metric,
-        no_cache=no_cache,
     )
 
-    year_obj = await get_year(year=CURR_YEAR, no_cache=no_cache)
-    if year_obj is None:
-        raise Exception("Year not found")
+    data = [{"match": m, "event_name": e} for m, e in upcoming_matches]
 
-    foul_rate = year_obj.foul_rate
-
-    return {
-        "matches": [
-            {
-                "match": match.to_dict(),
-                "event_name": event_name,
-            }
-            for (match, event_name) in upcoming_matches
-        ],
-        "foul_rate": foul_rate,
-    }
+    return compress(data)
 
 
 @router.get("/noteworthy_matches/{year}")
-@async_fail_gracefully
+@async_fail_gracefully_singular
 async def read_noteworthy_matches(
-    response: Response,
+    response: StreamingResponse,
     year: int,
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    playoff: Optional[str] = None,
+    elim: Optional[str] = None,
     week: Optional[int] = None,
     no_cache: bool = False,
-) -> Dict[str, Any]:
-    noteworthy_matches: Dict[str, List[APIMatch]] = {}
-    noteworthy_matches = await get_noteworthy_matches(
+) -> Any:
+    noteworthy_matches = get_noteworthy_matches(
         year=year,
         country=country,
         state=state,
         district=district,
-        playoff={None: None, "quals": False, "elims": True}[playoff],
+        elim={None: None, "qual": False, "elim": True}[elim],
         week=week,
-        no_cache=no_cache,
     )
 
-    year_obj = await get_year(year=year, no_cache=no_cache)
-    if year_obj is None:
-        raise Exception("Year not found")
+    data = {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}
 
-    foul_rate = year_obj.foul_rate
-
-    return {
-        "matches": {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()},
-        "foul_rate": foul_rate,
-    }
+    return compress(data)

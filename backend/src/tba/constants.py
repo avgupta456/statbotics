@@ -90,9 +90,33 @@ DISTRICT_MAPPING: Dict[str, str] = {
 }
 
 
-# BLACKLISTS
+# TEAMS
 
-YEAR_BLACKLIST: List[int] = [2021]
+PLACEHOLDER_TEAMS = [
+    "9999",
+    "9998",
+    "9997",
+    "9996",
+    "9995",
+    "9994",
+    "9993",
+    "9992",
+    "9991",
+    "9990",
+    "9989",
+    "9988",
+    "9987",
+    "9986",
+    "9985",
+    "9984",
+    "9983",
+    "9982",
+    "9981",
+    "9980",
+]
+
+
+# BLACKLISTS
 
 # 2005va, 2007ga no matches, 2004va quals + elims mismatch
 # Rest are incomplete/invalid offseason events
@@ -102,7 +126,6 @@ EVENT_BLACKLIST: List[str] = [
     "2007ga",
     "2008cal",  # very incomplete
     "2016cafc2",  # "" team
-    "2019lafwbb3",  # too long key, can add back later
     "2022zhha",  # no matches
 ]
 

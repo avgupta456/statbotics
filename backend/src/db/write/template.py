@@ -1,8 +1,8 @@
 from typing import Any, Callable, Dict, List, Type
 
 import attr
-from sqlalchemy.dialects import postgresql  # type: ignore
-from sqlalchemy.orm.session import Session as SessionType  # type: ignore
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
 from src.db.main import Session
@@ -31,19 +31,19 @@ def update_template(
             session: SessionType, primary_key: List[str], data: List[Dict[str, Any]]
         ):
             for i in range(0, len(data), CUTOFF):
-                insert = postgresql.insert(orm_type.__table__).values(  # type: ignore
+                insert = postgresql.insert(orm_type.__table__).values(
                     data[i : i + CUTOFF]
                 )
-                update_cols = {  # type: ignore
-                    c.name: c for c in insert.excluded if c.name not in primary_key  # type: ignore
+                update_cols = {
+                    c.name: c for c in insert.excluded if c.name not in primary_key
                 }
-                update = insert.on_conflict_do_update(  # type: ignore
+                update = insert.on_conflict_do_update(
                     index_elements=primary_key, set_=update_cols
                 )
-                session.execute(update.execution_options(synchronize_session=False))  # type: ignore
+                session.execute(update.execution_options(synchronize_session=False))
 
         def callback(session: SessionType):
-            new_items = [attr.asdict(x) for x in items]  # type: ignore
+            new_items = [attr.asdict(x) for x in items]
 
             if orm_type == ETagORM:
                 primary_key = ["path"]
@@ -62,7 +62,7 @@ def update_template(
             elif orm_type == TeamMatchORM:
                 primary_key = ["team", "match"]
             else:
-                raise Exception("Unknown orm_type")
+                raise Exception("Unknown orm_type: " + str(orm_type))
 
             if insert_only:
                 return _insert(session, new_items)

@@ -1,66 +1,72 @@
 import statistics
-from typing import List
+from typing import Callable, List, Optional, Tuple
 
-from src.db.models import Event, Match, Year
-from src.constants import MAX_YEAR
+from src.constants import CURR_YEAR
+from src.db.models import Match, Year
+from src.types.enums import MatchStatus
+from src.utils.utils import r
 
 
-def process_year(year: Year, events: List[Event], matches: List[Match]) -> Year:
-    week_one_events = set([e.key for e in events if e.week == 1])
-    week_one_matches = [m for m in matches if m.event in week_one_events]
-    week_one_matches = [m for m in week_one_matches if m.status == "Completed"]
+def process_year(year: Year, matches: List[Match]) -> Year:
+    week_one_matches = [
+        m for m in matches if m.week == 1 and m.status == MatchStatus.COMPLETED
+    ]
 
-    scores: List[int] = []
-    autos: List[int] = []
-    teleops: List[int] = []
-    endgames: List[int] = []
-    fouls: List[int] = []
-    no_fouls: List[int] = []
-    rp_1s: List[int] = []
-    rp_2s: List[int] = []
+    def get_mean_sd(
+        red_accessor: Callable[[Match], Optional[float]],
+        blue_accessor: Callable[[Match], Optional[float]],
+    ) -> Tuple[float, float]:
+        arr: List[Optional[float]] = [red_accessor(x) for x in week_one_matches] + [
+            blue_accessor(x) for x in week_one_matches
+        ]
+        clean_arr: List[float] = [x for x in arr if x is not None]
+        if len(clean_arr) < 2:
+            return 0, 0
 
-    # TODO: investigate discrepancy between scores and fouls + no_fouls
-    for match in week_one_matches:
-        if match.status != "Completed":
-            continue
+        mean = statistics.mean(clean_arr)
+        sd = statistics.stdev(clean_arr)
+        return r(mean, 2), r(sd, 2)
 
-        scores.extend([match.red_score or 0, match.blue_score or 0])
-        autos.extend([match.red_auto or 0, match.blue_auto or 0])
-        teleops.extend([match.red_teleop or 0, match.blue_teleop or 0])
-        endgames.extend([match.red_endgame or 0, match.blue_endgame or 0])
-        fouls.extend([match.red_fouls or 0, match.blue_fouls or 0])
-        no_fouls.extend([match.red_no_fouls or 0, match.blue_no_fouls or 0])
-        rp_1s.extend([match.red_rp_1 or 0, match.blue_rp_1 or 0])
-        rp_2s.extend([match.red_rp_2 or 0, match.blue_rp_2 or 0])
-
-    if len(scores) > 0:
-        year.score_mean = round(sum(scores) / len(scores), 2)
-        year.score_sd = round(statistics.pstdev(scores), 2)
-        year.auto_mean = round(sum(autos) / len(autos), 2)
-        year.teleop_mean = round(sum(teleops) / len(teleops), 2)
-        year.endgame_mean = round(sum(endgames) / len(endgames), 2)
-        year.fouls_mean = round(sum(fouls) / len(fouls), 2)
-        year.no_fouls_mean = round(sum(no_fouls) / len(no_fouls), 2)
-        year.rp_1_mean = round(sum(rp_1s) / len(rp_1s), 2)
-        year.rp_2_mean = round(sum(rp_2s) / len(rp_2s), 2)
-    elif year.year == MAX_YEAR:
-        year.score_mean = 30
-        year.score_sd = 10
+    N = 2 * len(week_one_matches)
+    if year.year == CURR_YEAR and N < 100:
+        year.score_mean, year.score_sd = 30, 10
+        year.no_foul_mean = 30
+        year.foul_mean = 0
         year.auto_mean = 10
         year.teleop_mean = 10
         year.endgame_mean = 10
-        year.fouls_mean = 0
-        year.no_fouls_mean = 30
         year.rp_1_mean = 0.5
         year.rp_2_mean = 0.5
+        year.tiebreaker_mean = 0
+        year.comp_1_mean = 3
+        year.comp_2_mean = 3
+        year.comp_3_mean = 3
+        year.comp_4_mean = 3
+        year.comp_5_mean = 3
+        year.comp_6_mean = 3
+        year.comp_7_mean = 3
+        year.comp_8_mean = 3
+        year.comp_9_mean = 3
+        year.comp_10_mean = 3
+        return year
 
-    if year.year < 2016:
-        year.auto_mean = None
-        year.teleop_mean = None
-        year.endgame_mean = None
-        year.fouls_mean = None
-        year.no_fouls_mean = None
-        year.rp_1_mean = None
-        year.rp_2_mean = None
+    year.score_mean, year.score_sd = get_mean_sd(
+        lambda m: m.red_score, lambda m: m.blue_score
+    )
+    if year.year >= 2016:
+        year.no_foul_mean, _ = get_mean_sd(lambda m: m.red_no_foul, lambda m: m.blue_no_foul)  # type: ignore
+        year.foul_mean, _ = get_mean_sd(lambda m: m.red_foul, lambda m: m.blue_foul)
+        year.auto_mean, _ = get_mean_sd(lambda m: m.red_auto, lambda m: m.blue_auto)
+        year.teleop_mean, _ = get_mean_sd(lambda m: m.red_teleop, lambda m: m.blue_teleop)  # type: ignore
+        year.endgame_mean, _ = get_mean_sd(lambda m: m.red_endgame, lambda m: m.blue_endgame)  # type: ignore
+        year.rp_1_mean, _ = get_mean_sd(lambda m: m.red_rp_1, lambda m: m.blue_rp_1)
+        year.rp_2_mean, _ = get_mean_sd(lambda m: m.red_rp_2, lambda m: m.blue_rp_2)
+        year.tiebreaker_mean, _ = get_mean_sd(lambda m: m.red_tiebreaker, lambda m: m.blue_tiebreaker)  # type: ignore
+        for i in range(1, 19):
+            mean, _ = get_mean_sd(
+                lambda m: getattr(m, f"red_comp_{i}"),
+                lambda m: getattr(m, f"blue_comp_{i}"),
+            )
+            setattr(year, f"comp_{i}_mean", mean)
 
     return year

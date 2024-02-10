@@ -1,117 +1,129 @@
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple
 
-from src.db.models.etag import ETag
-from src.db.models.event import Event
 from src.db.models.match import Match
-from src.db.models.team import Team
-from src.db.models.team_event import TeamEvent
 from src.db.models.team_match import TeamMatch
-from src.db.models.team_year import TeamYear
-from src.db.models.year import Year
+from src.tba.read_tba import MatchDict
+from src.types.enums import CompLevel
 
 
-def create_team_obj(data: Dict[str, Any]) -> Team:
-    data["wins"] = 0
-    data["losses"] = 0
-    data["ties"] = 0
-    data["count"] = 0
-    data["full_wins"] = 0
-    data["full_losses"] = 0
-    data["full_ties"] = 0
-    data["full_count"] = 0
-    return Team.from_dict(data)
+def match_dict_to_objs(
+    data: MatchDict, year: int, week: int, offseason: bool
+) -> Tuple[Match, List[TeamMatch]]:
+    elim = data["comp_level"] != CompLevel.QUAL
 
+    red_breakdown = data["red_score_breakdown"]
+    blue_breakdown = data["blue_score_breakdown"]
 
-def create_year_obj(data: Dict[str, Any]) -> Year:
-    return Year.from_dict(data)
-
-
-def create_team_year_obj(data: Dict[str, Any]) -> TeamYear:
-    data["wins"] = 0
-    data["losses"] = 0
-    data["ties"] = 0
-    data["count"] = 0
-    data["full_wins"] = 0
-    data["full_losses"] = 0
-    data["full_ties"] = 0
-    data["full_count"] = 0
-    return TeamYear.from_dict(data)
-
-
-def create_event_obj(data: Dict[str, Any]) -> Event:
-    data["offseason"] = data["type"] > 10
-    return Event.from_dict(data)
-
-
-def create_team_event_obj(data: Dict[str, Any]) -> TeamEvent:
-    data["wins"] = 0
-    data["losses"] = 0
-    data["ties"] = 0
-    data["count"] = 0
-    data["qual_wins"] = 0
-    data["qual_losses"] = 0
-    data["qual_ties"] = 0
-    data["qual_count"] = 0
-    return TeamEvent.from_dict(data)
-
-
-def create_match_obj(data: Dict[str, Any]) -> Tuple[Match, List[TeamMatch]]:
-    data["playoff"] = data["comp_level"] != "qm"
-    data["red_auto"] = data["red_score_breakdown"]["auto"]
-    data["red_auto_movement"] = data["red_score_breakdown"]["auto_movement"]
-    data["red_auto_1"] = data["red_score_breakdown"]["auto_1"]
-    data["red_auto_2"] = data["red_score_breakdown"]["auto_2"]
-    data["red_auto_2_1"] = data["red_score_breakdown"]["auto_2_1"]
-    data["red_auto_2_2"] = data["red_score_breakdown"]["auto_2_2"]
-    data["red_teleop_1"] = data["red_score_breakdown"]["teleop_1"]
-    data["red_teleop_2"] = data["red_score_breakdown"]["teleop_2"]
-    data["red_teleop_2_1"] = data["red_score_breakdown"]["teleop_2_1"]
-    data["red_teleop_2_2"] = data["red_score_breakdown"]["teleop_2_2"]
-    data["red_teleop"] = data["red_score_breakdown"]["teleop"]
-    data["red_endgame"] = data["red_score_breakdown"]["endgame"]
-    data["red_no_fouls"] = data["red_score_breakdown"]["no_fouls"]
-    data["red_fouls"] = data["red_score_breakdown"]["fouls"]
-    data["red_rp_1"] = data["red_score_breakdown"]["rp1"]
-    data["red_rp_2"] = data["red_score_breakdown"]["rp2"]
-    data["red_tiebreaker"] = data["red_score_breakdown"]["tiebreaker"]
-    data["blue_auto"] = data["blue_score_breakdown"]["auto"]
-    data["blue_auto_movement"] = data["blue_score_breakdown"]["auto_movement"]
-    data["blue_auto_1"] = data["blue_score_breakdown"]["auto_1"]
-    data["blue_auto_2"] = data["blue_score_breakdown"]["auto_2"]
-    data["blue_auto_2_1"] = data["blue_score_breakdown"]["auto_2_1"]
-    data["blue_auto_2_2"] = data["blue_score_breakdown"]["auto_2_2"]
-    data["blue_teleop_1"] = data["blue_score_breakdown"]["teleop_1"]
-    data["blue_teleop_2"] = data["blue_score_breakdown"]["teleop_2"]
-    data["blue_teleop_2_1"] = data["blue_score_breakdown"]["teleop_2_1"]
-    data["blue_teleop_2_2"] = data["blue_score_breakdown"]["teleop_2_2"]
-    data["blue_teleop"] = data["blue_score_breakdown"]["teleop"]
-    data["blue_endgame"] = data["blue_score_breakdown"]["endgame"]
-    data["blue_no_fouls"] = data["blue_score_breakdown"]["no_fouls"]
-    data["blue_fouls"] = data["blue_score_breakdown"]["fouls"]
-    data["blue_rp_1"] = data["blue_score_breakdown"]["rp1"]
-    data["blue_rp_2"] = data["blue_score_breakdown"]["rp2"]
-    data["blue_tiebreaker"] = data["blue_score_breakdown"]["tiebreaker"]
-    match = Match.from_dict(data)
+    match = Match(
+        key=data["key"],
+        year=year,
+        event=data["event"],
+        offseason=offseason,
+        week=week,
+        elim=elim,
+        comp_level=data["comp_level"],
+        set_number=data["set_number"],
+        match_number=data["match_number"],
+        time=data["time"],
+        predicted_time=data["predicted_time"],
+        status=data["status"],
+        video=data["video"],
+        red_1=data["red_1"],
+        red_2=data["red_2"],
+        red_3=data["red_3"],
+        red_dq=data["red_dq"],
+        red_surrogate=data["red_surrogate"],
+        blue_1=data["blue_1"],
+        blue_2=data["blue_2"],
+        blue_3=data["blue_3"],
+        blue_dq=data["blue_dq"],
+        blue_surrogate=data["blue_surrogate"],
+        winner=data["winner"],
+        red_score=data["red_score"],
+        red_no_foul=red_breakdown["no_foul_points"],
+        red_foul=red_breakdown["foul_points"],
+        red_auto=red_breakdown["auto_points"],
+        red_teleop=red_breakdown["teleop_points"],
+        red_endgame=red_breakdown["endgame_points"],
+        red_rp_1=red_breakdown["rp_1"],
+        red_rp_2=red_breakdown["rp_2"],
+        red_tiebreaker=red_breakdown["tiebreaker"],
+        red_comp_1=red_breakdown["comp_1"],
+        red_comp_2=red_breakdown["comp_2"],
+        red_comp_3=red_breakdown["comp_3"],
+        red_comp_4=red_breakdown["comp_4"],
+        red_comp_5=red_breakdown["comp_5"],
+        red_comp_6=red_breakdown["comp_6"],
+        red_comp_7=red_breakdown["comp_7"],
+        red_comp_8=red_breakdown["comp_8"],
+        red_comp_9=red_breakdown["comp_9"],
+        red_comp_10=red_breakdown["comp_10"],
+        red_comp_11=red_breakdown["comp_11"],
+        red_comp_12=red_breakdown["comp_12"],
+        red_comp_13=red_breakdown["comp_13"],
+        red_comp_14=red_breakdown["comp_14"],
+        red_comp_15=red_breakdown["comp_15"],
+        red_comp_16=red_breakdown["comp_16"],
+        red_comp_17=red_breakdown["comp_17"],
+        red_comp_18=red_breakdown["comp_18"],
+        blue_score=data["blue_score"],
+        blue_no_foul=blue_breakdown["no_foul_points"],
+        blue_foul=blue_breakdown["foul_points"],
+        blue_auto=blue_breakdown["auto_points"],
+        blue_teleop=blue_breakdown["teleop_points"],
+        blue_endgame=blue_breakdown["endgame_points"],
+        blue_rp_1=blue_breakdown["rp_1"],
+        blue_rp_2=blue_breakdown["rp_2"],
+        blue_tiebreaker=blue_breakdown["tiebreaker"],
+        blue_comp_1=blue_breakdown["comp_1"],
+        blue_comp_2=blue_breakdown["comp_2"],
+        blue_comp_3=blue_breakdown["comp_3"],
+        blue_comp_4=blue_breakdown["comp_4"],
+        blue_comp_5=blue_breakdown["comp_5"],
+        blue_comp_6=blue_breakdown["comp_6"],
+        blue_comp_7=blue_breakdown["comp_7"],
+        blue_comp_8=blue_breakdown["comp_8"],
+        blue_comp_9=blue_breakdown["comp_9"],
+        blue_comp_10=blue_breakdown["comp_10"],
+        blue_comp_11=blue_breakdown["comp_11"],
+        blue_comp_12=blue_breakdown["comp_12"],
+        blue_comp_13=blue_breakdown["comp_13"],
+        blue_comp_14=blue_breakdown["comp_14"],
+        blue_comp_15=blue_breakdown["comp_15"],
+        blue_comp_16=blue_breakdown["comp_16"],
+        blue_comp_17=blue_breakdown["comp_17"],
+        blue_comp_18=blue_breakdown["comp_18"],
+    )
 
     team_matches: List[TeamMatch] = []
-    new_data = {"match": data["key"], **data}
-
     for alliance in ["red", "blue"]:
-        new_data["alliance"] = alliance
-        teams = [data[f"{alliance}_1"], data[f"{alliance}_2"], data[f"{alliance}_3"]]
+        team_1 = data["red_1"] if alliance == "red" else data["blue_1"]
+        team_2 = data["red_2"] if alliance == "red" else data["blue_2"]
+        team_3 = data["red_3"] if alliance == "red" else data["blue_3"]
+        dq = data["red_dq"] if alliance == "red" else data["blue_dq"]
+        surrogate = (
+            data["red_surrogate"] if alliance == "red" else data["blue_surrogate"]
+        )
+
+        teams = [team_1, team_2, team_3]
         teams = [team for team in teams if team is not None]
         for team in teams:
-            new_data["team"] = team
-            new_data["dq"] = team in data[f"{alliance}_dq"].split(",")
-            new_data["surrogate"] = team in data[f"{alliance}_surrogate"].split(",")
-            team_matches.append(create_team_match_obj(new_data))
+            team_matches.append(
+                TeamMatch(
+                    id=None,
+                    team=team,
+                    year=year,
+                    event=data["event"],
+                    match=data["key"],
+                    alliance=alliance,
+                    time=data["time"],
+                    offseason=offseason,
+                    week=week,
+                    elim=elim,
+                    dq=team in dq.split(","),
+                    surrogate=team in surrogate.split(","),
+                    status=data["status"],
+                )
+            )
 
     return (match, team_matches)
-
-
-def create_team_match_obj(data: Dict[str, Any]) -> TeamMatch:
-    return TeamMatch.from_dict(data)
-
-
-def create_etag_obj(path: str, etag: str) -> ETag:
-    return ETag.from_dict({"path": path, "etag": etag})

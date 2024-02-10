@@ -1,16 +1,17 @@
-from typing import Any
-
-from sqlalchemy import create_engine  # type: ignore
-from sqlalchemy.ext.declarative import declarative_base  # type: ignore
-from sqlalchemy.orm import sessionmaker  # type: ignore
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, sessionmaker
 
 from src.constants import CONN_STR
 
-engine = create_engine(CONN_STR)  # type: ignore
+engine = create_engine(CONN_STR)
 
 Session = sessionmaker(bind=engine)
 
-Base: Any = declarative_base()
+
+# Only for type hints, doesn't enable slots
+# Mirror to avoid intermediate commits to DB
+class Base(MappedAsDataclass, DeclarativeBase):
+    pass
 
 
 def clean_db() -> None:

@@ -1,63 +1,52 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, List  # , Optional
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 
-from src.site.aggregation import (
-    get_matches,
-    get_team,
-    get_team_events,
-    get_team_matches,
-    get_team_year,
-    get_team_years,
-    get_teams,
-    get_year,
+from src.api import (  # get_matches,; get_team,; get_team_events,; get_team_matches,; get_team_year,; get_team_years,; get_year,
+    get_teams_cached,
 )
-from src.site.models import (
-    APIMatch,
-    APITeam,
-    APITeamEvent,
-    APITeamMatch,
-    APITeamYear,
-    APIYear,
+from src.db.models import (  # APIMatch,; APITeamEvent,; APITeamMatch,; APITeamYear,; APIYear,
+    Team,
 )
-from src.utils.decorators import async_fail_gracefully
+from src.site.helper import compress
+from src.utils.decorators import async_fail_gracefully_plural
 
 router = APIRouter()
 
 
 @router.get("/teams/all")
-@async_fail_gracefully
-async def read_all_teams(
-    response: Response, no_cache: bool = False
-) -> List[Dict[str, Any]]:
-    teams: List[APITeam] = await get_teams(no_cache=no_cache)
-    return [
-        {"num": x.num, "team": x.team, "active": x.active}
+@async_fail_gracefully_plural
+async def read_all_teams(response: StreamingResponse, no_cache: bool = False) -> Any:
+    teams: List[Team] = await get_teams_cached(site=True, no_cache=no_cache)
+    data = [
+        {"team": x.team, "name": x.name, "active": x.active}
         for x in teams
         if not x.offseason
     ]
+    return compress(data)
 
 
+"""
 @router.get("/team/{team_num}")
 @async_fail_gracefully
 async def read_team(
-    response: Response, team_num: int, no_cache: bool = False
+    response: Response, team_num: str, no_cache: bool = False
 ) -> Dict[str, Any]:
     team: Optional[APITeam] = await get_team(team=team_num, no_cache=no_cache)
     if team is None or team.offseason:
         raise Exception("Team not found")
 
     return team.to_dict()
+"""
 
-
+"""
 @router.get("/team/{team_num}/years")
 @async_fail_gracefully
 async def read_team_years(
-    response: Response, team_num: int, no_cache: bool = False
+    response: Response, team_num: str, no_cache: bool = False
 ) -> List[Dict[str, Any]]:
-    team_years: List[APITeamYear] = await get_team_years(
-        team=team_num, no_cache=no_cache
-    )
+    team_years: List[APITeamYear] = await get_team_years(team=team_num, no_cache=True)
     return [
         {
             "year": x.year,
@@ -87,12 +76,13 @@ async def read_team_years(
         }
         for x in team_years
     ]
+"""
 
-
+"""
 @router.get("/team/{team_num}/{year}")
 @async_fail_gracefully
 async def read_team_year(
-    response: Response, team_num: int, year: int, no_cache: bool = False
+    response: Response, team_num: str, year: int, no_cache: bool = False
 ) -> Dict[str, Any]:
     year_obj: Optional[APIYear] = await get_year(year=year, no_cache=no_cache)
     if year_obj is None:
@@ -131,3 +121,4 @@ async def read_team_year(
     }
 
     return out
+"""
