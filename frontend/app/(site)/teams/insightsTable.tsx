@@ -123,7 +123,7 @@ const PageTeamInsightsTable = ({
       year >= CURR_YEAR &&
         columnHelper.accessor("unitless_epa", {
           cell: (info) => formatCell(info),
-          header: "Unitless EPA*",
+          header: "Unitless EPA",
         }),
       columnHelper.accessor("total_epa", {
         cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
@@ -255,24 +255,6 @@ const PageTeamInsightsTable = ({
         csvFilename={`${year}_insights.csv`}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
-      <div className="w-full px-4 border-t-[1px] border-gray-200">
-        {year >= CURR_YEAR && (
-          <>
-            <div className="w-full text-xs mt-4">
-              <strong>1.</strong> Yellow highlighted teams have not played yet. Their EPA rating is
-              only a projection.
-            </div>
-            <div className="w-full text-xs mb-4">
-              <strong>2.</strong> Unitless EPA is a linear function mapping EPA into Elo units. This
-              is not the same as Year Normalized EPA for past seasons. See{" "}
-              <Link href="/blog/epa" className="text_link">
-                blog
-              </Link>{" "}
-              for more details.
-            </div>
-          </>
-        )}
-      </div>
     </div>
   );
 };
