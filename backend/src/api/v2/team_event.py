@@ -75,7 +75,7 @@ def get_v2_team_event(team_event: TeamEvent) -> Dict[str, Any]:
 
 
 @router.get("/")
-async def read_root():
+async def read_root_team_event():
     return {"name": "Team Event Router"}
 
 

@@ -166,8 +166,7 @@ def update_curr_year(partial: bool):
     else:
         objs = create_objs(year)
 
-    # NOTE: Temporarily make cache True (3rd arg)
-    teams = process_year(year, partial, True, teams, objs, None)
+    teams = process_year(year, partial, year < CURR_YEAR, teams, objs, None)
 
     if not partial:
         # triggers loading all team years

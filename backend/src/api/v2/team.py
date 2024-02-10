@@ -41,7 +41,7 @@ def get_v2_team(team: Team) -> Dict[str, Any]:
 
 
 @router.get("/")
-async def read_root():
+async def read_root_team():
     return {"name": "Team Router"}
 
 

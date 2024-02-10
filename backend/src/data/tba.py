@@ -400,11 +400,12 @@ def process_year(
         event_obj.qual_matches = qual_matches
         event_objs_dict[event_key] = event_obj
 
-    # update is_first_event after iterating through all events
-    for pk, team_event in team_event_objs_dict.items():
-        team_event_objs_dict[pk].first_event = (
-            team_first_event_dict[team_event.team][0] == team_event.event
-        )
+    if not partial:
+        # update is_first_event after iterating through all events
+        for pk, team_event in team_event_objs_dict.items():
+            team_event_objs_dict[pk].first_event = (
+                team_first_event_dict[team_event.team][0] == team_event.event
+            )
 
     # iterates over all teams (unrelated to offseason status)
     for team in team_to_offseason:

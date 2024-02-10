@@ -37,7 +37,7 @@ def get_v2_team_match(team_match: TeamMatch) -> Dict[str, Any]:
 
 
 @router.get("/")
-async def read_root():
+async def read_root_team_match():
     return {"name": "Team Match Router"}
 
 

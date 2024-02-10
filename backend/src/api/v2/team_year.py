@@ -83,7 +83,7 @@ def get_v2_team_year(team_year: TeamYear) -> Dict[str, Any]:
 
 
 @router.get("/")
-async def read_root():
+async def read_root_team_year():
     return {"name": "Team Year Router"}
 
 

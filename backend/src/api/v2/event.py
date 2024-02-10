@@ -45,7 +45,7 @@ def get_v2_event(event: Event) -> Dict[str, Any]:
 
 
 @router.get("/")
-async def read_root():
+async def read_root_event():
     return {"name": "Event Router"}
 
 
