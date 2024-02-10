@@ -5,6 +5,9 @@ from typing import List
 
 PROD = os.getenv("PROD", "False") == "True"
 
+# 8001 emulates the data server
+BACKEND_URL = "https://api.statbotics.io" if PROD else "http://localhost:8001"
+
 # DB
 
 CRDB_USER = os.getenv("CRDB_USER", "")

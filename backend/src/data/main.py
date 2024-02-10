@@ -9,7 +9,6 @@ from src.data.epa.main import (
     process_year as process_year_epa,
 )
 from src.data.tba import (
-    check_year_partial as check_year_partial_tba,
     load_teams as load_teams_tba,
     post_process as post_process_tba,
     process_year as process_year_tba,
@@ -28,8 +27,6 @@ from src.data.wins import (
 from src.db.main import clean_db
 from src.db.models import Team, TeamYear
 from src.db.read import (
-    get_etags as get_etags_db,
-    get_events as get_events_db,
     get_num_years,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
@@ -153,18 +150,11 @@ def update_curr_year(partial: bool):
     timer.print("Load Teams")
 
     if partial:
-        event_objs = get_events_db(year=year, offseason=None)
-        etags = get_etags_db(year)
-        is_new_data = check_year_partial_tba(year, event_objs, etags)
-        timer.print("Check TBA")
-
-        if not is_new_data:
-            return
-
         objs: objs_type = read_objs_db(year)
         timer.print("Read Objs")
     else:
         objs = create_objs(year)
+        timer.print("Create Objs")
 
     teams = process_year(year, partial, year < CURR_YEAR, teams, objs, None)
 
