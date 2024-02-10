@@ -12,7 +12,7 @@ class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team: MS = mapped_column(String(6), index=True, primary_key=True)
+    team: MS = mapped_column(String(6), primary_key=True)
 
     """NO DEFAULTS"""
     name: MS = mapped_column(String(100))

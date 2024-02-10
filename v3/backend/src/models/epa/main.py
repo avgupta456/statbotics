@@ -78,6 +78,11 @@ class EPA(Model):
 
         rp_1s: List[float] = []
         rp_2s: List[float] = []
+        # Backwards compatibility
+        autos: List[float] = []
+        teleops: List[float] = []
+        endgames: List[float] = []
+
         breakdowns: List[Any] = []
 
         red_teams = match.get_red()[: self.num_teams]
@@ -93,6 +98,17 @@ class EPA(Model):
 
             rp_1s.append(rp_1)
             rp_2s.append(rp_2)
+
+            # Backwards compatibility
+            if year >= 2016:
+                autos.append(pred_mean[1])
+                teleops.append(pred_mean[2])
+                endgames.append(pred_mean[3])
+            else:
+                autos.append(0)
+                teleops.append(0)
+                endgames.append(0)
+
             breakdowns.append(pred_mean)
 
         red_score = get_score_from_breakdown(
@@ -127,9 +143,23 @@ class EPA(Model):
         foul_rate = self.year_obj.get_foul_rate()
         red_score_with_fouls = red_score * (1 + foul_rate)
         blue_score_with_fouls = blue_score * (1 + foul_rate)
-        red_pred = AlliancePred(red_score_with_fouls, breakdowns[0], rp_1s[0], rp_2s[0])
+        red_pred = AlliancePred(
+            red_score_with_fouls,
+            breakdowns[0],
+            rp_1s[0],
+            rp_2s[0],
+            autos[0],
+            teleops[0],
+            endgames[0],
+        )
         blue_pred = AlliancePred(
-            blue_score_with_fouls, breakdowns[1], rp_1s[1], rp_2s[1]
+            blue_score_with_fouls,
+            breakdowns[1],
+            rp_1s[1],
+            rp_2s[1],
+            autos[1],
+            teleops[1],
+            endgames[1],
         )
 
         return win_prob, red_pred, blue_pred
@@ -263,3 +293,11 @@ class EPA(Model):
             match.epa_blue_rp_1_pred = r(match_pred.blue_rp_1 or 0, 4)
             match.epa_red_rp_2_pred = r(match_pred.red_rp_2 or 0, 4)
             match.epa_blue_rp_2_pred = r(match_pred.blue_rp_2 or 0, 4)
+
+            # Backward compatibility
+            match.epa_red_auto_pred = r(match_pred.red_auto or 0, 2)
+            match.epa_red_teleop_pred = r(match_pred.red_teleop or 0, 2)
+            match.epa_red_endgame_pred = r(match_pred.red_endgame or 0, 2)
+            match.epa_blue_auto_pred = r(match_pred.blue_auto or 0, 2)
+            match.epa_blue_teleop_pred = r(match_pred.blue_teleop or 0, 2)
+            match.epa_blue_endgame_pred = r(match_pred.blue_endgame or 0, 2)

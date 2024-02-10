@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy import Boolean, Enum, Float, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -16,11 +16,11 @@ class TeamMatchORM(Base, ModelORM):
 
     __tablename__ = "team_matches"
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
-    team: MS = mapped_column(String(6), index=True)
-    year: MI = mapped_column(Integer, index=True)
-    event: MS = mapped_column(String(12), index=True)
-    match: MS = mapped_column(String(20), index=True)
-    alliance: MS = mapped_column(String(4), index=True)
+    team: MS = mapped_column(String(6))
+    year: MI = mapped_column(Integer)
+    event: MS = mapped_column(String(12))
+    match: MS = mapped_column(String(20))
+    alliance: MS = mapped_column(String(4))
 
     PrimaryKeyConstraint(team, match)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -29,6 +29,8 @@ class TeamMatchORM(Base, ModelORM):
     ForeignKeyConstraint(["match"], ["matches.key"])
     ForeignKeyConstraint(["team", "year"], ["team_years.team", "team_years.year"])
     ForeignKeyConstraint(["team", "event"], ["team_events.team", "team_events.event"])
+
+    Index("all_idx", team, year, event, match, alliance)
 
     """GENERAL"""
     time: MI = mapped_column(Integer)

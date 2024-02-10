@@ -1,6 +1,6 @@
 from typing import Any, Dict, Tuple
 
-from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy import Boolean, Enum, Float, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -17,9 +17,9 @@ class TeamEventORM(Base, ModelORM):
 
     __tablename__ = "team_events"
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
-    team: MS = mapped_column(String(6), index=True)
-    year: MI = mapped_column(Integer, index=True)
-    event: MS = mapped_column(String(12), index=True)
+    team: MS = mapped_column(String(6))
+    year: MI = mapped_column(Integer)
+    event: MS = mapped_column(String(12))
 
     PrimaryKeyConstraint(team, event)
     ForeignKeyConstraint(["team"], ["teams.team"])
@@ -72,7 +72,7 @@ class TeamEventORM(Base, ModelORM):
     epa_mean: MF = mapped_column(Float, default=0)
     epa_max: MF = mapped_column(Float, default=0)
 
-    epa: MF = mapped_column(Float, index=True, default=0)
+    epa: MF = mapped_column(Float, default=0)
     epa_sd: MF = mapped_column(Float, default=0)
     epa_skew: MF = mapped_column(Float, default=0)
     epa_n: MF = mapped_column(Float, default=0)
@@ -127,6 +127,8 @@ class TeamEventORM(Base, ModelORM):
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)
+
+    Index("all_idx", team, year, event, epa)
 
 
 _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)

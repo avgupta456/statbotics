@@ -3,12 +3,11 @@ from typing import Any, Optional
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
-from src.site.helper import compress
 from src.db.functions import get_noteworthy_matches, get_upcoming_matches
-
+from src.site.helper import compress
 from src.utils.decorators import (
-    async_fail_gracefully_singular,
     async_fail_gracefully_plural,
+    async_fail_gracefully_singular,
 )
 
 # from src.constants import CURR_YEAR

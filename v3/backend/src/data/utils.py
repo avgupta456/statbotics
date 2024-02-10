@@ -2,15 +2,7 @@ from datetime import datetime
 from typing import Dict, Optional, Tuple
 
 from src.db.functions import clear_year
-from src.db.models import (
-    ETag,
-    Event,
-    Match,
-    TeamEvent,
-    TeamMatch,
-    TeamYear,
-    Year,
-)
+from src.db.models import ETag, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.db.read import (
     get_etags as get_etags_db,
     get_events as get_events_db,

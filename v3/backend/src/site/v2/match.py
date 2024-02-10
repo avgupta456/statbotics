@@ -1,12 +1,15 @@
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
+from src.constants import CURR_YEAR
 from src.site.v2.aggregation import (
     get_event,
     get_match,
+    get_noteworthy_matches,
     get_team_events,
     get_team_matches,
+    get_upcoming_matches,
     get_year,
 )
 from src.site.v2.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
@@ -68,7 +71,34 @@ async def read_upcoming_matches(
     metric: str = "predicted_time",
     no_cache: bool = False,
 ) -> Any:
-    return {"matches": [], "foul_rate": 0}
+    upcoming_matches: List[Tuple[APIMatch, str]] = []
+    upcoming_matches = await get_upcoming_matches(
+        country=country,
+        state=state,
+        district=district,
+        playoff={None: None, "quals": False, "elims": True}[playoff],
+        minutes=minutes,
+        limit=limit,
+        metric=metric,
+        no_cache=no_cache,
+    )
+
+    year_obj = await get_year(year=CURR_YEAR, no_cache=no_cache)
+    if year_obj is None:
+        raise Exception("Year not found")
+
+    foul_rate = year_obj.foul_rate
+
+    return {
+        "matches": [
+            {
+                "match": match.to_dict(),
+                "event_name": event_name,
+            }
+            for (match, event_name) in upcoming_matches
+        ],
+        "foul_rate": foul_rate,
+    }
 
 
 @router.get("/noteworthy_matches/{year}")
@@ -83,4 +113,25 @@ async def read_noteworthy_matches(
     week: Optional[int] = None,
     no_cache: bool = False,
 ) -> Any:
-    return {"matches": [], "foul_rate": 0}
+    print("HERE")
+    noteworthy_matches: Dict[str, List[APIMatch]] = {}
+    noteworthy_matches = await get_noteworthy_matches(
+        year=year,
+        country=country,
+        state=state,
+        district=district,
+        playoff={None: None, "quals": False, "elims": True}[playoff],
+        week=week,
+        no_cache=no_cache,
+    )
+
+    year_obj = await get_year(year=year, no_cache=no_cache)
+    if year_obj is None:
+        raise Exception("Year not found")
+
+    foul_rate = year_obj.foul_rate
+
+    return {
+        "matches": {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()},
+        "foul_rate": foul_rate,
+    }
