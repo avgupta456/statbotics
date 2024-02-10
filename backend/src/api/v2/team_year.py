@@ -29,7 +29,7 @@ def get_v2_team_year(team_year: TeamYear) -> Dict[str, Any]:
         "epa_end": team_year.epa,
         "epa_mean": None,
         "epa_max": team_year.epa_max,
-        "epa_diff": team_year.epa - team_year.epa_start,
+        "epa_diff": round(team_year.epa - team_year.epa_start, 2),
         "auto_epa_start": None,
         "auto_epa_pre_champs": None,
         "auto_epa_end": team_year.auto_epa,

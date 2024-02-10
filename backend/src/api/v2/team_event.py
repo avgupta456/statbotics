@@ -33,7 +33,7 @@ def get_v2_team_event(team_event: TeamEvent) -> Dict[str, Any]:
         "epa_end": team_event.epa,
         "epa_mean": team_event.epa_mean,
         "epa_max": team_event.epa_max,
-        "epa_diff": team_event.epa - team_event.epa_start,
+        "epa_diff": round(team_event.epa - team_event.epa_start, 2),
         "auto_epa_start": None,
         "auto_epa_pre_playoffs": None,
         "auto_epa_end": team_event.auto_epa,

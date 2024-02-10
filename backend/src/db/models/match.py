@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from sqlalchemy import Boolean, Enum, Float, Index, Integer, String
+from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -17,8 +17,8 @@ class MatchORM(Base, ModelORM):
 
     __tablename__ = "matches"
     key: MS = mapped_column(String(20))
-    year: MI = mapped_column(Integer)
-    event: MS = mapped_column(String(12))
+    year: MI = mapped_column(Integer, index=True)
+    event: MS = mapped_column(String(12), index=True)
 
     PrimaryKeyConstraint(key)
     ForeignKeyConstraint(["year"], ["years.year"])
@@ -43,20 +43,17 @@ class MatchORM(Base, ModelORM):
     )
     video: MOS = mapped_column(String(20), nullable=True)
 
-    red_1: MS = mapped_column(String(6))
-    red_2: MS = mapped_column(String(6))
-    red_3: MOS = mapped_column(String(6), nullable=True)
+    red_1: MS = mapped_column(String(6), index=True)
+    red_2: MS = mapped_column(String(6), index=True)
+    red_3: MOS = mapped_column(String(6), index=True, nullable=True)
     red_dq: MS = mapped_column(String(20))
     red_surrogate: MS = mapped_column(String(20))
 
-    blue_1: MS = mapped_column(String(6))
-    blue_2: MS = mapped_column(String(6))
-    blue_3: MOS = mapped_column(String(6), nullable=True)
+    blue_1: MS = mapped_column(String(6), index=True)
+    blue_2: MS = mapped_column(String(6), index=True)
+    blue_3: MOS = mapped_column(String(6), index=True, nullable=True)
     blue_dq: MS = mapped_column(String(20))
     blue_surrogate: MS = mapped_column(String(20))
-
-    Index("properties_idx", year, event, offseason, week, elim, status)
-    Index("team_key_idx", red_1, red_2, red_3, blue_1, blue_2, blue_3)
 
     """OUTCOME"""
     winner: Mapped[Optional[MatchWinner]] = mapped_column(

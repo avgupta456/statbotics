@@ -1,4 +1,5 @@
 from typing import Any, Callable
+import platform
 
 from dotenv import load_dotenv  # type: ignore
 
@@ -102,7 +103,11 @@ async def read_root():
 
 @router.get("/info")
 def get_info():
-    return {"PROD": PROD, "CONN_STR": "REDACTED" if PROD else CONN_STR}
+    return {
+        "PROD": PROD,
+        "CONN_STR": "REDACTED" if PROD else CONN_STR,
+        "PYTHON_VERSION": platform.python_version(),
+    }
 
 
 app.include_router(router, include_in_schema=False)

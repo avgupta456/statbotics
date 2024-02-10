@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from sqlalchemy import Boolean, Enum, Float, Index, Integer, String
+from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -16,11 +16,10 @@ class EventORM(Base, ModelORM):
 
     __tablename__ = "events"
     key: MS = mapped_column(String(20))
-    year: MI = mapped_column(Integer)
+    year: MI = mapped_column(Integer, index=True)
 
     PrimaryKeyConstraint(key)
     ForeignKeyConstraint(["year"], ["years.year"])
-    Index("year_idx", year)
 
     """GENERAL"""
     name: MS = mapped_column(String(100))

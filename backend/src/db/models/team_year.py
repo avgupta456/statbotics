@@ -1,6 +1,6 @@
 from typing import Any, Dict, Tuple
 
-from sqlalchemy import Boolean, Float, Index, Integer, String
+from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -17,7 +17,7 @@ class TeamYearORM(Base, ModelORM):
 
     __tablename__ = "team_years"
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
-    year: MI = mapped_column(Integer)
+    year: MI = mapped_column(Integer, index=True)
     team: MS = mapped_column(String(6))
 
     # force unique (team, year)
@@ -43,7 +43,7 @@ class TeamYearORM(Base, ModelORM):
     epa_pre_champs: MF = mapped_column(Float, default=0)
     epa_max: MF = mapped_column(Float, default=0)
 
-    epa: MF = mapped_column(Float, default=0)
+    epa: MF = mapped_column(Float, index=True, default=0)
     epa_sd: MF = mapped_column(Float, default=0)
     epa_skew: MF = mapped_column(Float, default=0)
     epa_n: MF = mapped_column(Float, default=0)
@@ -98,8 +98,6 @@ class TeamYearORM(Base, ModelORM):
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)
-
-    Index("team_year_epa_idx", team, year, epa)
 
     """STATS"""
     wins: MI = mapped_column(Integer, default=0)  # competition season only
