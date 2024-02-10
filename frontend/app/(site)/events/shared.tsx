@@ -41,37 +41,42 @@ const EventsLayout = ({
       event.name?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const sortedData: APIEvent[] | undefined = filteredData?.sort((a, b) =>
+    a.start_date === b.start_date
+      ? b.epa_mean > a.epa_mean
+        ? 1
+        : -1
+      : a.start_date > b.start_date
+      ? 1
+      : -1
+  );
+
   const N = filteredData?.length;
 
   // ex: 2024-01-01
   const today = new Date().toISOString().split("T")[0];
 
-  const ongoingEvents = filteredData
+  const ongoingEvents = sortedData
     ?.filter(
       (event) =>
         event.status === "Ongoing" &&
         (event.year !== CURR_YEAR || event.week >= CURR_WEEK) &&
         event.end_date >= today
     )
-    .sort((a, b) => (b.epa_mean > a.epa_mean ? 1 : -1));
+    .sort((a, b) => (a.epa_mean > b.epa_mean ? -1 : 1));
   const ongoingN = ongoingEvents.length;
 
-  const upcomingEvents = filteredData
-    ?.filter(
-      (event) =>
-        event.status === "Upcoming" &&
-        (event.year !== CURR_YEAR || event.week >= CURR_WEEK) &&
-        event.end_date >= today
-    )
-    .sort((a, b) => (a.week === b.week ? (b.epa_mean > a.epa_mean ? 1 : -1) : a.week - b.week));
+  const upcomingEvents = sortedData?.filter(
+    (event) =>
+      event.status === "Upcoming" &&
+      (event.year !== CURR_YEAR || event.week >= CURR_WEEK) &&
+      event.end_date >= today
+  );
   const upcomingN = upcomingEvents.length;
 
-  const completedEvents = filteredData
-    ?.filter(
-      (event) =>
-        event.status === "Completed" && (event.year !== CURR_YEAR || event.week <= CURR_WEEK)
-    )
-    .sort((a, b) => (a.week === b.week ? (b.epa_mean > a.epa_mean ? 1 : -1) : a.week - b.week));
+  const completedEvents = sortedData?.filter(
+    (event) => event.status === "Completed" && (event.year !== CURR_YEAR || event.week <= CURR_WEEK)
+  );
   const completedN = completedEvents.length;
 
   return (

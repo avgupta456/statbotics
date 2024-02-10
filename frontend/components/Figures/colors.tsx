@@ -80,6 +80,11 @@ export const ColorsProvider = ({ children, teams }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (teams.length === 0) {
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     fetchColors(teams).then((newColors) => {
       const filteredColors: TeamColors = new Map();

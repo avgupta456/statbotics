@@ -17,6 +17,18 @@ const EventCard = ({ event }: { event: APIEvent }) => {
   if (event.district) {
     location = `${location} (${event.district.toUpperCase()})`;
   }
+
+  const formatDates = (start: Date, end: Date) => {
+    const startMonth = start.toLocaleString("default", { month: "short" });
+    const endMonth = end.toLocaleString("default", { month: "short" });
+    const startDate = start.getDate();
+    const endDate = end.getDate();
+    if (startMonth === endMonth && startDate === endDate) {
+      return `${startMonth} ${startDate}`;
+    }
+    return `${startMonth} ${startDate} to ${endMonth} ${endDate}`;
+  };
+
   return (
     <Link href={`/event/${event.key}`}>
       <div className="h-40 m-2 p-4 rounded flex flex-col border-[1px] shadow hover:bg-blue-100 cursor-pointer">
@@ -24,7 +36,7 @@ const EventCard = ({ event }: { event: APIEvent }) => {
           {formatEventName(event.name, 45)}
         </div>
         <div className="w-full mb-2">
-          {location} - Week {event.week}
+          Week {event.week}, {formatDates(new Date(event.start_date), new Date(event.end_date))}
         </div>
         {event.status === "Ongoing" && <div className="w-full">{event.status_str}</div>}
       </div>
@@ -42,7 +54,7 @@ const Summary = ({
   setFilters: (filters: { [key: string]: any }) => void;
 }) => {
   const [expanded, setExpanded] = useState("");
-  const cutoffN = 4;
+  const cutoffN = 8;
 
   return (
     <EventsLayout
