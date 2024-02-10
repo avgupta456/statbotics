@@ -14,7 +14,7 @@ class YearORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "years"
-    year: MI = mapped_column(Integer, index=True, primary_key=True)
+    year: MI = mapped_column(Integer, primary_key=True)
 
     """CONSTANTS"""
     score_mean: MF = mapped_column(Float, default=0)

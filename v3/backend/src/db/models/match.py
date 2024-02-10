@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy import Boolean, Enum, Float, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -16,18 +16,18 @@ class MatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "matches"
-    key: MS = mapped_column(String(20), index=True)
-    year: MI = mapped_column(Integer, index=True)
-    event: MS = mapped_column(String(12), index=True)
+    key: MS = mapped_column(String(20))
+    year: MI = mapped_column(Integer)
+    event: MS = mapped_column(String(12))
 
     PrimaryKeyConstraint(key)
     ForeignKeyConstraint(["year"], ["years.year"])
     ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    offseason: MB = mapped_column(Boolean, index=True)
-    week: MI = mapped_column(Integer, index=True)
-    elim: MB = mapped_column(Boolean, index=True)
+    offseason: MB = mapped_column(Boolean)
+    week: MI = mapped_column(Integer)
+    elim: MB = mapped_column(Boolean)
 
     comp_level: Mapped[CompLevel] = mapped_column(
         Enum(CompLevel, values_callable=values_callable)
@@ -39,21 +39,24 @@ class MatchORM(Base, ModelORM):
     predicted_time: MOI = mapped_column(Integer, nullable=True)  # For display
 
     status: Mapped[MatchStatus] = mapped_column(
-        Enum(MatchStatus, values_callable=values_callable), index=True
+        Enum(MatchStatus, values_callable=values_callable)
     )
     video: MOS = mapped_column(String(20), nullable=True)
 
-    red_1: MS = mapped_column(String(6), index=True)
-    red_2: MS = mapped_column(String(6), index=True)
-    red_3: MOS = mapped_column(String(6), index=True, nullable=True)
+    red_1: MS = mapped_column(String(6))
+    red_2: MS = mapped_column(String(6))
+    red_3: MOS = mapped_column(String(6), nullable=True)
     red_dq: MS = mapped_column(String(20))
     red_surrogate: MS = mapped_column(String(20))
 
-    blue_1: MS = mapped_column(String(6), index=True)
-    blue_2: MS = mapped_column(String(6), index=True)
-    blue_3: MOS = mapped_column(String(6), index=True, nullable=True)
+    blue_1: MS = mapped_column(String(6))
+    blue_2: MS = mapped_column(String(6))
+    blue_3: MOS = mapped_column(String(6), nullable=True)
     blue_dq: MS = mapped_column(String(20))
     blue_surrogate: MS = mapped_column(String(20))
+
+    Index("properties_idx", year, event, offseason, week, elim, status)
+    Index("team_key_idx", red_1, red_2, red_3, blue_1, blue_2, blue_3)
 
     """OUTCOME"""
     winner: Mapped[Optional[MatchWinner]] = mapped_column(
