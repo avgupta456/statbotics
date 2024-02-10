@@ -47,7 +47,7 @@ export function PageContent({
   }
 
   return (
-    <>
+    <div className="flex-grow pb-4">
       <QueryHandler
         recordTab
         tab={tab}
@@ -80,7 +80,7 @@ export function PageContent({
           </div>
         </TabPanel>
       </TabsLayout>
-    </>
+    </div>
   );
 }
 

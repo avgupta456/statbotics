@@ -7,7 +7,7 @@ import { classnames } from "../utils/utils";
 
 export default function LandingPage() {
   return (
-    <div className="container mx-auto flex h-full w-full flex-wrap items-center p-4 pt-[100px]">
+    <div className="container mx-auto flex w-full flex-grow flex-wrap items-center p-4">
       <div className="relative hidden h-[400px] w-1/2 lg:block">
         <Image
           src="/spline.png"
