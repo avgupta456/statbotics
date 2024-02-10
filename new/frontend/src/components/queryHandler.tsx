@@ -17,9 +17,6 @@ export default function QueryHandler({
   recordLocation,
   location = null,
   setLocation = () => {},
-  recordWeek,
-  week = null,
-  setWeek = () => {},
   query = {},
 }: {
   recordTab: boolean;
@@ -36,10 +33,6 @@ export default function QueryHandler({
   location?: string | null;
   // eslint-disable-next-line no-unused-vars
   setLocation?: (newLocation: string | null) => void;
-  recordWeek: boolean;
-  week?: number | null;
-  // eslint-disable-next-line no-unused-vars
-  setWeek?: (newWeek: number | null) => void;
   query?: any;
 }) {
   const router = useRouter();
@@ -51,7 +44,6 @@ export default function QueryHandler({
     state: paramsState,
     district: paramsDistrict,
     year: paramsYear,
-    week: paramsWeek,
   } = router.query;
 
   const paramsTab = window.location.hash.substring(1);
@@ -81,13 +73,6 @@ export default function QueryHandler({
           setLocation(`district_${parsedDistrict}`);
         }
       }
-
-      if (recordWeek && typeof paramsWeek === "string") {
-        const paramsWeekInt = parseInt(paramsWeek);
-        if (paramsWeekInt !== week) {
-          setWeek(paramsWeekInt);
-        }
-      }
     }
   }, [isReady]);
 
@@ -107,10 +92,6 @@ export default function QueryHandler({
       newQuery[locationType] = locationValue;
     }
 
-    if (recordWeek && week) {
-      newQuery.week = week;
-    }
-
     const cleanQuery: any = Object.fromEntries(
       Object.entries(newQuery).filter(([, v]) => v !== undefined),
     );
@@ -124,7 +105,7 @@ export default function QueryHandler({
       undefined,
       { shallow: true },
     );
-  }, [year, tab, location, week]);
+  }, [year, tab, location]);
 
   return null;
 }

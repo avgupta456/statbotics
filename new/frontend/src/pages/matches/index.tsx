@@ -38,7 +38,6 @@ export default function MatchesPage() {
           recordLocation
           location={location}
           setLocation={setLocation}
-          recordWeek={false}
         />
         <TabsLayout
           showYearSelector

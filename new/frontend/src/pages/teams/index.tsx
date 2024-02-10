@@ -116,7 +116,6 @@ export default function TeamsPage() {
           recordLocation
           location={location}
           setLocation={setLocation}
-          recordWeek={false}
         />
         <TabsLayout
           showYearSelector

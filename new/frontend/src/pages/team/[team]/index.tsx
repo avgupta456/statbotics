@@ -56,7 +56,6 @@ export function PageContent({
         tabOptions={["overview"]}
         recordYear={false}
         recordLocation={false}
-        recordWeek={false}
         query={interpolation}
       />
       <TabsLayout

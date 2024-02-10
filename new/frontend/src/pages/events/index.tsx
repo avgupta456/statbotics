@@ -125,7 +125,7 @@ export default function EventsPage() {
   const [tab, setTab] = useState<string>("summary");
   const [year, setYear] = useState<number>(CURR_YEAR);
   const [location, setLocation] = useState<string | null>(null);
-  const [week, setWeek] = useState<number | null>(null);
+  const [week, setWeek] = useState<number | null>(-1); // season, not offseason
   const [search, setSearch] = useState<string>("");
 
   const memoizedLocation = useMemo(() => ({ location, setLocation }), [location, setLocation]);
@@ -218,9 +218,6 @@ export default function EventsPage() {
           recordLocation
           location={location}
           setLocation={setLocation}
-          recordWeek
-          week={week}
-          setWeek={setWeek}
         />
         <TabsLayout
           showYearSelector
