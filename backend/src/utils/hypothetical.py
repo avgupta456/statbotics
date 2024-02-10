@@ -70,5 +70,5 @@ def get_cheesy_schedule(num_teams: int, matches_per_team: int) -> List[Any]:
         f"https://raw.githubusercontent.com/Team254/cheesy-arena/main/schedules/{num_teams}_{matches_per_team}.csv"
     )
     lines = data.text.split("\n")
-    lines = [[int(x) for x in line.split(",")[::2]] for line in lines[:-1]]
+    lines = [[str(x) for x in line.split(",")[::2]] for line in lines[:-1]]
     return lines

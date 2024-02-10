@@ -1,270 +1,306 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-import attr
-from sqlalchemy import Boolean, Column, Float, Integer, String  # type: ignore
-from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint  # type: ignore
+import numpy as np
+from sqlalchemy import Boolean, Enum, Float, Index, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
+from src.breakdown import key_to_name
 from src.db.main import Base
-from src.db.models.main import Model, ModelORM
+from src.db.models.main import Model, ModelORM, generate_attr_class
+from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS, values_callable
+from src.types.enums import CompLevel, MatchStatus, MatchWinner
 
 
 class MatchORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "matches"
-    key = Column(String(20), index=True)
-    year = Column(Integer, index=True)
-    event = Column(String(20), index=True)
+    key: MS = mapped_column(String(20))
+    year: MI = mapped_column(Integer)
+    event: MS = mapped_column(String(12))
 
     PrimaryKeyConstraint(key)
     ForeignKeyConstraint(["year"], ["years.year"])
     ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    comp_level = Column(String(10))
-    set_number = Column(Integer)
-    match_number = Column(Integer)
-    offseason = Column(Boolean)
+    offseason: MB = mapped_column(Boolean)
+    week: MI = mapped_column(Integer)
+    elim: MB = mapped_column(Boolean)
 
-    # Choices are 'Upcoming', 'Completed'
-    status = Column(String(10), index=True)
-    video = Column(String(20))
+    comp_level: Mapped[CompLevel] = mapped_column(
+        Enum(CompLevel, values_callable=values_callable)
+    )
+    set_number: MI = mapped_column(Integer)
+    match_number: MI = mapped_column(Integer)
 
-    red_1 = Column(Integer, index=True)
-    red_2 = Column(Integer, index=True)
-    red_3 = Column(Integer, index=True)
-    red_dq = Column(String(20))
-    red_surrogate = Column(String(20))
-    red_epa_sum = Column(Float)
-    red_auto_epa_sum = Column(Float)
-    red_teleop_epa_sum = Column(Float)
-    red_endgame_epa_sum = Column(Float)
-    red_rp_1_epa_sum = Column(Float)
-    red_rp_2_epa_sum = Column(Float)
+    time: MI = mapped_column(Integer)  # Enforces ordering
+    predicted_time: MOI = mapped_column(Integer, nullable=True)  # For display
 
-    # Different than dq/surrogate to allow for easier querying
-    blue_1 = Column(Integer, index=True)
-    blue_2 = Column(Integer, index=True)
-    blue_3 = Column(Integer, index=True)
-    blue_dq = Column(String(20))
-    blue_surrogate = Column(String(20))
-    blue_epa_sum = Column(Float)
-    blue_auto_epa_sum = Column(Float)
-    blue_teleop_epa_sum = Column(Float)
-    blue_endgame_epa_sum = Column(Float)
-    blue_rp_1_epa_sum = Column(Float)
-    blue_rp_2_epa_sum = Column(Float)
+    status: Mapped[MatchStatus] = mapped_column(
+        Enum(MatchStatus, values_callable=values_callable)
+    )
+    video: MOS = mapped_column(String(20), nullable=True)
 
-    winner = Column(String(10))
-    epa_winner = Column(String(10))
-    epa_win_prob = Column(Float)
-    red_rp_1_prob = Column(Float)
-    red_rp_2_prob = Column(Float)
-    blue_rp_1_prob = Column(Float)
-    blue_rp_2_prob = Column(Float)
+    red_1: MS = mapped_column(String(6))
+    red_2: MS = mapped_column(String(6))
+    red_3: MOS = mapped_column(String(6), nullable=True)
+    red_dq: MS = mapped_column(String(20))
+    red_surrogate: MS = mapped_column(String(20))
 
-    playoff = Column(Boolean, index=True)
-    time = Column(Integer)  # Enforces ordering
-    predicted_time = Column(Integer)  # For display
+    blue_1: MS = mapped_column(String(6))
+    blue_2: MS = mapped_column(String(6))
+    blue_3: MOS = mapped_column(String(6), nullable=True)
+    blue_dq: MS = mapped_column(String(20))
+    blue_surrogate: MS = mapped_column(String(20))
 
-    red_score = Column(Integer)
-    blue_score = Column(Integer)
+    Index("properties_idx", year, event, offseason, week, elim, status)
+    Index("team_key_idx", red_1, red_2, red_3, blue_1, blue_2, blue_3)
 
-    red_auto = Column(Integer)
-    red_auto_movement = Column(Integer)
-    red_auto_1 = Column(Integer)
-    red_auto_2 = Column(Integer)
-    red_auto_2_1 = Column(Integer)
-    red_auto_2_2 = Column(Integer)
-    red_teleop_1 = Column(Integer)
-    red_teleop_2 = Column(Integer)
-    red_teleop_2_1 = Column(Integer)
-    red_teleop_2_2 = Column(Integer)
-    red_teleop = Column(Integer)
-    red_endgame = Column(Integer)
-    red_no_fouls = Column(Integer)
-    red_fouls = Column(Integer)
-    red_rp_1 = Column(Integer)
-    red_rp_2 = Column(Integer)
-    red_tiebreaker = Column(Integer)
+    """OUTCOME"""
+    winner: Mapped[Optional[MatchWinner]] = mapped_column(
+        Enum(MatchWinner, values_callable=values_callable), nullable=True, default=None
+    )
 
-    blue_auto = Column(Integer)
-    blue_auto_movement = Column(Integer)
-    blue_auto_1 = Column(Integer)
-    blue_auto_2 = Column(Integer)
-    blue_auto_2_1 = Column(Integer)
-    blue_auto_2_2 = Column(Integer)
-    blue_teleop_1 = Column(Integer)
-    blue_teleop_2 = Column(Integer)
-    blue_teleop_2_1 = Column(Integer)
-    blue_teleop_2_2 = Column(Integer)
-    blue_teleop = Column(Integer)
-    blue_endgame = Column(Integer)
-    blue_no_fouls = Column(Integer)
-    blue_fouls = Column(Integer)
-    blue_rp_1 = Column(Integer)
-    blue_rp_2 = Column(Integer)
-    blue_tiebreaker = Column(Integer)
+    red_score: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_auto: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_teleop: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_endgame: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
+    red_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    red_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_3: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_4: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_5: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_6: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_7: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_8: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_9: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_10: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_11: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_12: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_13: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_14: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_15: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_16: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_17: MOF = mapped_column(Float, nullable=True, default=None)
+    red_comp_18: MOF = mapped_column(Float, nullable=True, default=None)
+
+    blue_score: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_foul: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_auto: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_teleop: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_endgame: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
+    blue_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    blue_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_3: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_4: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_5: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_6: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_7: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_8: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_9: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_10: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_11: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_12: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_13: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_14: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_15: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_16: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_17: MOF = mapped_column(Float, nullable=True, default=None)
+    blue_comp_18: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """EPA"""
+    epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
+        Enum(MatchWinner, values_callable=values_callable), nullable=True, default=None
+    )
+    epa_win_prob: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """BACKWARDS COMPATIBILITY"""
+    epa_red_auto_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_teleop_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_endgame_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_auto_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_teleop_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_endgame_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
 
-@attr.s(auto_attribs=True, slots=True)
-class Match(Model):
-    key: str
-    year: int
-    event: str
+_Match = generate_attr_class("Match", MatchORM)
 
-    comp_level: str
-    set_number: int
-    match_number: int
-    offseason: bool
-    status: str
-    video: Optional[str] = None
 
-    red_1: Optional[int] = None
-    red_2: Optional[int] = None
-    red_3: Optional[int] = None
-    red_dq: Optional[str] = None
-    red_surrogate: Optional[str] = None
-    red_epa_sum: Optional[float] = None
-    red_auto_epa_sum: Optional[float] = None
-    red_teleop_epa_sum: Optional[float] = None
-    red_endgame_epa_sum: Optional[float] = None
-    red_rp_1_epa_sum: Optional[float] = None
-    red_rp_2_epa_sum: Optional[float] = None
-
-    blue_1: Optional[int] = None
-    blue_2: Optional[int] = None
-    blue_3: Optional[int] = None
-    blue_dq: Optional[str] = None
-    blue_surrogate: Optional[str] = None
-    blue_epa_sum: Optional[float] = None
-    blue_auto_epa_sum: Optional[float] = None
-    blue_teleop_epa_sum: Optional[float] = None
-    blue_endgame_epa_sum: Optional[float] = None
-    blue_rp_1_epa_sum: Optional[float] = None
-    blue_rp_2_epa_sum: Optional[float] = None
-
-    winner: Optional[str] = None
-    epa_winner: Optional[str] = None
-    epa_win_prob: Optional[float] = None
-    red_rp_1_prob: Optional[float] = None
-    red_rp_2_prob: Optional[float] = None
-    blue_rp_1_prob: Optional[float] = None
-    blue_rp_2_prob: Optional[float] = None
-
-    playoff: bool = False
-    time: Optional[int] = None
-    predicted_time: Optional[int] = None
-
-    red_score: Optional[int] = None
-    blue_score: Optional[int] = None
-
-    red_auto: Optional[int] = None
-    red_auto_movement: Optional[int] = None
-    red_auto_1: Optional[int] = None
-    red_auto_2: Optional[int] = None
-    red_auto_2_1: Optional[int] = None
-    red_auto_2_2: Optional[int] = None
-    red_teleop_1: Optional[int] = None
-    red_teleop_2: Optional[int] = None
-    red_teleop_2_1: Optional[int] = None
-    red_teleop_2_2: Optional[int] = None
-    red_teleop: Optional[int] = None
-    red_endgame: Optional[int] = None
-    red_no_fouls: Optional[int] = None
-    red_fouls: Optional[int] = None
-    red_rp_1: Optional[int] = None
-    red_rp_2: Optional[int] = None
-    red_tiebreaker: Optional[int] = None
-
-    blue_auto: Optional[int] = None
-    blue_auto_movement: Optional[int] = None
-    blue_auto_1: Optional[int] = None
-    blue_auto_2: Optional[int] = None
-    blue_auto_2_1: Optional[int] = None
-    blue_auto_2_2: Optional[int] = None
-    blue_teleop_1: Optional[int] = None
-    blue_teleop_2: Optional[int] = None
-    blue_teleop_2_1: Optional[int] = None
-    blue_teleop_2_2: Optional[int] = None
-    blue_teleop: Optional[int] = None
-    blue_endgame: Optional[int] = None
-    blue_no_fouls: Optional[int] = None
-    blue_fouls: Optional[int] = None
-    blue_rp_1: Optional[int] = None
-    blue_rp_2: Optional[int] = None
-    blue_tiebreaker: Optional[int] = None
-
-    @classmethod
-    def from_dict(cls, dict: Dict[str, Any]) -> "Match":
-        dict = {k: dict.get(k, None) for k in cls.__slots__}  # type: ignore
-        return Match(**dict)
-
-    def as_dict(self: "Match") -> Dict[str, Any]:
-        return attr.asdict(
-            self,  # type: ignore
-            filter=attr.filters.exclude(
-                attr.fields(Match).red_auto_1,  # type: ignore
-                attr.fields(Match).red_auto_2,  # type: ignore
-                attr.fields(Match).red_auto_2_1,  # type: ignore
-                attr.fields(Match).red_auto_2_2,  # type: ignore
-                attr.fields(Match).red_teleop_1,  # type: ignore
-                attr.fields(Match).red_teleop_2,  # type: ignore
-                attr.fields(Match).red_teleop_2_1,  # type: ignore
-                attr.fields(Match).red_teleop_2_2,  # type: ignore
-                attr.fields(Match).blue_auto_1,  # type: ignore
-                attr.fields(Match).blue_auto_2,  # type: ignore
-                attr.fields(Match).blue_auto_2_1,  # type: ignore
-                attr.fields(Match).blue_auto_2_2,  # type: ignore
-                attr.fields(Match).blue_teleop_1,  # type: ignore
-                attr.fields(Match).blue_teleop_2,  # type: ignore
-                attr.fields(Match).blue_teleop_2_1,  # type: ignore
-                attr.fields(Match).blue_teleop_2_2,  # type: ignore
-            ),
-        )
-
-    """SUPER FUNCTIONS"""
-
-    def sort(self) -> int:
+class Match(_Match, Model):
+    def sort(self: "Match") -> int:
         return self.time or 0
 
-    def get_red(self) -> List[int]:
+    def pk(self: "Match") -> str:
+        return self.key
+
+    def __hash__(self: "Match") -> int:
+        return hash(self.pk())
+
+    def __str__(self: "Match") -> str:
+        # Only refresh DB if these change (during 1 min partial update)
+        return "_".join(
+            [
+                self.key,
+                self.status,
+                str(self.red_score),
+                str(self.blue_score),
+                str(self.red_teleop),
+                str(self.blue_teleop),
+                str(self.epa_red_score_pred),
+                str(self.epa_blue_score_pred),
+                str(self.predicted_time),
+            ]
+        )
+
+    """HELPER FUNCTIONS"""
+
+    def get_red(self: "Match") -> List[str]:
         return [x for x in [self.red_1, self.red_2, self.red_3] if x is not None]
 
-    def get_blue(self) -> List[int]:
+    def get_blue(self: "Match") -> List[str]:
         return [x for x in [self.blue_1, self.blue_2, self.blue_3] if x is not None]
 
-    def get_red_surrogates(self) -> List[int]:
-        if self.red_surrogate is None:
-            return []
-        return [int(x) for x in self.red_surrogate.split(",") if x != ""]
+    def get_red_surrogates(self: "Match") -> List[str]:
+        return [x for x in self.red_surrogate.split(",") if x != ""]
 
-    def get_blue_surrogates(self) -> List[int]:
-        if self.blue_surrogate is None:
-            return []
-        return [int(x) for x in self.blue_surrogate.split(",") if x != ""]
+    def get_blue_surrogates(self: "Match") -> List[str]:
+        return [x for x in self.blue_surrogate.split(",") if x != ""]
 
-    def get_red_dqs(self) -> List[int]:
-        if self.red_dq is None:
-            return []
-        return [int(x) for x in self.red_dq.split(",") if x != ""]
+    def get_red_dqs(self: "Match") -> List[str]:
+        return [x for x in self.red_dq.split(",") if x != ""]
 
-    def get_blue_dqs(self) -> List[int]:
-        if self.blue_dq is None:
-            return []
-        return [int(x) for x in self.blue_dq.split(",") if x != ""]
+    def get_blue_dqs(self: "Match") -> List[str]:
+        return [x for x in self.blue_dq.split(",") if x != ""]
 
-    def get_teams(self) -> List[List[int]]:
+    def get_teams(self: "Match") -> List[List[str]]:
         return [self.get_red(), self.get_blue()]
 
-    def to_dict(self) -> Dict[str, Any]:
-        out: Dict[str, Any] = {k: getattr(self, k) for k in self.__slots__}  # type: ignore
-        out["red"] = self.get_red()
-        out["blue"] = self.get_blue()
-        return out
+    def get_winner(self: "Match") -> Optional[MatchWinner]:
+        # For calculating win prediction metrics
+        if self.winner is not None:
+            return self.winner
 
-    def __str__(self: "Match"):
-        # Only refresh DB if these change (during 1 min partial update)
-        # Includes EPA to update when predictions change, includes red/blue score to update when score changes
-        # Includes red/blue teleop to updat when score breakdown changes, includes predicted time to update when time predictions change
-        return f"{self.key}_{self.status}_{self.red_score}_{self.blue_score}_{self.red_teleop}_{self.blue_teleop}_{self.red_epa_sum}_{self.blue_epa_sum}_{self.predicted_time}"
+        if self.red_score is None or self.blue_score is None:
+            return None
+
+        if self.red_score > self.blue_score:
+            return MatchWinner.RED
+        elif self.blue_score > self.red_score:
+            return MatchWinner.BLUE
+        else:
+            return MatchWinner.TIE
+
+    def get_breakdown(self: "Match", alliance: str) -> Any:
+        if self.year < 2016:
+            return np.array([getattr(self, f"{alliance}_score") or 0])
+        return np.array(
+            [
+                getattr(self, f"{alliance}_no_foul") or 0,
+                getattr(self, f"{alliance}_auto") or 0,
+                getattr(self, f"{alliance}_teleop") or 0,
+                getattr(self, f"{alliance}_endgame") or 0,
+                int(getattr(self, f"{alliance}_rp_1") or False),
+                int(getattr(self, f"{alliance}_rp_2") or False),
+                getattr(self, f"{alliance}_tiebreaker") or 0,
+                getattr(self, f"{alliance}_comp_1") or 0,
+                getattr(self, f"{alliance}_comp_2") or 0,
+                getattr(self, f"{alliance}_comp_3") or 0,
+                getattr(self, f"{alliance}_comp_4") or 0,
+                getattr(self, f"{alliance}_comp_5") or 0,
+                getattr(self, f"{alliance}_comp_6") or 0,
+                getattr(self, f"{alliance}_comp_7") or 0,
+                getattr(self, f"{alliance}_comp_8") or 0,
+                getattr(self, f"{alliance}_comp_9") or 0,
+                getattr(self, f"{alliance}_comp_10") or 0,
+                getattr(self, f"{alliance}_comp_11") or 0,
+                getattr(self, f"{alliance}_comp_12") or 0,
+                getattr(self, f"{alliance}_comp_13") or 0,
+                getattr(self, f"{alliance}_comp_14") or 0,
+                getattr(self, f"{alliance}_comp_15") or 0,
+                getattr(self, f"{alliance}_comp_16") or 0,
+                getattr(self, f"{alliance}_comp_17") or 0,
+                getattr(self, f"{alliance}_comp_18") or 0,
+            ]
+        )
+
+    def get_breakdowns(self: "Match") -> Tuple[Any, Any]:
+        return self.get_breakdown("red"), self.get_breakdown("blue")
+
+    def to_dict(self: "Match") -> Dict[str, Any]:
+        clean: Dict[str, Any] = {
+            "key": self.key,
+            "year": self.year,
+            "event": self.event,
+            "offseason": self.offseason,
+            "week": self.week,
+            "elim": self.elim,
+            "comp_level": self.comp_level,
+            "set_number": self.set_number,
+            "match_number": self.match_number,
+            "time": self.time,
+            "predicted_time": self.predicted_time,
+            "status": self.status,
+            "video": self.video,
+            "alliances": {
+                "red": {
+                    "team_keys": self.get_red(),
+                    "surrogate_team_keys": self.get_red_surrogates(),
+                    "dq_team_keys": self.get_red_dqs(),
+                },
+                "blue": {
+                    "team_keys": self.get_blue(),
+                    "surrogate_team_keys": self.get_blue_surrogates(),
+                    "dq_team_keys": self.get_blue_dqs(),
+                },
+            },
+            "pred": {
+                "winner": self.epa_winner,
+                "red_win_prob": self.epa_win_prob,
+                "red_score": self.epa_red_score_pred,
+                "blue_score": self.epa_blue_score_pred,
+            },
+            "result": {
+                "winner": self.winner,
+                "red_score": self.red_score,
+                "blue_score": self.blue_score,
+                "red_no_foul": self.red_no_foul,
+                "blue_no_foul": self.blue_no_foul,
+            },
+        }
+
+        if self.year >= 2016:
+            rp_1_name = key_to_name[self.year]["rp_1"]
+            rp_2_name = key_to_name[self.year]["rp_2"]
+
+            clean["pred"][f"red_{rp_1_name}"] = self.epa_red_rp_1_pred
+            clean["pred"][f"red_{rp_2_name}"] = self.epa_red_rp_2_pred
+            clean["pred"][f"blue_{rp_1_name}"] = self.epa_blue_rp_1_pred
+            clean["pred"][f"blue_{rp_2_name}"] = self.epa_blue_rp_2_pred
+
+            for k in ["auto", "teleop", "endgame", "rp_1", "rp_2", "tiebreaker"] + [
+                f"comp_{i}" for i in range(1, 19)
+            ]:
+                if k not in key_to_name[self.year]:
+                    continue
+                name = key_to_name[self.year][k]
+                clean["result"][f"red_{name}"] = getattr(self, f"red_{k}")
+                clean["result"][f"blue_{name}"] = getattr(self, f"blue_{k}")
+
+        return clean
