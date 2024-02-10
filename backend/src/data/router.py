@@ -49,8 +49,7 @@ async def update_curr_year_site_endpoint():
     etags = get_etags_db(CURR_YEAR)
     is_new_data = check_year_partial_tba(CURR_YEAR, event_objs, etags)
     if not is_new_data:
-        return
+        return {"status": "skipped"}
 
     requests.get(f"{BACKEND_URL}/v3/data/update_curr_year")
-    update_curr_year(partial=True)
     return {"status": "success"}
