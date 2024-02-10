@@ -19,7 +19,10 @@ from src.api.v2.router import router as api_v2_router
 
 # from src.constants import AUTH_KEY_BLACKLIST, CONN_STR, PROD
 from src.constants import CONN_STR, PROD
-from src.data.router import router as data_router
+from src.data.router import (
+    data_router as data_data_router,
+    site_router as data_site_router,
+)
 from src.site.router import router as site_router
 from src.site.v2.router import router as site_v2_router
 
@@ -112,7 +115,8 @@ def get_info():
 
 app.include_router(router, include_in_schema=False)
 app.include_router(api_router, prefix="/v3")
-app.include_router(data_router, prefix="/v3/data", include_in_schema=False)
+app.include_router(data_data_router, prefix="/v3/data", include_in_schema=False)
+app.include_router(data_site_router, prefix="/v3/site", include_in_schema=False)
 app.include_router(site_router, prefix="/v3/site", include_in_schema=False)
 
 # Will be deprecated
