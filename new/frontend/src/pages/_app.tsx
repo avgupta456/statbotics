@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 
-import { AppShell, MantineProvider, createTheme, useMantineColorScheme } from "@mantine/core";
+import { MantineProvider, createTheme, useMantineColorScheme } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/spotlight/styles.css";
 
@@ -11,6 +11,7 @@ import { get, set } from "idb-keyval";
 
 import { DataContext } from "../contexts/dataContext";
 import { PreferencesContext } from "../contexts/preferencesContext";
+import Footer from "../layout/footer";
 import Header from "../layout/header";
 import "../styles/globals.css";
 import { APIEvent, APITeamYear, APIYear } from "../types/api";
@@ -106,14 +107,13 @@ function App({ Component, pageProps }: AppProps) {
 
   return (
     <PreferencesContext.Provider value={memoizedPreferencesValue}>
-      <AppShell header={{ height: 60 }} padding={0} transitionDuration={0}>
-        <DataContext.Provider value={memoizedDataValue}>
+      <DataContext.Provider value={memoizedDataValue}>
+        <div className="flex min-h-screen flex-col">
           <Header />
-          <AppShell.Main>
-            <Component {...pageProps} />
-          </AppShell.Main>
-        </DataContext.Provider>
-      </AppShell>
+          <Component {...pageProps} />
+          <Footer />
+        </div>
+      </DataContext.Provider>
     </PreferencesContext.Provider>
   );
 }

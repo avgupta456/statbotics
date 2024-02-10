@@ -24,47 +24,49 @@ export default function MatchesPage() {
   const memoizedLocation = useMemo(() => ({ location, setLocation }), [location, setLocation]);
 
   return (
-    <LocationContext.Provider value={memoizedLocation}>
-      <QueryHandler
-        recordTab
-        tab={tab}
-        setTab={setTab}
-        defaultTab="upcoming"
-        tabOptions={["upcoming", "noteworthy"]}
-        recordYear
-        year={year}
-        setYear={setYear}
-        recordLocation
-        location={location}
-        setLocation={setLocation}
-        recordWeek={false}
-      />
-      <TabsLayout
-        showYearSelector
-        year={year}
-        setYear={setYear}
-        title="Matches"
-        tab={tab}
-        setTab={setTab}
-        defaultTab="upcoming"
-      >
-        <Tabs.List>
-          {year === CURR_YEAR && (
-            <Tabs.Tab value="upcoming" leftSection={<IoMdStopwatch />}>
-              Upcoming
+    <div className="flex-grow pb-4">
+      <LocationContext.Provider value={memoizedLocation}>
+        <QueryHandler
+          recordTab
+          tab={tab}
+          setTab={setTab}
+          defaultTab="upcoming"
+          tabOptions={["upcoming", "noteworthy"]}
+          recordYear
+          year={year}
+          setYear={setYear}
+          recordLocation
+          location={location}
+          setLocation={setLocation}
+          recordWeek={false}
+        />
+        <TabsLayout
+          showYearSelector
+          year={year}
+          setYear={setYear}
+          title="Matches"
+          tab={tab}
+          setTab={setTab}
+          defaultTab="upcoming"
+        >
+          <Tabs.List>
+            {year === CURR_YEAR && (
+              <Tabs.Tab value="upcoming" leftSection={<IoMdStopwatch />}>
+                Upcoming
+              </Tabs.Tab>
+            )}
+            <Tabs.Tab value="noteworthy" leftSection={<GiPodium />}>
+              Noteworthy
             </Tabs.Tab>
-          )}
-          <Tabs.Tab value="noteworthy" leftSection={<GiPodium />}>
-            Noteworthy
-          </Tabs.Tab>
-        </Tabs.List>
-        <TabPanel value="upcoming" loading={false} error={false}>
-          <UpcomingMatches />
-        </TabPanel>
-        <TabPanel value="noteworthy" loading={false} error={false}>
-          <NoteworthyMatches year={year} />
-        </TabPanel>
-      </TabsLayout>
-    </LocationContext.Provider>
+          </Tabs.List>
+          <TabPanel value="upcoming" loading={false} error={false}>
+            <UpcomingMatches />
+          </TabPanel>
+          <TabPanel value="noteworthy" loading={false} error={false}>
+            <NoteworthyMatches year={year} />
+          </TabPanel>
+        </TabsLayout>
+      </LocationContext.Provider>
+    </div>
   );
 }

@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { AppShell, Button, Group, Kbd, NavLink as MantineNavLink, Menu, Text } from "@mantine/core";
+import { Button, Group, Kbd, NavLink as MantineNavLink, Menu, Text } from "@mantine/core";
 import { Spotlight, spotlight } from "@mantine/spotlight";
 
 import { getAllEvents, getAllTeams } from "../api/header";
@@ -110,7 +110,7 @@ function Header() {
   const allOptions = [...teamOptions, ...eventOptions];
 
   return (
-    <AppShell.Header className="bg-zinc-700 text-white dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="h-[60px] bg-zinc-700 p-3 text-white dark:border-zinc-700 dark:bg-zinc-900">
       <Spotlight
         // not rendered, but allows keyboard navigation with Ctrl+K
         actions={allOptions}
@@ -123,7 +123,7 @@ function Header() {
           placeholder: "Search...",
         }}
       />
-      <div className="m-3 flex items-center">
+      <div className="flex items-center">
         <Group className="w-full" gap={0} hiddenFrom="md">
           <Menu
             trigger="click"
@@ -287,7 +287,7 @@ function Header() {
           {colorScheme === "light" ? sunIcon : moonIcon}
         </Group>
       </div>
-    </AppShell.Header>
+    </div>
   );
 }
 

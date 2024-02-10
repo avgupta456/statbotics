@@ -92,7 +92,7 @@ function EventCard({ event }: { event: APIEvent }) {
 
 function EventsSection({ title, events }: { title: string; events: APIEvent[] }) {
   const [expanded, setExpanded] = useState(false);
-  const cutoffN = 4;
+  const cutoffN = 8;
 
   const count = events.length;
   const showEvents = events.slice(0, expanded ? undefined : cutoffN);
@@ -166,10 +166,10 @@ export default function EventsPage() {
     let filtered = eventDataDict[year] ?? [];
 
     const sortEvents = (a: APIEvent, b: APIEvent) => {
-      if (a.week === b.week) {
+      if ((a.status === "Ongoing" && b.status === "Ongoing") || a.start_date === b.start_date) {
         return (b.epa.mean ?? -1) - (a.epa.mean ?? -1);
       }
-      return a.week - b.week;
+      return a.start_date > b.start_date ? 1 : -1;
     };
 
     filtered = filtered.sort(sortEvents);
@@ -204,64 +204,76 @@ export default function EventsPage() {
   const completedEvents = data.filter((event) => event.status === "Completed");
 
   return (
-    <LocationContext.Provider value={memoizedLocation}>
-      <QueryHandler
-        recordTab
-        tab={tab}
-        setTab={setTab}
-        defaultTab="summary"
-        tabOptions={["summary", "table"]}
-        recordYear
-        year={year}
-        setYear={setYear}
-        recordLocation
-        location={location}
-        setLocation={setLocation}
-        recordWeek
-        week={week}
-        setWeek={setWeek}
-      />
-      <TabsLayout
-        showYearSelector
-        year={year}
-        setYear={setYear}
-        title="Events"
-        tab={tab}
-        setTab={setTab}
-        defaultTab="summary"
-      >
-        <Tabs.List>
-          <Tabs.Tab value="summary" leftSection={<MdGridView />}>
-            Summary
-          </Tabs.Tab>
-          <Tabs.Tab value="table" leftSection={<MdOutlineTableChart />}>
-            Table
-          </Tabs.Tab>
-        </Tabs.List>
-        <TabPanel value="summary" loading={loading} error={error}>
-          <div className="h-full w-full">
-            <EventsFilterBar week={week} setWeek={setWeek} search={search} setSearch={setSearch} />
-            <div className="p-2 md:p-0">
-              {[
-                { name: "Ongoing", events: ongoingEvents },
-                { name: "Upcoming", events: upcomingEvents },
-                { name: "Completed", events: completedEvents },
-              ]
-                .filter(({ events }) => events.length > 0)
-                .map(({ name, events }) => (
-                  <EventsSection key={name} title={name} events={events} />
-                ))}
+    <div className="flex-grow pb-4">
+      <LocationContext.Provider value={memoizedLocation}>
+        <QueryHandler
+          recordTab
+          tab={tab}
+          setTab={setTab}
+          defaultTab="summary"
+          tabOptions={["summary", "table"]}
+          recordYear
+          year={year}
+          setYear={setYear}
+          recordLocation
+          location={location}
+          setLocation={setLocation}
+          recordWeek
+          week={week}
+          setWeek={setWeek}
+        />
+        <TabsLayout
+          showYearSelector
+          year={year}
+          setYear={setYear}
+          title="Events"
+          tab={tab}
+          setTab={setTab}
+          defaultTab="summary"
+        >
+          <Tabs.List>
+            <Tabs.Tab value="summary" leftSection={<MdGridView />}>
+              Summary
+            </Tabs.Tab>
+            <Tabs.Tab value="table" leftSection={<MdOutlineTableChart />}>
+              Table
+            </Tabs.Tab>
+          </Tabs.List>
+          <TabPanel value="summary" loading={loading} error={error}>
+            <div className="h-full w-full">
+              <EventsFilterBar
+                week={week}
+                setWeek={setWeek}
+                search={search}
+                setSearch={setSearch}
+              />
+              <div className="p-2 md:p-0">
+                {[
+                  { name: "Ongoing", events: ongoingEvents },
+                  { name: "Upcoming", events: upcomingEvents },
+                  { name: "Completed", events: completedEvents },
+                ]
+                  .filter(({ events }) => events.length > 0)
+                  .map(({ name, events }) => (
+                    <EventsSection key={name} title={name} events={events} />
+                  ))}
+              </div>
             </div>
-          </div>
-        </TabPanel>
-        <TabPanel value="table" loading={loading} error={error}>
-          <div className="h-full w-full">
-            <EventsFilterBar week={week} setWeek={setWeek} search={search} setSearch={setSearch} />
-            <div className="h-4" />
-            <EventsTable year={year} data={data} />
-          </div>
-        </TabPanel>
-      </TabsLayout>
-    </LocationContext.Provider>
+          </TabPanel>
+          <TabPanel value="table" loading={loading} error={error}>
+            <div className="h-full w-full">
+              <EventsFilterBar
+                week={week}
+                setWeek={setWeek}
+                search={search}
+                setSearch={setSearch}
+              />
+              <div className="h-4" />
+              <EventsTable year={year} data={data} />
+            </div>
+          </TabPanel>
+        </TabsLayout>
+      </LocationContext.Provider>
+    </div>
   );
 }

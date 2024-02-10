@@ -99,7 +99,7 @@ export default function TeamsPage() {
   const loading = data?.length === 0;
 
   return (
-    <div>
+    <div className="flex-grow pb-4">
       <Head>
         <title>Teams - Statbotics</title>
       </Head>
