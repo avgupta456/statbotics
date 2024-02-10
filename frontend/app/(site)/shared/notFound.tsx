@@ -15,7 +15,7 @@ const NotFound = ({ type }: { type: string }) => {
   }, []);
 
   if (!render) {
-    return null;
+    return <div className="flex-grow" />;
   }
 
   return (
