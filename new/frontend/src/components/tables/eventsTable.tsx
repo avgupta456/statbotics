@@ -124,7 +124,6 @@ export default function EventsTable({ year, data }: { year: number; data: APIEve
       data={data || []}
       dataType="Event"
       columnDefs={columnDefs}
-      offset={262}
       showDownloadCSV
       showExpand
       expanded={expanded}
