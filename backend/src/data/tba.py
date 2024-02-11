@@ -384,7 +384,7 @@ def process_year(
                 status=event_status,
                 first_event=False,
                 rank=rankings.get(team, None),
-                num_teams=len(rankings),
+                num_teams=len(event_teams),
                 elim_alliance=alliance_dict.get(team, None),
                 is_captain=captain_dict.get(team, None),
                 district_points=team_event_to_district_points.get(team_event_key, None),

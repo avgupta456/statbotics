@@ -2,8 +2,6 @@
 
 import React, { useMemo, useState } from "react";
 
-import Link from "next/link";
-
 import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
@@ -144,14 +142,12 @@ const PageTeamInsightsTable = ({
           cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
           header: "Endgame EPA",
         }),
-      /*
       year == CURR_YEAR &&
         columnHelper.accessor("next_event_name", {
           cell: (info) =>
             EventLink({ key: info.row.original.next_event_key, event: info.getValue() }),
           header: "Next Event",
         }),
-      */
       columnHelper.accessor("record", {
         cell: (info) => formatCell(info),
         header: "Record",
@@ -182,7 +178,7 @@ const PageTeamInsightsTable = ({
       year >= CURR_YEAR &&
         detailedColumnHelper.accessor("unitless_epa", {
           cell: (info) => formatCell(info),
-          header: "Unitless EPA*",
+          header: "Unitless EPA",
         }),
       detailedColumnHelper.accessor("total_epa", {
         cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
@@ -213,14 +209,12 @@ const PageTeamInsightsTable = ({
           cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
           header: RPMapping[year][1],
         }),
-      /*
       year == CURR_YEAR &&
         detailedColumnHelper.accessor("next_event_name", {
           cell: (info) =>
             EventLink({ key: info.row.original.next_event_key, event: info.getValue() }),
           header: "Next Event",
         }),
-      */
       detailedColumnHelper.accessor("record", {
         cell: (info) => formatCell(info),
         header: "Record",
