@@ -5,7 +5,7 @@ import { Tooltip } from "@mantine/core";
 
 import { useLocation } from "../contexts/locationContext";
 import { APIEvent, APITeamEvent, APITeamYear } from "../types/api";
-import { COUNTRIES, DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../utils/geography";
+import { COUNTRY_FULL_NAMES, DISTRICT_FULL_NAMES, STATE_FULL_NAMES } from "../utils/geography";
 import { Select } from "./select";
 
 export function LocationFilter() {
@@ -16,7 +16,10 @@ export function LocationFilter() {
       data={[
         {
           group: "Countries",
-          items: COUNTRIES.map((c) => ({ value: `country_${c}`, label: c })),
+          items: Object.values(COUNTRY_FULL_NAMES).map((c) => ({
+            value: `country_${c}`,
+            label: c,
+          })),
         },
         {
           group: "States/Provinces",
@@ -50,6 +53,7 @@ export const filterLocation = (
   if (!location) return true;
   const [type, value] = location.split("_");
   if (type === "country" && item.country) {
+    // unlike state and district, full name stored in DB
     return item.country === value;
   }
   if (type === "state" && item.state) {

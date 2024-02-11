@@ -19,7 +19,6 @@ export default function Table({
   data,
   dataType,
   columnDefs,
-  offset,
   EPAColumns = [],
   showLocationQuickFilter = false,
   showProjectionsFilter = false,
@@ -33,7 +32,6 @@ export default function Table({
   data: any[];
   dataType: "TeamYear" | "Event";
   columnDefs: any[];
-  offset: number;
   EPAColumns?: string[];
   showLocationQuickFilter?: boolean;
   showProjectionsFilter?: boolean;
@@ -165,6 +163,8 @@ export default function Table({
 
   const showMultiSelect = showProjectionsFilter || showCompetingThisWeekFilter;
 
+  const hasHeaderGroup = finalColumnDefs.some((c) => c.children);
+
   return (
     <div>
       <div className="mx-2 mb-2 flex flex-row">
@@ -247,10 +247,8 @@ export default function Table({
         className={classnames(
           "w-full",
           colorScheme === "light" ? "ag-theme-quartz" : "ag-theme-quartz-dark",
+          hasHeaderGroup ? "h-[566px]" : "h-[519px]",
         )}
-        style={{
-          height: mobile ? `calc(100vh - ${offset}px)` : "519px",
-        }}
       >
         <AgGridReact
           ref={gridRef}

@@ -1,25 +1,27 @@
-export const COUNTRIES: string[] = [
-  "USA",
-  "Canada",
-  "Türkiye",
-  "Mexico",
-  "Israel",
-  "Brazil",
-  "Australia",
-  "Chinese Taipei",
-  "China",
-  "Japan",
-  "Colombia",
-  "India",
-  "Poland",
-];
+export const COUNTRY_FULL_NAMES: { [key: string]: string } = {
+  USA: "USA",
+  CAN: "Canada",
+  TUR: "Türkiye",
+  MEX: "Mexico",
+  ISR: "Israel",
+  BRA: "Brazil",
+  AUS: "Australia",
+  TWN: "Chinese Taipei",
+  CHN: "China",
+  JPN: "Japan",
+  COL: "Colombia",
+  IND: "India",
+  POL: "Poland",
+};
 
-export const parseCountry = (country: undefined | string | string[]) => {
+export const parseCountry = (country: undefined | string | string[], out: "key" | "value") => {
   if (!country) return null;
   if (Array.isArray(country)) return null;
   const countryUpper = country.toUpperCase();
-  const countryMatch = COUNTRIES.find((c) => c.toUpperCase() === countryUpper);
-  if (countryMatch) return countryMatch;
+  const countryMatch = Object.entries(COUNTRY_FULL_NAMES).find(
+    ([k, v]) => k.toUpperCase() === countryUpper || v.toUpperCase() === countryUpper,
+  );
+  if (countryMatch) return out === "key" ? countryMatch[0] : countryMatch[1];
   return null;
 };
 
@@ -96,14 +98,14 @@ export const STATE_FULL_NAMES: { [key: string]: string } = {
   // NU: "Nunavut",
 };
 
-export const parseState = (state: undefined | string | string[]) => {
+export const parseState = (state: undefined | string | string[], out: "key" | "value") => {
   if (!state) return null;
   if (Array.isArray(state)) return null;
   const stateUpper = state.toUpperCase();
   const stateMatch = Object.entries(STATE_FULL_NAMES).find(
     ([k, v]) => k.toUpperCase() === stateUpper || v.toUpperCase() === stateUpper,
   );
-  if (stateMatch) return stateMatch[1];
+  if (stateMatch) return out === "key" ? stateMatch[0] : stateMatch[1];
   return null;
 };
 
@@ -121,13 +123,13 @@ export const DISTRICT_FULL_NAMES: { [key: string]: string } = {
   isr: "Israel",
 };
 
-export const parseDistrict = (district: undefined | string | string[]) => {
+export const parseDistrict = (district: undefined | string | string[], out: "key" | "value") => {
   if (!district) return null;
   if (Array.isArray(district)) return null;
   const districtUpper = district.toUpperCase();
   const districtMatch = Object.entries(DISTRICT_FULL_NAMES).find(
     ([k, v]) => k.toUpperCase() === districtUpper || v.toUpperCase() === districtUpper,
   );
-  if (districtMatch) return districtMatch[1];
+  if (districtMatch) return out === "key" ? districtMatch[0] : districtMatch[1];
   return null;
 };

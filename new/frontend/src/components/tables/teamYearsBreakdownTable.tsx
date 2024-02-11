@@ -121,7 +121,6 @@ export default function TeamYearsBreakdownTable({
       data={data || []}
       dataType="TeamYear"
       columnDefs={columnDefs}
-      offset={222}
       EPAColumns={EPAColumns}
       showLocationQuickFilter
       showProjectionsFilter={year === CURR_YEAR}

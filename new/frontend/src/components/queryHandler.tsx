@@ -62,9 +62,9 @@ export default function QueryHandler({
       }
 
       if (recordLocation) {
-        const parsedCountry = parseCountry(paramsCountry);
-        const parsedState = parseState(paramsState);
-        const parsedDistrict = parseDistrict(paramsDistrict);
+        const parsedCountry = parseCountry(paramsCountry, "value");
+        const parsedState = parseState(paramsState, "key");
+        const parsedDistrict = parseDistrict(paramsDistrict, "key");
         if (parsedCountry) {
           setLocation(`country_${parsedCountry}`);
         } else if (parsedState) {
@@ -89,7 +89,13 @@ export default function QueryHandler({
     if (recordLocation && location) {
       const locationType = location.split("_")[0];
       const locationValue = location.split("_")[1];
-      newQuery[locationType] = locationValue;
+      if (locationType === "country") {
+        newQuery[locationType] = parseCountry(locationValue, "key");
+      } else if (locationType === "state") {
+        newQuery[locationType] = parseState(locationValue, "key");
+      } else if (locationType === "district") {
+        newQuery[locationType] = parseDistrict(locationValue, "key");
+      }
     }
 
     const cleanQuery: any = Object.fromEntries(
