@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import Script from "next/script";
 
 import { MantineProvider, createTheme, useMantineColorScheme } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -126,6 +127,21 @@ export default function AppWrapper({ ...props }: AppProps) {
       </Head>
       <MantineProvider theme={theme}>
         <NoSSR>
+          <Script
+            id="google"
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-JD14NTTG5M"
+          />
+          <Script
+            id="gtag"
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-JD14NTTG5M', { page_path: window.location.pathname });
+          `,
+            }}
+          />
           <App {...props} />
         </NoSSR>
       </MantineProvider>
