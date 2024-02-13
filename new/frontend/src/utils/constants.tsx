@@ -2,7 +2,7 @@
 INFRASTRUCTURE
 */
 
-export const PROD = process.env.PROD === "True";
+export const PROD = process.env.NEXT_PUBLIC_PROD === "True";
 
 export const BACKEND_URL = PROD
   ? "https://api.statbotics.io/v3/site"
