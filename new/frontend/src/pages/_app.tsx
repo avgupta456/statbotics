@@ -130,7 +130,7 @@ export default function AppWrapper({ ...props }: AppProps) {
           <Script
             id="google"
             async
-            src="https://www.googletagmanager.com/gtag/js?id=G-JD14NTTG5M"
+            src="https://www.googletagmanager.com/gtag/js?id=G-RXZJL49QER"
           />
           <Script
             id="gtag"
@@ -138,7 +138,7 @@ export default function AppWrapper({ ...props }: AppProps) {
               __html: `window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-JD14NTTG5M', { page_path: window.location.pathname });
+            gtag('config', 'G-RXZJL49QER', { page_path: window.location.pathname });
           `,
             }}
           />
