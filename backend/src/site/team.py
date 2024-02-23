@@ -20,7 +20,12 @@ router = APIRouter()
 async def read_all_teams(response: StreamingResponse, no_cache: bool = False) -> Any:
     teams: List[Team] = await get_teams_cached(site=True, no_cache=no_cache)
     data = [
-        {"team": x.team, "name": x.name, "active": x.active}
+        {
+            "team": x.team,
+            "name": x.name,
+            "active": x.active,
+            "color": {"primary": x.primary_color, "secondary": x.secondary_color},
+        }
         for x in teams
         if not x.offseason
     ]

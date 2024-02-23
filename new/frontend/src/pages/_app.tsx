@@ -15,7 +15,7 @@ import { PreferencesContext } from "../contexts/preferencesContext";
 import Footer from "../layout/footer";
 import Header from "../layout/header";
 import "../styles/globals.css";
-import { APIEvent, APITeamYear, APIYear } from "../types/api";
+import { APIEvent, APIShortEvent, APIShortTeam, APITeamYear, APIYear } from "../types/api";
 import NoSSR from "../utils/no-ssr";
 
 const theme = createTheme({
@@ -24,17 +24,18 @@ const theme = createTheme({
 });
 
 function App({ Component, pageProps }: AppProps) {
-  const [teamYearMiniDataDict, setTeamYearMiniDataDict] = useState<{
-    [key: number]: APITeamYear[];
-  }>({});
+  const [allTeams, setAllTeams] = useState<APIShortTeam[]>([]);
+  const [allEvents, setAllEvents] = useState<APIShortEvent[]>([]);
   const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: APITeamYear[] }>({});
   const [eventDataDict, setEventDataDict] = useState<{ [key: number]: APIEvent[] }>({});
   const [yearDataDict, setYearDataDict] = useState<{ [key: number]: APIYear }>({});
 
   const memoizedDataValue = useMemo(
     () => ({
-      teamYearMiniDataDict,
-      setTeamYearMiniDataDict,
+      allTeams,
+      setAllTeams,
+      allEvents,
+      setAllEvents,
       teamYearDataDict,
       setTeamYearDataDict,
       eventDataDict,
@@ -43,8 +44,10 @@ function App({ Component, pageProps }: AppProps) {
       setYearDataDict,
     }),
     [
-      teamYearMiniDataDict,
-      setTeamYearMiniDataDict,
+      allTeams,
+      setAllTeams,
+      allEvents,
+      setAllEvents,
       teamYearDataDict,
       setTeamYearDataDict,
       eventDataDict,

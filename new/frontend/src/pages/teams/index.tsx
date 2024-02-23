@@ -21,13 +21,7 @@ import { BREAKDOWN_YEARS, CURR_YEAR } from "../../utils/constants";
 
 export default function TeamsPage() {
   const { isReady } = useRouter();
-  const {
-    teamYearMiniDataDict,
-    setTeamYearMiniDataDict,
-    teamYearDataDict,
-    setTeamYearDataDict,
-    setYearDataDict,
-  } = useData();
+  const { teamYearDataDict, setTeamYearDataDict, setYearDataDict } = useData();
 
   const [year, setYear] = useState<number>(CURR_YEAR);
   const [location, setLocation] = useState<string | null>(null);
@@ -41,33 +35,11 @@ export default function TeamsPage() {
   const memoizedLocation = useMemo(() => ({ location, setLocation }), [location, setLocation]);
 
   const [error, setError] = useState(false);
-  const [loadingMini, setLoadingMini] = useState(false);
-  const [loadingFull, setLoadingFull] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const getMiniDataForYear = async (yearNum: number) => {
-      setLoadingMini(true);
-      const {
-        year: yearData,
-        team_years: teamYearsData,
-      }: {
-        year: APIYear;
-        team_years: APITeamYear[];
-      } = await getYearTeamYears(yearNum, 50);
-      if (teamYearsData && yearData) {
-        setTeamYearMiniDataDict((prev: { [key: number]: APITeamYear[] }) => ({
-          ...prev,
-          [yearNum]: teamYearsData,
-        }));
-        setYearDataDict((prev: { [key: number]: APIYear }) => ({ ...prev, [yearNum]: yearData }));
-      } else {
-        setError(true);
-      }
-      setLoadingMini(false);
-    };
-
     const getDataForYear = async (yearNum: number) => {
-      setLoadingFull(true);
+      setLoading(true);
       const data = await getYearTeamYears(yearNum);
       const teamYearsData: APITeamYear[] = data?.team_years;
       const yearData: APIYear = data?.year;
@@ -80,23 +52,20 @@ export default function TeamsPage() {
       } else {
         setError(true);
       }
-      setLoadingFull(false);
+      setLoading(false);
     };
 
-    if (isReady && !error && !teamYearMiniDataDict[year] && !loadingMini) {
-      getMiniDataForYear(year);
-    } else if (isReady && !error && !teamYearDataDict[year] && !loadingFull) {
+    if (isReady && !error && !teamYearDataDict[year] && !loading) {
       getDataForYear(year);
     }
-  }, [isReady, teamYearMiniDataDict, teamYearDataDict, year]);
+  }, [isReady, teamYearDataDict, year]);
 
-  let data = teamYearDataDict[year] || teamYearMiniDataDict[year];
+  let data = teamYearDataDict[year];
   if (data) {
     data = data.sort(
       (a, b) => (a?.epa?.ranks?.total?.rank ?? 0) - (b?.epa?.ranks?.total?.rank ?? 0),
     );
   }
-  const loading = data?.length === 0;
 
   return (
     <div className="flex-grow pb-4">
@@ -146,13 +115,13 @@ export default function TeamsPage() {
               Figures
             </Tabs.Tab>
           </Tabs.List>
-          <TabPanel value="insights" loading={loading} error={error}>
+          <TabPanel value="insights" loading={false} error={error}>
             <div className="h-full w-full">
               <TeamYearsTable year={year} data={data} />
             </div>
           </TabPanel>
           {year >= 2016 && (
-            <TabPanel value="breakdown" loading={loading} error={error}>
+            <TabPanel value="breakdown" loading={false} error={error}>
               <div className="h-full w-full">
                 <TeamYearsBreakdownTable year={year} data={data} />
               </div>
