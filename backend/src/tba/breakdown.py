@@ -709,33 +709,85 @@ def clean_breakdown_2024(
     no_foul_points: int,
     foul_points: int,
 ) -> BreakdownDict:
+    # auto
+    auto_leave_points = breakdown.get("autoLeavePoints", 0)
+    auto_amp_notes = breakdown.get("autoAmpNoteCount", 0)
+    auto_amp_note_points = 2 * auto_amp_notes
+    auto_speaker_notes = breakdown.get("autoSpeakerNoteCount", 0)
+    auto_speaker_note_points = 5 * auto_speaker_notes
+    auto_notes = auto_amp_notes + auto_speaker_notes
+    auto_note_points = auto_amp_note_points + auto_speaker_note_points
+    auto_points = auto_leave_points + auto_note_points
+
+    # teleop
+    teleop_amp_notes = breakdown.get("teleopAmpNoteCount", 0)
+    teleop_amp_note_points = 1 * teleop_amp_notes
+    teleop_speaker_notes = breakdown.get("teleopSpeakerNoteCount", 0)
+    teleop_speaker_amplified_notes = breakdown.get("teleopSpeakerNoteAmplifiedCount", 0)
+    # count both unamplified and amplified notes
+    teleop_speaker_notes += teleop_speaker_amplified_notes
+    teleop_speaker_points = (
+        2 * teleop_speaker_notes + 3 * teleop_speaker_amplified_notes
+    )
+    teleop_notes = teleop_amp_notes + teleop_speaker_notes
+    teleop_note_points = teleop_amp_note_points + teleop_speaker_points
+    teleop_points = teleop_note_points
+
+    # combined
+    amp_notes = auto_amp_notes + teleop_amp_notes
+    amp_points = auto_amp_note_points + teleop_amp_note_points
+    speaker_notes = auto_speaker_notes + teleop_speaker_notes
+    speaker_points = auto_speaker_note_points + teleop_speaker_points
+    amplified_notes = teleop_speaker_amplified_notes
+    total_notes = auto_notes + teleop_notes
+    total_note_points = auto_note_points + teleop_note_points
+
+    # endgame
+    endgame_park_points = breakdown.get("endGameParkPoints", 0)
+    endgame_on_stage_points = breakdown.get("endGameOnStagePoints", 0)
+    endgame_harmony_points = breakdown.get("endGameHarmonyPoints", 0)
+    endgame_trap_points = breakdown.get("endGameNoteInTrapPoints", 0)
+    endgame_spotlight_points = breakdown.get("endGameSpotLightBonusPoints", 0)
+    endgame_points = (
+        endgame_park_points
+        + endgame_on_stage_points
+        + endgame_harmony_points
+        + endgame_trap_points
+        + endgame_spotlight_points
+    )
+
+    # other
+    rp_1 = bool(breakdown.get("melodyBonusAchieved", False))
+    rp_2 = bool(breakdown.get("harmonyBonusAchieved", False))
+    tiebreaker = int(breakdown.get("coopertitionBonusAchieved", False))
+
     return {
-        "score": 30,
-        "no_foul_points": 30,
-        "foul_points": 0,
-        "auto_points": 10,
-        "teleop_points": 10,
-        "endgame_points": 10,
-        "rp_1": False,
-        "rp_2": False,
-        "tiebreaker": 30,
-        "comp_1": 3,
-        "comp_2": 3,
-        "comp_3": 3,
-        "comp_4": 3,
-        "comp_5": 3,
-        "comp_6": 3,
-        "comp_7": 3,
-        "comp_8": 3,
-        "comp_9": 3,
-        "comp_10": 3,
-        "comp_11": None,
-        "comp_12": None,
-        "comp_13": None,
-        "comp_14": None,
-        "comp_15": None,
-        "comp_16": None,
-        "comp_17": None,
+        "score": score,
+        "no_foul_points": no_foul_points,
+        "foul_points": foul_points,
+        "auto_points": auto_points,
+        "teleop_points": teleop_points,
+        "endgame_points": endgame_points,
+        "rp_1": rp_1,
+        "rp_2": rp_2,
+        "tiebreaker": tiebreaker,
+        "comp_1": auto_leave_points,
+        "comp_2": auto_notes,
+        "comp_3": auto_note_points,
+        "comp_4": teleop_notes,
+        "comp_5": teleop_note_points,
+        "comp_6": amp_notes,
+        "comp_7": amp_points,
+        "comp_8": speaker_notes,
+        "comp_9": speaker_points,
+        "comp_10": amplified_notes,
+        "comp_11": total_notes,
+        "comp_12": total_note_points,
+        "comp_13": endgame_park_points,
+        "comp_14": endgame_on_stage_points,
+        "comp_15": endgame_harmony_points,
+        "comp_16": endgame_trap_points,
+        "comp_17": endgame_spotlight_points,
         "comp_18": None,
     }
 

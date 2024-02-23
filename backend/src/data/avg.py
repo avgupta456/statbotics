@@ -29,25 +29,32 @@ def process_year(year: Year, matches: List[Match]) -> Year:
 
     N = 2 * len(week_one_matches)
     if year.year == CURR_YEAR and N < 100:
-        year.score_mean, year.score_sd = 30, 10
-        year.no_foul_mean = 30
-        year.foul_mean = 0
-        year.auto_mean = 10
-        year.teleop_mean = 10
-        year.endgame_mean = 10
-        year.rp_1_mean = 0.5
-        year.rp_2_mean = 0.5
-        year.tiebreaker_mean = 0
-        year.comp_1_mean = 3
-        year.comp_2_mean = 3
-        year.comp_3_mean = 3
-        year.comp_4_mean = 3
-        year.comp_5_mean = 3
-        year.comp_6_mean = 3
-        year.comp_7_mean = 3
-        year.comp_8_mean = 3
-        year.comp_9_mean = 3
-        year.comp_10_mean = 3
+        year.score_mean, year.score_sd = 39.74, 24.11
+        year.no_foul_mean = 37.6
+        year.foul_mean = 2.15
+        year.auto_mean = 16.05
+        year.teleop_mean = 18.77
+        year.endgame_mean = 2.77
+        year.rp_1_mean = 0.06
+        year.rp_2_mean = 0.01
+        year.tiebreaker_mean = 0.1
+        year.comp_1_mean = 2.65
+        year.comp_2_mean = 2.76
+        year.comp_3_mean = 13.4
+        year.comp_4_mean = 9.19
+        year.comp_5_mean = 18.77
+        year.comp_6_mean = 2.6
+        year.comp_7_mean = 2.73
+        year.comp_8_mean = 9.35
+        year.comp_9_mean = 29.45
+        year.comp_10_mean = 0.95
+        year.comp_11_mean = 11.95
+        year.comp_12_mean = 32.18
+        year.comp_13_mean = 1.4
+        year.comp_14_mean = 1.35
+        year.comp_15_mean = 0.01
+        year.comp_16_mean = 0.01
+        year.comp_17_mean = 0.02
         return year
 
     year.score_mean, year.score_sd = get_mean_sd(

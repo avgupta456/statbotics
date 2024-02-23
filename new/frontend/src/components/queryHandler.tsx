@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { useRouter } from "next/router";
 
-import { CURR_YEAR } from "../utils/constants";
+import { CURR_YEAR, YEAR_OPTIONS } from "../utils/constants";
 import { parseCountry, parseDistrict, parseState } from "../utils/geography";
 
 export default function QueryHandler({
@@ -56,7 +56,7 @@ export default function QueryHandler({
 
       if (recordYear && typeof paramsYear === "string") {
         const paramsYearInt = parseInt(paramsYear);
-        if (paramsYearInt >= 2002 && paramsYearInt !== year) {
+        if (YEAR_OPTIONS.includes(paramsYear) && paramsYearInt !== year) {
           setYear(paramsYearInt);
         }
       }
