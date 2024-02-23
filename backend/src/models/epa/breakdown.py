@@ -134,7 +134,10 @@ def get_pred_rps(
         rp_2 = breakdown_mean[keys.index("rp_2")]
 
     elif year == 2024:
-        rp_1 = breakdown_mean[keys.index("rp_1")]
+        total_notes_mean = breakdown_mean[keys.index("total_notes")]
+        total_notes_sd = breakdown_sd[keys.index("total_notes")]
+
+        rp_1 = t_prob_gt_0(total_notes_mean - 18 * DISCOUNT, total_notes_sd)
         rp_2 = breakdown_mean[keys.index("rp_2")]
 
     return rp_1, rp_2
