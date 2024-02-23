@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { APITeamYear } from "../../types/api";
 import { CURR_YEAR } from "../../utils/constants";
 import { getEPADef } from "./templates/epa";
-import { getCountryDef, getDistrictDef, getStateDef } from "./templates/locations";
 import { rankDef, teamNameDef, teamNumDef } from "./templates/misc";
 import Table from "./templates/table";
 
@@ -17,14 +16,7 @@ export default function TeamYearsBreakdownTable({
   const [expanded, setExpanded] = useState(false);
 
   const getColumnDefs = (newYear: number, newExpanded: boolean) => {
-    const sharedDefs = [
-      rankDef,
-      teamNumDef,
-      teamNameDef,
-      getCountryDef(!newExpanded),
-      getStateDef(!newExpanded),
-      getDistrictDef(!newExpanded),
-    ];
+    const sharedDefs = [rankDef, teamNumDef, teamNameDef];
 
     if (newYear === 2023) {
       return [
