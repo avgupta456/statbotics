@@ -17,7 +17,7 @@ import { useData } from "../../contexts/dataContext";
 import { LocationContext } from "../../contexts/locationContext";
 import TabsLayout, { TabPanel } from "../../layout/tabs";
 import { APITeamYear, APIYear } from "../../types/api";
-import { CURR_YEAR } from "../../utils/constants";
+import { BREAKDOWN_YEARS, CURR_YEAR } from "../../utils/constants";
 
 export default function TeamsPage() {
   const { isReady } = useRouter();
@@ -34,7 +34,7 @@ export default function TeamsPage() {
   const [_tab, setTab] = useState<string>("insights");
 
   let tab = _tab;
-  if (tab === "breakdown" && ![2023].includes(year)) {
+  if (tab === "breakdown" && !BREAKDOWN_YEARS.includes(year)) {
     tab = "insights";
   }
 
@@ -134,7 +134,7 @@ export default function TeamsPage() {
               <Tabs.Tab
                 value="breakdown"
                 leftSection={<MdOutlineTableChart />}
-                disabled={![2023].includes(year)}
+                disabled={!BREAKDOWN_YEARS.includes(year)}
               >
                 Breakdown
               </Tabs.Tab>

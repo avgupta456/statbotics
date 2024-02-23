@@ -20,6 +20,8 @@ export const YEAR_OPTIONS = Array.from({ length: CURR_YEAR - START_YEAR + 1 }, (
   (CURR_YEAR - i).toString(),
 );
 
+export const BREAKDOWN_YEARS = [2023, 2024]; // TODO: implement 2016-2022
+
 /*
 COLORS
 */

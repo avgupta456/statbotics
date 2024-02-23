@@ -190,7 +190,7 @@ export default function Table({
           </FilterBar>
         )}
         <div className="flex-grow" />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {EPAColumns.length > 0 && (
             <>
               <div className="lg:hidden">
