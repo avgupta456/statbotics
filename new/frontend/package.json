@@ -31,7 +31,7 @@
     "ag-grid-react": "^31.0.1",
     "idb-keyval": "^6.2.1",
     "katex": "^0.16.9",
-    "next": "14.0.4",
+    "next": "^14.1.0",
     "pako": "^2.1.0",
     "react": "^18",
     "react-dom": "^18",
