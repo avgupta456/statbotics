@@ -1,6 +1,6 @@
 import requests
 
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 
 from src.data.main import reset_all_years, update_colors, update_curr_year
 
@@ -43,13 +43,17 @@ async def update_colors_endpoint(use_cache: bool = True):
     return {"status": "success"}
 
 
+def update_curr_year_background():
+    requests.get(f"{BACKEND_URL}/v3/data/update_curr_year")
+
+
 @site_router.get("/update_curr_year")
-async def update_curr_year_site_endpoint():
+async def update_curr_year_site_endpoint(background_tasks: BackgroundTasks):
     event_objs = get_events_db(year=CURR_YEAR, offseason=None)
     etags = get_etags_db(CURR_YEAR)
     is_new_data = check_year_partial_tba(CURR_YEAR, event_objs, etags)
     if not is_new_data:
         return {"status": "skipped"}
 
-    requests.get(f"{BACKEND_URL}/v3/data/update_curr_year")
-    return {"status": "success"}
+    background_tasks.add_task(update_curr_year_background)
+    return {"status": "backgrounded"}
