@@ -69,6 +69,7 @@ class Model:
             team_year = team_years[team]
             self.pre_record_team(team, team_match, team_event, team_year)
 
+        self.record_match(match, match_pred)
         if match.status == MatchStatus.UPCOMING:
             return
 
@@ -90,5 +91,3 @@ class Model:
             if not skip_update:
                 self.update_team(team, attr, match, team_match)
             self.post_record_team(team, team_match, team_event, team_year)
-
-        self.record_match(match, match_pred)
