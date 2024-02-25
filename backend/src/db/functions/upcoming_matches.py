@@ -63,10 +63,10 @@ def get_upcoming_matches(
 
         if metric in ["max_epa", "sum_epa"]:
             # sort desc
-            matches = matches.order_by(text(f"matches.{metric} DESC"))
+            matches = matches.order_by(text(f"{metric} DESC"))
         elif metric in ["time", "diff_epa"]:
             # sort asc
-            matches = matches.order_by(text(f"matches.{metric} ASC"))
+            matches = matches.order_by(text(f"{metric} ASC"))
 
         matches = matches.limit(limit).all()
 
