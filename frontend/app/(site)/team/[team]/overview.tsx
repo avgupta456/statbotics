@@ -231,7 +231,6 @@ const OverviewSection = ({
                 year={year.year}
                 teamNum={teamData.num}
                 matches={eventMatches}
-                foulRate={year.foul_rate}
                 myAlliance={alliance}
               />
             </div>

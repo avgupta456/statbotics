@@ -24,7 +24,6 @@ const timestampToString = (timestamp: number) => {
 
 const MatchRow = ({
   year,
-  foulRate,
   teamNum,
   compLevel,
   match,
@@ -34,7 +33,6 @@ const MatchRow = ({
   myAlliance,
 }: {
   year: number;
-  foulRate: number;
   teamNum: number;
   compLevel: string;
   match: APIMatch;
@@ -217,7 +215,7 @@ const MatchRow = ({
               alliance === "red" ? "underline" : ""
             )}
           >
-            {round((1 + foulRate) * match.red_epa_pred, 0)}
+            {round(match.red_epa_pred, 0)}
           </span>
           {year >= 2016 && !match.playoff && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
           {year >= 2016 && !match.playoff && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
@@ -235,7 +233,7 @@ const MatchRow = ({
               alliance === "blue" ? "underline" : ""
             )}
           >
-            {round((1 + foulRate) * match.blue_epa_pred, 0)}
+            {round(match.blue_epa_pred, 0)}
           </span>
           {year >= 2016 && !match.playoff && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
           {year >= 2016 && !match.playoff && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
@@ -296,7 +294,6 @@ const MatchTable = ({
   year,
   teamNum,
   matches,
-  foulRate,
   showHeaders = true,
   showSubHeaders = true,
   sorted = true,
@@ -308,7 +305,6 @@ const MatchTable = ({
   year: number;
   teamNum: number;
   matches: APIMatch[];
-  foulRate: number;
   showHeaders?: boolean;
   showSubHeaders?: boolean;
   sorted?: boolean;
@@ -385,7 +381,6 @@ const MatchTable = ({
                     <MatchRow
                       key={match.key}
                       year={year}
-                      foulRate={foulRate}
                       teamNum={teamNum}
                       compLevel={compLevel}
                       match={match}
@@ -403,7 +398,6 @@ const MatchTable = ({
               <MatchRow
                 key={match.key}
                 year={year}
-                foulRate={foulRate}
                 teamNum={teamNum}
                 compLevel={match.comp_level}
                 match={match}

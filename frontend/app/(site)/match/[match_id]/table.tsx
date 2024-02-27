@@ -32,8 +32,8 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const blue3EventData = data.team_events.find((teamEvent) => teamEvent.num === blue3);
 
   // Used for both upcoming and completed matches
-  const redFouls = data.match.red_epa_pred * data.year.foul_rate;
-  const blueFouls = data.match.blue_epa_pred * data.year.foul_rate;
+  const redEventTotal = data.match.red_epa_pred;
+  const blueEventTotal = data.match.blue_epa_pred;
 
   const redEventAuto = red1EventData.auto_epa + red2EventData.auto_epa + red3EventData.auto_epa;
   const blueEventAuto = blue1EventData.auto_epa + blue2EventData.auto_epa + blue3EventData.auto_epa;
@@ -49,8 +49,8 @@ const PageMatchTable = ({ data }: { data: Data }) => {
   const blueEventRP1 = blue1EventData.rp_1_epa + blue2EventData.rp_1_epa + blue3EventData.rp_1_epa;
   const redEventRP2 = red1EventData.rp_2_epa + red2EventData.rp_2_epa + red3EventData.rp_2_epa;
   const blueEventRP2 = blue1EventData.rp_2_epa + blue2EventData.rp_2_epa + blue3EventData.rp_2_epa;
-  const redEventTotal = redEventAuto + redEventTeleop + redEventEndgame + redFouls;
-  const blueEventTotal = blueEventAuto + blueEventTeleop + blueEventEndgame + blueFouls;
+  const redFouls = redEventTotal - (redEventAuto + redEventTeleop + redEventEndgame);
+  const blueFouls = blueEventTotal - (blueEventAuto + blueEventTeleop + blueEventEndgame);
 
   const completed = data.match.status === "Completed";
 
@@ -143,12 +143,12 @@ const PageMatchTable = ({ data }: { data: Data }) => {
     red1: completed ? red1Data.total_epa : red1EventData.total_epa,
     red2: completed ? red2Data.total_epa : red2EventData.total_epa,
     red3: completed ? red3Data.total_epa : red3EventData.total_epa,
-    redTotal: completed ? data.match.red_epa_pred + redFouls : redEventTotal,
+    redTotal: redEventTotal,
     redActual: completed ? data.match.red_score : null,
     blue1: completed ? blue1Data.total_epa : blue1EventData.total_epa,
     blue2: completed ? blue2Data.total_epa : blue2EventData.total_epa,
     blue3: completed ? blue3Data.total_epa : blue3EventData.total_epa,
-    blueTotal: completed ? data.match.blue_epa_pred + blueFouls : blueEventTotal,
+    blueTotal: blueEventTotal,
     blueActual: completed ? data.match.blue_score : null,
   };
 

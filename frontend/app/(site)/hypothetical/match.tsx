@@ -49,21 +49,19 @@ const Match = ({ data }: { data: TeamYearData }) => {
   const red1EPA = data.team_years.find((team) => team.num === red1)?.total_epa ?? 0;
   const red2EPA = data.team_years.find((team) => team.num === red2)?.total_epa ?? 0;
   const red3EPA = data.team_years.find((team) => team.num === red3)?.total_epa ?? 0;
-  const redEPA = red1EPA + red2EPA + red3EPA;
-  const redPred = redEPA * (1 + data?.year?.foul_rate ?? 0);
+  const redPred = red1EPA + red2EPA + red3EPA;
 
   const blue1EPA = data.team_years.find((team) => team.num === blue1)?.total_epa ?? 0;
   const blue2EPA = data.team_years.find((team) => team.num === blue2)?.total_epa ?? 0;
   const blue3EPA = data.team_years.find((team) => team.num === blue3)?.total_epa ?? 0;
-  const blueEPA = blue1EPA + blue2EPA + blue3EPA;
-  const bluePred = blueEPA * (1 + data?.year?.foul_rate ?? 0);
+  const bluePred = blue1EPA + blue2EPA + blue3EPA;
 
   const predWinner = redPred > bluePred ? "red" : "blue";
 
   const yearSd = data?.year?.score_sd ?? 0;
   const K = -5 / 8;
 
-  const redWinProb = 100 / (1 + 10 ** ((K * (redEPA - blueEPA)) / yearSd));
+  const redWinProb = 100 / (1 + 10 ** ((K * (redPred - bluePred)) / yearSd));
   const blueWinProb = 100 - redWinProb;
 
   const teamOptions = data.team_years
@@ -144,7 +142,7 @@ const Match = ({ data }: { data: TeamYearData }) => {
               </p>
             </div>
             <div className="text-sm text-gray-600 mt-2">
-              Includes {Math.round(data?.year?.foul_rate * 100)}% foul rate
+              This is a rough estimate and may not exactly line up with EPA predictions.
             </div>
           </div>
           <div className="h-full w-1 bg-gray-300" />

@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Callable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from src.api.v2.utils import format_team, inv_format_team
 from src.db.models import TeamEvent
@@ -83,12 +83,9 @@ def team_year_to_team_event(team_year: APITeamYear, event: APIEvent) -> APITeamE
 @alru_cache(ttl=timedelta(minutes=1))
 async def get_team_events(
     year: int,
-    score_mean: float,
-    score_sd: float,
     event: Optional[str] = None,
     team: Optional[int] = None,
     offseason: Optional[bool] = False,
-    epa_to_norm_epa: Optional[Callable[[float], float]] = None,
     no_cache: bool = False,
 ) -> Tuple[bool, List[APITeamEvent]]:
     team_event_objs: List[TeamEvent] = _get_team_events(

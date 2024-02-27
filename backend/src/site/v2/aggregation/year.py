@@ -74,8 +74,6 @@ def unpack_year(year: Year) -> APIYear:
         sd=0,
     )
 
-    foul_rate = (year.foul_mean or 0) / (year.no_foul_mean or 1)
-
     return APIYear(
         year=year.year,
         score_mean=year.score_mean or 0,
@@ -86,7 +84,6 @@ def unpack_year(year: Year) -> APIYear:
         endgame_stats=endgame_stats,
         rp_1_stats=rp_1_stats,
         rp_2_stats=rp_2_stats,
-        foul_rate=foul_rate,
     )
 
 

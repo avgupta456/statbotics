@@ -26,4 +26,3 @@ class APIYear(APIModel):
     endgame_stats: PercentileStats
     rp_1_stats: PercentileStats
     rp_2_stats: PercentileStats
-    foul_rate: float

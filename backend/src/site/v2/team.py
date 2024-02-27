@@ -68,9 +68,9 @@ async def read_team_years(
                 if x.country_epa_count > 0
                 else None
             ),
-            "district_epa_rank": x.district_epa_rank
-            if x.district_epa_count > 0
-            else None,
+            "district_epa_rank": (
+                x.district_epa_rank if x.district_epa_count > 0 else None
+            ),
             "district_epa_percentile": (
                 x.district_epa_rank / x.district_epa_count
                 if x.district_epa_count > 0
@@ -95,20 +95,13 @@ async def read_team_year(
         raise Exception("Year not found")
 
     team_year: Optional[APITeamYear] = await get_team_year(
-        team=team_num,
-        year=year,
-        no_cache=no_cache,
+        team=team_num, year=year, no_cache=no_cache
     )
     if team_year is None or team_year.offseason:
         raise Exception("TeamYear not found")
 
     team_events: List[APITeamEvent] = await get_team_events(
-        year=year,
-        score_mean=year_obj.score_mean,
-        score_sd=year_obj.score_sd,
-        team=team_num,
-        offseason=None,
-        no_cache=no_cache,
+        year=year, team=team_num, offseason=None, no_cache=no_cache
     )
 
     matches: List[APIMatch] = await get_matches(

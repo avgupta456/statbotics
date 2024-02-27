@@ -4,7 +4,7 @@ from fastapi import APIRouter, Response
 
 from src.api.team_year import get_team_year_cached, get_team_years_cached
 from src.api.v2.utils import format_team, inv_format_team
-from src.constants import CURR_YEAR
+from src.constants import CURR_WEEK
 from src.db.models import TeamYear
 from src.utils.decorators import (
     async_fail_gracefully_plural,
@@ -23,7 +23,7 @@ def get_v2_team_year(team_year: TeamYear) -> Dict[str, Any]:
         "state": team_year.state,
         "country": team_year.country,
         "district": team_year.district,
-        "is_competing": team_year.year == CURR_YEAR or team_year.count > 0,
+        "is_competing": team_year.next_event_week == CURR_WEEK,
         "epa_start": team_year.epa_start,
         "epa_pre_champs": team_year.epa_pre_champs,
         "epa_end": team_year.epa,

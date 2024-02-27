@@ -12,20 +12,11 @@ import { BACKEND_URL, CURR_YEAR } from "../../../constants";
 import { log, round, truncate } from "../../../utils";
 
 type MatchData = {
-  matches: {
-    match: APIMatch;
-    event_name: string;
-  }[];
-  foul_rate: number;
-};
+  match: APIMatch;
+  event_name: string;
+}[];
 
-const UpcomingMatch = ({
-  foulRate,
-  match,
-}: {
-  foulRate: number;
-  match: { match: APIMatch; event_name: string };
-}) => {
+const UpcomingMatch = ({ match }: { match: { match: APIMatch; event_name: string } }) => {
   const eventId = match.match.event;
 
   return (
@@ -63,7 +54,6 @@ const UpcomingMatch = ({
           year={CURR_YEAR}
           teamNum={0}
           matches={[match.match]}
-          foulRate={foulRate}
           showHeaders={true}
           showSubHeaders={false}
           showVideo={false}
@@ -157,10 +147,8 @@ const UpcomingMatches = ({
     <div className="flex flex-col">
       <FilterBar defaultFilters={defaultFilters} filters={actualFilters} setFilters={setFilters} />
       <div className="mt-8 flex flex-col gap-8">
-        {data && data?.matches?.length > 0 && !loading ? (
-          data.matches.map((match) => (
-            <UpcomingMatch key={match.match.key} foulRate={data.foul_rate} match={match} />
-          ))
+        {data && data?.length > 0 && !loading ? (
+          data.map((match) => <UpcomingMatch key={match.match.key} match={match} />)
         ) : (
           <div className="w-full flex-grow flex flex-col items-center justify-center">
             <div className="text-gray-700 mt-4">
