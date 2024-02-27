@@ -263,9 +263,6 @@ def process_year(
         if partial and not new_etag:
             continue
 
-        current_match = 0 if len(matches) > 0 else -1
-        qual_matches = 0 if len(matches) > 0 else -1
-
         event_status = get_event_status(matches, year_num)
         event_obj.status = event_status
 
@@ -326,9 +323,6 @@ def process_year(
                 (match_obj, curr_team_match_objs) = match_dict_to_objs(
                     match, year_num, event_obj.week, event_obj.offseason
                 )
-
-                current_match += match_obj.status == MatchStatus.COMPLETED
-                qual_matches += not match_obj.elim
 
                 # Replace even if present, since may be Upcoming -> Completed
                 match_objs_dict[match_obj.key] = match_obj
@@ -394,11 +388,6 @@ def process_year(
                 team_event_obj.num_teams = None
 
             team_event_objs_dict[team_event_obj.pk()] = team_event_obj
-
-        event_obj.num_teams = len(event_teams)
-        event_obj.current_match = current_match
-        event_obj.qual_matches = qual_matches
-        event_objs_dict[event_key] = event_obj
 
     if not partial:
         # update is_first_event after iterating through all events

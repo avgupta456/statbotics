@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 
 from src.constants import CURR_YEAR
 from src.data.utils import objs_type
-from src.db.models import Team, TeamYear
+from src.db.models import Team, TeamYear, TeamEvent, Match
 from src.types.enums import MatchStatus, MatchWinner
 from src.utils.utils import r
 
@@ -132,6 +132,22 @@ def process_year(objs: objs_type) -> objs_type:
         total_rps, count = te_rps[(team_event.team, team_event.event)]
         team_event.rps = total_rps
         team_event.rps_per_match = r(total_rps / max(1, count), 4)
+
+    # Also handle event_obj num_teams, current_match, qual_matches
+    event_to_team_events: Dict[str, List[TeamEvent]] = defaultdict(list)
+    event_to_matches: Dict[str, List[Match]] = defaultdict(list)
+    for team_event in objs[3].values():
+        event_to_team_events[team_event.event].append(team_event)
+    for match in objs[4].values():
+        event_to_matches[match.event].append(match)
+
+    for event in objs[2].values():
+        event.num_teams = len(event_to_team_events[event.key])
+        curr_matches = event_to_matches[event.key]
+        event.current_match = len(
+            [m for m in curr_matches if m.status == MatchStatus.COMPLETED]
+        )
+        event.qual_matches = len([m for m in curr_matches if not m.elim])
 
     return objs
 
