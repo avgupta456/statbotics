@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import List, Optional, Tuple
 
 from src.api.v2.utils import format_team, inv_format_team
-from src.constants import CURR_YEAR
+from src.constants import CURR_WEEK
 from src.db.models import TeamYear
 from src.db.read import (
     get_team_year as _get_team_year,
@@ -20,7 +20,7 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
         state=team_year.state,
         country=team_year.country,
         district=team_year.district,
-        is_competing=team_year.year == CURR_YEAR or team_year.count > 0,
+        is_competing=team_year.next_event_week == CURR_WEEK,
         next_event_key=team_year.next_event_key,
         next_event_name=team_year.next_event_name,
         next_event_week=team_year.next_event_week,
