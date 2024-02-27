@@ -40,7 +40,6 @@ export type APIYear = {
   endgame_stats: PercentileStats;
   rp_1_stats: PercentileStats;
   rp_2_stats: PercentileStats;
-  foul_rate: number;
 };
 
 export const emptyAPIYear: APIYear = {
@@ -53,7 +52,6 @@ export const emptyAPIYear: APIYear = {
   endgame_stats: emptyPercentileStats,
   rp_1_stats: emptyPercentileStats,
   rp_2_stats: emptyPercentileStats,
-  foul_rate: 0,
 };
 
 export type APITeamYear = {

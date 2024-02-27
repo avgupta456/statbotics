@@ -8,8 +8,8 @@ const Summary = ({ data }: { data: Data }) => {
   const redWinProb = winProb * 100;
   const blueWinProb = (1 - winProb) * 100;
 
-  const redPred = data.match.red_epa_pred * (1 + data.year.foul_rate);
-  const bluePred = data.match.blue_epa_pred * (1 + data.year.foul_rate);
+  const redPred = data.match.red_epa_pred;
+  const bluePred = data.match.blue_epa_pred;
 
   const redScore = data.match.red_score;
   const blueScore = data.match.blue_score;
