@@ -20,7 +20,7 @@ _ETag = generate_attr_class("ETag", ETagORM)
 
 class ETag(_ETag, Model):
     def pk(self: "ETag") -> str:
-        return f"{self.year}-{self.path}"
+        return self.path
 
     def __hash__(self: "ETag") -> int:
         return hash(self.pk())

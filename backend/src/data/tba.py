@@ -123,6 +123,9 @@ def check_year_partial(
         if new_etag != prev_etag and new_etag is not None:
             return True  # If any event has new matches, return True
 
+        if event_obj.status == EventStatus.UPCOMING:
+            continue
+
         prev_etag = etags_dict.get(event_obj.key + "/rankings", default_etag).etag
         _, new_etag = get_event_rankings_tba(event_obj.key, prev_etag, cache=False)
         if new_etag != prev_etag and new_etag is not None:
@@ -238,15 +241,7 @@ def process_year(
 
     for event_obj in event_objs_dict.values():
         if partial:
-            if event_obj.status == EventStatus.COMPLETED:
-                continue
-
-            start_date = datetime.strptime(event_obj.start_date, "%Y-%m-%d")
-            end_date = datetime.strptime(event_obj.end_date, "%Y-%m-%d")
-            if start_date - timedelta(days=1) > datetime.now():
-                continue
-
-            if end_date + timedelta(days=1) < datetime.now():
+            if event_obj.week != CURR_WEEK:
                 continue
 
         event_key, event_time = event_obj.key, event_obj.time
@@ -258,11 +253,7 @@ def process_year(
                 year_num, event_key, event_obj.offseason, event_time, etag, cache
             )
 
-        matches, new_etag = call_tba(get_event_matches_tba_year, event_key + "/matches")
-
-        if partial and not new_etag:
-            continue
-
+        matches, _ = call_tba(get_event_matches_tba_year, event_key + "/matches")
         event_status = get_event_status(matches, year_num)
         event_obj.status = event_status
 
