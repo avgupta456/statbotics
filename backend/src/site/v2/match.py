@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
-from src.constants import CURR_YEAR
 from src.site.v2.aggregation import (
     get_event,
     get_match,
@@ -40,8 +39,6 @@ async def read_match(response: Response, match_id: str, no_cache: bool = False) 
 
     team_events: List[APITeamEvent] = await get_team_events(
         year=year.year,
-        score_mean=year.score_mean,
-        score_sd=year.score_sd,
         event=match.event,
         no_cache=no_cache,
     )
@@ -83,22 +80,13 @@ async def read_upcoming_matches(
         no_cache=no_cache,
     )
 
-    year_obj = await get_year(year=CURR_YEAR, no_cache=no_cache)
-    if year_obj is None:
-        raise Exception("Year not found")
-
-    foul_rate = year_obj.foul_rate
-
-    return {
-        "matches": [
-            {
-                "match": match.to_dict(),
-                "event_name": event_name,
-            }
-            for (match, event_name) in upcoming_matches
-        ],
-        "foul_rate": foul_rate,
-    }
+    return [
+        {
+            "match": match.to_dict(),
+            "event_name": event_name,
+        }
+        for (match, event_name) in upcoming_matches
+    ]
 
 
 @router.get("/noteworthy_matches/{year}")
@@ -113,7 +101,6 @@ async def read_noteworthy_matches(
     week: Optional[int] = None,
     no_cache: bool = False,
 ) -> Any:
-    print("HERE")
     noteworthy_matches: Dict[str, List[APIMatch]] = {}
     noteworthy_matches = await get_noteworthy_matches(
         year=year,
@@ -125,13 +112,4 @@ async def read_noteworthy_matches(
         no_cache=no_cache,
     )
 
-    year_obj = await get_year(year=year, no_cache=no_cache)
-    if year_obj is None:
-        raise Exception("Year not found")
-
-    foul_rate = year_obj.foul_rate
-
-    return {
-        "matches": {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()},
-        "foul_rate": foul_rate,
-    }
+    return {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}

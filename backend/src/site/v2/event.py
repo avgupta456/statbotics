@@ -52,8 +52,6 @@ async def read_event(
 
     team_events: List[APITeamEvent] = await get_team_events(
         year=year.year,
-        score_mean=year.score_mean / (1 + year.foul_rate),
-        score_sd=year.score_sd,
         event=event_id,
         offseason=event.offseason,
         no_cache=no_cache,
