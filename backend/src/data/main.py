@@ -1,4 +1,5 @@
 from collections import defaultdict
+from copy import deepcopy
 from typing import Dict, List, Optional
 
 from src.constants import CURR_YEAR
@@ -43,17 +44,7 @@ def process_year(
     all_team_years: Optional[Dict[int, Dict[str, TeamYear]]],
 ) -> List[Team]:
     timer = Timer()
-
-    orig_objs = (
-        objs[0],
-        {**objs[1]},
-        {**objs[2]},
-        {**objs[3]},
-        {**objs[4]},
-        {**objs[5]},
-        {**objs[6]},
-    )
-
+    orig_objs = deepcopy(objs)
     if all_team_years is None:
         all_team_years = defaultdict(dict)
         for year in range(max(2002, year_num - 4), year_num):
