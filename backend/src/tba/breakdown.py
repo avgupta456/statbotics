@@ -758,7 +758,7 @@ def clean_breakdown_2024(
 
     # other
     rp_1 = bool(breakdown.get("melodyBonusAchieved", False))
-    rp_2 = bool(breakdown.get("harmonyBonusAchieved", False))
+    rp_2 = bool(breakdown.get("ensembleBonusAchieved", False))
     tiebreaker = int(breakdown.get("coopertitionBonusAchieved", False))
 
     return {
