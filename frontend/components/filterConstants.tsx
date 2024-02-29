@@ -4,7 +4,7 @@ export const countryOptions = [
   { value: "", label: "All" },
   { value: "USA", label: "USA" },
   { value: "Canada", label: "Canada" },
-  { value: "Turkey", label: "Turkey" },
+  { value: "Türkiye", label: "Türkiye" },
   { value: "Mexico", label: "Mexico" },
   { value: "Israel", label: "Israel" },
   { value: "Chinese Taipei", label: "Chinese Taipei" },
