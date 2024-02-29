@@ -249,8 +249,9 @@ def process_year(
         def get_event_matches_tba_year(
             etag: OS, cache: bool
         ) -> Tuple[List[MatchDict], OS]:
+            # TODO: use etag to avoid querying every time (needed to get matches)
             return get_event_matches_tba(
-                year_num, event_key, event_obj.offseason, event_time, etag, cache
+                year_num, event_key, event_obj.offseason, event_time, None, cache
             )
 
         matches, _ = call_tba(get_event_matches_tba_year, event_key + "/matches")
