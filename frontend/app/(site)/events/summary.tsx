@@ -21,8 +21,8 @@ const EventCard = ({ event }: { event: APIEvent }) => {
   const formatDates = (start: Date, end: Date) => {
     const startMonth = start.toLocaleString("default", { month: "short" });
     const endMonth = end.toLocaleString("default", { month: "short" });
-    const startDate = start.getDate();
-    const endDate = end.getDate();
+    const startDate = start.getUTCDate();
+    const endDate = end.getUTCDate();
     if (startMonth === endMonth && startDate === endDate) {
       return `${startMonth} ${startDate}`;
     }
