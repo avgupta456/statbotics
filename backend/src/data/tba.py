@@ -131,6 +131,11 @@ def check_year_partial(
         if new_etag != prev_etag and new_etag is not None:
             return True  # If any event has new rankings, return True
 
+        qual_matches = event_obj.qual_matches or 0
+        current_match = event_obj.current_match or 0
+        if qual_matches == 0 or current_match < qual_matches:
+            continue
+
         _, new_etag = get_event_alliances_tba(event_obj.key, prev_etag, cache=False)
         if new_etag != prev_etag and new_etag is not None:
             return True  # If any event has new alliances, return True
