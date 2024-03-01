@@ -68,7 +68,7 @@ def get_event_status(matches: List[MatchDict], year: int) -> EventStatus:
             num_upcoming_matches += 1
 
     elim_started = num_matches > num_qual_matches
-    finals_finished = num_upcoming_matches == 0 and max_finals_winner >= 2
+    finals_finished = num_upcoming_matches == 0 or max_finals_winner >= 2
 
     event_status: EventStatus = EventStatus.COMPLETED
     if year == CURR_YEAR:
