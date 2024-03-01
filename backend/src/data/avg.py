@@ -29,32 +29,32 @@ def process_year(year: Year, matches: List[Match]) -> Year:
 
     # TODO: Delete after Week 1
     if year.year == CURR_YEAR:
-        year.score_mean, year.score_sd = 50.59, 23.01
-        year.no_foul_mean = 44.35
-        year.foul_mean = 6.24
-        year.auto_mean = 16.7
-        year.teleop_mean = 23.69
-        year.endgame_mean = 3.97
-        year.rp_1_mean = 0.25
-        year.rp_2_mean = 0.01
-        year.tiebreaker_mean = 0.26
-        year.comp_1_mean = 3.64
-        year.comp_2_mean = 2.62
-        year.comp_3_mean = 13.06
-        year.comp_4_mean = 11.21
-        year.comp_5_mean = 23.69
-        year.comp_6_mean = 3.76
-        year.comp_7_mean = 3.77
-        year.comp_8_mean = 10.06
-        year.comp_9_mean = 32.97
-        year.comp_10_mean = 1.67
-        year.comp_11_mean = 13.83
-        year.comp_12_mean = 36.74
-        year.comp_13_mean = 1.39
-        year.comp_14_mean = 1.75
-        year.comp_15_mean = 0.05
-        year.comp_16_mean = 0.71
-        year.comp_17_mean = 0.07
+        year.score_mean, year.score_sd = 49.08, 21.38
+        year.no_foul_mean = 42.94
+        year.foul_mean = 6.14
+        year.auto_mean = 16.84
+        year.teleop_mean = 22.52
+        year.endgame_mean = 3.58
+        year.rp_1_mean = 0.23
+        year.rp_2_mean = 0.11
+        year.tiebreaker_mean = 0.25
+        year.comp_1_mean = 3.50
+        year.comp_2_mean = 2.67
+        year.comp_3_mean = 13.34
+        year.comp_4_mean = 10.69
+        year.comp_5_mean = 22.52
+        year.comp_6_mean = 3.27
+        year.comp_7_mean = 3.27
+        year.comp_8_mean = 10.09
+        year.comp_9_mean = 32.59
+        year.comp_10_mean = 1.47
+        year.comp_11_mean = 13.36
+        year.comp_12_mean = 35.86
+        year.comp_13_mean = 1.46
+        year.comp_14_mean = 1.61
+        year.comp_15_mean = 0.03
+        year.comp_16_mean = 0.44
+        year.comp_17_mean = 0.04
         return year
 
     year.score_mean, year.score_sd = get_mean_sd(
