@@ -330,14 +330,16 @@ def process_year(
             def get_event_rankings_tba_year(
                 etag: OS, cache: bool
             ) -> Tuple[Dict[str, int], OS]:
-                return get_event_rankings_tba(event_key, etag, cache)
+                # TODO: use etag to avoid querying every time (needed to get rankings)
+                return get_event_rankings_tba(event_key, None, cache)
 
             rankings, _ = call_tba(get_event_rankings_tba_year, event_key + "/rankings")
 
             def get_event_alliances_tba_year(
                 etag: OS, cache: bool
             ) -> Tuple[Tuple[Dict[str, str], Dict[str, bool]], OS]:
-                return get_event_alliances_tba(event_key, etag, cache)
+                # TODO: use etag to avoid querying every time (needed to get alliances)
+                return get_event_alliances_tba(event_key, None, cache)
 
             (alliance_dict, captain_dict), _ = call_tba(
                 get_event_alliances_tba_year, event_key + "/alliances"

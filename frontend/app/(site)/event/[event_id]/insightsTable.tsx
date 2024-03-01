@@ -239,9 +239,6 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
     [year, data, maxRank, disableHighlight]
   );
 
-  const numProjections = eventInsightsData.filter(
-    (row) => row.rank === -1 && row.first_event
-  ).length;
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
