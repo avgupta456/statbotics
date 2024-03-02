@@ -3,6 +3,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, cast
 
+from src.constants import CURR_WEEK, CURR_YEAR
 from src.tba.breakdown import clean_breakdown, post_clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
@@ -122,6 +123,13 @@ def get_events(
         event_type_dict[99] = EventType.OFFSEASON
         event_type_dict[100] = EventType.PRESEASON
         event_type = event_type_dict[event_type_int]
+
+        if (
+            (event_type in [EventType.PRESEASON, EventType.OFFSEASON])
+            and (year == CURR_YEAR)
+            and CURR_WEEK not in [0, 9]
+        ):
+            continue
 
         # assigns worlds to week 8
         if event_type.is_champs():

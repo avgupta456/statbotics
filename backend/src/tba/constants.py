@@ -127,6 +127,7 @@ EVENT_BLACKLIST: List[str] = [
     "2008cal",  # very incomplete
     "2016cafc2",  # "" team
     "2022zhha",  # no matches
+    "2024nywz",  # malformed
 ]
 
 MATCH_BLACKLIST: List[str] = [
