@@ -32,14 +32,14 @@ async def read_root_team_match():
     return {"name": "Team Match V3 Router"}
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_team_match_cached(
     team: str, match: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamMatch]]:
     return (True, get_team_match(team=team, match=match))
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_team_matches_cached(
     team: Optional[str] = None,
     year: Optional[int] = None,

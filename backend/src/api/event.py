@@ -32,7 +32,7 @@ async def read_root_event():
     return {"name": "Event V3 Router"}
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_event_cached(
     event: str,
     no_cache: bool = False,
@@ -40,7 +40,7 @@ async def get_event_cached(
     return (True, get_event(event_id=event))
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=1))
 async def get_events_cached(
     year: Optional[int] = None,
     country: Optional[str] = None,
