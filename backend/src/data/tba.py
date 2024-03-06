@@ -246,7 +246,7 @@ def process_year(
 
     for event_obj in event_objs_dict.values():
         if partial:
-            if event_obj.week != CURR_WEEK:
+            if event_obj.week > CURR_WEEK:
                 continue
 
         event_key, event_time = event_obj.key, event_obj.time

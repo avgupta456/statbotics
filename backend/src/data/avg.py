@@ -1,7 +1,6 @@
 import statistics
 from typing import Callable, List, Optional, Tuple
 
-from src.constants import CURR_YEAR
 from src.db.models import Match, Year
 from src.types.enums import MatchStatus
 from src.utils.utils import r
@@ -26,36 +25,6 @@ def process_year(year: Year, matches: List[Match]) -> Year:
         mean = statistics.mean(clean_arr)
         sd = statistics.stdev(clean_arr)
         return r(mean, 2), r(sd, 2)
-
-    # TODO: Delete after Week 1
-    if year.year == CURR_YEAR:
-        year.score_mean, year.score_sd = 49.08, 21.38
-        year.no_foul_mean = 42.94
-        year.foul_mean = 6.14
-        year.auto_mean = 16.84
-        year.teleop_mean = 22.52
-        year.endgame_mean = 3.58
-        year.rp_1_mean = 0.23
-        year.rp_2_mean = 0.11
-        year.tiebreaker_mean = 0.25
-        year.comp_1_mean = 3.50
-        year.comp_2_mean = 2.67
-        year.comp_3_mean = 13.34
-        year.comp_4_mean = 10.69
-        year.comp_5_mean = 22.52
-        year.comp_6_mean = 3.27
-        year.comp_7_mean = 3.27
-        year.comp_8_mean = 10.09
-        year.comp_9_mean = 32.59
-        year.comp_10_mean = 1.47
-        year.comp_11_mean = 13.36
-        year.comp_12_mean = 35.86
-        year.comp_13_mean = 1.46
-        year.comp_14_mean = 1.61
-        year.comp_15_mean = 0.03
-        year.comp_16_mean = 0.44
-        year.comp_17_mean = 0.04
-        return year
 
     year.score_mean, year.score_sd = get_mean_sd(
         lambda m: m.red_score, lambda m: m.blue_score

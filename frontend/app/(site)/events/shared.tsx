@@ -62,15 +62,13 @@ const EventsLayout = ({
 
   const ongoingEvents = sortedData
     ?.filter(
-      (event) => event.status === "Ongoing" && (event.year !== CURR_YEAR || event.week >= CURR_WEEK)
-      // && event.end_date >= today
+      (event) => event.status === "Ongoing" && (event.week >= CURR_WEEK || event.end_date >= today)
     )
     .sort((a, b) => (a.epa_mean > b.epa_mean ? -1 : 1));
   const ongoingN = ongoingEvents.length;
 
   const upcomingEvents = sortedData?.filter(
-    (event) => event.status === "Upcoming" && (event.year !== CURR_YEAR || event.week >= CURR_WEEK)
-    // && event.end_date >= today
+    (event) => event.status === "Upcoming" && (event.week >= CURR_WEEK || event.end_date >= today)
   );
   const upcomingN = upcomingEvents.length;
 
