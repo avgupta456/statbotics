@@ -61,20 +61,18 @@ const EventsLayout = ({
   const today = new Date().toISOString().split("T")[0];
 
   const ongoingEvents = sortedData
-    ?.filter(
-      (event) => event.status === "Ongoing" && (event.week >= CURR_WEEK || event.end_date >= today)
-    )
-    .sort((a, b) => (a.epa_mean > b.epa_mean ? -1 : 1));
+    ?.filter((event) => event.status === "Ongoing")
+    .sort((a, b) => {
+      if (a.current_match > 0 && b.current_match === 0) return -1;
+      if (a.current_match === 0 && b.current_match > 0) return 1;
+      return a.epa_mean > b.epa_mean ? -1 : 1;
+    });
   const ongoingN = ongoingEvents.length;
 
-  const upcomingEvents = sortedData?.filter(
-    (event) => event.status === "Upcoming" && (event.week >= CURR_WEEK || event.end_date >= today)
-  );
+  const upcomingEvents = sortedData?.filter((event) => event.status === "Upcoming");
   const upcomingN = upcomingEvents.length;
 
-  const completedEvents = sortedData?.filter(
-    (event) => event.status === "Completed" && (event.year !== CURR_YEAR || event.week <= CURR_WEEK)
-  );
+  const completedEvents = sortedData?.filter((event) => event.status === "Completed");
   const completedN = completedEvents.length;
 
   return (
