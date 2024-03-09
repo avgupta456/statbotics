@@ -141,6 +141,7 @@ key_to_name = {
         "teleop": "teleop_points",
         "endgame": "endgame_points",
         "rp_1": "melody_rp",
+        # TODO: Rename to ensemble_rp
         "rp_2": "harmony_rp",
         "tiebreaker": "tiebreaker_points",
         "comp_1": "auto_leave_points",

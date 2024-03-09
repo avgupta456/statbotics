@@ -88,5 +88,5 @@ export const RP_NAMES: { [key: number]: string[] } = {
   2020: ["Generator RP", "Hang RP"],
   2022: ["Cargo RP", "Hangar RP"],
   2023: ["Links RP", "Activation RP"],
-  2024: ["Melody RP", "Harmony RP"],
+  2024: ["Melody RP", "Ensemble RP"],
 };
