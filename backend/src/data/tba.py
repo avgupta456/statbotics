@@ -24,7 +24,7 @@ from src.tba.read_tba import (
     get_teams as get_teams_tba,
 )
 from src.types.enums import CompLevel, EventStatus, MatchStatus, MatchWinner
-from src.utils.utils import get_team_event_key
+from src.utils.utils import get_team_event_key, get_team_year_key
 
 OS = Optional[str]
 OI = Optional[int]
@@ -246,7 +246,7 @@ def process_year(
 
     for event_obj in event_objs_dict.values():
         if partial:
-            if event_obj.week > CURR_WEEK:
+            if event_obj.week != CURR_WEEK and event_obj.status != EventStatus.ONGOING:
                 continue
 
         event_key, event_time = event_obj.key, event_obj.time
@@ -360,33 +360,39 @@ def process_year(
             team_obj = teams_dict[team]
 
             team_event_key = get_team_event_key(team, event_key)
-            team_event_obj = TeamEvent(
-                id=None,
-                team=team,
-                year=year_num,
-                event=event_key,
-                time=event_time,
-                offseason=event_obj.offseason,
-                team_name=team_obj.name,
-                event_name=event_obj.name,
-                country=event_obj.country,
-                state=event_obj.state,
-                district=event_obj.district,
-                type=event_obj.type,
-                week=event_obj.week,
-                status=event_status,
-                first_event=False,
-                rank=rankings.get(team, None),
-                num_teams=len(event_teams),
-                elim_alliance=alliance_dict.get(team, None),
-                is_captain=captain_dict.get(team, None),
-                district_points=team_event_to_district_points.get(team_event_key, None),
+            curr_te = team_event_objs_dict.get(team_event_key, None)
+            if curr_te is None:
+                curr_te = TeamEvent(
+                    id=None,
+                    team=team,
+                    year=year_num,
+                    event=event_key,
+                    time=event_time,
+                    offseason=event_obj.offseason,
+                    team_name=team_obj.name,
+                    event_name=event_obj.name,
+                    country=event_obj.country,
+                    state=event_obj.state,
+                    district=event_obj.district,
+                    type=event_obj.type,
+                    week=event_obj.week,
+                    status=event_status,
+                    first_event=False,
+                    rank=None,
+                    num_teams=None,
+                    elim_alliance=None,
+                    is_captain=None,
+                    district_points=None,
+                )
+
+            curr_te.rank = rankings.get(team, curr_te.rank)
+            curr_te.num_teams = len(event_teams)
+            curr_te.elim_alliance = alliance_dict.get(team, curr_te.elim_alliance)
+            curr_te.is_captain = captain_dict.get(team, curr_te.is_captain)
+            curr_te.district_points = team_event_to_district_points.get(
+                team_event_key, curr_te.district_points
             )
-
-            if team_event_obj.num_teams == 0:
-                team_event_obj.num_teams = None
-
-            team_event_objs_dict[team_event_obj.pk()] = team_event_obj
+            team_event_objs_dict[team_event_key] = curr_te
 
     if not partial:
         # update is_first_event after iterating through all events
@@ -401,23 +407,33 @@ def process_year(
         offseason = team_to_offseason[team] or team in PLACEHOLDER_TEAMS
         competing_this_week = team_competing_this_week_dict.get(team, False)
         next_event = team_next_event_dict.get(team, (None, None, None))
-        team_year_obj = TeamYear(
-            id=None,
-            year=year_num,
-            team=team,
-            offseason=offseason,
-            name=team_obj.name,
-            country=team_obj.country,
-            state=team_obj.state,
-            district=team_to_district.get(team, None),
-            district_points=team_to_district_points.get(team, None),
-            district_rank=team_to_district_rank.get(team, None),
-            competing_this_week=competing_this_week,
-            next_event_key=next_event[0],
-            next_event_name=next_event[1],
-            next_event_week=next_event[2],
+
+        team_year_key = get_team_year_key(team, year_num)
+        curr_ty = team_year_objs_dict.get(team_year_key, None)
+        if curr_ty is None:
+            curr_ty = TeamYear(
+                id=None,
+                year=year_num,
+                team=team,
+                offseason=offseason,
+                name=team_obj.name,
+                country=team_obj.country,
+                state=team_obj.state,
+                district=None,
+                district_points=None,
+                district_rank=None,
+                competing_this_week=competing_this_week,
+                next_event_key=next_event[0],
+                next_event_name=next_event[1],
+                next_event_week=next_event[2],
+            )
+
+        curr_ty.district = team_to_district.get(team, curr_ty.district)
+        curr_ty.district_points = team_to_district_points.get(
+            team, curr_ty.district_points
         )
-        team_year_objs_dict[team_year_obj.pk()] = team_year_obj
+        curr_ty.district_rank = team_to_district_rank.get(team, curr_ty.district_rank)
+        team_year_objs_dict[team_year_key] = curr_ty
 
     orig_teams = set([team.team for team in teams])
     new_teams = [team for team in teams_dict.values() if team.team not in orig_teams]
