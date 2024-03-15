@@ -52,7 +52,7 @@ def read_objs(year: int) -> objs_type:
 
     return (
         year_obj,
-        {t.pk(): t for t in get_team_years_db(year=year)},
+        {t.pk(): t for t in get_team_years_db(year=year, offseason=None)},
         {e.pk(): e for e in get_events_db(year=year, offseason=None)},
         {te.pk(): te for te in get_team_events_db(year=year, offseason=None)},
         {m.pk(): m for m in get_matches_db(year=year, offseason=None)},

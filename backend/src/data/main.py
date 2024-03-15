@@ -48,7 +48,7 @@ def process_year(
     if all_team_years is None:
         all_team_years = defaultdict(dict)
         for year in range(max(2002, year_num - 4), year_num):
-            team_years = get_team_years_db(year=year)
+            team_years = get_team_years_db(year=year, offseason=None)
             for ty in team_years:
                 all_team_years[ty.year][ty.team] = ty
 
@@ -82,7 +82,7 @@ def post_process(
 
     if all_team_years is None:
         all_team_years = defaultdict(dict)
-        all_team_years_list = get_team_years_db()
+        all_team_years_list = get_team_years_db(offseason=None)
         for ty in all_team_years_list:
             all_team_years[ty.year][ty.team] = ty
 
@@ -137,7 +137,7 @@ def update_curr_year(partial: bool):
     year = CURR_YEAR
     timer = Timer()
 
-    teams = get_teams_db()
+    teams = get_teams_db(offseason=None)
     timer.print("Load Teams")
 
     if partial:
