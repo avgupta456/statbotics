@@ -61,7 +61,7 @@ const EventsLayout = ({
   const today = new Date().toISOString().split("T")[0];
 
   const ongoingEvents = sortedData
-    ?.filter((event) => event.status === "Ongoing")
+    ?.filter((event) => event.status === "Ongoing" || event.week >= CURR_WEEK)
     .sort((a, b) => {
       if (a.current_match > 0 && b.current_match === 0) return -1;
       if (a.current_match === 0 && b.current_match > 0) return 1;
@@ -72,7 +72,9 @@ const EventsLayout = ({
   const upcomingEvents = sortedData?.filter((event) => event.status === "Upcoming");
   const upcomingN = upcomingEvents.length;
 
-  const completedEvents = sortedData?.filter((event) => event.status === "Completed");
+  const completedEvents = sortedData?.filter(
+    (event) => event.status === "Completed" || (event.status == "Ongoing" && event.week < CURR_WEEK)
+  );
   const completedN = completedEvents.length;
 
   return (
