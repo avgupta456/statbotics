@@ -34,14 +34,14 @@ async def read_root_team_event():
     return {"name": "Team Event V3 Router"}
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_event_cached(
     team: str, event: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamEvent]]:
     return (True, get_team_event(team=team, event=event))
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_events_cached(
     team: Optional[str] = None,
     year: Optional[int] = None,

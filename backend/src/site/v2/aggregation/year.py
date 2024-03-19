@@ -87,7 +87,7 @@ def unpack_year(year: Year) -> APIYear:
     )
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_year(year: int, no_cache: bool = False) -> Tuple[bool, Optional[APIYear]]:
     year_obj = _get_year(year=year)
 

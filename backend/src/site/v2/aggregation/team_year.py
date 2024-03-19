@@ -48,7 +48,7 @@ def unpack_team_year(team_year: TeamYear) -> APITeamYear:
     )
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_year(
     team: int, year: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[APITeamYear]]:

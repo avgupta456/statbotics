@@ -31,14 +31,14 @@ async def read_root_team_year():
     return {"name": "Team Year V3 Router"}
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_year_cached(
     team: str, year: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamYear]]:
     return (True, get_team_year(team=team, year=year))
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_years_cached(
     team: Optional[str] = None,
     year: Optional[int] = None,

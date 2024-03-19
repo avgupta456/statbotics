@@ -80,7 +80,7 @@ def team_year_to_team_event(team_year: APITeamYear, event: APIEvent) -> APITeamE
     )
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_events(
     year: int,
     event: Optional[str] = None,

@@ -30,14 +30,14 @@ async def read_root_team():
     return {"name": "Team V3 Router"}
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_cached(
     team: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[Team]]:
     return (True, get_team(team=team))
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_teams_cached(
     country: Optional[str] = None,
     state: Optional[str] = None,

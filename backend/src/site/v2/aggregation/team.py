@@ -21,7 +21,7 @@ def unpack_team(team: Team) -> APITeam:
     )
 
 
-@alru_cache(ttl=timedelta(minutes=1))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team(team: int, no_cache: bool = False) -> Tuple[bool, Optional[APITeam]]:
     team_obj = _get_team(team=inv_format_team(team))
 
