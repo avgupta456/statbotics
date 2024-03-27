@@ -14,7 +14,7 @@ SEASON CONFIG
 
 export const START_YEAR = 2002;
 export const CURR_YEAR = 2024;
-export const CURR_WEEK = 3;
+export const CURR_WEEK = 5;
 
 export const YEAR_OPTIONS = [
   "2024",
