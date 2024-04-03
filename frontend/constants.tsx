@@ -60,6 +60,25 @@ export const eventNameMap = {
   "FIRST Ontario Provincial Championship - SCIENCE Division": "Ontario Champs - Science Division",
   "FIRST Ontario Provincial Championship - TECHNOLOGY Division":
     "Ontario Champs - Technology Division",
+  "FIRST in Michigan State Championship": "FiM Champs - Overall",
+  "FIRST in Michigan State Championship - DTE Energy Foundation Division":
+    "FiM Champs - DTE Energy Foundation Division",
+  "FIRST in Michigan State Championship - Hemlock Semiconductor Division":
+    "FiM Champs - Hemlock Semiconductor Division",
+  "FIRST in Michigan State Championship - Consumers Energy Division":
+    "FiM Champs - Consumers Energy Division",
+  "FIRST in Michigan State Championship - Aptiv Division": "FiM Champs - Aptiv Division",
+  // "New England FIRST District Championship": "NE Champs - Overall",
+  "New England FIRST District Championship - Ganson Division": "NE Champs - Ganson Division",
+  "New England FIRST District Championship - Richardson Division":
+    "NE Champs - Richardson Division",
+  "FIRST In Texas District Championship": "FIT Champs - Overall",
+  "FIRST In Texas District Championship - Mercury Division": "FIT Champs - Mercury Division",
+  "FIRST In Texas District Championship - Apollo Division": "FIT Champs - Apollo Division",
+  // "FIRST Ontario Provincial Championship": "Ontario Champs - Overall",
+  "FIRST Ontario Provincial Championship - Science Division": "Ontario Champs - Science Division",
+  "FIRST Ontario Provincial Championship - Technology Division":
+    "Ontario Champs - Technology Division",
 };
 
 export const divisionToMainEvent = {
@@ -86,6 +105,29 @@ export const divisionToMainEvent = {
   "2023joh": "2023cmptx",
   "2023mil": "2023cmptx",
   "2023new": "2023cmptx",
+  "2024micmp": "2024micmp",
+  "2024micmp1": "2024micmp",
+  "2024micmp2": "2024micmp",
+  "2024micmp3": "2024micmp",
+  "2024micmp4": "2024micmp",
+  "2024necmp": "2024necmp",
+  "2024necmp1": "2024necmp",
+  "2024necmp2": "2024necmp",
+  "2024txcmp": "2024txcmp",
+  "2024txcmp1": "2024txcmp",
+  "2024txcmp2": "2024txcmp",
+  "2024oncmp": "2024oncmp",
+  "2024oncmp1": "2024oncmp",
+  "2024oncmp2": "2024oncmp",
+  "2024cmptx": "2024cmptx",
+  "2024arc": "2024cmptx",
+  "2024cur": "2024cmptx",
+  "2024dal": "2024cmptx",
+  "2024gal": "2024cmptx",
+  "2024hop": "2024cmptx",
+  "2024joh": "2024cmptx",
+  "2024mil": "2024cmptx",
+  "2024new": "2024cmptx",
 };
 
 export const mainEventToDivisions = {
@@ -121,5 +163,38 @@ export const mainEventToDivisions = {
     { name: "Johnson", key: "2023joh" },
     { name: "Milstein", key: "2023mil" },
     { name: "Newton", key: "2023new" },
+  ],
+  "2024micmp": [
+    { name: "Overall", key: "2024micmp" },
+    { name: "DTE Energy Foundation", key: "2024micmp1" },
+    { name: "Hemlock Semiconductor", key: "2024micmp2" },
+    { name: "Consumers Energy", key: "2024micmp3" },
+    { name: "Aptiv", key: "2024micmp4" },
+  ],
+  "2024necmp": [
+    { name: "Overall", key: "2024necmp" },
+    { name: "Ganson", key: "2024necmp1" },
+    { name: "Richardson", key: "2024necmp2" },
+  ],
+  "2024txcmp": [
+    { name: "Overall", key: "2024txcmp" },
+    { name: "Mercury", key: "2024txcmp1" },
+    { name: "Apollo", key: "2024txcmp2" },
+  ],
+  "2024oncmp": [
+    { name: "Overall", key: "2024oncmp" },
+    { name: "Science", key: "2024oncmp1" },
+    { name: "Technology", key: "2024oncmp2" },
+  ],
+  "2024cmptx": [
+    { name: "Overall", key: "2024cmptx" },
+    { name: "Archimedes", key: "2024arc" },
+    { name: "Curie", key: "2024cur" },
+    { name: "Daly", key: "2024dal" },
+    { name: "Galileo", key: "2024gal" },
+    { name: "Hopper", key: "2024hop" },
+    { name: "Johnson", key: "2024joh" },
+    { name: "Milstein", key: "2024mil" },
+    { name: "Newton", key: "2024new" },
   ],
 };
