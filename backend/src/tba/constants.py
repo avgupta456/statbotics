@@ -143,6 +143,7 @@ MATCH_BLACKLIST: List[str] = [
     "2019wiwi_ef2m1",  # 58 /
     "2019wiwi_ef5m1",  # 58 /
     "2019wiwi_qf3m1",  # 58 /
+    "2024arli_f1m1",
 ]
 
 DISTRICT_OVERRIDES: Dict[str, str] = {}
