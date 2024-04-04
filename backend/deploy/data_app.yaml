@@ -1,6 +1,6 @@
 service: data
 runtime: python311
-entrypoint: gunicorn -w 1 -t 600 -k uvicorn.workers.UvicornWorker main:app
+entrypoint: gunicorn -w 1 -t 1200 -k uvicorn.workers.UvicornWorker main:app
 
 instance_class: B4
 
