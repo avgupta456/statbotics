@@ -40,7 +40,7 @@ async def read_hypothetical_event(event_id: str, no_cache: bool = False) -> Any:
         raise Exception("Year not found")
 
     team_years: List[APITeamYear] = await get_team_years(
-        year=year, teams=teams, no_cache=no_cache
+        year=year, teams=",".join([str(x) for x in teams]), no_cache=no_cache
     )
 
     team_years_dict = {x.num: x for x in team_years}
