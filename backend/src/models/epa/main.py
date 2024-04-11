@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from src.db.models import Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.models.epa.breakdown import (
     get_pred_rps,
     get_score_from_breakdown,
@@ -73,8 +73,11 @@ class EPA(Model):
             # Records TeamYear EPA stats if no matches played yet
             self.post_record_team(num, None, None, team_year)
 
-    def predict_match(self, match: Match) -> Tuple[float, AlliancePred, AlliancePred]:
-        year, week, key, elim = self.year_num, match.week, match.key, match.elim
+    def predict_match(
+        self, match: Match, event: Event
+    ) -> Tuple[float, AlliancePred, AlliancePred]:
+        year, week, key, elim = self.year_num, event.week, match.key, match.elim
+        event_type = event.type
 
         rp_1s: List[float] = []
         rp_2s: List[float] = []
@@ -94,7 +97,7 @@ class EPA(Model):
 
             pred_mean = post_process_breakdown(year, key, pred_mean, opp_pred_mean)
 
-            rp_1, rp_2 = get_pred_rps(year, week, pred_mean, pred_sd)
+            rp_1, rp_2 = get_pred_rps(year, week, event_type, pred_mean, pred_sd)
 
             rp_1s.append(rp_1)
             rp_2s.append(rp_2)

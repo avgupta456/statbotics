@@ -1,6 +1,6 @@
 from typing import Dict, Optional, Tuple
 
-from src.db.models import Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.models.types import AlliancePred, Attribution, MatchPred
 from src.tba.constants import PLACEHOLDER_TEAMS
 from src.types.enums import MatchStatus
@@ -24,7 +24,9 @@ class Model:
         self.year_num = year.year
         self.num_teams = 2 if year.year <= 2004 else 3
 
-    def predict_match(self, match: Match) -> Tuple[float, AlliancePred, AlliancePred]:
+    def predict_match(
+        self, match: Match, event: Event
+    ) -> Tuple[float, AlliancePred, AlliancePred]:
         raise NotImplementedError
 
     def attribute_match(
@@ -57,11 +59,12 @@ class Model:
     def process_match(
         self,
         match: Match,
+        event: Event,
         team_matches: Dict[str, TeamMatch],
         team_events: Dict[str, TeamEvent],
         team_years: Dict[str, TeamYear],
     ):
-        win_prob, red_pred, blue_pred = self.predict_match(match)
+        win_prob, red_pred, blue_pred = self.predict_match(match, event)
         match_pred = MatchPred(win_prob, red_pred, blue_pred)
 
         for team, team_match in team_matches.items():

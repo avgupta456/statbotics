@@ -65,7 +65,7 @@ async def get_team_year(
 @alru_cache(ttl=timedelta(minutes=5))
 async def get_team_years(
     team: Optional[int] = None,
-    teams: Optional[List[int]] = None,
+    teams: Optional[str] = None,
     year: Optional[int] = None,
     limit: Optional[int] = None,
     metric: Optional[str] = None,
@@ -76,7 +76,11 @@ async def get_team_years(
 
     team_year_objs: List[TeamYear] = _get_team_years(
         team=None if team is None else inv_format_team(team),
-        teams=None if teams is None else [inv_format_team(team) for team in teams],
+        teams=(
+            None
+            if teams is None
+            else [inv_format_team(int(team)) for team in teams.split(",")]
+        ),
         year=year,
         limit=limit,
         metric=metric,
