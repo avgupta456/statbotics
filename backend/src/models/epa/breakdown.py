@@ -3,6 +3,7 @@ from typing import Any, Tuple
 from src.db.models import Year
 from src.models.epa.math import t_prob_gt_0, unit_sigmoid, zero_sigmoid
 from src.tba.breakdown import all_keys
+from src.types.enums import EventType
 
 
 def post_process_breakdown(
@@ -77,7 +78,7 @@ def post_process_breakdown(
 
 
 def get_pred_rps(
-    year: int, week: int, breakdown_mean: Any, breakdown_sd: Any
+    year: int, week: int, event_type: EventType, breakdown_mean: Any, breakdown_sd: Any
 ) -> Tuple[float, float]:
     DISCOUNT = 0.85  # Teams try harder when near the threshold
     keys = all_keys[year]
@@ -88,7 +89,7 @@ def get_pred_rps(
 
         rp_1 = breakdown_mean[keys.index("rp_1")]
         rp_2 = t_prob_gt_0(boulders_mean - 8 * DISCOUNT, boulders_sd)
-        if week >= 8:
+        if event_type in [EventType.CHAMPS_DIV, EventType.EINSTEIN]:
             rp_2 = t_prob_gt_0(boulders_mean - 10 * DISCOUNT, boulders_sd)
 
     elif year == 2017:
@@ -128,7 +129,7 @@ def get_pred_rps(
         links_sd = breakdown_sd[keys.index("links")]
 
         rp_1 = t_prob_gt_0(links_mean - 4 * DISCOUNT, links_sd)
-        if week >= 8:
+        if event_type in [EventType.CHAMPS_DIV, EventType.EINSTEIN]:
             rp_1 = t_prob_gt_0(links_mean - 5 * DISCOUNT, links_sd)
 
         rp_2 = breakdown_mean[keys.index("rp_2")]
@@ -137,7 +138,14 @@ def get_pred_rps(
         total_notes_mean = breakdown_mean[keys.index("total_notes")]
         total_notes_sd = breakdown_sd[keys.index("total_notes")]
 
-        rp_1 = t_prob_gt_0(total_notes_mean - 18 * DISCOUNT, total_notes_sd)
+        cutoff = 18  # 15 if coop but unlikely
+        if event_type == EventType.DISTRICT_CMP:
+            cutoff = 20  # 21, 18 if coop, somewhat likely
+        elif event_type in [EventType.CHAMPS_DIV, EventType.EINSTEIN]:
+            cutoff = 23  # 25, 21 if coop, fairly likely
+
+        rp_1 = t_prob_gt_0(total_notes_mean - cutoff * DISCOUNT, total_notes_sd)
+
         rp_2 = breakdown_mean[keys.index("rp_2")]
 
     return rp_1, rp_2
