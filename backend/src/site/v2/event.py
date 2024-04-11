@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Response
 
@@ -39,9 +39,7 @@ async def read_events(response: Response, year: int, no_cache: bool = False) -> 
 
 @router.get("/event/{event_id}")
 @async_fail_gracefully
-async def read_event(
-    response: Response, event_id: str, no_cache: bool = False
-) -> Dict[str, Any]:
+async def read_event(response: Response, event_id: str, no_cache: bool = False) -> Any:
     event: Optional[APIEvent] = await get_event(event=event_id, no_cache=no_cache)
     if event is None:
         raise Exception("Event not found")
@@ -82,7 +80,7 @@ async def read_event(
 @async_fail_gracefully
 async def read_team_matches(
     response: Response, event_id: str, team: int, no_cache: bool = False
-) -> List[Dict[str, Any]]:
+) -> Any:
     team_matches: List[APITeamMatch] = await get_team_matches(
         event=event_id, team=team, no_cache=no_cache
     )
@@ -93,5 +91,5 @@ async def read_team_matches(
 @async_fail_gracefully
 async def read_hypothetical_event(
     response: Response, event_id: str, no_cache: bool = False
-) -> Dict[str, Any]:
+) -> Any:
     return await _read_hypothetical_event(event_id, no_cache=no_cache)
