@@ -11,6 +11,8 @@ export const CURR_WEEK = 8;
 
 export const MAX_TEAM = 9979; // above is offseason
 
+export const BREAKDOWN_YEARS = [2023, 2024]; // TODO: implement 2016-2022
+
 export const CORRECT_COLOR = "#86CFA3";
 export const INCORRECT_COLOR = "#F77F84";
 
