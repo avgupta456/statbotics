@@ -1,7 +1,9 @@
 export const PROD = process.env.PROD === "True";
 
 // undici bug requires 127.0.0.1 instead of localhost
-export const BACKEND_URL = PROD ? "https://api.statbotics.io/site" : "http://127.0.0.1:8000/site";
+export const BACKEND_URL = PROD
+  ? "https://api.statbotics.io/v3/site"
+  : "http://127.0.0.1:8000/v3/site";
 // export const BACKEND_URL = "https://api.statbotics.io/site";
 
 export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
@@ -29,7 +31,18 @@ export const Category10Colors = [
   "#17becf",
 ];
 
-export const RPMapping = {
+export const RP_KEYS: { [key: number]: string[] } = {
+  2016: ["defenses_rp", "tower_rp"],
+  2017: ["rotor_rp", "kpa_rp"],
+  2018: ["auto_rp", "climb_rp"],
+  2019: ["rocket_rp", "hab_rp"],
+  2020: ["cells_rp", "climb_rp"],
+  2022: ["cargo_rp", "hangar_rp"],
+  2023: ["links_rp", "activation_rp"],
+  2024: ["melody_rp", "harmony_rp"],
+};
+
+export const RP_NAMES: { [key: number]: string[] } = {
   2016: ["Breach RP", "Capture RP"],
   2017: ["Rotors RP", "Pressure RP"],
   2018: ["Auto RP", "Climb RP"],

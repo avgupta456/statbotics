@@ -4,9 +4,8 @@ import Link from "next/link";
 
 import { CellContext } from "@tanstack/react-table";
 
+import { EPAPercentiles } from "../../types/api";
 import { classnames, truncate } from "../../utils";
-import { PercentileStats } from "../types/api";
-import { formatNumber } from "../utils";
 
 export const TeamLink = ({
   team,
@@ -15,26 +14,22 @@ export const TeamLink = ({
   small,
 }: {
   team: string | number;
-  num: number;
+  num: string;
   year: number;
   small?: boolean;
 }) => {
-  if (num > 100000) {
-    return formatNumber(num);
-  } else {
-    return (
-      <div
-        className={classnames(
-          "mx-auto h-10 h-full flex justify-center items-center text-sm",
-          small ? "w-16 md:w-20" : "w-24 md:w-32"
-        )}
-      >
-        <Link href={`/team/${num}/${year}`} className="text_link">
-          {truncate(team.toString(), 30)}
-        </Link>
-      </div>
-    );
-  }
+  return (
+    <div
+      className={classnames(
+        "mx-auto h-10 h-full flex justify-center items-center text-sm",
+        small ? "w-16 md:w-20" : "w-24 md:w-32"
+      )}
+    >
+      <Link href={`/team/${num}/${year}`} className="text_link">
+        {truncate(team.toString(), 30)}
+      </Link>
+    </div>
+  );
 };
 
 export const EventLink = ({ key, event }: { key: string; event: string }) => {
@@ -65,7 +60,7 @@ export const CONDITIONAL_COLORS = [
 
 export const getEPAColor = (
   value: number,
-  percentileStats: PercentileStats,
+  percentileStats: EPAPercentiles,
   multiplier: number = 1,
   reverse: boolean = false
 ) => {
@@ -123,7 +118,7 @@ export const formatCell = (info: CellContext<any, number | string>) => {
 };
 
 export const formatEPACell = (
-  percentileStats: PercentileStats,
+  percentileStats: EPAPercentiles,
   info: CellContext<any, number | string>,
   disableHighlight: boolean,
   multiplier: number = 1,

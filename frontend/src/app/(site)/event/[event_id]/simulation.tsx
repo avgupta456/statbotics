@@ -12,8 +12,7 @@ import {
   formatEPACell,
   formatProbCell,
 } from "../../../../components/Table/shared";
-import { APITeamEvent } from "../../../../components/types/api";
-import { formatNumber } from "../../../../components/utils";
+import { APITeamEvent } from "../../../../types/api";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
@@ -25,7 +24,7 @@ type SimResults = {
 
 type SimulationRow = {
   rank: number;
-  num: number;
+  num: string;
   team: string;
   epa: number;
   rankMean: number;
@@ -136,14 +135,14 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
     .sort((a, b) => rankMean[a.num] - rankMean[b.num])
     .map((teamEvent: APITeamEvent, i) => ({
       rank: i + 1,
-      num: teamEvent.num,
-      team: teamEvent.team,
-      epa: round(teamEvent.total_epa ?? 0, 1),
-      rankMean: rankMean[teamEvent.num] ? round(rankMean[teamEvent.num], 2) : "",
-      rank5: rank5[teamEvent.num] ? round(rank5[teamEvent.num], 2) : "",
-      rank50: rank50[teamEvent.num] ? round(rank50[teamEvent.num], 2) : "",
-      rank95: rank95[teamEvent.num] ? round(rank95[teamEvent.num], 2) : "",
-      RPMean: RPMean[teamEvent.num] ? round(RPMean[teamEvent.num], 2) : "",
+      num: teamEvent.team,
+      team: teamEvent.team_name,
+      epa: round(teamEvent.epa.total_points.mean ?? 0, 1),
+      rankMean: rankMean[teamEvent.team] ? round(rankMean[teamEvent.team], 2) : "",
+      rank5: rank5[teamEvent.team] ? round(rank5[teamEvent.team], 2) : "",
+      rank50: rank50[teamEvent.team] ? round(rank50[teamEvent.team], 2) : "",
+      rank95: rank95[teamEvent.team] ? round(rank95[teamEvent.team], 2) : "",
+      RPMean: RPMean[teamEvent.team] ? round(RPMean[teamEvent.team], 2) : "",
     }));
 
   const detailedSimData = data.team_events
@@ -173,7 +172,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         header: "Predicted Rank",
       }),
       columnHelper.accessor("num", {
-        cell: (info) => formatNumber(info.getValue()),
+        cell: (info) => info.getValue(),
         header: "Number",
       }),
       columnHelper.accessor("team", {
@@ -211,7 +210,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
   const detailedColumns = useMemo<any>(
     () => [
       detailedColumnHelper.accessor("num", {
-        cell: (info) => formatNumber(info.getValue()),
+        cell: (info) => info.getValue(),
         header: "Number",
       }),
       detailedColumnHelper.accessor("team", {

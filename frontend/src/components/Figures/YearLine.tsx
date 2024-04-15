@@ -6,10 +6,11 @@ import { GiPodium } from "react-icons/gi";
 import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
-import { BACKEND_URL, CURR_YEAR, RPMapping } from "../../constants";
-import { classnames, log, round } from "../../utils";
+import { getTeamYearTeamMatches } from "../../api/teams";
+import { CURR_YEAR, RP_KEYS } from "../../constants";
+import { APITeamMatch, APITeamYear } from "../../types/api";
+import { classnames } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
-import { APITeamMatch, APITeamYear } from "../types/api";
 import LineChart from "./Line";
 
 const YearLineChart = ({
@@ -33,24 +34,10 @@ const YearLineChart = ({
 
   // FUNCTIONS
 
-  const fetchData = async (teamNum: number) => {
-    const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/team_year/${year}/${teamNum}/matches`, {
-      next: { revalidate: 60 },
-    });
-    log(`/team_year/${year}/${teamNum}/matches took ${round(performance.now() - start, 0)} ms`);
+  const fetchData = async (teamNum: string) => {
+    const data = await getTeamYearTeamMatches(year, teamNum);
 
-    if (!res.ok) {
-      return undefined;
-    }
-
-    const data = await res.json();
-    if (!data) {
-      log("No data found for team " + teamNum);
-      return undefined;
-    }
-
-    const sortedData: APITeamMatch[] = data.data
+    const sortedData: APITeamMatch[] = data
       .filter((teamMatch: any) => teamMatch.status === "Completed")
       .sort((a: any, b: any) => a.time - b.time);
 
@@ -84,7 +71,7 @@ const YearLineChart = ({
   const topTeams = teamYears
     ?.sort((a, b) => b[yAxis.value] - a[yAxis.value])
     ?.slice(0, 3)
-    ?.map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
+    ?.map((team) => ({ value: team.team, label: `${team.team} | ${team.name}` }));
 
   const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
 
@@ -120,8 +107,8 @@ const YearLineChart = ({
           { value: "auto_epa", label: "Auto EPA" },
           { value: "teleop_epa", label: "Teleop EPA" },
           { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: `${RPMapping?.[year]?.[0]} EPA` },
-          { value: "rp_2_epa", label: `${RPMapping?.[year]?.[1]} EPA` },
+          { value: "rp_1_epa", label: `${RP_KEYS[year][0]} EPA` },
+          { value: "rp_2_epa", label: `${RP_KEYS[year][1]} EPA` },
         ].filter(Boolean)
       : [{ value: "total_epa", label: "EPA" }];
 

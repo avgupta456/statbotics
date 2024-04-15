@@ -1,33 +1,59 @@
 import React from "react";
 import Select from "react-select";
 
-import { RPMapping } from "../constants";
-import { classnames, round } from "../utils";
+import { RP_KEYS } from "../constants";
+import { APITeamEvent, APITeamYear } from "../types/api";
+import { round } from "../utils";
+
+type EYu = APITeamEvent | APITeamYear | undefined;
+type Yu = APITeamYear | undefined;
+type Eu = APITeamEvent | undefined;
 
 export const getColumnOptions = (year: number) => [
-  { label: "Constant", accessor: (datum) => 1 },
-  { label: "Total EPA", accessor: (datum) => round(datum?.total_epa) },
-  { label: "Unitless EPA", accessor: (datum) => round(datum?.unitless_epa, 0) },
-  { label: "Norm EPA", accessor: (datum) => round(datum?.norm_epa, 0) },
-  { label: "Auto", accessor: (datum) => round(datum?.auto_epa) },
-  { label: "Teleop", accessor: (datum) => round(datum?.teleop_epa) },
-  { label: "Endgame", accessor: (datum) => round(datum?.endgame_epa) },
+  { label: "Constant", accessor: (datum: EYu) => 1 },
+  {
+    label: "Total EPA",
+    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.total_points?.mean),
+  },
+  {
+    label: "Unitless EPA",
+    accessor: (datum: EYu) => round(datum?.epa?.unitless, 0),
+  },
+  { label: "Norm EPA", accessor: (datum: EYu) => round(datum?.epa?.norm, 0) },
+  { label: "Auto", accessor: (datum: EYu) => round(datum?.epa?.breakdown?.auto_points?.mean) },
+  { label: "Teleop", accessor: (datum: EYu) => round(datum?.epa?.breakdown?.teleop_points?.mean) },
+  {
+    label: "Endgame",
+    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.endgame_points?.mean),
+  },
   {
     label: "Auto + Endgame",
-    accessor: (datum) => round(datum?.auto_epa + datum?.endgame_epa),
+    accessor: (datum: EYu) =>
+      round(datum?.epa?.breakdown?.auto_points?.mean + datum?.epa?.breakdown?.endgame_points?.mean),
   },
-  { label: `${RPMapping?.[year]?.[0]}`, accessor: (datum) => round(datum?.rp_1_epa, 3) },
-  { label: `${RPMapping?.[year]?.[1]}`, accessor: (datum) => round(datum?.rp_2_epa, 3) },
-
-  { label: "Wins", accessor: (datum) => datum?.wins },
+  {
+    label: `${RP_KEYS[year][0]}`,
+    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.[RP_KEYS[year][0]]?.mean, 3),
+  },
+  {
+    label: `${RP_KEYS[year][1]}`,
+    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.[RP_KEYS[year][1]]?.mean, 3),
+  },
+  { label: "Wins", accessor: (datum: Yu) => datum?.record?.season?.wins },
   {
     label: "Win Rate",
-    accessor: (datum) => round(datum?.wins / (datum?.wins + datum?.losses + datum?.ties), 3),
+    accessor: (datum: Yu) =>
+      round(
+        datum?.record?.season?.wins /
+          (datum?.record?.season?.wins +
+            datum?.record?.season?.losses +
+            datum?.record?.season?.ties),
+        3
+      ),
   },
   // For events
-  { label: "Rank", accessor: (datum) => datum?.rank },
-  { label: "N - Rank", accessor: (datum) => datum?.numTeams - datum?.rank },
-  { label: "RPs / Match", accessor: (datum) => round(datum?.rps_per_match, 3) },
+  { label: "Rank", accessor: (datum: Eu) => datum?.record?.qual?.rank },
+  { label: "RPs / Match", accessor: (datum: Eu) => round(datum?.record?.qual?.rps_per_match, 3) },
 ];
 
 export const getColumnOptionsDict = (year: number) =>

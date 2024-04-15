@@ -7,6 +7,15 @@ export const round = (num: number, digits: number = 1) => {
   return Math.round(num * factor) / factor;
 };
 
+export const sortTeamNums = (a: string, b: string) => {
+  // Extract numeric prefixes from strings
+  const numA = parseInt(a.match(/^\d+/)[0]);
+  const numB = parseInt(b.match(/^\d+/)[0]);
+
+  // Compare numeric prefixes
+  return numA - numB;
+};
+
 export const truncate = (str: string, length: number) => {
   if (str.length > length) {
     return str.substring(0, length - 3) + "...";

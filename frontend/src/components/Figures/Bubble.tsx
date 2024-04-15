@@ -6,10 +6,10 @@ import HC_more from "highcharts/highcharts-more";
 
 import { useContext, useEffect, useState } from "react";
 
+import { APITeamEvent, APITeamYear } from "../../types/api";
 import { ColumnBar, getColumnOptionsDict } from "../columns";
 import { filterData } from "../filter";
 import { FilterBar } from "../filterBar";
-import { formatNumber } from "../utils";
 import { ColorsContext, useColors } from "./colors";
 
 if (typeof Highcharts === "object") {
@@ -20,7 +20,7 @@ type ScatterData = {
   x: number;
   y: number;
   z: number;
-  num: string; // to handle offseason
+  num: string;
   labelInt: number;
   color: string;
 };
@@ -34,7 +34,7 @@ const BubbleChart = ({
   setFilters,
 }: {
   year: number;
-  data: any[];
+  data: APITeamYear[];
   columnOptions: string[];
   defaultFilters: { [key: string]: any };
   filters: { [key: string]: any };
@@ -70,11 +70,11 @@ const BubbleChart = ({
     {}
   );
 
-  let filteredData: any[] = filterData(data, actualFilters);
-  const numRemoved = filteredData.filter((datum) => datum?.count === 0).length;
+  let filteredData: APITeamYear[] = filterData(data, actualFilters);
+  const numRemoved = filteredData.filter((datum) => datum?.record?.season?.count === 0).length;
 
   if (!showZero) {
-    filteredData = filteredData.filter((datum) => datum?.count > 0);
+    filteredData = filteredData.filter((datum) => datum?.record?.season?.count > 0);
   }
 
   const columnOptionsDict = getColumnOptionsDict(year);
@@ -90,9 +90,9 @@ const BubbleChart = ({
     x: xAxis.accessor(datum),
     y: yAxis.accessor(datum),
     z: zAxis.accessor(datum),
-    num: formatNumber(datum.num),
+    num: datum.team,
     labelInt: 0,
-    color: getColor(datum.num),
+    color: getColor(datum.team),
   }));
 
   const xs = scatterData.map((datum) => datum.x);

@@ -3,9 +3,9 @@
 import React, { useMemo } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
-import { CURR_YEAR, RPMapping } from "../../../constants";
+import { CURR_YEAR, RP_NAMES } from "../../../constants";
+import { TeamYearData, emptyTeamYearData } from "../../../types/data";
 import TabsSection from "../shared/tabs";
-import { TeamYearData, emptyTeamYearData } from "../types";
 import FigureSection from "./figures";
 import InsightsTable from "./insightsTable";
 
@@ -50,8 +50,8 @@ const Tabs = ({
             year >= 2016 && "Teleop",
             year >= 2016 && "Endgame",
             year >= 2016 && "Auto + Endgame",
-            year >= 2016 && `${RPMapping?.[year]?.[0]}`,
-            year >= 2016 && `${RPMapping?.[year]?.[1]}`,
+            year >= 2016 && `${RP_NAMES[year][0]}`,
+            year >= 2016 && `${RP_NAMES[year][1]}`,
             "Wins",
             "Win Rate",
           ].filter(Boolean) as string[]

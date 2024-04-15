@@ -13,7 +13,6 @@ import {
   formatEPACell,
   formatPercentileCell,
 } from "../../../../components/Table/shared";
-import { formatNumber } from "../../../../components/utils";
 import { round } from "../../../../utils";
 import { Data } from "./types";
 
@@ -40,7 +39,7 @@ type SosResults = {
 
 type SosRow = {
   rank: number;
-  num: number;
+  num: string;
   team: string;
   epa: number;
   rankPercentile: number;
@@ -152,7 +151,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         header: "Rank",
       }),
       columnHelper.accessor("num", {
-        cell: (info) => formatNumber(info.getValue()),
+        cell: (info) => info.getValue(),
         header: "Number",
       }),
       columnHelper.accessor("team", {
@@ -190,7 +189,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         header: "Rank",
       }),
       detailedColumnHelper.accessor("num", {
-        cell: (info) => formatNumber(info.getValue()),
+        cell: (info) => info.getValue(),
         header: "Number",
       }),
       detailedColumnHelper.accessor("team", {

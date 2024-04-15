@@ -58,6 +58,40 @@ export type APIYear = {
   };
 };
 
+export const emptyAPIYear: APIYear = {
+  year: 0,
+  score_mean: 0,
+  score_sd: 0,
+  percentiles: {},
+  breakdown: {},
+  metrics: {
+    win_prob: {
+      season: {
+        count: 0,
+      },
+      champs: {
+        count: 0,
+      },
+    },
+    score_pred: {
+      season: {
+        count: 0,
+      },
+      champs: {
+        count: 0,
+      },
+    },
+    rp_pred: {
+      season: {
+        count: {},
+      },
+      champs: {
+        count: {},
+      },
+    },
+  },
+};
+
 export type Record = {
   wins: number;
   losses: number;

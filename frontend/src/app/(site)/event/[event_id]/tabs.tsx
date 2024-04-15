@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import BubbleChart from "../../../../components/Figures/Bubble";
 import {
   CURR_YEAR,
-  RPMapping,
+  RP_KEYS,
   divisionToMainEvent,
   mainEventToDivisions,
 } from "../../../../constants";
@@ -50,12 +50,10 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
             year >= 2016 && "Teleop",
             year >= 2016 && "Endgame",
             year >= 2016 && "Auto + Endgame",
-            year >= 2016 && `${RPMapping?.[year]?.[0]}`,
-            year >= 2016 && `${RPMapping?.[year]?.[1]}`,
+            year >= 2016 && `${RP_KEYS[year][0]}`,
+            year >= 2016 && `${RP_KEYS[year][1]}`,
             "Rank",
-            "N - Rank",
             "RPs / Match",
-            "Wins",
           ].filter(Boolean) as string[]
         }
       />

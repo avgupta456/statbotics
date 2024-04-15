@@ -3,10 +3,10 @@ import { BsPlayCircle } from "react-icons/bs";
 
 import Link from "next/link";
 
-import { CORRECT_COLOR, INCORRECT_COLOR } from "../constants";
-import { capitalize, classnames, round } from "../utils";
-import { APIMatch } from "./types/api";
-import { compLevelFullNames, formatMatch, formatNumber } from "./utils";
+import { CORRECT_COLOR, INCORRECT_COLOR, RP_KEYS } from "../constants";
+import { APIMatch } from "../types/api";
+import { classnames, round } from "../utils";
+import { compLevelFullNames, formatMatch } from "./utils";
 
 const lightRed = "#FFEEEE";
 const lightBlue = "#EEEEFF";
@@ -33,7 +33,7 @@ const MatchRow = ({
   myAlliance,
 }: {
   year: number;
-  teamNum: number;
+  teamNum: string;
   compLevel: string;
   match: APIMatch;
   showVideo: boolean;
@@ -41,15 +41,15 @@ const MatchRow = ({
   stacked: boolean;
   myAlliance: boolean;
 }) => {
-  let alliance = match.red.includes(teamNum) ? "red" : "";
-  alliance = match.blue.includes(teamNum) ? "blue" : alliance;
+  let alliance = match.alliances.red.team_keys.includes(teamNum) ? "red" : "";
+  alliance = match.alliances.blue.team_keys.includes(teamNum) ? "blue" : alliance;
 
-  const _winProb = round(match.epa_win_prob * 100, 0);
+  const _winProb = round(match.pred.red_win_prob * 100, 0);
   const winProb = _winProb > 50 ? _winProb : 100 - _winProb;
-  const correctWinner = match.winner === match.pred_winner;
+  const correctWinner = match.result.winner === match.pred.winner;
 
-  const myAllianceWinProb = alliance === match.pred_winner ? winProb : 100 - winProb;
-  const myAllianceWinner = alliance === match.winner;
+  const myAllianceWinProb = alliance === match.pred.winner ? winProb : 100 - winProb;
+  const myAllianceWinner = alliance === match.result.winner;
 
   const Video = () => (
     <div className="w-16 h-full flex justify-center items-center border-r border-b border-gray-300">
@@ -92,26 +92,20 @@ const MatchRow = ({
           stacked ? "w-full h-1/2" : "w-1/2 h-full"
         )}
       >
-        {match.red.map((team) =>
-          team > 100000 ? (
-            <div className="w-1/3" key={`${match.key}-${team}`}>
-              {formatNumber(team)}
-            </div>
-          ) : (
-            <Link
-              href={`/team/${team}/${year}`}
-              className={classnames(
-                "w-1/3",
-                match.winner === "red" ? "font-bold" : "font-thin",
-                team === teamNum ? "underline" : "",
-                "text-blue-600 hover:text-blue-700 cursor-pointer"
-              )}
-              key={`${match.key}-${team}`}
-            >
-              {team}
-            </Link>
-          )
-        )}
+        {match.alliances.red.team_keys.map((team) => (
+          <Link
+            href={`/team/${team}/${year}`}
+            className={classnames(
+              "w-1/3",
+              match.result.winner === "red" ? "font-bold" : "font-thin",
+              team === teamNum ? "underline" : "",
+              "text-blue-600 hover:text-blue-700 cursor-pointer"
+            )}
+            key={`${match.key}-${team}`}
+          >
+            {team}
+          </Link>
+        ))}
       </div>
       <div
         style={{ backgroundColor: lightBlue }}
@@ -120,26 +114,20 @@ const MatchRow = ({
           stacked ? "w-full h-1/2" : "w-1/2 h-full"
         )}
       >
-        {match.blue.map((team) =>
-          team > 100000 ? (
-            <div className="w-1/3" key={`${match.key}-${team}`}>
-              {formatNumber(team)}
-            </div>
-          ) : (
-            <Link
-              href={`/team/${team}/${year}`}
-              className={classnames(
-                "w-1/3",
-                match.winner === "blue" ? "font-bold" : "font-thin",
-                team === teamNum ? "underline" : "",
-                "text-blue-600 hover:text-blue-700 cursor-pointer"
-              )}
-              key={`${match.key}-${team}`}
-            >
-              {team}
-            </Link>
-          )
-        )}
+        {match.alliances.blue.team_keys.map((team) => (
+          <Link
+            href={`/team/${team}/${year}`}
+            className={classnames(
+              "w-1/3",
+              match.result.winner === "blue" ? "font-bold" : "font-thin",
+              team === teamNum ? "underline" : "",
+              "text-blue-600 hover:text-blue-700 cursor-pointer"
+            )}
+            key={`${match.key}-${team}`}
+          >
+            {team}
+          </Link>
+        ))}
       </div>
     </div>
   );
@@ -156,14 +144,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.winner === "red" ? "font-bold" : "font-thin",
+              match.result.winner === "red" ? "font-bold" : "font-thin",
               alliance === "red" ? "underline" : ""
             )}
           >
-            {match.red_score}
+            {match.result.red_score}
           </span>
-          {year >= 2016 && match.red_rp_1 > 0.5 && <sup>●</sup>}
-          {year >= 2016 && match.red_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result[RP_KEYS[year][1]] > 0.5 && <sup>●</sup>}
         </div>
         <div
           style={{ backgroundColor: lightBlue }}
@@ -174,14 +162,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.winner === "blue" ? "font-bold" : "font-thin",
+              match.result.winner === "blue" ? "font-bold" : "font-thin",
               alliance === "blue" ? "underline" : ""
             )}
           >
-            {match.blue_score}
+            {match.result.blue_score}
           </span>
-          {year >= 2016 && match.blue_rp_1 > 0.5 && <sup>●</sup>}
-          {year >= 2016 && match.blue_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result[RP_KEYS[year][1]] > 0.5 && <sup>●</sup>}
         </div>
       </>
     ) : (
@@ -211,14 +199,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.pred_winner === "red" ? "font-bold" : "font-thin",
+              match.pred.winner === "red" ? "font-bold" : "font-thin",
               alliance === "red" ? "underline" : ""
             )}
           >
-            {round(match.red_epa_pred, 0)}
+            {round(match.pred.red_score, 0)}
           </span>
-          {year >= 2016 && !match.playoff && match.red_rp_1_pred > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.playoff && match.red_rp_2_pred > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
         </div>
         <div
           className={classnames(
@@ -229,14 +217,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.pred_winner === "blue" ? "font-bold" : "font-thin",
+              match.pred.winner === "blue" ? "font-bold" : "font-thin",
               alliance === "blue" ? "underline" : ""
             )}
           >
-            {round(match.blue_epa_pred, 0)}
+            {round(match.pred.blue_score, 0)}
           </span>
-          {year >= 2016 && !match.playoff && match.blue_rp_1_pred > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.playoff && match.blue_rp_2_pred > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][1]] > 0.5 && <sup>●</sup>}
         </div>
       </div>
       <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>
@@ -247,10 +235,10 @@ const MatchRow = ({
           )}
         >
           {myAlliance
-            ? match.pred_winner === alliance
+            ? match.pred.winner === alliance
               ? "Win"
               : "Lose"
-            : match.pred_winner === "red"
+            : match.pred.winner === "red"
             ? "Red"
             : "Blue"}
         </div>
@@ -303,7 +291,7 @@ const MatchTable = ({
   myAlliance = true,
 }: {
   year: number;
-  teamNum: number;
+  teamNum: string;
   matches: APIMatch[];
   showHeaders?: boolean;
   showSubHeaders?: boolean;
@@ -317,7 +305,7 @@ const MatchTable = ({
     return <div className="w-full text-center">Schedule not released yet.</div>;
   }
 
-  const myAllianceActual = teamNum !== 0 && myAlliance;
+  const myAllianceActual = teamNum !== "" && myAlliance;
 
   const compLevels = matches.map((match) => match.comp_level);
   const uniqueCompLevels = compLevels

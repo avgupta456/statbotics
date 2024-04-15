@@ -1,15 +1,16 @@
 import React from "react";
 
 import YearLineChart from "../../../components/Figures/YearLine";
-import { TeamYearData } from "../types";
+import { TeamYearData } from "../../../types/data";
+import { sortTeamNums } from "../../../utils";
 
 const FigureSection = ({ year, data }: { year: number; data: TeamYearData }) => {
   const lineData = data.team_years
     .map((teamYear) => ({
-      value: teamYear.num,
-      label: `${teamYear.num} | ${teamYear.team}`,
+      value: teamYear.team,
+      label: `${teamYear.team} | ${teamYear.name}`,
     }))
-    .sort((a, b) => a.value - b.value);
+    .sort((a, b) => sortTeamNums(a.value, b.value));
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">

@@ -6,13 +6,12 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../../components/Table/InsightsTable";
 import { TeamLink, formatCell, formatEPACell } from "../../../../components/Table/shared";
-import { formatNumber } from "../../../../components/utils";
-import { CURR_YEAR, RPMapping } from "../../../../constants";
+import { CURR_YEAR, RP_NAMES } from "../../../../constants";
 import { round, truncate } from "../../../../utils";
 import { Data } from "./types";
 
 export type TeamEventInsights = {
-  num: number;
+  num: string;
   team: string;
   first_event: boolean;
   rank: number;
@@ -27,7 +26,7 @@ export type TeamEventInsights = {
 };
 
 export type DetailedTeamEventInsights = {
-  num: number;
+  num: string;
   team: string;
   first_event: boolean;
   rank: number;
@@ -110,7 +109,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
     () =>
       [
         columnHelper.accessor("num", {
-          cell: (info) => formatNumber(info.getValue()),
+          cell: (info) => info.getValue(),
           header: "Number",
         }),
         columnHelper.accessor("team", {
@@ -154,12 +153,12 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         year >= 2016 &&
           columnHelper.accessor("rp_1_epa", {
             cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
-            header: `${RPMapping?.[data.year.year]?.[0]} EPA`,
+            header: `${RP_NAMES?.[data.year.year]?.[0]} EPA`,
           }),
         year >= 2016 &&
           columnHelper.accessor("rp_2_epa", {
             cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
-            header: `${RPMapping?.[data.year.year]?.[1]} EPA`,
+            header: `${RP_NAMES?.[data.year.year]?.[1]} EPA`,
           }),
       ].filter(Boolean),
     [year, data, maxRank, disableHighlight]
@@ -169,7 +168,7 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
     () =>
       [
         detailedColumnHelper.accessor("num", {
-          cell: (info) => formatNumber(info.getValue()),
+          cell: (info) => info.getValue(),
           header: "Number",
         }),
         detailedColumnHelper.accessor("team", {
@@ -218,12 +217,12 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
         year >= 2016 &&
           detailedColumnHelper.accessor("rp_1_epa", {
             cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
-            header: `${RPMapping?.[data.year.year]?.[0]} EPA`,
+            header: `${RP_NAMES?.[data.year.year]?.[0]} EPA`,
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("rp_2_epa", {
             cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
-            header: `${RPMapping?.[data.year.year]?.[1]} EPA`,
+            header: `${RP_NAMES?.[data.year.year]?.[1]} EPA`,
           }),
         maxRank > 0 &&
           detailedColumnHelper.accessor("record", {

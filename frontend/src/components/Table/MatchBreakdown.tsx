@@ -6,9 +6,9 @@ import Link from "next/link";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
+import { RP_KEYS } from "../../constants";
+import { APIYear, EPAPercentiles } from "../../types/api";
 import { classnames, truncate } from "../../utils";
-import { APIYear, PercentileStats } from "../types/api";
-import { formatNumber } from "../utils";
 import Table from "./Table";
 import { CONDITIONAL_COLORS, getEPAColor, getRPColor } from "./shared";
 
@@ -31,17 +31,13 @@ const columnHelper = createColumnHelper<Component>();
 // Copied from ./shared.tsx with minor changes
 
 const TeamLink = ({ team, num, year }: { team: string | number; num: number; year: number }) => {
-  if (num > 100000) {
-    return formatNumber(num);
-  } else {
-    return (
-      <div className="w-24 h-full flex justify-center items-center">
-        <Link href={`/team/${num}/${year}`} className="text_link">
-          {truncate(team.toString(), 30)}
-        </Link>
-      </div>
-    );
-  }
+  return (
+    <div className="w-24 h-full flex justify-center items-center">
+      <Link href={`/team/${num}/${year}`} className="text_link">
+        {truncate(team.toString(), 30)}
+      </Link>
+    </div>
+  );
 };
 
 const formatCell = (
@@ -56,18 +52,18 @@ const formatCell = (
   if (typeof value === "string" || row == "Fouls") {
     color = CONDITIONAL_COLORS[1];
   } else {
-    const percentileStats: PercentileStats =
+    const percentileStats: EPAPercentiles =
       row === "Auto"
-        ? stats.auto_stats
+        ? stats.percentiles.auto_points
         : row === "Teleop"
-        ? stats.teleop_stats
+        ? stats.percentiles.teleop_points
         : row === "Endgame"
-        ? stats.endgame_stats
+        ? stats.percentiles.endgame_points
         : row === "RP1"
-        ? stats.rp_1_stats
+        ? stats.percentiles[RP_KEYS[stats.year][0]]
         : row === "RP2"
-        ? stats.rp_2_stats
-        : stats.total_stats;
+        ? stats.percentiles[RP_KEYS[stats.year][1]]
+        : stats.percentiles.total_points;
 
     if (row.includes("RP")) {
       color = getRPColor(value);

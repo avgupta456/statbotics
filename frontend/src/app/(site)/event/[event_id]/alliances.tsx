@@ -5,7 +5,6 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { BarChartNoLegend } from "../../../../components/Figures/Bar";
 import InsightsTable from "../../../../components/Table/InsightsTable";
 import { TeamLink, formatCell, formatEPACell } from "../../../../components/Table/shared";
-import { formatNumber } from "../../../../components/utils";
 import { readTBA, round } from "../../../../utils";
 import { Data } from "./types";
 
@@ -24,10 +23,10 @@ const getAlliances = async (eventId: string) => {
 // Weird naming to use in the BarChart
 export type AllianceInsights = {
   rank: number;
-  team1: number;
-  team2: number;
-  team3: number;
-  team4?: number;
+  team1: string;
+  team2: string;
+  team3: string;
+  team4?: string;
   total_epa: number;
   "Captain EPA": number;
   "First Pick EPA": number;
@@ -85,7 +84,7 @@ const AlliancesSection = ({
     () =>
       [
         columnHelper.accessor("rank", {
-          cell: (info) => formatNumber(info.getValue()),
+          cell: (info) => info.getValue(),
           header: "Rank",
         }),
         columnHelper.accessor("team1", {
