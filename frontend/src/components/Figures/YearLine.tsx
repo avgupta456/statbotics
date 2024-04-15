@@ -7,7 +7,7 @@ import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
 import { getTeamYearTeamMatches } from "../../api/teams";
-import { CURR_YEAR, RP_KEYS } from "../../constants";
+import { RP_KEYS, RP_NAMES } from "../../constants";
 import { APITeamMatch, APITeamYear } from "../../types/api";
 import { classnames } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
@@ -22,10 +22,53 @@ const YearLineChart = ({
   teamYears?: APITeamYear[];
   teams: any;
 }) => {
-  const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
+  const yAxisOptions = [
+    {
+      yearAccessor: (teamYear: APITeamYear) => teamYear?.epa?.breakdown?.total_points?.mean ?? 0,
+      matchAccessor: (teamMatch: APITeamMatch) => teamMatch?.epa?.breakdown?.total_points ?? 0,
+      value: "total_epa",
+      label: "Total EPA",
+    },
+    ...(year >= 2016
+      ? [
+          {
+            yearAccessor: (teamYear: APITeamYear) => teamYear.epa.breakdown.auto_points.mean,
+            matchAccessor: (teamMatch: APITeamMatch) => teamMatch.epa.breakdown.auto_points,
+            value: "auto_epa",
+            label: "Auto EPA",
+          },
+          {
+            yearAccessor: (teamYear: APITeamYear) => teamYear.epa.breakdown.teleop_points.mean,
+            matchAccessor: (teamMatch: APITeamMatch) => teamMatch.epa.breakdown.teleop_points,
+            value: "teleop_epa",
+            label: "Teleop EPA",
+          },
+          {
+            yearAccessor: (teamYear: APITeamYear) => teamYear.epa.breakdown.endgame_points.mean,
+            matchAccessor: (teamMatch: APITeamMatch) => teamMatch.epa.breakdown.endgame_points,
+            value: "endgame_epa",
+            label: "Endgame EPA",
+          },
+          {
+            yearAccessor: (teamYear: APITeamYear) => teamYear.epa.breakdown[RP_KEYS[year][0]].mean,
+            matchAccessor: (teamMatch: APITeamMatch) => teamMatch.epa.breakdown[RP_KEYS[year][0]],
+            value: "rp_1_epa",
+            label: `${RP_NAMES[year][0]} EPA`,
+          },
+          {
+            yearAccessor: (teamYear: APITeamYear) => teamYear.epa.breakdown[RP_KEYS[year][1]].mean,
+            matchAccessor: (teamMatch: APITeamMatch) => teamMatch.epa.breakdown[RP_KEYS[year][1]],
+            value: "rp_2_epa",
+            label: `${RP_NAMES[year][1]} EPA`,
+          },
+        ]
+      : []),
+  ];
+
+  const [yAxis, setYAxis] = useState(yAxisOptions[0]);
   const [xAxis, setXAxis] = useState("match");
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
-  const [allData, setAllData] = useState<{ [key: number]: APITeamMatch[] | undefined }>({});
+  const [allData, setAllData] = useState<{ [key: string]: APITeamMatch[] | undefined }>({});
 
   useEffect(() => {
     setSelectedTeams([]);
@@ -69,11 +112,11 @@ const YearLineChart = ({
   // VARIABLES
 
   const topTeams = teamYears
-    ?.sort((a, b) => b[yAxis.value] - a[yAxis.value])
+    ?.sort((a, b) => yAxis.yearAccessor(b) - yAxis.yearAccessor(a))
     ?.slice(0, 3)
     ?.map((team) => ({ value: team.team, label: `${team.team} | ${team.name}` }));
 
-  const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
+  const selectedTeamNums: string[] = selectedTeams.map((team) => team.value);
 
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
@@ -84,33 +127,21 @@ const YearLineChart = ({
         id: teamNum,
         data:
           currData?.map((teamMatch: APITeamMatch, i) => ({
-            x: xAxis === "match" ? i : i / Math.max(1, N - 1),
+            x: xAxis === "match" ? i : i / Math.max(1, N),
             label: currData?.[i - 1]?.match || "Start",
-            y: teamMatch[yAxis.value],
+            y: yAxis.matchAccessor(teamMatch),
           })) || [],
       };
 
-      // TODO: fix this to the actual post-match EPA
-      const lastEPA = currData?.[N - 1]?.[yAxis.value];
+      const currTeamYear = teamYears.find((teamYear) => teamYear.team === teamNum);
+      console.log(currTeamYear);
+      const lastEPA = yAxis.yearAccessor(currTeamYear);
       teamData.data.push({ x: xAxis === "match" ? N : 1, label: "End", y: lastEPA });
 
       return teamData;
     });
 
   // RENDER
-
-  const yAxisOptions =
-    year >= 2016
-      ? [
-          { value: "total_epa", label: "Total EPA" },
-          year >= CURR_YEAR && { value: "unitless_epa", label: "Unitless EPA" },
-          { value: "auto_epa", label: "Auto EPA" },
-          { value: "teleop_epa", label: "Teleop EPA" },
-          { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: `${RP_KEYS[year][0]} EPA` },
-          { value: "rp_2_epa", label: `${RP_KEYS[year][1]} EPA` },
-        ].filter(Boolean)
-      : [{ value: "total_epa", label: "EPA" }];
 
   const TeamSelect = ({ className }) => (
     <WindowedSelect
