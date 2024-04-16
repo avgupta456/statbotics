@@ -10,7 +10,7 @@ import { filterData } from "../../../components/filter";
 import { FilterBar } from "../../../components/filterBar";
 import { CURR_YEAR, RP_KEYS, RP_NAMES } from "../../../constants";
 import { APITeamYear } from "../../../types/api";
-import { TeamYearData } from "../../../types/data";
+import { TeamYearsData } from "../../../types/data";
 import { round, truncate } from "../../../utils";
 
 export type TeamYearInsights = {
@@ -42,7 +42,7 @@ const PageTeamInsightsTable = ({
   setFilters,
 }: {
   year: number;
-  data: TeamYearData;
+  data: TeamYearsData;
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
 }) => {
@@ -81,7 +81,7 @@ const PageTeamInsightsTable = ({
 
       return {
         num: teamYear.team ?? "-1",
-        team: teamYear.team ? truncate(teamYear.team, 30) : "N/A",
+        team: teamYear.name ? truncate(teamYear.name, 30) : "N/A",
         epa_rank: teamYear.epa.ranks.total.rank ?? -1,
         total_epa: round(teamYear.epa.breakdown.total_points.mean, 1) ?? 0,
         norm_epa: round(teamYear.epa.norm, 0) ?? 0,

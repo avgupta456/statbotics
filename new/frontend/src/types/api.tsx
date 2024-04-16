@@ -106,10 +106,6 @@ export type APITeamYear = {
   district?: string;
   offseason: boolean;
   epa: {
-    total_points: {
-      mean: number;
-      sd: number;
-    };
     unitless: number;
     norm: number;
     conf: [number, number];
@@ -187,10 +183,6 @@ export type APITeamEvent = {
   status: string;
   first_event: boolean;
   epa: {
-    total_points: {
-      mean: number;
-      sd: number;
-    };
     unitless: number;
     norm: number;
     conf: [number, number];

@@ -4,15 +4,14 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { getYearTeamYears } from "../../../api/teams";
 import { CURR_YEAR } from "../../../constants";
-import { APITeamYear, APIYear } from "../../../types/api";
-import { TeamYearData } from "../../../types/data";
+import { TeamYearsData } from "../../../types/data";
 import { AppContext } from "../context";
 import PageLayout from "../shared/layout";
 import Tabs from "./tabs";
 
 const PageContent = ({ paramFilters }: { paramFilters: { [key: string]: any } }) => {
   const { teamYearDataDict, setTeamYearDataDict, year, setYear } = useContext(AppContext);
-  const data: TeamYearData | undefined = teamYearDataDict[year];
+  const data: TeamYearsData | undefined = teamYearDataDict[year];
   const [error, setError] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -37,7 +36,7 @@ const PageContent = ({ paramFilters }: { paramFilters: { [key: string]: any } })
         return;
       }
 
-      const data: TeamYearData = await getYearTeamYears(year);
+      const data: TeamYearsData = await getYearTeamYears(year);
 
       if (!data) {
         setError(true);

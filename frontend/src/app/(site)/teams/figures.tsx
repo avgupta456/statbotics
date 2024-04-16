@@ -1,10 +1,10 @@
 import React from "react";
 
 import YearLineChart from "../../../components/Figures/YearLine";
-import { TeamYearData } from "../../../types/data";
+import { TeamYearsData } from "../../../types/data";
 import { sortTeamNums } from "../../../utils";
 
-const FigureSection = ({ year, data }: { year: number; data: TeamYearData }) => {
+const FigureSection = ({ year, data }: { year: number; data: TeamYearsData }) => {
   const lineData = data.team_years
     .map((teamYear) => ({
       value: teamYear.team,
