@@ -107,6 +107,16 @@ async def read_team_year(
         team=team_num, year=year, offseason=None, no_cache=no_cache
     )
 
+    team_matches = sorted(team_matches, key=lambda x: x.time)
+    matches = sorted(matches, key=lambda x: x.time)
+
+    event_time = {e.event: e.time for e in team_events}
+    for m in matches:
+        if m.event in event_time and m.time < event_time[m.event]:
+            event_time[m.event] = m.time
+
+    team_events = sorted(team_events, key=lambda x: (x.week, event_time[x.event]))
+
     out = {
         "year": year_obj.to_dict(),
         "team_year": team_year.to_dict(),

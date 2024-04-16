@@ -8,7 +8,7 @@ import PageContent from "./main";
 // do not cache this page
 export const revalidate = 0;
 
-const Page = ({ params }: { params: { team: number } }) => {
+const Page = ({ params }: { params: { team: string } }) => {
   const { team } = params;
   const paramYear = CURR_YEAR;
 
