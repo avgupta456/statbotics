@@ -5,15 +5,17 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { getTeam, getTeamYear } from "../../../../api/team";
 import { CURR_YEAR } from "../../../../constants";
+import { APITeam } from "../../../../types/api";
+import { TeamYearData } from "../../../../types/data";
 import PageLayout from "../../shared/layout";
 import NotFound from "../../shared/notFound";
-import { getTeamData, getTeamYearData, getTeamYearsData } from "./shared";
 import SummaryTabs from "./summaryTabs";
 import Tabs from "./tabs";
-import { TeamData, TeamYearData, TeamYearsData } from "./types";
+import { SummaryRow } from "./types";
 
-const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) => {
+const PageContent = ({ team, paramYear }: { team: string; paramYear: number }) => {
   const [prevYear, _setPrevYear] = useState(paramYear);
   const [year, _setYear] = useState(paramYear);
 
@@ -22,19 +24,19 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
     _setYear(newYear);
   };
 
-  const [teamData, setTeamData] = useState<TeamData | undefined>();
-  const [teamYearsData, setTeamYearsData] = useState<TeamYearsData | undefined>();
+  const [teamData, setTeamData] = useState<APITeam | undefined>();
+  const [teamYearsData, setTeamYearsData] = useState<SummaryRow[] | undefined>();
   const [teamYearDataDict, setTeamYearDataDict] = useState<{
     [key: number]: TeamYearData | undefined;
   }>({});
 
   useEffect(() => {
-    const _getTeamDataForYear = async (team: number) => {
+    const _getTeamDataForYear = async (team: string) => {
       if (teamData) {
         return;
       }
 
-      const data: TeamData | undefined = await getTeamData(team);
+      const data: APITeam | undefined = await getTeam(team);
       setTeamData(data);
     };
 
@@ -42,12 +44,12 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
   }, [team, teamData]);
 
   useEffect(() => {
-    const _getTeamYearDataForYear = async (team: number, year: number) => {
+    const _getTeamYearDataForYear = async (team: string, year: number) => {
       if (teamYearDataDict[year]) {
         return;
       }
 
-      const data: TeamYearData | undefined = await getTeamYearData(team, year);
+      const data: TeamYearData | undefined = await getTeamYear(team, year);
       if (!data) {
         return;
       }
@@ -60,18 +62,20 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
     }
   }, [team, year, teamYearDataDict]);
 
+  /*
   useEffect(() => {
     const _getTeamYearsData = async (team: number) => {
       if (teamYearsData) {
         return;
       }
 
-      const data: TeamYearsData | undefined = await getTeamYearsData(team);
+      const data: TeamYearData[] | undefined = await getTeamYearsData(team);
       setTeamYearsData(data);
     };
 
     _getTeamYearsData(team);
   }, [team, teamYearsData]);
+  */
 
   useEffect(() => {
     if (teamYearsData && year !== -1 && !teamYearsData.map((x) => x.year).includes(year)) {
@@ -126,7 +130,7 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
           fallbackTeamYearData={fallbackTeamYearData}
         />
       ) : (
-        <SummaryTabs teamNum={team} teamData={teamData} teamYearsData={teamYearsData} />
+        <SummaryTabs teamData={teamData} teamYearsData={teamYearsData} />
       )}
     </PageLayout>
   );

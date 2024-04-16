@@ -6,8 +6,9 @@ import Link from "next/link";
 import MatchTable from "../../../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../../../components/filterConstants";
 import { CURR_YEAR, Category10Colors } from "../../../../constants";
+import { APITeam } from "../../../../types/api";
+import { TeamYearData } from "../../../../types/data";
 import { classnames, getMediaUrl } from "../../../../utils";
-import { TeamData, TeamYearData } from "./types";
 
 const epaCard = (epa: string, label: string, bg: string) => {
   if (!epa || !label || !bg) {
@@ -43,7 +44,7 @@ const OverviewSection = ({
   teamData,
   teamYearData,
 }: {
-  teamData: TeamData | undefined;
+  teamData: APITeam | undefined;
   teamYearData: TeamYearData | undefined;
 }) => {
   const [alliance, setAlliance] = useState<boolean>(true);
@@ -107,9 +108,10 @@ const OverviewSection = ({
       <div className="w-full flex flex-wrap">
         <div className={classnames("w-full", media && "lg:w-auto lg:flex-grow")}>
           <div className="w-full mb-4">
-            Team {teamData.num} ({teamData.team}) had a record of{" "}
+            Team {teamData.team} ({teamData.name}) had a record of{" "}
             <strong>
-              {teamYear.wins}-{teamYear.losses}-{teamYear.ties}
+              {teamYear?.record?.season?.wins}-{teamYear?.record?.season?.losses}-
+              {teamYear?.record?.season?.ties}
             </strong>{" "}
             in {year.year}.
           </div>
@@ -117,32 +119,57 @@ const OverviewSection = ({
             EPA Breakdown:
             {year.year >= 2016 ? (
               <>
-                {epaCard(teamYear?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
-                {epaCard(teamYear?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
-                {epaCard(teamYear?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-                {epaCard(teamYear?.total_epa?.toFixed(1), "Total", Category10Colors[3])}
+                {epaCard(
+                  teamYear?.epa?.breakdown?.auto_points?.mean?.toFixed(1),
+                  "Auto",
+                  Category10Colors[0]
+                )}
+                {epaCard(
+                  teamYear?.epa?.breakdown?.teleop_points?.mean?.toFixed(1),
+                  "Teleop",
+                  Category10Colors[1]
+                )}
+                {epaCard(
+                  teamYear?.epa?.breakdown?.endgame_points?.mean?.toFixed(1),
+                  "Endgame",
+                  Category10Colors[2]
+                )}
+                {epaCard(
+                  teamYear?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                  "Total",
+                  Category10Colors[3]
+                )}
               </>
             ) : (
-              epaCard(teamYear?.total_epa?.toFixed(1), "Total", Category10Colors[0])
+              epaCard(
+                teamYear?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                "Total",
+                Category10Colors[0]
+              )
             )}
           </div>
           <div className="w-full mb-8 lg:mb-12 flex justify-center gap-2 md:gap-4">
-            {rankCard(teamYear?.epa_rank, teamYear?.epa_count, "Worldwide", "")}
             {rankCard(
-              teamYear?.country_epa_rank,
-              teamYear?.country_epa_count,
+              teamYear?.epa?.ranks?.total?.rank,
+              teamYear?.epa?.ranks?.total?.team_count,
+              "Worldwide",
+              ""
+            )}
+            {rankCard(
+              teamYear?.epa?.ranks?.country?.rank,
+              teamYear?.epa?.ranks?.country?.team_count,
               teamData?.country,
               `?country=${teamData?.country}`
             )}
             {rankCard(
-              teamYear?.district_epa_rank,
-              teamYear?.district_epa_count,
+              teamYear?.epa?.ranks?.district?.rank,
+              teamYear?.epa?.ranks?.district?.team_count,
               district,
               `?district=${teamData?.district}`
             )}
             {rankCard(
-              teamYear?.state_epa_rank,
-              teamYear?.state_epa_count,
+              teamYear?.epa?.ranks?.state?.rank,
+              teamYear?.epa?.ranks?.state?.team_count,
               state,
               `?state=${teamData?.state}`
             )}
@@ -196,19 +223,20 @@ const OverviewSection = ({
                 Week {event.week}
               </div>
               <div className="flex flex-col mb-2">
-                {event.rank > 0 && event.num_teams > 0 && (
+                {event?.record?.qual?.rank > 0 && event?.record?.qual?.num_teams > 0 && (
                   <div>
                     Rank:{" "}
                     <strong>
-                      {event.rank} of {event.num_teams}
+                      {event?.record?.qual?.rank} of {event?.record?.qual?.num_teams}
                     </strong>
                   </div>
                 )}
-                {event.count > 0 && (
+                {event?.record?.total?.count > 0 && (
                   <div>
                     Record:{" "}
                     <strong>
-                      {event.wins}-{event.losses}-{event.ties}
+                      {event?.record?.total?.wins}-{event?.record?.total?.losses}-
+                      {event?.record?.total?.ties}
                     </strong>
                   </div>
                 )}
@@ -216,20 +244,40 @@ const OverviewSection = ({
               <div className="flex flex-row flex-wrap mb-2">
                 {year.year >= 2016 ? (
                   <>
-                    {epaCard(event?.auto_epa?.toFixed(1), "Auto", Category10Colors[0])}
-                    {epaCard(event?.teleop_epa?.toFixed(1), "Teleop", Category10Colors[1])}
-                    {epaCard(event?.endgame_epa?.toFixed(1), "Endgame", Category10Colors[2])}
-                    {epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[3])}
+                    {epaCard(
+                      event?.epa?.breakdown?.auto_points?.mean?.toFixed(1),
+                      "Auto",
+                      Category10Colors[0]
+                    )}
+                    {epaCard(
+                      event?.epa?.breakdown?.teleop_points?.mean?.toFixed(1),
+                      "Teleop",
+                      Category10Colors[1]
+                    )}
+                    {epaCard(
+                      event?.epa?.breakdown?.endgame_points?.mean?.toFixed(1),
+                      "Endgame",
+                      Category10Colors[2]
+                    )}
+                    {epaCard(
+                      event?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                      "Total",
+                      Category10Colors[3]
+                    )}
                   </>
                 ) : (
-                  epaCard(event?.total_epa?.toFixed(1), "Total", Category10Colors[0])
+                  epaCard(
+                    event?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                    "Total",
+                    Category10Colors[0]
+                  )
                 )}
               </div>
             </div>
             <div className="w-full lg:w-3/4 h-full pl-4 overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
               <MatchTable
                 year={year.year}
-                teamNum={teamData.num}
+                teamNum={teamData.team}
                 matches={eventMatches}
                 myAlliance={alliance}
               />

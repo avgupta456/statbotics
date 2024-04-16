@@ -202,6 +202,7 @@ class TeamEvent(_TeamEvent, Model):
                     "rps": self.rps,
                     "rps_per_match": self.rps_per_match,
                     "rank": self.rank,
+                    "num_teams": self.num_teams,
                 },
                 "elim": {
                     "wins": elim_wins,
@@ -211,6 +212,13 @@ class TeamEvent(_TeamEvent, Model):
                     "winrate": elim_winrate,
                     "alliance": self.elim_alliance,
                     "is_captain": self.is_captain,
+                },
+                "total": {
+                    "wins": self.wins,
+                    "losses": self.losses,
+                    "ties": self.ties,
+                    "count": self.count,
+                    "winrate": self.winrate,
                 },
             },
             "district_points": self.district_points,

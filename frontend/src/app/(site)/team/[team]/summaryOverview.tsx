@@ -8,8 +8,9 @@ import LineChart from "../../../../components/Figures/Line";
 import InsightsTable from "../../../../components/Table/InsightsTable";
 import { formatCell } from "../../../../components/Table/shared";
 import { CURR_YEAR } from "../../../../constants";
+import { APITeam } from "../../../../types/api";
 import { round } from "../../../../utils";
-import { SummaryRow, TeamData, TeamYearsData } from "./types";
+import { SummaryRow } from "./types";
 
 const columnHelper = createColumnHelper<SummaryRow>();
 
@@ -17,8 +18,8 @@ const SummaryOverviewSection = ({
   teamData,
   teamYearsData,
 }: {
-  teamData: TeamData | undefined;
-  teamYearsData: TeamYearsData | undefined;
+  teamData: APITeam | undefined;
+  teamYearsData: SummaryRow[] | undefined;
 }) => {
   const includeDistrict = teamData?.district;
   const includeState = teamData?.state;
@@ -134,7 +135,7 @@ const SummaryOverviewSection = ({
       ],
     },
     {
-      id: teamData.num.toString(),
+      id: teamData.team.toString(),
       data: filteredTeamYearsData.map((teamYear) => ({
         x: teamYear.year,
         y: round(teamYear.norm_epa, 0),

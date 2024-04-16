@@ -241,6 +241,7 @@ export type APITeamEvent = {
       rps: number;
       rps_per_match: number;
       rank: number;
+      num_teams: number;
     };
     elim: {
       wins: number;
@@ -250,6 +251,13 @@ export type APITeamEvent = {
       winrate: number;
       alliance?: string;
       is_captain: boolean;
+    };
+    total: {
+      wins: number;
+      losses: number;
+      ties: number;
+      count: number;
+      winrate: number;
     };
   };
 };

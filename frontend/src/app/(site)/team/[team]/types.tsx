@@ -1,22 +1,3 @@
-import {
-  APIMatch,
-  APITeam,
-  APITeamEvent,
-  APITeamMatch,
-  APITeamYear,
-  APIYear,
-} from "../../../../components/types/api";
-
-export type TeamData = APITeam;
-
-export type TeamYearData = {
-  year: APIYear;
-  team_year: APITeamYear;
-  team_events: APITeamEvent[];
-  matches: APIMatch[];
-  team_matches: APITeamMatch[];
-};
-
 export type SummaryRow = {
   team: number;
   year: number;
@@ -31,5 +12,3 @@ export type SummaryRow = {
   state_epa_rank?: number;
   state_epa_percentile?: number;
 };
-
-export type TeamYearsData = SummaryRow[];

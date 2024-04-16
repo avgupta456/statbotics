@@ -1,4 +1,12 @@
-import { APIEvent, APITeamYear, APIYear, emptyAPIYear } from "./api";
+import {
+  APIEvent,
+  APIMatch,
+  APITeamEvent,
+  APITeamMatch,
+  APITeamYear,
+  APIYear,
+  emptyAPIYear,
+} from "./api";
 
 export type TeamYearsData = {
   year: APIYear;
@@ -18,4 +26,12 @@ export type EventsData = {
 export const emptyEventData: EventsData = {
   year: emptyAPIYear,
   events: [],
+};
+
+export type TeamYearData = {
+  year: APIYear;
+  team_year: APITeamYear;
+  team_events: APITeamEvent[];
+  matches: APIMatch[];
+  team_matches: APITeamMatch[];
 };

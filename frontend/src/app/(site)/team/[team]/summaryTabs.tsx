@@ -2,18 +2,17 @@
 
 import React, { useMemo } from "react";
 
+import { APITeam } from "../../../../types/api";
 import TabsSection from "../../shared/tabs";
 import SummaryOverviewSection from "./summaryOverview";
-import { TeamData, TeamYearsData } from "./types";
+import { SummaryRow } from "./types";
 
 const SummaryTabs = ({
-  teamNum,
   teamData,
   teamYearsData,
 }: {
-  teamNum: number;
-  teamData: TeamData | undefined;
-  teamYearsData: TeamYearsData | undefined;
+  teamData: APITeam | undefined;
+  teamYearsData: SummaryRow[] | undefined;
 }) => {
   const MemoizedSummaryOverviewSection = useMemo(
     () => <SummaryOverviewSection teamData={teamData} teamYearsData={teamYearsData} />,

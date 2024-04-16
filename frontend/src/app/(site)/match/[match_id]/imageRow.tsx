@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { getMediaUrls } from "../../../../utils";
-import { Data } from "./types";
 
 const ImageRow = ({ data }: { data: Data }) => {
   const [media, setMedia] = useState<string[] | null>(null);

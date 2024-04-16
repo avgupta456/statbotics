@@ -73,27 +73,27 @@ const PageTeamInsightsTable = ({
     });
 
   const yearInsightsData: TeamYearInsights[] = filterData(allTeamYears, actualFilters)
-    .filter((teamYear: APITeamYear) => showProjections || teamYear.record.season.count > 0)
+    .filter((teamYear: APITeamYear) => showProjections || teamYear?.record?.season?.count > 0)
     .map((teamYear: APITeamYear) => {
-      const wins = teamYear.record.season.wins ?? 0;
-      const losses = teamYear.record.season.losses ?? 0;
-      const ties = teamYear.record.season.ties ?? 0;
+      const wins = teamYear?.record?.season?.wins ?? 0;
+      const losses = teamYear?.record?.season?.losses ?? 0;
+      const ties = teamYear?.record?.season?.ties ?? 0;
 
       return {
-        num: teamYear.team ?? "-1",
-        team: teamYear.name ? truncate(teamYear.name, 30) : "N/A",
-        epa_rank: teamYear.epa.ranks.total.rank ?? -1,
-        total_epa: round(teamYear.epa.breakdown.total_points.mean, 1) ?? 0,
-        norm_epa: round(teamYear.epa.norm, 0) ?? 0,
-        unitless_epa: round(teamYear.epa.unitless, 0) ?? 0,
-        auto_epa: round(teamYear.epa.breakdown.auto_points.mean, 1) ?? "N/A",
-        teleop_epa: round(teamYear.epa.breakdown.teleop_points.mean, 1) ?? "N/A",
-        endgame_epa: round(teamYear.epa.breakdown.endgame_points.mean, 1) ?? "N/A",
-        rp_1_epa: round(teamYear.epa.breakdown[RP_KEYS[year][0]].mean, 2) ?? "N/A",
-        rp_2_epa: round(teamYear.epa.breakdown[RP_KEYS[year][1]].mean, 2) ?? "N/A",
-        next_event_key: teamYear.competing.next_event_key ?? "N/A",
-        next_event_name: teamYear.competing.next_event_name ?? "N/A",
-        next_event_week: teamYear.competing.next_event_week ?? "N/A",
+        num: teamYear?.team ?? "-1",
+        team: teamYear?.name ? truncate(teamYear?.name, 30) : "N/A",
+        epa_rank: teamYear?.epa?.ranks?.total?.rank ?? -1,
+        total_epa: round(teamYear?.epa?.breakdown?.total_points?.mean, 1) ?? 0,
+        norm_epa: round(teamYear?.epa?.norm, 0) ?? 0,
+        unitless_epa: round(teamYear?.epa?.unitless, 0) ?? 0,
+        auto_epa: round(teamYear?.epa?.breakdown?.auto_points?.mean, 1) ?? "N/A",
+        teleop_epa: round(teamYear?.epa?.breakdown?.teleop_points?.mean, 1) ?? "N/A",
+        endgame_epa: round(teamYear?.epa?.breakdown?.endgame_points?.mean, 1) ?? "N/A",
+        rp_1_epa: round(teamYear?.epa?.breakdown[RP_KEYS[year][0]]?.mean, 2) ?? "N/A",
+        rp_2_epa: round(teamYear?.epa?.breakdown[RP_KEYS[year][1]]?.mean, 2) ?? "N/A",
+        next_event_key: teamYear?.competing?.next_event_key ?? "N/A",
+        next_event_name: teamYear?.competing?.next_event_name ?? "N/A",
+        next_event_week: teamYear?.competing?.next_event_week ?? "N/A",
         record: `${wins}-${losses}-${ties}`,
         winrate: ((wins + ties / 2) / Math.max(wins + losses + ties, 1)).toFixed(3),
       };

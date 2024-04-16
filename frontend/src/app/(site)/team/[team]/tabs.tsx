@@ -2,10 +2,11 @@
 
 import React, { useMemo } from "react";
 
+import { APITeam } from "../../../../types/api";
+import { TeamYearData } from "../../../../types/data";
 import TabsSection from "../../shared/tabs";
 import FigureSection from "./figures";
 import OverviewSection from "./overview";
-import { TeamData, TeamYearData } from "./types";
 
 const Tabs = ({
   teamNum,
@@ -14,9 +15,9 @@ const Tabs = ({
   teamYearData,
   fallbackTeamYearData,
 }: {
-  teamNum: number;
+  teamNum: string;
   year: number;
-  teamData: TeamData | undefined;
+  teamData: APITeam | undefined;
   teamYearData: TeamYearData | undefined;
   fallbackTeamYearData: TeamYearData | undefined;
 }) => {
@@ -29,15 +30,10 @@ const Tabs = ({
   );
 
   const MemoizedFigureSection = useMemo(() => {
-    const matches = teamYearData?.team_matches || fallbackTeamYearData?.team_matches || [];
-    return (
-      <FigureSection
-        teamNum={teamNum}
-        year={year}
-        // creates smooth transition
-        matches={matches}
-      />
-    );
+    // creates smooth transition
+    const teamYear = teamYearData?.team_year ?? fallbackTeamYearData?.team_year;
+    const matches = teamYearData?.team_matches ?? fallbackTeamYearData?.team_matches ?? [];
+    return <FigureSection teamNum={teamNum} year={year} teamYear={teamYear} matches={matches} />;
   }, [teamNum, year, teamYearData, fallbackTeamYearData]);
 
   const tabs = [
