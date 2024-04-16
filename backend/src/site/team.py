@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
@@ -110,12 +110,13 @@ async def read_team_year(
     team_matches = sorted(team_matches, key=lambda x: x.time)
     matches = sorted(matches, key=lambda x: x.time)
 
-    event_time = {e.event: e.time for e in team_events}
+    event_times: Dict[str, Optional[int]] = {e.event: None for e in team_events}
     for m in matches:
-        if m.event in event_time and m.time < event_time[m.event]:
-            event_time[m.event] = m.time
+        event_time = event_times.get(m.event, None)
+        if event_time is None or m.time < event_time:
+            event_times[m.event] = m.time
 
-    team_events = sorted(team_events, key=lambda x: (x.week, event_time[x.event]))
+    team_events = sorted(team_events, key=lambda x: (x.week, event_times[x.event]))
 
     out = {
         "year": year_obj.to_dict(),

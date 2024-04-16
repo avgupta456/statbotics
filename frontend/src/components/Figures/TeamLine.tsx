@@ -49,12 +49,16 @@ const TeamLineChart = ({
           {
             matchAccessor: (teamMatch: APITeamMatch) =>
               teamMatch?.epa?.breakdown?.[RP_KEYS[year][0]],
+            yearAccessor: (teamYear: APITeamYear) =>
+              teamYear?.epa?.breakdown?.[RP_KEYS[year][0]]?.mean,
             value: "rp_1_epa",
             label: `${RP_NAMES[year][0]} EPA`,
           },
           {
             matchAccessor: (teamMatch: APITeamMatch) =>
               teamMatch?.epa?.breakdown?.[RP_KEYS[year][1]],
+            yearAccessor: (teamYear: APITeamYear) =>
+              teamYear?.epa?.breakdown?.[RP_KEYS[year][1]]?.mean,
             value: "rp_2_epa",
             label: `${RP_NAMES[year][1]} EPA`,
           },
