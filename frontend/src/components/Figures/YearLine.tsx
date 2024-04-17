@@ -19,7 +19,7 @@ const YearLineChart = ({
   teams,
 }: {
   year: number;
-  teamYears?: APITeamYear[];
+  teamYears: APITeamYear[];
   teams: any;
 }) => {
   const yAxisOptions = getYAxisOptions(year);

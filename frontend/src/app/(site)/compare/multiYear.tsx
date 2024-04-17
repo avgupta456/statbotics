@@ -4,38 +4,26 @@ import React, { useState } from "react";
 import { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
+import { getTeam, getTeamYears } from "../../../api/team";
 import LineChart from "../../../components/Figures/Line";
 import { multiSelectStyles } from "../../../components/multiSelect";
-import { BACKEND_URL, CURR_YEAR } from "../../../constants";
-import { log, round } from "../../../utils";
+import { CURR_YEAR } from "../../../constants";
+import { ShortTeam } from "../../../types/data";
+import { round } from "../../../utils";
 
-const MultiYear = ({ teams }: { teams: { [key: string]: any }[] }) => {
+const MultiYear = ({ teams }: { teams: ShortTeam[] }) => {
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
-  const [allData, setAllData] = useState<{ [key: number]: any }>({});
+  const [allData, setAllData] = useState<{ [key: number]: any[] }>({});
 
-  const teamOptions = teams?.map((team: any) => ({
-    value: team.num,
-    label: `${team.num} | ${team.team}`,
+  const teamOptions = teams?.map((team) => ({
+    value: team.team,
+    label: `${team.team} | ${team.name}`,
   }));
 
-  const fetchData = async (teamNum: number) => {
-    const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/team/${teamNum}/years`, {
-      next: { revalidate: 60 },
-    });
-    log(`/team/${teamNum}/years took ${round(performance.now() - start, 0)} ms`);
+  const fetchData = async (teamNum: string) => {
+    const data = await getTeam(teamNum);
 
-    if (!res.ok) {
-      return undefined;
-    }
-
-    const data = await res.json();
-    if (!data) {
-      log("No data found for team " + teamNum);
-      return undefined;
-    }
-
-    const sortedData: any[] = data.data
+    const sortedData: any[] = data.team_years
       .filter((x) => x.year <= CURR_YEAR)
       .sort((a: any, b: any) => a.year - b.year);
 

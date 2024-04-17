@@ -51,3 +51,14 @@ export type MatchData = {
   match: APIMatch;
   team_matches: APITeamMatch[];
 };
+
+export type ShortTeam = {
+  team: string;
+  name: string;
+  active: boolean;
+};
+
+export type ShortEvent = {
+  key: string;
+  name: string;
+};

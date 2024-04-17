@@ -9,72 +9,34 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { getAllEvents, getAllTeams } from "../api/header";
 import { Option } from "../components/multiSelect";
-import { BACKEND_URL } from "../constants";
-import { classnames, log, round } from "../utils";
-import { getWithExpiry, setWithExpiry } from "./localStorage";
+import { ShortEvent, ShortTeam } from "../types/data";
+import { classnames } from "../utils";
 
 const loaderProp = ({ src }) => {
   return src;
 };
-
-async function getTeamData() {
-  const cacheData = getWithExpiry("full_team_list");
-  if (cacheData && cacheData?.length > 1000) {
-    log("Used Local Storage: Full Team List");
-    return cacheData;
-  }
-
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/teams/all`, { next: { revalidate: 60 } });
-  log(`/teams/all took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = (await res.json())?.data;
-  setWithExpiry("full_team_list", data, 60 * 60 * 24 * 7); // 1 week expiry
-  return data;
-}
-
-async function getEventData() {
-  const cacheData = getWithExpiry("full_event_list");
-  if (cacheData && cacheData?.length > 1000) {
-    log("Used Local Storage: Full Event List");
-    return cacheData;
-  }
-
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/events/all`, { next: { revalidate: 60 } });
-  log(`events/all took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = (await res.json())?.data;
-  setWithExpiry("full_event_list", data, 60 * 60 * 24 * 7); // 1 week expiry
-  return data;
-}
 
 const Navbar = () => {
   const router = useRouter();
 
   const [toggle, setToggle] = useState(false);
 
-  const [teams, setTeams] = useState([]);
-  const [events, setEvents] = useState([]);
+  const [teams, setTeams] = useState<ShortTeam[]>([]);
+  const [events, setEvents] = useState<ShortEvent[]>([]);
 
   useEffect(() => {
-    getTeamData().then((data) => setTeams(data));
+    getAllTeams().then((data) => setTeams(data));
   }, []);
 
   useEffect(() => {
-    getEventData().then((data) => setEvents(data));
+    getAllEvents().then((data) => setEvents(data));
   }, []);
 
-  const teamOptions = teams?.map((team: any) => ({
-    value: `/team/${team.num}`,
-    label: `${team.num} | ${team.team}`,
+  const teamOptions = teams?.map((team: ShortTeam) => ({
+    value: `/team/${team.team}`,
+    label: `${team.team} | ${team.name}`,
   }));
 
   const eventOptions = events
