@@ -60,7 +60,7 @@ const ScatterPlot = ({
           return (
             <div
               className="bg-white rounded shadow p-2"
-              style={{ color: getColor(Number(node["data"]["id"])) }}
+              style={{ color: getColor(node["data"]["id"]) }}
             >
               <div className="text-sm font-bold">{`Team ${node["data"]["id"]}`}</div>
               <div className="text-xs mb-1">{`Rank ${node["data"]["x"]}`}</div>
@@ -70,7 +70,7 @@ const ScatterPlot = ({
             </div>
           );
         }}
-        colors={(datum) => getColor(Number(datum.serieId))}
+        colors={(datum) => getColor(datum.serieId.toString())}
         blendMode="multiply"
         axisTop={null}
         axisRight={null}

@@ -44,6 +44,9 @@ async def read_events(
         "year": year_obj.to_dict(),
         "events": [x.to_dict() for x in events if x.status != EventStatus.INVALID],
     }
+
+    events = sorted(events, key=lambda x: x.time)
+
     return compress(data)
 
 
@@ -70,6 +73,9 @@ async def read_event(
         event=event_id, offseason=event.offseason, no_cache=no_cache
     )
 
+    team_matches = sorted(team_matches, key=lambda x: x.time)
+    matches = sorted(matches, key=lambda x: x.time)
+
     out = {
         "event": event.to_dict(),
         "matches": [x.to_dict() for x in matches],
@@ -89,5 +95,5 @@ async def read_team_matches(
     team_matches: List[TeamMatch] = await get_team_matches_cached(
         event=event_id, team=team, no_cache=no_cache
     )
-    out = [x.to_dict() for x in team_matches]
+    out = [x.to_dict() for x in sorted(team_matches, key=lambda x: x.time)]
     return compress(out)
