@@ -272,6 +272,7 @@ export type APIMatch = {
   comp_level: string;
   set_number: number;
   match_number: number;
+  match_name: string;
   time: number;
   predicted_time: number;
   status: string;

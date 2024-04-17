@@ -10,6 +10,7 @@ from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS, values_callable
 from src.types.enums import CompLevel, MatchStatus, MatchWinner
+from src.utils.utils import get_match_name
 
 
 class MatchORM(Base, ModelORM):
@@ -251,6 +252,7 @@ class Match(_Match, Model):
             "comp_level": self.comp_level,
             "set_number": self.set_number,
             "match_number": self.match_number,
+            "match_name": get_match_name(self.key),
             "time": self.time,
             "predicted_time": self.predicted_time,
             "status": self.status,

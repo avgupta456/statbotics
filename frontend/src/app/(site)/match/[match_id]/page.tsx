@@ -65,7 +65,7 @@ const Page = ({ params }: { params: { match_id: string } }) => {
             <BsArrowLeft className="text-3xl lg:text-4xl text-white mr-16" />
           )}
           <div className="flex flex-row flex-wrap items-end justify-center">
-            <p className="text-3xl lg:text-4xl">{data.match.match_number}</p>
+            <p className="text-3xl lg:text-4xl">{data.match.match_name}</p>
             <Link href={`/event/${data.match.event}`} className="lg:text-2xl ml-2 text_link">
               {truncatedEventName}
             </Link>
