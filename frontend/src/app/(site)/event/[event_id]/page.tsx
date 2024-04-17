@@ -19,24 +19,19 @@ export const revalidate = 0;
 const Page = ({ params }: { params: { event_id: string } }) => {
   const { event_id } = params;
 
-  const hypothetical = event_id.length > 10;
   const [data, setData] = useState<EventData | undefined>();
 
   useEffect(() => {
-    const getEventData = async (event_id: string, hypothetical: boolean) => {
+    const getEventData = async (event_id: string) => {
       if (data) {
         return;
       }
 
-      if (hypothetical) {
-        // setData(await getHypotheticalData(event_id));
-      } else {
-        setData(await getEvent(event_id));
-      }
+      setData(await getEvent(event_id));
     };
 
-    getEventData(event_id, hypothetical);
-  }, [event_id, hypothetical, data]);
+    getEventData(event_id);
+  }, [event_id, data]);
 
   useEffect(() => {
     document.title = `${event_id} - Statbotics`;
@@ -56,16 +51,15 @@ const Page = ({ params }: { params: { event_id: string } }) => {
           {data.year.year} {truncatedEventName}
         </p>
         <div className="flex">
-          {!hypothetical && (
-            <Link
-              href={"https://www.thebluealliance.com/event/" + event_id}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Image src="/tba.png" alt="TBA" height={28} width={28} />
-            </Link>
-          )}
-          {status === "Ongoing" && !hypothetical && (
+          <Link
+            href={"https://www.thebluealliance.com/event/" + event_id}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <Image src="/tba.png" alt="TBA" height={28} width={28} />
+          </Link>
+
+          {status === "Ongoing" && (
             <Link
               href={"https://www.thebluealliance.com/gameday/" + event_id}
               rel="noopener noreferrer"
