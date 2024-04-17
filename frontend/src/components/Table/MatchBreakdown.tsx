@@ -30,7 +30,7 @@ const columnHelper = createColumnHelper<Component>();
 
 // Copied from ./shared.tsx with minor changes
 
-const TeamLink = ({ team, num, year }: { team: string | number; num: number; year: number }) => {
+const TeamLink = ({ team, num, year }: { team: string | number; num: string; year: number }) => {
   return (
     <div className="w-24 h-full flex justify-center items-center">
       <Link href={`/team/${num}/${year}`} className="text_link">
@@ -85,7 +85,7 @@ const MatchBreakdown = ({
   stats,
 }: {
   data: Component[];
-  teams: number[];
+  teams: string[];
   stats: APIYear;
 }) => {
   const columns = useMemo<any>(

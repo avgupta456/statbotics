@@ -4,13 +4,14 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 
+import { MatchData } from "../../../../types/data";
 import { getMediaUrls } from "../../../../utils";
 
-const ImageRow = ({ data }: { data: Data }) => {
+const ImageRow = ({ data }: { data: MatchData }) => {
   const [media, setMedia] = useState<string[] | null>(null);
 
-  const reverseBlue = [...data.match.blue].reverse();
-  const teams = data.match.red.concat(reverseBlue);
+  const reverseBlue = [...data.match.alliances.blue.team_keys].reverse();
+  const teams = data.match.alliances.red.team_keys.concat(reverseBlue);
   const year = data.year.year;
 
   useEffect(() => {

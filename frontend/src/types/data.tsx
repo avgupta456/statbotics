@@ -35,3 +35,11 @@ export type TeamYearData = {
   matches: APIMatch[];
   team_matches: APITeamMatch[];
 };
+
+export type MatchData = {
+  year: APIYear;
+  event: APIEvent;
+  team_events: APITeamEvent[];
+  match: APIMatch;
+  team_matches: APITeamMatch[];
+};

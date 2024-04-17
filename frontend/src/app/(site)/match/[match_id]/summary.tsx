@@ -1,18 +1,18 @@
 import React from "react";
 
+import { MatchData } from "../../../../types/data";
 import { classnames } from "../../../../utils";
-import { Data } from "./types";
 
-const Summary = ({ data }: { data: Data }) => {
-  const winProb = data.match.epa_win_prob;
+const Summary = ({ data }: { data: MatchData }) => {
+  const winProb = data.match.pred.red_win_prob;
   const redWinProb = winProb * 100;
   const blueWinProb = (1 - winProb) * 100;
 
-  const redPred = data.match.red_epa_pred;
-  const bluePred = data.match.blue_epa_pred;
+  const redPred = data.match.pred.red_score;
+  const bluePred = data.match.pred.blue_score;
 
-  const redScore = data.match.red_score;
-  const blueScore = data.match.blue_score;
+  const redScore = data.match.result.red_score;
+  const blueScore = data.match.result.blue_score;
 
   const completed = data.match.status === "Completed";
 
@@ -35,10 +35,10 @@ const Summary = ({ data }: { data: Data }) => {
             <p
               className={classnames(
                 "ml-2",
-                data.match.pred_winner === "red" ? "text-red-500" : "text-blue-500"
+                data.match.pred.winner === "red" ? "text-red-500" : "text-blue-500"
               )}
             >
-              {data.match.pred_winner.toUpperCase()}
+              {data.match.pred.winner.toUpperCase()}
             </p>
           </div>
         </div>
@@ -71,10 +71,14 @@ const Summary = ({ data }: { data: Data }) => {
             <p
               className={classnames(
                 "ml-2",
-                completed ? (data.match.winner === "red" ? "text-red-500" : "text-blue-500") : ""
+                completed
+                  ? data.match.result.winner === "red"
+                    ? "text-red-500"
+                    : "text-blue-500"
+                  : ""
               )}
             >
-              {completed ? data.match.winner.toUpperCase() : "N/A"}
+              {completed ? data.match.result.winner.toUpperCase() : "N/A"}
             </p>
           </div>
         </div>
