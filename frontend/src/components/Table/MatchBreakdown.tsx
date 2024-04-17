@@ -6,7 +6,6 @@ import Link from "next/link";
 
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import { RP_KEYS } from "../../constants";
 import { APIYear, EPAPercentiles } from "../../types/api";
 import { classnames, truncate } from "../../utils";
 import Table from "./Table";
@@ -60,9 +59,9 @@ const formatCell = (
         : row === "Endgame"
         ? stats.percentiles.endgame_points
         : row === "RP1"
-        ? stats.percentiles[RP_KEYS[stats.year][0]]
+        ? stats.percentiles.rp_1
         : row === "RP2"
-        ? stats.percentiles[RP_KEYS[stats.year][1]]
+        ? stats.percentiles.rp_2
         : stats.percentiles.total_points;
 
     if (row.includes("RP")) {

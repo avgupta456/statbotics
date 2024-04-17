@@ -5,44 +5,54 @@ import EventLineChart from "../../../../components/Figures/EventLine";
 import ScatterPlot from "../../../../components/Figures/Scatter";
 import { ColorsContext } from "../../../../components/Figures/colors";
 import { MAX_TEAM } from "../../../../constants";
-import { Data } from "./types";
+import { EventData } from "../../../../types/data";
 
-const FiguresSection = ({ year, eventId, data }: { year: number; eventId: string; data: Data }) => {
+const FiguresSection = ({
+  year,
+  eventId,
+  data,
+}: {
+  year: number;
+  eventId: string;
+  data: EventData;
+}) => {
   const [showColors, setShowColors] = useState(false);
   const { isLoading: loadingColors } = useContext(ColorsContext);
 
   const barData = data.team_events
     .map((teamEvent) => ({
-      team: teamEvent.num,
-      "Total EPA": teamEvent.total_epa,
-      "Auto EPA": teamEvent.auto_epa,
-      "Teleop EPA": teamEvent.teleop_epa,
-      "Endgame EPA": teamEvent.endgame_epa,
-      sortEpa: teamEvent.total_epa,
+      team: teamEvent.team,
+      "Total EPA": teamEvent?.epa.breakdown?.total_points?.mean ?? 0,
+      "Auto EPA": teamEvent?.epa.breakdown?.auto_points?.mean ?? 0,
+      "Teleop EPA": teamEvent?.epa.breakdown?.teleop_points?.mean ?? 0,
+      "Endgame EPA": teamEvent?.epa.breakdown?.endgame_points?.mean ?? 0,
+      sortEpa: teamEvent?.epa.breakdown?.total_points?.mean ?? 0,
     }))
     .sort((a, b) => b.sortEpa - a.sortEpa)
     .slice(0, 16);
 
-  const lineData = data.team_events
-    .filter((teamEvent) => teamEvent.num <= MAX_TEAM) // Filter out offseason teams
+  const lineData = data.team_events // Filter out offseason teams
+    .filter((teamEvent) => parseInt(teamEvent.team) <= MAX_TEAM)
     .map((teamEvent) => ({
-      value: teamEvent.num,
-      label: `${teamEvent.num} | ${teamEvent.team}`,
+      value: teamEvent.team,
+      label: `${teamEvent.team} | ${teamEvent.team}`,
     }))
-    .sort((a, b) => a.value - b.value);
+    .sort((a, b) => (a.value > b.value ? 1 : -1));
 
-  const scatterData = data.team_events
-    .filter((teamEvent) => teamEvent.num <= MAX_TEAM && teamEvent.rank > 0) // Filter out offseason teams
+  const scatterData = data.team_events // Filter out offseason teams
+    .filter((teamEvent) => parseInt(teamEvent.team) <= MAX_TEAM && teamEvent.record.qual.rank > 0)
     .map((teamEvent) => ({
-      id: teamEvent.num.toString(),
+      id: teamEvent.team,
       data: [
         {
-          id: teamEvent.num.toString(),
-          x: teamEvent.rank,
-          y: teamEvent.total_epa,
+          id: teamEvent.team,
+          x: teamEvent.record.qual.rank,
+          y: teamEvent.epa.breakdown.total_points,
         },
       ],
     }));
+
+  console.log(scatterData);
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">

@@ -18,6 +18,14 @@ export const emptyTeamYearsData: TeamYearsData = {
   team_years: [],
 };
 
+export type TeamYearData = {
+  year: APIYear;
+  team_year: APITeamYear;
+  team_events: APITeamEvent[];
+  matches: APIMatch[];
+  team_matches: APITeamMatch[];
+};
+
 export type EventsData = {
   year: APIYear;
   events: APIEvent[];
@@ -28,12 +36,12 @@ export const emptyEventData: EventsData = {
   events: [],
 };
 
-export type TeamYearData = {
-  year: APIYear;
-  team_year: APITeamYear;
-  team_events: APITeamEvent[];
+export type EventData = {
+  event: APIEvent;
   matches: APIMatch[];
+  team_events: APITeamEvent[];
   team_matches: APITeamMatch[];
+  year: APIYear;
 };
 
 export type MatchData = {

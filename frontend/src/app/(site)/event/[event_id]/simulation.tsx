@@ -13,8 +13,8 @@ import {
   formatProbCell,
 } from "../../../../components/Table/shared";
 import { APITeamEvent } from "../../../../types/api";
+import { EventData } from "../../../../types/data";
 import { round } from "../../../../utils";
-import { Data } from "./types";
 
 type SimResults = {
   index: number;
@@ -37,9 +37,9 @@ type SimulationRow = {
 const columnHelper = createColumnHelper<SimulationRow>();
 const detailedColumnHelper = createColumnHelper<any>();
 
-const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) => {
+const SimulationSection = ({ eventId, data }: { eventId: string; data: EventData }) => {
   const scheduleReleased = data.matches.length > 0;
-  const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.playoff).length;
+  const qualsN = data.matches.filter((m) => m.status === "Completed" && !m.elim).length;
   const eventOngoing = data.event.status === "Ongoing";
 
   const [index, setIndex] = useState(eventOngoing ? qualsN : -1);
@@ -132,7 +132,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
   }
 
   const simulationData = data.team_events
-    .sort((a, b) => rankMean[a.num] - rankMean[b.num])
+    .sort((a, b) => rankMean[a.team] - rankMean[b.team])
     .map((teamEvent: APITeamEvent, i) => ({
       rank: i + 1,
       num: teamEvent.team,
@@ -146,21 +146,21 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
     }));
 
   const detailedSimData = data.team_events
-    .sort((a, b) => rankMean[a.num] - rankMean[b.num])
+    .sort((a, b) => rankMean[a.team] - rankMean[b.team])
     .map((teamEvent) => {
       const probsObj = {};
       for (let i = 0; i < N; i++) {
-        probsObj[`prob${i + 1}`] = rankProbs[teamEvent.num]?.[i]
-          ? round(rankProbs[teamEvent.num]?.[i], 2)
+        probsObj[`prob${i + 1}`] = rankProbs[teamEvent.team]?.[i]
+          ? round(rankProbs[teamEvent.team]?.[i], 2)
           : "";
       }
 
       return {
-        num: teamEvent.num,
-        team: teamEvent.team,
-        epa: round(teamEvent.total_epa ?? 0, 1),
-        rankMean: rankMean[teamEvent.num] ? round(rankMean[teamEvent.num], 2) : "",
-        RPMean: RPMean[teamEvent.num] ? round(RPMean[teamEvent.num], 2) : "",
+        num: teamEvent.team,
+        team: teamEvent.team_name,
+        epa: round(teamEvent.epa.breakdown.total_points.mean ?? 0, 1),
+        rankMean: rankMean[teamEvent.team] ? round(rankMean[teamEvent.team], 2) : "",
+        RPMean: RPMean[teamEvent.team] ? round(RPMean[teamEvent.team], 2) : "",
         ...probsObj,
       };
     });
@@ -180,7 +180,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         header: "Team",
       }),
       columnHelper.accessor("epa", {
-        cell: (info) => formatEPACell(data.year.total_stats, info, false),
+        cell: (info) => formatEPACell(data.year.percentiles.total_points, info, false),
         header: "EPA",
       }),
       columnHelper.accessor("rankMean", {
@@ -218,7 +218,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: Data }) =
         header: "Team",
       }),
       detailedColumnHelper.accessor("epa", {
-        cell: (info) => formatEPACell(data.year.total_stats, info, false),
+        cell: (info) => formatEPACell(data.year.percentiles.total_points, info, false),
         header: "EPA",
       }),
       detailedColumnHelper.accessor("rankMean", {

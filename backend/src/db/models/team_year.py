@@ -220,7 +220,9 @@ class TeamYear(_TeamYear, Model):
                 "mean": self.epa,
                 "sd": self.epa_sd,
             }
-            for key, name in key_to_name[self.year].items():
+            pairs = list(key_to_name[self.year].items())
+            pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
+            for key, name in pairs:
                 clean["epa"]["breakdown"][name] = {
                     "mean": getattr(self, f"{key}_epa"),
                     "sd": getattr(self, f"{key}_epa_sd"),

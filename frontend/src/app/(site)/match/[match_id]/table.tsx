@@ -2,11 +2,8 @@ import React from "react";
 
 import MatchBreakdown from "../../../../components/Table/MatchBreakdown";
 import { TableKey } from "../../../../components/Table/shared";
-import { RP_KEYS } from "../../../../constants";
 import { MatchData } from "../../../../types/data";
 import { round } from "../../../../utils";
-
-const RPSigmoid = (x: number) => 1 / (1 + Math.exp(-4 * (x - 0.5)));
 
 const PageMatchTable = ({ data }: { data: MatchData }) => {
   const red1 = data.match.alliances.red.team_keys[0];
@@ -38,13 +35,10 @@ const PageMatchTable = ({ data }: { data: MatchData }) => {
   const redPredTotal = data.match.pred.red_score;
   const bluePredTotal = data.match.pred.blue_score;
 
-  const rp1Key = RP_KEYS[data.year.year][0];
-  const rp2Key = RP_KEYS[data.year.year][1];
-
-  const redPredRP1 = data.match.pred[`red_${rp1Key}`];
-  const bluePredRP1 = data.match.pred[`blue_${rp1Key}`];
-  const redPredRP2 = data.match.pred[`red_${rp2Key}`];
-  const bluePredRP2 = data.match.pred[`blue_${rp2Key}`];
+  const redPredRP1 = data.match.pred.red_rp_1;
+  const bluePredRP1 = data.match.pred.blue_rp_1;
+  const redPredRP2 = data.match.pred.red_rp_2;
+  const bluePredRP2 = data.match.pred.blue_rp_2;
 
   // Used for upcoming events
 
@@ -149,30 +143,30 @@ const PageMatchTable = ({ data }: { data: MatchData }) => {
 
   const rp1Component = {
     name: "RP1",
-    red1: completed ? red1Data[rp1Key] : red1EventData[rp1Key].mean,
-    red2: completed ? red2Data[rp1Key] : red2EventData[rp1Key].mean,
-    red3: completed ? red3Data[rp1Key] : red3EventData[rp1Key].mean,
+    red1: completed ? red1Data.rp_1 : red1EventData.rp_1.mean,
+    red2: completed ? red2Data.rp_1 : red2EventData.rp_1.mean,
+    red3: completed ? red3Data.rp_1 : red3EventData.rp_1.mean,
     redTotal: redPredRP1,
-    redActual: completed ? data.match.result[`red_${rp1Key}`] : null,
-    blue1: completed ? blue1Data[rp1Key] : blue1EventData[rp1Key].mean,
-    blue2: completed ? blue2Data[rp1Key] : blue2EventData[rp1Key].mean,
-    blue3: completed ? blue3Data[rp1Key] : blue3EventData[rp1Key].mean,
+    redActual: completed ? data.match.result.red_rp_1 : null,
+    blue1: completed ? blue1Data.rp_1 : blue1EventData.rp_1.mean,
+    blue2: completed ? blue2Data.rp_1 : blue2EventData.rp_1.mean,
+    blue3: completed ? blue3Data.rp_1 : blue3EventData.rp_1.mean,
     blueTotal: bluePredRP1,
-    blueActual: completed ? data.match.result[`blue_${rp1Key}`] : null,
+    blueActual: completed ? data.match.result.blue_rp_1 : null,
   };
 
   const rp2Component = {
     name: "RP2",
-    red1: completed ? red1Data[rp2Key] : red1EventData[rp2Key].mean,
-    red2: completed ? red2Data[rp2Key] : red2EventData[rp2Key].mean,
-    red3: completed ? red3Data[rp2Key] : red3EventData[rp2Key].mean,
+    red1: completed ? red1Data.rp_2 : red1EventData.rp_2.mean,
+    red2: completed ? red2Data.rp_2 : red2EventData.rp_2.mean,
+    red3: completed ? red3Data.rp_2 : red3EventData.rp_2.mean,
     redTotal: redPredRP2,
-    redActual: completed ? data.match.result[`red_${rp1Key}`] : null,
-    blue1: completed ? blue1Data[rp2Key] : blue1EventData[rp2Key].mean,
-    blue2: completed ? blue2Data[rp2Key] : blue2EventData[rp2Key].mean,
-    blue3: completed ? blue3Data[rp2Key] : blue3EventData[rp2Key].mean,
+    redActual: completed ? data.match.result.red_rp_2 : null,
+    blue1: completed ? blue1Data.rp_2 : blue1EventData.rp_2.mean,
+    blue2: completed ? blue2Data.rp_2 : blue2EventData.rp_2.mean,
+    blue3: completed ? blue3Data.rp_2 : blue3EventData.rp_2.mean,
     blueTotal: bluePredRP2,
-    blueActual: completed ? data.match.result[`blue_${rp2Key}`] : null,
+    blueActual: completed ? data.match.result.blue_rp_2 : null,
   };
 
   const totalComponent = {

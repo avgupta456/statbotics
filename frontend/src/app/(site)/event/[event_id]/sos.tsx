@@ -13,8 +13,8 @@ import {
   formatEPACell,
   formatPercentileCell,
 } from "../../../../components/Table/shared";
+import { EventData } from "../../../../types/data";
 import { round } from "../../../../utils";
-import { Data } from "./types";
 
 type SosDatum = {
   preSimAvgRank: number;
@@ -51,7 +51,7 @@ type SosRow = {
 const columnHelper = createColumnHelper<SosRow>();
 const detailedColumnHelper = createColumnHelper<any>();
 
-const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
+const SosSection = ({ eventId, data }: { eventId: string; data: EventData }) => {
   const [simCount, setSimCount] = useState(1000);
   const [refresh, setRefresh] = useState(0);
 
@@ -123,25 +123,28 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
   const year = data.event.year;
 
   const sosData = data.team_events
-    .sort((a, b) => a.rank - b.rank)
+    .sort((a, b) => a.record.qual.rank - b.record.qual.rank)
     .map((teamEvent, i) => ({
       rank: i + 1,
-      num: teamEvent.num,
-      team: teamEvent.team,
-      epa: round(preEvent ? teamEvent.start_total_epa : teamEvent.total_epa, 1),
-      preSimAvgRank: preSimAvgRank[teamEvent.num],
-      simAvgRank: simAvgRank[teamEvent.num],
-      deltaRank: deltaRank[teamEvent.num],
-      rankPercentile: rankPercentile[teamEvent.num],
-      preSimAvgRP: preSimAvgRP[teamEvent.num],
-      simAvgRP: simAvgRP[teamEvent.num],
-      deltaRP: deltaRP[teamEvent.num],
-      rpPercentile: rpPercentile[teamEvent.num],
-      avgPartnerEPA: avgPartnerEPA[teamEvent.num],
-      avgOpponentEPA: avgOpponentEPA[teamEvent.num],
-      deltaEPA: deltaEPA[teamEvent.num],
-      epaPercentile: epaPercentile[teamEvent.num],
-      overallPercentile: overallPercentile[teamEvent.num],
+      num: teamEvent.team,
+      team: teamEvent.team_name,
+      epa: round(
+        preEvent ? teamEvent.epa.stats.start : teamEvent.epa.breakdown.total_points.mean,
+        1
+      ),
+      preSimAvgRank: preSimAvgRank[teamEvent.team],
+      simAvgRank: simAvgRank[teamEvent.team],
+      deltaRank: deltaRank[teamEvent.team],
+      rankPercentile: rankPercentile[teamEvent.team],
+      preSimAvgRP: preSimAvgRP[teamEvent.team],
+      simAvgRP: simAvgRP[teamEvent.team],
+      deltaRP: deltaRP[teamEvent.team],
+      rpPercentile: rpPercentile[teamEvent.team],
+      avgPartnerEPA: avgPartnerEPA[teamEvent.team],
+      avgOpponentEPA: avgOpponentEPA[teamEvent.team],
+      deltaEPA: deltaEPA[teamEvent.team],
+      epaPercentile: epaPercentile[teamEvent.team],
+      overallPercentile: overallPercentile[teamEvent.team],
     }));
 
   const columns = useMemo<any>(
@@ -159,7 +162,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         header: "Team",
       }),
       columnHelper.accessor("epa", {
-        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+        cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
         header: "EPA",
       }),
       columnHelper.accessor("rpPercentile", {
@@ -197,7 +200,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: Data }) => {
         header: "Team",
       }),
       detailedColumnHelper.accessor("epa", {
-        cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+        cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
         header: "EPA",
       }),
       detailedColumnHelper.accessor("preSimAvgRP", {

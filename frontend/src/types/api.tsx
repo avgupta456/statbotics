@@ -280,12 +280,12 @@ export type APIMatch = {
   alliances: {
     red: {
       team_keys: string[];
-      scurrogate_team_keys: string[];
+      surrogate_team_keys: string[];
       dq_team_keys: string[];
     };
     blue: {
       team_keys: string[];
-      scurrogate_team_keys: string[];
+      surrogate_team_keys: string[];
       dq_team_keys: string[];
     };
   };

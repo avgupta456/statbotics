@@ -8,7 +8,7 @@ import InsightsTable from "../../../components/Table/InsightsTable";
 import { EventLink, TeamLink, formatCell, formatEPACell } from "../../../components/Table/shared";
 import { filterData } from "../../../components/filter";
 import { FilterBar } from "../../../components/filterBar";
-import { CURR_YEAR, RP_KEYS, RP_NAMES } from "../../../constants";
+import { CURR_YEAR, RP_NAMES } from "../../../constants";
 import { APITeamYear } from "../../../types/api";
 import { TeamYearsData } from "../../../types/data";
 import { round, truncate } from "../../../utils";
@@ -89,8 +89,8 @@ const PageTeamInsightsTable = ({
         auto_epa: round(teamYear?.epa?.breakdown?.auto_points?.mean, 1) ?? "N/A",
         teleop_epa: round(teamYear?.epa?.breakdown?.teleop_points?.mean, 1) ?? "N/A",
         endgame_epa: round(teamYear?.epa?.breakdown?.endgame_points?.mean, 1) ?? "N/A",
-        rp_1_epa: round(teamYear?.epa?.breakdown[RP_KEYS[year][0]]?.mean, 2) ?? "N/A",
-        rp_2_epa: round(teamYear?.epa?.breakdown[RP_KEYS[year][1]]?.mean, 2) ?? "N/A",
+        rp_1_epa: round(teamYear?.epa?.breakdown?.rp_1?.mean, 2) ?? "N/A",
+        rp_2_epa: round(teamYear?.epa?.breakdown?.rp_2?.mean, 2) ?? "N/A",
         next_event_key: teamYear?.competing?.next_event_key ?? "N/A",
         next_event_name: teamYear?.competing?.next_event_name ?? "N/A",
         next_event_week: teamYear?.competing?.next_event_week ?? "N/A",
@@ -205,14 +205,12 @@ const PageTeamInsightsTable = ({
         }),
       year >= 2016 &&
         detailedColumnHelper.accessor("rp_1_epa", {
-          cell: (info) =>
-            formatEPACell(data.year.percentiles[RP_KEYS[year][0]], info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.rp_1, info, disableHighlight),
           header: RP_NAMES[year][0],
         }),
       year >= 2016 &&
         detailedColumnHelper.accessor("rp_2_epa", {
-          cell: (info) =>
-            formatEPACell(data.year.percentiles[RP_KEYS[year][1]], info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.rp_2, info, disableHighlight),
           header: RP_NAMES[year][1],
         }),
       year == CURR_YEAR &&

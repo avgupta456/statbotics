@@ -3,7 +3,7 @@ import { BsPlayCircle } from "react-icons/bs";
 
 import Link from "next/link";
 
-import { CORRECT_COLOR, INCORRECT_COLOR, RP_KEYS } from "../constants";
+import { CORRECT_COLOR, INCORRECT_COLOR } from "../constants";
 import { APIMatch } from "../types/api";
 import { classnames, round } from "../utils";
 import { compLevelFullNames, formatMatch } from "./utils";
@@ -150,8 +150,8 @@ const MatchRow = ({
           >
             {match.result.red_score}
           </span>
-          {year >= 2016 && match.result[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
-          {year >= 2016 && match.result[RP_KEYS[year][1]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result.rp_2 > 0.5 && <sup>●</sup>}
         </div>
         <div
           style={{ backgroundColor: lightBlue }}
@@ -168,8 +168,8 @@ const MatchRow = ({
           >
             {match.result.blue_score}
           </span>
-          {year >= 2016 && match.result[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
-          {year >= 2016 && match.result[RP_KEYS[year][1]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match.result.rp_2 > 0.5 && <sup>●</sup>}
         </div>
       </>
     ) : (
@@ -205,8 +205,8 @@ const MatchRow = ({
           >
             {round(match.pred.red_score, 0)}
           </span>
-          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred.rp_2 > 0.5 && <sup>●</sup>}
         </div>
         <div
           className={classnames(
@@ -223,8 +223,8 @@ const MatchRow = ({
           >
             {round(match.pred.blue_score, 0)}
           </span>
-          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][0]] > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.elim && match.pred[RP_KEYS[year][1]] > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match.pred.rp_2 > 0.5 && <sup>●</sup>}
         </div>
       </div>
       <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>

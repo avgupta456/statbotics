@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "react-select";
 
-import { RP_KEYS } from "../constants";
+import { RP_NAMES } from "../constants";
 import { APITeamEvent, APITeamYear } from "../types/api";
 import { round } from "../utils";
 
@@ -32,12 +32,12 @@ export const getColumnOptions = (year: number) => [
       round(datum?.epa?.breakdown?.auto_points?.mean + datum?.epa?.breakdown?.endgame_points?.mean),
   },
   {
-    label: `${RP_KEYS[year][0]}`,
-    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.[RP_KEYS[year][0]]?.mean, 3),
+    label: `${RP_NAMES[year][0]}`,
+    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_1?.mean, 3),
   },
   {
-    label: `${RP_KEYS[year][1]}`,
-    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.[RP_KEYS[year][1]]?.mean, 3),
+    label: `${RP_NAMES[year][1]}`,
+    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_2?.mean, 3),
   },
   { label: "Wins", accessor: (datum: Yu) => datum?.record?.season?.wins },
   {

@@ -8,10 +8,11 @@ import { useRouter } from "next/navigation";
 import BubbleChart from "../../../../components/Figures/Bubble";
 import {
   CURR_YEAR,
-  RP_KEYS,
+  RP_NAMES,
   divisionToMainEvent,
   mainEventToDivisions,
 } from "../../../../constants";
+import { EventData } from "../../../../types/data";
 import TabsSection from "../../shared/tabs";
 import AlliancesSection from "./alliances";
 import FiguresSection from "./figures";
@@ -19,9 +20,8 @@ import InsightsTable from "./insightsTable";
 import MatchSection from "./matches";
 import SimulationSection from "./simulation";
 import SosSection from "./sos";
-import { Data } from "./types";
 
-const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Data }) => {
+const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: EventData }) => {
   const router = useRouter();
 
   const MemoizedInsightsTable = useMemo(
@@ -29,16 +29,11 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     [eventId, data]
   );
 
-  const bubbleData = data.team_events.map((teamEvent) => ({
-    ...teamEvent,
-    numTeams: data.team_events.length,
-  }));
-
   const MemoizedBubbleChart = useMemo(
     () => (
       <BubbleChart
         year={year}
-        data={bubbleData}
+        data={data.team_events}
         defaultFilters={{}}
         filters={{}}
         setFilters={() => {}}
@@ -50,15 +45,15 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
             year >= 2016 && "Teleop",
             year >= 2016 && "Endgame",
             year >= 2016 && "Auto + Endgame",
-            year >= 2016 && `${RP_KEYS[year][0]}`,
-            year >= 2016 && `${RP_KEYS[year][1]}`,
+            year >= 2016 && `${RP_NAMES[year][0]}`,
+            year >= 2016 && `${RP_NAMES[year][1]}`,
             "Rank",
             "RPs / Match",
           ].filter(Boolean) as string[]
         }
       />
     ),
-    [bubbleData, year]
+    [data, year]
   );
 
   const MemoizedQualMatchSection = useMemo(
@@ -91,8 +86,8 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Da
     [eventId, data]
   );
 
-  const qualsN = data?.matches?.filter((match) => !match.playoff)?.length || 0;
-  const elimsN = data?.matches?.filter((match) => match.playoff)?.length || 0;
+  const qualsN = data?.matches?.filter((match) => !match.elim)?.length || 0;
+  const elimsN = data?.matches?.filter((match) => match.elim)?.length || 0;
 
   let tabs = [
     { title: "Insights", content: MemoizedInsightsTable },

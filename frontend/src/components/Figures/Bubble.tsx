@@ -34,7 +34,7 @@ const BubbleChart = ({
   setFilters,
 }: {
   year: number;
-  data: APITeamYear[];
+  data: (APITeamYear | APITeamEvent)[];
   columnOptions: string[];
   defaultFilters: { [key: string]: any };
   filters: { [key: string]: any };
@@ -70,11 +70,19 @@ const BubbleChart = ({
     {}
   );
 
-  let filteredData: APITeamYear[] = filterData(data, actualFilters);
-  const numRemoved = filteredData.filter((datum) => datum?.record?.season?.count === 0).length;
+  const getCount = (datum: APITeamYear | APITeamEvent) => {
+    if ("season" in datum?.record) {
+      return datum.record.season.count;
+    } else {
+      return datum.record.qual.count;
+    }
+  };
+
+  let filteredData: (APITeamYear | APITeamEvent)[] = filterData(data, actualFilters);
+  const numRemoved = filteredData.filter((datum) => getCount(datum) === 0).length;
 
   if (!showZero) {
-    filteredData = filteredData.filter((datum) => datum?.record?.season?.count > 0);
+    filteredData = filteredData.filter((datum) => getCount(datum) > 0);
   }
 
   const columnOptionsDict = getColumnOptionsDict(year);

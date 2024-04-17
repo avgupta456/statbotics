@@ -309,7 +309,9 @@ class Year(_Year, Model):
                 "foul_mean": self.foul_mean,
                 "no_foul_mean": self.no_foul_mean,
             }
-            for key, name in key_to_name[self.year].items():
+            pairs = list(key_to_name[self.year].items())
+            pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
+            for key, name in pairs:
                 clean["breakdown"][f"{name}_mean"] = getattr(self, f"{key}_mean")
                 if key != "tiebreaker":
                     clean["percentiles"][name] = {

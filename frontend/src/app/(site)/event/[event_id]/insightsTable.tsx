@@ -7,8 +7,9 @@ import { createColumnHelper } from "@tanstack/react-table";
 import InsightsTable from "../../../../components/Table/InsightsTable";
 import { TeamLink, formatCell, formatEPACell } from "../../../../components/Table/shared";
 import { CURR_YEAR, RP_NAMES } from "../../../../constants";
+import { APITeamEvent } from "../../../../types/api";
+import { EventData } from "../../../../types/data";
 import { round, truncate } from "../../../../utils";
-import { Data } from "./types";
 
 export type TeamEventInsights = {
   num: string;
@@ -46,10 +47,12 @@ export type DetailedTeamEventInsights = {
 const columnHelper = createColumnHelper<TeamEventInsights>();
 const detailedColumnHelper = createColumnHelper<DetailedTeamEventInsights>();
 
-const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data }) => {
+const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: EventData }) => {
+  console.log(data);
+
   const [disableHighlight, setDisableHighlight] = useState(false);
 
-  const sortFunc = (a, b) => {
+  const sortFunc = (a: TeamEventInsights, b: TeamEventInsights) => {
     if (a.rank === -1 && b.rank === -1) {
       return b.total_epa - a.total_epa;
     } else if (a.rank === -1) {
@@ -64,18 +67,18 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
   const eventInsightsData: TeamEventInsights[] = data.team_events
     .map((teamEvent) => {
       return {
-        num: teamEvent.num ?? -1,
-        team: teamEvent.team ? truncate(teamEvent.team, 30) : "N/A",
+        num: teamEvent.team ?? "N/A",
+        team: teamEvent.team_name ? truncate(teamEvent.team_name, 30) : "N/A",
         first_event: teamEvent.first_event ?? false,
-        unitless_epa: round(teamEvent.unitless_epa, 0) ?? "N/A",
-        norm_epa: round(teamEvent.norm_epa, 0) ?? "N/A",
-        total_epa: round(teamEvent.total_epa, 1) ?? 0,
-        auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
-        teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
-        endgame_epa: round(teamEvent.endgame_epa, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent.rp_1_epa, 2) ?? "N/A",
-        rp_2_epa: round(teamEvent.rp_2_epa, 2) ?? "N/A",
-        rank: teamEvent.rank ?? -1,
+        unitless_epa: round(teamEvent.epa.unitless, 0) ?? "N/A",
+        norm_epa: round(teamEvent.epa.norm, 0) ?? "N/A",
+        total_epa: round(teamEvent.epa.breakdown.total_points.mean, 1) ?? 0,
+        auto_epa: round(teamEvent.epa.breakdown.auto_points.mean, 1) ?? "N/A",
+        teleop_epa: round(teamEvent.epa.breakdown.teleop_points.mean, 1) ?? "N/A",
+        endgame_epa: round(teamEvent.epa.breakdown.endgame_points.mean, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent.epa.breakdown.rp_1.mean, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent.epa.breakdown.rp_2.mean, 2) ?? "N/A",
+        rank: teamEvent.record.qual.rank ?? -1,
       };
     })
     .sort(sortFunc);
@@ -83,21 +86,21 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
   const detailedEventInsightsData: DetailedTeamEventInsights[] = data.team_events
     .map((teamEvent) => {
       return {
-        num: teamEvent.num ?? -1,
-        team: teamEvent.team ? truncate(teamEvent.team, 30) : "N/A",
+        num: teamEvent.team ?? "N/A",
+        team: teamEvent.team_name ? truncate(teamEvent.team_name, 30) : "N/A",
         first_event: teamEvent.first_event ?? false,
-        unitless_epa: round(teamEvent.unitless_epa, 0) ?? "N/A",
-        norm_epa: round(teamEvent.norm_epa, 0) ?? "N/A",
-        total_epa: round(teamEvent.total_epa, 1) ?? 0,
-        auto_epa: round(teamEvent.auto_epa, 1) ?? "N/A",
-        teleop_epa: round(teamEvent.teleop_epa, 1) ?? "N/A",
-        endgame_epa: round(teamEvent.endgame_epa, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent.rp_1_epa, 2) ?? "N/A",
-        rp_2_epa: round(teamEvent.rp_2_epa, 2) ?? "N/A",
-        rank: teamEvent.rank ?? -1,
-        rps: teamEvent.rps ?? 0,
-        rps_per_match: teamEvent.rps_per_match.toFixed(2),
-        record: `${teamEvent.qual_wins}-${teamEvent.qual_losses}-${teamEvent.qual_ties}`,
+        unitless_epa: round(teamEvent.epa.unitless, 0) ?? "N/A",
+        norm_epa: round(teamEvent.epa.norm, 0) ?? "N/A",
+        total_epa: round(teamEvent.epa.breakdown.total_points.mean, 1) ?? 0,
+        auto_epa: round(teamEvent.epa.breakdown.auto_points.mean, 1) ?? "N/A",
+        teleop_epa: round(teamEvent.epa.breakdown.teleop_points.mean, 1) ?? "N/A",
+        endgame_epa: round(teamEvent.epa.breakdown.endgame_points.mean, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent.epa.breakdown.rp_1.mean, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent.epa.breakdown.rp_2.mean, 2) ?? "N/A",
+        rank: teamEvent.record.qual.rank ?? -1,
+        rps: teamEvent.record.qual.rps ?? 0,
+        rps_per_match: teamEvent.record.qual.rps_per_match.toFixed(2),
+        record: `${teamEvent.record.qual.wins}-${teamEvent.record.qual.losses}-${teamEvent.record.qual.ties}`,
       };
     })
     .sort(sortFunc);
@@ -132,32 +135,35 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
             header: "Norm EPA",
           }),
         columnHelper.accessor("total_epa", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "EPA",
         }),
         year >= 2016 &&
           columnHelper.accessor("auto_epa", {
-            cell: (info) => formatEPACell(data.year.auto_stats, info, disableHighlight),
+            cell: (info) =>
+              formatEPACell(data.year.percentiles.auto_points, info, disableHighlight),
             header: "Auto EPA",
           }),
         year >= 2016 &&
           columnHelper.accessor("teleop_epa", {
-            cell: (info) => formatEPACell(data.year.teleop_stats, info, disableHighlight),
+            cell: (info) =>
+              formatEPACell(data.year.percentiles.teleop_points, info, disableHighlight),
             header: "Teleop EPA",
           }),
         year >= 2016 &&
           columnHelper.accessor("endgame_epa", {
-            cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
+            cell: (info) =>
+              formatEPACell(data.year.percentiles.endgame_points, info, disableHighlight),
             header: "Endgame EPA",
           }),
         year >= 2016 &&
           columnHelper.accessor("rp_1_epa", {
-            cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.percentiles.rp_1, info, disableHighlight),
             header: `${RP_NAMES?.[data.year.year]?.[0]} EPA`,
           }),
         year >= 2016 &&
           columnHelper.accessor("rp_2_epa", {
-            cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.percentiles.rp_2, info, disableHighlight),
             header: `${RP_NAMES?.[data.year.year]?.[1]} EPA`,
           }),
       ].filter(Boolean),
@@ -196,32 +202,35 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Data
             header: "Norm EPA",
           }),
         detailedColumnHelper.accessor("total_epa", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "EPA",
         }),
         year >= 2016 &&
           detailedColumnHelper.accessor("auto_epa", {
-            cell: (info) => formatEPACell(data.year.auto_stats, info, disableHighlight),
+            cell: (info) =>
+              formatEPACell(data.year.percentiles.auto_points, info, disableHighlight),
             header: "Auto EPA",
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("teleop_epa", {
-            cell: (info) => formatEPACell(data.year.teleop_stats, info, disableHighlight),
+            cell: (info) =>
+              formatEPACell(data.year.percentiles.teleop_points, info, disableHighlight),
             header: "Teleop EPA",
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("endgame_epa", {
-            cell: (info) => formatEPACell(data.year.endgame_stats, info, disableHighlight),
+            cell: (info) =>
+              formatEPACell(data.year.percentiles.endgame_points, info, disableHighlight),
             header: "Endgame EPA",
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("rp_1_epa", {
-            cell: (info) => formatEPACell(data.year.rp_1_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.percentiles.rp_1, info, disableHighlight),
             header: `${RP_NAMES?.[data.year.year]?.[0]} EPA`,
           }),
         year >= 2016 &&
           detailedColumnHelper.accessor("rp_2_epa", {
-            cell: (info) => formatEPACell(data.year.rp_2_stats, info, disableHighlight),
+            cell: (info) => formatEPACell(data.year.percentiles.rp_2, info, disableHighlight),
             header: `${RP_NAMES?.[data.year.year]?.[1]} EPA`,
           }),
         maxRank > 0 &&

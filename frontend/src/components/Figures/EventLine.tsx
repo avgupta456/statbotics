@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import { GiPodium } from "react-icons/gi";
 import Select from "react-select";
 
-import { BACKEND_URL, CURR_YEAR, RPMapping } from "../../constants";
+import { BACKEND_URL } from "../../constants";
+import { APITeamEvent, APITeamMatch } from "../../types/api";
 import { classnames, log, round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";
-import { APITeamEvent, APITeamMatch } from "../types/api";
 import LineChart from "./Line";
+import { getYAxisOptions } from "./shared";
 
 const EventLineChart = ({
   eventId,
@@ -21,7 +22,8 @@ const EventLineChart = ({
   teamEvents: APITeamEvent[];
   teams: any;
 }) => {
-  const [yAxis, setYAxis] = useState({ value: "total_epa", label: "Total EPA" });
+  const yAxisOptions = getYAxisOptions(year);
+  const [yAxis, setYAxis] = useState(yAxisOptions[0]);
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
   const [allData, setAllData] = useState<{ [key: number]: APITeamMatch[] }>({});
 
@@ -76,11 +78,11 @@ const EventLineChart = ({
   // VARIABLES
 
   const topTeams = teamEvents
-    .sort((a, b) => b[yAxis.value] - a[yAxis.value])
+    .sort((a, b) => yAxis.yearAccessor(b) - yAxis.yearAccessor(a))
     .slice(0, 3)
-    .map((team) => ({ value: team.num, label: `${team.num} | ${team.team}` }));
+    .map((team) => ({ value: team.team, label: `${team.team} | ${team.team_name}` }));
 
-  const selectedTeamNums: number[] = selectedTeams.map((team: any) => team.value);
+  const selectedTeamNums: string[] = selectedTeams.map((team: any) => team.value);
 
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
@@ -88,16 +90,17 @@ const EventLineChart = ({
       let teamData = {
         id: teamNum,
         data: allData[teamNum].map((teamMatch: any, i: number) => ({
-          x: allData[teamNum][i - 1]?.match_number || 0,
+          x: i, // TODO: fix here
           label: allData[teamNum][i - 1]?.match || "Start",
-          y: teamMatch[yAxis.value],
+          y: yAxis.matchAccessor(teamMatch),
         })),
       };
 
       if (teamData.data.length > 0) {
-        const lastMatch = allData[teamNum][allData[teamNum].length - 1].match_number;
-        const lastEPA =
-          teamEvents[teamEvents.findIndex((team) => team.num === teamNum)][yAxis.value];
+        const lastMatch = allData[teamNum].length;
+        const lastEPA = yAxis.yearAccessor(
+          teamEvents[teamEvents.findIndex((team) => team.team === teamNum)]
+        );
         teamData.data.push({ x: lastMatch, label: "End", y: lastEPA });
       }
 
@@ -105,19 +108,6 @@ const EventLineChart = ({
     });
 
   // RENDER
-
-  const yAxisOptions =
-    year >= 2016
-      ? [
-          { value: "total_epa", label: "Total EPA" },
-          { value: "auto_epa", label: "Auto EPA" },
-          { value: "teleop_epa", label: "Teleop EPA" },
-          { value: "endgame_epa", label: "Endgame EPA" },
-          { value: "rp_1_epa", label: `${RPMapping?.[year]?.[0]} EPA` },
-          { value: "rp_2_epa", label: `${RPMapping?.[year]?.[1]} EPA` },
-        ].filter(Boolean)
-      : [{ value: "total_epa", label: "EPA" }];
-
   const TeamSelect = ({ className }) => (
     <Select
       isMulti

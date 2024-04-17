@@ -6,39 +6,12 @@ import { BsTwitch } from "react-icons/bs";
 import Image from "next/image";
 import Link from "next/link";
 
+import { getEvent } from "../../../../api/event";
 import { ColorsProvider } from "../../../../components/Figures/colors";
-import { BACKEND_URL } from "../../../../constants";
-import { formatEventName, log, round } from "../../../../utils";
+import { EventData } from "../../../../types/data";
+import { formatEventName } from "../../../../utils";
 import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
-import { Data } from "./types";
-
-async function getData(event_id: string) {
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/event/` + event_id, { next: { revalidate: 60 } });
-  log(`/event/${event_id} took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = await res.json();
-  return data?.data;
-}
-
-async function getHypotheticalData(event_id: string) {
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/event/hypothetical/${event_id}`, {
-    next: { revalidate: 60 },
-  });
-  log(`/event/hypothetical/${event_id} took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-
-  const data = await res.json();
-  return data?.data;
-}
 
 // do not cache this page
 export const revalidate = 0;
@@ -47,7 +20,7 @@ const Page = ({ params }: { params: { event_id: string } }) => {
   const { event_id } = params;
 
   const hypothetical = event_id.length > 10;
-  const [data, setData] = useState<Data | undefined>();
+  const [data, setData] = useState<EventData | undefined>();
 
   useEffect(() => {
     const getEventData = async (event_id: string, hypothetical: boolean) => {
@@ -56,9 +29,9 @@ const Page = ({ params }: { params: { event_id: string } }) => {
       }
 
       if (hypothetical) {
-        setData(await getHypotheticalData(event_id));
+        // setData(await getHypotheticalData(event_id));
       } else {
-        setData(await getData(event_id));
+        setData(await getEvent(event_id));
       }
     };
 
@@ -105,7 +78,7 @@ const Page = ({ params }: { params: { event_id: string } }) => {
           )}
         </div>
       </div>
-      <ColorsProvider teams={data?.team_events.map((x) => x.num) ?? []}>
+      <ColorsProvider teams={data?.team_events.map((x) => x.team) ?? []}>
         <Tabs eventId={event_id} year={data.year.year} data={data} />
       </ColorsProvider>
     </div>

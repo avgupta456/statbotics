@@ -5,8 +5,8 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { BarChartNoLegend } from "../../../../components/Figures/Bar";
 import InsightsTable from "../../../../components/Table/InsightsTable";
 import { TeamLink, formatCell, formatEPACell } from "../../../../components/Table/shared";
+import { EventData } from "../../../../types/data";
 import { readTBA, round } from "../../../../utils";
-import { Data } from "./types";
 
 const getAlliances = async (eventId: string) => {
   const rawAlliances = await readTBA(`/event/${eventId}/alliances`);
@@ -44,7 +44,7 @@ const AlliancesSection = ({
 }: {
   year: number;
   eventId: string;
-  data: Data;
+  data: EventData;
 }) => {
   const [alliances, setAlliances] = useState(null);
   const [disableHighlight, setDisableHighlight] = useState(false);
@@ -55,7 +55,7 @@ const AlliancesSection = ({
 
   const teamToEPA = {};
   data?.team_events?.forEach((teamEvent) => {
-    teamToEPA[teamEvent?.num] = teamEvent?.total_epa;
+    teamToEPA[teamEvent?.team] = teamEvent?.epa?.breakdown?.total_points?.mean ?? 0;
   });
 
   const allianceInsightsData: AllianceInsights[] = alliances?.map((alliance) => {
@@ -116,26 +116,27 @@ const AlliancesSection = ({
           header: "Pick 3",
         }),
         columnHelper.accessor("total_epa", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight, 2.5),
+          cell: (info) =>
+            formatEPACell(data.year.percentiles.total_points, info, disableHighlight, 2.5),
           header: "Total EPA",
         }),
         columnHelper.accessor("Captain EPA", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Captain EPA",
         }),
         columnHelper.accessor("First Pick EPA", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Pick 1 EPA",
         }),
         columnHelper.accessor("Second Pick EPA", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Pick 2 EPA",
         }),
         columnHelper.accessor("Third Pick EPA", {
           cell: (info) =>
             info.getValue() === 0
               ? formatCell(info)
-              : formatEPACell(data.year.total_stats, info, disableHighlight),
+              : formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Pick 3 EPA",
         }),
         year !== 2015 &&
