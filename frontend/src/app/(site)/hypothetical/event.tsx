@@ -6,9 +6,9 @@ import WindowedSelect from "react-windowed-select";
 import Link from "next/link";
 
 import { PROD } from "../../../constants";
+import { TeamYearsData } from "../../../types/data";
 import { classnames, decompress } from "../../../utils";
 import { compress } from "../../../utils";
-import { TeamYearData } from "../types";
 
 // for multi-select
 const formatTeam = (team) => ({
@@ -16,7 +16,7 @@ const formatTeam = (team) => ({
   label: `${team.num} | ${team.team}`,
 });
 
-const Event = ({ data, year }: { data: TeamYearData; year: number }) => {
+const Event = ({ data, year }: { data: TeamYearsData; year: number }) => {
   const [selectedTeams, setSelectedTeams] = useState<any>([]);
   const [seed, setSeed] = useState(0);
 
