@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 
 import BubbleChart from "../../../components/Figures/Bubble";
-import { CURR_YEAR, RP_NAMES } from "../../../constants";
+import { BREAKDOWN_YEARS, CURR_YEAR, RP_NAMES } from "../../../constants";
 import { TeamYearsData, emptyTeamYearsData } from "../../../types/data";
 import TabsSection from "../shared/tabs";
 import BreakdownTable from "./breakdownTable";
@@ -36,14 +36,15 @@ const Tabs = ({
   );
 
   const MemoizedBreakdownTable = useMemo(
-    () => (
-      <BreakdownTable
-        year={year}
-        data={data || emptyTeamYearsData}
-        filters={filters}
-        setFilters={(newFilters) => setFilters({ ...filters, ...newFilters })}
-      />
-    ),
+    () =>
+      BREAKDOWN_YEARS.includes(year) && (
+        <BreakdownTable
+          year={year}
+          data={data || emptyTeamYearsData}
+          filters={filters}
+          setFilters={(newFilters) => setFilters({ ...filters, ...newFilters })}
+        />
+      ),
     [year, data, filters, setFilters]
   );
 
@@ -81,7 +82,7 @@ const Tabs = ({
 
   const tabs = [
     { title: "Insights", content: MemoizedInsightsTable },
-    { title: "Breakdown", content: MemoizedBreakdownTable },
+    BREAKDOWN_YEARS.includes(year) && { title: "Breakdown", content: MemoizedBreakdownTable },
     { title: "Bubble Chart", content: MemoizedBubbleChart },
     { title: "Figures", content: MemoizedFigureSection },
   ].filter(Boolean);
