@@ -6,7 +6,9 @@ import Select from "react-select";
 import { useRouter } from "next/navigation";
 
 import BubbleChart from "../../../../components/Figures/Bubble";
+import BreakdownTable from "../../../../components/Table/BreakdownTable";
 import {
+  BREAKDOWN_YEARS,
   CURR_YEAR,
   RP_NAMES,
   divisionToMainEvent,
@@ -27,6 +29,21 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Ev
   const MemoizedInsightsTable = useMemo(
     () => <InsightsTable eventId={eventId} data={data} />,
     [eventId, data]
+  );
+
+  const MemoizedBreakdownTable = useMemo(
+    () =>
+      BREAKDOWN_YEARS.includes(year) && (
+        <div className="w-full flex flex-col justify-center items-center">
+          <BreakdownTable
+            year={year}
+            yearData={data.year}
+            data={data.team_events}
+            csvFilename={`${data.event.key}_epa_breakdown.csv`}
+          />
+        </div>
+      ),
+    [year, data]
   );
 
   const MemoizedBubbleChart = useMemo(
@@ -91,6 +108,7 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Ev
 
   let tabs = [
     { title: "Insights", content: MemoizedInsightsTable },
+    BREAKDOWN_YEARS.includes(year) && { title: "Breakdown", content: MemoizedBreakdownTable },
     { title: "Bubble Chart", content: MemoizedBubbleChart },
     qualsN > 0 && { title: "Qual Matches", content: MemoizedQualMatchSection },
     elimsN > 0 && { title: "Alliances", content: MemoizedAlliancesSection },
