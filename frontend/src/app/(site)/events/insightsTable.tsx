@@ -9,8 +9,8 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import InsightsTable from "../../../components/Table/InsightsTable";
 import { EventLink, formatCell, formatEPACell } from "../../../components/Table/shared";
+import { EventsData } from "../../../types/data";
 import { formatEventName, round } from "../../../utils";
-import { EventData } from "../types";
 import EventsLayout from "./shared";
 
 export type EventInsights = {
@@ -34,7 +34,7 @@ export type EventInsights = {
 
 const columnHelper = createColumnHelper<EventInsights>();
 
-const EventTable = ({ name, data }: { name: string; data: EventData }) => {
+const EventTable = ({ name, data }: { name: string; data: EventsData }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
 
   const eventInsightsData: EventInsights[] = data.events
@@ -49,14 +49,14 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
         country: event.country || "",
         district: event.district?.toUpperCase() || "",
         state: event.state || "",
-        status_str: event.status_str || "",
+        status_str: event.status || "",
         matches: Math.max(event.qual_matches, event.current_match) || 0,
-        epa_acc: (100 * event.epa_acc)?.toFixed(1) + "%" || "N/A",
-        epa_mse: event.epa_mse?.toFixed(3) || "N/A",
-        epa_max: round(event.epa_max, 1) || 0,
-        epa_top8: round(event.epa_top8, 1) || 0,
-        epa_top24: round(event.epa_top24, 1) || 0,
-        epa_mean: round(event.epa_mean, 1) || 0,
+        epa_acc: (100 * event.metrics.win_prob.acc)?.toFixed(1) + "%" || "N/A",
+        epa_mse: event.metrics.win_prob.mse?.toFixed(3) || "N/A",
+        epa_max: round(event.epa.max, 1) || 0,
+        epa_top8: round(event.epa.top_8, 1) || 0,
+        epa_top24: round(event.epa.top_24, 1) || 0,
+        epa_mean: round(event.epa.mean, 1) || 0,
         video: `https://www.thebluealliance.com/gameday/${event.key}` || "",
       };
     })
@@ -96,19 +96,19 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
             header: "Status",
           }),
         columnHelper.accessor("epa_max", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Max EPA",
         }),
         columnHelper.accessor("epa_top8", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Top 8 EPA",
         }),
         columnHelper.accessor("epa_top24", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Top 24 EPA",
         }),
         columnHelper.accessor("epa_mean", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Mean EPA",
         }),
       ].filter(Boolean),
@@ -184,19 +184,19 @@ const EventTable = ({ name, data }: { name: string; data: EventData }) => {
             header: "MSE",
           }),
         columnHelper.accessor("epa_max", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Max EPA",
         }),
         columnHelper.accessor("epa_top8", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Top 8 EPA",
         }),
         columnHelper.accessor("epa_top24", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Top 24 EPA",
         }),
         columnHelper.accessor("epa_mean", {
-          cell: (info) => formatEPACell(data.year.total_stats, info, disableHighlight),
+          cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
           header: "Mean EPA",
         }),
       ].filter(Boolean),
@@ -223,7 +223,7 @@ const EventInsightsTable = ({
   filters,
   setFilters,
 }: {
-  data: EventData;
+  data: EventsData;
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
 }) => {

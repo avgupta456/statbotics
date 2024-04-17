@@ -1,12 +1,12 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 
 import { filterData } from "../../../components/filter";
 import { FilterBar } from "../../../components/filterBar";
-import { APIEvent } from "../../../components/types/api";
 import { CURR_WEEK, CURR_YEAR } from "../../../constants";
-import { EventData } from "../types";
+import { APIEvent } from "../../../types/api";
+import { EventsData } from "../../../types/data";
 
 const defaultFilters = {
   week: "",
@@ -23,10 +23,10 @@ const EventsLayout = ({
   setFilters,
   SectionComponent,
 }: {
-  data: EventData;
+  data: EventsData;
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
-  SectionComponent: FC<{ name: string; data: EventData }>;
+  SectionComponent: FC<{ name: string; data: EventsData }>;
 }) => {
   if (data?.year?.year === CURR_YEAR) {
     defaultFilters["offseason"] = "season";
@@ -47,7 +47,7 @@ const EventsLayout = ({
 
   const sortedData: APIEvent[] | undefined = filteredData?.sort((a, b) =>
     a.start_date === b.start_date
-      ? b.epa_mean > a.epa_mean
+      ? b.epa.mean > a.epa.mean
         ? 1
         : -1
       : a.start_date > b.start_date
@@ -65,7 +65,7 @@ const EventsLayout = ({
     .sort((a, b) => {
       if (a.current_match > 0 && b.current_match === 0) return -1;
       if (a.current_match === 0 && b.current_match > 0) return 1;
-      return a.epa_mean > b.epa_mean ? -1 : 1;
+      return a.epa.mean > b.epa.mean ? -1 : 1;
     });
   const ongoingN = ongoingEvents.length;
 

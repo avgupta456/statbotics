@@ -4,9 +4,9 @@ import React, { useState } from "react";
 
 import Link from "next/link";
 
-import { APIEvent } from "../../../components/types/api";
+import { APIEvent } from "../../../types/api";
+import { EventsData } from "../../../types/data";
 import { formatEventName } from "../../../utils";
-import { EventData } from "../types";
 import EventsLayout from "./shared";
 
 const EventCard = ({ event }: { event: APIEvent }) => {
@@ -38,7 +38,7 @@ const EventCard = ({ event }: { event: APIEvent }) => {
         <div className="w-full mb-2">
           Week {event.week}, {formatDates(new Date(event.start_date), new Date(event.end_date))}
         </div>
-        {event.status === "Ongoing" && <div className="w-full">{event.status_str}</div>}
+        {event.status === "Ongoing" && <div className="w-full">{event.status}</div>}
       </div>
     </Link>
   );
@@ -49,7 +49,7 @@ const Summary = ({
   filters,
   setFilters,
 }: {
-  data: EventData;
+  data: EventsData;
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
 }) => {

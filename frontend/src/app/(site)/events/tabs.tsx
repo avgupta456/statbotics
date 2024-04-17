@@ -2,8 +2,8 @@
 
 import React, { useMemo } from "react";
 
+import { EventsData } from "../../../types/data";
 import TabsSection from "../shared/tabs";
-import { EventData } from "../types";
 import Table from "./insightsTable";
 import Summary from "./summary";
 
@@ -13,7 +13,7 @@ const Tabs = ({
   filters,
   setFilters,
 }: {
-  data: EventData;
+  data: EventsData;
   error: boolean;
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;

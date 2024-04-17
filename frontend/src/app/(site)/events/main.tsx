@@ -2,37 +2,15 @@
 
 import React, { useContext, useEffect, useState } from "react";
 
-import { BACKEND_URL, CURR_YEAR } from "../../../constants";
-import { log, round } from "../../../utils";
-import { getWithExpiry, setWithExpiry } from "../../localStorage";
+import { getYearEvents } from "../../../api/events";
+import { EventsData } from "../../../types/data";
 import { AppContext } from "../context";
 import PageLayout from "../shared/layout";
-import { EventData } from "../types";
 import Tabs from "./tabs";
-
-async function getEventData(year: number) {
-  const cacheData = getWithExpiry(`events_${year}`);
-  if (cacheData && cacheData?.events?.length > 10) {
-    log("Used Local Storage: " + year);
-    return cacheData;
-  }
-
-  const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}/events/${year}`, { next: { revalidate: 60 } });
-  log(`/events/${year} took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-  const data = (await res.json())?.data;
-  const expiry = year === CURR_YEAR ? 60 : 60 * 60; // 1 minute / 1 hour
-  setWithExpiry(`events_${year}`, data, expiry);
-  return data;
-}
 
 const PageContent = ({ paramFilters }: { paramFilters: { [key: string]: any } }) => {
   const { eventDataDict, setEventDataDict, year, setYear } = useContext(AppContext);
-  const data: EventData | undefined = eventDataDict[year];
+  const data: EventsData | undefined = eventDataDict[year];
   const [error, setError] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -58,7 +36,7 @@ const PageContent = ({ paramFilters }: { paramFilters: { [key: string]: any } })
         return;
       }
 
-      const data: EventData = await getEventData(year);
+      const data: EventsData = await getYearEvents(year);
 
       if (!data) {
         setError(true);
