@@ -40,7 +40,9 @@ export async function getNoteworthyMatches(
 }
 
 export async function getUpcomingMatches(
-  location: string | null,
+  country: string | null,
+  state: string | null,
+  district: string | null,
   elim: string | null,
   filterMatches: string | null,
   sortMatches: string
@@ -51,9 +53,17 @@ export async function getUpcomingMatches(
     suffix += `&minutes=${filterMatches}`;
     storageKey += `_${filterMatches}`;
   }
-  if (location) {
-    suffix += `&${location.replace("_", "=")}`;
-    storageKey += `_${location}`;
+  if (country) {
+    suffix += `&country=${country}`;
+    storageKey += `_${country}`;
+  }
+  if (state) {
+    suffix += `&state=${state}`;
+    storageKey += `_${state}`;
+  }
+  if (district) {
+    suffix += `&district=${district}`;
+    storageKey += `_${district}`;
   }
   if (elim) {
     suffix += `&elim=${elim}`;

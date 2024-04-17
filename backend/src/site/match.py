@@ -93,7 +93,7 @@ async def read_upcoming_matches(
         metric=metric,
     )
 
-    data = [{"match": m, "event_name": e} for m, e in upcoming_matches]
+    data = [{"match": m.to_dict(), "event_name": e} for m, e in upcoming_matches]
 
     return compress(data)
 

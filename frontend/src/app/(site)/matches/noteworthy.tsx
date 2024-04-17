@@ -4,7 +4,7 @@ import { getNoteworthyMatches } from "../../../api/matches";
 import MatchTable from "../../../components/MatchTable";
 import { FilterBar } from "../../../components/filterBar";
 import { APIMatch } from "../../../types/api";
-import { classnames, log, round } from "../../../utils";
+import { classnames } from "../../../utils";
 
 const lightGray = "#F0F0F0";
 

@@ -4,12 +4,13 @@ import { BsTwitch } from "react-icons/bs";
 import Image from "next/image";
 import Link from "next/link";
 
+import { getUpcomingMatches } from "../../../api/matches";
 import MatchTable from "../../../components/MatchTable";
 import { FilterBar } from "../../../components/filterBar";
-import { APIMatch } from "../../../components/types/api";
 import { formatMatch } from "../../../components/utils";
-import { BACKEND_URL, CURR_YEAR } from "../../../constants";
-import { log, round, truncate } from "../../../utils";
+import { CURR_YEAR } from "../../../constants";
+import { APIMatch } from "../../../types/api";
+import { truncate } from "../../../utils";
 
 type MatchData = {
   match: APIMatch;
@@ -52,7 +53,7 @@ const UpcomingMatch = ({ match }: { match: { match: APIMatch; event_name: string
       <div className="w-full md:w-2/3 lg:w-1/2 overflow-x-scroll scrollbar-hide mx-auto">
         <MatchTable
           year={CURR_YEAR}
-          teamNum={0}
+          teamNum={""}
           matches={[match.match]}
           showHeaders={true}
           showSubHeaders={false}
@@ -63,25 +64,6 @@ const UpcomingMatch = ({ match }: { match: { match: APIMatch; event_name: string
     </div>
   );
 };
-
-async function getMatchData(country, state, district, playoff, filterMatches, sortMatches) {
-  const start = performance.now();
-  let suffix = `?limit=20&metric=${sortMatches}`;
-  if (filterMatches) suffix += `&minutes=${filterMatches}`;
-  if (country) suffix += `&country=${country}`;
-  if (state) suffix += `&state=${state}`;
-  if (district) suffix += `&district=${district}`;
-  if (playoff) suffix += `&playoff=${playoff}`;
-
-  const res = await fetch(`${BACKEND_URL}/upcoming_matches${suffix}`, { next: { revalidate: 60 } });
-  log(`/upcoming_matches/ took ${round(performance.now() - start, 0)}ms`);
-
-  if (!res.ok) {
-    return undefined;
-  }
-
-  return (await res.json())?.data;
-}
 
 const defaultFilters = {
   country: "",
@@ -117,7 +99,7 @@ const UpcomingMatches = ({
     }
 
     setLoading(true);
-    getMatchData(
+    getUpcomingMatches(
       actualFilters.country,
       actualFilters.state,
       actualFilters.district,
