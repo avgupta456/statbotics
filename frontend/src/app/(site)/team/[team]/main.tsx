@@ -36,8 +36,9 @@ const PageContent = ({ team, paramYear }: { team: string; paramYear: number }) =
         return;
       }
 
-      const data: APITeam | undefined = await getTeam(team);
-      setTeamData(data);
+      const data = await getTeam(team);
+      setTeamData(data.team);
+      setTeamYearsData(data.team_years);
     };
 
     _getTeamDataForYear(team);
@@ -61,21 +62,6 @@ const PageContent = ({ team, paramYear }: { team: string; paramYear: number }) =
       _getTeamYearDataForYear(team, year);
     }
   }, [team, year, teamYearDataDict]);
-
-  /*
-  useEffect(() => {
-    const _getTeamYearsData = async (team: number) => {
-      if (teamYearsData) {
-        return;
-      }
-
-      const data: TeamYearData[] | undefined = await getTeamYearsData(team);
-      setTeamYearsData(data);
-    };
-
-    _getTeamYearsData(team);
-  }, [team, teamYearsData]);
-  */
 
   useEffect(() => {
     if (teamYearsData && year !== -1 && !teamYearsData.map((x) => x.year).includes(year)) {
@@ -111,7 +97,7 @@ const PageContent = ({ team, paramYear }: { team: string; paramYear: number }) =
       includeSummary
     >
       <div className="w-full flex items-center justify-center mb-4">
-        <div className="text-2xl lg:text-3xl">{teamData?.team}</div>
+        <div className="text-2xl lg:text-3xl">{teamData?.name}</div>
         <Link
           href={`https://www.thebluealliance.com/team/${team}`}
           rel="noopener noreferrer"

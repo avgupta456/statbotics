@@ -37,25 +37,17 @@ async def read_all_teams(response: StreamingResponse, no_cache: bool = False) ->
 
 @router.get("/team/{team_num}")
 @async_fail_gracefully_singular
-async def read_team(
+async def read_team_years(
     response: StreamingResponse, team_num: str, no_cache: bool = False
 ) -> Any:
     team: Optional[Team] = await get_team_cached(team=team_num, no_cache=no_cache)
     if team is None or team.offseason:
         raise Exception("Team not found")
 
-    return compress(team.to_dict())
-
-
-@router.get("/team/{team_num}/years")
-@async_fail_gracefully_plural
-async def read_team_years(
-    response: StreamingResponse, team_num: str, no_cache: bool = False
-) -> Any:
     team_years: List[TeamYear] = await get_team_years_cached(
         team=team_num, no_cache=True
     )
-    out = [
+    team_year_stats = [
         {
             "year": x.year,
             "team": x.team,
@@ -72,6 +64,11 @@ async def read_team_years(
         }
         for x in team_years
     ]
+
+    out = {
+        "team": team.to_dict(),
+        "team_years": team_year_stats,
+    }
 
     return compress(out)
 
