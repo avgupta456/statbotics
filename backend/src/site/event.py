@@ -5,14 +5,13 @@ from fastapi.responses import StreamingResponse
 
 from src.api import (
     get_event_cached,
+    get_events_cached,
     get_matches_cached,
     get_team_events_cached,
     get_team_matches_cached,
     get_year_cached,
-    get_events_cached,
 )
-
-from src.db.models import Event, Year, Match, TeamEvent, TeamMatch
+from src.db.models import Event, Match, TeamEvent, TeamMatch, Year
 from src.site.helper import compress
 from src.types.enums import EventStatus
 from src.utils.decorators import (

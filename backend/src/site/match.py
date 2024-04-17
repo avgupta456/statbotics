@@ -3,22 +3,20 @@ from typing import Any, List, Optional
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
+from src.api import (
+    get_event_cached,
+    get_match_cached,
+    get_team_events_cached,
+    get_team_matches_cached,
+    get_year_cached,
+)
 from src.db.functions import get_noteworthy_matches, get_upcoming_matches
+from src.db.models import Event, Match, TeamEvent, TeamMatch, Year
 from src.site.helper import compress
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
 )
-
-from src.api import (
-    get_team_matches_cached,
-    get_team_events_cached,
-    get_year_cached,
-    get_match_cached,
-    get_event_cached,
-)
-from src.db.models import TeamMatch, Year, Match, Event, TeamEvent
-
 
 router = APIRouter()
 

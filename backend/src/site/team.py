@@ -4,16 +4,16 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
 from src.api import (
-    get_teams_cached,
+    get_matches_cached,
     get_team_cached,
     get_team_events_cached,
+    get_team_matches_cached,
     get_team_year_cached,
     get_team_years_cached,
+    get_teams_cached,
     get_year_cached,
-    get_matches_cached,
-    get_team_matches_cached,
 )
-from src.db.models import Match, TeamEvent, TeamMatch, TeamYear, Year, Team
+from src.db.models import Match, Team, TeamEvent, TeamMatch, TeamYear, Year
 from src.site.helper import compress
 from src.utils.decorators import (
     async_fail_gracefully_plural,
