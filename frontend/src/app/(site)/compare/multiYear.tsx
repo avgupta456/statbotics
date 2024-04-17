@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
-import { getTeam, getTeamYears } from "../../../api/team";
+import { getTeam } from "../../../api/team";
 import LineChart from "../../../components/Figures/Line";
 import { multiSelectStyles } from "../../../components/multiSelect";
 import { CURR_YEAR } from "../../../constants";

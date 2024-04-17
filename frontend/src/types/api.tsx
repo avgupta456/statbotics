@@ -320,7 +320,6 @@ export type APITeamMatch = {
   surrogate: boolean;
   status: string;
   epa: {
-    total_points: number;
     post: number;
     breakdown: { [key: string]: number };
   };
