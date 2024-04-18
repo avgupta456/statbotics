@@ -21,7 +21,7 @@ const SingleYear = ({ teams }: { teams: ShortTeam[] }) => {
       value: team.team,
       label: `${team.team} | ${team.name}`,
     }))
-    .sort((a, b) => (a.value > b.value ? 1 : -1));
+    .sort((a, b) => parseInt(a.value) - parseInt(b.value));
 
   return (
     <div className="mb-4">

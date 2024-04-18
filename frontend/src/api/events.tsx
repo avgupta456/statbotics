@@ -6,5 +6,5 @@ import query from "./storage";
 export async function getYearEvents(year: number): Promise<{ year: APIYear; events: APIEvent[] }> {
   const urlSuffix = `/events/${year}`;
   const storageKey = `events_${year}_v3`;
-  return query(storageKey, urlSuffix, 0, 60, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
+  return query(storageKey, urlSuffix, 0, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
 }

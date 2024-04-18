@@ -244,14 +244,14 @@ async function indexSim(
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points : teamEvent.epa.stats.start;
-    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points || 0;
+    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points.mean : teamEvent.epa.stats.start;
+    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points.mean || 0;
 
-    let currRP1EPA = postEvent ? teamEvent.epa.breakdown.rp_1 : 0; // TODO: fix start rp epa
-    if (!currRP1EPA) currRP1EPA = teamEvent.epa.breakdown.rp_1 || 0;
+    let currRP1EPA = postEvent ? teamEvent.epa.breakdown.rp_1.mean : 0; // TODO: fix start rp epa
+    if (!currRP1EPA) currRP1EPA = teamEvent.epa.breakdown.rp_1.mean || 0;
 
-    let currRP2EPA = postEvent ? teamEvent.epa.breakdown.rp_2 : 0; // TODO: fix start rp epa
-    if (!currRP2EPA) currRP2EPA = teamEvent.epa.breakdown.rp_2 || 0;
+    let currRP2EPA = postEvent ? teamEvent.epa.breakdown.rp_2.mean : 0; // TODO: fix start rp epa
+    if (!currRP2EPA) currRP2EPA = teamEvent.epa.breakdown.rp_2.mean || 0;
 
     currEPAs[teamEvent.team] = currEPA;
     currRP1EPAs[teamEvent.team] = currRP1EPA;
@@ -419,7 +419,7 @@ async function _strengthOfSchedule(data: EventData, simCount: number, postEvent:
     for (let j = 0; j < redTeams.length; j++) {
       const currPartners = [];
       for (let k = 0; k < redTeams.length; k++) {
-        if (j == k) continue;
+        if (j === k) continue;
         currPartners.push(redTeams[k]);
       }
       teamPartners[redTeams[j]].push(currPartners);
@@ -433,7 +433,7 @@ async function _strengthOfSchedule(data: EventData, simCount: number, postEvent:
     for (let j = 0; j < blueTeams.length; j++) {
       const currPartners = [];
       for (let k = 0; k < blueTeams.length; k++) {
-        if (j == k) continue;
+        if (j === k) continue;
         currPartners.push(blueTeams[k]);
       }
       teamPartners[blueTeams[j]].push(currPartners);

@@ -35,13 +35,7 @@ function decompress(buffer: any) {
   return data;
 }
 
-async function query(
-  storageKey: string,
-  apiPath: string,
-  minLength: number = 1000,
-  revalidate: number = 60,
-  expiry: number = 60 * 60
-) {
+async function query(storageKey: string, apiPath: string, minLength: number, expiry: number) {
   const cacheRawData = await getWithExpiry(storageKey);
   const cacheData = cacheRawData ? decompress(cacheRawData) : null;
   if (cacheData && (minLength === 0 || cacheData?.length > minLength)) {
@@ -50,7 +44,7 @@ async function query(
   }
 
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}${apiPath}`, { next: { revalidate } });
+  const res = await fetch(`${BACKEND_URL}${apiPath}`, { next: { revalidate: 0 } });
   log(`${apiPath} took ${round(performance.now() - start, 0)}ms`);
 
   if (!res.ok) {

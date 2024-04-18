@@ -22,7 +22,7 @@ export async function getTeamYear(
   const urlSuffix = `/team/${team}/${year}`;
   const storageKey = `team_${team}_${year}_v3`;
 
-  return query(storageKey, urlSuffix, 0, 60, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
+  return query(storageKey, urlSuffix, 0, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
 }
 
 export async function getTeamYears(team: string): Promise<any[]> {

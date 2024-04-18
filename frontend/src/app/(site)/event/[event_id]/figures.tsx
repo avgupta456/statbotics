@@ -35,9 +35,9 @@ const FiguresSection = ({
     .filter((teamEvent) => parseInt(teamEvent.team) <= MAX_TEAM)
     .map((teamEvent) => ({
       value: teamEvent.team,
-      label: `${teamEvent.team} | ${teamEvent.team}`,
+      label: `${teamEvent.team} | ${teamEvent.team_name}`,
     }))
-    .sort((a, b) => (a.value > b.value ? 1 : -1));
+    .sort((a, b) => parseInt(a.value) - parseInt(b.value));
 
   const scatterData = data.team_events // Filter out offseason teams
     .filter((teamEvent) => parseInt(teamEvent.team) <= MAX_TEAM && teamEvent.record.qual.rank > 0)
@@ -47,12 +47,10 @@ const FiguresSection = ({
         {
           id: teamEvent.team,
           x: teamEvent.record.qual.rank,
-          y: teamEvent.epa.breakdown.total_points,
+          y: teamEvent.epa.breakdown.total_points.mean,
         },
       ],
     }));
-
-  console.log(scatterData);
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">

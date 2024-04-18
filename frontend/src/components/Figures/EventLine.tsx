@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { GiPodium } from "react-icons/gi";
 import Select from "react-select";
 
+import { getTeamEventTeamMatches } from "../../api/event";
 import { BACKEND_URL } from "../../constants";
 import { APITeamEvent, APITeamMatch } from "../../types/api";
 import { classnames, log, round } from "../../utils";
@@ -29,24 +30,10 @@ const EventLineChart = ({
 
   // FUNCTIONS
 
-  const fetchData = async (teamNum: number) => {
-    const start = performance.now();
-    const res = await fetch(`${BACKEND_URL}/event/${eventId}/team_matches/${teamNum}`, {
-      next: { revalidate: 60 },
-    });
-    log(`/event/${eventId}/team_matches/${teamNum} took ${round(performance.now() - start, 0)} ms`);
+  const fetchData = async (teamNum: string) => {
+    const data = await getTeamEventTeamMatches(teamNum, eventId);
 
-    if (!res.ok) {
-      return undefined;
-    }
-
-    const data: { data: APITeamMatch[] } | undefined = await res.json();
-    if (!data) {
-      log("No data found for team " + teamNum);
-      return undefined;
-    }
-
-    const sortedData = data.data
+    const sortedData = data
       .filter((teamMatch: any) => !teamMatch.playoff && teamMatch.status === "Completed")
       .sort((a: any, b: any) => a.match_num - b.match_num);
 
