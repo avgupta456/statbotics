@@ -34,10 +34,12 @@ const Navbar = () => {
     getAllEvents().then((data) => setEvents(data));
   }, []);
 
-  const teamOptions = teams?.map((team: ShortTeam) => ({
-    value: `/team/${team.team}`,
-    label: `${team.team} | ${team.name}`,
-  }));
+  const teamOptions = teams
+    ?.sort((a, b) => parseInt(a.team) - parseInt(b.team))
+    ?.map((team: ShortTeam) => ({
+      value: `/team/${team.team}`,
+      label: `${team.team} | ${team.name}`,
+    }));
 
   const eventOptions = events
     ?.sort((a, b) => parseInt(b.key.slice(0, 4)) - parseInt(a.key.slice(0, 4)))
