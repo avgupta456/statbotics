@@ -29,8 +29,6 @@ const PageMatchTable = ({ data }: { data: MatchData }) => {
   const blue2EventData = data.team_events.find((te) => te.team === blue2)?.epa?.breakdown;
   const blue3EventData = data.team_events.find((te) => te.team === blue3)?.epa?.breakdown;
 
-  console.log(red1Data, red1EventData);
-
   // Used for both upcoming and completed matches
   const redPredTotal = data?.match?.pred?.red_score;
   const bluePredTotal = data?.match?.pred?.blue_score;

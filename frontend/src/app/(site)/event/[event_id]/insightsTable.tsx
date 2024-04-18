@@ -48,8 +48,6 @@ const columnHelper = createColumnHelper<TeamEventInsights>();
 const detailedColumnHelper = createColumnHelper<DetailedTeamEventInsights>();
 
 const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: EventData }) => {
-  console.log(data);
-
   const [disableHighlight, setDisableHighlight] = useState(false);
 
   const sortFunc = (a: TeamEventInsights, b: TeamEventInsights) => {

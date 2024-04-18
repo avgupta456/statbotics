@@ -92,7 +92,6 @@ const YearLineChart = ({
       };
 
       const currTeamYear = teamYears.find((teamYear) => teamYear.team === teamNum);
-      console.log(currTeamYear);
       const lastEPA = yAxis.yearAccessor(currTeamYear);
       teamData.data.push({ x: xAxis === "match" ? N : 1, label: "End", y: lastEPA });
 

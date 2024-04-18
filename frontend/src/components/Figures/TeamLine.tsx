@@ -37,8 +37,6 @@ const TeamLineChart = ({
   const lastEvent = filteredData[filteredData.length - 1]?.match.split("_")[0];
   arr.push({ x: filteredData.length, event: lastEvent, label: "End", y: lastEPA });
 
-  console.log(arr);
-
   let teamData = [
     {
       id: teamNum.toString(),
