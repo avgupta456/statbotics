@@ -67,18 +67,18 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Even
   const eventInsightsData: TeamEventInsights[] = data.team_events
     .map((teamEvent) => {
       return {
-        num: teamEvent.team ?? "N/A",
-        team: teamEvent.team_name ? truncate(teamEvent.team_name, 30) : "N/A",
-        first_event: teamEvent.first_event ?? false,
-        unitless_epa: round(teamEvent.epa.unitless, 0) ?? "N/A",
-        norm_epa: round(teamEvent.epa.norm, 0) ?? "N/A",
-        total_epa: round(teamEvent.epa.breakdown.total_points.mean, 1) ?? 0,
-        auto_epa: round(teamEvent.epa.breakdown.auto_points.mean, 1) ?? "N/A",
-        teleop_epa: round(teamEvent.epa.breakdown.teleop_points.mean, 1) ?? "N/A",
-        endgame_epa: round(teamEvent.epa.breakdown.endgame_points.mean, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent.epa.breakdown.rp_1.mean, 2) ?? "N/A",
-        rp_2_epa: round(teamEvent.epa.breakdown.rp_2.mean, 2) ?? "N/A",
-        rank: teamEvent.record.qual.rank ?? -1,
+        num: teamEvent?.team ?? "N/A",
+        team: teamEvent?.team_name ? truncate(teamEvent?.team_name, 30) : "N/A",
+        first_event: teamEvent?.first_event ?? false,
+        unitless_epa: round(teamEvent?.epa?.unitless, 0) ?? "N/A",
+        norm_epa: round(teamEvent?.epa?.norm, 0) ?? "N/A",
+        total_epa: round(teamEvent?.epa?.breakdown?.total_points?.mean, 1) ?? 0,
+        auto_epa: round(teamEvent?.epa?.breakdown?.auto_points?.mean, 1) ?? "N/A",
+        teleop_epa: round(teamEvent?.epa?.breakdown?.teleop_points?.mean, 1) ?? "N/A",
+        endgame_epa: round(teamEvent?.epa?.breakdown?.endgame_points?.mean, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent?.epa?.breakdown?.rp_1?.mean, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent?.epa?.breakdown?.rp_2?.mean, 2) ?? "N/A",
+        rank: teamEvent?.record?.qual?.rank ?? -1,
       };
     })
     .sort(sortFunc);
@@ -86,21 +86,21 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Even
   const detailedEventInsightsData: DetailedTeamEventInsights[] = data.team_events
     .map((teamEvent) => {
       return {
-        num: teamEvent.team ?? "N/A",
-        team: teamEvent.team_name ? truncate(teamEvent.team_name, 30) : "N/A",
-        first_event: teamEvent.first_event ?? false,
-        unitless_epa: round(teamEvent.epa.unitless, 0) ?? "N/A",
-        norm_epa: round(teamEvent.epa.norm, 0) ?? "N/A",
-        total_epa: round(teamEvent.epa.breakdown.total_points.mean, 1) ?? 0,
-        auto_epa: round(teamEvent.epa.breakdown.auto_points.mean, 1) ?? "N/A",
-        teleop_epa: round(teamEvent.epa.breakdown.teleop_points.mean, 1) ?? "N/A",
-        endgame_epa: round(teamEvent.epa.breakdown.endgame_points.mean, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent.epa.breakdown.rp_1.mean, 2) ?? "N/A",
-        rp_2_epa: round(teamEvent.epa.breakdown.rp_2.mean, 2) ?? "N/A",
-        rank: teamEvent.record.qual.rank ?? -1,
-        rps: teamEvent.record.qual.rps ?? 0,
-        rps_per_match: teamEvent.record.qual.rps_per_match.toFixed(2),
-        record: `${teamEvent.record.qual.wins}-${teamEvent.record.qual.losses}-${teamEvent.record.qual.ties}`,
+        num: teamEvent?.team ?? "N/A",
+        team: teamEvent?.team_name ? truncate(teamEvent?.team_name, 30) : "N/A",
+        first_event: teamEvent?.first_event ?? false,
+        unitless_epa: round(teamEvent?.epa?.unitless, 0) ?? "N/A",
+        norm_epa: round(teamEvent?.epa?.norm, 0) ?? "N/A",
+        total_epa: round(teamEvent?.epa?.breakdown?.total_points?.mean, 1) ?? 0,
+        auto_epa: round(teamEvent?.epa?.breakdown?.auto_points?.mean, 1) ?? "N/A",
+        teleop_epa: round(teamEvent?.epa?.breakdown?.teleop_points?.mean, 1) ?? "N/A",
+        endgame_epa: round(teamEvent?.epa?.breakdown?.endgame_points?.mean, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent?.epa?.breakdown?.rp_1?.mean, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent?.epa?.breakdown?.rp_2?.mean, 2) ?? "N/A",
+        rank: teamEvent?.record?.qual?.rank ?? -1,
+        rps: teamEvent?.record?.qual?.rps ?? 0,
+        rps_per_match: teamEvent?.record?.qual?.rps_per_match.toFixed(2),
+        record: `${teamEvent?.record?.qual.wins}-${teamEvent?.record?.qual?.losses}-${teamEvent?.record?.qual?.ties}`,
       };
     })
     .sort(sortFunc);

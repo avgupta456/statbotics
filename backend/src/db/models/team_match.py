@@ -111,8 +111,8 @@ class TeamMatch(_TeamMatch, Model):
             },
         }
 
+        clean["epa"]["breakdown"]["total_points"] = self.epa
         if self.year >= 2016:
-            clean["epa"]["breakdown"]["total_points"] = self.epa
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
             for key, name in pairs:

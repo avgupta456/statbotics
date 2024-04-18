@@ -65,7 +65,7 @@ const PageTeamInsightsTable = ({
   );
 
   const allTeamYears: APITeamYear[] = data.team_years
-    .sort((a, b) => b.epa.breakdown.total_points.mean - a.epa.breakdown.total_points.mean)
+    .sort((a, b) => b?.epa?.breakdown?.total_points?.mean - a?.epa?.breakdown?.total_points?.mean)
     .map((teamYear: APITeamYear, i) => {
       // overwrite epa_rank with index (since we lazy update epa_rank)
       teamYear.epa.ranks.total.rank = i + 1;

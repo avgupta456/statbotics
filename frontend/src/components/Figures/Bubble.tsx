@@ -72,9 +72,9 @@ const BubbleChart = ({
 
   const getCount = (datum: APITeamYear | APITeamEvent) => {
     if ("season" in datum?.record) {
-      return datum.record.season.count;
+      return datum?.record?.season?.count;
     } else {
-      return datum.record.qual.count;
+      return datum?.record?.qual?.count;
     }
   };
 

@@ -84,7 +84,7 @@ const EPABreakdownTable = ({
   const allCols = Object.keys(config.keys);
 
   const yearInsightsData: any[] = data
-    .sort((a, b) => b.epa.breakdown.total_points.mean - a.epa.breakdown.total_points.mean)
+    .sort((a, b) => b?.epa?.breakdown?.total_points?.mean - a?.epa?.breakdown?.total_points?.mean)
     .map((team) => {
       const teamEventToName = (team: APITeamYear | APITeamEvent) => {
         if ("name" in team) {
@@ -99,7 +99,7 @@ const EPABreakdownTable = ({
       return {
         ...{ num: team.team, team: truncate(teamEventToName(team), 30) },
         ...allCols.reduce((acc, col) => {
-          const value = team.epa.breakdown[col].mean;
+          const value = team?.epa?.breakdown?.[col]?.mean;
           return { ...acc, [col]: round(value, config.keys[col].digits) };
         }, {}),
       };

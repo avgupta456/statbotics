@@ -123,13 +123,13 @@ const SosSection = ({ eventId, data }: { eventId: string; data: EventData }) => 
   const year = data.event.year;
 
   const sosData = data.team_events
-    .sort((a, b) => a.record.qual.rank - b.record.qual.rank)
+    .sort((a, b) => a?.record?.qual?.rank - b?.record?.qual?.rank)
     .map((teamEvent, i) => ({
       rank: i + 1,
       num: teamEvent.team,
       team: teamEvent.team_name,
       epa: round(
-        preEvent ? teamEvent.epa.stats.start : teamEvent.epa.breakdown.total_points.mean,
+        preEvent ? teamEvent?.epa?.stats?.start : teamEvent?.epa?.breakdown?.total_points?.mean,
         1
       ),
       preSimAvgRank: preSimAvgRank[teamEvent.team],

@@ -303,6 +303,15 @@ class Year(_Year, Model):
             },
         }
 
+        clean["breakdown"] = {
+            "total_points_mean": self.score_mean,
+        }
+        clean["percentiles"]["total_points"] = {
+            "p99": self.epa_99p,
+            "p90": self.epa_90p,
+            "p75": self.epa_75p,
+            "p25": self.epa_25p,
+        }
         if self.year >= 2016:
             clean["breakdown"] = {
                 "total_points_mean": self.score_mean,

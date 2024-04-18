@@ -165,14 +165,14 @@ const NoteworthyMatches = ({
               header={"Max Score"}
               accessor={(match) =>
                 year < 2016
-                  ? Math.max(match.result.red_score, match.result.blue_score)
-                  : Math.max(match.result.red_no_foul, match.result.blue_no_foul)
+                  ? Math.max(match?.result?.red_score, match?.result?.blue_score)
+                  : Math.max(match?.result?.red_no_foul, match?.result?.blue_no_foul)
               }
               redAccessor={(match) =>
-                year < 2016 ? match.result.red_score : match.result.red_no_foul
+                year < 2016 ? match?.result?.red_score : match?.result?.red_no_foul
               }
               blueAccessor={(match) =>
-                year < 2016 ? match.result.blue_score : match.result.blue_no_foul
+                year < 2016 ? match?.result?.blue_score : match?.result?.blue_no_foul
               }
             />
             <div className="w-full text-sm ml-4 mt-4 mb-4">
@@ -186,8 +186,8 @@ const NoteworthyMatches = ({
               header={"Sum Score"}
               accessor={(match) =>
                 year < 2016
-                  ? match.result.red_score + match.result.blue_score
-                  : match.result.red_no_foul + match.result.blue_no_foul
+                  ? match?.result?.red_score + match?.result?.blue_score
+                  : match?.result?.red_no_foul + match?.result?.blue_no_foul
               }
             />
             <div className="mb-8" />
@@ -196,9 +196,9 @@ const NoteworthyMatches = ({
               matches={data?.losing_score || []}
               mainHeader="Highest Losing Scores"
               header={"Losing Score"}
-              accessor={(match) => Math.min(match.result.red_score, match.result.blue_score)}
-              redAccessor={(match) => match.result.red_score}
-              blueAccessor={(match) => match.result.blue_score}
+              accessor={(match) => Math.min(match?.result?.red_score, match?.result?.blue_score)}
+              redAccessor={(match) => match?.result?.red_score}
+              blueAccessor={(match) => match?.result?.blue_score}
             />
             {year >= 2016 && (
               <div className="w-full text-sm ml-4 mt-4 mb-4">
@@ -213,10 +213,10 @@ const NoteworthyMatches = ({
                   mainHeader="Highest Auto Scores"
                   header={"Auto Score"}
                   accessor={(match) =>
-                    Math.max(match.result.red_auto_points, match.result.blue_auto_points)
+                    Math.max(match?.result?.red_auto_points, match?.result?.blue_auto_points)
                   }
-                  redAccessor={(match) => match.result.red_auto_points}
-                  blueAccessor={(match) => match.result.blue_auto_points}
+                  redAccessor={(match) => match?.result?.red_auto_points}
+                  blueAccessor={(match) => match?.result?.blue_auto_points}
                 />
                 <div className="mb-8" />
                 <NoteworthySection
@@ -225,10 +225,10 @@ const NoteworthyMatches = ({
                   mainHeader="Highest Teleop Scores"
                   header={"Teleop Score"}
                   accessor={(match) =>
-                    Math.max(match.result.red_teleop_points, match.result.blue_teleop_points)
+                    Math.max(match?.result?.red_teleop_points, match?.result?.blue_teleop_points)
                   }
-                  redAccessor={(match) => match.result.red_teleop_points}
-                  blueAccessor={(match) => match.result.blue_teleop_points}
+                  redAccessor={(match) => match?.result?.red_teleop_points}
+                  blueAccessor={(match) => match?.result?.blue_teleop_points}
                 />
                 <div className="mb-8" />
                 <NoteworthySection
@@ -237,10 +237,10 @@ const NoteworthyMatches = ({
                   mainHeader="Highest Endgame Scores"
                   header={"Endgame Score"}
                   accessor={(match) =>
-                    Math.max(match.result.red_endgame_points, match.result.blue_endgame_points)
+                    Math.max(match?.result?.red_endgame_points, match?.result?.blue_endgame_points)
                   }
-                  redAccessor={(match) => match.result.red_endgame_points}
-                  blueAccessor={(match) => match.result.blue_endgame_points}
+                  redAccessor={(match) => match?.result?.red_endgame_points}
+                  blueAccessor={(match) => match?.result?.blue_endgame_points}
                 />
               </>
             )}

@@ -41,15 +41,15 @@ const MatchRow = ({
   stacked: boolean;
   myAlliance: boolean;
 }) => {
-  let alliance = match.alliances.red.team_keys.includes(teamNum) ? "red" : "";
-  alliance = match.alliances.blue.team_keys.includes(teamNum) ? "blue" : alliance;
+  let alliance = match?.alliances?.red?.team_keys.includes(teamNum) ? "red" : "";
+  alliance = match?.alliances?.blue?.team_keys.includes(teamNum) ? "blue" : alliance;
 
-  const _winProb = round(match.pred.red_win_prob * 100, 0);
+  const _winProb = round(match?.pred?.red_win_prob * 100, 0);
   const winProb = _winProb > 50 ? _winProb : 100 - _winProb;
-  const correctWinner = match.result.winner === match.pred.winner;
+  const correctWinner = match?.result?.winner === match?.pred?.winner;
 
-  const myAllianceWinProb = alliance === match.pred.winner ? winProb : 100 - winProb;
-  const myAllianceWinner = alliance === match.result.winner;
+  const myAllianceWinProb = alliance === match?.pred?.winner ? winProb : 100 - winProb;
+  const myAllianceWinner = alliance === match?.result?.winner;
 
   const Video = () => (
     <div className="w-16 h-full flex justify-center items-center border-r border-b border-gray-300">
@@ -92,12 +92,12 @@ const MatchRow = ({
           stacked ? "w-full h-1/2" : "w-1/2 h-full"
         )}
       >
-        {match.alliances.red.team_keys.map((team) => (
+        {match?.alliances?.red?.team_keys?.map((team) => (
           <Link
             href={`/team/${team}/${year}`}
             className={classnames(
               "w-1/3",
-              match.result.winner === "red" ? "font-bold" : "font-thin",
+              match?.result?.winner === "red" ? "font-bold" : "font-thin",
               team === teamNum ? "underline" : "",
               "text-blue-600 hover:text-blue-700 cursor-pointer"
             )}
@@ -114,12 +114,12 @@ const MatchRow = ({
           stacked ? "w-full h-1/2" : "w-1/2 h-full"
         )}
       >
-        {match.alliances.blue.team_keys.map((team) => (
+        {match?.alliances?.blue?.team_keys?.map((team) => (
           <Link
             href={`/team/${team}/${year}`}
             className={classnames(
               "w-1/3",
-              match.result.winner === "blue" ? "font-bold" : "font-thin",
+              match?.result?.winner === "blue" ? "font-bold" : "font-thin",
               team === teamNum ? "underline" : "",
               "text-blue-600 hover:text-blue-700 cursor-pointer"
             )}
@@ -144,14 +144,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.result.winner === "red" ? "font-bold" : "font-thin",
+              match?.result?.winner === "red" ? "font-bold" : "font-thin",
               alliance === "red" ? "underline" : ""
             )}
           >
-            {match.result.red_score}
+            {match?.result?.red_score}
           </span>
-          {year >= 2016 && match.result.rp_1 > 0.5 && <sup>●</sup>}
-          {year >= 2016 && match.result.rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match?.result?.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match?.result?.rp_2 > 0.5 && <sup>●</sup>}
         </div>
         <div
           style={{ backgroundColor: lightBlue }}
@@ -162,14 +162,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.result.winner === "blue" ? "font-bold" : "font-thin",
+              match?.result?.winner === "blue" ? "font-bold" : "font-thin",
               alliance === "blue" ? "underline" : ""
             )}
           >
-            {match.result.blue_score}
+            {match?.result?.blue_score}
           </span>
-          {year >= 2016 && match.result.rp_1 > 0.5 && <sup>●</sup>}
-          {year >= 2016 && match.result.rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match?.result?.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && match?.result?.rp_2 > 0.5 && <sup>●</sup>}
         </div>
       </>
     ) : (
@@ -199,14 +199,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.pred.winner === "red" ? "font-bold" : "font-thin",
+              match?.pred?.winner === "red" ? "font-bold" : "font-thin",
               alliance === "red" ? "underline" : ""
             )}
           >
-            {round(match.pred.red_score, 0)}
+            {round(match?.pred?.red_score, 0)}
           </span>
-          {year >= 2016 && !match.elim && match.pred.rp_1 > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.elim && match.pred.rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match?.pred?.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match?.pred?.rp_2 > 0.5 && <sup>●</sup>}
         </div>
         <div
           className={classnames(
@@ -217,14 +217,14 @@ const MatchRow = ({
         >
           <span
             className={classnames(
-              match.pred.winner === "blue" ? "font-bold" : "font-thin",
+              match?.pred?.winner === "blue" ? "font-bold" : "font-thin",
               alliance === "blue" ? "underline" : ""
             )}
           >
-            {round(match.pred.blue_score, 0)}
+            {round(match?.pred?.blue_score, 0)}
           </span>
-          {year >= 2016 && !match.elim && match.pred.rp_1 > 0.5 && <sup>●</sup>}
-          {year >= 2016 && !match.elim && match.pred.rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match?.pred?.rp_1 > 0.5 && <sup>●</sup>}
+          {year >= 2016 && !match.elim && match?.pred?.rp_2 > 0.5 && <sup>●</sup>}
         </div>
       </div>
       <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>
@@ -235,10 +235,10 @@ const MatchRow = ({
           )}
         >
           {myAlliance
-            ? match.pred.winner === alliance
+            ? match?.pred?.winner === alliance
               ? "Win"
               : "Lose"
-            : match.pred.winner === "red"
+            : match?.pred?.winner === "red"
             ? "Red"
             : "Blue"}
         </div>

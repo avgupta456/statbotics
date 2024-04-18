@@ -46,13 +46,7 @@ const EventsLayout = ({
   );
 
   const sortedData: APIEvent[] | undefined = filteredData?.sort((a, b) =>
-    a.start_date === b.start_date
-      ? b.epa.mean > a.epa.mean
-        ? 1
-        : -1
-      : a.start_date > b.start_date
-      ? 1
-      : -1
+    a.start_date === b.start_date ? b.epa.mean - a.epa.mean : a.start_date > b.start_date ? 1 : -1
   );
 
   const N = filteredData?.length;
@@ -65,7 +59,7 @@ const EventsLayout = ({
     .sort((a, b) => {
       if (a.current_match > 0 && b.current_match === 0) return -1;
       if (a.current_match === 0 && b.current_match > 0) return 1;
-      return a.epa.mean > b.epa.mean ? -1 : 1;
+      return b?.epa?.mean - a?.epa?.mean;
     });
   const ongoingN = ongoingEvents.length;
 

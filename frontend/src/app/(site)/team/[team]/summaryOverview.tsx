@@ -88,23 +88,23 @@ const SummaryOverviewSection = ({
 
   const tableData = filteredTeamYearsData
     .map((teamYear) => ({
-      year: teamYear.year,
-      norm_epa: round(teamYear.norm_epa, 0),
+      year: teamYear?.year,
+      norm_epa: round(teamYear?.norm_epa, 0),
       epa_rank: teamYear.epa_rank || "N/A",
       epa_percentile: teamYear?.epa_percentile
-        ? Math.min(99.9, 100 * (1 - teamYear.epa_percentile)).toFixed(1) + "%"
+        ? Math.min(99.9, 100 * (1 - teamYear?.epa_percentile)).toFixed(1) + "%"
         : "N/A",
-      country_epa_rank: teamYear.country_epa_rank || "N/A",
+      country_epa_rank: teamYear?.country_epa_rank || "N/A",
       country_epa_percentile: teamYear?.country_epa_percentile
-        ? Math.min(99.9, 100 * (1 - teamYear.country_epa_percentile)).toFixed(1) + "%"
+        ? Math.min(99.9, 100 * (1 - teamYear?.country_epa_percentile)).toFixed(1) + "%"
         : "N/A",
-      district_epa_rank: teamYear.district_epa_rank || "N/A",
+      district_epa_rank: teamYear?.district_epa_rank || "N/A",
       district_epa_percentile: teamYear?.district_epa_percentile
-        ? Math.min(99.9, 100 * (1 - teamYear.district_epa_percentile)).toFixed(1) + "%"
+        ? Math.min(99.9, 100 * (1 - teamYear?.district_epa_percentile)).toFixed(1) + "%"
         : "N/A",
-      state_epa_rank: teamYear.state_epa_rank || "N/A",
+      state_epa_rank: teamYear?.state_epa_rank || "N/A",
       state_epa_percentile: teamYear?.state_epa_percentile
-        ? Math.min(99.9, 100 * (1 - teamYear.state_epa_percentile)).toFixed(1) + "%"
+        ? Math.min(99.9, 100 * (1 - teamYear?.state_epa_percentile)).toFixed(1) + "%"
         : "N/A",
     }))
     .reverse();

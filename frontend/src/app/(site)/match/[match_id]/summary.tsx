@@ -4,17 +4,17 @@ import { MatchData } from "../../../../types/data";
 import { classnames } from "../../../../utils";
 
 const Summary = ({ data }: { data: MatchData }) => {
-  const winProb = data.match.pred.red_win_prob;
+  const winProb = data?.match?.pred?.red_win_prob;
   const redWinProb = winProb * 100;
   const blueWinProb = (1 - winProb) * 100;
 
-  const redPred = data.match.pred.red_score;
-  const bluePred = data.match.pred.blue_score;
+  const redPred = data?.match?.pred.red_score;
+  const bluePred = data?.match?.pred.blue_score;
 
-  const redScore = data.match.result.red_score;
-  const blueScore = data.match.result.blue_score;
+  const redScore = data?.match?.result.red_score;
+  const blueScore = data?.match?.result.blue_score;
 
-  const completed = data.match.status === "Completed";
+  const completed = data?.match?.status === "Completed";
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -72,13 +72,13 @@ const Summary = ({ data }: { data: MatchData }) => {
               className={classnames(
                 "ml-2",
                 completed
-                  ? data.match.result.winner === "red"
+                  ? data?.match?.result?.winner === "red"
                     ? "text-red-500"
                     : "text-blue-500"
                   : ""
               )}
             >
-              {completed ? data.match.result.winner.toUpperCase() : "N/A"}
+              {completed ? data?.match?.result?.winner.toUpperCase() : "N/A"}
             </p>
           </div>
         </div>

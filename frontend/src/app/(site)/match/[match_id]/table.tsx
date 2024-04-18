@@ -6,80 +6,81 @@ import { MatchData } from "../../../../types/data";
 import { round } from "../../../../utils";
 
 const PageMatchTable = ({ data }: { data: MatchData }) => {
-  const red1 = data.match.alliances.red.team_keys[0];
-  const red2 = data.match.alliances.red.team_keys[1];
-  const red3 = data.match.alliances.red.team_keys[2];
-  const blue1 = data.match.alliances.blue.team_keys[0];
-  const blue2 = data.match.alliances.blue.team_keys[1];
-  const blue3 = data.match.alliances.blue.team_keys[2];
+  const red1 = data?.match?.alliances?.red?.team_keys[0];
+  const red2 = data?.match?.alliances?.red?.team_keys[1];
+  const red3 = data?.match?.alliances?.red?.team_keys[2];
+  const blue1 = data?.match?.alliances?.blue?.team_keys[0];
+  const blue2 = data?.match?.alliances?.blue?.team_keys[1];
+  const blue3 = data?.match?.alliances?.blue?.team_keys[2];
 
   // Used for completed matches
-  const red1Data = data.team_matches.find((tm) => tm.team === red1).epa.breakdown;
-  const red2Data = data.team_matches.find((tm) => tm.team === red2).epa.breakdown;
-  const red3Data = data.team_matches.find((tm) => tm.team === red3).epa.breakdown;
-  const blue1Data = data.team_matches.find((tm) => tm.team === blue1).epa.breakdown;
-  const blue2Data = data.team_matches.find((tm) => tm.team === blue2).epa.breakdown;
-  const blue3Data = data.team_matches.find((tm) => tm.team === blue3).epa.breakdown;
+  const red1Data = data.team_matches.find((tm) => tm.team === red1)?.epa?.breakdown;
+  const red2Data = data.team_matches.find((tm) => tm.team === red2)?.epa?.breakdown;
+  const red3Data = data.team_matches.find((tm) => tm.team === red3)?.epa?.breakdown;
+  const blue1Data = data.team_matches.find((tm) => tm.team === blue1)?.epa?.breakdown;
+  const blue2Data = data.team_matches.find((tm) => tm.team === blue2)?.epa?.breakdown;
+  const blue3Data = data.team_matches.find((tm) => tm.team === blue3)?.epa?.breakdown;
 
   // Used for upcoming matches
-  const red1EventData = data.team_events.find((te) => te.team === red1).epa.breakdown;
-  const red2EventData = data.team_events.find((te) => te.team === red2).epa.breakdown;
-  const red3EventData = data.team_events.find((te) => te.team === red3).epa.breakdown;
-  const blue1EventData = data.team_events.find((te) => te.team === blue1).epa.breakdown;
-  const blue2EventData = data.team_events.find((te) => te.team === blue2).epa.breakdown;
-  const blue3EventData = data.team_events.find((te) => te.team === blue3).epa.breakdown;
+  const red1EventData = data.team_events.find((te) => te.team === red1)?.epa?.breakdown;
+  const red2EventData = data.team_events.find((te) => te.team === red2)?.epa?.breakdown;
+  const red3EventData = data.team_events.find((te) => te.team === red3)?.epa?.breakdown;
+  const blue1EventData = data.team_events.find((te) => te.team === blue1)?.epa?.breakdown;
+  const blue2EventData = data.team_events.find((te) => te.team === blue2)?.epa?.breakdown;
+  const blue3EventData = data.team_events.find((te) => te.team === blue3)?.epa?.breakdown;
 
   console.log(red1Data, red1EventData);
 
   // Used for both upcoming and completed matches
-  const redPredTotal = data.match.pred.red_score;
-  const bluePredTotal = data.match.pred.blue_score;
+  const redPredTotal = data?.match?.pred?.red_score;
+  const bluePredTotal = data?.match?.pred?.blue_score;
 
-  const redPredRP1 = data.match.pred.red_rp_1;
-  const bluePredRP1 = data.match.pred.blue_rp_1;
-  const redPredRP2 = data.match.pred.red_rp_2;
-  const bluePredRP2 = data.match.pred.blue_rp_2;
+  const redPredRP1 = data?.match?.pred?.red_rp_1;
+  const bluePredRP1 = data?.match?.pred?.blue_rp_1;
+  const redPredRP2 = data?.match?.pred?.red_rp_2;
+  const bluePredRP2 = data?.match?.pred?.blue_rp_2;
 
   // Used for upcoming events
 
   const redEventAuto =
-    red1EventData.auto_points.mean +
-    red2EventData.auto_points.mean +
-    red3EventData.auto_points.mean;
+    red1EventData?.auto_points?.mean +
+    red2EventData?.auto_points?.mean +
+    red3EventData?.auto_points?.mean;
   const blueEventAuto =
-    blue1EventData.auto_points.mean +
-    blue2EventData.auto_points.mean +
-    blue3EventData.auto_points.mean;
+    blue1EventData?.auto_points?.mean +
+    blue2EventData?.auto_points?.mean +
+    blue3EventData?.auto_points?.mean;
   const redEventTeleop =
-    red1EventData.teleop_points.mean +
-    red2EventData.teleop_points.mean +
-    red3EventData.teleop_points.mean;
+    red1EventData?.teleop_points?.mean +
+    red2EventData?.teleop_points?.mean +
+    red3EventData?.teleop_points?.mean;
   const blueEventTeleop =
-    blue1EventData.teleop_points.mean +
-    blue2EventData.teleop_points.mean +
-    blue3EventData.teleop_points.mean;
+    blue1EventData?.teleop_points?.mean +
+    blue2EventData?.teleop_points?.mean +
+    blue3EventData?.teleop_points?.mean;
   const redEventEndgame =
-    red1EventData.endgame_points.mean +
-    red2EventData.endgame_points.mean +
-    red3EventData.endgame_points.mean;
+    red1EventData?.endgame_points?.mean +
+    red2EventData?.endgame_points?.mean +
+    red3EventData?.endgame_points?.mean;
   const blueEventEndgame =
-    blue1EventData.endgame_points.mean +
-    blue2EventData.endgame_points.mean +
-    blue3EventData.endgame_points.mean;
+    blue1EventData?.endgame_points?.mean +
+    blue2EventData?.endgame_points?.mean +
+    blue3EventData?.endgame_points?.mean;
   const redEventFouls = redPredTotal - (redEventAuto + redEventTeleop + redEventEndgame);
   const blueEventFouls = bluePredTotal - (blueEventAuto + blueEventTeleop + blueEventEndgame);
 
   // Used for completed events
 
-  const redMatchAuto = red1Data.auto_points + red2Data.auto_points + red3Data.auto_points;
-  const blueMatchAuto = blue1Data.auto_points + blue2Data.auto_points + blue3Data.auto_points;
-  const redMatchTeleop = red1Data.teleop_points + red2Data.teleop_points + red3Data.teleop_points;
+  const redMatchAuto = red1Data?.auto_points + red2Data?.auto_points + red3Data?.auto_points;
+  const blueMatchAuto = blue1Data?.auto_points + blue2Data?.auto_points + blue3Data?.auto_points;
+  const redMatchTeleop =
+    red1Data?.teleop_points + red2Data?.teleop_points + red3Data?.teleop_points;
   const blueMatchTeleop =
-    blue1Data.teleop_points + blue2Data.teleop_points + blue3Data.teleop_points;
+    blue1Data?.teleop_points + blue2Data?.teleop_points + blue3Data?.teleop_points;
   const redMatchEndgame =
-    red1Data.endgame_points + red2Data.endgame_points + red3Data.endgame_points;
+    red1Data?.endgame_points + red2Data?.endgame_points + red3Data?.endgame_points;
   const blueMatchEndgame =
-    blue1Data.endgame_points + blue2Data.endgame_points + blue3Data.endgame_points;
+    blue1Data?.endgame_points + blue2Data?.endgame_points + blue3Data?.endgame_points;
   const redMatchFouls = redPredTotal - (redMatchAuto + redMatchTeleop + redMatchEndgame);
   const blueMatchFouls = bluePredTotal - (blueMatchAuto + blueMatchTeleop + blueMatchEndgame);
 
@@ -87,44 +88,44 @@ const PageMatchTable = ({ data }: { data: MatchData }) => {
 
   const autoComponent = {
     name: "Auto",
-    red1: completed ? red1Data.auto_points : red1EventData.auto_points.mean,
-    red2: completed ? red2Data.auto_points : red2EventData.auto_points.mean,
-    red3: completed ? red3Data.auto_points : red3EventData.auto_points.mean,
+    red1: completed ? red1Data?.auto_points : red1EventData?.auto_points?.mean,
+    red2: completed ? red2Data?.auto_points : red2EventData?.auto_points?.mean,
+    red3: completed ? red3Data?.auto_points : red3EventData?.auto_points?.mean,
     redTotal: completed ? redMatchAuto : redEventAuto,
-    redActual: completed ? data.match.result.red_auto_points : null,
-    blue1: completed ? blue1Data.auto_points : blue1EventData.auto_points.mean,
-    blue2: completed ? blue2Data.auto_points : blue2EventData.auto_points.mean,
-    blue3: completed ? blue3Data.auto_points : blue3EventData.auto_points.mean,
+    redActual: completed ? data?.match?.result?.red_auto_points : null,
+    blue1: completed ? blue1Data?.auto_points : blue1EventData?.auto_points?.mean,
+    blue2: completed ? blue2Data?.auto_points : blue2EventData?.auto_points?.mean,
+    blue3: completed ? blue3Data?.auto_points : blue3EventData?.auto_points?.mean,
     blueTotal: completed ? blueMatchAuto : blueEventAuto,
-    blueActual: completed ? data.match.result.blue_auto_points : null,
+    blueActual: completed ? data?.match?.result?.blue_auto_points : null,
   };
 
   const teleopComponent = {
     name: "Teleop",
-    red1: completed ? red1Data.teleop_points : red1EventData.teleop_points.mean,
-    red2: completed ? red2Data.teleop_points : red2EventData.teleop_points.mean,
-    red3: completed ? red3Data.teleop_points : red3EventData.teleop_points.mean,
+    red1: completed ? red1Data?.teleop_points : red1EventData?.teleop_points?.mean,
+    red2: completed ? red2Data?.teleop_points : red2EventData?.teleop_points?.mean,
+    red3: completed ? red3Data?.teleop_points : red3EventData?.teleop_points?.mean,
     redTotal: completed ? redMatchTeleop : redEventTeleop,
-    redActual: completed ? data.match.result.red_teleop_points : null,
-    blue1: completed ? blue1Data.teleop_points : blue1EventData.teleop_points.mean,
-    blue2: completed ? blue2Data.teleop_points : blue2EventData.teleop_points.mean,
-    blue3: completed ? blue3Data.teleop_points : blue3EventData.teleop_points.mean,
+    redActual: completed ? data?.match?.result?.red_teleop_points : null,
+    blue1: completed ? blue1Data?.teleop_points : blue1EventData?.teleop_points?.mean,
+    blue2: completed ? blue2Data?.teleop_points : blue2EventData?.teleop_points?.mean,
+    blue3: completed ? blue3Data?.teleop_points : blue3EventData?.teleop_points?.mean,
     blueTotal: completed ? blueMatchTeleop : blueEventTeleop,
-    blueActual: completed ? data.match.result.blue_teleop_points : null,
+    blueActual: completed ? data?.match?.result?.blue_teleop_points : null,
   };
 
   const endgameComponent = {
     name: "Endgame",
-    red1: completed ? red1Data.endgame_points : red1EventData.endgame_points.mean,
-    red2: completed ? red2Data.endgame_points : red2EventData.endgame_points.mean,
-    red3: completed ? red3Data.endgame_points : red3EventData.endgame_points.mean,
+    red1: completed ? red1Data?.endgame_points : red1EventData?.endgame_points?.mean,
+    red2: completed ? red2Data?.endgame_points : red2EventData?.endgame_points?.mean,
+    red3: completed ? red3Data?.endgame_points : red3EventData?.endgame_points?.mean,
     redTotal: completed ? redMatchEndgame : redEventEndgame,
-    redActual: completed ? data.match.result.red_endgame_points : null,
-    blue1: completed ? blue1Data.endgame_points : blue1EventData.endgame_points.mean,
-    blue2: completed ? blue2Data.endgame_points : blue2EventData.endgame_points.mean,
-    blue3: completed ? blue3Data.endgame_points : blue3EventData.endgame_points.mean,
+    redActual: completed ? data?.match?.result?.red_endgame_points : null,
+    blue1: completed ? blue1Data?.endgame_points : blue1EventData?.endgame_points.mean,
+    blue2: completed ? blue2Data?.endgame_points : blue2EventData?.endgame_points.mean,
+    blue3: completed ? blue3Data?.endgame_points : blue3EventData?.endgame_points.mean,
     blueTotal: completed ? blueMatchEndgame : blueEventEndgame,
-    blueActual: completed ? data.match.result.blue_endgame_points : null,
+    blueActual: completed ? data?.match?.result?.blue_endgame_points : null,
   };
 
   const foulComponent = {
@@ -133,54 +134,56 @@ const PageMatchTable = ({ data }: { data: MatchData }) => {
     red2: null,
     red3: null,
     redTotal: completed ? redMatchFouls : redEventFouls,
-    redActual: completed ? data.match.result.red_score - data.match.result.red_no_foul : null,
+    redActual: completed ? data?.match?.result?.red_score - data?.match?.result?.red_no_foul : null,
     blue1: null,
     blue2: null,
     blue3: null,
     blueTotal: completed ? blueMatchFouls : blueEventFouls,
-    blueActual: completed ? data.match.result.blue_score - data.match.result.blue_no_foul : null,
+    blueActual: completed
+      ? data?.match?.result?.blue_score - data?.match?.result?.blue_no_foul
+      : null,
   };
 
   const rp1Component = {
     name: "RP1",
-    red1: completed ? red1Data.rp_1 : red1EventData.rp_1.mean,
-    red2: completed ? red2Data.rp_1 : red2EventData.rp_1.mean,
-    red3: completed ? red3Data.rp_1 : red3EventData.rp_1.mean,
+    red1: completed ? red1Data?.rp_1 : red1EventData?.rp_1?.mean,
+    red2: completed ? red2Data?.rp_1 : red2EventData?.rp_1?.mean,
+    red3: completed ? red3Data?.rp_1 : red3EventData?.rp_1?.mean,
     redTotal: redPredRP1,
-    redActual: completed ? data.match.result.red_rp_1 : null,
-    blue1: completed ? blue1Data.rp_1 : blue1EventData.rp_1.mean,
-    blue2: completed ? blue2Data.rp_1 : blue2EventData.rp_1.mean,
-    blue3: completed ? blue3Data.rp_1 : blue3EventData.rp_1.mean,
+    redActual: completed ? data?.match?.result?.red_rp_1 : null,
+    blue1: completed ? blue1Data?.rp_1 : blue1EventData?.rp_1?.mean,
+    blue2: completed ? blue2Data?.rp_1 : blue2EventData?.rp_1?.mean,
+    blue3: completed ? blue3Data?.rp_1 : blue3EventData?.rp_1?.mean,
     blueTotal: bluePredRP1,
-    blueActual: completed ? data.match.result.blue_rp_1 : null,
+    blueActual: completed ? data?.match?.result?.blue_rp_1 : null,
   };
 
   const rp2Component = {
     name: "RP2",
-    red1: completed ? red1Data.rp_2 : red1EventData.rp_2.mean,
-    red2: completed ? red2Data.rp_2 : red2EventData.rp_2.mean,
-    red3: completed ? red3Data.rp_2 : red3EventData.rp_2.mean,
+    red1: completed ? red1Data?.rp_2 : red1EventData?.rp_2?.mean,
+    red2: completed ? red2Data?.rp_2 : red2EventData?.rp_2?.mean,
+    red3: completed ? red3Data?.rp_2 : red3EventData?.rp_2?.mean,
     redTotal: redPredRP2,
-    redActual: completed ? data.match.result.red_rp_2 : null,
-    blue1: completed ? blue1Data.rp_2 : blue1EventData.rp_2.mean,
-    blue2: completed ? blue2Data.rp_2 : blue2EventData.rp_2.mean,
-    blue3: completed ? blue3Data.rp_2 : blue3EventData.rp_2.mean,
+    redActual: completed ? data?.match?.result?.red_rp_2 : null,
+    blue1: completed ? blue1Data?.rp_2 : blue1EventData?.rp_2.mean,
+    blue2: completed ? blue2Data?.rp_2 : blue2EventData?.rp_2.mean,
+    blue3: completed ? blue3Data?.rp_2 : blue3EventData?.rp_2.mean,
     blueTotal: bluePredRP2,
-    blueActual: completed ? data.match.result.blue_rp_2 : null,
+    blueActual: completed ? data?.match?.result?.blue_rp_2 : null,
   };
 
   const totalComponent = {
     name: "Total",
-    red1: completed ? red1Data.total_points : red1EventData.total_points.mean,
-    red2: completed ? red2Data.total_points : red2EventData.total_points.mean,
-    red3: completed ? red3Data.total_points : red3EventData.total_points.mean,
+    red1: completed ? red1Data?.total_points : red1EventData?.total_points.mean,
+    red2: completed ? red2Data?.total_points : red2EventData?.total_points.mean,
+    red3: completed ? red3Data?.total_points : red3EventData?.total_points.mean,
     redTotal: redPredTotal,
-    redActual: completed ? data.match.result.red_score : null,
-    blue1: completed ? blue1Data.total_points : blue1EventData.total_points.mean,
-    blue2: completed ? blue2Data.total_points : blue2EventData.total_points.mean,
-    blue3: completed ? blue3Data.total_points : blue3EventData.total_points.mean,
+    redActual: completed ? data?.match?.result?.red_score : null,
+    blue1: completed ? blue1Data?.total_points : blue1EventData?.total_points?.mean,
+    blue2: completed ? blue2Data?.total_points : blue2EventData?.total_points?.mean,
+    blue3: completed ? blue3Data?.total_points : blue3EventData?.total_points?.mean,
     blueTotal: bluePredTotal,
-    blueActual: completed ? data.match.result.blue_score : null,
+    blueActual: completed ? data?.match?.result?.blue_score : null,
   };
 
   const matchData = [

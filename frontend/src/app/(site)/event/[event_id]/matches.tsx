@@ -12,7 +12,7 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
   const correctPreds = matches
     .filter((match) => match.status === "Completed")
     .reduce((acc, match) => {
-      if (match.pred.winner === match.result.winner) {
+      if (match?.pred?.winner === match?.result?.winner) {
         return acc + 1;
       }
       return acc;
@@ -22,10 +22,10 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
   const rp1CorrectPreds = matches
     .filter((match) => !match.elim && match.status === "Completed")
     .reduce((acc, match) => {
-      if (match.pred.red_rp_1 > 0.5 === match.result.red_rp_1 > 0.5) {
+      if (match.pred.red_rp_1 > 0.5 === match?.result?.red_rp_1 > 0.5) {
         acc = acc + 1;
       }
-      if (match.pred.blue_rp_1 > 0.5 === match.result.blue_rp_1 > 0.5) {
+      if (match.pred.blue_rp_1 > 0.5 === match?.result?.blue_rp_1 > 0.5) {
         acc = acc + 1;
       }
       return acc;
@@ -35,10 +35,10 @@ const MatchSection = ({ year, quals, data }: { year: number; quals: boolean; dat
   const rp2CorrectPreds = matches
     .filter((match) => !match.elim && match.status === "Completed")
     .reduce((acc, match) => {
-      if (match.pred.red_rp_2 > 0.5 === match.result.red_rp_2 > 0.5) {
+      if (match?.pred?.red_rp_2 > 0.5 === match?.result?.red_rp_2 > 0.5) {
         acc = acc + 1;
       }
-      if (match.pred.blue_rp_2 > 0.5 === match.result.blue_rp_2 > 0.5) {
+      if (match?.pred?.blue_rp_2 > 0.5 === match?.result?.blue_rp_2 > 0.5) {
         acc = acc + 1;
       }
       return acc;

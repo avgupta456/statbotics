@@ -20,25 +20,37 @@ export const getColumnOptions = (year: number) => [
     accessor: (datum: EYu) => round(datum?.epa?.unitless, 0),
   },
   { label: "Norm EPA", accessor: (datum: EYu) => round(datum?.epa?.norm, 0) },
-  { label: "Auto", accessor: (datum: EYu) => round(datum?.epa?.breakdown?.auto_points?.mean) },
-  { label: "Teleop", accessor: (datum: EYu) => round(datum?.epa?.breakdown?.teleop_points?.mean) },
-  {
-    label: "Endgame",
-    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.endgame_points?.mean),
-  },
-  {
-    label: "Auto + Endgame",
-    accessor: (datum: EYu) =>
-      round(datum?.epa?.breakdown?.auto_points?.mean + datum?.epa?.breakdown?.endgame_points?.mean),
-  },
-  {
-    label: `${RP_NAMES[year][0]}`,
-    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_1?.mean, 3),
-  },
-  {
-    label: `${RP_NAMES[year][1]}`,
-    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_2?.mean, 3),
-  },
+  ...(year >= 2016
+    ? [
+        {
+          label: "Auto",
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.auto_points?.mean),
+        },
+        {
+          label: "Teleop",
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.teleop_points?.mean),
+        },
+        {
+          label: "Endgame",
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.endgame_points?.mean),
+        },
+        {
+          label: "Auto + Endgame",
+          accessor: (datum: EYu) =>
+            round(
+              datum?.epa?.breakdown?.auto_points?.mean + datum?.epa?.breakdown?.endgame_points?.mean
+            ),
+        },
+        {
+          label: `${RP_NAMES[year][0]}`,
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_1?.mean, 3),
+        },
+        {
+          label: `${RP_NAMES[year][1]}`,
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_2?.mean, 3),
+        },
+      ]
+    : []),
   { label: "Wins", accessor: (datum: Yu) => datum?.record?.season?.wins },
   {
     label: "Win Rate",

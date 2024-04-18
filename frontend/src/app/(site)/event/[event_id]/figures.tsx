@@ -22,11 +22,11 @@ const FiguresSection = ({
   const barData = data.team_events
     .map((teamEvent) => ({
       team: teamEvent.team,
-      "Total EPA": teamEvent?.epa.breakdown?.total_points?.mean ?? 0,
-      "Auto EPA": teamEvent?.epa.breakdown?.auto_points?.mean ?? 0,
-      "Teleop EPA": teamEvent?.epa.breakdown?.teleop_points?.mean ?? 0,
-      "Endgame EPA": teamEvent?.epa.breakdown?.endgame_points?.mean ?? 0,
-      sortEpa: teamEvent?.epa.breakdown?.total_points?.mean ?? 0,
+      "Total EPA": teamEvent?.epa?.breakdown?.total_points?.mean ?? 0,
+      "Auto EPA": teamEvent?.epa?.breakdown?.auto_points?.mean ?? 0,
+      "Teleop EPA": teamEvent?.epa?.breakdown?.teleop_points?.mean ?? 0,
+      "Endgame EPA": teamEvent?.epa?.breakdown?.endgame_points?.mean ?? 0,
+      sortEpa: teamEvent?.epa?.breakdown?.total_points?.mean ?? 0,
     }))
     .sort((a, b) => b.sortEpa - a.sortEpa)
     .slice(0, 16);
@@ -40,14 +40,14 @@ const FiguresSection = ({
     .sort((a, b) => parseInt(a.value) - parseInt(b.value));
 
   const scatterData = data.team_events // Filter out offseason teams
-    .filter((teamEvent) => parseInt(teamEvent.team) <= MAX_TEAM && teamEvent.record.qual.rank > 0)
+    .filter((teamEvent) => parseInt(teamEvent.team) <= MAX_TEAM && teamEvent?.record?.qual.rank > 0)
     .map((teamEvent) => ({
       id: teamEvent.team,
       data: [
         {
           id: teamEvent.team,
-          x: teamEvent.record.qual.rank,
-          y: teamEvent.epa.breakdown.total_points.mean,
+          x: teamEvent?.record?.qual?.rank,
+          y: teamEvent?.epa?.breakdown?.total_points?.mean,
         },
       ],
     }));

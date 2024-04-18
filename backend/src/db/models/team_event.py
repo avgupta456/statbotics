@@ -224,11 +224,11 @@ class TeamEvent(_TeamEvent, Model):
             "district_points": self.district_points,
         }
 
+        clean["epa"]["breakdown"]["total_points"] = {
+            "mean": self.epa,
+            "sd": self.epa_sd,
+        }
         if self.year >= 2016:
-            clean["epa"]["breakdown"]["total_points"] = {
-                "mean": self.epa,
-                "sd": self.epa_sd,
-            }
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
             for key, name in pairs:
