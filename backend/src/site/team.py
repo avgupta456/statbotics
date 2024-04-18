@@ -113,7 +113,9 @@ async def read_team_year(
         if event_time is None or m.time < event_time:
             event_times[m.event] = m.time
 
-    team_events = sorted(team_events, key=lambda x: (x.week, event_times[x.event]))
+    team_events = sorted(
+        team_events, key=lambda x: (x.week, event_times[x.event] or x.time)
+    )
 
     out = {
         "year": year_obj.to_dict(),
