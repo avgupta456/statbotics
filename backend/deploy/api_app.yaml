@@ -2,7 +2,7 @@ service: default
 runtime: python311
 entrypoint: gunicorn -w 1 -t 600 -k uvicorn.workers.UvicornWorker main:app
 
-instance_class: F1
+instance_class: F2
 
 automatic_scaling:
   min_instances: 1
