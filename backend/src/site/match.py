@@ -1,7 +1,7 @@
 from typing import Any, List, Optional
 
 from fastapi import APIRouter
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
 
 from src.api import (
     get_event_cached,
@@ -12,7 +12,8 @@ from src.api import (
 )
 from src.db.functions import get_noteworthy_matches, get_upcoming_matches
 from src.db.models import Event, Match, TeamEvent, TeamMatch, Year
-from src.site.helper import compress
+
+# from src.site.helper import compress
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
@@ -23,9 +24,7 @@ router = APIRouter()
 
 @router.get("/match/{match_id}")
 @async_fail_gracefully_singular
-async def read_match(
-    response: StreamingResponse, match_id: str, no_cache: bool = False
-) -> Any:
+async def read_match(response: Response, match_id: str, no_cache: bool = False) -> Any:
     match: Optional[Match] = await get_match_cached(match=match_id, no_cache=no_cache)
     if match is None:
         raise Exception("Match not found")
@@ -58,13 +57,13 @@ async def read_match(
         "team_matches": [x.to_dict() for x in team_matches],
     }
 
-    return compress(out)
+    return out
 
 
 @router.get("/upcoming_matches")
 @async_fail_gracefully_plural
 async def read_upcoming_matches(
-    response: StreamingResponse,
+    response: Response,
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
@@ -86,13 +85,13 @@ async def read_upcoming_matches(
 
     data = [{"match": m.to_dict(), "event_name": e} for m, e in upcoming_matches]
 
-    return compress(data)
+    return data
 
 
 @router.get("/noteworthy_matches/{year}")
 @async_fail_gracefully_singular
 async def read_noteworthy_matches(
-    response: StreamingResponse,
+    response: Response,
     year: int,
     country: Optional[str] = None,
     state: Optional[str] = None,
@@ -112,4 +111,4 @@ async def read_noteworthy_matches(
 
     data = {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}
 
-    return compress(data)
+    return data

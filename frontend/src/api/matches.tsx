@@ -1,5 +1,5 @@
 import { CURR_YEAR } from "../constants";
-import query from "./storage";
+import query, { version } from "./storage";
 
 export async function getNoteworthyMatches(
   year: number,
@@ -10,7 +10,7 @@ export async function getNoteworthyMatches(
   week: number | null
 ) {
   let suffix = `/noteworthy_matches/${year}`;
-  let storageKey = `noteworthy_matches_${year}`;
+  let storageKey = `noteworthy_matches_${year}_${version}`;
 
   let suffixes = [];
   if (country) {
@@ -48,7 +48,7 @@ export async function getUpcomingMatches(
   sortMatches: string
 ) {
   let suffix = `/upcoming_matches?limit=20&metric=${sortMatches}`;
-  let storageKey = `upcoming_matches_${sortMatches}`;
+  let storageKey = `upcoming_matches_${sortMatches}_${version}`;
   if (filterMatches) {
     suffix += `&minutes=${filterMatches}`;
     storageKey += `_${filterMatches}`;

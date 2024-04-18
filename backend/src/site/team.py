@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
 
 from src.api import (
     get_matches_cached,
@@ -14,7 +14,8 @@ from src.api import (
     get_year_cached,
 )
 from src.db.models import Match, Team, TeamEvent, TeamMatch, TeamYear, Year
-from src.site.helper import compress
+
+# from src.site.helper import compress
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
@@ -25,20 +26,20 @@ router = APIRouter()
 
 @router.get("/teams/all")
 @async_fail_gracefully_plural
-async def read_all_teams(response: StreamingResponse, no_cache: bool = False) -> Any:
+async def read_all_teams(response: Response, no_cache: bool = False) -> Any:
     teams: List[Team] = await get_teams_cached(site=True, no_cache=no_cache)
     data = [
         {"team": x.team, "name": x.name, "active": x.active}
         for x in teams
         if not x.offseason
     ]
-    return compress(data)
+    return data
 
 
 @router.get("/team/{team_num}")
 @async_fail_gracefully_singular
 async def read_team_years(
-    response: StreamingResponse, team_num: str, no_cache: bool = False
+    response: Response, team_num: str, no_cache: bool = False
 ) -> Any:
     team: Optional[Team] = await get_team_cached(team=team_num, no_cache=no_cache)
     if team is None or team.offseason:
@@ -70,13 +71,13 @@ async def read_team_years(
         "team_years": team_year_stats,
     }
 
-    return compress(out)
+    return out
 
 
 @router.get("/team/{team_num}/{year}")
 @async_fail_gracefully_singular
 async def read_team_year(
-    response: StreamingResponse, team_num: str, year: int, no_cache: bool = False
+    response: Response, team_num: str, year: int, no_cache: bool = False
 ) -> Any:
     year_obj: Optional[Year] = await get_year_cached(year=year, no_cache=no_cache)
     if year_obj is None:
@@ -125,4 +126,4 @@ async def read_team_year(
         "team_matches": [x.to_dict() for x in team_matches],
     }
 
-    return compress(out)
+    return out

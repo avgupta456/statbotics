@@ -2,5 +2,8 @@ dispatch:
   - url: "*/v3/data/*"
     service: data
 
+  - url: "*/v3/site/*"
+    service: site
+
   - url: "*/.*"
     service: default

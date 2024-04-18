@@ -4,6 +4,8 @@ import pako from "pako";
 import { BACKEND_URL } from "../constants";
 import { log, round } from "../utils";
 
+export const version = "v3.2";
+
 async function setWithExpiry(key: string, value: any, ttl: number) {
   const now = new Date();
 
@@ -29,15 +31,16 @@ async function getWithExpiry(key: string) {
   return get(key);
 }
 
-function decompress(buffer: any) {
-  const strData = pako.inflate(buffer, { to: "string" });
-  const data = JSON.parse(strData);
-  return data;
-}
+// function decompress(buffer: any) {
+//   const strData = pako.inflate(buffer, { to: "string" });
+//   const data = JSON.parse(strData);
+//   return data;
+// }
 
 async function query(storageKey: string, apiPath: string, minLength: number, expiry: number) {
   const cacheRawData = await getWithExpiry(storageKey);
-  const cacheData = cacheRawData ? decompress(cacheRawData) : null;
+  // const cacheData = cacheRawData ? decompress(cacheRawData) : null;
+  const cacheData = cacheRawData;
   if (cacheData && (minLength === 0 || cacheData?.length > minLength)) {
     log(`Used Local Storage: ${storageKey}`);
     return cacheData;
@@ -51,15 +54,11 @@ async function query(storageKey: string, apiPath: string, minLength: number, exp
     return undefined;
   }
 
-  const buffer = await res.arrayBuffer();
+  // const buffer = await res.arrayBuffer();
+  const buffer = await res.json();
   setWithExpiry(storageKey, buffer, expiry);
-  const strData = pako.inflate(buffer, { to: "string" });
-  const data = JSON.parse(strData);
-
-  // log(`Uncompressed size: ${apiPath}, ${round(strData.length / 1024, 2)}kb`);
-  // log(`Compressed size: ${apiPath}, ${round(buffer.byteLength / 1024, 2)}kb`);
-
-  return data;
+  return buffer;
+  // return decompress(buffer);
 }
 
 export default query;

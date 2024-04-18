@@ -1,7 +1,7 @@
 from typing import Any, List, Optional
 
 from fastapi import APIRouter
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
 
 from src.api import (
     get_event_cached,
@@ -12,7 +12,8 @@ from src.api import (
     get_year_cached,
 )
 from src.db.models import Event, Match, TeamEvent, TeamMatch, Year
-from src.site.helper import compress
+
+# from src.site.helper import compress
 from src.types.enums import EventStatus
 from src.utils.decorators import (
     async_fail_gracefully_plural,
@@ -24,17 +25,15 @@ router = APIRouter()
 
 @router.get("/events/all")
 @async_fail_gracefully_plural
-async def read_all_events(response: StreamingResponse, no_cache: bool = False) -> Any:
+async def read_all_events(response: Response, no_cache: bool = False) -> Any:
     events: List[Event] = await get_events_cached(no_cache=no_cache, site=True)
     data = [{"key": event.key, "name": event.name} for event in events]
-    return compress(data)
+    return data
 
 
 @router.get("/events/{year}")
 @async_fail_gracefully_plural
-async def read_events(
-    response: StreamingResponse, year: int, no_cache: bool = False
-) -> Any:
+async def read_events(response: Response, year: int, no_cache: bool = False) -> Any:
     year_obj: Optional[Year] = await get_year_cached(year=year, no_cache=no_cache)
     if year_obj is None:
         raise Exception("Year not found")
@@ -47,14 +46,12 @@ async def read_events(
 
     events = sorted(events, key=lambda x: x.time)
 
-    return compress(data)
+    return data
 
 
 @router.get("/event/{event_id}")
 @async_fail_gracefully_singular
-async def read_event(
-    response: StreamingResponse, event_id: str, no_cache: bool = False
-) -> Any:
+async def read_event(response: Response, event_id: str, no_cache: bool = False) -> Any:
     event: Optional[Event] = await get_event_cached(event=event_id, no_cache=no_cache)
     if event is None:
         raise Exception("Event not found")
@@ -84,16 +81,16 @@ async def read_event(
         "year": year.to_dict(),
     }
 
-    return compress(out)
+    return out
 
 
 @router.get("/event/{event_id}/team_matches/{team}")
 @async_fail_gracefully_plural
 async def read_team_matches(
-    response: StreamingResponse, event_id: str, team: str, no_cache: bool = False
+    response: Response, event_id: str, team: str, no_cache: bool = False
 ) -> Any:
     team_matches: List[TeamMatch] = await get_team_matches_cached(
         event=event_id, team=team, no_cache=no_cache
     )
     out = [x.to_dict() for x in sorted(team_matches, key=lambda x: x.time)]
-    return compress(out)
+    return out
