@@ -10,6 +10,7 @@ from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MI, MOB, MOF, MOI, MOS, MS, values_callable
 from src.types.enums import CompLevel, MatchStatus, MatchWinner
+from src.utils.utils import get_match_name
 
 
 class MatchORM(Base, ModelORM):
@@ -206,7 +207,7 @@ class Match(_Match, Model):
 
     def get_breakdown(self: "Match", alliance: str) -> Any:
         if self.year < 2016:
-            return np.array([getattr(self, f"{alliance}_score") or 0])
+            return np.array([getattr(self, f"{alliance}_score") or 0], dtype=np.float32)
         return np.array(
             [
                 getattr(self, f"{alliance}_no_foul") or 0,
@@ -234,7 +235,8 @@ class Match(_Match, Model):
                 getattr(self, f"{alliance}_comp_16") or 0,
                 getattr(self, f"{alliance}_comp_17") or 0,
                 getattr(self, f"{alliance}_comp_18") or 0,
-            ]
+            ],
+            dtype=np.float32,
         )
 
     def get_breakdowns(self: "Match") -> Tuple[Any, Any]:
@@ -251,6 +253,7 @@ class Match(_Match, Model):
             "comp_level": self.comp_level,
             "set_number": self.set_number,
             "match_number": self.match_number,
+            "match_name": get_match_name(self.key),
             "time": self.time,
             "predicted_time": self.predicted_time,
             "status": self.status,
@@ -286,18 +289,20 @@ class Match(_Match, Model):
             rp_1_name = key_to_name[self.year]["rp_1"]
             rp_2_name = key_to_name[self.year]["rp_2"]
 
+            clean["pred"]["red_rp_1"] = self.epa_red_rp_1_pred
+            clean["pred"]["red_rp_2"] = self.epa_red_rp_2_pred
+            clean["pred"]["blue_rp_1"] = self.epa_blue_rp_1_pred
+            clean["pred"]["blue_rp_2"] = self.epa_blue_rp_2_pred
+
             clean["pred"][f"red_{rp_1_name}"] = self.epa_red_rp_1_pred
             clean["pred"][f"red_{rp_2_name}"] = self.epa_red_rp_2_pred
             clean["pred"][f"blue_{rp_1_name}"] = self.epa_blue_rp_1_pred
             clean["pred"][f"blue_{rp_2_name}"] = self.epa_blue_rp_2_pred
 
-            for k in ["auto", "teleop", "endgame", "rp_1", "rp_2", "tiebreaker"] + [
-                f"comp_{i}" for i in range(1, 19)
-            ]:
-                if k not in key_to_name[self.year]:
-                    continue
-                name = key_to_name[self.year][k]
-                clean["result"][f"red_{name}"] = getattr(self, f"red_{k}")
-                clean["result"][f"blue_{name}"] = getattr(self, f"blue_{k}")
+            pairs = list(key_to_name[self.year].items())
+            pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
+            for key, name in pairs:
+                clean["result"][f"red_{name}"] = getattr(self, f"red_{key}")
+                clean["result"][f"blue_{name}"] = getattr(self, f"blue_{key}")
 
         return clean

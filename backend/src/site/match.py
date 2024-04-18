@@ -1,62 +1,54 @@
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
+from src.api import (
+    get_event_cached,
+    get_match_cached,
+    get_team_events_cached,
+    get_team_matches_cached,
+    get_year_cached,
+)
 from src.db.functions import get_noteworthy_matches, get_upcoming_matches
+from src.db.models import Event, Match, TeamEvent, TeamMatch, Year
 from src.site.helper import compress
 from src.utils.decorators import (
     async_fail_gracefully_plural,
     async_fail_gracefully_singular,
 )
 
-# from src.constants import CURR_YEAR
-# from src.site.aggregation import (
-# get_event,
-# get_match,
-# get_noteworthy_matches,
-# get_team_events,
-# get_team_matches,
-# get_upcoming_matches,
-# get_year,
-# )
-# from src.site.models import APIEvent, APIMatch, APITeamEvent, APITeamMatch, APIYear
-# from src.utils.decorators import async_fail_gracefully
-
 router = APIRouter()
 
 
-"""
 @router.get("/match/{match_id}")
-@async_fail_gracefully
+@async_fail_gracefully_singular
 async def read_match(
-    response: Response, match_id: str, no_cache: bool = False
-) -> Dict[str, Any]:
-    match: Optional[APIMatch] = await get_match(match=match_id, no_cache=no_cache)
+    response: StreamingResponse, match_id: str, no_cache: bool = False
+) -> Any:
+    match: Optional[Match] = await get_match_cached(match=match_id, no_cache=no_cache)
     if match is None:
         raise Exception("Match not found")
 
-    event: Optional[APIEvent] = await get_event(event=match.event, no_cache=no_cache)
+    event: Optional[Event] = await get_event_cached(
+        event=match.event, no_cache=no_cache
+    )
     if event is None:
         raise Exception("Event not found")
 
-    year: Optional[APIYear] = await get_year(year=match.year, no_cache=no_cache)
+    year: Optional[Year] = await get_year_cached(year=match.year, no_cache=no_cache)
     if year is None:
         raise Exception("Year not found")
 
-    team_matches: List[APITeamMatch] = await get_team_matches(
+    team_matches: List[TeamMatch] = await get_team_matches_cached(
         match=match_id, no_cache=no_cache
     )
-    team_nums = [x.num for x in team_matches]
+    team_nums = [x.team for x in team_matches]
 
-    team_events: List[APITeamEvent] = await get_team_events(
-        year=year.year,
-        score_mean=year.score_mean,
-        score_sd=year.score_sd,
-        event=match.event,
-        no_cache=no_cache,
+    team_events: List[TeamEvent] = await get_team_events_cached(
+        year=year.year, event=match.event, no_cache=no_cache
     )
-    team_events = [x for x in team_events if x.num in team_nums]
+    team_events = [x for x in team_events if x.team in team_nums]
 
     out = {
         "year": year.to_dict(),
@@ -66,8 +58,7 @@ async def read_match(
         "team_matches": [x.to_dict() for x in team_matches],
     }
 
-    return out
-"""
+    return compress(out)
 
 
 @router.get("/upcoming_matches")
@@ -93,7 +84,7 @@ async def read_upcoming_matches(
         metric=metric,
     )
 
-    data = [{"match": m, "event_name": e} for m, e in upcoming_matches]
+    data = [{"match": m.to_dict(), "event_name": e} for m, e in upcoming_matches]
 
     return compress(data)
 

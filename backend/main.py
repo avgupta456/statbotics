@@ -1,5 +1,5 @@
-from typing import Any, Callable
 import platform
+from typing import Any, Callable
 
 from dotenv import load_dotenv  # type: ignore
 

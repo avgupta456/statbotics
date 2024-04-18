@@ -202,6 +202,7 @@ class TeamEvent(_TeamEvent, Model):
                     "rps": self.rps,
                     "rps_per_match": self.rps_per_match,
                     "rank": self.rank,
+                    "num_teams": self.num_teams,
                 },
                 "elim": {
                     "wins": elim_wins,
@@ -212,16 +213,25 @@ class TeamEvent(_TeamEvent, Model):
                     "alliance": self.elim_alliance,
                     "is_captain": self.is_captain,
                 },
+                "total": {
+                    "wins": self.wins,
+                    "losses": self.losses,
+                    "ties": self.ties,
+                    "count": self.count,
+                    "winrate": self.winrate,
+                },
             },
             "district_points": self.district_points,
         }
 
+        clean["epa"]["breakdown"]["total_points"] = {
+            "mean": self.epa,
+            "sd": self.epa_sd,
+        }
         if self.year >= 2016:
-            clean["epa"]["breakdown"]["total_points"] = {
-                "mean": self.epa,
-                "sd": self.epa_sd,
-            }
-            for key, name in key_to_name[self.year].items():
+            pairs = list(key_to_name[self.year].items())
+            pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
+            for key, name in pairs:
                 clean["epa"]["breakdown"][name] = {
                     "mean": getattr(self, f"{key}_epa"),
                     "sd": getattr(self, f"{key}_epa_sd"),

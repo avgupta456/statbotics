@@ -106,10 +106,6 @@ export type APITeamYear = {
   district?: string;
   offseason: boolean;
   epa: {
-    total_points: {
-      mean: number;
-      sd: number;
-    };
     unitless: number;
     norm: number;
     conf: [number, number];
@@ -187,10 +183,6 @@ export type APITeamEvent = {
   status: string;
   first_event: boolean;
   epa: {
-    total_points: {
-      mean: number;
-      sd: number;
-    };
     unitless: number;
     norm: number;
     conf: [number, number];
@@ -237,12 +229,12 @@ export type APIMatch = {
   alliances: {
     red: {
       team_keys: string[];
-      scurrogate_team_keys: string[];
+      surrogate_team_keys: string[];
       dq_team_keys: string[];
     };
     blue: {
       team_keys: string[];
-      scurrogate_team_keys: string[];
+      surrogate_team_keys: string[];
       dq_team_keys: string[];
     };
   };

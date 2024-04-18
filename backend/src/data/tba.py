@@ -27,7 +27,6 @@ from src.types.enums import CompLevel, EventStatus, MatchStatus, MatchWinner
 from src.utils.utils import get_team_event_key, get_team_year_key
 
 OS = Optional[str]
-OI = Optional[int]
 
 """
 HELPER FUNCTIONS
@@ -178,8 +177,7 @@ def process_year(
 
     teams_dict: Dict[str, Team] = {team.team: team for team in teams}
     team_competing_this_week_dict: Dict[str, bool] = {}
-    team_next_event_dict: Dict[str, Tuple[OS, OS, OI]] = {}
-    team_first_event_dict: Dict[str, Tuple[OS, OI]] = {}
+    team_first_event_dict: Dict[str, Tuple[OS, int]] = {}
 
     # maps team to district_abbrev (or None if not in a district)
     team_to_district: Dict[str, OS] = {}
@@ -273,23 +271,12 @@ def process_year(
             if not offseason or team not in team_to_offseason:
                 team_to_offseason[team] = offseason
 
-            event_name = event_obj.name
             event_week = event_obj.week
             event_year = event_obj.year
 
             # Stores whether a team is competing this week
             if event_year == CURR_YEAR and event_week == CURR_WEEK:
                 team_competing_this_week_dict[team] = True
-
-            # Store closest upcoming/ongoing event
-            if event_week >= CURR_WEEK and event_status != EventStatus.COMPLETED:
-                # event is upcoming or ongoing
-                if team not in team_next_event_dict:
-                    # first event for team
-                    team_next_event_dict[team] = (event_key, event_name, event_week)
-                elif (team_next_event_dict[team][2] or -1) > event_week:
-                    # event is closer than previous closest event
-                    team_next_event_dict[team] = (event_key, event_name, event_week)
 
             # Store first event
             if team not in team_first_event_dict:
@@ -406,7 +393,6 @@ def process_year(
         team_obj = teams_dict[team]
         offseason = team_to_offseason[team] or team in PLACEHOLDER_TEAMS
         competing_this_week = team_competing_this_week_dict.get(team, False)
-        next_event = team_next_event_dict.get(team, (None, None, None))
 
         team_year_key = get_team_year_key(team, year_num)
         curr_ty = team_year_objs_dict.get(team_year_key, None)
@@ -423,9 +409,9 @@ def process_year(
                 district_points=None,
                 district_rank=None,
                 competing_this_week=competing_this_week,
-                next_event_key=next_event[0],
-                next_event_name=next_event[1],
-                next_event_week=next_event[2],
+                next_event_key=None,
+                next_event_name=None,
+                next_event_week=None,
             )
 
         curr_ty.district = team_to_district.get(team, curr_ty.district)

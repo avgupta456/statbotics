@@ -1,10 +1,10 @@
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
-from src.constants import CURR_YEAR
+from src.constants import CURR_WEEK, CURR_YEAR
 from src.data.utils import objs_type
-from src.db.models import Team, TeamYear, TeamEvent, Match
-from src.types.enums import MatchStatus, MatchWinner
+from src.db.models import Event, Match, Team, TeamEvent, TeamYear
+from src.types.enums import EventStatus, MatchStatus, MatchWinner
 from src.utils.utils import r
 
 
@@ -148,6 +148,24 @@ def process_year(objs: objs_type) -> objs_type:
             [m for m in curr_matches if m.status == MatchStatus.COMPLETED]
         )
         event.qual_matches = len([m for m in curr_matches if not m.elim])
+
+    # Also handles team_year_obj next_event_{key, name, week}
+    team_to_events: Dict[str, List[Event]] = defaultdict(list)
+    for event in objs[2].values():
+        for team_event in event_to_team_events[event.key]:
+            team_to_events[team_event.team].append(event)
+
+    for team_year in objs[1].values():
+        events = [
+            e
+            for e in team_to_events[team_year.team]
+            if e.week >= CURR_WEEK and e.status != EventStatus.COMPLETED
+        ]
+        if len(events) > 0:
+            next_event = min(events, key=lambda x: (x.week, x.num_teams))
+            team_year.next_event_key = next_event.key
+            team_year.next_event_name = next_event.name
+            team_year.next_event_week = next_event.week
 
     return objs
 

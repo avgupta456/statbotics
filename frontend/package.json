@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier": "prettier --write app pages components"
+    "prettier": "prettier --write src"
   },
   "dependencies": {
     "@nivo/bar": "^0.80.0",
@@ -26,7 +26,9 @@
     "highcharts": "^10.3.2",
     "highcharts-more": "^0.1.7",
     "highcharts-react-official": "^3.1.0",
+    "idb-keyval": "^6.2.1",
     "next": "^13.5.5",
+    "pako": "^2.1.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-csv": "2.0.3",
@@ -46,6 +48,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.8",
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "@types/pako": "^2.0.3",
     "autoprefixer": "^10.4.13",
     "eslint": "8.30.0",
     "eslint-config-next": "13.0.6",
