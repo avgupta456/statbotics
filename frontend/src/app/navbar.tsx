@@ -35,6 +35,7 @@ const Navbar = () => {
   }, []);
 
   const teamOptions = teams
+    ?.filter((team) => team.active)
     ?.sort((a, b) => parseInt(a.team) - parseInt(b.team))
     ?.map((team: ShortTeam) => ({
       value: `/team/${team.team}`,
