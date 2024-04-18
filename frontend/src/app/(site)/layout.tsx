@@ -7,9 +7,6 @@ import { EventsData, TeamYearsData } from "../../types/data";
 import { AppContext } from "./context";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [teamYearMiniDataDict, setTeamYearMiniDataDict] = useState<{
-    [key: number]: TeamYearsData;
-  }>({});
   const [teamYearDataDict, setTeamYearDataDict] = useState<{ [key: number]: TeamYearsData }>({});
   const [eventDataDict, setEventDataDict] = useState<{ [key: number]: EventsData }>({});
   const [year, setYear] = useState(CURR_YEAR);
