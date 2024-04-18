@@ -18,7 +18,7 @@ TOutput = TypeVar("TOutput")
 TKey = Tuple[Tuple[Any, ...], FrozenSet[Tuple[str, Any]]]
 
 
-def alru_cache(max_size: int = 128, ttl: timedelta = timedelta(minutes=1)):
+def alru_cache(max_size: int = 8, ttl: timedelta = timedelta(minutes=1)):
     def decorator(
         func: Callable[Param, Awaitable[Tuple[bool, TOutput]]]
     ) -> Callable[Param, Awaitable[TOutput]]:
