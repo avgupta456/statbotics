@@ -15,7 +15,7 @@ const EventCard = ({ event }: { event: APIEvent }) => {
     location = `${event.state}, ${location}`;
   }
   if (event.district) {
-    location = `${location} (${event.district.toUpperCase()})`;
+    location = `${location} (${event?.district?.toUpperCase()})`;
   }
 
   const formatDates = (start: Date, end: Date) => {

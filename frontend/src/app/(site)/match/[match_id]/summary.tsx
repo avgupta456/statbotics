@@ -8,11 +8,11 @@ const Summary = ({ data }: { data: MatchData }) => {
   const redWinProb = winProb * 100;
   const blueWinProb = (1 - winProb) * 100;
 
-  const redPred = data?.match?.pred.red_score;
-  const bluePred = data?.match?.pred.blue_score;
+  const redPred = data?.match?.pred?.red_score;
+  const bluePred = data?.match?.pred?.blue_score;
 
-  const redScore = data?.match?.result.red_score;
-  const blueScore = data?.match?.result.blue_score;
+  const redScore = data?.match?.result?.red_score;
+  const blueScore = data?.match?.result?.blue_score;
 
   const completed = data?.match?.status === "Completed";
 
@@ -35,10 +35,10 @@ const Summary = ({ data }: { data: MatchData }) => {
             <p
               className={classnames(
                 "ml-2",
-                data.match.pred.winner === "red" ? "text-red-500" : "text-blue-500"
+                data?.match?.pred?.winner === "red" ? "text-red-500" : "text-blue-500"
               )}
             >
-              {data.match.pred.winner.toUpperCase()}
+              {data?.match?.pred?.winner?.toUpperCase()}
             </p>
           </div>
         </div>
@@ -78,7 +78,7 @@ const Summary = ({ data }: { data: MatchData }) => {
                   : ""
               )}
             >
-              {completed ? data?.match?.result?.winner.toUpperCase() : "N/A"}
+              {completed ? data?.match?.result?.winner?.toUpperCase() : "N/A"}
             </p>
           </div>
         </div>
