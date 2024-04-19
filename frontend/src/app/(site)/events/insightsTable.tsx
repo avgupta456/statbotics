@@ -49,7 +49,7 @@ const EventTable = ({ name, data }: { name: string; data: EventsData }) => {
         country: event.country || "",
         district: event?.district?.toUpperCase() || "",
         state: event.state || "",
-        status_str: event.status || "",
+        status_str: event.status_str || "",
         matches: Math.max(event.qual_matches, event.current_match) || 0,
         epa_acc: (100 * event?.metrics?.win_prob.acc)?.toFixed(1) + "%" || "N/A",
         epa_mse: event?.metrics?.win_prob?.mse?.toFixed(3) || "N/A",

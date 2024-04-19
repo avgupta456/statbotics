@@ -46,9 +46,7 @@ offseason_query = Query(None, description="Whether the event is an offseason eve
 offset_query = Query(None, ge=0, description="Offset from the first result to return.")
 state_query = Query(None, description="Capitalized two-letter state code, e.g. `NC`.")
 
-team_query = Query(
-    None, ge=0, le=99999, description="Team number (no prefix), e.g. `5511`."
-)
+team_query = Query(None, description="Team number (no prefix), e.g. `5511`.")
 
 week_query = Query(
     None,

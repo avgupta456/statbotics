@@ -147,7 +147,7 @@ class TeamYear(_TeamYear, Model):
 
     def __str__(self: "TeamYear") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return "_".join([self.team, str(self.year), str(self.count)])
+        return "_".join([self.team, str(self.year), str(self.count), str(self.epa)])
 
     def to_dict(self: "TeamYear") -> Dict[str, Any]:
         lower, upper = get_skew_normal_95_conf_interval(
@@ -163,6 +163,10 @@ class TeamYear(_TeamYear, Model):
             "district": self.district,
             "offseason": self.offseason,
             "epa": {
+                "total_points": {
+                    "mean": self.epa,
+                    "sd": self.epa_sd,
+                },
                 "unitless": self.unitless_epa,
                 "norm": self.norm_epa,
                 "conf": [lower, upper],

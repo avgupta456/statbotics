@@ -100,6 +100,21 @@ class Event(_Event, Model):
             ]
         )
 
+    def get_event_status_str(self: "Event") -> str:
+        if self.status != "Ongoing":
+            return self.status
+
+        if self.qual_matches == 0:
+            return "Scheduled Unreleased"
+        elif self.current_match == 0:
+            return "Schedule Released"
+        elif (self.current_match or -1) < (self.qual_matches or -1):
+            return "Qual " + str(self.current_match)
+        elif self.current_match == self.qual_matches:
+            return "Quals Over"
+        else:
+            return "Elims Ongoing"
+
     def to_dict(self: "Event") -> Dict[str, Any]:
         clean: Dict[str, Any] = {
             "key": self.key,
@@ -116,6 +131,7 @@ class Event(_Event, Model):
             "offseason": self.offseason,
             "video": self.video,
             "status": self.status,
+            "status_str": self.get_event_status_str(),
             "num_teams": self.num_teams,
             "current_match": self.current_match,
             "qual_matches": self.qual_matches,

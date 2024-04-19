@@ -38,7 +38,7 @@ const EventCard = ({ event }: { event: APIEvent }) => {
         <div className="w-full mb-2">
           Week {event.week}, {formatDates(new Date(event.start_date), new Date(event.end_date))}
         </div>
-        {event.status === "Ongoing" && <div className="w-full">{event.status}</div>}
+        {event.status === "Ongoing" && <div className="w-full">{event.status_str}</div>}
       </div>
     </Link>
   );
