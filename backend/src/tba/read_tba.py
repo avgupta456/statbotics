@@ -242,7 +242,7 @@ def get_event_matches(
 
         status = (
             MatchStatus.COMPLETED
-            if min(raw_red_score, raw_blue_score) >= 0
+            if min(raw_red_score, raw_blue_score) > 0
             else MatchStatus.UPCOMING
         )
 
