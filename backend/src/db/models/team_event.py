@@ -145,7 +145,14 @@ class TeamEvent(_TeamEvent, Model):
     def __str__(self: "TeamEvent") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return "_".join(
-            [self.team, self.event, str(self.status), str(self.count), str(self.rank)]
+            [
+                self.team,
+                self.event,
+                str(self.status),
+                str(self.count),
+                str(self.epa),
+                str(self.rank),
+            ]
         )
 
     def to_dict(self: "TeamEvent") -> Dict[str, Any]:
