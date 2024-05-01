@@ -5,8 +5,8 @@ entrypoint: gunicorn -w 1 -t 600 -k uvicorn.workers.UvicornWorker main:app
 instance_class: F2
 
 automatic_scaling:
-  min_instances: 4
-  max_instances: 8
+  min_instances: 0
+  max_instances: 0
 
 env_variables:
   LOCAL_DB: false
