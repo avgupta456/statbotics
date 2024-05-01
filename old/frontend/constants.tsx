@@ -7,7 +7,7 @@ export const BACKEND_URL = PROD ? "https://api.statbotics.io/site" : "http://127
 export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
 
 export const CURR_YEAR = 2024;
-export const CURR_WEEK = 8;
+export const CURR_WEEK = 9;
 
 export const MAX_TEAM = 9979; // above is offseason
 
