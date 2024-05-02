@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FaGithub } from "react-icons/fa";
 import { MdMenu as IconMenu, MdSearch as IconSearch } from "react-icons/md";
 import { RxMoon, RxSun } from "react-icons/rx";
@@ -11,8 +11,8 @@ import { Button, Group, Kbd, NavLink as MantineNavLink, Menu, Text } from "@mant
 import { Spotlight, spotlight } from "@mantine/spotlight";
 
 import { getAllEvents, getAllTeams } from "../api/header";
+import { useData } from "../contexts/dataContext";
 import { usePreferences } from "../contexts/preferencesContext";
-import { APIShortEvent, APIShortTeam } from "../types/api";
 import { loaderProp } from "../utils/utils";
 
 function NavLink({ href, label }: { href: string; label: string }) {
@@ -39,8 +39,8 @@ function NavLink({ href, label }: { href: string; label: string }) {
 
 function Header() {
   const router = useRouter();
-
   const { colorScheme, setColorScheme } = usePreferences();
+  const { allTeams, setAllTeams, allEvents, setAllEvents } = useData();
 
   const searchIcon = (
     <IconSearch
@@ -65,19 +65,16 @@ function Header() {
     />
   );
 
-  const [teams, setTeams] = useState<APIShortTeam[]>([]);
-  const [events, setEvents] = useState<APIShortEvent[]>([]);
-
   useEffect(() => {
-    getAllTeams().then((data) => setTeams(data));
+    getAllTeams().then((data) => setAllTeams(data));
   }, []);
 
   useEffect(() => {
-    getAllEvents().then((data) => setEvents(data));
+    getAllEvents().then((data) => setAllEvents(data));
   }, []);
 
   const seenTeams = new Set();
-  const teamOptions = teams
+  const teamOptions = allTeams
     ?.filter((team: any) => {
       const duplicate = seenTeams.has(team.team);
       seenTeams.add(team.team);
@@ -92,7 +89,7 @@ function Header() {
     }));
 
   const seenEvents = new Set();
-  const eventOptions = events
+  const eventOptions = allEvents
     ?.filter((event: any) => {
       const duplicate = seenEvents.has(event.key);
       seenEvents.add(event.key);

@@ -279,6 +279,10 @@ export type APIShortTeam = {
   team: string;
   name: string;
   active: boolean;
+  color: {
+    primary: string;
+    secondary: string;
+  };
 };
 
 export type APIShortEvent = {
