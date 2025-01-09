@@ -9,7 +9,6 @@ from src.api.query import (
     district_query,
     limit_query,
     metric_query,
-    offseason_query,
     offset_query,
     state_query,
     team_query,
@@ -33,19 +32,18 @@ async def read_root_team_year():
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_team_year_cached(
-    team: str, year: int, no_cache: bool = False
+    team: int, year: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamYear]]:
     return (True, get_team_year(team=team, year=year))
 
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_team_years_cached(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -64,7 +62,6 @@ async def get_team_years_cached(
             country=country,
             state=state,
             district=district,
-            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -81,7 +78,7 @@ async def get_team_years_cached(
 @async_fail_gracefully_singular
 async def read_team_year(
     response: Response,
-    team: str,
+    team: int,
     year: int,
 ) -> Dict[str, Any]:
     team_year_obj: Optional[TeamYear] = await get_team_year_cached(team=team, year=year)
@@ -99,12 +96,11 @@ async def read_team_year(
 @async_fail_gracefully_plural
 async def read_team_years(
     response: Response,
-    team: Optional[str] = team_query,
+    team: Optional[int] = team_query,
     year: Optional[int] = year_query,
     country: Optional[str] = country_query,
     state: Optional[str] = state_query,
     district: Optional[str] = district_query,
-    offseason: Optional[bool] = offseason_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
     limit: Optional[int] = limit_query,
@@ -116,7 +112,6 @@ async def read_team_years(
         country=country,
         state=state,
         district=district,
-        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,

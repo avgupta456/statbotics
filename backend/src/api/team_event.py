@@ -11,7 +11,6 @@ from src.api.query import (
     event_type_query,
     limit_query,
     metric_query,
-    offseason_query,
     offset_query,
     state_query,
     team_query,
@@ -36,14 +35,14 @@ async def read_root_team_event():
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_team_event_cached(
-    team: str, event: str, no_cache: bool = False
+    team: int, event: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamEvent]]:
     return (True, get_team_event(team=team, event=event))
 
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_team_events_cached(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
@@ -51,7 +50,6 @@ async def get_team_events_cached(
     district: Optional[str] = None,
     type: Optional[str] = None,
     week: Optional[int] = None,
-    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -73,7 +71,6 @@ async def get_team_events_cached(
             district=district,
             type=type,
             week=week,
-            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -88,7 +85,7 @@ async def get_team_events_cached(
     description="Returns a single Team Event object. Requires a team number and event key, e.g. `5511` and `2019ncwak`.",
 )
 @async_fail_gracefully_singular
-async def read_team_event(response: Response, team: str, event: str) -> Dict[str, Any]:
+async def read_team_event(response: Response, team: int, event: str) -> Dict[str, Any]:
     team_event_obj: Optional[TeamEvent] = await get_team_event_cached(
         team=team, event=event
     )
@@ -106,7 +103,7 @@ async def read_team_event(response: Response, team: str, event: str) -> Dict[str
 @async_fail_gracefully_plural
 async def read_team_events(
     response: Response,
-    team: Optional[str] = team_query,
+    team: Optional[int] = team_query,
     year: Optional[int] = year_query,
     event: Optional[str] = event_query,
     country: Optional[str] = country_query,
@@ -114,7 +111,6 @@ async def read_team_events(
     district: Optional[str] = district_query,
     type: Optional[str] = event_type_query,
     week: Optional[int] = week_query,
-    offseason: Optional[bool] = offseason_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
     limit: Optional[int] = limit_query,
@@ -129,7 +125,6 @@ async def read_team_events(
         district=district,
         type=type,
         week=week,
-        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,

@@ -124,25 +124,10 @@ EVENT_BLACKLIST: List[str] = [
     "2004va",
     "2005va",
     "2007ga",
-    "2008cal",  # very incomplete
-    "2016cafc2",  # "" team
     "2022zhha",  # no matches
     "2024nywz",  # malformed
 ]
 
-MATCH_BLACKLIST: List[str] = [
-    "2014cafc2_qm4",  # duplicate teams
-    "2016mttd_qm13",  # duplicate teams
-    "2016mttd_qm18",  # duplicate teams
-    "2016mttd_qm30",  # duplicate teams
-    "2016ohsc_qf1m1",  # 0's
-    "2016ohsc_qf1m2",  # 0's
-    "2016ohsc_qf3m1",  # 0's
-    "2016ohsc_qf3m2",  # 0's
-    "2017crc_qf3m1",  # duplicate teams
-    "2019wiwi_ef2m1",  # 58 /
-    "2019wiwi_ef5m1",  # 58 /
-    "2019wiwi_qf3m1",  # 58 /
-]
+MATCH_BLACKLIST: List[str] = []
 
 DISTRICT_OVERRIDES: Dict[str, str] = {}

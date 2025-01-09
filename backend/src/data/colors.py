@@ -7,7 +7,7 @@ from src.db.models import Team
 
 
 def post_process(teams: List[Team], use_cache: bool = True) -> List[Team]:
-    cache: Dict[str, Any] = {}
+    cache: Dict[int, Any] = {}
     if use_cache:
         try:
             with open("cache/colors.json", "r") as f:
@@ -17,14 +17,12 @@ def post_process(teams: List[Team], use_cache: bool = True) -> List[Team]:
 
     for team in teams:
         # print(team)
-        if team.offseason:
-            continue
         if team.team in cache:
             team.primary_color = cache[team.team]["primary"]
             team.secondary_color = cache[team.team]["secondary"]
             continue
 
-        response = requests.get("https://frc-colors.com/api/v1/team/" + team.team)
+        response = requests.get("https://frc-colors.com/api/v1/team/" + str(team.team))
 
         data = response.json()
         team.primary_color = data.get("colors", {}).get("primaryHex", None)

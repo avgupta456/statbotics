@@ -26,7 +26,6 @@ class MatchORM(Base, ModelORM):
     ForeignKeyConstraint(["event"], ["events.key"])
 
     """GENERAL"""
-    offseason: MB = mapped_column(Boolean)
     week: MI = mapped_column(Integer)
     elim: MB = mapped_column(Boolean)
 
@@ -44,15 +43,15 @@ class MatchORM(Base, ModelORM):
     )
     video: MOS = mapped_column(String(20), nullable=True)
 
-    red_1: MS = mapped_column(String(6), index=True)
-    red_2: MS = mapped_column(String(6), index=True)
-    red_3: MOS = mapped_column(String(6), index=True, nullable=True)
+    red_1: MI = mapped_column(Integer, index=True)
+    red_2: MI = mapped_column(Integer, index=True)
+    red_3: MOI = mapped_column(Integer, index=True, nullable=True)
     red_dq: MS = mapped_column(String(20))
     red_surrogate: MS = mapped_column(String(20))
 
-    blue_1: MS = mapped_column(String(6), index=True)
-    blue_2: MS = mapped_column(String(6), index=True)
-    blue_3: MOS = mapped_column(String(6), index=True, nullable=True)
+    blue_1: MI = mapped_column(Integer, index=True)
+    blue_2: MI = mapped_column(Integer, index=True)
+    blue_3: MOI = mapped_column(Integer, index=True, nullable=True)
     blue_dq: MS = mapped_column(String(20))
     blue_surrogate: MS = mapped_column(String(20))
 
@@ -169,25 +168,25 @@ class Match(_Match, Model):
 
     """HELPER FUNCTIONS"""
 
-    def get_red(self: "Match") -> List[str]:
+    def get_red(self: "Match") -> List[int]:
         return [x for x in [self.red_1, self.red_2, self.red_3] if x is not None]
 
-    def get_blue(self: "Match") -> List[str]:
+    def get_blue(self: "Match") -> List[int]:
         return [x for x in [self.blue_1, self.blue_2, self.blue_3] if x is not None]
 
-    def get_red_surrogates(self: "Match") -> List[str]:
-        return [x for x in self.red_surrogate.split(",") if x != ""]
+    def get_red_surrogates(self: "Match") -> List[int]:
+        return [int(x) for x in self.red_surrogate.split(",") if x != ""]
 
-    def get_blue_surrogates(self: "Match") -> List[str]:
-        return [x for x in self.blue_surrogate.split(",") if x != ""]
+    def get_blue_surrogates(self: "Match") -> List[int]:
+        return [int(x) for x in self.blue_surrogate.split(",") if x != ""]
 
-    def get_red_dqs(self: "Match") -> List[str]:
-        return [x for x in self.red_dq.split(",") if x != ""]
+    def get_red_dqs(self: "Match") -> List[int]:
+        return [int(x) for x in self.red_dq.split(",") if x != ""]
 
-    def get_blue_dqs(self: "Match") -> List[str]:
-        return [x for x in self.blue_dq.split(",") if x != ""]
+    def get_blue_dqs(self: "Match") -> List[int]:
+        return [int(x) for x in self.blue_dq.split(",") if x != ""]
 
-    def get_teams(self: "Match") -> List[List[str]]:
+    def get_teams(self: "Match") -> List[List[int]]:
         return [self.get_red(), self.get_blue()]
 
     def get_winner(self: "Match") -> Optional[MatchWinner]:
@@ -247,7 +246,6 @@ class Match(_Match, Model):
             "key": self.key,
             "year": self.year,
             "event": self.event,
-            "offseason": self.offseason,
             "week": self.week,
             "elim": self.elim,
             "comp_level": self.comp_level,

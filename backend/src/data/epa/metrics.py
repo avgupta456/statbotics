@@ -86,7 +86,7 @@ def win_prob_metrics(
 
 def score_metrics(
     matches: List[Match],
-) -> Tuple[int, Optional[float], Optional[float], Optional[float]]:
+) -> Tuple[int, Optional[float], Optional[float]]:
     preds: List[Any] = []
     actuals: List[Any] = []
     for match in matches:
@@ -101,20 +101,19 @@ def score_metrics(
             actuals.append(actual)
 
     if len(preds) == 0:
-        return 0, None, None, None
+        return 0, None, None
 
     preds = np.array(preds)  # type: ignore
     actuals = np.array(actuals)  # type: ignore
 
     error = get_error(preds, actuals)
-    mae = get_mae(preds, actuals)
     rmse = get_rmse(preds, actuals)
-    return len(preds), r(error, 4), r(mae, 4), r(rmse, 4)
+    return len(preds), r(error, 4), r(rmse, 4)
 
 
 def rp_metrics(
     matches: List[Match], rp: str
-) -> Tuple[int, Optional[float], Optional[float], Optional[float], Optional[float]]:
+) -> Tuple[int, Optional[float], Optional[float]]:
     preds: List[Any] = []
     actuals: List[Any] = []
     for match in matches:
@@ -132,16 +131,14 @@ def rp_metrics(
             actuals.append(actual)
 
     if len(preds) == 0:
-        return 0, None, None, None, None
+        return 0, None, None
 
     preds = np.array(preds)  # type: ignore
     actuals = np.array(actuals)  # type: ignore
 
     error = get_error(preds, actuals)
     acc = get_acc(preds, actuals)
-    ll = get_ll(preds, actuals)
-    f1 = get_f1(preds, actuals)
-    return len(preds), r(error, 4), r(acc, 4), r(ll, 4), r(f1, 4)
+    return len(preds), r(error, 4), r(acc, 4)
 
 
 def process_year(objs: objs_type) -> objs_type:
@@ -154,9 +151,7 @@ def process_year(objs: objs_type) -> objs_type:
     # YEAR
     year = objs[0]
 
-    season_matches = [
-        m for m in matches if m.status == MatchStatus.COMPLETED and not m.offseason
-    ]
+    season_matches = [m for m in matches if m.status == MatchStatus.COMPLETED]
     champs_matches = [m for m in season_matches if m.week == 8]
     season_qual_matches = [m for m in season_matches if not m.elim]
     champs_qual_matches = [m for m in champs_matches if not m.elim]
@@ -173,13 +168,10 @@ def process_year(objs: objs_type) -> objs_type:
     ) = win_prob_metrics(champs_matches)
 
     # score
-    _, year.epa_score_error, year.epa_score_mae, year.epa_score_rmse = score_metrics(
-        season_matches
-    )
+    _, year.epa_score_error, year.epa_score_rmse = score_metrics(season_matches)
     (
         _,
         year.epa_champs_score_error,
-        year.epa_champs_score_mae,
         year.epa_champs_score_rmse,
     ) = score_metrics(champs_matches)
 
@@ -188,30 +180,22 @@ def process_year(objs: objs_type) -> objs_type:
         year.rp_count,
         year.epa_rp_1_error,
         year.epa_rp_1_acc,
-        year.epa_rp_1_ll,
-        year.epa_rp_1_f1,
     ) = rp_metrics(season_qual_matches, "rp_1")
     (
         _,
         year.epa_rp_2_error,
         year.epa_rp_2_acc,
-        year.epa_rp_2_ll,
-        year.epa_rp_2_f1,
     ) = rp_metrics(season_qual_matches, "rp_2")
 
     (
         year.champs_rp_count,
         year.epa_champs_rp_1_error,
         year.epa_champs_rp_1_acc,
-        year.epa_champs_rp_1_ll,
-        year.epa_champs_rp_1_f1,
     ) = rp_metrics(champs_qual_matches, "rp_1")
     (
         _,
         year.epa_champs_rp_2_error,
         year.epa_champs_rp_2_acc,
-        year.epa_champs_rp_2_ll,
-        year.epa_champs_rp_2_f1,
     ) = rp_metrics(champs_qual_matches, "rp_2")
 
     # EVENTS
@@ -223,22 +207,17 @@ def process_year(objs: objs_type) -> objs_type:
         (
             _,
             event.epa_score_error,
-            event.epa_score_mae,
             event.epa_score_rmse,
         ) = score_metrics(ms)
         (
             event.rp_count,
             event.epa_rp_1_error,
             event.epa_rp_1_acc,
-            event.epa_rp_1_ll,
-            event.epa_rp_1_f1,
         ) = rp_metrics(qual_ms, "rp_1")
         (
             _,
             event.epa_rp_2_error,
             event.epa_rp_2_acc,
-            event.epa_rp_2_ll,
-            event.epa_rp_2_f1,
         ) = rp_metrics(qual_ms, "rp_2")
 
     return objs

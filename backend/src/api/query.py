@@ -41,8 +41,6 @@ metric_query = Query(
     description="How to sort the returned values. Any column in the table is valid.",
 )
 
-offseason_query = Query(None, description="Whether the event is an offseason event.")
-
 offset_query = Query(None, ge=0, description="Offset from the first result to return.")
 state_query = Query(None, description="Capitalized two-letter state code, e.g. `NC`.")
 

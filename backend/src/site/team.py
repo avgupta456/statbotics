@@ -28,21 +28,17 @@ router = APIRouter()
 @async_fail_gracefully_plural
 async def read_all_teams(response: Response, no_cache: bool = False) -> Any:
     teams: List[Team] = await get_teams_cached(site=True, no_cache=no_cache)
-    data = [
-        {"team": x.team, "name": x.name, "active": x.active}
-        for x in teams
-        if not x.offseason
-    ]
+    data = [{"team": x.team, "name": x.name, "active": x.active} for x in teams]
     return data
 
 
 @router.get("/team/{team_num}")
 @async_fail_gracefully_singular
 async def read_team_years(
-    response: Response, team_num: str, no_cache: bool = False
+    response: Response, team_num: int, no_cache: bool = False
 ) -> Any:
     team: Optional[Team] = await get_team_cached(team=team_num, no_cache=no_cache)
-    if team is None or team.offseason:
+    if team is None:
         raise Exception("Team not found")
 
     team_years: List[TeamYear] = await get_team_years_cached(
@@ -77,7 +73,7 @@ async def read_team_years(
 @router.get("/team/{team_num}/{year}")
 @async_fail_gracefully_singular
 async def read_team_year(
-    response: Response, team_num: str, year: int, no_cache: bool = False
+    response: Response, team_num: int, year: int, no_cache: bool = False
 ) -> Any:
     year_obj: Optional[Year] = await get_year_cached(year=year, no_cache=no_cache)
     if year_obj is None:
@@ -88,21 +84,20 @@ async def read_team_year(
         year=year,
         no_cache=no_cache,
     )
-    if team_year is None or team_year.offseason:
+    if team_year is None:
         raise Exception("TeamYear not found")
 
     team_events: List[TeamEvent] = await get_team_events_cached(
         year=year,
         team=team_num,
-        offseason=None,
         no_cache=no_cache,
     )
 
     matches: List[Match] = await get_matches_cached(
-        team=team_num, year=year, offseason=None, no_cache=no_cache
+        team=team_num, year=year, no_cache=no_cache
     )
     team_matches: List[TeamMatch] = await get_team_matches_cached(
-        team=team_num, year=year, offseason=None, no_cache=no_cache
+        team=team_num, year=year, no_cache=no_cache
     )
 
     team_matches = sorted(team_matches, key=lambda x: x.time)

@@ -19,17 +19,15 @@ TRP = Tuple[int, int]
 def process_year(objs: objs_type) -> objs_type:
     year_num = objs[0].year
 
-    ty_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    ty_full_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    te_record: Dict[Tuple[str, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    te_qual_record: Dict[Tuple[str, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    te_rps: Dict[Tuple[str, str], TRP] = defaultdict(lambda: (0, 0))
+    ty_record: Dict[int, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
+    te_record: Dict[Tuple[int, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
+    te_qual_record: Dict[Tuple[int, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
+    te_rps: Dict[Tuple[int, str], TRP] = defaultdict(lambda: (0, 0))
 
     for m_obj in objs[4].values():
         elim = m_obj.elim
         event = m_obj.event
         status = m_obj.status
-        offseason = m_obj.offseason
         winner = m_obj.winner
 
         if status != MatchStatus.COMPLETED or winner is None:
@@ -56,20 +54,12 @@ def process_year(objs: objs_type) -> objs_type:
             total_rps = 2 * win_update + 1 * tie_update + rp_1 + rp_2
 
             for t in teams:
-                ty_full_record[t] = (
-                    ty_full_record[t][0] + win_update,
-                    ty_full_record[t][1] + loss_update,
-                    ty_full_record[t][2] + tie_update,
-                    ty_full_record[t][3] + 1,
+                ty_record[t] = (
+                    ty_record[t][0] + win_update,
+                    ty_record[t][1] + loss_update,
+                    ty_record[t][2] + tie_update,
+                    ty_record[t][3] + 1,
                 )
-
-                if not offseason:
-                    ty_record[t] = (
-                        ty_record[t][0] + win_update,
-                        ty_record[t][1] + loss_update,
-                        ty_record[t][2] + tie_update,
-                        ty_record[t][3] + 1,
-                    )
 
                 if t not in dqs and t not in surrogates:
                     # DQ, surrogate only affect TeamEvent records
@@ -99,16 +89,6 @@ def process_year(objs: objs_type) -> objs_type:
             team_year.count,
         ) = ty_record[team_year.team]
         team_year.winrate = winrate(team_year.wins, team_year.ties, team_year.count)
-
-        (
-            team_year.full_wins,
-            team_year.full_losses,
-            team_year.full_ties,
-            team_year.full_count,
-        ) = ty_full_record[team_year.team]
-        team_year.full_winrate = winrate(
-            team_year.full_wins, team_year.full_ties, team_year.full_count
-        )
 
     for team_event in objs[3].values():
         (
@@ -150,7 +130,7 @@ def process_year(objs: objs_type) -> objs_type:
         event.qual_matches = len([m for m in curr_matches if not m.elim])
 
     # Also handles team_year_obj next_event_{key, name, week}
-    team_to_events: Dict[str, List[Event]] = defaultdict(list)
+    team_to_events: Dict[int, List[Event]] = defaultdict(list)
     for event in objs[2].values():
         for team_event in event_to_team_events[event.key]:
             team_to_events[team_event.team].append(event)
@@ -171,11 +151,10 @@ def process_year(objs: objs_type) -> objs_type:
 
 
 def post_process(
-    teams: List[Team], all_team_years: Dict[int, Dict[str, TeamYear]]
+    teams: List[Team], all_team_years: Dict[int, Dict[int, TeamYear]]
 ) -> List[Team]:
-    t_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    t_full_record: Dict[str, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    t_active: Dict[str, bool] = defaultdict(lambda: False)
+    t_record: Dict[int, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
+    t_active: Dict[int, bool] = defaultdict(lambda: False)
 
     all_team_years_list: List[TeamYear] = []
     for team_years_dict in all_team_years.values():
@@ -191,27 +170,12 @@ def post_process(
             t_record[team][3] + team_year.count,
         )
 
-        t_full_record[team] = (
-            t_full_record[team][0] + team_year.full_wins,
-            t_full_record[team][1] + team_year.full_losses,
-            t_full_record[team][2] + team_year.full_ties,
-            t_full_record[team][3] + team_year.full_count,
-        )
-
         if team_year.year == CURR_YEAR:
             t_active[team] = True
 
     for team in teams:
         team.wins, team.losses, team.ties, team.count = t_record[team.team]
         team.winrate = winrate(team.wins, team.ties, team.count)
-
-        (
-            team.full_wins,
-            team.full_losses,
-            team.full_ties,
-            team.full_count,
-        ) = t_full_record[team.team]
-        team.full_winrate = winrate(team.full_wins, team.full_ties, team.full_count)
 
         team.active = t_active[team.team]
 

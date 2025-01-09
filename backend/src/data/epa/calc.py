@@ -8,7 +8,7 @@ from src.utils.utils import get_team_event_key, get_team_match_key, get_team_yea
 
 
 def process_year(
-    objs: objs_type, all_team_years: Dict[int, Dict[str, TeamYear]]
+    objs: objs_type, all_team_years: Dict[int, Dict[int, TeamYear]]
 ) -> objs_type:
     year = objs[0]
     team_years = objs[1]
@@ -18,9 +18,9 @@ def process_year(
     team_matches = objs[5]
 
     match_events: Dict[str, Event] = {}
-    match_team_matches: Dict[str, Dict[str, TeamMatch]] = defaultdict(dict)
-    match_team_events: Dict[str, Dict[str, TeamEvent]] = defaultdict(dict)
-    match_team_years: Dict[str, Dict[str, TeamYear]] = defaultdict(dict)
+    match_team_matches: Dict[str, Dict[int, TeamMatch]] = defaultdict(dict)
+    match_team_events: Dict[str, Dict[int, TeamEvent]] = defaultdict(dict)
+    match_team_years: Dict[str, Dict[int, TeamYear]] = defaultdict(dict)
     for match in matches.values():
         match_events[match.key] = events[match.event]
         red_teams, blue_teams = match.get_teams()

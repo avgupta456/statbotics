@@ -61,13 +61,11 @@ async def read_event(response: Response, event_id: str, no_cache: bool = False) 
         raise Exception("Year not found")
 
     team_events: List[TeamEvent] = await get_team_events_cached(
-        year=year.year, event=event_id, offseason=event.offseason, no_cache=no_cache
+        year=year.year, event=event_id, no_cache=no_cache
     )
-    matches: List[Match] = await get_matches_cached(
-        event=event_id, offseason=event.offseason, no_cache=no_cache
-    )
+    matches: List[Match] = await get_matches_cached(event=event_id, no_cache=no_cache)
     team_matches: List[TeamMatch] = await get_team_matches_cached(
-        event=event_id, offseason=event.offseason, no_cache=no_cache
+        event=event_id, no_cache=no_cache
     )
 
     team_matches = sorted(team_matches, key=lambda x: x.time)
@@ -87,7 +85,7 @@ async def read_event(response: Response, event_id: str, no_cache: bool = False) 
 @router.get("/event/{event_id}/team_matches/{team}")
 @async_fail_gracefully_plural
 async def read_team_matches(
-    response: Response, event_id: str, team: str, no_cache: bool = False
+    response: Response, event_id: str, team: int, no_cache: bool = False
 ) -> Any:
     team_matches: List[TeamMatch] = await get_team_matches_cached(
         event=event_id, team=team, no_cache=no_cache

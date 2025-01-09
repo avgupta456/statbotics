@@ -29,7 +29,6 @@ def get_teams(cache: bool = True) -> List[TeamDict]:
                 "team": num,
                 "name": data_team["nickname"],
                 "rookie_year": data_team["rookie_year"],
-                "offseason": True,
                 "country": data_team["country"],
                 "state": clean_state(data_team["state_prov"]),
             }
@@ -51,23 +50,23 @@ def get_districts(
 
 def get_district_teams(
     district: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[List[str], Optional[str]]:
-    out: List[str] = []
+) -> Tuple[List[int], Optional[str]]:
+    out: List[int] = []
     data, new_etag = get_tba(
         "district/" + str(district) + "/teams", etag=etag, cache=cache
     )
     if type(data) is bool:
         return out, new_etag
     for team in data:
-        out.append(team["key"][3:])
+        out.append(int(team["key"][3:]))
     return out, new_etag
 
 
 def get_district_rankings(
     district: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[Tuple[Dict[str, int], Dict[str, int], Dict[str, int]], Optional[str]]:
-    team_to_points: Dict[str, int] = {}
-    team_to_rank: Dict[str, int] = {}
+) -> Tuple[Tuple[Dict[int, int], Dict[int, int], Dict[str, int]], Optional[str]]:
+    team_to_points: Dict[int, int] = {}
+    team_to_rank: Dict[int, int] = {}
     team_event_to_points: Dict[str, int] = {}
     data, new_etag = get_tba(
         "district/" + str(district) + "/rankings", etag=etag, cache=cache
@@ -75,7 +74,7 @@ def get_district_rankings(
     if type(data) is bool or data is None:
         return (team_to_points, team_to_rank, team_event_to_points), new_etag
     for team in data:
-        team_num = team["team_key"][3:]
+        team_num = int(team["team_key"][3:])
         points = int(team["point_total"])
         rank = int(team["rank"])
         team_to_points[team_num] = points
@@ -189,19 +188,18 @@ def get_events(
 
 def get_event_teams(
     event: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[List[str], Optional[str]]:
+) -> Tuple[List[int], Optional[str]]:
     query_str = "event/" + str(event) + "/teams/simple"
     data, new_etag = get_tba(query_str, etag=etag, cache=cache)
     if type(data) is bool:
         return [], new_etag
-    out = [x["key"][3:] for x in data]
+    out = [int(x["key"][3:]) for x in data]
     return out, new_etag
 
 
 def get_event_matches(
     year: int,
     event: str,
-    offseason: bool,
     event_time: int,
     etag: Optional[str] = None,
     cache: bool = True,
@@ -268,15 +266,10 @@ def get_event_matches(
 
         breakdown = match.get("score_breakdown", {}) or {}
         red_breakdown = clean_breakdown(
-            match["key"], "red", year, offseason, breakdown.get("red", None), red_score
+            match["key"], "red", year, breakdown.get("red", None), red_score
         )
         blue_breakdown = clean_breakdown(
-            match["key"],
-            "blue",
-            year,
-            offseason,
-            breakdown.get("blue", None),
-            blue_score,
+            match["key"], "blue", year, breakdown.get("blue", None), blue_score
         )
 
         red_breakdown, blue_breakdown = post_clean_breakdown(
@@ -318,14 +311,14 @@ def get_event_matches(
             "match_number": cast(int, match["match_number"]),
             "status": status,
             "video": video,
-            "red_1": red_teams[0],
-            "red_2": red_teams[1],
-            "red_3": red_teams[2] if len(red_teams) > 2 else None,
+            "red_1": int(red_teams[0]),
+            "red_2": int(red_teams[1]),
+            "red_3": int(red_teams[2]) if len(red_teams) > 2 else None,
             "red_dq": ",".join([t[3:] for t in red_dq_teams]),
             "red_surrogate": ",".join([t[3:] for t in red_surrogate_teams]),
-            "blue_1": blue_teams[0],
-            "blue_2": blue_teams[1],
-            "blue_3": blue_teams[2] if len(blue_teams) > 2 else None,
+            "blue_1": int(blue_teams[0]),
+            "blue_2": int(blue_teams[1]),
+            "blue_3": int(blue_teams[2]) if len(blue_teams) > 2 else None,
             "blue_dq": ",".join([t[3:] for t in blue_dq_teams]),
             "blue_surrogate": ",".join([t[3:] for t in blue_surrogate_teams]),
             "winner": winner,
@@ -343,8 +336,8 @@ def get_event_matches(
 
 def get_event_rankings(
     event: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[Dict[str, int], Optional[str]]:
-    out: Dict[str, int] = {}
+) -> Tuple[Dict[int, int], Optional[str]]:
+    out: Dict[int, int] = {}
     new_etag: Optional[str] = None
     # queries TBA for rankings, some older events are not populated
     try:
@@ -364,9 +357,9 @@ def get_event_rankings(
 
 def get_event_alliances(
     event: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[Tuple[Dict[str, str], Dict[str, bool]], Optional[str]]:
-    alliance_dict: Dict[str, str] = {}
-    captain_dict: Dict[str, bool] = {}
+) -> Tuple[Tuple[Dict[int, str], Dict[int, bool]], Optional[str]]:
+    alliance_dict: Dict[int, str] = {}
+    captain_dict: Dict[int, bool] = {}
     new_etag: Optional[str] = None
     # queries TBA for alliances, some older events are not populated
     try:

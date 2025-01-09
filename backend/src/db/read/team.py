@@ -8,7 +8,7 @@ from src.db.models.team import Team, TeamORM
 from src.db.read.main import common_filters
 
 
-def get_team(team: str) -> Optional[Team]:
+def get_team(team: int) -> Optional[Team]:
     def callback(session: SessionType):
         out_data = session.query(TeamORM).filter(TeamORM.team == team).first()
         return Team.from_dict(out_data.__dict__) if out_data else None
@@ -21,7 +21,6 @@ def get_teams(
     state: Optional[str] = None,
     district: Optional[str] = None,
     active: Optional[bool] = None,
-    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -38,8 +37,6 @@ def get_teams(
             data = data.filter(TeamORM.district == district)
         if active is not None:
             data = data.filter(TeamORM.active == active)
-        if offseason is not None:
-            data = data.filter(TeamORM.offseason == offseason)
 
         return data
 

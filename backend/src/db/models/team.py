@@ -12,7 +12,7 @@ class TeamORM(Base, ModelORM):
     """DECLARATION"""
 
     __tablename__ = "teams"
-    team: MS = mapped_column(String(6), primary_key=True)
+    team: MI = mapped_column(Integer, index=True, primary_key=True)
 
     """NO DEFAULTS"""
     name: MS = mapped_column(String(100))
@@ -21,7 +21,6 @@ class TeamORM(Base, ModelORM):
     rookie_year: MOI = mapped_column(Integer, nullable=True)
 
     """GENERAL"""
-    offseason: MB = mapped_column(Boolean, default=True)
     district: MOS = mapped_column(String(10), nullable=True, default=None)
     active: MB = mapped_column(Boolean, default=False)
     primary_color: MOS = mapped_column(String(7), nullable=True, default=None)
@@ -52,14 +51,14 @@ _Team = generate_attr_class("Team", TeamORM)
 
 class Team(_Team, Model):
     def pk(self: "Team") -> str:
-        return self.team
+        return str(self.team)
 
     def __hash__(self: "Team") -> int:
         return hash(self.pk())
 
     def __str__(self: "Team") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return "_".join([self.team, str(self.count)])
+        return "_".join([str(self.team), str(self.count)])
 
     def to_dict(self: "Team") -> Dict[str, Any]:
         return {
@@ -69,7 +68,6 @@ class Team(_Team, Model):
             "state": self.state,
             "district": self.district,
             "rookie_year": self.rookie_year,
-            "offseason": self.offseason,
             "active": self.active,
             "colors": {
                 "primary": self.primary_color,

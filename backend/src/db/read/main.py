@@ -27,7 +27,7 @@ def common_filters(
                 data = data.limit(limit)
             if offset is not None:
                 data = data.offset(offset)
-            out_data: List[model_orm] = data.all()
+            out_data: List[model_orm] = data.all()  # type: ignore
 
             return [model.from_dict(x.__dict__) for x in out_data]
 

@@ -30,12 +30,7 @@ async def read_team_years(
         raise Exception("Year not found")
 
     team_years: List[TeamYear] = await get_team_years_cached(
-        year=year,
-        offseason=False,
-        limit=limit,
-        metric=metric,
-        site=True,
-        no_cache=no_cache,
+        year=year, limit=limit, metric=metric, site=True, no_cache=no_cache
     )
     team_years = [x for x in team_years if x.count > 0 or year >= CURR_YEAR]
 
@@ -50,7 +45,7 @@ async def read_team_years(
 @router.get("/team_year/{year}/{team}/matches")
 @async_fail_gracefully_plural
 async def read_team_matches(
-    response: Response, year: int, team: str, no_cache: bool = False
+    response: Response, year: int, team: int, no_cache: bool = False
 ) -> Any:
     team_matches: List[TeamMatch] = await get_team_matches_cached(
         team=team, year=year, no_cache=no_cache

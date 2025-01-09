@@ -16,7 +16,7 @@ class TeamMatchORM(Base, ModelORM):
 
     __tablename__ = "team_matches"
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
-    team: MS = mapped_column(String(6))
+    team: MI = mapped_column(Integer, index=True)
     year: MI = mapped_column(Integer, index=True)
     event: MS = mapped_column(String(12), index=True)
     match: MS = mapped_column(String(20), index=True)
@@ -32,7 +32,6 @@ class TeamMatchORM(Base, ModelORM):
 
     """GENERAL"""
     time: MI = mapped_column(Integer)
-    offseason: MB = mapped_column(Boolean)
     week: MI = mapped_column(Integer)
     elim: MB = mapped_column(Boolean)
 
@@ -87,7 +86,13 @@ class TeamMatch(_TeamMatch, Model):
     def __str__(self: "TeamMatch") -> str:
         # Only refresh DB if these change (during 1 min partial update)
         return "_".join(
-            [self.team, self.match, str(self.status), str(self.epa), str(self.post_epa)]
+            [
+                str(self.team),
+                self.match,
+                str(self.status),
+                str(self.epa),
+                str(self.post_epa),
+            ]
         )
 
     def to_dict(self: "TeamMatch") -> Dict[str, Any]:
@@ -98,7 +103,6 @@ class TeamMatch(_TeamMatch, Model):
             "event": self.event,
             "alliance": self.alliance,
             "time": self.time,
-            "offseason": self.offseason,
             "week": self.week,
             "elim": self.elim,
             "dq": self.dq,

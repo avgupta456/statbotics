@@ -20,21 +20,3 @@ def update_team_districts() -> None:
         )
 
     run_transaction(Session, callback)
-
-
-def update_team_offseason() -> None:
-    def callback(session: SessionType):
-        # set offseason to false if any year is not offseason
-        not_offseason_teams = [
-            x[0]
-            for x in session.query(TeamYearORM.team)
-            .filter(TeamYearORM.offseason.is_(False))
-            .group_by(TeamYearORM.team)
-            .all()
-        ]
-
-        session.query(TeamORM).filter(TeamORM.team.in_(not_offseason_teams)).update(
-            {TeamORM.offseason: False}, synchronize_session=False  # type: ignore
-        )
-
-    run_transaction(Session, callback)

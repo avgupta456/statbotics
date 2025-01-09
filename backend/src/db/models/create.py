@@ -7,7 +7,7 @@ from src.types.enums import CompLevel
 
 
 def match_dict_to_objs(
-    data: MatchDict, year: int, week: int, offseason: bool
+    data: MatchDict, year: int, week: int
 ) -> Tuple[Match, List[TeamMatch]]:
     elim = data["comp_level"] != CompLevel.QUAL
 
@@ -18,7 +18,6 @@ def match_dict_to_objs(
         key=data["key"],
         year=year,
         event=data["event"],
-        offseason=offseason,
         week=week,
         elim=elim,
         comp_level=data["comp_level"],
@@ -117,7 +116,6 @@ def match_dict_to_objs(
                     match=data["key"],
                     alliance=alliance,
                     time=data["time"],
-                    offseason=offseason,
                     week=week,
                     elim=elim,
                     dq=team in dq.split(","),

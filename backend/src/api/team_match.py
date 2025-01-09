@@ -10,7 +10,6 @@ from src.api.query import (
     limit_query,
     match_query,
     metric_query,
-    offseason_query,
     offset_query,
     team_query,
     week_query,
@@ -34,20 +33,19 @@ async def read_root_team_match():
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_team_match_cached(
-    team: str, match: str, no_cache: bool = False
+    team: int, match: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamMatch]]:
     return (True, get_team_match(team=team, match=match))
 
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_team_matches_cached(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
     match: Optional[str] = None,
     elim: Optional[bool] = None,
-    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -67,7 +65,6 @@ async def get_team_matches_cached(
             week=week,
             match=match,
             elim=elim,
-            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -82,7 +79,7 @@ async def get_team_matches_cached(
     description="Returns a single Team Match object. Requires a team number and match key, e.g. `5511` and `2019ncwak_f1m1`.",
 )
 @async_fail_gracefully_singular
-async def read_team_match(response: Response, team: str, match: str) -> Dict[str, Any]:
+async def read_team_match(response: Response, team: int, match: str) -> Dict[str, Any]:
     team_match_obj: Optional[TeamMatch] = await get_team_match_cached(
         team=team, match=match
     )
@@ -100,13 +97,12 @@ async def read_team_match(response: Response, team: str, match: str) -> Dict[str
 @async_fail_gracefully_plural
 async def read_team_matches(
     response: Response,
-    team: Optional[str] = team_query,
+    team: Optional[int] = team_query,
     year: Optional[int] = year_query,
     event: Optional[str] = event_query,
     week: Optional[int] = week_query,
     match: Optional[str] = match_query,
     elim: Optional[bool] = elim_query,
-    offseason: Optional[bool] = offseason_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
     limit: Optional[int] = limit_query,
@@ -119,7 +115,6 @@ async def read_team_matches(
         week=week,
         match=match,
         elim=elim,
-        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,

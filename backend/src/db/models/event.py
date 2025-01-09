@@ -1,13 +1,13 @@
 from typing import Any, Dict
 
-from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy import Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.breakdown import key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MI, MOF, MOI, MOS, MS, values_callable
+from src.db.models.types import MI, MOF, MOI, MOS, MS, values_callable
 from src.types.enums import EventStatus, EventType
 
 
@@ -34,7 +34,6 @@ class EventORM(Base, ModelORM):
         Enum(EventType, values_callable=values_callable)
     )
     week: MI = mapped_column(Integer)
-    offseason: MB = mapped_column(Boolean)
 
     # Link to livestream, full link (unlike Match) to handle Twitch/YT
     video: MOS = mapped_column(String(50), nullable=True)
@@ -63,19 +62,14 @@ class EventORM(Base, ModelORM):
     epa_mse: MOF = mapped_column(Float, nullable=True, default=None)
 
     epa_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
     epa_score_error: MOF = mapped_column(Float, nullable=True, default=None)
 
     rp_count: MI = mapped_column(Integer, default=0)
     epa_rp_1_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_1_ll: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_1_f1: MOF = mapped_column(Float, nullable=True, default=None)
 
     epa_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_2_ll: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_2_f1: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Event = generate_attr_class("Event", EventORM)
@@ -128,7 +122,6 @@ class Event(_Event, Model):
             "end_date": self.end_date,
             "type": self.type,
             "week": self.week,
-            "offseason": self.offseason,
             "video": self.video,
             "status": self.status,
             "status_str": self.get_event_status_str(),
@@ -152,7 +145,6 @@ class Event(_Event, Model):
                 "score_pred": {
                     "count": 2 * self.count,
                     "rmse": self.epa_score_rmse,
-                    "mae": self.epa_score_mae,
                     "error": self.epa_score_error,
                 },
             },
@@ -164,14 +156,10 @@ class Event(_Event, Model):
                 key_to_name[self.year]["rp_1"]: {
                     "error": self.epa_rp_1_error,
                     "acc": self.epa_rp_1_acc,
-                    "ll": self.epa_rp_1_ll,
-                    "f1": self.epa_rp_1_f1,
                 },
                 key_to_name[self.year]["rp_2"]: {
                     "error": self.epa_rp_2_error,
                     "acc": self.epa_rp_2_acc,
-                    "ll": self.epa_rp_2_ll,
-                    "f1": self.epa_rp_2_f1,
                 },
             }
 

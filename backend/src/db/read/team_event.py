@@ -8,7 +8,7 @@ from src.db.models.team_event import TeamEvent, TeamEventORM
 from src.db.read.main import common_filters
 
 
-def get_team_event(team: str, event: str) -> Optional[TeamEvent]:
+def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
     def callback(session: SessionType):
         data = session.query(TeamEventORM).filter(
             TeamEventORM.team == team, TeamEventORM.event == event
@@ -22,7 +22,7 @@ def get_team_event(team: str, event: str) -> Optional[TeamEvent]:
 
 
 def get_team_events(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
@@ -30,7 +30,6 @@ def get_team_events(
     district: Optional[str] = None,
     type: Optional[str] = None,
     week: Optional[int] = None,
-    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -55,8 +54,6 @@ def get_team_events(
             data = data.filter(TeamEventORM.type == type)
         if week is not None:
             data = data.filter(TeamEventORM.week == week)
-        if offseason is not None:
-            data = data.filter(TeamEventORM.offseason == offseason)
 
         return data
 

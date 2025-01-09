@@ -25,7 +25,6 @@ def get_events(
     district: Optional[str] = None,
     type: Optional[str] = None,
     week: Optional[int] = None,
-    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -46,8 +45,6 @@ def get_events(
             data = data.filter(EventORM.type == type)
         if week is not None:
             data = data.filter(EventORM.week == week)
-        if offseason is not None:
-            data = data.filter(EventORM.offseason == offseason)
 
         return data
 

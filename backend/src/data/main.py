@@ -41,14 +41,14 @@ def process_year(
     cache: bool,
     teams: List[Team],
     objs: objs_type,
-    all_team_years: Optional[Dict[int, Dict[str, TeamYear]]],
+    all_team_years: Optional[Dict[int, Dict[int, TeamYear]]],
 ) -> List[Team]:
     timer = Timer()
     orig_objs = deepcopy(objs)
     if all_team_years is None:
         all_team_years = defaultdict(dict)
         for year in range(max(2002, year_num - 4), year_num):
-            team_years = get_team_years_db(year=year, offseason=None)
+            team_years = get_team_years_db(year=year)
             for ty in team_years:
                 all_team_years[ty.year][ty.team] = ty
 
@@ -75,14 +75,14 @@ def process_year(
 
 def post_process(
     teams: List[Team],
-    all_team_years: Optional[Dict[int, Dict[str, TeamYear]]],
+    all_team_years: Optional[Dict[int, Dict[int, TeamYear]]],
     colors: bool = False,  # default don't update colors
 ):
     timer = Timer()
 
     if all_team_years is None:
         all_team_years = defaultdict(dict)
-        all_team_years_list = get_team_years_db(offseason=None)
+        all_team_years_list = get_team_years_db()
         for ty in all_team_years_list:
             all_team_years[ty.year][ty.team] = ty
 
@@ -121,7 +121,7 @@ def reset_all_years():
     teams = load_teams_tba(cache=True)
     timer.print("Load Teams")
 
-    all_team_years: Dict[int, Dict[str, TeamYear]] = {}
+    all_team_years: Dict[int, Dict[int, TeamYear]] = {}
     for year_num in range(start_year, end_year + 1):
         objs = create_objs(year_num)
         if year_num == 2021:
@@ -137,7 +137,7 @@ def update_curr_year(partial: bool):
     year = CURR_YEAR
     timer = Timer()
 
-    teams = get_teams_db(offseason=None)
+    teams = get_teams_db()
     timer.print("Load Teams")
 
     if partial:

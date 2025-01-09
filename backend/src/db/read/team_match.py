@@ -8,7 +8,7 @@ from src.db.models.team_match import TeamMatch, TeamMatchORM
 from src.db.read.main import common_filters
 
 
-def get_team_match(team: str, match: str) -> Optional[TeamMatch]:
+def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
     def callback(session: SessionType):
         data = session.query(TeamMatchORM).filter(
             TeamMatchORM.team == team, TeamMatchORM.match == match
@@ -22,13 +22,12 @@ def get_team_match(team: str, match: str) -> Optional[TeamMatch]:
 
 
 def get_team_matches(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
     match: Optional[str] = None,
     elim: Optional[bool] = None,
-    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -49,8 +48,6 @@ def get_team_matches(
             data = data.filter(TeamMatchORM.match == match)
         if elim is not None:
             data = data.filter(TeamMatchORM.elim == elim)
-        if offseason is not None:
-            data = data.filter(TeamMatchORM.offseason == offseason)
 
         return data
 

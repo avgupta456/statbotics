@@ -1,16 +1,16 @@
 import uuid
 
 
-def get_team_year_key(team: str, year: int) -> str:
-    return team + "_" + str(year)
+def get_team_year_key(team: int, year: int) -> str:
+    return str(team) + "_" + str(year)
 
 
-def get_team_event_key(team: str, event: str) -> str:
-    return team + "_" + event
+def get_team_event_key(team: int, event: str) -> str:
+    return str(team) + "_" + event
 
 
-def get_team_match_key(team: str, match: str) -> str:
-    return team + "_" + match
+def get_team_match_key(team: int, match: str) -> str:
+    return str(team) + "_" + match
 
 
 def get_match_name(key: str) -> str:

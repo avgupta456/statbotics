@@ -8,7 +8,7 @@ from src.db.models.team_year import TeamYear, TeamYearORM
 from src.db.read.main import common_filters
 
 
-def get_team_year(team: str, year: int) -> Optional[TeamYear]:
+def get_team_year(team: int, year: int) -> Optional[TeamYear]:
     def callback(session: SessionType):
         data = session.query(TeamYearORM).filter(
             TeamYearORM.team == team, TeamYearORM.year == year
@@ -22,13 +22,12 @@ def get_team_year(team: str, year: int) -> Optional[TeamYear]:
 
 
 def get_team_years(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     teams: Optional[List[str]] = None,
     year: Optional[int] = None,
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
-    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -49,8 +48,6 @@ def get_team_years(
             data = data.filter(TeamYearORM.state == state)
         if district is not None:
             data = data.filter(TeamYearORM.district == district)
-        if offseason is not None:
-            data = data.filter(TeamYearORM.offseason == offseason)
 
         return data
 

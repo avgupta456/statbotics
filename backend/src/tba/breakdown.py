@@ -796,7 +796,6 @@ def clean_breakdown(
     key: str,
     alliance: str,
     year: int,
-    offseason: bool,
     breakdown: Optional[Dict[str, Any]],
     score: Optional[int],
 ) -> BreakdownDict:
@@ -845,7 +844,7 @@ def clean_breakdown(
         no_foul_points = out["no_foul_points"] or 0
 
         error = no_foul_points - (auto_points + teleop_points + endgame_points)
-        if not offseason and error != 0:
+        if error != 0:
             out["teleop_points"] = (out["teleop_points"] or 0) + error
             print("ERROR", key, alliance, error)
 

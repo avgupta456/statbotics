@@ -10,7 +10,6 @@ from src.api.query import (
     district_query,
     limit_query,
     metric_query,
-    offseason_query,
     offset_query,
     state_query,
 )
@@ -32,7 +31,7 @@ async def read_root_team():
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_team_cached(
-    team: str, no_cache: bool = False
+    team: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[Team]]:
     return (True, get_team(team=team))
 
@@ -43,7 +42,6 @@ async def get_teams_cached(
     state: Optional[str] = None,
     district: Optional[str] = None,
     active: Optional[bool] = None,
-    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -61,7 +59,6 @@ async def get_teams_cached(
             state=state,
             district=district,
             active=active,
-            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -78,7 +75,7 @@ async def get_teams_cached(
 @async_fail_gracefully_singular
 async def read_team(
     response: Response,
-    team: str,
+    team: int,
 ) -> Dict[str, Any]:
     team_obj: Optional[Team] = await get_team_cached(team=team)
     if team_obj is None:
@@ -99,7 +96,6 @@ async def read_teams(
     state: Optional[str] = state_query,
     district: Optional[str] = district_query,
     active: Optional[bool] = active_query,
-    offseason: Optional[bool] = offseason_query,
     metric: str = metric_query,
     ascending: bool = ascending_query,
     limit: int = limit_query,
@@ -110,7 +106,6 @@ async def read_teams(
         state=state,
         district=district,
         active=active,
-        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,

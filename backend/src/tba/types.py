@@ -4,10 +4,9 @@ from src.types.enums import CompLevel, EventType, MatchStatus, MatchWinner
 
 
 class TeamDict(TypedDict):
-    team: str
+    team: int
     name: str
     rookie_year: int
-    offseason: bool
     country: Optional[str]
     state: Optional[str]
 
@@ -96,14 +95,14 @@ class MatchDict(TypedDict):
     match_number: int
     status: MatchStatus
     video: Optional[str]
-    red_1: str
-    red_2: str
-    red_3: Optional[str]
+    red_1: int
+    red_2: int
+    red_3: Optional[int]
     red_dq: str
     red_surrogate: str
-    blue_1: str
-    blue_2: str
-    blue_3: Optional[str]
+    blue_1: int
+    blue_2: int
+    blue_3: Optional[int]
     blue_dq: str
     blue_surrogate: str
     winner: Optional[MatchWinner]

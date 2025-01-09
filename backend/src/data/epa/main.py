@@ -12,7 +12,7 @@ from src.utils.utils import r
 
 # MAIN FUNCTION
 def process_year(
-    objs: objs_type, all_team_years: Dict[int, Dict[str, TeamYear]]
+    objs: objs_type, all_team_years: Dict[int, Dict[int, TeamYear]]
 ) -> objs_type:
     objs = process_year_calc(objs, all_team_years)
     objs = process_year_agg(objs)
@@ -22,9 +22,9 @@ def process_year(
 
 
 def post_process(
-    teams: List[Team], all_team_years: Dict[int, Dict[str, TeamYear]]
+    teams: List[Team], all_team_years: Dict[int, Dict[int, TeamYear]]
 ) -> List[Team]:
-    team_team_years: Dict[str, List[TeamYear]] = defaultdict(list)
+    team_team_years: Dict[int, List[TeamYear]] = defaultdict(list)
     for team_years in all_team_years.values():
         for team_year in team_years.values():
             team_team_years[team_year.team].append(team_year)

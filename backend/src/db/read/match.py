@@ -21,12 +21,11 @@ def get_match(match: str) -> Optional[Match]:
 
 
 def get_matches(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
     elim: Optional[bool] = None,
-    offseason: Optional[bool] = False,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -52,8 +51,6 @@ def get_matches(
             data = data.filter(MatchORM.week == week)
         if elim is not None:
             data = data.filter(MatchORM.elim == elim)
-        if offseason is not None:
-            data = data.filter(MatchORM.offseason == offseason)
 
         return data
 

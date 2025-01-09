@@ -11,7 +11,7 @@ from src.utils.utils import get_team_event_key, r
 def process_year_epas(
     tms: List[TeamMatch], acc: Callable[[TeamMatch], Optional[float]], default: float
 ):
-    _arr = [acc(tm) for tm in tms if not tm.offseason]
+    _arr = [acc(tm) for tm in tms]
     arr = [x for x in _arr if x is not None]
     _pre_champs_arr = [acc(tm) for tm in tms if acc(tm) if tm.week < 8]
     pre_champs_arr = [x for x in _pre_champs_arr if x is not None]
@@ -27,13 +27,13 @@ def process_year(objs: objs_type) -> objs_type:
     mean = year.score_mean or 0
     sd = year.score_sd or 0
 
-    curr_epas: Dict[str, float] = {}
+    curr_epas: Dict[int, float] = {}
 
     event_team_events_dict: Dict[str, List[TeamEvent]] = defaultdict(list)
     for team_event in objs[3].values():
         event_team_events_dict[team_event.event].append(team_event)
 
-    team_team_matches_dict: Dict[str, List[TeamMatch]] = defaultdict(list)
+    team_team_matches_dict: Dict[int, List[TeamMatch]] = defaultdict(list)
     team_event_team_matches_dict: Dict[str, List[TeamMatch]] = defaultdict(list)
     for team_match in sorted(objs[5].values(), key=lambda tm: tm.sort()):
         team_team_matches_dict[team_match.team].append(team_match)
@@ -42,10 +42,10 @@ def process_year(objs: objs_type) -> objs_type:
 
     # TEAM YEARS
     epa_list: List[float] = []
-    total_epas: List[Tuple[str, float]] = []
-    country_epas: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
-    state_epas: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
-    district_epas: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
+    total_epas: List[Tuple[int, float]] = []
+    country_epas: Dict[str, List[Tuple[int, float]]] = defaultdict(list)
+    state_epas: Dict[str, List[Tuple[int, float]]] = defaultdict(list)
+    district_epas: Dict[str, List[Tuple[int, float]]] = defaultdict(list)
     for ty in objs[1].values():
         curr_epas[ty.team] = ty.epa_start
 
@@ -55,16 +55,15 @@ def process_year(objs: objs_type) -> objs_type:
             ms, lambda m: m.post_epa, ty.epa_start
         )
 
-        if not ty.offseason:
-            epa_list.append(ty.epa)
-            total_epas.append((ty.team, ty.epa))
-            country_epas[ty.country or ""].append((ty.team, ty.epa))
-            district_epas[ty.district or ""].append((ty.team, ty.epa))
-            state_epas[ty.state or ""].append((ty.team, ty.epa))
+        epa_list.append(ty.epa)
+        total_epas.append((ty.team, ty.epa))
+        country_epas[ty.country or ""].append((ty.team, ty.epa))
+        district_epas[ty.district or ""].append((ty.team, ty.epa))
+        state_epas[ty.state or ""].append((ty.team, ty.epa))
 
     epa_list.sort(reverse=True)
 
-    def epa_tups_to_teams(v: List[Tuple[str, float]]):
+    def epa_tups_to_teams(v: List[Tuple[int, float]]):
         return [x[0] for x in sorted(v, reverse=True, key=lambda x: x[1])]
 
     sorted_teams = epa_tups_to_teams(total_epas)
@@ -80,32 +79,33 @@ def process_year(objs: objs_type) -> objs_type:
         norm_epa: float = epa_to_norm_epa(ty.epa)
         ty.norm_epa = r(norm_epa)
 
-        if ty.offseason:
-            continue
-
         team = ty.team
-        ty.total_epa_rank = sorted_teams.index(team) + 1
-        ty.total_team_count = len(total_epas)
-        ty.total_epa_percentile = r(1 - ty.total_epa_rank / ty.total_team_count, 4)
+        total_epa_rank = sorted_teams.index(team) + 1
+        total_team_count = len(total_epas)
+        ty.total_epa_percentile = r(1 - total_epa_rank / total_team_count, 4)
+        ty.total_epa_rank = total_epa_rank
+        ty.total_team_count = total_team_count
 
         country_epas_ = country_sorted_teams[ty.country or ""]
-        ty.country_epa_rank = country_epas_.index(team) + 1
-        ty.country_team_count = len(country_epas_)
-        ty.country_epa_percentile = r(
-            1 - ty.country_epa_rank / ty.country_team_count, 4
-        )
+        country_epa_rank = country_epas_.index(team) + 1
+        country_team_count = len(country_epas_)
+        ty.country_epa_percentile = r(1 - country_epa_rank / country_team_count, 4)
+        ty.country_epa_rank = country_epa_rank
+        ty.country_team_count = country_team_count
 
         state_epas_ = state_sorted_teams[ty.state or ""]
-        ty.state_epa_rank = state_epas_.index(team) + 1
-        ty.state_team_count = len(state_epas_)
-        ty.state_epa_percentile = r(1 - ty.state_epa_rank / ty.state_team_count, 4)
+        state_epa_rank = state_epas_.index(team) + 1
+        state_team_count = len(state_epas_)
+        ty.state_epa_percentile = r(1 - state_epa_rank / state_team_count, 4)
+        ty.state_epa_rank = state_epa_rank
+        ty.state_team_count = state_team_count
 
         district_epas_ = district_sorted_teams[ty.district or ""]
-        ty.district_epa_rank = district_epas_.index(team) + 1
-        ty.district_team_count = len(district_epas_)
-        ty.district_epa_percentile = r(
-            1 - ty.district_epa_rank / ty.district_team_count, 4
-        )
+        district_epa_rank = district_epas_.index(team) + 1
+        district_team_count = len(district_epas_)
+        ty.district_epa_percentile = r(1 - district_epa_rank / district_team_count, 4)
+        ty.district_epa_rank = district_epa_rank
+        ty.district_team_count = district_team_count
 
     # YEAR
     def get_percentiles(arr: List[float]) -> Tuple[float, float, float, float]:

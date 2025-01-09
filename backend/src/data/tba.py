@@ -3,13 +3,9 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
 from src.constants import CURR_WEEK, CURR_YEAR
 from src.data.utils import objs_type
-from src.db.functions import (
-    remove_teams_with_no_events,
-    update_team_districts,
-    update_team_offseason,
-)
+from src.db.functions import remove_teams_with_no_events, update_team_districts
 from src.db.models import ETag, Event, Team, TeamEvent, TeamYear, match_dict_to_objs
-from src.tba.constants import DISTRICT_MAPPING, PLACEHOLDER_TEAMS
+from src.tba.constants import DISTRICT_MAPPING
 from src.tba.read_tba import (
     EventDict,
     MatchDict,
@@ -37,7 +33,7 @@ def load_teams(cache: bool = True) -> List[Team]:
     teams = get_teams_tba(cache=cache)
     team_objs = [
         Team(
-            team=team["team"],
+            team=int(team["team"]),
             name=team["name"],
             country=team["country"],
             state=team["state"],
@@ -114,7 +110,6 @@ def check_year_partial(
         _, new_etag = get_event_matches_tba(
             year_num,
             event_obj.key,
-            event_obj.offseason,
             event_obj.time,
             prev_etag,
             cache=False,
@@ -175,18 +170,17 @@ def process_year(
             out, new_etag = func(None, cache)
         return out, new_etag is not None and new_etag != prev_etag
 
-    teams_dict: Dict[str, Team] = {team.team: team for team in teams}
-    team_competing_this_week_dict: Dict[str, bool] = {}
-    team_first_event_dict: Dict[str, Tuple[OS, int]] = {}
+    teams_dict: Dict[int, Team] = {team.team: team for team in teams}
+    team_competing_this_week_dict: Dict[int, bool] = {}
+    team_first_event_dict: Dict[int, Tuple[OS, int]] = {}
 
     # maps team to district_abbrev (or None if not in a district)
-    team_to_district: Dict[str, OS] = {}
-    team_to_district_points: Dict[str, int] = {}
-    team_to_district_rank: Dict[str, int] = {}
+    team_to_district: Dict[int, OS] = {}
+    team_to_district_points: Dict[int, int] = {}
+    team_to_district_rank: Dict[int, int] = {}
     team_event_to_district_points: Dict[str, int] = {}
 
-    # maps team to offseason status
-    team_to_offseason: Dict[str, bool] = {}
+    all_teams: Set[int] = set()
 
     if not partial:
 
@@ -225,6 +219,9 @@ def process_year(
         key = event["key"]
         curr_obj = event_objs_dict.get(key, None)
         curr_status = EventStatus.UPCOMING if curr_obj is None else curr_obj.status
+        if event["type"].is_offseason():
+            continue
+
         event_objs_dict[key] = Event(
             key=key,
             year=year_num,
@@ -237,7 +234,6 @@ def process_year(
             end_date=event["end_date"],
             type=event["type"],
             week=event["week"],
-            offseason=event["type"].is_offseason(),
             video=event["video"],
             status=curr_status,
         )
@@ -253,24 +249,20 @@ def process_year(
             etag: OS, cache: bool
         ) -> Tuple[List[MatchDict], OS]:
             # TODO: use etag to avoid querying every time (needed to get matches)
-            return get_event_matches_tba(
-                year_num, event_key, event_obj.offseason, event_time, None, cache
-            )
+            return get_event_matches_tba(year_num, event_key, event_time, None, cache)
 
         matches, _ = call_tba(get_event_matches_tba_year, event_key + "/matches")
         event_status = get_event_status(matches, year_num)
         event_obj.status = event_status
 
-        event_teams: Set[str] = set()
-        rankings: Dict[str, int] = {}
-        alliance_dict: Dict[str, str] = {}
-        captain_dict: Dict[str, bool] = {}
+        event_teams: Set[int] = set()
+        rankings: Dict[int, int] = {}
+        alliance_dict: Dict[int, str] = {}
+        captain_dict: Dict[int, bool] = {}
 
-        def add_team_event(team: str, offseason: bool):
+        def add_team_event(team: int):
+            all_teams.add(team)
             event_teams.add(team)
-            if not offseason or team not in team_to_offseason:
-                team_to_offseason[team] = offseason
-
             event_week = event_obj.week
             event_year = event_obj.year
 
@@ -291,7 +283,7 @@ def process_year(
 
         elif event_status == EventStatus.UPCOMING:
 
-            def get_event_teams_tba_year(etag: OS, cache: bool) -> Tuple[List[str], OS]:
+            def get_event_teams_tba_year(etag: OS, cache: bool) -> Tuple[List[int], OS]:
                 return get_event_teams_tba(event_key, etag, cache)
 
             temp_event_teams, _ = call_tba(
@@ -299,24 +291,24 @@ def process_year(
             )
 
             for team in temp_event_teams:
-                add_team_event(team, event_obj.offseason)
+                add_team_event(team)
 
         elif event_status in [EventStatus.ONGOING, EventStatus.COMPLETED]:
             # Update event_obj, accumulate match_obj, alliance_objs, team_match_objs
             for match in matches:
                 (match_obj, curr_team_match_objs) = match_dict_to_objs(
-                    match, year_num, event_obj.week, event_obj.offseason
+                    match, year_num, event_obj.week
                 )
 
                 # Replace even if present, since may be Upcoming -> Completed
                 match_objs_dict[match_obj.key] = match_obj
                 for team_match_obj in curr_team_match_objs:
-                    add_team_event(team_match_obj.team, event_obj.offseason)
+                    add_team_event(team_match_obj.team)
                     team_match_objs_dict[team_match_obj.pk()] = team_match_obj
 
             def get_event_rankings_tba_year(
                 etag: OS, cache: bool
-            ) -> Tuple[Dict[str, int], OS]:
+            ) -> Tuple[Dict[int, int], OS]:
                 # TODO: use etag to avoid querying every time (needed to get rankings)
                 return get_event_rankings_tba(event_key, None, cache)
 
@@ -324,7 +316,7 @@ def process_year(
 
             def get_event_alliances_tba_year(
                 etag: OS, cache: bool
-            ) -> Tuple[Tuple[Dict[str, str], Dict[str, bool]], OS]:
+            ) -> Tuple[Tuple[Dict[int, str], Dict[int, bool]], OS]:
                 # TODO: use etag to avoid querying every time (needed to get alliances)
                 return get_event_alliances_tba(event_key, None, cache)
 
@@ -337,11 +329,10 @@ def process_year(
             if team not in teams_dict:
                 teams_dict[team] = Team(
                     team=team,
-                    name=team,
+                    name=str(team),
                     country=None,
                     state=None,
                     rookie_year=None,
-                    offseason=True,
                 )
 
             team_obj = teams_dict[team]
@@ -355,7 +346,6 @@ def process_year(
                     year=year_num,
                     event=event_key,
                     time=event_time,
-                    offseason=event_obj.offseason,
                     team_name=team_obj.name,
                     event_name=event_obj.name,
                     country=event_obj.country,
@@ -389,9 +379,8 @@ def process_year(
             )
 
     # iterates over all teams (unrelated to offseason status)
-    for team in team_to_offseason:
+    for team in all_teams:
         team_obj = teams_dict[team]
-        offseason = team_to_offseason[team] or team in PLACEHOLDER_TEAMS
         competing_this_week = team_competing_this_week_dict.get(team, False)
 
         team_year_key = get_team_year_key(team, year_num)
@@ -401,7 +390,6 @@ def process_year(
                 id=None,
                 year=year_num,
                 team=team,
-                offseason=offseason,
                 name=team_obj.name,
                 country=team_obj.country,
                 state=team_obj.state,
@@ -438,4 +426,3 @@ def process_year(
 def post_process():
     remove_teams_with_no_events()
     update_team_districts()
-    update_team_offseason()

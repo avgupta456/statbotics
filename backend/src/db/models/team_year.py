@@ -18,7 +18,7 @@ class TeamYearORM(Base, ModelORM):
     __tablename__ = "team_years"
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
     year: MI = mapped_column(Integer, index=True)
-    team: MS = mapped_column(String(6))
+    team: MI = mapped_column(Integer, index=True)
 
     # force unique (team, year)
     PrimaryKeyConstraint(team, year)
@@ -26,7 +26,6 @@ class TeamYearORM(Base, ModelORM):
     ForeignKeyConstraint(["team"], ["teams.team"])
 
     """API COMPLETENESS"""
-    offseason: MB = mapped_column(Boolean)
     name: MS = mapped_column(String(100))
     country: MOS = mapped_column(String(30))
     state: MOS = mapped_column(String(10))
@@ -48,53 +47,29 @@ class TeamYearORM(Base, ModelORM):
     epa_skew: MF = mapped_column(Float, default=0)
     epa_n: MF = mapped_column(Float, default=0)
     auto_epa: MOF = mapped_column(Float, default=None)
-    auto_epa_sd: MOF = mapped_column(Float, default=None)
     teleop_epa: MOF = mapped_column(Float, default=None)
-    teleop_epa_sd: MOF = mapped_column(Float, default=None)
     endgame_epa: MOF = mapped_column(Float, default=None)
-    endgame_epa_sd: MOF = mapped_column(Float, default=None)
     rp_1_epa: MOF = mapped_column(Float, default=None)
-    rp_1_epa_sd: MOF = mapped_column(Float, default=None)
     rp_2_epa: MOF = mapped_column(Float, default=None)
-    rp_2_epa_sd: MOF = mapped_column(Float, default=None)
     tiebreaker_epa: MOF = mapped_column(Float, default=None)
-    tiebreaker_epa_sd: MOF = mapped_column(Float, default=None)
     comp_1_epa: MOF = mapped_column(Float, default=None)
-    comp_1_epa_sd: MOF = mapped_column(Float, default=None)
     comp_2_epa: MOF = mapped_column(Float, default=None)
-    comp_2_epa_sd: MOF = mapped_column(Float, default=None)
     comp_3_epa: MOF = mapped_column(Float, default=None)
-    comp_3_epa_sd: MOF = mapped_column(Float, default=None)
     comp_4_epa: MOF = mapped_column(Float, default=None)
-    comp_4_epa_sd: MOF = mapped_column(Float, default=None)
     comp_5_epa: MOF = mapped_column(Float, default=None)
-    comp_5_epa_sd: MOF = mapped_column(Float, default=None)
     comp_6_epa: MOF = mapped_column(Float, default=None)
-    comp_6_epa_sd: MOF = mapped_column(Float, default=None)
     comp_7_epa: MOF = mapped_column(Float, default=None)
-    comp_7_epa_sd: MOF = mapped_column(Float, default=None)
     comp_8_epa: MOF = mapped_column(Float, default=None)
-    comp_8_epa_sd: MOF = mapped_column(Float, default=None)
     comp_9_epa: MOF = mapped_column(Float, default=None)
-    comp_9_epa_sd: MOF = mapped_column(Float, default=None)
     comp_10_epa: MOF = mapped_column(Float, default=None)
-    comp_10_epa_sd: MOF = mapped_column(Float, default=None)
     comp_11_epa: MOF = mapped_column(Float, default=None)
-    comp_11_epa_sd: MOF = mapped_column(Float, default=None)
     comp_12_epa: MOF = mapped_column(Float, default=None)
-    comp_12_epa_sd: MOF = mapped_column(Float, default=None)
     comp_13_epa: MOF = mapped_column(Float, default=None)
-    comp_13_epa_sd: MOF = mapped_column(Float, default=None)
     comp_14_epa: MOF = mapped_column(Float, default=None)
-    comp_14_epa_sd: MOF = mapped_column(Float, default=None)
     comp_15_epa: MOF = mapped_column(Float, default=None)
-    comp_15_epa_sd: MOF = mapped_column(Float, default=None)
     comp_16_epa: MOF = mapped_column(Float, default=None)
-    comp_16_epa_sd: MOF = mapped_column(Float, default=None)
     comp_17_epa: MOF = mapped_column(Float, default=None)
-    comp_17_epa_sd: MOF = mapped_column(Float, default=None)
     comp_18_epa: MOF = mapped_column(Float, default=None)
-    comp_18_epa_sd: MOF = mapped_column(Float, default=None)
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)
@@ -105,12 +80,6 @@ class TeamYearORM(Base, ModelORM):
     ties: MI = mapped_column(Integer, default=0)
     count: MI = mapped_column(Integer, default=0)
     winrate: MF = mapped_column(Float, default=0)
-
-    full_wins: MI = mapped_column(Integer, default=0)  # includes offseason
-    full_losses: MI = mapped_column(Integer, default=0)
-    full_ties: MI = mapped_column(Integer, default=0)
-    full_count: MI = mapped_column(Integer, default=0)
-    full_winrate: MF = mapped_column(Float, default=0)
 
     district_points: MOI = mapped_column(Integer, nullable=True, default=None)
     district_rank: MOI = mapped_column(Integer, nullable=True, default=None)
@@ -136,7 +105,7 @@ _TeamYear = generate_attr_class("TeamYear", TeamYearORM)
 
 
 class TeamYear(_TeamYear, Model):
-    def sort(self: "TeamYear") -> Tuple[str, int]:
+    def sort(self: "TeamYear") -> Tuple[int, int]:
         return (self.team, self.year)
 
     def pk(self: "TeamYear") -> str:
@@ -147,7 +116,9 @@ class TeamYear(_TeamYear, Model):
 
     def __str__(self: "TeamYear") -> str:
         # Only refresh DB if these change (during 1 min partial update)
-        return "_".join([self.team, str(self.year), str(self.count), str(self.epa)])
+        return "_".join(
+            [str(self.team), str(self.year), str(self.count), str(self.epa)]
+        )
 
     def to_dict(self: "TeamYear") -> Dict[str, Any]:
         lower, upper = get_skew_normal_95_conf_interval(
@@ -161,7 +132,6 @@ class TeamYear(_TeamYear, Model):
             "country": self.country,
             "state": self.state,
             "district": self.district,
-            "offseason": self.offseason,
             "epa": {
                 "total_points": {
                     "mean": self.epa,
@@ -200,37 +170,22 @@ class TeamYear(_TeamYear, Model):
                 },
             },
             "record": {
-                "season": {
-                    "wins": self.wins,
-                    "losses": self.losses,
-                    "ties": self.ties,
-                    "count": self.count,
-                    "winrate": self.winrate,
-                },
-                "full": {
-                    "wins": self.full_wins,
-                    "losses": self.full_losses,
-                    "ties": self.full_ties,
-                    "count": self.full_count,
-                    "winrate": self.full_winrate,
-                },
+                "wins": self.wins,
+                "losses": self.losses,
+                "ties": self.ties,
+                "count": self.count,
+                "winrate": self.winrate,
             },
             "district_points": self.district_points,
             "district_rank": self.district_rank,
         }
 
-        clean["epa"]["breakdown"]["total_points"] = {
-            "mean": self.epa,
-            "sd": self.epa_sd,
-        }
+        clean["epa"]["breakdown"]["total_points"] = self.epa
         if self.year >= 2016:
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
             for key, name in pairs:
-                clean["epa"]["breakdown"][name] = {
-                    "mean": getattr(self, f"{key}_epa"),
-                    "sd": getattr(self, f"{key}_epa_sd"),
-                }
+                clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
 
         if self.year == CURR_YEAR:
             clean["competing"] = {

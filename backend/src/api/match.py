@@ -9,7 +9,6 @@ from src.api.query import (
     event_query,
     limit_query,
     metric_query,
-    offseason_query,
     offset_query,
     team_query,
     week_query,
@@ -40,12 +39,11 @@ async def get_match_cached(
 
 @alru_cache(ttl=timedelta(minutes=2))
 async def get_matches_cached(
-    team: Optional[str] = None,
+    team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     week: Optional[int] = None,
     elim: Optional[bool] = None,
-    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
@@ -64,7 +62,6 @@ async def get_matches_cached(
             event=event,
             week=week,
             elim=elim,
-            offseason=offseason,
             metric=metric,
             ascending=ascending,
             limit=limit,
@@ -95,12 +92,11 @@ async def read_match(response: Response, match: str) -> Dict[str, Any]:
 @async_fail_gracefully_plural
 async def read_matches(
     response: Response,
-    team: Optional[str] = team_query,
+    team: Optional[int] = team_query,
     year: Optional[int] = year_query,
     event: Optional[str] = event_query,
     week: Optional[int] = week_query,
     elim: Optional[bool] = elim_query,
-    offseason: Optional[bool] = offseason_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
     limit: Optional[int] = limit_query,
@@ -112,7 +108,6 @@ async def read_matches(
         event=event,
         week=week,
         elim=elim,
-        offseason=offseason,
         metric=metric,
         ascending=ascending,
         limit=limit,

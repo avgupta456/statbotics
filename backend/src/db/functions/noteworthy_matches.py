@@ -28,7 +28,6 @@ def get_noteworthy_matches(
         ).filter(
             (MatchORM.year == year)
             & (MatchORM.status == MatchStatus.COMPLETED)
-            & (MatchORM.offseason == False)  # noqa: E712
             & (MatchORM.event == EventORM.key)
         )
 

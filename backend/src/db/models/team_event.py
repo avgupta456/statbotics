@@ -17,7 +17,7 @@ class TeamEventORM(Base, ModelORM):
 
     __tablename__ = "team_events"
     id: MOI = mapped_column(Integer, nullable=True)  # placeholder for backend API
-    team: MS = mapped_column(String(6))
+    team: MI = mapped_column(Integer, index=True)
     year: MI = mapped_column(Integer, index=True)
     event: MS = mapped_column(String(12), index=True)
 
@@ -29,7 +29,6 @@ class TeamEventORM(Base, ModelORM):
 
     """GENERAL"""
     time: MI = mapped_column(Integer)
-    offseason: MB = mapped_column(Boolean)
 
     """API COMPLETENESS"""
     team_name: MS = mapped_column(String(100))
@@ -77,53 +76,29 @@ class TeamEventORM(Base, ModelORM):
     epa_skew: MF = mapped_column(Float, default=0)
     epa_n: MF = mapped_column(Float, default=0)
     auto_epa: MOF = mapped_column(Float, default=None)
-    auto_epa_sd: MOF = mapped_column(Float, default=None)
     teleop_epa: MOF = mapped_column(Float, default=None)
-    teleop_epa_sd: MOF = mapped_column(Float, default=None)
     endgame_epa: MOF = mapped_column(Float, default=None)
-    endgame_epa_sd: MOF = mapped_column(Float, default=None)
     rp_1_epa: MOF = mapped_column(Float, default=None)
-    rp_1_epa_sd: MOF = mapped_column(Float, default=None)
     rp_2_epa: MOF = mapped_column(Float, default=None)
-    rp_2_epa_sd: MOF = mapped_column(Float, default=None)
     tiebreaker_epa: MOF = mapped_column(Float, default=None)
-    tiebreaker_epa_sd: MOF = mapped_column(Float, default=None)
     comp_1_epa: MOF = mapped_column(Float, default=None)
-    comp_1_epa_sd: MOF = mapped_column(Float, default=None)
     comp_2_epa: MOF = mapped_column(Float, default=None)
-    comp_2_epa_sd: MOF = mapped_column(Float, default=None)
     comp_3_epa: MOF = mapped_column(Float, default=None)
-    comp_3_epa_sd: MOF = mapped_column(Float, default=None)
     comp_4_epa: MOF = mapped_column(Float, default=None)
-    comp_4_epa_sd: MOF = mapped_column(Float, default=None)
     comp_5_epa: MOF = mapped_column(Float, default=None)
-    comp_5_epa_sd: MOF = mapped_column(Float, default=None)
     comp_6_epa: MOF = mapped_column(Float, default=None)
-    comp_6_epa_sd: MOF = mapped_column(Float, default=None)
     comp_7_epa: MOF = mapped_column(Float, default=None)
-    comp_7_epa_sd: MOF = mapped_column(Float, default=None)
     comp_8_epa: MOF = mapped_column(Float, default=None)
-    comp_8_epa_sd: MOF = mapped_column(Float, default=None)
     comp_9_epa: MOF = mapped_column(Float, default=None)
-    comp_9_epa_sd: MOF = mapped_column(Float, default=None)
     comp_10_epa: MOF = mapped_column(Float, default=None)
-    comp_10_epa_sd: MOF = mapped_column(Float, default=None)
     comp_11_epa: MOF = mapped_column(Float, default=None)
-    comp_11_epa_sd: MOF = mapped_column(Float, default=None)
     comp_12_epa: MOF = mapped_column(Float, default=None)
-    comp_12_epa_sd: MOF = mapped_column(Float, default=None)
     comp_13_epa: MOF = mapped_column(Float, default=None)
-    comp_13_epa_sd: MOF = mapped_column(Float, default=None)
     comp_14_epa: MOF = mapped_column(Float, default=None)
-    comp_14_epa_sd: MOF = mapped_column(Float, default=None)
     comp_15_epa: MOF = mapped_column(Float, default=None)
-    comp_15_epa_sd: MOF = mapped_column(Float, default=None)
     comp_16_epa: MOF = mapped_column(Float, default=None)
-    comp_16_epa_sd: MOF = mapped_column(Float, default=None)
     comp_17_epa: MOF = mapped_column(Float, default=None)
-    comp_17_epa_sd: MOF = mapped_column(Float, default=None)
     comp_18_epa: MOF = mapped_column(Float, default=None)
-    comp_18_epa_sd: MOF = mapped_column(Float, default=None)
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)
@@ -133,7 +108,7 @@ _TeamEvent = generate_attr_class("TeamEvent", TeamEventORM)
 
 
 class TeamEvent(_TeamEvent, Model):
-    def sort(self: "TeamEvent") -> Tuple[str, int]:
+    def sort(self: "TeamEvent") -> Tuple[int, int]:
         return (self.team, self.time)
 
     def pk(self: "TeamEvent") -> str:
@@ -146,7 +121,7 @@ class TeamEvent(_TeamEvent, Model):
         # Only refresh DB if these change (during 1 min partial update)
         return "_".join(
             [
-                self.team,
+                str(self.team),
                 self.event,
                 str(self.status),
                 str(self.count),
@@ -173,7 +148,6 @@ class TeamEvent(_TeamEvent, Model):
             "year": self.year,
             "event": self.event,
             "time": self.time,
-            "offseason": self.offseason,
             "team_name": self.team_name,
             "event_name": self.event_name,
             "country": self.country,
@@ -231,17 +205,11 @@ class TeamEvent(_TeamEvent, Model):
             "district_points": self.district_points,
         }
 
-        clean["epa"]["breakdown"]["total_points"] = {
-            "mean": self.epa,
-            "sd": self.epa_sd,
-        }
+        clean["epa"]["breakdown"]["total_points"] = self.epa
         if self.year >= 2016:
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
             for key, name in pairs:
-                clean["epa"]["breakdown"][name] = {
-                    "mean": getattr(self, f"{key}_epa"),
-                    "sd": getattr(self, f"{key}_epa_sd"),
-                }
+                clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
 
         return clean

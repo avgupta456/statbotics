@@ -1,9 +1,15 @@
-from typing import Any, Tuple
+from typing import Any
+
+# from typing import Tuple
+
 
 from src.db.models import Year
-from src.models.epa.math import t_prob_gt_0, unit_sigmoid, zero_sigmoid
+
+# from src.models.epa.math import t_prob_gt_0
+from src.models.epa.math import unit_sigmoid, zero_sigmoid
 from src.tba.breakdown import all_keys
-from src.types.enums import EventType
+
+# from src.types.enums import EventType
 
 
 def post_process_breakdown(
@@ -77,6 +83,7 @@ def post_process_breakdown(
     return breakdown
 
 
+"""
 def get_pred_rps(
     year: int, week: int, event_type: EventType, breakdown_mean: Any, breakdown_sd: Any
 ) -> Tuple[float, float]:
@@ -149,6 +156,7 @@ def get_pred_rps(
         rp_2 = breakdown_mean[keys.index("rp_2")]
 
     return rp_1, rp_2
+"""
 
 
 def get_score_from_breakdown(

@@ -17,7 +17,7 @@ class Model:
     def start_season(
         self,
         year: Year,
-        all_team_years: Dict[int, Dict[str, TeamYear]],
+        all_team_years: Dict[int, Dict[int, TeamYear]],
         team_years: Dict[str, TeamYear],
     ) -> None:
         self.year_obj = year
@@ -31,22 +31,22 @@ class Model:
 
     def attribute_match(
         self, match: Match, red_pred: AlliancePred, blue_pred: AlliancePred
-    ) -> Dict[str, Attribution]:
+    ) -> Dict[int, Attribution]:
         raise NotImplementedError
 
     def update_team(
-        self, team: str, attrib: Attribution, match: Match, team_match: TeamMatch
+        self, team: int, attrib: Attribution, match: Match, team_match: TeamMatch
     ) -> None:
         raise NotImplementedError
 
     def pre_record_team(
-        self, team: str, tm: TeamMatch, te: TeamEvent, ty: TeamYear
+        self, team: int, tm: TeamMatch, te: TeamEvent, ty: TeamYear
     ) -> None:
         pass
 
     def post_record_team(
         self,
-        team: str,
+        team: int,
         tm: Optional[TeamMatch],
         te: Optional[TeamEvent],
         ty: Optional[TeamYear],
@@ -60,9 +60,9 @@ class Model:
         self,
         match: Match,
         event: Event,
-        team_matches: Dict[str, TeamMatch],
-        team_events: Dict[str, TeamEvent],
-        team_years: Dict[str, TeamYear],
+        team_matches: Dict[int, TeamMatch],
+        team_events: Dict[int, TeamEvent],
+        team_years: Dict[int, TeamYear],
     ):
         win_prob, red_pred, blue_pred = self.predict_match(match, event)
         match_pred = MatchPred(win_prob, red_pred, blue_pred)
@@ -78,14 +78,14 @@ class Model:
 
         attributions = self.attribute_match(match, red_pred, blue_pred)
 
-        # Don't update if 1) placeholder match, 2) elim dq, 3) offseason
+        # Don't update if 1) placeholder match, 2) elim dq
         teams = set(match.get_red() + match.get_blue())
         placeholder_match = len(set(PLACEHOLDER_TEAMS).intersection(teams)) > 0
         elim_dq = match.elim and (
             len(match.get_red_dqs()) >= self.num_teams
             or len(match.get_blue_dqs()) >= self.num_teams
         )
-        skip_update = placeholder_match or elim_dq or match.offseason
+        skip_update = placeholder_match or elim_dq
 
         for team, attr in attributions.items():
             team_match = team_matches[team]

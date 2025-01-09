@@ -46,7 +46,7 @@ def update_curr_year_background():
 
 @site_router.get("/update_curr_year")
 async def update_curr_year_site_endpoint(background_tasks: BackgroundTasks):
-    event_objs = get_events_db(year=CURR_YEAR, offseason=None)
+    event_objs = get_events_db(year=CURR_YEAR)
     etags = get_etags_db(CURR_YEAR)
     is_new_data = check_year_partial_tba(CURR_YEAR, event_objs, etags)
     if not is_new_data:

@@ -15,7 +15,6 @@ load_dotenv()
 
 # flake8: noqa E402
 from src.api.router import router as api_router
-from src.api.v2.router import router as api_v2_router
 
 # from src.constants import AUTH_KEY_BLACKLIST, CONN_STR, PROD
 from src.constants import CONN_STR, PROD
@@ -24,7 +23,6 @@ from src.data.router import (
     site_router as data_site_router,
 )
 from src.site.router import router as site_router
-from src.site.v2.router import router as site_v2_router
 
 # from src.utils.utils import is_uuid
 
@@ -34,28 +32,6 @@ SETUP
 
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
-
-"""
-async def get_api_key(request: Request, api_key_header: str = Depends(api_key_header)):
-    url: str = request.url.__str__()
-    if "localhost:8000" in url:
-        return
-    if "v3/api" not in url:
-        return
-
-    if api_key_header:
-        if not is_uuid(api_key_header) or api_key_header in AUTH_KEY_BLACKLIST:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid API key header. Generate a new API key at https://statbotics.io/api/generate_key",
-            )
-        return
-    else:
-        raise HTTPException(
-            status_code=401,
-            detail="API key not provided. If you are using the interactive docs, please click the 'Authorize' button in the top right corner. Otherwise, please add an 'X-API-Key' header with your API key. Generate a new API key at https://statbotics.io/api/generate_key.",
-        )
-"""
 
 app = FastAPI(
     title="Statbotics REST API",
@@ -118,7 +94,3 @@ app.include_router(api_router, prefix="/v3")
 app.include_router(data_data_router, prefix="/v3/data", include_in_schema=False)
 app.include_router(data_site_router, prefix="/v3/site", include_in_schema=False)
 app.include_router(site_router, prefix="/v3/site", include_in_schema=False)
-
-# Will be deprecated
-app.include_router(api_v2_router, prefix="/v2")
-app.include_router(site_v2_router, prefix="/site", include_in_schema=False)
