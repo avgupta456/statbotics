@@ -27,7 +27,7 @@ from src.data.wins import (
 from src.db.main import clean_db
 from src.db.models import Team, TeamYear
 from src.db.read import (
-    # get_num_years,
+    get_num_years,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
 )
@@ -99,15 +99,14 @@ def post_process(
 def reset_all_years():
     timer = Timer()
 
-    start_year = 2023
-    end_year = 2025  # CURR_YEAR
+    start_year = 2002
+    end_year = CURR_YEAR
 
-    # try:
-    #     num_years = get_num_years()
-    #     if num_years > 0:
-    #         return
-    # except Exception:
-    #     pass
+    try:
+        if get_num_years() > 0:
+            return
+    except Exception:
+        pass
 
     clean_db()
     timer.print("Clean DB")
