@@ -4,7 +4,7 @@ import pako from "pako";
 import { BACKEND_URL } from "../constants";
 import { log, round } from "../utils";
 
-export const version = "v3.2";
+export const version = "v3";
 
 async function setWithExpiry(key: string, value: any, ttl: number) {
   const now = new Date();

@@ -99,8 +99,8 @@ def post_process(
 def reset_all_years():
     timer = Timer()
 
-    start_year = 2015
-    end_year = 2016  # CURR_YEAR
+    start_year = 2023
+    end_year = 2025  # CURR_YEAR
 
     # try:
     #     num_years = get_num_years()

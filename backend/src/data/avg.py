@@ -63,4 +63,35 @@ def process_year(year: Year, matches: List[Match]) -> Year:
             )
             setattr(year, f"comp_{i}_mean", mean)
 
+    if len(week_one_matches) < 100 and year.year == 2025:
+        year.score_mean = 115
+        year.score_sd = 50
+        year.no_foul_mean = 115
+        year.foul_mean = 0
+        year.auto_mean = 20
+        year.teleop_mean = 85
+        year.endgame_mean = 10
+        year.rp_1_mean = 0.5
+        year.rp_2_mean = 0.5
+        year.rp_3_mean = 0.5
+        year.tiebreaker_mean = 0
+        year.comp_1_mean = 6
+        year.comp_2_mean = 4
+        year.comp_3_mean = 20
+        year.comp_4_mean = 20
+        year.comp_5_mean = 70
+        year.comp_6_mean = 6
+        year.comp_7_mean = 6
+        year.comp_8_mean = 6
+        year.comp_9_mean = 6
+        year.comp_10_mean = 90
+        year.comp_11_mean = 0.5
+        year.comp_12_mean = 1.5
+        year.comp_13_mean = 6
+        year.comp_14_mean = 1
+        year.comp_15_mean = 3
+        year.comp_16_mean = 16
+        year.comp_17_mean = 30
+        year.comp_18_mean = 10
+
     return year

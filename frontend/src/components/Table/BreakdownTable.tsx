@@ -24,21 +24,65 @@ type Config = {
 };
 
 const configs: { [key: number]: Config } = {
-  // TODO: Update 2025 config once TBA schema populates
   2025: {
     keys: {
       total_points: { name: "Total Points", digits: 1 },
       auto_points: { name: "Auto Points", digits: 1 },
       teleop_points: { name: "Teleop Points", digits: 1 },
       endgame_points: { name: "Endgame Points", digits: 1 },
+      auto_coral: { name: "Auto Coral", digits: 1 },
+      auto_coral_points: { name: "Auto Coral Points", digits: 1 },
+      teleop_coral: { name: "Teleop Coral", digits: 1 },
+      teleop_coral_points: { name: "Teleop Coral Points", digits: 1 },
+      coral_l1: { name: "Coral L1", digits: 1 },
+      coral_l2: { name: "Coral L2", digits: 1 },
+      coral_l3: { name: "Coral L3", digits: 1 },
+      coral_l4: { name: "Coral L4", digits: 1 },
+      total_coral_points: { name: "Total Coral Points", digits: 1 },
+      auto_processor: { name: "Auto Processor", digits: 1 },
+      teleop_processor: { name: "Teleop Processor", digits: 1 },
+      total_processor_points: { name: "Total Processor Points", digits: 1 },
+      auto_algae: { name: "Auto Algae", digits: 1 },
+      teleop_algae: { name: "Teleop Algae", digits: 1 },
+      total_algae_points: { name: "Total Algae Points", digits: 1 },
+      total_game_pieces: { name: "Total Game Pieces", digits: 1 },
     },
     layout: {
       0: {
-        Overall: ["total_points"],
+        Overall: [
+          "total_points",
+          "total_game_pieces",
+          "total_coral_points",
+          "total_processor_points",
+          "total_algae_points",
+        ],
+        Coral: ["auto_coral", "teleop_coral", "coral_l1", "coral_l2", "coral_l3", "coral_l4"],
+        Processor: ["auto_processor", "teleop_processor"],
+        Algae: ["auto_algae", "teleop_algae"],
         Endgame: ["endgame_points"],
       },
       1: {
-        Overall: ["total_points"],
+        Overall: [
+          "total_points",
+          "auto_points",
+          "teleop_points",
+          "total_game_pieces",
+          "total_coral_points",
+          "total_processor_points",
+          "total_algae_points",
+        ],
+        Coral: [
+          "auto_coral",
+          "auto_coral_points",
+          "teleop_coral",
+          "teleop_coral_points",
+          "coral_l1",
+          "coral_l2",
+          "coral_l3",
+          "coral_l4",
+        ],
+        Processor: ["auto_processor", "teleop_processor"],
+        Algae: ["auto_algae", "teleop_algae"],
         Endgame: ["endgame_points"],
       },
     },

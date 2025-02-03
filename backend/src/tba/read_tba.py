@@ -97,6 +97,9 @@ def get_events(
     for event in data:
         key: str = event["key"]
 
+        if "tempclone" in key:
+            continue
+
         # filters out partial/missing events
         if key in EVENT_BLACKLIST:
             continue
