@@ -54,7 +54,7 @@ function UpcomingMatch({ match }: { match: UpcomingMatchObj }) {
       <div className="scrollbar-hide mx-auto w-full overflow-x-scroll md:w-2/3 lg:w-1/2">
         <MatchTable
           year={CURR_YEAR}
-          teamNum=""
+          teamNum={0}
           matches={[match.match]}
           showHeaders
           showSubHeaders={false}

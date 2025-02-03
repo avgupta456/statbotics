@@ -13,7 +13,6 @@ const defaultFilters = {
   country: "",
   state: "",
   district: "",
-  offseason: "",
   search: "",
 };
 
@@ -28,10 +27,6 @@ const EventsLayout = ({
   setFilters: (filters: { [key: string]: any }) => void;
   SectionComponent: FC<{ name: string; data: EventsData }>;
 }) => {
-  if (data?.year?.year === CURR_YEAR) {
-    defaultFilters["offseason"] = "season";
-  }
-
   const actualFilters = Object.keys(defaultFilters).reduce(
     (acc, key) => ({ ...acc, [key]: filters[key] || defaultFilters[key] }),
     {}

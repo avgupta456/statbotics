@@ -35,11 +35,6 @@ class EventType(str, Enum):
     DISTRICT_CMP = "district_cmp"
     CHAMPS_DIV = "champs_div"
     EINSTEIN = "einstein"
-    OFFSEASON = "offseason"
-    PRESEASON = "preseason"
-
-    def is_offseason(self: "EventType") -> bool:
-        return self in (EventType.OFFSEASON, EventType.PRESEASON)
 
     def is_champs(self: "EventType") -> bool:
         return self in (EventType.CHAMPS_DIV, EventType.EINSTEIN)

@@ -10,7 +10,7 @@ export async function getEvent(event: string): Promise<EventData> {
 }
 
 export async function getTeamEventTeamMatches(
-  team: string,
+  team: number,
   event: string
 ): Promise<APITeamMatch[]> {
   const urlSuffix = `/event/${event}/team_matches/${team}`;

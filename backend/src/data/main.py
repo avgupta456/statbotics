@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 
 from src.constants import CURR_YEAR
 from src.data.avg import process_year as process_year_avg
-from src.data.colors import post_process as post_process_colors
 from src.data.epa.main import (
     post_process as post_process_epa,
     process_year as process_year_epa,
@@ -28,7 +27,7 @@ from src.data.wins import (
 from src.db.main import clean_db
 from src.db.models import Team, TeamYear
 from src.db.read import (
-    get_num_years,
+    # get_num_years,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
 )
@@ -74,9 +73,7 @@ def process_year(
 
 
 def post_process(
-    teams: List[Team],
-    all_team_years: Optional[Dict[int, Dict[int, TeamYear]]],
-    colors: bool = False,  # default don't update colors
+    teams: List[Team], all_team_years: Optional[Dict[int, Dict[int, TeamYear]]]
 ):
     timer = Timer()
 
@@ -98,22 +95,19 @@ def post_process(
     post_process_tba()  # updates DB directly
     timer.print("Post TBA")
 
-    if colors:
-        update_colors()
-
 
 def reset_all_years():
     timer = Timer()
 
-    start_year = 2002
-    end_year = CURR_YEAR
+    start_year = 2015
+    end_year = 2016  # CURR_YEAR
 
-    try:
-        num_years = get_num_years()
-        if num_years > 0:
-            return
-    except Exception:
-        pass
+    # try:
+    #     num_years = get_num_years()
+    #     if num_years > 0:
+    #         return
+    # except Exception:
+    #     pass
 
     clean_db()
     timer.print("Clean DB")
@@ -130,7 +124,7 @@ def reset_all_years():
         teams = process_year(year_num, False, True, teams, objs, all_team_years)
         all_team_years[year_num] = {ty.team: ty for ty in objs[1].values()}
 
-    post_process(teams, all_team_years, colors=True)
+    post_process(teams, all_team_years)
 
 
 def update_curr_year(partial: bool):
@@ -151,17 +145,4 @@ def update_curr_year(partial: bool):
 
     if not partial:
         # triggers loading all team years
-        post_process(teams, None, colors=False)
-
-
-def update_colors(use_cache: bool = True):
-    timer = Timer()
-
-    teams = get_teams_db()
-    timer.print("Load Teams")
-
-    teams = post_process_colors(teams, use_cache)
-    timer.print("Update Colors")
-
-    update_teams_db(teams)
-    timer.print("Update DB")
+        post_process(teams, None)

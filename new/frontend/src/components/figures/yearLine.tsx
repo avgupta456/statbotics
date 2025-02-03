@@ -13,8 +13,8 @@ import LineChart from "./lineChart";
 function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamYear[] }) {
   const [yAxis, setYAxis] = useState({ value: "total_points", label: "Total EPA" });
   const [xAxis, setXAxis] = useState("match");
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
-  const [allData, setAllData] = useState<{ [key: string]: APITeamMatch[] | undefined }>({});
+  const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
+  const [allData, setAllData] = useState<{ [key: number]: APITeamMatch[] | undefined }>({});
 
   const teamOptions = teamYears?.map((team) => ({
     value: team.team,
@@ -29,10 +29,11 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
   // FUNCTIONS
 
   const addTeams = async (newTeams: string[]) => {
-    setSelectedTeams(newTeams);
+    const intNewTeams = newTeams.map((team) => parseInt(team));
+    setSelectedTeams(intNewTeams);
     const newAllData = { ...allData };
     await Promise.all(
-      newTeams.map(async (teamNum) => {
+      intNewTeams.map(async (teamNum) => {
         if (!newAllData[teamNum]) {
           const teamData = await getTeamYearTeamMatches(year, teamNum);
           newAllData[teamNum] = teamData;
@@ -45,21 +46,17 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
 
   const topTeams = teamYears
     ?.sort(
-      (a, b) =>
-        (b?.epa?.breakdown?.[yAxis.value]?.mean ?? 0) -
-        (a?.epa?.breakdown?.[yAxis.value]?.mean ?? 0),
+      (a, b) => (b?.epa?.breakdown?.[yAxis.value] ?? 0) - (a?.epa?.breakdown?.[yAxis.value] ?? 0),
     )
     ?.slice(0, 3)
     ?.map((team) => team.team);
 
-  const selectedTeamNums: string[] = selectedTeams.map((team) => team);
+  const selectedTeamNums: number[] = selectedTeams.map((team) => team);
 
   const lineData = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
     .map((teamNum) => {
-      const currTeamMatchData = allData[teamNum]?.filter(
-        (teamMatch: APITeamMatch) => !teamMatch.offseason,
-      );
+      const currTeamMatchData = allData[teamNum];
       const currTeamYearData = teamYears?.find((teamYear) => teamYear.team === teamNum);
       const N = currTeamMatchData?.length || 0;
       const teamData = {
@@ -72,7 +69,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
           })) || [],
       };
 
-      const lastEPA = currTeamYearData?.epa?.breakdown?.[yAxis.value]?.mean ?? 0;
+      const lastEPA = currTeamYearData?.epa?.breakdown?.[yAxis.value] ?? 0;
       teamData.data.push({ x: xAxis === "match" ? N : 1, label: "End", y: lastEPA });
 
       return teamData;
@@ -92,9 +89,9 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
         <MultiSelect
           className="mr-2 h-9 flex-grow text-sm"
           placeholder={selectedTeams.length === 0 ? "Search teams" : ""}
-          data={teamOptions}
+          data={teamOptions?.map((team) => ({ value: team.value.toString(), label: team.label }))}
           onChange={addTeams}
-          value={selectedTeams}
+          value={selectedTeams.map((team) => team.toString())}
           limit={20}
           searchable
         />
@@ -103,7 +100,7 @@ function YearLineChart({ year, teamYears }: { year: number; teamYears?: APITeamY
             <div className="cursor-pointer">
               <GiPodium
                 className="m-1.5 h-6 w-6 text-zinc-600"
-                onClick={() => addTeams(topTeams)}
+                onClick={() => addTeams(topTeams.map((team) => team.toString()))}
               />
             </div>
           </Tooltip>

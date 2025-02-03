@@ -28,6 +28,7 @@ export default function TeamYearsTable({
       newYear >= 2016 && getEPADef("endgame_points", "Endgame"),
       newYear >= 2016 && newExpanded && getEPADef("rp_1", RP_NAMES[newYear][0]),
       newYear >= 2016 && newExpanded && getEPADef("rp_2", RP_NAMES[newYear][1]),
+      newYear >= 2025 && newExpanded && getEPADef("rp_3", RP_NAMES[newYear][2]),
       newExpanded && UnitlessEPADef,
       recordDef,
       newExpanded && winRateDef,
@@ -41,15 +42,10 @@ export default function TeamYearsTable({
     setColumnDefs(getColumnDefs(year, expanded));
   }, [year, expanded]);
 
-  const EPAColumns = ["total_points", "auto_points", "teleop_points", "endgame_points"];
-
   return (
     <Table
-      year={year}
       data={data || []}
-      dataType="TeamYear"
       columnDefs={columnDefs}
-      EPAColumns={EPAColumns}
       showLocationQuickFilter
       showProjectionsFilter={year === CURR_YEAR}
       showCompetingThisWeekFilter={year === CURR_YEAR}

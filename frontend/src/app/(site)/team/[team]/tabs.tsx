@@ -15,7 +15,7 @@ const Tabs = ({
   teamYearData,
   fallbackTeamYearData,
 }: {
-  teamNum: string;
+  teamNum: number;
   year: number;
   teamData: APITeam | undefined;
   teamYearData: TeamYearData | undefined;

@@ -9,16 +9,15 @@ const FigureSection = ({
   teamYear,
   matches,
 }: {
-  teamNum: string;
+  teamNum: number;
   year: number;
   teamYear: APITeamYear;
   matches: APITeamMatch[];
 }) => {
-  const seasonMatches = matches.filter((match) => !match.offseason);
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">
       <div className="w-full text-2xl font-bold mb-4">EPA Over Time</div>
-      <TeamLineChart teamNum={teamNum} year={year} teamYear={teamYear} data={seasonMatches} />
+      <TeamLineChart teamNum={teamNum} year={year} teamYear={teamYear} data={matches} />
     </div>
   );
 };

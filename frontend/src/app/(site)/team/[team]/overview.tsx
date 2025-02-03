@@ -110,8 +110,7 @@ const OverviewSection = ({
           <div className="w-full mb-4">
             Team {teamData.team} ({teamData.name}) had a record of{" "}
             <strong>
-              {teamYear?.record?.season?.wins}-{teamYear?.record?.season?.losses}-
-              {teamYear?.record?.season?.ties}
+              {teamYear?.record?.wins}-{teamYear?.record?.losses}-{teamYear?.record?.ties}
             </strong>{" "}
             in {year.year}.
           </div>
@@ -120,29 +119,29 @@ const OverviewSection = ({
             {year.year >= 2016 ? (
               <>
                 {epaCard(
-                  teamYear?.epa?.breakdown?.auto_points?.mean?.toFixed(1),
+                  teamYear?.epa?.breakdown?.auto_points?.toFixed(1),
                   "Auto",
                   Category10Colors[0]
                 )}
                 {epaCard(
-                  teamYear?.epa?.breakdown?.teleop_points?.mean?.toFixed(1),
+                  teamYear?.epa?.breakdown?.teleop_points?.toFixed(1),
                   "Teleop",
                   Category10Colors[1]
                 )}
                 {epaCard(
-                  teamYear?.epa?.breakdown?.endgame_points?.mean?.toFixed(1),
+                  teamYear?.epa?.breakdown?.endgame_points?.toFixed(1),
                   "Endgame",
                   Category10Colors[2]
                 )}
                 {epaCard(
-                  teamYear?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                  teamYear?.epa?.breakdown?.total_points?.toFixed(1),
                   "Total",
                   Category10Colors[3]
                 )}
               </>
             ) : (
               epaCard(
-                teamYear?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                teamYear?.epa?.breakdown?.total_points?.toFixed(1),
                 "Total",
                 Category10Colors[0]
               )
@@ -245,29 +244,29 @@ const OverviewSection = ({
                 {year.year >= 2016 ? (
                   <>
                     {epaCard(
-                      event?.epa?.breakdown?.auto_points?.mean?.toFixed(1),
+                      event?.epa?.breakdown?.auto_points?.toFixed(1),
                       "Auto",
                       Category10Colors[0]
                     )}
                     {epaCard(
-                      event?.epa?.breakdown?.teleop_points?.mean?.toFixed(1),
+                      event?.epa?.breakdown?.teleop_points?.toFixed(1),
                       "Teleop",
                       Category10Colors[1]
                     )}
                     {epaCard(
-                      event?.epa?.breakdown?.endgame_points?.mean?.toFixed(1),
+                      event?.epa?.breakdown?.endgame_points?.toFixed(1),
                       "Endgame",
                       Category10Colors[2]
                     )}
                     {epaCard(
-                      event?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                      event?.epa?.breakdown?.total_points?.toFixed(1),
                       "Total",
                       Category10Colors[3]
                     )}
                   </>
                 ) : (
                   epaCard(
-                    event?.epa?.breakdown?.total_points?.mean?.toFixed(1),
+                    event?.epa?.breakdown?.total_points?.toFixed(1),
                     "Total",
                     Category10Colors[0]
                   )

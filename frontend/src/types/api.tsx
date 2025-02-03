@@ -15,15 +15,12 @@ export type WinProbMetrics = {
 export type ScorePredMetrics = {
   count: number;
   rmse?: number;
-  mae?: number;
   error?: number;
 };
 
 export type RPPredMetrics = {
   error?: number;
   acc?: number;
-  ll?: number;
-  f1?: number;
 };
 
 export type APIYear = {
@@ -101,18 +98,13 @@ export type Record = {
 };
 
 export type APITeam = {
-  team: string;
+  team: number;
   name: string;
   country: string;
   state?: string;
   district?: string;
   rookie_year: number;
-  offseason: boolean;
   active: boolean;
-  colors: {
-    primary: string;
-    secondary: string;
-  };
   record: {
     season: Record;
     full: Record;
@@ -132,22 +124,18 @@ export type EPARank = {
 };
 
 export type APITeamYear = {
-  team: string;
+  team: number;
   year: number;
   name: string;
   country: string;
   state?: string;
   district?: string;
-  offseason: boolean;
   epa: {
-    total_points: {
-      mean: number;
-      sd: number;
-    };
+    total_points: { mean: number; sd: number };
     unitless: number;
     norm: number;
     conf: [number, number];
-    breakdown: { [key: string]: { mean: number; sd: number } };
+    breakdown: { [key: string]: number };
     stats: { start: number; pre_champs: number; max: number };
     ranks: {
       total: EPARank;
@@ -156,10 +144,7 @@ export type APITeamYear = {
       district?: EPARank;
     };
   };
-  record: {
-    season: Record;
-    full: Record;
-  };
+  record: Record;
   district_points?: number;
   district_rank?: number;
   competing?: {
@@ -182,7 +167,6 @@ export type APIEvent = {
   end_date: string;
   type: string;
   week: number;
-  offseason: boolean;
   video?: string;
   status: string;
   status_str: string;
@@ -207,11 +191,10 @@ export type APIEvent = {
 };
 
 export type APITeamEvent = {
-  team: string;
+  team: number;
   year: number;
   event: string;
   time: number;
-  offseason: boolean;
   team_name: string;
   event_name: string;
   country: string;
@@ -222,14 +205,11 @@ export type APITeamEvent = {
   status: string;
   first_event: boolean;
   epa: {
-    total_points: {
-      mean: number;
-      sd: number;
-    };
+    total_points: { mean: number; sd: number };
     unitless: number;
     norm: number;
     conf: [number, number];
-    breakdown: { [key: string]: { mean: number; sd: number } };
+    breakdown: { [key: string]: number };
     stats: { start: number; pre_elim: number; mean: number; max: number };
   };
   record: {
@@ -267,7 +247,6 @@ export type APIMatch = {
   key: string;
   year: number;
   event: string;
-  offseason: boolean;
   week: number;
   elim: boolean;
   comp_level: string;
@@ -280,14 +259,14 @@ export type APIMatch = {
   video?: string;
   alliances: {
     red: {
-      team_keys: string[];
-      surrogate_team_keys: string[];
-      dq_team_keys: string[];
+      team_keys: number[];
+      surrogate_team_keys: number[];
+      dq_team_keys: number[];
     };
     blue: {
-      team_keys: string[];
-      surrogate_team_keys: string[];
-      dq_team_keys: string[];
+      team_keys: number[];
+      surrogate_team_keys: number[];
+      dq_team_keys: number[];
     };
   };
   pred: {
@@ -308,13 +287,12 @@ export type APIMatch = {
 };
 
 export type APITeamMatch = {
-  team: string;
+  team: number;
   match: string;
   year: number;
   event: string;
   alliance: string;
   time: number;
-  offseason: boolean;
   week: number;
   elim: boolean;
   dq: boolean;

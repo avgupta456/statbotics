@@ -219,9 +219,6 @@ def process_year(
         key = event["key"]
         curr_obj = event_objs_dict.get(key, None)
         curr_status = EventStatus.UPCOMING if curr_obj is None else curr_obj.status
-        if event["type"].is_offseason():
-            continue
-
         event_objs_dict[key] = Event(
             key=key,
             year=year_num,
@@ -378,7 +375,6 @@ def process_year(
                 team_first_event_dict[team_event.team][0] == team_event.event
             )
 
-    # iterates over all teams (unrelated to offseason status)
     for team in all_teams:
         team_obj = teams_dict[team]
         competing_this_week = team_competing_this_week_dict.get(team, False)

@@ -73,14 +73,14 @@ function Alliances({
 }: {
   match: APIMatch;
   stacked: boolean;
-  teamNum: string;
+  teamNum: number;
   year: number;
 }) {
   return (
-    <div className={stacked ? "flex w-1/3 flex-col" : "w-3/7 flex"}>
+    <div className={stacked ? "flex w-1/3 flex-col" : "flex w-3/7"}>
       <div
         className={classnames(
-          "bg-matchRed dark:bg-matchRed-dark flex items-center justify-center",
+          "flex items-center justify-center bg-matchRed dark:bg-matchRed-dark",
           stacked ? "h-1/2 w-full" : "h-full w-1/2",
         )}
       >
@@ -101,7 +101,7 @@ function Alliances({
       </div>
       <div
         className={classnames(
-          "bg-matchBlue dark:bg-matchBlue-dark flex items-center justify-center",
+          "flex items-center justify-center bg-matchBlue dark:bg-matchBlue-dark",
           stacked ? "h-1/2 w-full" : "h-full w-1/2",
         )}
       >
@@ -139,7 +139,7 @@ function Scores({
     <>
       <div
         className={classnames(
-          "bg-matchRed dark:bg-matchRed-dark flex h-full items-center justify-center",
+          "flex h-full items-center justify-center bg-matchRed dark:bg-matchRed-dark",
           stacked ? "w-1/9" : "w-1/14",
         )}
       >
@@ -154,10 +154,11 @@ function Scores({
         </span>
         {year >= 2016 && match.result.red_rp_1 > 0.5 && <sup>●</sup>}
         {year >= 2016 && match.result.red_rp_2 > 0.5 && <sup>●</sup>}
+        {year >= 2025 && match.result.red_rp_3 > 0.5 && <sup>●</sup>}
       </div>
       <div
         className={classnames(
-          "bg-matchBlue dark:bg-matchBlue-dark flex h-full items-center justify-center",
+          "flex h-full items-center justify-center bg-matchBlue dark:bg-matchBlue-dark",
           stacked ? "w-1/9" : "w-1/14",
         )}
       >
@@ -172,6 +173,7 @@ function Scores({
         </span>
         {year >= 2016 && match.result.blue_rp_1 > 0.5 && <sup>●</sup>}
         {year >= 2016 && match.result.blue_rp_2 > 0.5 && <sup>●</sup>}
+        {year >= 2025 && match.result.blue_rp_3 > 0.5 && <sup>●</sup>}
       </div>
     </>
   ) : (
@@ -212,10 +214,10 @@ function ScorePreds({
 
   return (
     <>
-      <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>
+      <div className={stacked ? "flex w-1/9 flex-col" : "flex w-1/7"}>
         <div
           className={classnames(
-            "bg-matchRed dark:bg-matchRed-dark flex items-center justify-center border-l-4 border-double border-gray-300 dark:border-gray-700",
+            "flex items-center justify-center border-l-4 border-double border-gray-300 bg-matchRed dark:border-gray-700 dark:bg-matchRed-dark",
             stacked ? "h-1/2 w-full" : "h-full w-1/2",
           )}
         >
@@ -230,10 +232,11 @@ function ScorePreds({
           </span>
           {year >= 2016 && !match.elim && match.pred.red_rp_1 > 0.5 && <sup>●</sup>}
           {year >= 2016 && !match.elim && match.pred.red_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2025 && !match.elim && match.pred.red_rp_3 > 0.5 && <sup>●</sup>}
         </div>
         <div
           className={classnames(
-            "bg-matchBlue dark:bg-matchBlue-dark flex items-center justify-center border-l-4 border-double border-gray-300 dark:border-gray-700",
+            "flex items-center justify-center border-l-4 border-double border-gray-300 bg-matchBlue dark:border-gray-700 dark:bg-matchBlue-dark",
             stacked ? "h-1/2 w-full" : "h-full w-1/2",
           )}
         >
@@ -248,9 +251,10 @@ function ScorePreds({
           </span>
           {year >= 2016 && !match.elim && match.pred.blue_rp_1 > 0.5 && <sup>●</sup>}
           {year >= 2016 && !match.elim && match.pred.blue_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2025 && !match.elim && match.pred.blue_rp_3 > 0.5 && <sup>●</sup>}
         </div>
       </div>
-      <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>
+      <div className={stacked ? "flex w-1/9 flex-col" : "flex w-1/7"}>
         <div
           className={classnames(
             "flex items-center justify-center",
@@ -299,7 +303,7 @@ function MatchRow({
   myAlliance,
 }: {
   year: number;
-  teamNum: string;
+  teamNum: number;
   compLevel: string;
   match: APIMatch;
   showVideo: boolean;
@@ -345,7 +349,7 @@ function MatchTable({
   myAlliance = true,
 }: {
   year: number;
-  teamNum: string;
+  teamNum: number;
   matches: APIMatch[];
   showHeaders?: boolean;
   showSubHeaders?: boolean;
@@ -359,7 +363,7 @@ function MatchTable({
     return <div className="w-full text-center">Schedule not released yet.</div>;
   }
 
-  const myAllianceActual = teamNum.length > 0 && myAlliance;
+  const myAllianceActual = teamNum !== null && teamNum > 0 && myAlliance;
 
   const compLevels = matches.map((match) => match.comp_level);
   const uniqueCompLevels = compLevels

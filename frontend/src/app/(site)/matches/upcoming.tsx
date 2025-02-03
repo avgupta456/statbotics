@@ -53,7 +53,7 @@ const UpcomingMatch = ({ match }: { match: { match: APIMatch; event_name: string
       <div className="w-full md:w-2/3 lg:w-1/2 overflow-x-scroll scrollbar-hide mx-auto">
         <MatchTable
           year={CURR_YEAR}
-          teamNum={""}
+          teamNum={0}
           matches={[match.match]}
           showHeaders={true}
           showSubHeaders={false}

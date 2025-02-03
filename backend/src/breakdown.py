@@ -141,8 +141,7 @@ key_to_name = {
         "teleop": "teleop_points",
         "endgame": "endgame_points",
         "rp_1": "melody_rp",
-        # TODO: Rename to ensemble_rp
-        "rp_2": "harmony_rp",
+        "rp_2": "ensemble_rp",
         "tiebreaker": "tiebreaker_points",
         "comp_1": "auto_leave_points",
         "comp_2": "auto_notes",
@@ -162,6 +161,33 @@ key_to_name = {
         "comp_16": "endgame_trap_points",
         "comp_17": "endgame_spotlight_points",
     },
+    2025: {
+        "auto": "auto_points",
+        "teleop": "teleop_points",
+        "endgame": "endgame_points",
+        "rp_1": "auto_rp",
+        "rp_2": "coral_rp",
+        "rp_3": "barge_rp",
+        "tiebreaker": "tiebreaker_points",
+        "comp_1": "auto_leave_points",
+        "comp_2": "auto_coral",
+        "comp_3": "auto_coral_points",
+        "comp_4": "teleop_coral",
+        "comp_5": "teleop_coral_points",
+        "comp_6": "coral_l1",
+        "comp_7": "coral_l1_points",
+        "comp_8": "coral_l2",
+        "comp_9": "coral_l2_points",
+        "comp_10": "coral_l3",
+        "comp_11": "coral_l3_points",
+        "comp_12": "coral_l4",
+        "comp_13": "coral_l4_points",
+        "comp_14": "auto_algae_processor",
+        "comp_15": "teleop_algae_processor",
+        "comp_16": "auto_algae_net",
+        "comp_17": "teleop_algae_net",
+        "comp_18": "barge_points",
+    },
 }
 
 all_keys: Dict[int, List[str]] = {}
@@ -176,6 +202,7 @@ for year in range(2002, CURR_YEAR + 1):
             "endgame_points",
             "rp_1",
             "rp_2",
+            "rp_3",
             "tiebreaker_points",
         ]
         for i in range(1, 18):

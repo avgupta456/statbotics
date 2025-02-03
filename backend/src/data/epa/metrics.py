@@ -27,10 +27,6 @@ def get_error(pred: Any, actual: Any) -> float:
     return np.mean(pred - actual)  # type: ignore
 
 
-def get_mae(pred: Any, actual: Any) -> float:
-    return np.mean(np.abs(pred - actual))  # type: ignore
-
-
 def get_rmse(pred: Any, actual: Any) -> float:
     return math.sqrt(get_mse(pred, actual))
 
@@ -186,6 +182,11 @@ def process_year(objs: objs_type) -> objs_type:
         year.epa_rp_2_error,
         year.epa_rp_2_acc,
     ) = rp_metrics(season_qual_matches, "rp_2")
+    (
+        _,
+        year.epa_rp_3_error,
+        year.epa_rp_3_acc,
+    ) = rp_metrics(season_qual_matches, "rp_3")
 
     (
         year.champs_rp_count,
@@ -197,6 +198,11 @@ def process_year(objs: objs_type) -> objs_type:
         year.epa_champs_rp_2_error,
         year.epa_champs_rp_2_acc,
     ) = rp_metrics(champs_qual_matches, "rp_2")
+    (
+        _,
+        year.epa_champs_rp_3_error,
+        year.epa_champs_rp_3_acc,
+    ) = rp_metrics(champs_qual_matches, "rp_3")
 
     # EVENTS
 
@@ -219,5 +225,10 @@ def process_year(objs: objs_type) -> objs_type:
             event.epa_rp_2_error,
             event.epa_rp_2_acc,
         ) = rp_metrics(qual_ms, "rp_2")
+        (
+            _,
+            event.epa_rp_3_error,
+            event.epa_rp_3_acc,
+        ) = rp_metrics(qual_ms, "rp_3")
 
     return objs

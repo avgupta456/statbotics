@@ -24,7 +24,7 @@ event_query = Query(None, description="Event key, e.g. `2019ncwak`.")
 
 event_type_query = Query(
     None,
-    description="One of [`regional`, `district`, `district_cmp`, `cmp_division`, `cmp_finals`, `offseason`, or `preseason`].",
+    description="One of [`regional`, `district`, `district_cmp`, `cmp_division`, or `cmp_finals`].",
 )
 
 limit_query = Query(
@@ -44,13 +44,12 @@ metric_query = Query(
 offset_query = Query(None, ge=0, description="Offset from the first result to return.")
 state_query = Query(None, description="Capitalized two-letter state code, e.g. `NC`.")
 
-team_query = Query(None, description="Team number (no prefix), e.g. `5511`.")
+team_query = Query(
+    None, ge=0, lt=100000, description="Team number (no prefix), e.g. 5511."
+)
 
 week_query = Query(
-    None,
-    ge=0,
-    le=9,
-    description="Week of the competition season. 0 is preseason, 8 is CMP, 9 is offseason.",
+    None, ge=0, le=8, description="Week of the competition season. 8 is CMP"
 )
 
 year_query = Query(None, ge=2002, le=CURR_YEAR, description="Four-digit year")

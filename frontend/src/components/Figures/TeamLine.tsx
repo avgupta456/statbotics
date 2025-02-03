@@ -14,7 +14,7 @@ const TeamLineChart = ({
   teamYear,
   data,
 }: {
-  teamNum: string;
+  teamNum: number;
   year: number;
   teamYear: APITeamYear;
   data: APITeamMatch[];

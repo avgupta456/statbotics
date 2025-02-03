@@ -10,10 +10,10 @@ export const metadata = {
   title: "Events - Statbotics",
 };
 
-const Page = ({ searchParams: { year, week, country, state, district, offseason, search } }) => {
+const Page = ({ searchParams: { year, week, country, state, district, search } }) => {
   const paramFilters = validateFilters(
-    { year, week, country, state, district, offseason, search },
-    ["year", "week", "country", "state", "district", "offseason", "search"],
+    { year, week, country, state, district, search },
+    ["year", "week", "country", "state", "district", "search"],
     [undefined, "", "", "", "", "", ""]
   );
 

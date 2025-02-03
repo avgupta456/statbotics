@@ -30,7 +30,7 @@ const EventLineChart = ({
 
   // FUNCTIONS
 
-  const fetchData = async (teamNum: string) => {
+  const fetchData = async (teamNum: number) => {
     const data = await getTeamEventTeamMatches(teamNum, eventId);
 
     const sortedData = data
@@ -69,7 +69,7 @@ const EventLineChart = ({
     .slice(0, 3)
     .map((team) => ({ value: team.team, label: `${team.team} | ${team.team_name}` }));
 
-  const selectedTeamNums: string[] = selectedTeams.map((team: any) => team.value);
+  const selectedTeamNums: number[] = selectedTeams.map((team: any) => team.value);
 
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
@@ -77,7 +77,7 @@ const EventLineChart = ({
       let teamData = {
         id: teamNum,
         data: allData[teamNum].map((teamMatch: any, i: number) => ({
-          x: i, // TODO: fix here
+          x: i,
           label: allData[teamNum][i - 1]?.match || "Start",
           y: yAxis.matchAccessor(teamMatch),
         })),

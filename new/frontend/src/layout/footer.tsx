@@ -21,23 +21,6 @@ function Footer() {
           className="relative mx-1 h-4 w-4 sm:h-5 sm:h-5 lg:h-6 lg:w-6"
         >
           <Image src="/tba.png" alt="TBA" unoptimized fill className="object-contain" />
-        </Link>{" "}
-        | Sponsored by{" "}
-        <Link
-          href="https://www.thethriftybot.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:underline"
-        >
-          The Thrifty Bot
-        </Link>
-        <Link
-          href="https://www.thethriftybot.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative ml-1 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6"
-        >
-          <Image src="/thrifty.png" alt="Thrifty" unoptimized fill className="object-contain" />
         </Link>
       </p>
     </footer>

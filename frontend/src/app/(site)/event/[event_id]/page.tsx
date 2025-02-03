@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getEvent } from "../../../../api/event";
-import { ColorsProvider } from "../../../../components/Figures/colors";
 import { EventData } from "../../../../types/data";
 import { formatEventName } from "../../../../utils";
 import NotFound from "../../shared/notFound";
@@ -72,9 +71,7 @@ const Page = ({ params }: { params: { event_id: string } }) => {
           )}
         </div>
       </div>
-      <ColorsProvider teams={data?.team_events.map((x) => x.team) ?? []}>
-        <Tabs eventId={event_id} year={data.year.year} data={data} />
-      </ColorsProvider>
+      <Tabs eventId={event_id} year={data.year.year} data={data} />
     </div>
   );
 };

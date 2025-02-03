@@ -23,10 +23,10 @@ const getAlliances = async (eventId: string) => {
 // Weird naming to use in the BarChart
 export type AllianceInsights = {
   rank: number;
-  team1: string;
-  team2: string;
-  team3: string;
-  team4?: string;
+  team1: number;
+  team2: number;
+  team3: number;
+  team4?: number;
   total_epa: number;
   "Captain EPA": number;
   "First Pick EPA": number;
@@ -55,7 +55,7 @@ const AlliancesSection = ({
 
   const teamToEPA = {};
   data?.team_events?.forEach((teamEvent) => {
-    teamToEPA[teamEvent?.team] = teamEvent?.epa?.breakdown?.total_points?.mean ?? 0;
+    teamToEPA[teamEvent?.team] = teamEvent?.epa?.breakdown?.total_points ?? 0;
   });
 
   const allianceInsightsData: AllianceInsights[] = alliances?.map((alliance) => {
@@ -90,28 +90,48 @@ const AlliancesSection = ({
         columnHelper.accessor("team1", {
           cell: (info) =>
             info.getValue()
-              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              ? TeamLink({
+                  team: info.getValue().toString(),
+                  num: info.getValue(),
+                  year,
+                  small: true,
+                })
               : "",
           header: "Captain",
         }),
         columnHelper.accessor("team2", {
           cell: (info) =>
             info.getValue()
-              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              ? TeamLink({
+                  team: info.getValue().toString(),
+                  num: info.getValue(),
+                  year,
+                  small: true,
+                })
               : "",
           header: "Pick 1",
         }),
         columnHelper.accessor("team3", {
           cell: (info) =>
             info.getValue()
-              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              ? TeamLink({
+                  team: info.getValue().toString(),
+                  num: info.getValue(),
+                  year,
+                  small: true,
+                })
               : "",
           header: "Pick 2",
         }),
         columnHelper.accessor("team4", {
           cell: (info) =>
             info.getValue()
-              ? TeamLink({ team: info.getValue(), num: info.getValue(), year, small: true })
+              ? TeamLink({
+                  team: info.getValue().toString(),
+                  num: info.getValue(),
+                  year,
+                  small: true,
+                })
               : "",
           header: "Pick 3",
         }),

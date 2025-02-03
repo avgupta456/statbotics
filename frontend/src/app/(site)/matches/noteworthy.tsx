@@ -75,7 +75,7 @@ const NoteworthySection = ({
         <div className="flex-grow min-w-[720px]">
           <MatchTable
             year={year}
-            teamNum={""}
+            teamNum={0}
             matches={matches.slice(0, more ? matches.length : Math.min(matches.length, 10))}
             showHeaders={true}
             showSubHeaders={false}

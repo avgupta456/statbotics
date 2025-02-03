@@ -4,13 +4,12 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HC_more from "highcharts/highcharts-more";
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { APITeamEvent, APITeamYear } from "../../types/api";
 import { ColumnBar, getColumnOptionsDict } from "../columns";
 import { filterData } from "../filter";
 import { FilterBar } from "../filterBar";
-import { ColorsContext, useColors } from "./colors";
 
 if (typeof Highcharts === "object") {
   HC_more(Highcharts);
@@ -20,9 +19,8 @@ type ScatterData = {
   x: number;
   y: number;
   z: number;
-  num: string;
+  num: number;
   labelInt: number;
-  color: string;
 };
 
 const BubbleChart = ({
@@ -41,8 +39,6 @@ const BubbleChart = ({
   setFilters: (filters: { [key: string]: any }) => void;
 }) => {
   const [width, setWidth] = useState(0);
-  const [showColors, setShowColors] = useState(false);
-
   // update width on resize
   useEffect(() => {
     const updateWidth = () => setWidth(window.innerWidth);
@@ -71,10 +67,10 @@ const BubbleChart = ({
   );
 
   const getCount = (datum: APITeamYear | APITeamEvent) => {
-    if ("season" in datum?.record) {
-      return datum?.record?.season?.count;
-    } else {
+    if ("qual" in datum?.record) {
       return datum?.record?.qual?.count;
+    } else {
+      return datum?.record?.count;
     }
   };
 
@@ -90,17 +86,12 @@ const BubbleChart = ({
   const yAxis = columnOptionsDict[columns.y];
   const zAxis = columnOptionsDict[columns.z];
 
-  /** Maps team num to hex color code */
-  const { isLoading: loadingColors } = useContext(ColorsContext);
-  const getColor = useColors("#3b82f6", showColors);
-
   const scatterData: ScatterData[] = filteredData.map((datum) => ({
     x: xAxis.accessor(datum),
     y: yAxis.accessor(datum),
     z: zAxis.accessor(datum),
     num: datum.team,
     labelInt: 0,
-    color: getColor(datum.team),
   }));
 
   const xs = scatterData.map((datum) => datum.x);
@@ -146,7 +137,6 @@ const BubbleChart = ({
     y: datum.y,
     z: datum.z,
     num: datum.num,
-    color: datum.color,
     labelInt: datum.x > xCutoff || datum.y > yCutoff || datum.z > zCutoff ? 1 : 0,
   }));
 
@@ -267,10 +257,6 @@ const BubbleChart = ({
             currColumnOptions={columnOptions}
             columns={columns}
             setColumns={setColumns}
-            includeColors={data.length > 0 && data.length < 100}
-            loadingColors={loadingColors}
-            showColors={showColors}
-            setShowColors={setShowColors}
           />
         </div>
       </div>

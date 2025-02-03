@@ -2,7 +2,7 @@ import { CURR_YEAR } from "../constants";
 import { APIMatch, APITeam, APITeamEvent, APITeamMatch, APITeamYear, APIYear } from "../types/api";
 import query, { version } from "./storage";
 
-export async function getTeam(team: string): Promise<{ team: APITeam; team_years: any[] }> {
+export async function getTeam(team: number): Promise<{ team: APITeam; team_years: any[] }> {
   const urlSuffix = `/team/${team}`;
   const storageKey = `team_${team}_${version}`;
 
@@ -10,7 +10,7 @@ export async function getTeam(team: string): Promise<{ team: APITeam; team_years
 }
 
 export async function getTeamYear(
-  team: string,
+  team: number,
   year: number
 ): Promise<{
   year: APIYear;
@@ -25,7 +25,7 @@ export async function getTeamYear(
   return query(storageKey, urlSuffix, 0, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
 }
 
-export async function getTeamYears(team: string): Promise<any[]> {
+export async function getTeamYears(team: number): Promise<any[]> {
   const urlSuffix = `/team/${team}/years`;
   const storageKey = `team_${team}_years_${version}`;
 

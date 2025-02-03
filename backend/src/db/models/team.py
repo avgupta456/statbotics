@@ -23,8 +23,6 @@ class TeamORM(Base, ModelORM):
     """GENERAL"""
     district: MOS = mapped_column(String(10), nullable=True, default=None)
     active: MB = mapped_column(Boolean, default=False)
-    primary_color: MOS = mapped_column(String(7), nullable=True, default=None)
-    secondary_color: MOS = mapped_column(String(7), nullable=True, default=None)
 
     """STATS"""
     wins: MI = mapped_column(Integer, default=0)
@@ -32,12 +30,6 @@ class TeamORM(Base, ModelORM):
     ties: MI = mapped_column(Integer, default=0)
     count: MI = mapped_column(Integer, default=0)
     winrate: MF = mapped_column(Float, default=0)
-
-    full_wins: MI = mapped_column(Integer, default=0)
-    full_losses: MI = mapped_column(Integer, default=0)
-    full_ties: MI = mapped_column(Integer, default=0)
-    full_count: MI = mapped_column(Integer, default=0)
-    full_winrate: MF = mapped_column(Float, default=0)
 
     """EPA"""
     norm_epa: MOF = mapped_column(Float, nullable=True, default=None)
@@ -69,25 +61,12 @@ class Team(_Team, Model):
             "district": self.district,
             "rookie_year": self.rookie_year,
             "active": self.active,
-            "colors": {
-                "primary": self.primary_color,
-                "secondary": self.secondary_color,
-            },
             "record": {
-                "season": {
-                    "wins": self.wins,
-                    "losses": self.losses,
-                    "ties": self.ties,
-                    "count": self.count,
-                    "winrate": self.winrate,
-                },
-                "full": {
-                    "wins": self.full_wins,
-                    "losses": self.full_losses,
-                    "ties": self.full_ties,
-                    "count": self.full_count,
-                    "winrate": self.full_winrate,
-                },
+                "wins": self.wins,
+                "losses": self.losses,
+                "ties": self.ties,
+                "count": self.count,
+                "winrate": self.winrate,
             },
             "norm_epa": {
                 "current": self.norm_epa,

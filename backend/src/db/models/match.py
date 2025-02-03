@@ -68,6 +68,7 @@ class MatchORM(Base, ModelORM):
     red_endgame: MOI = mapped_column(Integer, nullable=True, default=None)
     red_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    red_rp_3: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
     red_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
     red_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
@@ -96,6 +97,7 @@ class MatchORM(Base, ModelORM):
     blue_endgame: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_rp_1: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
+    blue_rp_3: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
     blue_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
@@ -125,16 +127,10 @@ class MatchORM(Base, ModelORM):
     epa_blue_score_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_red_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_red_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_red_rp_3_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
-
-    """BACKWARDS COMPATIBILITY"""
-    epa_red_auto_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_red_teleop_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_red_endgame_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_blue_auto_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_blue_teleop_pred: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_blue_endgame_pred: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_blue_rp_3_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Match = generate_attr_class("Match", MatchORM)
@@ -215,6 +211,7 @@ class Match(_Match, Model):
                 getattr(self, f"{alliance}_endgame") or 0,
                 int(getattr(self, f"{alliance}_rp_1") or False),
                 int(getattr(self, f"{alliance}_rp_2") or False),
+                int(getattr(self, f"{alliance}_rp_3") or False),
                 getattr(self, f"{alliance}_tiebreaker") or 0,
                 getattr(self, f"{alliance}_comp_1") or 0,
                 getattr(self, f"{alliance}_comp_2") or 0,
@@ -284,21 +281,16 @@ class Match(_Match, Model):
         }
 
         if self.year >= 2016:
-            rp_1_name = key_to_name[self.year]["rp_1"]
-            rp_2_name = key_to_name[self.year]["rp_2"]
+            rps = ["rp_1", "rp_2"]
+            if self.year == 2025:
+                rps += ["rp_3"]
 
-            clean["pred"]["red_rp_1"] = self.epa_red_rp_1_pred
-            clean["pred"]["red_rp_2"] = self.epa_red_rp_2_pred
-            clean["pred"]["blue_rp_1"] = self.epa_blue_rp_1_pred
-            clean["pred"]["blue_rp_2"] = self.epa_blue_rp_2_pred
-
-            clean["pred"][f"red_{rp_1_name}"] = self.epa_red_rp_1_pred
-            clean["pred"][f"red_{rp_2_name}"] = self.epa_red_rp_2_pred
-            clean["pred"][f"blue_{rp_1_name}"] = self.epa_blue_rp_1_pred
-            clean["pred"][f"blue_{rp_2_name}"] = self.epa_blue_rp_2_pred
-
+            for rp in rps:
+                rp_name = key_to_name[self.year][rp]
+                clean["pred"][f"red_{rp_name}"] = getattr(self, f"epa_red_{rp}_pred")
+                clean["pred"][f"blue_{rp_name}"] = getattr(self, f"epa_blue_{rp}_pred")
             pairs = list(key_to_name[self.year].items())
-            pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
+            pairs += [(rp, rp) for rp in rps]
             for key, name in pairs:
                 clean["result"][f"red_{name}"] = getattr(self, f"red_{key}")
                 clean["result"][f"blue_{name}"] = getattr(self, f"blue_{key}")

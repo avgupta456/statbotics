@@ -15,7 +15,7 @@ import SummaryTabs from "./summaryTabs";
 import Tabs from "./tabs";
 import { SummaryRow } from "./types";
 
-const PageContent = ({ team, paramYear }: { team: string; paramYear: number }) => {
+const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) => {
   const [prevYear, _setPrevYear] = useState(paramYear);
   const [year, _setYear] = useState(paramYear);
 
@@ -31,7 +31,7 @@ const PageContent = ({ team, paramYear }: { team: string; paramYear: number }) =
   }>({});
 
   useEffect(() => {
-    const _getTeamDataForYear = async (team: string) => {
+    const _getTeamDataForYear = async (team: number) => {
       if (teamData) {
         return;
       }
@@ -45,7 +45,7 @@ const PageContent = ({ team, paramYear }: { team: string; paramYear: number }) =
   }, [team, teamData]);
 
   useEffect(() => {
-    const _getTeamYearDataForYear = async (team: string, year: number) => {
+    const _getTeamYearDataForYear = async (team: number, year: number) => {
       if (teamYearDataDict[year]) {
         return;
       }

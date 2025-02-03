@@ -35,13 +35,18 @@ const getRandomTiebreaker = (year: number, currArr: number[]) => {
       return 26 + Math.round(Math.random() * 60);
     } else if (year === 2023) {
       return (Math.random() > 0.9 ? 10000 : 0) + 10 + Math.round(Math.random() * 20);
+    } else if (year === 2024) {
+      return 45 + Math.round(Math.random() * 20);
+    } else if (year === 2025) {
+      // TODO: Replace with mean/sd after week 1
+      return 45 + Math.round(Math.random() * 20);
     } else {
       return 0;
     }
   } else {
     // Use local MEAN and SD
     const arr = currArr.map((a) => a % 10000); // Do not predict any tech fouls
-    const mean = arr.map((a) => a % 10000).reduce((a, b) => a + b, 0) / arr.length;
+    const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
     const std = Math.sqrt(arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length);
     return Math.round(mean + 5 * (Math.random() - 0.5) * std);
   }
@@ -83,6 +88,8 @@ const getSchedule = async (numTeams: number, numMatches: number) => {
     });
 };
 
+const getRPProb = (rpEPA) => 1 / (1 + Math.pow(Math.E, -4 * (rpEPA - 0.5)));
+
 async function preSim(
   data: EventData,
   simCount: number,
@@ -91,6 +98,7 @@ async function preSim(
   postMessage: boolean
 ) {
   const TOTAL_SD = data.year.score_sd;
+  const yearNum = data.year.year;
 
   const teamsN = data.team_events.length;
   const schedule = await getSchedule(teamsN, numMatches);
@@ -98,23 +106,28 @@ async function preSim(
   const currEPAs = {};
   const currRP1EPAs = {};
   const currRP2EPAs = {};
+  const currRP3EPAs = {};
 
   // Initialize EPAs
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points.mean : teamEvent.epa.stats.start;
-    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points.mean || 0;
+    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points : teamEvent.epa.stats.start;
+    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points || 0;
 
-    let currRP1EPA = postEvent ? teamEvent.epa.breakdown.rp_1.mean : 0; // TODO: fix start rp epa
-    if (!currRP1EPA) currRP1EPA = teamEvent.epa.breakdown.rp_1.mean || 0;
+    let currRP1EPA = postEvent ? teamEvent.epa.breakdown.rp_1 : 0; // TODO: fix start rp epa
+    if (!currRP1EPA) currRP1EPA = teamEvent.epa.breakdown.rp_1 || 0;
 
-    let currRP2EPA = postEvent ? teamEvent.epa.breakdown.rp_2.mean : 0; // TODO: fix start rp epa
-    if (!currRP2EPA) currRP2EPA = teamEvent.epa.breakdown.rp_2.mean || 0;
+    let currRP2EPA = postEvent ? teamEvent.epa.breakdown.rp_2 : 0; // TODO: fix start rp epa
+    if (!currRP2EPA) currRP2EPA = teamEvent.epa.breakdown.rp_2 || 0;
+
+    let currRP3EPA = postEvent ? teamEvent.epa.breakdown.rp_3 : 0; // TODO: fix start rp epa
+    if (!currRP3EPA) currRP3EPA = teamEvent.epa.breakdown.rp_3 || 0;
 
     currEPAs[teamEvent.team] = currEPA;
     currRP1EPAs[teamEvent.team] = currRP1EPA;
     currRP2EPAs[teamEvent.team] = currRP2EPA;
+    currRP3EPAs[teamEvent.team] = currRP3EPA;
   }
 
   // Simulate
@@ -152,27 +165,37 @@ async function preSim(
       let redEPA = currEPAs[red[0]] + currEPAs[red[1]] + currEPAs[red[2]];
       let redRP1EPA = currRP1EPAs[red[0]] + currRP1EPAs[red[1]] + currRP1EPAs[red[2]];
       let redRP2EPA = currRP2EPAs[red[0]] + currRP2EPAs[red[1]] + currRP2EPAs[red[2]];
+      let redRP3EPA = currRP3EPAs[red[0]] + currRP3EPAs[red[1]] + currRP3EPAs[red[3]];
       let blueEPA = currEPAs[blue[0]] + currEPAs[blue[1]] + currEPAs[blue[2]];
       let blueRP1EPA = currRP1EPAs[blue[0]] + currRP1EPAs[blue[1]] + currRP1EPAs[blue[2]];
       let blueRP2EPA = currRP2EPAs[blue[0]] + currRP2EPAs[blue[1]] + currRP2EPAs[blue[2]];
+      let blueRP3EPA = currRP3EPAs[blue[0]] + currRP3EPAs[blue[1]] + currRP3EPAs[blue[3]];
 
       const winProb = 1 / (1 + Math.pow(10, ((-5 / 8) * (redEPA - blueEPA)) / TOTAL_SD));
       const redWin = Math.random() < winProb ? 1 : 0;
 
-      const redRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP1EPA - 0.5)));
+      const redRP1Prob = getRPProb(redRP1EPA);
+      const redRP2Prob = getRPProb(redRP2EPA);
+      const redPR3Prob = getRPProb(redRP3EPA);
       const redRP1 = Math.random() < redRP1Prob ? 1 : 0;
-
-      const redRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP2EPA - 0.5)));
       const redRP2 = Math.random() < redRP2Prob ? 1 : 0;
+      const redRP3 = Math.random() < redPR3Prob ? 1 : 0;
 
-      const blueRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP1EPA - 0.5)));
+      const blueRP1Prob = getRPProb(blueRP1EPA);
+      const blueRP2Prob = getRPProb(blueRP2EPA);
+      const bluePR3Prob = getRPProb(blueRP3EPA);
       const blueRP1 = Math.random() < blueRP1Prob ? 1 : 0;
-
-      const blueRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP2EPA - 0.5)));
       const blueRP2 = Math.random() < blueRP2Prob ? 1 : 0;
+      const blueRP3 = Math.random() < bluePR3Prob ? 1 : 0;
 
-      const redRPs = redRP1 + redRP2 + (redWin ? 2 : 0);
-      const blueRPs = blueRP1 + blueRP2 + (redWin ? 0 : 2);
+      const redRPs =
+        yearNum >= 2025
+          ? redRP1 + redRP2 + redRP3 + (redWin ? 3 : 0)
+          : redRP1 + redRP2 + (redWin ? 2 : 0);
+      const blueRPs =
+        yearNum >= 2025
+          ? blueRP1 + blueRP2 + blueRP3 + (redWin ? 0 : 3)
+          : blueRP1 + blueRP2 + (redWin ? 0 : 2);
 
       red.forEach((team) => {
         if (currSimMatches[team] < numMatches) {
@@ -218,6 +241,7 @@ async function indexSim(
   postMessage: boolean
 ) {
   const TOTAL_SD = data.year.score_sd;
+  const yearNum = data.year.year;
 
   const qualMatches = data.matches
     .filter((match) => !match.elim)
@@ -228,6 +252,7 @@ async function indexSim(
   const currEPAs = {};
   const currRP1EPAs = {};
   const currRP2EPAs = {};
+  const currRP3EPAs = {};
   const currRPs = {};
   const currTiebreakers = {};
 
@@ -244,30 +269,44 @@ async function indexSim(
 
   for (let i = 0; i < data.team_events.length; i++) {
     const teamEvent = data.team_events[i];
-    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points.mean : teamEvent.epa.stats.start;
-    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points.mean || 0;
+    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points : teamEvent.epa.stats.start;
+    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points || 0;
 
-    let currRP1EPA = postEvent ? teamEvent.epa.breakdown.rp_1.mean : 0; // TODO: fix start rp epa
-    if (!currRP1EPA) currRP1EPA = teamEvent.epa.breakdown.rp_1.mean || 0;
+    let currRP1EPA = postEvent ? teamEvent.epa.breakdown.rp_1 : 0; // TODO: fix start rp epa
+    if (!currRP1EPA) currRP1EPA = teamEvent.epa.breakdown.rp_1 || 0;
 
-    let currRP2EPA = postEvent ? teamEvent.epa.breakdown.rp_2.mean : 0; // TODO: fix start rp epa
-    if (!currRP2EPA) currRP2EPA = teamEvent.epa.breakdown.rp_2.mean || 0;
+    let currRP2EPA = postEvent ? teamEvent.epa.breakdown.rp_2 : 0; // TODO: fix start rp epa
+    if (!currRP2EPA) currRP2EPA = teamEvent.epa.breakdown.rp_2 || 0;
+
+    let currRP3EPA = postEvent ? teamEvent.epa.breakdown.rp_3 : 0; // TODO: fix start rp epa
+    if (!currRP3EPA) currRP3EPA = teamEvent.epa.breakdown.rp_3 || 0;
 
     currEPAs[teamEvent.team] = currEPA;
     currRP1EPAs[teamEvent.team] = currRP1EPA;
     currRP2EPAs[teamEvent.team] = currRP2EPA;
+    currRP3EPAs[teamEvent.team] = currRP3EPA;
     currRPs[teamEvent.team] = 0;
     currTiebreakers[teamEvent.team] = [];
   }
 
-  const redResultToRPs = { red: 2, tie: 1, blue: 0 };
-  const blueResultToRPs = { red: 0, tie: 1, blue: 2 };
+  let redResultToRPs = { red: 2, tie: 1, blue: 0 };
+  let blueResultToRPs = { red: 0, tie: 1, blue: 2 };
+  if (yearNum >= 2025) {
+    redResultToRPs = { red: 3, tie: 1, blue: 0 };
+    blueResultToRPs = { red: 0, tie: 1, blue: 3 };
+  }
   for (let i = 0; i < index; i++) {
     const match = qualMatches[i];
     const redRPs =
-      match.result.red_rp_1 + match.result.red_rp_2 + redResultToRPs[match.result.winner];
+      match.result.red_rp_1 +
+      match.result.red_rp_2 +
+      match.result.red_rp_3 +
+      redResultToRPs[match.result.winner];
     const blueRPs =
-      match.result.blue_rp_1 + match.result.blue_rp_2 + blueResultToRPs[match.result.winner];
+      match.result.blue_rp_1 +
+      match.result.blue_rp_2 +
+      match.result.red_rp_3 +
+      blueResultToRPs[match.result.winner];
     const [redTiebreaker, blueTiebreaker] = getTiebreakers(data.event.year, match);
 
     const teamMatches = teamMatchesMap[match.key];
@@ -279,6 +318,7 @@ async function indexSim(
         currEPAs[team] = teamMatch.epa.post ?? teamMatch.epa.breakdown.total_points;
         currRP1EPAs[team] = teamMatch.epa.breakdown.rp_1;
         currRP2EPAs[team] = teamMatch.epa.breakdown.rp_2;
+        currRP3EPAs[team] = teamMatch.epa.breakdown.rp_3;
       }
       if (
         !match.alliances.red.surrogate_team_keys.includes(team) &&
@@ -317,9 +357,11 @@ async function indexSim(
       let redEPA = 0;
       let redRP1EPA = 0;
       let redRP2EPA = 0;
+      let redRP3EPA = 0;
       let blueEPA = 0;
       let blueRP1EPA = 0;
       let blueRP2EPA = 0;
+      let blueRP3EPA = 0;
       const teamMatches = teamMatchesMap[match.key];
       for (let k = 0; k < teamMatches.length; k++) {
         const teamMatch = teamMatches[k];
@@ -328,30 +370,44 @@ async function indexSim(
           redEPA += currEPAs[team];
           redRP1EPA += currRP1EPAs[team];
           redRP2EPA += currRP2EPAs[team];
+          redRP3EPA += currRP3EPAs[team];
         } else {
           blueEPA += currEPAs[team];
           blueRP1EPA += currRP1EPAs[team];
           blueRP2EPA += currRP2EPAs[team];
+          blueRP3EPA += currRP3EPAs[team];
         }
       }
 
       const winProb = 1 / (1 + Math.pow(10, ((-5 / 8) * (redEPA - blueEPA)) / TOTAL_SD));
       const redWin = Math.random() < winProb;
 
-      const redRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP1EPA - 0.5)));
+      const redRP1Prob = getRPProb(redRP1EPA);
       const redRP1 = Math.random() < redRP1Prob ? 1 : 0;
 
-      const redRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (redRP2EPA - 0.5)));
+      const redRP2Prob = getRPProb(redRP2EPA);
       const redRP2 = Math.random() < redRP2Prob ? 1 : 0;
 
-      const blueRP1Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP1EPA - 0.5)));
+      const redRP3Prob = getRPProb(redRP3EPA);
+      const redRP3 = Math.random() < redRP3Prob ? 1 : 0;
+
+      const blueRP1Prob = getRPProb(blueRP1EPA);
       const blueRP1 = Math.random() < blueRP1Prob ? 1 : 0;
 
-      const blueRP2Prob = 1 / (1 + Math.pow(Math.E, -4 * (blueRP2EPA - 0.5)));
+      const blueRP2Prob = getRPProb(blueRP2EPA);
       const blueRP2 = Math.random() < blueRP2Prob ? 1 : 0;
 
-      const redRPs = redRP1 + redRP2 + (redWin ? 2 : 0);
-      const blueRPs = blueRP1 + blueRP2 + (redWin ? 0 : 2);
+      const blueRP3Prob = getRPProb(blueRP3EPA);
+      const blueRP3 = Math.random() < blueRP3Prob ? 1 : 0;
+
+      const redRPs =
+        yearNum >= 2025
+          ? redRP1 + redRP2 + redRP3 + (redWin ? 3 : 0)
+          : redRP1 + redRP2 + (redWin ? 2 : 0);
+      const blueRPs =
+        yearNum >= 2025
+          ? blueRP1 + blueRP2 + blueRP3 + (redWin ? 0 : 3)
+          : blueRP1 + blueRP2 + (redWin ? 0 : 2);
 
       for (let k = 0; k < teamMatches.length; k++) {
         const teamMatch = teamMatches[k];
@@ -463,8 +519,8 @@ async function _strengthOfSchedule(data: EventData, simCount: number, postEvent:
   let epaSd = 0;
   for (let j = 0; j < data.team_events.length; j++) {
     const teamEvent = data.team_events[j];
-    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points.mean : teamEvent.epa.stats.start;
-    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points.mean || 0;
+    let currEPA = postEvent ? teamEvent.epa.breakdown.total_points : teamEvent.epa.stats.start;
+    if (!currEPA) currEPA = teamEvent.epa.breakdown.total_points || 0;
     teamEPAs[teamEvent.team] = currEPA;
     epaAvg += currEPA;
     epaSd += currEPA ** 2;

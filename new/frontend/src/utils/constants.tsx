@@ -13,10 +13,11 @@ SEASON CONFIG
 */
 
 export const START_YEAR = 2002;
-export const CURR_YEAR = 2024;
-export const CURR_WEEK = 8;
+export const CURR_YEAR = 2025;
+export const CURR_WEEK = 1;
 
 export const YEAR_OPTIONS = [
+  "2025",
   "2024",
   "2023",
   "2022",
@@ -42,7 +43,7 @@ export const YEAR_OPTIONS = [
   "2002",
 ];
 
-export const BREAKDOWN_YEARS = [2023, 2024]; // TODO: implement 2016-2022
+export const BREAKDOWN_YEARS = [2023, 2024, 2025]; // TODO: implement 2016-2022
 
 /*
 COLORS
@@ -77,7 +78,8 @@ export const RP_KEYS: { [key: number]: string[] } = {
   2020: ["cells_rp", "climb_rp"],
   2022: ["cargo_rp", "hangar_rp"],
   2023: ["links_rp", "activation_rp"],
-  2024: ["melody_rp", "harmony_rp"],
+  2024: ["melody_rp", "ensemble_rp"],
+  2025: ["auto_rp", "coral_rp", "barge_rp"],
 };
 
 export const RP_NAMES: { [key: number]: string[] } = {
@@ -89,4 +91,5 @@ export const RP_NAMES: { [key: number]: string[] } = {
   2022: ["Cargo RP", "Hangar RP"],
   2023: ["Links RP", "Activation RP"],
   2024: ["Melody RP", "Ensemble RP"],
+  2025: ["Auto RP", "Coral RP", "Barge RP"],
 };

@@ -36,8 +36,7 @@ export const readTBA = async (url: string) => {
   throw new Error("TBA Error: " + response.status);
 };
 
-export const getMediaUrl = async (team: string, year: number) => {
-  if (team === "") return null;
+export const getMediaUrl = async (team: number, year: number) => {
   const data = await readTBA(`/team/frc${team}/media/${year}`);
   const image = data.filter((item: any) => item?.preferred)?.[0];
   if (image?.type === "instagram-image") {
@@ -52,7 +51,7 @@ export const getMediaUrl = async (team: string, year: number) => {
   }
 };
 
-export const getMediaUrls = async (teams: string[], year: number) => {
+export const getMediaUrls = async (teams: number[], year: number) => {
   const urls = [];
   for (const team of teams) {
     const url = await getMediaUrl(team, year);

@@ -22,7 +22,7 @@ export async function getYearTeamYears(
 
 export async function getTeamYearTeamMatches(
   year: number,
-  teamNum: string
+  teamNum: number
 ): Promise<APITeamMatch[]> {
   const urlSuffix = `/team_year/${year}/${teamNum}/matches`;
   const storageKey = `team_year_matches_${year}_${teamNum}_${version}`;

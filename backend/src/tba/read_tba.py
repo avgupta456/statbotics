@@ -3,7 +3,6 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, cast
 
-from src.constants import CURR_WEEK, CURR_YEAR
 from src.tba.breakdown import clean_breakdown, post_clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
@@ -102,13 +101,11 @@ def get_events(
         if key in EVENT_BLACKLIST:
             continue
 
-        if event["district"] is not None:
-            event["district"] = event["district"]["abbreviation"]
-
-        if event["key"] in DISTRICT_OVERRIDES:
-            event["district"] = DISTRICT_OVERRIDES[event["key"]]
-
+        # preseason or offseason events
         event_type_int = int(event["event_type"])
+        if event_type_int >= 99:
+            continue
+
         event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
         event_type_dict[0] = EventType.REGIONAL
         event_type_dict[1] = EventType.DISTRICT
@@ -119,28 +116,17 @@ def get_events(
         event_type_dict[5] = EventType.DISTRICT_CMP
         # rename festival of championships to einsteins
         event_type_dict[6] = EventType.EINSTEIN
-        event_type_dict[99] = EventType.OFFSEASON
-        event_type_dict[100] = EventType.PRESEASON
         event_type = event_type_dict[event_type_int]
 
-        if (
-            (event_type in [EventType.PRESEASON, EventType.OFFSEASON])
-            and (year == CURR_YEAR)
-            and CURR_WEEK not in [0, 9]
-        ):
-            continue
+        if event["district"] is not None:
+            event["district"] = event["district"]["abbreviation"]
+
+        if event["key"] in DISTRICT_OVERRIDES:
+            event["district"] = DISTRICT_OVERRIDES[event["key"]]
 
         # assigns worlds to week 8
         if event_type.is_champs():
             event["week"] = 8
-
-        # assigns preseason to week 0
-        if event_type == EventType.PRESEASON:
-            event["week"] = 0
-
-        # assigns offseasons to week 9
-        if event_type == EventType.OFFSEASON:
-            event["week"] = 9
 
         # filter out incomplete events
         if "week" not in event or event["week"] is None:
@@ -235,25 +221,23 @@ def get_event_matches(
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
             continue
 
-        raw_red_score: int = match["alliances"]["red"]["score"]
-        raw_blue_score: int = match["alliances"]["blue"]["score"]
-
-        status = (
-            MatchStatus.COMPLETED
-            if min(raw_red_score, raw_blue_score) > 0
-            else MatchStatus.UPCOMING
-        )
+        raw_winner: Optional[str] = match.get("winning_alliance", None)
+        # new logic as of 2025, may need to revisit
+        # some upcoming events were pre-populated with (0, 0) scores in 2024
+        status = MatchStatus.UPCOMING
+        if raw_winner is not None:
+            status = MatchStatus.COMPLETED
 
         red_score = None
         blue_score = None
         winner = None
         if status == MatchStatus.COMPLETED:
-            red_score = raw_red_score
-            blue_score = raw_blue_score
+            red_score = match["alliances"]["red"]["score"]
+            blue_score = match["alliances"]["blue"]["score"]
 
-            if match["winning_alliance"] == "red":
+            if raw_winner == "red":
                 winner = MatchWinner.RED
-            elif match["winning_alliance"] == "blue":
+            elif raw_winner == "blue":
                 winner = MatchWinner.BLUE
             else:
                 winner = MatchWinner.TIE
@@ -347,7 +331,7 @@ def get_event_rankings(
             return out, new_etag
         rankings = data["rankings"]
         for ranking in rankings:
-            team_num = ranking["team_key"][3:]
+            team_num = int(ranking["team_key"][3:])
             out[team_num] = ranking["rank"]
     except Exception:
         pass

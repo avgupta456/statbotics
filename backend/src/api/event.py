@@ -47,7 +47,6 @@ async def get_events_cached(
     district: Optional[str] = None,
     type: Optional[str] = None,
     week: Optional[int] = None,
-    offseason: Optional[bool] = None,
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,

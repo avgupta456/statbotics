@@ -13,8 +13,8 @@ export const TeamLink = ({
   year,
   small,
 }: {
-  team: string | number;
-  num: string;
+  team: string;
+  num: number;
   year: number;
   small?: boolean;
 }) => {
@@ -67,25 +67,25 @@ export const getEPAColor = (
   let color = "";
 
   if (reverse) {
-    if (value > multiplier * percentileStats?.p25 ?? 0) {
+    if (value > multiplier * percentileStats?.p25 || 0) {
       color = CONDITIONAL_COLORS[0];
-    } else if (value > multiplier * percentileStats?.p75 ?? 0) {
+    } else if (value > multiplier * percentileStats?.p75 || 0) {
       color = CONDITIONAL_COLORS[1];
-    } else if (value > multiplier * percentileStats?.p90 ?? 0) {
+    } else if (value > multiplier * percentileStats?.p90 || 0) {
       color = CONDITIONAL_COLORS[2];
-    } else if (value > multiplier * percentileStats?.p99 ?? 0) {
+    } else if (value > multiplier * percentileStats?.p99 || 0) {
       color = CONDITIONAL_COLORS[3];
     } else {
       color = CONDITIONAL_COLORS[4];
     }
   } else {
-    if (value < multiplier * percentileStats?.p25 ?? 0) {
+    if (value < multiplier * percentileStats?.p25 || 0) {
       color = CONDITIONAL_COLORS[0];
-    } else if (value < multiplier * percentileStats?.p75 ?? 0) {
+    } else if (value < multiplier * percentileStats?.p75 || 0) {
       color = CONDITIONAL_COLORS[1];
-    } else if (value < multiplier * percentileStats?.p90 ?? 0) {
+    } else if (value < multiplier * percentileStats?.p90 || 0) {
       color = CONDITIONAL_COLORS[2];
-    } else if (value < multiplier * percentileStats?.p99 ?? 0) {
+    } else if (value < multiplier * percentileStats?.p99 || 0) {
       color = CONDITIONAL_COLORS[3];
     } else {
       color = CONDITIONAL_COLORS[4];
@@ -132,7 +132,7 @@ export const formatEPACell = (
     color = "";
   } else if (typeof value === "string") {
     color = CONDITIONAL_COLORS[1];
-  } else if (column == "rp_1_epa" || column == "rp_2_epa") {
+  } else if (column == "rp_1_epa" || column == "rp_2_epa" || column == "rp_3_epa") {
     color = getRPColor(value);
   } else {
     color = getEPAColor(value, percentileStats, multiplier, reverse);

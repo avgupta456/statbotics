@@ -13,7 +13,7 @@ export const getColumnOptions = (year: number) => [
   { label: "Constant", accessor: (datum: EYu) => 1 },
   {
     label: "Total EPA",
-    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.total_points?.mean),
+    accessor: (datum: EYu) => round(datum?.epa?.breakdown?.total_points),
   },
   {
     label: "Unitless EPA",
@@ -24,42 +24,45 @@ export const getColumnOptions = (year: number) => [
     ? [
         {
           label: "Auto",
-          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.auto_points?.mean),
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.auto_points),
         },
         {
           label: "Teleop",
-          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.teleop_points?.mean),
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.teleop_points),
         },
         {
           label: "Endgame",
-          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.endgame_points?.mean),
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.endgame_points),
         },
         {
           label: "Auto + Endgame",
           accessor: (datum: EYu) =>
-            round(
-              datum?.epa?.breakdown?.auto_points?.mean + datum?.epa?.breakdown?.endgame_points?.mean
-            ),
+            round(datum?.epa?.breakdown?.auto_points + datum?.epa?.breakdown?.endgame_points),
         },
         {
           label: `${RP_NAMES[year][0]}`,
-          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_1?.mean, 3),
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_1, 3),
         },
         {
           label: `${RP_NAMES[year][1]}`,
-          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_2?.mean, 3),
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_2, 3),
         },
       ]
     : []),
-  { label: "Wins", accessor: (datum: Yu) => datum?.record?.season?.wins },
+  ...(year >= 2025
+    ? [
+        {
+          label: `${RP_NAMES[year][2]}`,
+          accessor: (datum: EYu) => round(datum?.epa?.breakdown?.rp_3, 3),
+        },
+      ]
+    : []),
+  { label: "Wins", accessor: (datum: Yu) => datum?.record?.wins },
   {
     label: "Win Rate",
     accessor: (datum: Yu) =>
       round(
-        datum?.record?.season?.wins /
-          (datum?.record?.season?.wins +
-            datum?.record?.season?.losses +
-            datum?.record?.season?.ties),
+        datum?.record?.wins / (datum?.record?.wins + datum?.record?.losses + datum?.record?.ties),
         3
       ),
   },
@@ -79,19 +82,11 @@ export const ColumnBar = ({
   currColumnOptions,
   columns,
   setColumns,
-  includeColors = false,
-  loadingColors = false,
-  showColors = false,
-  setShowColors = () => {},
 }: {
   year: number;
   currColumnOptions: string[];
   columns: any;
   setColumns: any;
-  includeColors?: boolean;
-  loadingColors?: boolean;
-  showColors?: boolean;
-  setShowColors?: any;
 }) => {
   const columnKeys = Object.keys(columns);
 
@@ -129,19 +124,6 @@ export const ColumnBar = ({
           />
         </div>
       ))}
-      {includeColors && (
-        <>
-          <div className="w-0.5 h-10 mr-2 bg-gray-500 rounded" />
-          <button
-            className="h-10 p-2 rounded bg-gray-100 flex items-center justify-center disabled:cursor-progress disabled:opacity-50 hover:bg-gray-200 disabled:bg-gray-100"
-            type="button"
-            disabled={loadingColors}
-            onClick={() => setShowColors((value) => !value)}
-          >
-            {showColors ? "Hide" : "Use"} Team Colors
-          </button>
-        </>
-      )}
     </div>
   );
 };

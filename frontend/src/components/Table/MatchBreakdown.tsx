@@ -29,7 +29,7 @@ const columnHelper = createColumnHelper<Component>();
 
 // Copied from ./shared.tsx with minor changes
 
-const TeamLink = ({ team, num, year }: { team: string | number; num: string; year: number }) => {
+const TeamLink = ({ team, num, year }: { team: number; num: number; year: number }) => {
   return (
     <div className="w-24 h-full flex justify-center items-center">
       <Link href={`/team/${num}/${year}`} className="text_link">
@@ -62,6 +62,8 @@ const formatCell = (
         ? stats.percentiles.rp_1
         : row === "RP2"
         ? stats.percentiles.rp_2
+        : row === "RP3"
+        ? stats.percentiles.rp_3
         : stats.percentiles.total_points;
 
     if (row.includes("RP")) {
@@ -84,7 +86,7 @@ const MatchBreakdown = ({
   stats,
 }: {
   data: Component[];
-  teams: string[];
+  teams: number[];
   stats: APIYear;
 }) => {
   const columns = useMemo<any>(

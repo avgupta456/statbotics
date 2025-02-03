@@ -1,7 +1,7 @@
-import { createRef, useEffect, useMemo, useState } from "react";
-import { MdAdd, MdCloudDownload, MdRemove, MdSettings } from "react-icons/md";
+import { createRef, useEffect, useState } from "react";
+import { MdAdd, MdCloudDownload, MdRemove } from "react-icons/md";
 
-import { MultiSelect, Popover, Tooltip } from "@mantine/core";
+import { MultiSelect, Tooltip } from "@mantine/core";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -9,17 +9,12 @@ import { AgGridReact } from "ag-grid-react";
 
 import { useLocation } from "../../../contexts/locationContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
-import { APITeamYear } from "../../../types/api";
 import { classnames } from "../../../utils/utils";
 import FilterBar, { LocationFilter } from "../../filterBar";
-import { Select } from "../../select";
 
 export default function Table({
-  year,
   data,
-  dataType,
   columnDefs,
-  EPAColumns = [],
   showLocationQuickFilter = false,
   showProjectionsFilter = false,
   showCompetingThisWeekFilter = false,
@@ -28,11 +23,8 @@ export default function Table({
   expanded = false,
   setExpanded = () => {},
 }: {
-  year: number;
   data: any[];
-  dataType: "TeamYear" | "Event";
   columnDefs: any[];
-  EPAColumns?: string[];
   showLocationQuickFilter?: boolean;
   showProjectionsFilter?: boolean;
   showCompetingThisWeekFilter?: boolean;
@@ -45,7 +37,7 @@ export default function Table({
   const gridRef = createRef<any>();
   let cleanData = data;
 
-  const { colorScheme, EPACellFormat, setEPACellFormat } = usePreferences();
+  const { colorScheme } = usePreferences();
 
   // Location Quick Filter
 
@@ -73,54 +65,21 @@ export default function Table({
     gridRef.current.api.exportDataAsCsv({ skipColumnGroupHeaders: true, allColumns: true });
   };
 
-  // Show Expand
-
-  // EPA Context
-
-  const [EPAContext, setEPAContext] = useState({ year });
-
-  const updateTeamYearContext = (newData: APITeamYear[]) => {
-    const newContext: any = { year };
-    EPAColumns.forEach((k) => {
-      const means = newData.map((d) => d?.epa?.breakdown?.[k]?.mean);
-      const sds = newData.map((d) => d?.epa?.breakdown?.[k]?.sd);
-      const lowBounds = newData.map((d) => d?.epa?.conf?.[0]);
-      const highBounds = newData.map((d) => d?.epa?.conf?.[1]);
-      const maxValues = means.map((m, i) => m + highBounds[i] * sds[i]);
-      const maxErrors = sds.map((s, i) => s * Math.max(highBounds[i], -lowBounds[i]));
-      newContext[k] = {
-        minValue: 0,
-        maxValue: Math.max(...maxValues),
-        maxError: Math.max(...maxErrors),
-      };
-    });
-    setEPAContext(newContext);
+  const defaultColDef = {
+    resizable: false,
+    sortable: true,
+    suppressMovable: true,
+    suppressStickyLabel: true,
+    suppressSpanHeaderHeight: true,
+    filter: false,
+    flex: 1,
+    minWidth: 120,
+    headerClass: "ag-text-center",
+    cellStyle: {
+      textAlign: "center",
+    },
+    cellClass: "",
   };
-
-  useEffect(() => {
-    if (data && data.length > 0 && dataType === "TeamYear") {
-      updateTeamYearContext(data);
-    }
-  }, [data]);
-
-  const defaultColDef = useMemo(
-    () => ({
-      resizable: false,
-      sortable: true,
-      suppressMovable: true,
-      suppressStickyLabel: true,
-      suppressSpanHeaderHeight: true,
-      filter: false,
-      flex: 1,
-      minWidth: 120,
-      headerClass: "ag-text-center",
-      cellStyle: {
-        textAlign: "center",
-      },
-      cellClass: EPACellFormat === "Error Bars (shifted)" ? "ag-col-border" : "",
-    }),
-    [EPACellFormat],
-  );
 
   const otherFilterOptions = [];
   if (showCompetingThisWeekFilter) {
@@ -129,14 +88,6 @@ export default function Table({
   if (showProjectionsFilter) {
     otherFilterOptions.push("Played this season");
   }
-
-  const EPACellFormatOptions = [
-    "Error Bars (shifted)",
-    "Error Bars (centered)",
-    "Highlight (with interval)",
-    "Highlight (mean only)",
-    "Plaintext",
-  ];
 
   const mobile = window.innerWidth < 640;
 
@@ -191,36 +142,6 @@ export default function Table({
         )}
         <div className="flex-grow" />
         <div className="flex items-center gap-3">
-          {EPAColumns.length > 0 && (
-            <>
-              <div className="lg:hidden">
-                <Popover width={220} position="bottom" shadow="md">
-                  <Popover.Target>
-                    <Tooltip label="Options">
-                      <div className="cursor-pointer">
-                        <MdSettings className="h-6 w-6 cursor-pointer text-zinc-600" />
-                      </div>
-                    </Tooltip>
-                  </Popover.Target>
-                  <Popover.Dropdown>
-                    <Select
-                      data={EPACellFormatOptions}
-                      value={EPACellFormat}
-                      onChange={setEPACellFormat}
-                      allowDeselect={false}
-                    />
-                  </Popover.Dropdown>
-                </Popover>
-              </div>
-              <Select
-                data={EPACellFormatOptions}
-                value={EPACellFormat}
-                onChange={setEPACellFormat}
-                allowDeselect={false}
-                className="hidden lg:block"
-              />
-            </>
-          )}
           {showDownloadCSV && (
             <div className="hidden xs:block">
               <Tooltip label="Download CSV">
@@ -260,7 +181,6 @@ export default function Table({
           pagination={!mobile}
           paginationPageSize={10}
           paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
-          context={EPAContext}
         />
       </div>
     </div>

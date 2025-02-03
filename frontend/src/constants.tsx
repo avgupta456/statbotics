@@ -8,12 +8,13 @@ export const BACKEND_URL = PROD
 
 export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
 
-export const CURR_YEAR = 2024;
-export const CURR_WEEK = 9;
+export const CURR_YEAR = 2025;
+export const CURR_WEEK = 1;
 
-export const MAX_TEAM = 9979; // above is offseason
+// 9970 to 9999 are placeholder teams
+export const PLACEHOLDER_TEAMS = Array.from({ length: 30 }, (_, i) => 9970 + i);
 
-export const BREAKDOWN_YEARS = [2024]; // TODO: implement 2016-2023
+export const BREAKDOWN_YEARS = [2024, 2025]; // TODO: implement 2016-2023
 
 export const CORRECT_COLOR = "#86CFA3";
 export const INCORRECT_COLOR = "#F77F84";
@@ -39,7 +40,8 @@ export const RP_KEYS: { [key: number]: string[] } = {
   2020: ["cells_rp", "climb_rp"],
   2022: ["cargo_rp", "hangar_rp"],
   2023: ["links_rp", "activation_rp"],
-  2024: ["melody_rp", "harmony_rp"],
+  2024: ["melody_rp", "ensemble_rp"],
+  2025: ["auto_rp", "coral_rp", "barge_rp"],
 };
 
 export const RP_NAMES: { [key: number]: string[] } = {
@@ -51,6 +53,7 @@ export const RP_NAMES: { [key: number]: string[] } = {
   2022: ["Cargo RP", "Hangar RP"],
   2023: ["Links RP", "Activation RP"],
   2024: ["Melody RP", "Ensemble RP"],
+  2025: ["Auto RP", "Coral RP", "Barge RP"],
 };
 
 export const eventNameMap = {

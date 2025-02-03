@@ -51,7 +51,9 @@ def process_year(objs: objs_type) -> objs_type:
 
             rp_1 = (m_obj.red_rp_1 if alliance == "red" else m_obj.blue_rp_1) or 0
             rp_2 = (m_obj.red_rp_2 if alliance == "red" else m_obj.blue_rp_2) or 0
-            total_rps = 2 * win_update + 1 * tie_update + rp_1 + rp_2
+            rp_3 = (m_obj.red_rp_3 if alliance == "red" else m_obj.blue_rp_3) or 0
+            win_rps = 3 if year_num >= 2025 else 2
+            total_rps = win_rps * win_update + 1 * tie_update + rp_1 + rp_2 + rp_3
 
             for t in teams:
                 ty_record[t] = (

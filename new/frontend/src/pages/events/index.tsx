@@ -125,7 +125,7 @@ export default function EventsPage() {
   const [tab, setTab] = useState<string>("summary");
   const [year, setYear] = useState<number>(CURR_YEAR);
   const [location, setLocation] = useState<string | null>(null);
-  const [week, setWeek] = useState<number | null>(-1); // season, not offseason
+  const [week, setWeek] = useState<number | null>(-1);
   const [search, setSearch] = useState<string>("");
 
   const memoizedLocation = useMemo(() => ({ location, setLocation }), [location, setLocation]);
@@ -174,14 +174,8 @@ export default function EventsPage() {
 
     filtered = filtered.sort(sortEvents);
 
-    if (week !== null) {
-      if (week === -1) {
-        filtered = filtered.filter((event) => !event.offseason);
-      } else if (week === 9) {
-        filtered = filtered.filter((event) => event.offseason);
-      } else {
-        filtered = filtered.filter((event) => event.week === week);
-      }
+    if (week !== null && week >= 0) {
+      filtered = filtered.filter((event) => event.week === week);
     }
 
     if (location !== null) {
@@ -266,7 +260,7 @@ export default function EventsPage() {
                 setSearch={setSearch}
               />
               <div className="h-4" />
-              <EventsTable year={year} data={data} />
+              <EventsTable data={data} />
             </div>
           </TabPanel>
         </TabsLayout>

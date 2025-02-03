@@ -46,7 +46,7 @@ class EPA(Model):
         self,
         year: Year,
         all_team_years: Dict[int, Dict[int, TeamYear]],
-        team_years: Dict[int, TeamYear],
+        team_years: Dict[str, TeamYear],
     ) -> None:
         super().start_season(year, all_team_years, team_years)
         self.k = EPA.k_func(self.year_num)
@@ -83,10 +83,7 @@ class EPA(Model):
 
         rp_1s: List[float] = []
         rp_2s: List[float] = []
-        # Backwards compatibility
-        autos: List[float] = []
-        teleops: List[float] = []
-        endgames: List[float] = []
+        rp_3s: List[float] = []
 
         breakdowns: List[Any] = []
 
@@ -99,34 +96,26 @@ class EPA(Model):
 
             pred_mean = post_process_breakdown(year, key, pred_mean, opp_pred_mean)
 
-            # rp_1, rp_2 = get_pred_rps(year, week, event_type, pred_mean, pred_sd)
-
-            # temporarily disable fancy RP calculations since we are no longer storing breakdown sd's.
             keys = all_keys[year]
-            rp_1 = pred_mean[keys.index("rp_1")]
-            rp_2 = pred_mean[keys.index("rp_2")]
+            rp_1, rp_2, rp_3 = 0, 0, 0
+            if year >= 2016:
+                rp_1 = pred_mean[keys.index("rp_1")]
+                rp_2 = pred_mean[keys.index("rp_2")]
+                if year >= 2025:
+                    rp_3 = pred_mean[keys.index("rp_3")]
 
             rp_1s.append(rp_1)
             rp_2s.append(rp_2)
-
-            # Backwards compatibility
-            if year >= 2016:
-                autos.append(pred_mean[1])
-                teleops.append(pred_mean[2])
-                endgames.append(pred_mean[3])
-            else:
-                autos.append(0)
-                teleops.append(0)
-                endgames.append(0)
+            rp_3s.append(rp_3)
 
             breakdowns.append(pred_mean)
 
         red_score = get_score_from_breakdown(
-            key, year, breakdowns[0], breakdowns[1], rp_1s[0], rp_2s[0], elim
+            key, year, breakdowns[0], breakdowns[1], rp_1s[0], rp_2s[0], rp_3s[0], elim
         )
 
         blue_score = get_score_from_breakdown(
-            key, year, breakdowns[1], breakdowns[0], rp_1s[1], rp_2s[1], elim
+            key, year, breakdowns[1], breakdowns[0], rp_1s[1], rp_2s[1], rp_3s[1], elim
         )
 
         """
@@ -153,22 +142,10 @@ class EPA(Model):
         red_score_with_fouls = red_score * (1 + foul_rate)
         blue_score_with_fouls = blue_score * (1 + foul_rate)
         red_pred = AlliancePred(
-            red_score_with_fouls,
-            breakdowns[0],
-            rp_1s[0],
-            rp_2s[0],
-            autos[0],
-            teleops[0],
-            endgames[0],
+            red_score_with_fouls, breakdowns[0], rp_1s[0], rp_2s[0], rp_3s[0]
         )
         blue_pred = AlliancePred(
-            blue_score_with_fouls,
-            breakdowns[1],
-            rp_1s[1],
-            rp_2s[1],
-            autos[1],
-            teleops[1],
-            endgames[1],
+            blue_score_with_fouls, breakdowns[1], rp_1s[1], rp_2s[1], rp_3s[1]
         )
 
         return win_prob, red_pred, blue_pred
@@ -220,9 +197,10 @@ class EPA(Model):
             tm.endgame_epa = rounded_mean[3]
             tm.rp_1_epa = round(self.epas[team].mean[4], 4)
             tm.rp_2_epa = round(self.epas[team].mean[5], 4)
-            tm.tiebreaker_epa = rounded_mean[6]
+            tm.rp_3_epa = round(self.epas[team].mean[6], 4)
+            tm.tiebreaker_epa = rounded_mean[7]
             for i in range(1, 19):
-                new_value = rounded_mean[i + 6]
+                new_value = rounded_mean[i + 7]
                 setattr(tm, f"comp_{i}_epa", new_value)
 
     def post_record_team(
@@ -250,9 +228,10 @@ class EPA(Model):
                 te.endgame_epa = rounded_mean[3]
                 te.rp_1_epa = round(self.epas[team].mean[4], 4)
                 te.rp_2_epa = round(self.epas[team].mean[5], 4)
-                te.tiebreaker_epa = rounded_mean[6]
+                te.rp_3_epa = round(self.epas[team].mean[6], 4)
+                te.tiebreaker_epa = rounded_mean[7]
                 for i in range(1, 19):
-                    setattr(te, f"comp_{i}_epa", rounded_mean[i + 6])
+                    setattr(te, f"comp_{i}_epa", rounded_mean[i + 7])
 
         if ty is not None:
             ty.epa = rounded_mean[0]
@@ -266,9 +245,10 @@ class EPA(Model):
                 ty.endgame_epa = rounded_mean[3]
                 ty.rp_1_epa = round(self.epas[team].mean[4], 4)
                 ty.rp_2_epa = round(self.epas[team].mean[5], 4)
-                ty.tiebreaker_epa = rounded_mean[6]
+                ty.rp_3_epa = round(self.epas[team].mean[6], 5)
+                ty.tiebreaker_epa = rounded_mean[7]
                 for i in range(1, 19):
-                    setattr(ty, f"comp_{i}_epa", rounded_mean[i + 6])
+                    setattr(ty, f"comp_{i}_epa", rounded_mean[i + 7])
 
     def record_match(self, match: Match, match_pred: MatchPred) -> None:
         match.epa_win_prob = r(match_pred.win_prob, 4)
@@ -284,11 +264,6 @@ class EPA(Model):
             match.epa_blue_rp_1_pred = r(match_pred.blue_rp_1 or 0, 4)
             match.epa_red_rp_2_pred = r(match_pred.red_rp_2 or 0, 4)
             match.epa_blue_rp_2_pred = r(match_pred.blue_rp_2 or 0, 4)
-
-            # Backward compatibility
-            match.epa_red_auto_pred = r(match_pred.red_auto or 0, 2)
-            match.epa_red_teleop_pred = r(match_pred.red_teleop or 0, 2)
-            match.epa_red_endgame_pred = r(match_pred.red_endgame or 0, 2)
-            match.epa_blue_auto_pred = r(match_pred.blue_auto or 0, 2)
-            match.epa_blue_teleop_pred = r(match_pred.blue_teleop or 0, 2)
-            match.epa_blue_endgame_pred = r(match_pred.blue_endgame or 0, 2)
+            if self.year_num >= 2025:
+                match.epa_red_rp_3_pred = r(match_pred.red_rp_3 or 0, 4)
+                match.epa_blue_rp_3_pred = r(match_pred.blue_rp_3 or 0, 4)

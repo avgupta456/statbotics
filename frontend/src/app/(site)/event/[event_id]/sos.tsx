@@ -39,7 +39,7 @@ type SosResults = {
 
 type SosRow = {
   rank: number;
-  num: string;
+  num: number;
   team: string;
   epa: number;
   rankPercentile: number;
@@ -129,7 +129,7 @@ const SosSection = ({ eventId, data }: { eventId: string; data: EventData }) => 
       num: teamEvent.team,
       team: teamEvent.team_name,
       epa: round(
-        preEvent ? teamEvent?.epa?.stats?.start : teamEvent?.epa?.breakdown?.total_points?.mean,
+        preEvent ? teamEvent?.epa?.stats?.start : teamEvent?.epa?.breakdown?.total_points,
         1
       ),
       preSimAvgRank: preSimAvgRank[teamEvent.team],

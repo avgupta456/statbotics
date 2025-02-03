@@ -126,36 +126,10 @@ export default function TeamYearsBreakdownTable({
     setColumnDefs(getColumnDefs(year, expanded));
   }, [year, expanded]);
 
-  const EPAColumns = [
-    "total_points",
-    "auto_points",
-    "teleop_points",
-    "endgame_points",
-    "total_pieces",
-    "links",
-    "grid_points",
-    "auto_pieces",
-    "auto_grid_points",
-    "teleop_pieces",
-    "teleop_grid_points",
-    "bottom_pieces",
-    "middle_pieces",
-    "top_pieces",
-    "cubes_scored",
-    "cube_points",
-    "cones_scored",
-    "cone_points",
-    "auto_charge_station_points",
-    "endgame_charge_station_points",
-  ];
-
   return (
     <Table
-      year={year}
       data={data || []}
-      dataType="TeamYear"
       columnDefs={columnDefs}
-      EPAColumns={EPAColumns}
       showLocationQuickFilter
       showProjectionsFilter={year === CURR_YEAR}
       showCompetingThisWeekFilter={year === CURR_YEAR}

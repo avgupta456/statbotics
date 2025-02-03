@@ -71,6 +71,9 @@ class EventORM(Base, ModelORM):
     epa_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
 
+    epa_rp_3_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_3_acc: MOF = mapped_column(Float, nullable=True, default=None)
+
 
 _Event = generate_attr_class("Event", EventORM)
 
@@ -162,5 +165,12 @@ class Event(_Event, Model):
                     "acc": self.epa_rp_2_acc,
                 },
             }
+            if self.year >= 2025:
+                clean["metrics"]["rp_pred"][key_to_name[self.year]["rp_3"]] = (
+                    {
+                        "error": self.epa_rp_3_error,
+                        "acc": self.epa_rp_3_acc,
+                    },
+                )
 
         return clean

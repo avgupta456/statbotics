@@ -33,7 +33,7 @@ const MatchRow = ({
   myAlliance,
 }: {
   year: number;
-  teamNum: string;
+  teamNum: number;
   compLevel: string;
   match: APIMatch;
   showVideo: boolean;
@@ -152,6 +152,7 @@ const MatchRow = ({
           </span>
           {year >= 2016 && match?.result?.red_rp_1 > 0.5 && <sup>●</sup>}
           {year >= 2016 && match?.result?.red_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2025 && match?.result?.red_rp_3 > 0.5 && <sup>●</sup>}
         </div>
         <div
           style={{ backgroundColor: lightBlue }}
@@ -170,6 +171,7 @@ const MatchRow = ({
           </span>
           {year >= 2016 && match?.result?.blue_rp_1 > 0.5 && <sup>●</sup>}
           {year >= 2016 && match?.result?.blue_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2025 && match?.result?.blue_rp_3 > 0.5 && <sup>●</sup>}
         </div>
       </>
     ) : (
@@ -207,6 +209,7 @@ const MatchRow = ({
           </span>
           {year >= 2016 && !match.elim && match?.pred?.red_rp_1 > 0.5 && <sup>●</sup>}
           {year >= 2016 && !match.elim && match?.pred?.red_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2025 && !match.elim && match?.pred?.red_rp_3 > 0.5 && <sup>●</sup>}
         </div>
         <div
           className={classnames(
@@ -225,6 +228,7 @@ const MatchRow = ({
           </span>
           {year >= 2016 && !match.elim && match?.pred?.blue_rp_1 > 0.5 && <sup>●</sup>}
           {year >= 2016 && !match.elim && match?.pred?.blue_rp_2 > 0.5 && <sup>●</sup>}
+          {year >= 2025 && !match.elim && match?.pred?.blue_rp_3 > 0.5 && <sup>●</sup>}
         </div>
       </div>
       <div className={stacked ? "w-1/9 flex flex-col" : "w-1/7 flex"}>
@@ -291,7 +295,7 @@ const MatchTable = ({
   myAlliance = true,
 }: {
   year: number;
-  teamNum: string;
+  teamNum: number;
   matches: APIMatch[];
   showHeaders?: boolean;
   showSubHeaders?: boolean;
@@ -305,7 +309,7 @@ const MatchTable = ({
     return <div className="w-full text-center">Schedule not released yet.</div>;
   }
 
-  const myAllianceActual = teamNum !== "" && myAlliance;
+  const myAllianceActual = teamNum > 0 && myAlliance;
 
   const compLevels = matches.map((match) => match.comp_level);
   const uniqueCompLevels = compLevels

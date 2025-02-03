@@ -73,12 +73,7 @@ export type APITeam = {
   state?: string;
   district?: string;
   rookie_year: number;
-  offseason: boolean;
   active: boolean;
-  colors: {
-    primary: string;
-    secondary: string;
-  };
   record: {
     season: Record;
     full: Record;
@@ -98,18 +93,17 @@ export type EPARank = {
 };
 
 export type APITeamYear = {
-  team: string;
+  team: number;
   year: number;
   name: string;
   country: string;
   state?: string;
   district?: string;
-  offseason: boolean;
   epa: {
     unitless: number;
     norm: number;
     conf: [number, number];
-    breakdown: { [key: string]: { mean: number; sd: number } };
+    breakdown: { [key: string]: number };
     stats: { start: number; pre_champs: number; max: number };
     ranks: {
       total: EPARank;
@@ -144,7 +138,6 @@ export type APIEvent = {
   end_date: string;
   type: string;
   week: number;
-  offseason: boolean;
   video?: string;
   status: string;
   num_teams: number;
@@ -172,7 +165,6 @@ export type APITeamEvent = {
   year: number;
   event: string;
   time: number;
-  offseason: boolean;
   team_name: string;
   event_name: string;
   country: string;
@@ -186,7 +178,7 @@ export type APITeamEvent = {
     unitless: number;
     norm: number;
     conf: [number, number];
-    breakdown: { [key: string]: { mean: number; sd: number } };
+    breakdown: { [key: string]: number };
     stats: { start: number; pre_elim: number; mean: number; max: number };
   };
   record: {
@@ -216,7 +208,6 @@ export type APIMatch = {
   key: string;
   year: number;
   event: string;
-  offseason: boolean;
   week: number;
   elim: boolean;
   comp_level: string;
@@ -228,14 +219,14 @@ export type APIMatch = {
   video?: string;
   alliances: {
     red: {
-      team_keys: string[];
-      surrogate_team_keys: string[];
-      dq_team_keys: string[];
+      team_keys: number[];
+      surrogate_team_keys: number[];
+      dq_team_keys: number[];
     };
     blue: {
-      team_keys: string[];
-      surrogate_team_keys: string[];
-      dq_team_keys: string[];
+      team_keys: number[];
+      surrogate_team_keys: number[];
+      dq_team_keys: number[];
     };
   };
   pred: {
@@ -262,7 +253,6 @@ export type APITeamMatch = {
   event: string;
   alliance: string;
   time: number;
-  offseason: boolean;
   week: number;
   elim: boolean;
   dq: boolean;

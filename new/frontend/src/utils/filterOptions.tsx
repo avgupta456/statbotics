@@ -8,7 +8,6 @@ export const weekOptions = [
   { value: "7", label: "Week 7" },
   { value: "8", label: "Week 8" },
   { value: "-1", label: "Season" },
-  { value: "9", label: "Offseason" },
 ];
 
 export const elimOptions = [

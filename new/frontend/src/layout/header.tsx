@@ -45,7 +45,7 @@ function Header() {
   const searchIcon = (
     <IconSearch
       className="h-9 w-9 cursor-pointer rounded p-2 hover:bg-zinc-600 dark:hover:bg-zinc-800"
-      stroke={1.5}
+      stroke="1.5"
       onClick={spotlight.open}
     />
   );
@@ -53,14 +53,14 @@ function Header() {
   const sunIcon = (
     <RxSun
       className="h-9 w-9 cursor-pointer rounded p-2 text-yellow-500 hover:bg-zinc-600"
-      stroke={4}
+      stroke="4"
       onClick={() => setColorScheme("dark")}
     />
   );
   const moonIcon = (
     <RxMoon
       className="h-9 w-9 cursor-pointer rounded p-2 hover:bg-zinc-800"
-      stroke={2.5}
+      stroke="2.5"
       onClick={() => setColorScheme("light")}
     />
   );
@@ -119,7 +119,7 @@ function Header() {
         scrollable
         maxHeight={350}
         searchProps={{
-          leftSection: <IconSearch className="h-5 w-5" stroke={1.5} />,
+          leftSection: <IconSearch className="h-5 w-5" stroke="1.5" />,
           placeholder: "Search...",
         }}
       />
@@ -266,7 +266,7 @@ function Header() {
             justify="space-between"
             leftSection={
               <div className="flex items-center">
-                <IconSearch className="mr-2 h-5 w-5" stroke={1.5} />
+                <IconSearch className="mr-2 h-5 w-5" stroke="1.5" />
                 Search
               </div>
             }
@@ -282,7 +282,7 @@ function Header() {
             rel="noopener noreferrer"
             className="mr-2 flex h-9 cursor-pointer items-center rounded p-2 hover:bg-zinc-600 dark:hover:bg-zinc-800"
           >
-            <FaGithub className="h-5 w-5" stroke={2} />
+            <FaGithub className="h-5 w-5" stroke="2" />
           </Link>
           {colorScheme === "light" ? sunIcon : moonIcon}
         </Group>

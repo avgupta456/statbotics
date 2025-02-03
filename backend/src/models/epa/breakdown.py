@@ -23,6 +23,8 @@ def post_process_breakdown(
     if year >= 2016:
         breakdown[keys.index("rp_1")] = unit_sigmoid(breakdown[keys.index("rp_1")])
         breakdown[keys.index("rp_2")] = unit_sigmoid(breakdown[keys.index("rp_2")])
+        if year >= 2025:
+            breakdown[keys.index("rp_3")] = unit_sigmoid(breakdown[keys.index("rp_3")])
 
     if year == 2018:
         my_switch_power = breakdown[keys.index("switch_power")]
@@ -166,6 +168,7 @@ def get_score_from_breakdown(
     opp_breakdown: Any,
     rp_1_pred: float,
     rp_2_pred: float,
+    rp_3_pred: float,
     elim: bool,
 ) -> float:
     score = 0
@@ -252,5 +255,9 @@ def post_process_attrib(year: Year, epa: Any, attrib: Any, elim: bool) -> Any:
 
         rp_2_index = keys.index("rp_2")
         attrib[rp_2_index] = epa[rp_2_index]
+
+        if year.year >= 2025:
+            rp_3_index = keys.index("rp_3")
+            attrib[rp_3_index] = epa[rp_3_index]
 
     return attrib

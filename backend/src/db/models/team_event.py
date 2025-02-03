@@ -80,6 +80,7 @@ class TeamEventORM(Base, ModelORM):
     endgame_epa: MOF = mapped_column(Float, default=None)
     rp_1_epa: MOF = mapped_column(Float, default=None)
     rp_2_epa: MOF = mapped_column(Float, default=None)
+    rp_3_epa: MOF = mapped_column(Float, default=None)
     tiebreaker_epa: MOF = mapped_column(Float, default=None)
     comp_1_epa: MOF = mapped_column(Float, default=None)
     comp_2_epa: MOF = mapped_column(Float, default=None)
@@ -209,6 +210,8 @@ class TeamEvent(_TeamEvent, Model):
         if self.year >= 2016:
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
+            if self.year >= 2025:
+                pairs += [("rp_3", "rp_3")]
             for key, name in pairs:
                 clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
 

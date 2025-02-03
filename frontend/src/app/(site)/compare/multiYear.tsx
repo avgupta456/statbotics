@@ -20,7 +20,7 @@ const MultiYear = ({ teams }: { teams: ShortTeam[] }) => {
     label: `${team.team} | ${team.name}`,
   }));
 
-  const fetchData = async (teamNum: string) => {
+  const fetchData = async (teamNum: number) => {
     const data = await getTeam(teamNum);
 
     const sortedData: any[] = data.team_years

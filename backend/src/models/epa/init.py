@@ -58,6 +58,7 @@ def get_init_epa(
         # For ranking points, take inv sigmoid since later we will apply sigmoid
         mean[4] = max(-1, inv_unit_sigmoid(max(EPS, min(1 - EPS, mean[4]))))
         mean[5] = max(-1, inv_unit_sigmoid(max(EPS, min(1 - EPS, mean[5]))))
+        mean[6] = max(-1, inv_unit_sigmoid(max(EPS, min(1 - EPS, mean[6]))))
 
     curr_epa_mean = mean / num_teams + sd * curr_epa_z_score
     curr_epa_sd = sd / num_teams

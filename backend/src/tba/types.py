@@ -35,6 +35,7 @@ class BreakdownDict(TypedDict):
     endgame_points: Optional[int]
     rp_1: Optional[bool]
     rp_2: Optional[bool]
+    rp_3: Optional[bool]
     tiebreaker: Optional[int]
     comp_1: Optional[Union[int, float]]
     comp_2: Optional[Union[int, float]]
@@ -65,6 +66,7 @@ empty_breakdown: BreakdownDict = {
     "endgame_points": None,
     "rp_1": False,
     "rp_2": False,
+    "rp_3": False,
     "tiebreaker": None,
     "comp_1": None,
     "comp_2": None,

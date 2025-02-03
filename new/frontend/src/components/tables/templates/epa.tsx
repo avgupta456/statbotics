@@ -1,8 +1,6 @@
-import { Tooltip } from "@mantine/core";
-
 import { useData } from "../../../contexts/dataContext";
 import { usePreferences } from "../../../contexts/preferencesContext";
-import { APITeamYear, EPAPercentiles } from "../../../types/api";
+import { EPAPercentiles } from "../../../types/api";
 import { classnames, roundSigFigs } from "../../../utils/utils";
 
 function getColorSubTemplate(percentiles: EPAPercentiles, colorOptions: string[], value: number) {
@@ -35,12 +33,10 @@ function getColorTemplate(
 
 // eslint-disable-next-line import/prefer-default-export
 export function EPACellRenderer({
-  data,
   epaKey,
   value,
   context,
 }: {
-  data: APITeamYear;
   epaKey: string;
   value: number;
   context?: any;
@@ -52,13 +48,6 @@ export function EPACellRenderer({
   const { colorScheme, EPACellFormat } = usePreferences();
   const { yearDataDict } = useData();
   const { year } = context;
-
-  const mean = value;
-  const sd = data?.epa?.breakdown?.[epaKey]?.sd || 0;
-  const [rawLower, rawUpper] = data?.epa?.conf ?? [0, 0];
-  const lower = mean + rawLower * sd;
-  const upper = mean + rawUpper * sd;
-  const adjSd = (upper - lower) / 2;
 
   const percentiles: EPAPercentiles = yearDataDict[year]?.percentiles?.[epaKey] ?? {};
 
@@ -84,88 +73,11 @@ export function EPACellRenderer({
     value,
   );
 
-  if (EPACellFormat === "Highlight (mean only)") {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}>
-          {roundSigFigs(value, 3, 1)}
-        </div>
-      </div>
-    );
-  }
-
-  if (EPACellFormat === "Highlight (with interval)") {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <Tooltip
-          label={`${roundSigFigs(lower, 2, 2)} - ${roundSigFigs(upper, 2, 2)}`}
-          classNames={{
-            tooltip: "text-xs",
-          }}
-        >
-          <div
-            className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}
-          >
-            {roundSigFigs(value, 2, 1)}
-            <p className="ml-1 text-xs">±{roundSigFigs(adjSd, 1, 0)}</p>
-          </div>
-        </Tooltip>
-      </div>
-    );
-  }
-
-  const centerColor = color === "" ? "border border-zinc-500" : color;
-  const errorColor = color === "" ? "bg-zinc-500" : color;
-
-  const shifted = EPACellFormat === "Error Bars (shifted)";
-
-  let valueRange = 2 * (context?.[epaKey]?.maxError ?? 10);
-  let midValue = 0;
-  if (shifted) {
-    const minValue = context?.[epaKey]?.minValue ?? 0;
-    const maxValue = context?.[epaKey]?.maxValue ?? 100;
-    valueRange = maxValue - minValue;
-    midValue = minValue + valueRange / 2;
-  }
-
-  // multiply by 2 since the element is centered in the remaining space
-  const leftMargin = shifted ? (100 * 2 * (value - midValue)) / valueRange : 0;
-  // multiply by 100 / (100 - leftMargin) since full width reduced from 100% to (100 - leftMargin)
-  const leftBarWidth = (100 * ((100 / (100 - leftMargin)) * (value - lower))) / valueRange;
-  const rightBarWidth = (100 * ((100 / (100 - leftMargin)) * (upper - value))) / valueRange;
-
   return (
-    <div
-      className="relative flex h-full w-auto min-w-[24px] items-center justify-center"
-      style={{ marginLeft: `${leftMargin}%` }}
-    >
-      <div
-        className={classnames(
-          "absolute right-1/2 top-1/2 mr-[12px] h-[1.5px] transform",
-          errorColor,
-        )}
-        style={{ width: `calc(${leftBarWidth}% - 12px)` }}
-      />
-      <Tooltip
-        label={`${roundSigFigs(lower, 2, 2)} - ${roundSigFigs(upper, 2, 2)}`}
-        classNames={{ tooltip: "text-xs" }}
-      >
-        <div
-          className={classnames(
-            "flex h-6 w-6 items-center justify-center rounded-full",
-            centerColor,
-          )}
-        >
-          {roundSigFigs(value, 2, 0)}
-        </div>
-      </Tooltip>
-      <div
-        className={classnames(
-          "absolute left-1/2 top-1/2 ml-[12px] h-[1.5px] transform",
-          errorColor,
-        )}
-        style={{ width: `calc(${rightBarWidth}% - 12px)` }}
-      />
+    <div className="flex h-full w-full items-center justify-center">
+      <div className={classnames(color, "flex h-7 w-12 items-center justify-center rounded-lg")}>
+        {roundSigFigs(value, 3, 1)}
+      </div>
     </div>
   );
 }
@@ -183,7 +95,7 @@ export const UnitlessEPADef = {
 };
 
 export const getEPADef = (epaKey: string, headerName: string) => ({
-  field: `epa.breakdown.${epaKey}.mean`,
+  field: `epa.breakdown.${epaKey}`,
   headerName,
   minWidth: 120,
   cellRenderer: EPACellRenderer,

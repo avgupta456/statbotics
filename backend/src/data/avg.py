@@ -11,6 +11,18 @@ def process_year(year: Year, matches: List[Match]) -> Year:
         m for m in matches if m.week == 1 and m.status == MatchStatus.COMPLETED
     ]
 
+    def get_mean(
+        red_accessor: Callable[[Match], Optional[float]],
+        blue_accessor: Callable[[Match], Optional[float]],
+    ) -> float:
+        arr: List[Optional[float]] = [red_accessor(x) for x in week_one_matches] + [
+            blue_accessor(x) for x in week_one_matches
+        ]
+        clean_arr: List[float] = [x for x in arr if x is not None]
+        if len(clean_arr) < 1:
+            return 0
+        return r(statistics.mean(clean_arr), 2)
+
     def get_mean_sd(
         red_accessor: Callable[[Match], Optional[float]],
         blue_accessor: Callable[[Match], Optional[float]],
@@ -30,16 +42,22 @@ def process_year(year: Year, matches: List[Match]) -> Year:
         lambda m: m.red_score, lambda m: m.blue_score
     )
     if year.year >= 2016:
-        year.no_foul_mean, _ = get_mean_sd(lambda m: m.red_no_foul, lambda m: m.blue_no_foul)  # type: ignore
-        year.foul_mean, _ = get_mean_sd(lambda m: m.red_foul, lambda m: m.blue_foul)
-        year.auto_mean, _ = get_mean_sd(lambda m: m.red_auto, lambda m: m.blue_auto)
-        year.teleop_mean, _ = get_mean_sd(lambda m: m.red_teleop, lambda m: m.blue_teleop)  # type: ignore
-        year.endgame_mean, _ = get_mean_sd(lambda m: m.red_endgame, lambda m: m.blue_endgame)  # type: ignore
-        year.rp_1_mean, _ = get_mean_sd(lambda m: m.red_rp_1, lambda m: m.blue_rp_1)
-        year.rp_2_mean, _ = get_mean_sd(lambda m: m.red_rp_2, lambda m: m.blue_rp_2)
-        year.tiebreaker_mean, _ = get_mean_sd(lambda m: m.red_tiebreaker, lambda m: m.blue_tiebreaker)  # type: ignore
+        year.no_foul_mean, _ = get_mean_sd(
+            lambda m: m.red_no_foul, lambda m: m.blue_no_foul
+        )
+        year.foul_mean = get_mean(lambda m: m.red_foul, lambda m: m.blue_foul)
+        year.auto_mean = get_mean(lambda m: m.red_auto, lambda m: m.blue_auto)
+        year.teleop_mean = get_mean(lambda m: m.red_teleop, lambda m: m.blue_teleop)
+        year.endgame_mean = get_mean(lambda m: m.red_endgame, lambda m: m.blue_endgame)
+        year.rp_1_mean = get_mean(lambda m: m.red_rp_1, lambda m: m.blue_rp_1)
+        year.rp_2_mean = get_mean(lambda m: m.red_rp_2, lambda m: m.blue_rp_2)
+        year.rp_3_mean = get_mean(lambda m: m.red_rp_3, lambda m: m.blue_rp_3)
+        year.tiebreaker_mean = get_mean(
+            lambda m: m.red_tiebreaker, lambda m: m.blue_tiebreaker
+        )
+
         for i in range(1, 19):
-            mean, _ = get_mean_sd(
+            mean = get_mean(
                 lambda m: getattr(m, f"red_comp_{i}"),
                 lambda m: getattr(m, f"blue_comp_{i}"),
             )

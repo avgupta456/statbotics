@@ -124,7 +124,7 @@ def process_year(objs: objs_type) -> objs_type:
     )
 
     if year.year >= 2016:
-        for key in ["auto", "teleop", "endgame", "rp_1", "rp_2"] + [
+        for key in ["auto", "teleop", "endgame", "rp_1", "rp_2", "rp_3"] + [
             f"comp_{i}" for i in range(1, 19)
         ]:
             raw_epas = [getattr(ty, f"{key}_epa") for ty in objs[1].values()]

@@ -12,7 +12,7 @@ import { EventData } from "../../../../types/data";
 import { round, truncate } from "../../../../utils";
 
 export type TeamEventInsights = {
-  num: string;
+  num: number;
   team: string;
   first_event: boolean;
   rank: number;
@@ -24,10 +24,11 @@ export type TeamEventInsights = {
   endgame_epa: number | string;
   rp_1_epa: number | string;
   rp_2_epa: number | string;
+  rp_3_epa: number | string;
 };
 
 export type DetailedTeamEventInsights = {
-  num: string;
+  num: number;
   team: string;
   first_event: boolean;
   rank: number;
@@ -42,6 +43,7 @@ export type DetailedTeamEventInsights = {
   endgame_epa: number | string;
   rp_1_epa: number | string;
   rp_2_epa: number | string;
+  rp_3_epa: number | string;
 };
 
 const columnHelper = createColumnHelper<TeamEventInsights>();
@@ -65,42 +67,42 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Even
   const eventInsightsData: TeamEventInsights[] = data.team_events
     .map((teamEvent) => {
       return {
-        num: teamEvent?.team ?? "N/A",
+        num: teamEvent?.team ?? -1,
         team: teamEvent?.team_name ? truncate(teamEvent?.team_name, 30) : "N/A",
         first_event: teamEvent?.first_event ?? false,
         unitless_epa: round(teamEvent?.epa?.unitless, 0) ?? "N/A",
         norm_epa: round(teamEvent?.epa?.norm, 0) ?? "N/A",
-        total_epa: round(teamEvent?.epa?.breakdown?.total_points?.mean, 1) ?? 0,
-        auto_epa: round(teamEvent?.epa?.breakdown?.auto_points?.mean, 1) ?? "N/A",
-        teleop_epa: round(teamEvent?.epa?.breakdown?.teleop_points?.mean, 1) ?? "N/A",
-        endgame_epa: round(teamEvent?.epa?.breakdown?.endgame_points?.mean, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent?.epa?.breakdown?.rp_1?.mean, 2) ?? "N/A",
-        rp_2_epa: round(teamEvent?.epa?.breakdown?.rp_2?.mean, 2) ?? "N/A",
+        total_epa: round(teamEvent?.epa?.breakdown?.total_points, 1) ?? 0,
+        auto_epa: round(teamEvent?.epa?.breakdown?.auto_points, 1) ?? "N/A",
+        teleop_epa: round(teamEvent?.epa?.breakdown?.teleop_points, 1) ?? "N/A",
+        endgame_epa: round(teamEvent?.epa?.breakdown?.endgame_points, 1) ?? "N/A",
+        rp_1_epa: round(teamEvent?.epa?.breakdown?.rp_1, 2) ?? "N/A",
+        rp_2_epa: round(teamEvent?.epa?.breakdown?.rp_2, 2) ?? "N/A",
+        rp_3_epa: round(teamEvent?.epa?.breakdown?.rp_3, 1) ?? "N/A",
         rank: teamEvent?.record?.qual?.rank ?? -1,
       };
     })
     .sort(sortFunc);
 
   const detailedEventInsightsData: DetailedTeamEventInsights[] = data.team_events
-    .map((teamEvent) => {
-      return {
-        num: teamEvent?.team ?? "N/A",
-        team: teamEvent?.team_name ? truncate(teamEvent?.team_name, 30) : "N/A",
-        first_event: teamEvent?.first_event ?? false,
-        unitless_epa: round(teamEvent?.epa?.unitless, 0) ?? "N/A",
-        norm_epa: round(teamEvent?.epa?.norm, 0) ?? "N/A",
-        total_epa: round(teamEvent?.epa?.breakdown?.total_points?.mean, 1) ?? 0,
-        auto_epa: round(teamEvent?.epa?.breakdown?.auto_points?.mean, 1) ?? "N/A",
-        teleop_epa: round(teamEvent?.epa?.breakdown?.teleop_points?.mean, 1) ?? "N/A",
-        endgame_epa: round(teamEvent?.epa?.breakdown?.endgame_points?.mean, 1) ?? "N/A",
-        rp_1_epa: round(teamEvent?.epa?.breakdown?.rp_1?.mean, 2) ?? "N/A",
-        rp_2_epa: round(teamEvent?.epa?.breakdown?.rp_2?.mean, 2) ?? "N/A",
-        rank: teamEvent?.record?.qual?.rank ?? -1,
-        rps: teamEvent?.record?.qual?.rps ?? 0,
-        rps_per_match: teamEvent?.record?.qual?.rps_per_match.toFixed(2),
-        record: `${teamEvent?.record?.qual.wins}-${teamEvent?.record?.qual?.losses}-${teamEvent?.record?.qual?.ties}`,
-      };
-    })
+    .map((teamEvent) => ({
+      num: teamEvent?.team ?? null,
+      team: teamEvent?.team_name ? truncate(teamEvent?.team_name, 30) : "N/A",
+      first_event: teamEvent?.first_event ?? false,
+      unitless_epa: round(teamEvent?.epa?.unitless, 0) ?? "N/A",
+      norm_epa: round(teamEvent?.epa?.norm, 0) ?? "N/A",
+      total_epa: round(teamEvent?.epa?.breakdown?.total_points, 1) ?? 0,
+      auto_epa: round(teamEvent?.epa?.breakdown?.auto_points, 1) ?? "N/A",
+      teleop_epa: round(teamEvent?.epa?.breakdown?.teleop_points, 1) ?? "N/A",
+      endgame_epa: round(teamEvent?.epa?.breakdown?.endgame_points, 1) ?? "N/A",
+      rp_1_epa: round(teamEvent?.epa?.breakdown?.rp_1, 2) ?? "N/A",
+      rp_2_epa: round(teamEvent?.epa?.breakdown?.rp_2, 2) ?? "N/A",
+      rp_3_epa: round(teamEvent?.epa?.breakdown?.rp_3, 2) ?? "N/A",
+      rank: teamEvent?.record?.qual?.rank ?? -1,
+      rps: teamEvent?.record?.qual?.rps ?? 0,
+      rps_per_match: teamEvent?.record?.qual?.rps_per_match.toFixed(2),
+      record: `${teamEvent?.record?.qual.wins}-${teamEvent?.record?.qual?.losses}-${teamEvent?.record?.qual?.ties}`,
+    }))
     .sort(sortFunc);
 
   const maxRank = Math.max(...eventInsightsData.map((team) => team.rank));
@@ -163,6 +165,11 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Even
           columnHelper.accessor("rp_2_epa", {
             cell: (info) => formatEPACell(data.year.percentiles.rp_2, info, disableHighlight),
             header: `${RP_NAMES?.[data.year.year]?.[1]} EPA`,
+          }),
+        year >= 2025 &&
+          columnHelper.accessor("rp_3_epa", {
+            cell: (info) => formatEPACell(data.year.percentiles.rp_3, info, disableHighlight),
+            header: `${RP_NAMES?.[data.year.year]?.[2]} EPA`,
           }),
       ].filter(Boolean),
     [year, data, maxRank, disableHighlight]
@@ -230,6 +237,11 @@ const PageEventInsightsTable = ({ eventId, data }: { eventId: string; data: Even
           detailedColumnHelper.accessor("rp_2_epa", {
             cell: (info) => formatEPACell(data.year.percentiles.rp_2, info, disableHighlight),
             header: `${RP_NAMES?.[data.year.year]?.[1]} EPA`,
+          }),
+        year >= 2025 &&
+          detailedColumnHelper.accessor("rp_3_epa", {
+            cell: (info) => formatEPACell(data.year.percentiles.rp_3, info, disableHighlight),
+            header: `${RP_NAMES?.[data.year.year]?.[2]} EPA`,
           }),
         maxRank > 0 &&
           detailedColumnHelper.accessor("record", {

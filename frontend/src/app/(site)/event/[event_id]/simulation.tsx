@@ -24,7 +24,7 @@ type SimResults = {
 
 type SimulationRow = {
   rank: number;
-  num: string;
+  num: number;
   team: string;
   epa: number;
   rankMean: number;
@@ -158,7 +158,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: EventData
       return {
         num: teamEvent.team,
         team: teamEvent?.team_name,
-        epa: round(teamEvent?.epa?.breakdown?.total_points?.mean ?? 0, 1),
+        epa: round(teamEvent?.epa?.breakdown?.total_points ?? 0, 1),
         rankMean: rankMean[teamEvent.team] ? round(rankMean[teamEvent.team], 2) : "",
         RPMean: RPMean[teamEvent.team] ? round(RPMean[teamEvent.team], 2) : "",
         ...probsObj,

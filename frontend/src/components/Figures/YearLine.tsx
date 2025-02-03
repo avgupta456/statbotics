@@ -35,7 +35,7 @@ const YearLineChart = ({
 
   // FUNCTIONS
 
-  const fetchData = async (teamNum: string) => {
+  const fetchData = async (teamNum: number) => {
     const data = await getTeamYearTeamMatches(year, teamNum);
 
     const sortedData: APITeamMatch[] = data
@@ -74,12 +74,12 @@ const YearLineChart = ({
     ?.slice(0, 3)
     ?.map((team) => ({ value: team.team, label: `${team.team} | ${team.name}` }));
 
-  const selectedTeamNums: string[] = selectedTeams.map((team) => team.value);
+  const selectedTeamNums: number[] = selectedTeams.map((team) => team.value);
 
   const lineData: any[] = selectedTeamNums
     .filter((teamNum) => allData[teamNum])
     .map((teamNum) => {
-      const currData = allData[teamNum]?.filter((teamMatch: APITeamMatch) => !teamMatch.offseason);
+      const currData = allData[teamNum];
       const N = currData?.length || 0;
       let teamData = {
         id: teamNum,

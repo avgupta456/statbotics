@@ -26,6 +26,7 @@ class YearORM(Base, ModelORM):
     endgame_mean: MF = mapped_column(Float, default=0)
     rp_1_mean: MF = mapped_column(Float, default=0)
     rp_2_mean: MF = mapped_column(Float, default=0)
+    rp_3_mean: MF = mapped_column(Float, default=0)
     tiebreaker_mean: MF = mapped_column(Float, default=0)
     comp_1_mean: MF = mapped_column(Float, default=0)
     comp_2_mean: MF = mapped_column(Float, default=0)
@@ -76,6 +77,11 @@ class YearORM(Base, ModelORM):
     rp_2_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
     rp_2_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    rp_3_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_3_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_3_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    rp_3_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
     comp_1_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
     comp_1_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
@@ -180,31 +186,25 @@ class YearORM(Base, ModelORM):
     """SCORE PRED"""
 
     epa_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
     epa_score_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_score_rmse: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_score_mae: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_score_error: MOF = mapped_column(Float, nullable=True, default=None)
 
     """RP PRED"""
     rp_count: MI = mapped_column(Integer, default=0)
     epa_rp_1_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_1_ll: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_1_f1: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_2_ll: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_rp_2_f1: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_3_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_rp_3_acc: MOF = mapped_column(Float, nullable=True, default=None)
     champs_rp_count: MI = mapped_column(Integer, default=0)
     epa_champs_rp_1_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_rp_1_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_rp_1_ll: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_rp_1_f1: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_rp_2_error: MOF = mapped_column(Float, nullable=True, default=None)
     epa_champs_rp_2_acc: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_rp_2_ll: MOF = mapped_column(Float, nullable=True, default=None)
-    epa_champs_rp_2_f1: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_3_error: MOF = mapped_column(Float, nullable=True, default=None)
+    epa_champs_rp_3_acc: MOF = mapped_column(Float, nullable=True, default=None)
 
 
 _Year = generate_attr_class("Year", YearORM)
@@ -235,6 +235,7 @@ class Year(_Year, Model):
                 self.endgame_mean,
                 self.rp_1_mean,
                 self.rp_2_mean,
+                self.rp_3_mean,
                 self.tiebreaker_mean,
                 self.comp_1_mean,
                 self.comp_2_mean,
@@ -290,13 +291,11 @@ class Year(_Year, Model):
                     "season": {
                         "count": 2 * self.count,
                         "rmse": self.epa_score_rmse,
-                        "mae": self.epa_score_mae,
                         "error": self.epa_score_error,
                     },
                     "champs": {
                         "count": 2 * self.champs_count,
                         "rmse": self.epa_champs_score_rmse,
-                        "mae": self.epa_champs_score_mae,
                         "error": self.epa_champs_score_error,
                     },
                 },
@@ -320,6 +319,8 @@ class Year(_Year, Model):
             }
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
+            if self.year >= 2025:
+                pairs += [("rp_3", "rp_3")]
             for key, name in pairs:
                 clean["breakdown"][f"{name}_mean"] = getattr(self, f"{key}_mean")
                 if key != "tiebreaker":
@@ -330,37 +331,41 @@ class Year(_Year, Model):
                         "p25": getattr(self, f"{key}_epa_25p"),
                     }
 
+            rp_1_name = key_to_name[self.year]["rp_1"]
+            rp_2_name = key_to_name[self.year]["rp_2"]
             clean["metrics"]["rp_pred"] = {
                 "season": {
                     "count": self.rp_count,
-                    key_to_name[self.year]["rp_1"]: {
-                        "error": self.epa_rp_1_error,
-                        "acc": self.epa_rp_1_acc,
-                        "ll": self.epa_rp_1_ll,
-                        "f1": self.epa_rp_1_f1,
-                    },
-                    key_to_name[self.year]["rp_2"]: {
-                        "error": self.epa_rp_2_error,
-                        "acc": self.epa_rp_2_acc,
-                        "ll": self.epa_rp_2_ll,
-                        "f1": self.epa_rp_2_f1,
-                    },
+                    rp_1_name: {"error": self.epa_rp_1_error, "acc": self.epa_rp_1_acc},
+                    rp_2_name: {"error": self.epa_rp_2_error, "acc": self.epa_rp_2_acc},
                 },
                 "champs": {
                     "count": self.champs_rp_count,
-                    key_to_name[self.year]["rp_1"]: {
+                    rp_1_name: {
                         "error": self.epa_champs_rp_1_error,
                         "acc": self.epa_champs_rp_1_acc,
-                        "ll": self.epa_champs_rp_1_ll,
-                        "f1": self.epa_champs_rp_1_f1,
                     },
-                    key_to_name[self.year]["rp_2"]: {
+                    rp_2_name: {
                         "error": self.epa_champs_rp_2_error,
                         "acc": self.epa_champs_rp_2_acc,
-                        "ll": self.epa_champs_rp_2_ll,
-                        "f1": self.epa_champs_rp_2_f1,
                     },
                 },
             }
+
+        if self.year >= 2025:
+            rp_3_name = key_to_name[self.year]["rp_3"]
+            clean["metrics"]["rp_pred"]["season"][rp_3_name] = (
+                {
+                    "error": self.epa_rp_3_error,
+                    "acc": self.epa_rp_3_acc,
+                },
+            )
+
+            clean["metrics"]["rp_pred"]["champs"][rp_3_name] = (
+                {
+                    "error": self.epa_champs_rp_3_error,
+                    "acc": self.epa_champs_rp_3_acc,
+                },
+            )
 
         return clean
