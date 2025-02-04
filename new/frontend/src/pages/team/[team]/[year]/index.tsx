@@ -17,7 +17,7 @@ export default function TeamYearPage() {
 
   return (
     <PageContent
-      team={team as string}
+      team={parseInt(team)}
       paramYear={paramYear}
       interpolation={{ team, year: paramYear }}
     />

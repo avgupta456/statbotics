@@ -18,7 +18,7 @@ export function PageContent({
   paramYear,
   interpolation,
 }: {
-  team: string;
+  team: number;
   paramYear: number;
   interpolation: { [key: string]: any };
 }) {
@@ -86,5 +86,10 @@ export function PageContent({
 export default function TeamPage() {
   const router = useRouter();
   const { team } = router.query;
-  return <PageContent team={team as string} paramYear={CURR_YEAR} interpolation={{ team }} />;
+
+  if (typeof team !== "string") {
+    return null;
+  }
+
+  return <PageContent team={parseInt(team)} paramYear={CURR_YEAR} interpolation={{ team }} />;
 }

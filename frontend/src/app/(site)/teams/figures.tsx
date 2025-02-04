@@ -9,7 +9,7 @@ const FigureSection = ({ year, data }: { year: number; data: TeamYearsData }) =>
       value: teamYear.team,
       label: `${teamYear.team} | ${teamYear.name}`,
     }))
-    .sort((a, b) => parseInt(a.value) - parseInt(b.value));
+    .sort((a, b) => a.value - b.value);
 
   return (
     <div className="w-full h-auto flex flex-col justify-center items-center px-2">
