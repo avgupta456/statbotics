@@ -32,10 +32,10 @@ class TestTeams(unittest.TestCase):
         self.assertEqual(a["state"], "NC")
         self.assertEqual(a["district"], "fnc")
 
-        b = self.sb.get_team(
-            5511, fields=["team", "norm_epa", "norm_epa_recent", "wins", "winrate"]
-        )
-        self.assertEqual(len(b.values()), 5)
+        b = self.sb.get_team(5511, fields=["team", "norm_epa", "record"])
+        self.assertEqual(len(b.values()), 3)
+        self.assertEqual(len(b["norm_epa"]), 4)
+        self.assertEqual(len(b["record"]), 5)
 
     def test_get_team_fields_invalid(self):
         with self.assertRaises(ValueError):
@@ -57,7 +57,9 @@ class TestTeams(unittest.TestCase):
         data = self.sb.get_teams(
             metric="norm_epa", ascending=False, fields=["team", "norm_epa"]
         )
-        self.assertTrue(data[0]["norm_epa"] >= data[1]["norm_epa"])
+        self.assertTrue(
+            data[0]["norm_epa"]["current"] >= data[1]["norm_epa"]["current"]
+        )
 
     def test_get_teams_filters_invalid(self):
         with self.assertRaises(TypeError):

@@ -21,8 +21,8 @@ class Statbotics:
     """
 
     def __init__(self):
-        self.BASE_URL = "https://api.statbotics.io/v2"
-        # self.BASE_URL = "http://localhost:8000/v2"
+        self.BASE_URL = "https://api.statbotics.io/v3"
+        # self.BASE_URL = "http://localhost:8000/v3"
         self.session = CacheControl(requests.Session())
 
     def _filter_singular(
@@ -33,7 +33,9 @@ class Statbotics:
 
         for field in fields:
             if field not in data:
-                raise ValueError("Invalid field: " + str(field))
+                raise ValueError(
+                    f"Invalid field: {field}. Available fields: {data.keys()}"
+                )
 
         return {field: data[field] for field in fields}
 
@@ -45,7 +47,9 @@ class Statbotics:
 
         for field in fields:
             if field not in data[0]:
-                raise ValueError("Invalid field: " + str(field))
+                raise ValueError(
+                    f"Invalid field: {field}. Available fields: {data[0].keys()}"
+                )
 
         return [{field: entry[field] for field in fields} for entry in data]
 
