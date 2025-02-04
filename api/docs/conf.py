@@ -12,6 +12,7 @@
 #
 import os
 import sys
+import sphinx_rtd_theme
 
 
 sys.path.insert(0, os.path.abspath("./.."))
@@ -19,7 +20,7 @@ sys.path.insert(0, os.path.abspath("./.."))
 # -- Project information -----------------------------------------------------
 
 project = "Statbotics"
-copyright = "2023, Abhijit Gupta"
+copyright = "2025, Abhijit Gupta"
 author = "Abhijit Gupta"
 
 # The full version, including alpha/beta/rc tags
