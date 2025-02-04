@@ -24,7 +24,7 @@ copyright = "2023, Abhijit Gupta"
 author = "Abhijit Gupta"
 
 # The full version, including alpha/beta/rc tags
-release = "2.0.1"
+release = "3.0.0"
 
 
 # -- General configuration ---------------------------------------------------

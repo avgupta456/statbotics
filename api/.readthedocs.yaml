@@ -12,7 +12,7 @@ build:
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
-  configuration: docs/conf.py
+  configuration: api/docs/conf.py
 
 # Build documentation with MkDocs
 #mkdocs:

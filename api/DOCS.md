@@ -26,7 +26,7 @@ make html
 
 Requires Python 3.8+. Requires a PyPI account.
 
-1. Update `version` in `pyproject.toml`
+1. Update `version` in `pyproject.toml` and `docs/conf.py`
 2. Delete old distributions in `/dist`
 3. Run the following scripts:
 
