@@ -13,7 +13,7 @@ With Python>=3.8 and pip installed, run
 
 .. code-block:: python
 
-    pip install statbotics==2.0.1
+    pip install statbotics==3.0.0
 
 Then in a Python file, create a Statbotics object and get started!
 
@@ -24,7 +24,7 @@ Then in a Python file, create a Statbotics object and get started!
   sb = statbotics.Statbotics()
   print(sb.get_team(254))
 
-  >> {'team': 254, 'name': 'The Cheesy Poofs', 'offseason': False, 'state': 'CA', 'country': 'USA', 'district': None, 'rookie_year': 1999, 'active': True, 'norm_epa': 1961.0, 'norm_epa_recent': 1956.0, 'norm_epa_mean': 1896.0, 'norm_epa_max': 2114.0, ... }
+  >> {'team': 254, 'name': 'The Cheesy Poofs', 'country': 'USA', 'state': 'CA', 'district': None, 'rookie_year': 1999, 'active': True, 'record': {'wins': 808, 'losses': 160, 'ties': 8, 'count': 976, 'winrate': 0.832}, 'norm_epa': {'current': 1909.0, 'recent': 1904.0, 'mean': 1894.0, 'max': 2058.0}}
 
 Read below for more methods!
 
