@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import requests
 
-# from cachecontrol import CacheControl
+from cachecontrol import CacheControl
 
 from .validate import check_type, get_locations, get_type
 from .constants import (
@@ -24,8 +24,7 @@ class Statbotics:
     def __init__(self):
         self.BASE_URL = "https://api.statbotics.io/v3"
         # self.BASE_URL = "http://localhost:8000/v3"
-        # self.session = CacheControl(requests.Session())
-        self.session = requests.Session()
+        self.session = CacheControl(requests.Session())
 
     def _filter_singular(
         self, data: Dict[str, Any], fields: List[str]

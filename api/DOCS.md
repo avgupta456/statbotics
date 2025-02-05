@@ -13,7 +13,7 @@ pytest tests/
 
 ## Documentation
 
-Requires Python 3.8+. Production builds are triggered directly on the Read the Docs website.
+Requires Python 3.8+. Production builds are triggered directly on the Read the Docs website. You may need to comment out cache control for the build to succeed.
 
 ```
 pip install sphinx
