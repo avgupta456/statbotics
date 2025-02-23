@@ -831,7 +831,6 @@ def clean_breakdown_2025(
     processor_algae_points = 6 * processor_algae
     net_algae = breakdown.get("netAlgaeCount", 0)
     net_algae_points = 4 * net_algae
-    total_algae = processor_algae + net_algae
     total_algae_points = processor_algae_points + net_algae_points
     teleop_points = teleop_coral_points + total_algae_points
 
@@ -841,7 +840,9 @@ def clean_breakdown_2025(
     coral_l3 = auto_mid_coral + teleop_mid_coral
     coral_l4 = auto_top_coral + teleop_top_coral
     total_coral_points = auto_coral_points + teleop_coral_points
-    total_game_pieces = coral_l1 + coral_l2 + coral_l3 + coral_l4 + total_algae
+    total_game_pieces = (
+        coral_l1 + coral_l2 + coral_l3 + coral_l4 + net_algae + processor_algae
+    )
 
     # endgame
     barge_points = breakdown.get("endGameBargePoints", 0)
@@ -878,10 +879,10 @@ def clean_breakdown_2025(
         "comp_12": processor_algae_points,
         "comp_13": net_algae,
         "comp_14": net_algae_points,
-        "comp_15": total_algae,
-        "comp_16": total_algae_points,
-        "comp_17": total_game_pieces,
-        "comp_18": barge_points,
+        "comp_15": total_algae_points,
+        "comp_16": total_game_pieces,
+        "comp_17": barge_points,
+        "comp_18": None,
     }
 
 

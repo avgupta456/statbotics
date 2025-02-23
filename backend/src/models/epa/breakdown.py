@@ -80,6 +80,21 @@ def post_process_breakdown(
         breakdown[keys.index("cone_points")] = cone_points
         breakdown[keys.index("grid_points")] = grid_points
 
+    elif year == 2025:
+        # we internally assign 3 points per processor algae. in reality, it's worth 6 points
+        # for your alliance and 3 points for the opponent (assuming 75% success rate at 4 point net).
+        # Adjust by adding 3 points per processor algae scored by both alliances
+        my_processor_algae = breakdown[keys.index("processor_algae")]
+        opp_processor_algae = opp_breakdown[keys.index("processor_algae")]
+        processor_algae = my_processor_algae + opp_processor_algae
+        breakdown[keys.index("processor_algae_points")] += 3 * my_processor_algae
+        breakdown[keys.index("net_algae")] += 0.75 * opp_processor_algae
+        breakdown[keys.index("net_algae_points")] += 3 * opp_processor_algae
+        breakdown[keys.index("total_algae_points")] += 3 * processor_algae
+        breakdown[keys.index("total_game_pieces")] += 0.75 * opp_processor_algae
+        breakdown[keys.index("teleop_points")] += 3 * processor_algae
+        total_change += 3 * processor_algae
+
     breakdown[0] += total_change
 
     return breakdown
@@ -247,6 +262,14 @@ def post_process_attrib(year: Year, epa: Any, attrib: Any, elim: bool) -> Any:
             + attrib[teleop_index]
             + epa[keys.index("endgame_points")]
         )
+
+    if year.year == 2025:
+        # modifies processor algae to be worth 3 points (from 6)
+        update = 3 * epa[keys.index("processor_algae")]  # loses 3 points per algae
+        attrib[keys.index("processor_algae_points")] -= update
+        attrib[keys.index("total_algae_points")] -= update
+        attrib[keys.index("teleop_points")] -= update
+        attrib[keys.index("no_foul_points")] -= update
 
     if year.year >= 2016 and elim:
         # Don't update RP score during elim match

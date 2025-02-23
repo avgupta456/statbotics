@@ -43,7 +43,6 @@ const configs: { [key: number]: Config } = {
       processor_algae_points: { name: "Processor Algae Points", digits: 1 },
       net_algae: { name: "Net Algae", digits: 1 },
       net_algae_points: { name: "Net Algae Points", digits: 1 },
-      total_algae: { name: "Total Algae", digits: 1 },
       total_algae_points: { name: "Total Algae Points", digits: 1 },
       total_game_pieces: { name: "Total Game Pieces", digits: 1 },
     },

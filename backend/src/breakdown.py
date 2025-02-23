@@ -183,10 +183,9 @@ key_to_name = {
         "comp_12": "processor_algae_points",
         "comp_13": "net_algae",
         "comp_14": "net_algae_points",
-        "comp_15": "total_algae",
-        "comp_16": "total_algae_points",
-        "comp_17": "total_game_pieces",
-        "comp_18": "barge_points",
+        "comp_15": "total_algae_points",
+        "comp_16": "total_game_pieces",
+        "comp_17": "barge_points",
     },
 }
 
