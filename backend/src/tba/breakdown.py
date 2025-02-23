@@ -800,6 +800,91 @@ def clean_breakdown_2024(
     }
 
 
+def clean_breakdown_2025(
+    key: str,
+    alliance: str,
+    breakdown: Dict[str, Any],
+    score: int,
+    no_foul_points: int,
+    foul_points: int,
+) -> BreakdownDict:
+    # auto
+    auto_leave_points = breakdown.get("autoMobilityPoints", 0)
+    auto_coral = breakdown.get("autoCoralCount", 0)
+    auto_coral_points = breakdown.get("autoCoralPoints", 0)
+    auto_reef: Dict[str, int] = breakdown.get("autoReef", {})
+    auto_top_coral = auto_reef.get("tba_topRowCount", 0)
+    auto_mid_coral = auto_reef.get("tba_midRowCount", 0)
+    auto_bot_coral = auto_reef.get("tba_botRowCount", 0)
+    auto_trough_coral = auto_reef.get("trough", 0)
+    auto_points = auto_leave_points + auto_coral_points
+
+    # teleop
+    teleop_coral = breakdown.get("teleopCoralCount", 0)
+    teleop_coral_points = breakdown.get("teleopCoralPoints", 0)
+    teleop_reef: Dict[str, int] = breakdown.get("teleopReef", {})
+    teleop_top_coral = teleop_reef.get("tba_topRowCount", 0)
+    teleop_mid_coral = teleop_reef.get("tba_midRowCount", 0)
+    teleop_bot_coral = teleop_reef.get("tba_botRowCount", 0)
+    teleop_trough_coral = teleop_reef.get("trough", 0)
+    processor_algae = breakdown.get("wallAlgaeCount", 0)
+    processor_algae_points = 6 * processor_algae
+    net_algae = breakdown.get("netAlgaeCount", 0)
+    net_algae_points = 4 * net_algae
+    total_algae = processor_algae + net_algae
+    total_algae_points = processor_algae_points + net_algae_points
+    teleop_points = teleop_coral_points + total_algae_points
+
+    # combined
+    coral_l1 = auto_trough_coral + teleop_trough_coral
+    coral_l2 = auto_bot_coral + teleop_bot_coral
+    coral_l3 = auto_mid_coral + teleop_mid_coral
+    coral_l4 = auto_top_coral + teleop_top_coral
+    total_coral_points = auto_coral_points + teleop_coral_points
+    total_game_pieces = coral_l1 + coral_l2 + coral_l3 + coral_l4 + total_algae
+
+    # endgame
+    barge_points = breakdown.get("endGameBargePoints", 0)
+    endgame_points = barge_points
+
+    # other
+    auto_rp = bool(breakdown.get("autoBonusAchieved", False))
+    coral_rp = bool(breakdown.get("coralBonusAchieved", False))
+    barge_rp = bool(breakdown.get("bargeBonusAchieved", False))
+    tiebreaker_points = int(breakdown.get("coopertitionCriteriaMet", False))
+
+    return {
+        "score": score,
+        "no_foul_points": no_foul_points,
+        "foul_points": foul_points,
+        "auto_points": auto_points,
+        "teleop_points": teleop_points,
+        "endgame_points": endgame_points,
+        "rp_1": auto_rp,
+        "rp_2": coral_rp,
+        "rp_3": barge_rp,
+        "tiebreaker": tiebreaker_points,
+        "comp_1": auto_leave_points,
+        "comp_2": auto_coral,
+        "comp_3": auto_coral_points,
+        "comp_4": teleop_coral,
+        "comp_5": teleop_coral_points,
+        "comp_6": coral_l1,
+        "comp_7": coral_l2,
+        "comp_8": coral_l3,
+        "comp_9": coral_l4,
+        "comp_10": total_coral_points,
+        "comp_11": processor_algae,
+        "comp_12": processor_algae_points,
+        "comp_13": net_algae,
+        "comp_14": net_algae_points,
+        "comp_15": total_algae,
+        "comp_16": total_algae_points,
+        "comp_17": total_game_pieces,
+        "comp_18": barge_points,
+    }
+
+
 def clean_breakdown(
     key: str,
     alliance: str,
@@ -842,6 +927,8 @@ def clean_breakdown(
         out = clean_breakdown_2023(*inputs)
     elif year == 2024:
         out = clean_breakdown_2024(*inputs)
+    elif year == 2025:
+        out = clean_breakdown_2025(*inputs)
     else:
         out["no_foul_points"] = score
 
