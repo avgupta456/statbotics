@@ -91,6 +91,23 @@ export const filterData = (data: any[] | undefined, filter: any) => {
         filteredData = filteredData.filter((datum) => datum[key]);
       } else if (key === "district" && value === "regionals") {
         filteredData = filteredData.filter((datum) => datum["district"] === null);
+      } else if (key === "country" && value === "Europe") {
+        let countries = [
+          "netherlands",
+          "united kingdom",
+          "poland",
+          "france",
+          "switzerland",
+          "ukraine",
+          "sweden",
+          "norway",
+          "denmark",
+          "germany",
+          "romania",
+        ];
+        filteredData = filteredData.filter((datum) =>
+          countries.includes(datum["country"]?.toLowerCase())
+        );
       } else {
         filteredData = filteredData.filter((datum) => datum[key] === value);
       }

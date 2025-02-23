@@ -12,6 +12,7 @@ export const countryOptions = [
   { value: "Australia", label: "Australia" },
   { value: "Brazil", label: "Brazil" },
   { value: "India", label: "India" },
+  { value: "Europe", label: "Europe" },
 ];
 
 export const usaOptions = [
