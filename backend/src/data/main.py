@@ -111,7 +111,7 @@ def reset_all_years():
     clean_db()
     timer.print("Clean DB")
 
-    teams = load_teams_tba(cache=True)
+    teams = load_teams_tba(cache=False)
     timer.print("Load Teams")
 
     all_team_years: Dict[int, Dict[int, TeamYear]] = {}
