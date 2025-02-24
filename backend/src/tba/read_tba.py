@@ -225,6 +225,9 @@ def get_event_matches(
             continue
 
         raw_winner: Optional[str] = match.get("winning_alliance", None)
+        if raw_winner == "":
+            raw_winner = None
+
         # new logic as of 2025, may need to revisit
         # some upcoming events were pre-populated with (0, 0) scores in 2024
         status = MatchStatus.UPCOMING
