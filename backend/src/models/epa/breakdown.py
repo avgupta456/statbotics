@@ -237,8 +237,9 @@ def get_score_from_breakdown(
     return score
 
 
-def post_process_attrib(year: Year, epa: Any, attrib: Any, elim: bool) -> Any:
+def post_process_attrib(year: Year, epa: Any, err: Any, elim: bool) -> Any:
     keys = all_keys[year.year]
+    attrib = epa + err
     if year.year == 2018:
         # Overwrite total points using switch/scale power
         auto_index = keys.index("auto_points")
@@ -265,11 +266,12 @@ def post_process_attrib(year: Year, epa: Any, attrib: Any, elim: bool) -> Any:
 
     if year.year == 2025:
         # modifies processor algae to be worth 3 points (from 6)
-        update = 3 * epa[keys.index("processor_algae")]  # loses 3 points per algae
-        attrib[keys.index("processor_algae_points")] -= update
-        attrib[keys.index("total_algae_points")] -= update
-        attrib[keys.index("teleop_points")] -= update
-        attrib[keys.index("no_foul_points")] -= update
+        update = 3 * err[keys.index("processor_algae")]  # loses 3 points per algae
+        err[keys.index("processor_algae_points")] -= update
+        err[keys.index("total_algae_points")] -= update
+        err[keys.index("teleop_points")] -= update
+        err[keys.index("no_foul_points")] -= update
+        attrib = epa + err
 
     if year.year >= 2016 and elim:
         # Don't update RP score during elim match
