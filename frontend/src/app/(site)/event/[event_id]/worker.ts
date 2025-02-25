@@ -305,7 +305,7 @@ async function indexSim(
     const blueRPs =
       match.result.blue_rp_1 +
       match.result.blue_rp_2 +
-      match.result.red_rp_3 +
+      match.result.blue_rp_3 +
       blueResultToRPs[match.result.winner];
     const [redTiebreaker, blueTiebreaker] = getTiebreakers(data.event.year, match);
 
