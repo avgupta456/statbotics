@@ -87,7 +87,7 @@ export const filterData = (data: any[] | undefined, filter: any) => {
     const value = filter[key];
     if (key !== "search" && value !== "") {
       if (key === "is_competing") {
-        filteredData = filteredData.filter((datum) => datum[key]);
+        filteredData = filteredData.filter((datum) => datum["competing"]["this_week"]);
       } else if (key === "district" && value === "regionals") {
         filteredData = filteredData.filter((datum) => datum["district"] === null);
       } else if (key === "country" && value === "Europe") {
