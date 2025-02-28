@@ -86,6 +86,7 @@ export const districtOptions = [
   { value: "fit", label: "Texas" },
   { value: "fma", label: "Mid-Atlantic" },
   { value: "fnc", label: "North Carolina" },
+  { value: "fsc", label: "South Carolina" },
   { value: "isr", label: "Israel" },
   { value: "ne", label: "New England" },
   { value: "ont", label: "Ontario" },

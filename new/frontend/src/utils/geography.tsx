@@ -119,6 +119,7 @@ export const DISTRICT_FULL_NAMES: { [key: string]: string } = {
   chs: "Chesapeake",
   pch: "Peachtree",
   fnc: "North Carolina",
+  fsc: "South Carolina",
   fin: "Indiana",
   isr: "Israel",
 };

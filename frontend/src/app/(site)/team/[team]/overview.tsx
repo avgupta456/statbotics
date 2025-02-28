@@ -96,9 +96,16 @@ const OverviewSection = ({
   });
 
   if (
-    ["Michigan", "Israel", "Indiana", "Texas", "North Carolina", "Ontario", "Regionals"].includes(
-      district
-    )
+    [
+      "Michigan",
+      "Israel",
+      "Indiana",
+      "Texas",
+      "North Carolina",
+      "South Carolina",
+      "Ontario",
+      "Regionals",
+    ].includes(district)
   ) {
     district = undefined;
   }

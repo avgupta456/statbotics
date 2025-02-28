@@ -105,6 +105,7 @@ districts = {
     "fma": "fma",
     "nc": "fnc",
     "fnc": "fnc",
+    "fsc": "fsc",
     "tx": "fit",
     "fit": "fit",
     "in": "fin",
