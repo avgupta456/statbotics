@@ -373,7 +373,7 @@ class Statbotics:
         week: Optional[int] = None,
         metric: str = "year",
         ascending: Optional[bool] = None,
-        limit: int = 00,
+        limit: int = 100,
         offset: int = 0,
         fields: List[str] = ["all"],
     ) -> List[Dict[str, Any]]:
