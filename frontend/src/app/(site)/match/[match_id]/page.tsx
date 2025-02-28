@@ -6,7 +6,7 @@ import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import { getMatch } from "../../../../server/match";
+import { getMatch } from "../../../../api/match";
 import { MatchData } from "../../../../types/data";
 import { formatEventName } from "../../../../utils";
 import NotFound from "../../shared/notFound";

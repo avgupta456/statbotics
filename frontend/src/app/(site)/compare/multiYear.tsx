@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
+import { getTeam } from "../../../api/team";
 import LineChart from "../../../components/Figures/Line";
 import { multiSelectStyles } from "../../../components/multiSelect";
 import { CURR_YEAR } from "../../../constants";
-import { getTeam } from "../../../server/team";
 import { ShortTeam } from "../../../types/data";
 import { round } from "../../../utils";
 

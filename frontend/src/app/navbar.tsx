@@ -9,8 +9,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { getAllEvents, getAllTeams } from "../api/header";
 import { Option } from "../components/multiSelect";
-import { getAllEvents, getAllTeams } from "../server/header";
 import { ShortEvent, ShortTeam } from "../types/data";
 import { classnames } from "../utils";
 

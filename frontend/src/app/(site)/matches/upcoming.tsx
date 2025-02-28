@@ -4,11 +4,11 @@ import { BsTwitch } from "react-icons/bs";
 import Image from "next/image";
 import Link from "next/link";
 
+import { getUpcomingMatches } from "../../../api/matches";
 import MatchTable from "../../../components/MatchTable";
 import { FilterBar } from "../../../components/filterBar";
 import { formatMatch } from "../../../components/utils";
 import { CURR_YEAR } from "../../../constants";
-import { getUpcomingMatches } from "../../../server/matches";
 import { APIMatch } from "../../../types/api";
 import { truncate } from "../../../utils";
 
