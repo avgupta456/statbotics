@@ -5,6 +5,7 @@ import { BsTwitch } from "react-icons/bs";
 
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 import { getEvent } from "../../../../server/event";
 import { EventData } from "../../../../types/data";
@@ -12,35 +13,37 @@ import { formatEventName } from "../../../../utils";
 import NotFound from "../../shared/notFound";
 import Tabs from "./tabs";
 
-// do not cache this page
-export const revalidate = 0;
-
-const Page = ({ params }: { params: { event_id: string } }) => {
-  const { event_id } = params;
+const Page = () => {
+  const { event_id } = useParams();
 
   const [data, setData] = useState<EventData | undefined>();
 
   useEffect(() => {
-    const getEventData = async (event_id: string) => {
-      if (data) {
-        return;
-      }
+    const fetchEventData = async () => {
+      if (!event_id || data) return;
 
-      setData(await getEvent(event_id));
+      try {
+        const eventData = await getEvent(event_id as string);
+        setData(eventData);
+      } catch (error) {
+        console.error("Error fetching event data:", error);
+      }
     };
 
-    getEventData(event_id);
+    fetchEventData();
   }, [event_id, data]);
 
   useEffect(() => {
-    document.title = `${event_id} - Statbotics`;
+    if (event_id) {
+      document.title = `${event_id} - Statbotics`;
+    }
   }, [event_id]);
 
   if (!data) {
     return <NotFound type="Event" />;
   }
 
-  let truncatedEventName = formatEventName(data.event.name, 30);
+  const truncatedEventName = formatEventName(data.event.name, 30);
   const status = data.event.status;
 
   return (
@@ -51,7 +54,7 @@ const Page = ({ params }: { params: { event_id: string } }) => {
         </p>
         <div className="flex">
           <Link
-            href={"https://www.thebluealliance.com/event/" + event_id}
+            href={`https://www.thebluealliance.com/event/${event_id}`}
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -60,7 +63,7 @@ const Page = ({ params }: { params: { event_id: string } }) => {
 
           {status === "Ongoing" && (
             <Link
-              href={"https://www.thebluealliance.com/gameday/" + event_id}
+              href={`https://www.thebluealliance.com/gameday/${event_id}`}
               rel="noopener noreferrer"
               target="_blank"
               className="ml-2 text-sm"
@@ -71,7 +74,7 @@ const Page = ({ params }: { params: { event_id: string } }) => {
           )}
         </div>
       </div>
-      <Tabs eventId={event_id} year={data.year.year} data={data} />
+      <Tabs eventId={event_id as string} year={data.year.year} data={data} />
     </div>
   );
 };
