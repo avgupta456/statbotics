@@ -18,7 +18,7 @@ def get_timestamp_from_str(date: str):
 
 def get_teams(cache: bool = True) -> List[TeamDict]:
     out: List[TeamDict] = []
-    for i in range(20):
+    for i in range(50):
         data, _ = get_tba("teams/" + str(i), etag=None, cache=cache)
         if type(data) is bool:
             continue
