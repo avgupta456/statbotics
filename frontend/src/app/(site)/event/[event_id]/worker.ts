@@ -297,17 +297,21 @@ async function indexSim(
   }
   for (let i = 0; i < index; i++) {
     const match = qualMatches[i];
-    const redRPs =
-      match.result.red_rp_1 +
-      match.result.red_rp_2 +
-      match.result.red_rp_3 +
-      redResultToRPs[match.result.winner];
-    const blueRPs =
-      match.result.blue_rp_1 +
-      match.result.blue_rp_2 +
-      match.result.blue_rp_3 +
-      blueResultToRPs[match.result.winner];
-    const [redTiebreaker, blueTiebreaker] = getTiebreakers(data.event.year, match);
+    // always completed unless a match needs to be replayed
+    let [redRPs, blueRPs, redTiebreaker, blueTiebreaker] = [2, 2, 0, 0];
+    if (match.status === "Completed") {
+      redRPs =
+        match.result.red_rp_1 +
+        match.result.red_rp_2 +
+        match.result.red_rp_3 +
+        redResultToRPs[match.result.winner];
+      blueRPs =
+        match.result.blue_rp_1 +
+        match.result.blue_rp_2 +
+        match.result.blue_rp_3 +
+        blueResultToRPs[match.result.winner];
+      [redTiebreaker, blueTiebreaker] = getTiebreakers(data.event.year, match);
+    }
 
     const teamMatches = teamMatchesMap[match.key];
     for (let j = 0; j < teamMatches.length; j++) {
