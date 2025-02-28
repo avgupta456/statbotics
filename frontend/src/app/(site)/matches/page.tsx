@@ -1,23 +1,62 @@
-import React from "react";
+"use client";
+
+import React, { useCallback, useContext, useEffect, useState } from "react";
+
+import { useSearchParams } from "next/navigation";
 
 import { validateFilters } from "../../../components/filter";
-import PageContent from "./main";
+import { AppContext } from "../context";
+import PageLayout from "../shared/layout";
+import Tabs from "./tabs";
 
-// cache this page for 1 minute
-export const revalidate = 60;
+const Page = () => {
+  const { year, setYear } = useContext(AppContext);
+  const [error, setError] = useState(false);
 
-export const metadata = {
-  title: "Matches - Statbotics",
-};
+  const searchParams = useSearchParams();
 
-const Page = ({ searchParams: { year, week, country, state, district } }) => {
-  const paramFilters = validateFilters(
-    { year, week, country, state, district },
-    ["year", "week", "country", "state", "district"],
-    [undefined, "", "", "", "", ""]
+  useEffect(() => {
+    document.title = "Matches - Statbotics";
+  }, []);
+
+  const getFilters = useCallback(() => {
+    const filters = {
+      year: searchParams.get("year"),
+      week: searchParams.get("week"),
+      country: searchParams.get("country"),
+      state: searchParams.get("state"),
+      district: searchParams.get("district"),
+      playoff: "",
+      filterMatches: 15,
+      sortMatches: "max_epa",
+      refresh: 0,
+    };
+
+    return validateFilters(
+      filters,
+      ["year", "week", "country", "state", "district"],
+      [undefined, "", "", "", ""]
+    );
+  }, [searchParams]);
+
+  const [filters, setFilters] = useState(getFilters);
+
+  useEffect(() => {
+    const filterYear = parseInt(searchParams.get("year") || year.toString());
+    if (filterYear !== year) setYear(filterYear);
+
+    setFilters(getFilters());
+  }, [searchParams, year, setYear, getFilters]);
+
+  useEffect(() => {
+    setError(false);
+  }, [year]);
+
+  return (
+    <PageLayout title="Matches" year={year} setYear={setYear}>
+      <Tabs year={year} error={error} filters={filters} setFilters={setFilters} />
+    </PageLayout>
   );
-
-  return <PageContent paramFilters={paramFilters} />;
 };
 
 export default Page;
