@@ -5,7 +5,7 @@ import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 import Link from "next/link";
 
-import { getMatch } from "../../../../api/match";
+import { getMatch } from "../../../../server/match";
 import { MatchData } from "../../../../types/data";
 import { formatEventName } from "../../../../utils";
 import NotFound from "../../shared/notFound";

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
-import { getAllTeams } from "../../../api/header";
+import { getAllTeams } from "../../../server/header";
 import { ShortTeam } from "../../../types/data";
 import PageLayout from "../shared/layout";
 import TabsSection from "../shared/tabs";

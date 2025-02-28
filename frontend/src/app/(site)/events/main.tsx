@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from "react";
 
-import { getYearEvents } from "../../../api/events";
+import { getYearEvents } from "../../../server/events";
 import { EventsData } from "../../../types/data";
 import { AppContext } from "../context";
 import PageLayout from "../shared/layout";

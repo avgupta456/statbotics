@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { GiPodium } from "react-icons/gi";
 import Select from "react-select";
 
-import { getTeamEventTeamMatches } from "../../api/event";
 import { BACKEND_URL } from "../../constants";
+import { getTeamEventTeamMatches } from "../../server/event";
 import { APITeamEvent, APITeamMatch } from "../../types/api";
 import { classnames, log, round } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";

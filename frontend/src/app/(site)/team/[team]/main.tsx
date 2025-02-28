@@ -5,8 +5,8 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getTeam, getTeamYear } from "../../../../api/team";
 import { CURR_YEAR } from "../../../../constants";
+import { getTeam, getTeamYear } from "../../../../server/team";
 import { APITeam } from "../../../../types/api";
 import { TeamYearData } from "../../../../types/data";
 import PageLayout from "../../shared/layout";
