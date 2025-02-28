@@ -1,26 +1,30 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+import { useParams } from "next/navigation";
 
 import { CURR_YEAR } from "../../../../../constants";
 import PageContent from "../main";
 
-// do not cache this page
-export const revalidate = 0;
-
-const Page = ({ params }: { params: { team: number; year: number } }) => {
-  let { team, year: paramYear } = params;
-
-  if (paramYear !== -1) {
-    paramYear = Math.max(paramYear, 2002);
-    paramYear = Math.min(paramYear, CURR_YEAR);
-  }
+const Page = () => {
+  const { team, year: paramYear } = useParams();
+  const [year, setYear] = useState(CURR_YEAR);
 
   useEffect(() => {
-    document.title = `Team ${team} - Statbotics`;
+    if (paramYear && paramYear !== "-1") {
+      const numericYear = Math.min(Math.max(Number(paramYear), 2002), CURR_YEAR);
+      setYear(numericYear);
+    }
+  }, [paramYear]);
+
+  useEffect(() => {
+    if (team) {
+      document.title = `Team ${team} - Statbotics`;
+    }
   }, [team]);
 
-  return <PageContent team={team} paramYear={paramYear} />;
+  return <PageContent team={Number(team)} paramYear={year} />;
 };
 
 export default Page;
