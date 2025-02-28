@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 import { getMatch } from "../../../../server/match";
 import { MatchData } from "../../../../types/data";
@@ -14,44 +15,46 @@ import Summary from "./summary";
 import MatchTable from "./table";
 import Video from "./video";
 
-// do not cache this page
-export const revalidate = 0;
-
-const Page = ({ params }: { params: { match_id: string } }) => {
-  const { match_id } = params;
+const Page = () => {
+  const { match_id } = useParams();
   const [data, setData] = useState<MatchData | undefined>();
 
   useEffect(() => {
-    const getMatchData = async (match_id: string) => {
-      if (data) {
-        return;
-      }
+    const fetchMatchData = async () => {
+      if (!match_id || data) return;
 
-      setData(await getMatch(match_id));
+      try {
+        const matchData = await getMatch(match_id as string);
+        setData(matchData);
+      } catch (error) {
+        console.error("Error fetching match data:", error);
+      }
     };
 
-    getMatchData(match_id);
+    fetchMatchData();
   }, [match_id, data]);
 
   useEffect(() => {
-    document.title = `${match_id} - Statbotics`;
+    if (match_id) {
+      document.title = `${match_id} - Statbotics`;
+    }
   }, [match_id]);
 
   if (!data) {
     return <NotFound type="Match" />;
   }
 
-  let truncatedEventName = formatEventName(data.event.name, 40);
+  const truncatedEventName = formatEventName(data.event.name, 40);
 
-  let prevMatch: string | null = null;
-  if (!data.match.elim && data.match.match_number > 1) {
-    prevMatch = `${data.match.event}_qm${(data.match.match_number - 1).toString()}`;
-  }
+  const prevMatch =
+    !data.match.elim && data.match.match_number > 1
+      ? `${data.match.event}_qm${data.match.match_number - 1}`
+      : null;
 
-  let nextMatch: string | null = null;
-  if (!data.match.elim && data.match.match_number < data.event.qual_matches) {
-    nextMatch = `${data.match.event}_qm${(data.match.match_number + 1).toString()}`;
-  }
+  const nextMatch =
+    !data.match.elim && data.match.match_number < data.event.qual_matches
+      ? `${data.match.event}_qm${data.match.match_number + 1}`
+      : null;
 
   return (
     <div className="w-full h-full p-4">
