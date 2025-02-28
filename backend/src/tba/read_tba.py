@@ -224,23 +224,15 @@ def get_event_matches(
         if len(set(red_teams).intersection(set(blue_teams))) > 0:
             continue
 
-        raw_winner: Optional[str] = match.get("winning_alliance", None)
-        if raw_winner == "":
-            raw_winner = None
-
-        # new logic as of 2025, may need to revisit
-        # some upcoming events were pre-populated with (0, 0) scores in 2024
+        red_score = match.get("alliances", {}).get("red", {}).get("score", None)
+        blue_score = match.get("alliances", {}).get("blue", {}).get("score", None)
         status = MatchStatus.UPCOMING
-        if raw_winner is not None:
+        if red_score >= 0 and blue_score >= 0:
             status = MatchStatus.COMPLETED
 
-        red_score = None
-        blue_score = None
         winner = None
         if status == MatchStatus.COMPLETED:
-            red_score = match["alliances"]["red"]["score"]
-            blue_score = match["alliances"]["blue"]["score"]
-
+            raw_winner: Optional[str] = match.get("winning_alliance", None)
             if raw_winner == "red":
                 winner = MatchWinner.RED
             elif raw_winner == "blue":
