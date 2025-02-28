@@ -63,34 +63,45 @@ def process_year(year: Year, matches: List[Match]) -> Year:
             )
             setattr(year, f"comp_{i}_mean", mean)
 
-    if len(week_one_matches) < 100 and year.year == 2025:
-        year.score_mean = 78
-        year.score_sd = 38
-        year.no_foul_mean = 72  # originally 74
-        year.foul_mean = 4
-        year.auto_mean = 16
-        year.teleop_mean = 49  # originally 51
-        year.endgame_mean = 7
-        year.rp_1_mean = 0.39
-        year.rp_2_mean = 0.16
-        year.rp_3_mean = 0.36
-        year.tiebreaker_mean = 0
-        year.comp_1_mean = 7.5
-        year.comp_2_mean = 1.3
-        year.comp_3_mean = 8.7
-        year.comp_4_mean = 12
-        year.comp_5_mean = 45
-        year.comp_6_mean = 2.3
-        year.comp_7_mean = 2.6
-        year.comp_8_mean = 3.4
-        year.comp_9_mean = 6.4
-        year.comp_10_mean = 54
-        year.comp_11_mean = 0.5
-        year.comp_12_mean = 1.6  # originally 3.2
-        year.comp_13_mean = 0.6
-        year.comp_14_mean = 2.3
-        year.comp_15_mean = 3.9  # originally 5.5
-        year.comp_16_mean = 15.7
-        year.comp_17_mean = 7
+    if year.year == 2025:
+        # have to manually set processor algae to 3 points instead of 6
+        # this affects no_foul_mean, teleop_mean, comp_12 (processor_algae_points),
+        # and comp 15 (total algae points)
+
+        update = 3 * year.comp_11_mean  # from 6 to 3 points
+        year.no_foul_mean -= update
+        year.teleop_mean -= update
+        year.comp_12_mean -= update
+        year.comp_15_mean -= update
+
+        # TODO: Delete after Week 1 (set based on isde1/2)
+        year.score_mean = 94
+        year.score_sd = 41
+        year.no_foul_mean = 88  # originally 88
+        year.foul_mean = 4.3
+        year.auto_mean = 20.4
+        year.teleop_mean = 59.5  # originally 59.5
+        year.endgame_mean = 8.05
+        year.rp_1_mean = 0.45
+        year.rp_2_mean = 0.13
+        year.rp_3_mean = 0.29
+        year.tiebreaker_mean = 0.06
+        year.comp_1_mean = 8.0
+        year.comp_2_mean = 2.0
+        year.comp_3_mean = 12.4
+        year.comp_4_mean = 13.8
+        year.comp_5_mean = 54.7
+        year.comp_6_mean = 1.8
+        year.comp_7_mean = 2.4
+        year.comp_8_mean = 4.2
+        year.comp_9_mean = 7.0
+        year.comp_10_mean = 67.2
+        year.comp_11_mean = 0.44
+        year.comp_12_mean = 1.3
+        year.comp_13_mean = 0.87
+        year.comp_14_mean = 3.5
+        year.comp_15_mean = 4.8
+        year.comp_16_mean = 16.8
+        year.comp_17_mean = 8
 
     return year
