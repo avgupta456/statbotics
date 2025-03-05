@@ -4,7 +4,7 @@ import React, { FC } from "react";
 
 import { filterData } from "../../../components/filter";
 import { FilterBar } from "../../../components/filterBar";
-import { CURR_WEEK, CURR_YEAR } from "../../../constants";
+import { CURR_WEEK } from "../../../constants";
 import { APIEvent } from "../../../types/api";
 import { EventsData } from "../../../types/data";
 

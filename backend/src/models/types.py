@@ -23,7 +23,7 @@ class AlliancePred:
         self.rp_3 = rp_3
 
     def __repr__(self):
-        return f"Pred({self.score} {self.rp_1} {self.rp_2})"
+        return f"Pred({self.score} {self.rp_1} {self.rp_2} {self.rp_3})"
 
 
 class MatchPred:
@@ -51,7 +51,7 @@ class MatchPred:
         self.red_rp_2 = red_pred.rp_2
         self.blue_rp_2 = blue_pred.rp_2
         self.red_rp_3 = red_pred.rp_3
-        self.blue_rp_3 = red_pred.rp_3
+        self.blue_rp_3 = blue_pred.rp_3
 
 
 class Attribution:

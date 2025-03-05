@@ -14,7 +14,7 @@ const shuffle = (a) => {
 };
 
 const getTiebreakers = (year: number, match: APIMatch) => {
-  return [match.result.red_tiebreaker, match.result.blue_tiebreaker];
+  return [match.result.red_tiebreaker_points, match.result.blue_tiebreaker_points];
 };
 
 const getRandomTiebreaker = (year: number, currArr: number[]) => {
@@ -38,17 +38,21 @@ const getRandomTiebreaker = (year: number, currArr: number[]) => {
     } else if (year === 2024) {
       return 45 + Math.round(Math.random() * 20);
     } else if (year === 2025) {
-      // TODO: Replace with mean/sd after week 1
-      return 45 + Math.round(Math.random() * 20);
+      return Math.random() < 0.3 ? 1 : 0;
     } else {
       return 0;
     }
   } else {
-    // Use local MEAN and SD
-    const arr = currArr.map((a) => a % 10000); // Do not predict any tech fouls
-    const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
-    const std = Math.sqrt(arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length);
-    return Math.round(mean + 5 * (Math.random() - 0.5) * std);
+    if (year === 2025) {
+      const mean = currArr.reduce((a, b) => a + b, 0) / currArr.length;
+      return Math.random() < mean ? 1 : 0;
+    } else {
+      // Use local MEAN and SD
+      const arr = currArr.map((a) => a % 10000); // Do not predict any tech fouls
+      const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+      const std = Math.sqrt(arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length);
+      return Math.round(mean + 5 * (Math.random() - 0.5) * std);
+    }
   }
 };
 
@@ -165,28 +169,28 @@ async function preSim(
       let redEPA = currEPAs[red[0]] + currEPAs[red[1]] + currEPAs[red[2]];
       let redRP1EPA = currRP1EPAs[red[0]] + currRP1EPAs[red[1]] + currRP1EPAs[red[2]];
       let redRP2EPA = currRP2EPAs[red[0]] + currRP2EPAs[red[1]] + currRP2EPAs[red[2]];
-      let redRP3EPA = currRP3EPAs[red[0]] + currRP3EPAs[red[1]] + currRP3EPAs[red[3]];
+      let redRP3EPA = currRP3EPAs[red[0]] + currRP3EPAs[red[1]] + currRP3EPAs[red[2]];
       let blueEPA = currEPAs[blue[0]] + currEPAs[blue[1]] + currEPAs[blue[2]];
       let blueRP1EPA = currRP1EPAs[blue[0]] + currRP1EPAs[blue[1]] + currRP1EPAs[blue[2]];
       let blueRP2EPA = currRP2EPAs[blue[0]] + currRP2EPAs[blue[1]] + currRP2EPAs[blue[2]];
-      let blueRP3EPA = currRP3EPAs[blue[0]] + currRP3EPAs[blue[1]] + currRP3EPAs[blue[3]];
+      let blueRP3EPA = currRP3EPAs[blue[0]] + currRP3EPAs[blue[1]] + currRP3EPAs[blue[2]];
 
       const winProb = 1 / (1 + Math.pow(10, ((-5 / 8) * (redEPA - blueEPA)) / TOTAL_SD));
       const redWin = Math.random() < winProb ? 1 : 0;
 
       const redRP1Prob = getRPProb(redRP1EPA);
       const redRP2Prob = getRPProb(redRP2EPA);
-      const redPR3Prob = getRPProb(redRP3EPA);
+      const redRP3Prob = getRPProb(redRP3EPA);
       const redRP1 = Math.random() < redRP1Prob ? 1 : 0;
       const redRP2 = Math.random() < redRP2Prob ? 1 : 0;
-      const redRP3 = Math.random() < redPR3Prob ? 1 : 0;
+      const redRP3 = Math.random() < redRP3Prob ? 1 : 0;
 
       const blueRP1Prob = getRPProb(blueRP1EPA);
       const blueRP2Prob = getRPProb(blueRP2EPA);
-      const bluePR3Prob = getRPProb(blueRP3EPA);
+      const blueRP3Prob = getRPProb(blueRP3EPA);
       const blueRP1 = Math.random() < blueRP1Prob ? 1 : 0;
       const blueRP2 = Math.random() < blueRP2Prob ? 1 : 0;
-      const blueRP3 = Math.random() < bluePR3Prob ? 1 : 0;
+      const blueRP3 = Math.random() < blueRP3Prob ? 1 : 0;
 
       const redRPs =
         yearNum >= 2025

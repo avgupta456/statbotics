@@ -74,34 +74,4 @@ def process_year(year: Year, matches: List[Match]) -> Year:
         year.comp_12_mean -= update
         year.comp_15_mean -= update
 
-        # TODO: Delete after Week 1 (set based on isde1/2)
-        year.score_mean = 94
-        year.score_sd = 41
-        year.no_foul_mean = 88  # originally 88
-        year.foul_mean = 4.3
-        year.auto_mean = 20.4
-        year.teleop_mean = 59.5  # originally 59.5
-        year.endgame_mean = 8.05
-        year.rp_1_mean = 0.45
-        year.rp_2_mean = 0.13
-        year.rp_3_mean = 0.29
-        year.tiebreaker_mean = 0.06
-        year.comp_1_mean = 8.0
-        year.comp_2_mean = 2.0
-        year.comp_3_mean = 12.4
-        year.comp_4_mean = 13.8
-        year.comp_5_mean = 54.7
-        year.comp_6_mean = 1.8
-        year.comp_7_mean = 2.4
-        year.comp_8_mean = 4.2
-        year.comp_9_mean = 7.0
-        year.comp_10_mean = 67.2
-        year.comp_11_mean = 0.44
-        year.comp_12_mean = 1.3
-        year.comp_13_mean = 0.87
-        year.comp_14_mean = 3.5
-        year.comp_15_mean = 4.8
-        year.comp_16_mean = 16.8
-        year.comp_17_mean = 8
-
     return year

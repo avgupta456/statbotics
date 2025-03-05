@@ -289,6 +289,9 @@ class Match(_Match, Model):
                 rp_name = key_to_name[self.year][rp]
                 clean["pred"][f"red_{rp_name}"] = getattr(self, f"epa_red_{rp}_pred")
                 clean["pred"][f"blue_{rp_name}"] = getattr(self, f"epa_blue_{rp}_pred")
+            for rp in rps:
+                clean["pred"][f"red_{rp}"] = getattr(self, f"epa_red_{rp}_pred")
+                clean["pred"][f"blue_{rp}"] = getattr(self, f"epa_blue_{rp}_pred")
             pairs = list(key_to_name[self.year].items())
             pairs += [(rp, rp) for rp in rps]
             for key, name in pairs:
