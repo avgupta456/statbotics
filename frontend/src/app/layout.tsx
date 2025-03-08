@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import Image from "next/image";
@@ -7,31 +9,32 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "./navbar";
 
-export const metadata = {
-  title: "Statbotics",
-  description: "Modernizing FRC Data Analytics",
-  metadataBase: new URL("https://www.statbotics.io"),
-  openGraph: {
-    title: "Statbotics",
-    description: "Modernizing FRC Data Analytics",
-    type: "website",
-    url: "https://www.statbotics.io",
-    images: [
-      {
-        url: "https://www.statbotics.io/og_spline.png",
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
-  icons: {
-    icon: "/favicon.ico",
-  },
+const Meta = () => {
+  return (
+    <head>
+      <title>Statbotics</title>
+      <meta name="description" content="Modernizing FRC Data Analytics" />
+
+      {/* Open Graph Tags */}
+      <meta property="og:title" content="Statbotics" />
+      <meta property="og:description" content="Modernizing FRC Data Analytics" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://www.statbotics.io" />
+      <meta property="og:image" content="https://www.statbotics.io/og_spline.png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:logo" content="https://www.statbotics.io/circ_favicon.ico" />
+
+      {/* Favicon */}
+      <link rel="icon" href="/favicon.ico" />
+    </head>
+  );
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <Meta />
       <body>
         <Script id="google" async src="https://www.googletagmanager.com/gtag/js?id=G-JD14NTTG5M" />
         <Script
