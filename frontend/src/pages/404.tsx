@@ -1,30 +1,27 @@
 // pages/404.tsx
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
 
-// The useRouter hook for redirection
 import NotFound from "../pagesContent/shared/notFound";
-
-// Assuming you have a NotFound component
 
 const NotFoundPage = () => {
   const router = useRouter();
-  const path = router.asPath.split("/").filter(Boolean); // Extracts path segments
+  const path = router.asPath.split("/").filter(Boolean);
 
-  // Handle redirection logic if necessary
-  if (path.length === 1) {
-    const firstPath = path[0];
+  useEffect(() => {
+    if (path.length === 1) {
+      const firstPath = path[0];
 
-    // Check if it's all digits
-    if (/^\d+$/.test(firstPath)) {
-      router.push(`/team/${firstPath}`);
-    } else if (firstPath.includes("_")) {
-      router.push(`/match/${firstPath}`);
-    } else {
-      router.push(`/event/${firstPath}`);
+      if (/^\d+$/.test(firstPath)) {
+        router.replace(`/team/${firstPath}`);
+      } else if (firstPath.includes("_")) {
+        router.replace(`/match/${firstPath}`);
+      } else {
+        router.replace(`/event/${firstPath}`);
+      }
     }
-  }
+  }, [path, router]);
 
   return <NotFound type="Page" />;
 };

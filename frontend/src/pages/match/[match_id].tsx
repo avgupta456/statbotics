@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import { getMatch } from "../../api/match";
+import SiteLayout from "../../layouts/siteLayout";
 import ImageRow from "../../pagesContent/match/[match_id]/imageRow";
 import Summary from "../../pagesContent/match/[match_id]/summary";
 import MatchTable from "../../pagesContent/match/[match_id]/table";
@@ -15,8 +16,9 @@ import NotFound from "../../pagesContent/shared/notFound";
 import { MatchData } from "../../types/data";
 import { formatEventName } from "../../utils";
 
-const Page = () => {
-  const { match_id } = useParams();
+const InnerPage = () => {
+  const router = useRouter();
+  const { match_id } = router.query;
   const [data, setData] = useState<MatchData | undefined>();
 
   useEffect(() => {
@@ -89,6 +91,14 @@ const Page = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <SiteLayout>
+      <InnerPage />
+    </SiteLayout>
   );
 };
 

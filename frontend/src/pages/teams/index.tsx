@@ -2,22 +2,24 @@
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import { getYearTeamYears } from "../../api/teams";
 import { validateFilters } from "../../components/filter";
 import { CURR_YEAR } from "../../constants";
+import SiteLayout from "../../layouts/siteLayout";
 import { AppContext } from "../../pagesContent/context";
 import PageLayout from "../../pagesContent/shared/layout";
 import Tabs from "../../pagesContent/teams/tabs";
 import { TeamYearsData } from "../../types/data";
 
-const Page = () => {
+const InnerPage = () => {
   const { teamYearDataDict, setTeamYearDataDict, year, setYear } = useContext(AppContext);
   const data: TeamYearsData | undefined = teamYearDataDict[year];
   const [error, setError] = useState(false);
 
-  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { year: queryYear, country, state, district } = router.query;
 
   useEffect(() => {
     document.title = "Teams - Statbotics";
@@ -25,10 +27,10 @@ const Page = () => {
 
   const getFilters = useCallback(() => {
     const filters = {
-      year: searchParams.get("year"),
-      country: searchParams.get("country"),
-      state: searchParams.get("state"),
-      district: searchParams.get("district"),
+      year: queryYear,
+      country,
+      state,
+      district,
       is_competing: year === CURR_YEAR ? "" : undefined,
     };
 
@@ -37,16 +39,18 @@ const Page = () => {
       ["year", "country", "state", "district"],
       [undefined, "", "", ""]
     );
-  }, [searchParams, year]);
+  }, [queryYear, country, state, district, year]);
 
   const [filters, setFilters] = useState(getFilters);
 
   useEffect(() => {
-    const filterYear = parseInt(searchParams.get("year") || year.toString());
-    if (filterYear !== year) setYear(filterYear);
+    if (queryYear) {
+      const filterYear = parseInt(queryYear as string);
+      if (filterYear !== year) setYear(filterYear);
+    }
 
     setFilters(getFilters());
-  }, [searchParams, year, setYear, getFilters]);
+  }, [queryYear, year, setYear, getFilters]);
 
   useEffect(() => {
     setError(false);
@@ -74,6 +78,14 @@ const Page = () => {
     <PageLayout title="Teams" year={year} setYear={setYear}>
       <Tabs year={year} data={data} error={error} filters={filters} setFilters={setFilters} />
     </PageLayout>
+  );
+};
+
+const Page = () => {
+  return (
+    <SiteLayout>
+      <InnerPage />
+    </SiteLayout>
   );
 };
 

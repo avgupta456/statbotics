@@ -1,5 +1,6 @@
 import React from "react";
 
+import SiteLayout from "../../layouts/siteLayout";
 import Tabs from "../../pagesContent/compare/tabs";
 
 export const metadata = {
@@ -7,7 +8,11 @@ export const metadata = {
 };
 
 const Page = () => {
-  return <Tabs />;
+  return (
+    <SiteLayout>
+      <Tabs />
+    </SiteLayout>
+  );
 };
 
 export default Page;

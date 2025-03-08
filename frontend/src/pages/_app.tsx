@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import type { AppProps } from "next/app";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +11,7 @@ import Script from "next/script";
 import Navbar from "../pagesContent/navbar";
 import "../styles/globals.css";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ Component, pageProps }: AppProps) {
   return (
     <div>
       <Head>
@@ -49,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       />
       <div className="min-h-screen flex flex-col bg-white text-gray-800">
         <Navbar />
-        {children}
+        <Component {...pageProps} />
         <footer className="w-full border-t border-gray-300 text-gray-600 text-center pt-3 pb-2">
           <div className="h-4 sm:h-5 lg:h-6 flex justify-center items-center gap-1 text-xs sm:text-sm lg:text-base">
             Powered by{" "}

@@ -2,21 +2,23 @@
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import { getYearEvents } from "../../api/events";
 import { validateFilters } from "../../components/filter";
+import SiteLayout from "../../layouts/siteLayout";
 import { AppContext } from "../../pagesContent/context";
 import Tabs from "../../pagesContent/events/tabs";
 import PageLayout from "../../pagesContent/shared/layout";
 import { EventsData } from "../../types/data";
 
-const Page = () => {
+const InnerPage = () => {
   const { eventDataDict, setEventDataDict, year, setYear } = useContext(AppContext);
   const data: EventsData | undefined = eventDataDict[year];
   const [error, setError] = useState(false);
 
-  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { year: queryYear, week, country, state, district, search } = router.query;
 
   useEffect(() => {
     document.title = "Events - Statbotics";
@@ -24,12 +26,12 @@ const Page = () => {
 
   const getFilters = useCallback(() => {
     const filters = {
-      year: searchParams.get("year"),
-      week: searchParams.get("week"),
-      country: searchParams.get("country"),
-      state: searchParams.get("state"),
-      district: searchParams.get("district"),
-      search: searchParams.get("search"),
+      year: queryYear,
+      week,
+      country,
+      state,
+      district,
+      search,
     };
 
     return validateFilters(
@@ -37,16 +39,18 @@ const Page = () => {
       ["year", "week", "country", "state", "district", "search"],
       [undefined, "", "", "", "", ""]
     );
-  }, [searchParams]);
+  }, [queryYear, week, country, state, district, search]);
 
   const [filters, setFilters] = useState(getFilters);
 
   useEffect(() => {
-    const filterYear = parseInt(searchParams.get("year") || year.toString());
-    if (filterYear !== year) setYear(filterYear);
+    if (queryYear) {
+      const filterYear = parseInt(queryYear as string);
+      if (filterYear !== year) setYear(filterYear);
+    }
 
     setFilters(getFilters());
-  }, [searchParams, year, setYear, getFilters]);
+  }, [queryYear, year, setYear, getFilters]);
 
   useEffect(() => {
     setError(false);
@@ -74,6 +78,14 @@ const Page = () => {
     <PageLayout title="Events" year={year} setYear={setYear}>
       <Tabs data={data} error={error} filters={filters} setFilters={setFilters} />
     </PageLayout>
+  );
+};
+
+const Page = () => {
+  return (
+    <SiteLayout>
+      <InnerPage />
+    </SiteLayout>
   );
 };
 

@@ -5,16 +5,18 @@ import { BsTwitch } from "react-icons/bs";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import { getEvent } from "../../api/event";
+import SiteLayout from "../../layouts/siteLayout";
 import Tabs from "../../pagesContent/event/[event_id]/tabs";
 import NotFound from "../../pagesContent/shared/notFound";
 import { EventData } from "../../types/data";
 import { formatEventName } from "../../utils";
 
-const Page = () => {
-  const { event_id } = useParams();
+const InnerPage = () => {
+  const router = useRouter();
+  const { event_id } = router.query;
 
   const [data, setData] = useState<EventData | undefined>();
 
@@ -79,4 +81,11 @@ const Page = () => {
   );
 };
 
+const Page = () => {
+  return (
+    <SiteLayout>
+      <InnerPage />
+    </SiteLayout>
+  );
+};
 export default Page;

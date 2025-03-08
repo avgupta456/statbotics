@@ -2,13 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 import { CURR_YEAR } from "../../../constants";
+import SiteLayout from "../../../layouts/siteLayout";
 import PageContent from "../../../pagesContent/team/main";
 
-const Page = () => {
-  const { team, year: paramYear } = useParams();
+const InnerPage = () => {
+  const router = useRouter();
+  const { team, year: paramYear } = router.query;
   const [year, setYear] = useState(CURR_YEAR);
 
   useEffect(() => {
@@ -27,4 +29,11 @@ const Page = () => {
   return <PageContent team={Number(team)} paramYear={year} />;
 };
 
+const Page = () => {
+  return (
+    <SiteLayout>
+      <InnerPage />
+    </SiteLayout>
+  );
+};
 export default Page;
