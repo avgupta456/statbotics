@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import { getEvent } from "../../../../api/event";
+import { getEvent } from "../../../../server/event";
 import { EventData } from "../../../../types/data";
 import { formatEventName } from "../../../../utils";
 import NotFound from "../../shared/notFound";

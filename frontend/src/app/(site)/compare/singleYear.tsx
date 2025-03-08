@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 
-import { getYearTeamYears } from "../../../api/teams";
 import YearLineChart from "../../../components/Figures/YearLine";
 import { CURR_YEAR } from "../../../constants";
+import { getYearTeamYears } from "../../../server/teams";
 import { APITeamYear } from "../../../types/api";
 import { ShortTeam } from "../../../types/data";
 

@@ -4,8 +4,8 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
-import { getYearEvents } from "../../../api/events";
 import { validateFilters } from "../../../components/filter";
+import { getYearEvents } from "../../../server/events";
 import { EventsData } from "../../../types/data";
 import { AppContext } from "../context";
 import PageLayout from "../shared/layout";

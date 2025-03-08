@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { getNoteworthyMatches } from "../../../api/matches";
 import MatchTable from "../../../components/MatchTable";
 import { FilterBar } from "../../../components/filterBar";
+import { getNoteworthyMatches } from "../../../server/matches";
 import { APIMatch } from "../../../types/api";
 import { classnames } from "../../../utils";
 

@@ -4,9 +4,9 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
-import { getYearTeamYears } from "../../../api/teams";
 import { validateFilters } from "../../../components/filter";
 import { CURR_YEAR } from "../../../constants";
+import { getYearTeamYears } from "../../../server/teams";
 import { TeamYearsData } from "../../../types/data";
 import { AppContext } from "../context";
 import PageLayout from "../shared/layout";

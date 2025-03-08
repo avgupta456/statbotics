@@ -6,7 +6,7 @@ import { GiPodium } from "react-icons/gi";
 import Select, { createFilter } from "react-select";
 import WindowedSelect from "react-windowed-select";
 
-import { getTeamYearTeamMatches } from "../../api/teams";
+import { getTeamYearTeamMatches } from "../../server/teams";
 import { APITeamMatch, APITeamYear } from "../../types/api";
 import { classnames } from "../../utils";
 import { multiSelectStyles } from "../multiSelect";

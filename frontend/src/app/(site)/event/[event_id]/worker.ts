@@ -432,6 +432,9 @@ async function indexSim(
       }
     }
 
+    console.log(581, currSimTiebreakers[581]);
+    console.log(1678, currSimTiebreakers[1678]);
+
     const simRanksArr = Object.keys(currSimRPs).sort((a, b) => {
       if (currSimRPs[a] === currSimRPs[b]) {
         const tiebreakerA = currSimTiebreakers[a].reduce((x, y) => x + y, 0);
