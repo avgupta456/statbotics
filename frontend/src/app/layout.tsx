@@ -23,7 +23,7 @@ const Meta = () => {
       <meta property="og:image" content="https://www.statbotics.io/og_spline.png" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:logo" content="/circ_favicon.ico" />
+      <meta property="og:logo" content="https://www.statbotics.io/circ_favicon.ico" />
 
       {/* Favicon */}
       <link rel="icon" href="/favicon.ico" />
