@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +9,7 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "./navbar";
 
-export const metadata = {
+const metadata = {
   title: "Statbotics",
   description: "Modernizing FRC Data Analytics",
   metadataBase: new URL("https://www.statbotics.io"),
@@ -30,6 +32,40 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    // Helper function to set or create meta tags
+    const setMetaTag = (property, content) => {
+      let element = document.querySelector(`meta[${property}]`);
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute(property.split("=")[0], property.split("=")[1]);
+        document.head.appendChild(element);
+      }
+      element.setAttribute("content", content);
+    };
+
+    document.title = metadata.title;
+
+    // Set or create meta tags
+    setMetaTag("name='description'", metadata.description);
+    setMetaTag("property='og:title'", metadata.openGraph.title);
+    setMetaTag("property='og:description'", metadata.openGraph.description);
+    setMetaTag("property='og:type'", metadata.openGraph.type);
+    setMetaTag("property='og:url'", metadata.openGraph.url);
+    setMetaTag("property='og:image'", metadata.openGraph.images[0].url);
+    setMetaTag("property='og:image:width'", metadata.openGraph.images[0].width.toString());
+    setMetaTag("property='og:image:height'", metadata.openGraph.images[0].height.toString());
+
+    // Set or create favicon
+    let favicon = document.querySelector("link[rel='icon']");
+    if (!favicon) {
+      favicon = document.createElement("link");
+      favicon.setAttribute("rel", "icon");
+      document.head.appendChild(favicon);
+    }
+    favicon.setAttribute("href", metadata.icons.icon);
+  }, []);
+
   return (
     <html lang="en">
       <body>
