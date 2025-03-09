@@ -10,7 +10,7 @@ steps:
     env:
       - "CRDB_USER=abhijit"
       - "CRDB_PWD=${_CRDB_PWD}"
-      - "CRDB_HOST=free-tier.gcp-us-central1.cockroachlabs.cloud:26257"
+      - "CRDB_HOST=statbotics-5256.5xj.gcp-us-central1.cockroachlabs.cloud:26257"
       - "PROD=True"
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy", "--appyaml", "./deploy/data_app.yaml"]
