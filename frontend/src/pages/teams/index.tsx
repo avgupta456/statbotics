@@ -58,11 +58,20 @@ const InnerPage = () => {
 
   useEffect(() => {
     const getDataForYear = async (year: number) => {
-      if (teamYearDataDict[year] || error) {
+      if (error) {
         return;
       }
 
-      const data: TeamYearsData = await getYearTeamYears(year);
+      const numTeamYears = teamYearDataDict[year]?.team_years?.length ?? 0;
+
+      let data: TeamYearsData | null = null;
+      if (numTeamYears < 100) {
+        data = await getYearTeamYears(year, 100);
+      } else if (numTeamYears < 101) {
+        data = await getYearTeamYears(year);
+      } else {
+        return;
+      }
 
       if (!data) {
         setError(true);

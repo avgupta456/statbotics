@@ -50,7 +50,7 @@ async def get_team_years(
             query = query.filter(TeamYearORM.district == district)
 
         if metric is not None:
-            column = getattr(TeamYear, metric, None)
+            column = getattr(TeamYearORM, metric, None)
             if column:
                 if ascending:
                     query = query.order_by(column.asc())
