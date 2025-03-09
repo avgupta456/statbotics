@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
@@ -13,7 +14,7 @@ from src.api import (
     get_teams_cached,
     get_year_cached,
 )
-from src.db.models import Match, Team, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Team
 
 # from src.site.helper import compress
 from src.utils.decorators import (
@@ -37,13 +38,13 @@ async def read_all_teams(response: Response, no_cache: bool = False) -> Any:
 async def read_team_years(
     response: Response, team_num: int, no_cache: bool = False
 ) -> Any:
-    team: Optional[Team] = await get_team_cached(team=team_num, no_cache=no_cache)
+    team, team_years = await asyncio.gather(
+        get_team_cached(team=team_num, no_cache=no_cache),
+        get_team_years_cached(team=team_num, no_cache=no_cache),
+    )
     if team is None:
         raise Exception("Team not found")
 
-    team_years: List[TeamYear] = await get_team_years_cached(
-        team=team_num, no_cache=True
-    )
     team_year_stats = [
         {
             "year": x.year,
@@ -75,30 +76,18 @@ async def read_team_years(
 async def read_team_year(
     response: Response, team_num: int, year: int, no_cache: bool = False
 ) -> Any:
-    year_obj: Optional[Year] = await get_year_cached(year=year, no_cache=no_cache)
+    year_obj, team_year, team_events, matches, team_matches = await asyncio.gather(
+        get_year_cached(year=year, no_cache=no_cache),
+        get_team_year_cached(team=team_num, year=year, no_cache=no_cache),
+        get_team_events_cached(team=team_num, year=year, no_cache=no_cache),
+        get_matches_cached(team=team_num, year=year, no_cache=no_cache),
+        get_team_matches_cached(team=team_num, year=year, no_cache=no_cache),
+    )
+
     if year_obj is None:
         raise Exception("Year not found")
-
-    team_year: Optional[TeamYear] = await get_team_year_cached(
-        team=team_num,
-        year=year,
-        no_cache=no_cache,
-    )
     if team_year is None:
         raise Exception("TeamYear not found")
-
-    team_events: List[TeamEvent] = await get_team_events_cached(
-        year=year,
-        team=team_num,
-        no_cache=no_cache,
-    )
-
-    matches: List[Match] = await get_matches_cached(
-        team=team_num, year=year, no_cache=no_cache
-    )
-    team_matches: List[TeamMatch] = await get_team_matches_cached(
-        team=team_num, year=year, no_cache=no_cache
-    )
 
     team_matches = sorted(team_matches, key=lambda x: x.time)
     matches = sorted(matches, key=lambda x: x.time)

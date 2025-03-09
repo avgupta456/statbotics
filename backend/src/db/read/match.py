@@ -1,26 +1,25 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction  # type: ignore
-
-from src.db.main import Session
+from sqlalchemy import func
+from sqlalchemy.future import select
+from src.db.main import async_session
 from src.db.models.match import Match, MatchORM
-from src.db.read.main import common_filters
 
 
-def get_match(match: str) -> Optional[Match]:
-    def callback(session: SessionType):
-        data = session.query(MatchORM).filter(MatchORM.key == match).first()
+async def get_match(match: str) -> Optional[Match]:
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(
+                select(MatchORM).where(MatchORM.key == match)
+            )
+            data = result.scalars().first()
+            if data is None:
+                return None
 
-        if data is None:
-            return None
-
-        return Match.from_dict(data.__dict__)
-
-    return run_transaction(Session, callback)  # type: ignore
+            return Match.from_dict(data.__dict__)
 
 
-def get_matches(
+async def get_matches(
     team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
@@ -31,11 +30,11 @@ def get_matches(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Match]:
-    @common_filters(MatchORM, Match, metric, ascending, limit, offset)
-    def callback(session: SessionType):
-        data = session.query(MatchORM)
+    async with async_session() as session:
+        query = select(MatchORM)
+
         if team is not None:
-            data = data.filter(
+            query = query.filter(
                 (MatchORM.red_1 == team)
                 | (MatchORM.red_2 == team)
                 | (MatchORM.red_3 == team)
@@ -44,21 +43,35 @@ def get_matches(
                 | (MatchORM.blue_3 == team)
             )
         if year is not None:
-            data = data.filter(MatchORM.year == year)
+            query = query.filter(MatchORM.year == year)
         if event is not None:
-            data = data.filter(MatchORM.event == event)
+            query = query.filter(MatchORM.event == event)
         if week is not None:
-            data = data.filter(MatchORM.week == week)
+            query = query.filter(MatchORM.week == week)
         if elim is not None:
-            data = data.filter(MatchORM.elim == elim)
+            query = query.filter(MatchORM.elim == elim)
 
-        return data
+        if metric is not None:
+            column = getattr(MatchORM, metric, None)
+            if column:
+                if ascending:
+                    query = query.order_by(column.asc())
+                else:
+                    query = query.order_by(column.desc())
 
-    return run_transaction(Session, callback)  # type: ignore
+        if limit is not None:
+            query = query.limit(limit)
+        if offset is not None:
+            query = query.offset(offset)
+
+        result = await session.execute(query)
+        data = result.scalars().all()
+
+        return [Match.from_dict(match.__dict__) for match in data]
 
 
-def get_num_matches() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(MatchORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore
+async def get_num_matches() -> int:
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(select(func.count()).select_from(MatchORM))
+            return result.scalar() or 0

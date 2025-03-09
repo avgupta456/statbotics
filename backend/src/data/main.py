@@ -34,7 +34,7 @@ from src.db.read import (
 from src.db.write.main import update_teams as update_teams_db
 
 
-def process_year(
+async def process_year(
     year_num: int,
     partial: bool,
     cache: bool,
@@ -47,7 +47,7 @@ def process_year(
     if all_team_years is None:
         all_team_years = defaultdict(dict)
         for year in range(max(2002, year_num - 4), year_num):
-            team_years = get_team_years_db(year=year)
+            team_years = await get_team_years_db(year=year)
             for ty in team_years:
                 all_team_years[ty.year][ty.team] = ty
 
@@ -66,20 +66,20 @@ def process_year(
     objs = process_year_epa(objs, all_team_years)
     timer.print(str(year_num) + " EPA")
 
-    write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
+    await write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
     timer.print(str(year_num) + " Write")
 
     return teams
 
 
-def post_process(
+async def post_process(
     teams: List[Team], all_team_years: Optional[Dict[int, Dict[int, TeamYear]]]
 ):
     timer = Timer()
 
     if all_team_years is None:
         all_team_years = defaultdict(dict)
-        all_team_years_list = get_team_years_db()
+        all_team_years_list = await get_team_years_db()
         for ty in all_team_years_list:
             all_team_years[ty.year][ty.team] = ty
 
@@ -89,21 +89,21 @@ def post_process(
     teams = post_process_epa(teams, all_team_years)
     timer.print("Post EPA")
 
-    update_teams_db(teams)
+    await update_teams_db(teams)
     timer.print("Update DB")
 
-    post_process_tba()  # updates DB directly
+    await post_process_tba()  # updates DB directly
     timer.print("Post TBA")
 
 
-def reset_all_years():
+async def reset_all_years():
     timer = Timer()
 
     start_year = 2002
     end_year = CURR_YEAR
 
     try:
-        if get_num_years() > 0:
+        if await get_num_years() > 0:
             return
     except Exception:
         pass
@@ -120,28 +120,28 @@ def reset_all_years():
         if year_num == 2021:
             continue
 
-        teams = process_year(year_num, False, True, teams, objs, all_team_years)
+        teams = await process_year(year_num, False, True, teams, objs, all_team_years)
         all_team_years[year_num] = {ty.team: ty for ty in objs[1].values()}
 
-    post_process(teams, all_team_years)
+    await post_process(teams, all_team_years)
 
 
-def update_curr_year(partial: bool):
+async def update_curr_year(partial: bool):
     year = CURR_YEAR
     timer = Timer()
 
-    teams = get_teams_db()
+    teams = await get_teams_db()
     timer.print("Load Teams")
 
     if partial:
-        objs: objs_type = read_objs_db(year)
+        objs: objs_type = await read_objs_db(year)
         timer.print("Read Objs")
     else:
         objs = create_objs(year)
         timer.print("Create Objs")
 
-    teams = process_year(year, partial, year < CURR_YEAR, teams, objs, None)
+    teams = await process_year(year, partial, year < CURR_YEAR, teams, objs, None)
 
     if not partial:
         # triggers loading all team years
-        post_process(teams, None)
+        await post_process(teams, None)

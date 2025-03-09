@@ -36,7 +36,7 @@ async def get_event_cached(
     event: str,
     no_cache: bool = False,
 ) -> Tuple[bool, Optional[Event]]:
-    return (True, get_event(event_id=event))
+    return (True, await get_event(event_id=event))
 
 
 @alru_cache(ttl=timedelta(minutes=2))
@@ -59,7 +59,7 @@ async def get_events_cached(
 
     return (
         True,
-        get_events(
+        await get_events(
             year=year,
             country=country,
             state=state,
