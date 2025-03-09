@@ -30,9 +30,9 @@ CONN_STR = (
     else "cockroachdb://root@localhost:26257/statbotics3?sslmode=disable"
 )
 
-ASYNC_CONN_STR = CONN_STR.replace("cockroachdb://", "cockroachdb+asyncpg://").replace(
-    "?sslmode=disable", ""
-)
+ASYNC_CONN_STR = CONN_STR.replace("cockroachdb://", "cockroachdb+asyncpg://").split(
+    "?sslmode"
+)[0]
 
 # API
 
