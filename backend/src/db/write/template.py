@@ -1,11 +1,9 @@
-from typing import Any, Callable, Dict, List, Type
+from typing import Any, Callable, List, Type, Coroutine
 
 import attr
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.orm.session import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from src.db.main import session
+from src.db.main import async_session
 from src.db.models.etag import ETagORM
 from src.db.models.event import EventORM
 from src.db.models.main import TModel, TModelORM
@@ -21,57 +19,54 @@ CUTOFF = 1000
 
 def update_template(
     orm_type: Type[TModelORM], obj_type: Type[TModel]
-) -> Callable[[List[TModel], bool], None]:
-    def upsert(items: List[obj_type], insert_only: bool = False) -> None:  # type: ignore
-        def _insert(session: SessionType, data: List[Dict[str, Any]]):
-            for i in range(0, len(data), CUTOFF):
-                session.bulk_insert_mappings(orm_type, data[i : i + CUTOFF])  # type: ignore
+) -> Callable[[List[TModel], bool], Coroutine[Any, Any, None]]:
+    async def upsert(items: List[TModel], insert_only: bool = False) -> None:
+        async def _insert(session, new_items):
+            for i in range(0, len(new_items), CUTOFF):
+                session.add_all(
+                    [orm_type(**data) for data in new_items[i : i + CUTOFF]]
+                )
+            await session.commit()
 
-        def _update(
-            session: SessionType, primary_key: List[str], data: List[Dict[str, Any]]
-        ):
-            for i in range(0, len(data), CUTOFF):
-                insert = postgresql.insert(orm_type.__table__).values(
-                    data[i : i + CUTOFF]
+        async def _update(session, primary_key, new_items):
+            for i in range(0, len(new_items), CUTOFF):
+                insert_stmt = postgresql.insert(orm_type.__table__).values(
+                    new_items[i : i + CUTOFF]
                 )
                 update_cols = {
-                    c.name: c for c in insert.excluded if c.name not in primary_key
+                    c.name: c for c in insert_stmt.excluded if c.name not in primary_key
                 }
-                update = insert.on_conflict_do_update(
+                update_stmt = insert_stmt.on_conflict_do_update(
                     index_elements=primary_key, set_=update_cols
                 )
-                session.execute(update.execution_options(synchronize_session=False))
+                await session.execute(
+                    update_stmt.execution_options(synchronize_session=False)
+                )
 
-        def callback(session: SessionType):
+            await session.commit()
+
+        async with async_session() as session:
             new_items = [attr.asdict(x) for x in items]
 
-            if orm_type == ETagORM:
-                primary_key = ["path"]
-            elif orm_type == TeamORM:
-                primary_key = ["team"]
-            elif orm_type == YearORM:
-                primary_key = ["year"]
-            elif orm_type == TeamYearORM:
-                primary_key = ["team", "year"]
-            elif orm_type == EventORM:
-                primary_key = ["key"]
-            elif orm_type == TeamEventORM:
-                primary_key = ["team", "event"]
-            elif orm_type == MatchORM:
-                primary_key = ["key"]
-            elif orm_type == TeamMatchORM:
-                primary_key = ["team", "match"]
-            else:
+            if not new_items:
+                return
+
+            primary_key = {
+                ETagORM: ["path"],
+                TeamORM: ["team"],
+                YearORM: ["year"],
+                TeamYearORM: ["team", "year"],
+                EventORM: ["key"],
+                TeamEventORM: ["team", "event"],
+                MatchORM: ["key"],
+                TeamMatchORM: ["team", "match"],
+            }.get(orm_type)
+
+            if primary_key is None:
                 raise Exception("Unknown orm_type: " + str(orm_type))
 
             if insert_only:
-                return _insert(session, new_items)
-            return _update(session, primary_key, new_items)
-
-        # short circuit if no items
-        if len(items) == 0:
-            return
-
-        run_transaction(session, callback)
+                return await _insert(session, new_items)
+            return await _update(session, primary_key, new_items)
 
     return upsert

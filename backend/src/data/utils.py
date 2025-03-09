@@ -7,14 +7,6 @@ from src.db.read import (
     get_etags as get_etags_db,
     get_events as get_events_db,
     get_matches as get_matches_db,
-    get_num_etags as get_num_etags_db,
-    get_num_events as get_num_events_db,
-    get_num_matches as get_num_matches_db,
-    get_num_team_events as get_num_team_events_db,
-    get_num_team_matches as get_num_team_matches_db,
-    get_num_team_years as get_num_team_years_db,
-    get_num_teams as get_num_teams_db,
-    get_num_years as get_num_years_db,
     get_team_events as get_team_events_db,
     get_team_matches as get_team_matches_db,
     get_team_years as get_team_years_db,
@@ -74,7 +66,7 @@ async def write_objs(
         # Ensure that all objects are updated
         orig_objs = create_objs(-1)
 
-    update_years_db([objs[0]], clean)
+    await update_years_db([objs[0]], clean)
 
     for prev, curr, update_func in [
         (orig_objs[1], objs[1], update_team_years_db),
@@ -90,18 +82,7 @@ async def write_objs(
             if str(obj) != str(prev.get(obj.pk(), ""))
         ]
 
-        update_func(new_objs, clean)  # type: ignore
-
-
-def print_table_stats() -> None:
-    print("Num Teams:", get_num_teams_db())
-    print("Num Years:", get_num_years_db())
-    print("Num Team Years:", get_num_team_years_db())
-    print("Num Events:", get_num_events_db())
-    print("Num Team Events:", get_num_team_events_db())
-    print("Num Matches:", get_num_matches_db())
-    print("Num Team Matches:", get_num_team_matches_db())
-    print("Num ETags", get_num_etags_db())
+        await update_func(new_objs, clean)  # type: ignore
 
 
 class Timer:

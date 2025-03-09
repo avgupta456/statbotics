@@ -89,7 +89,7 @@ async def post_process(
     teams = post_process_epa(teams, all_team_years)
     timer.print("Post EPA")
 
-    update_teams_db(teams)
+    await update_teams_db(teams)
     timer.print("Update DB")
 
     await post_process_tba()  # updates DB directly
