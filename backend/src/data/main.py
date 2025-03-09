@@ -66,7 +66,7 @@ async def process_year(
     objs = process_year_epa(objs, all_team_years)
     timer.print(str(year_num) + " EPA")
 
-    write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
+    await write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
     timer.print(str(year_num) + " Write")
 
     return teams
@@ -92,7 +92,7 @@ async def post_process(
     update_teams_db(teams)
     timer.print("Update DB")
 
-    post_process_tba()  # updates DB directly
+    await post_process_tba()  # updates DB directly
     timer.print("Post TBA")
 
 

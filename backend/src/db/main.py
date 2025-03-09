@@ -7,7 +7,7 @@ from src.constants import CONN_STR, ASYNC_CONN_STR
 engine = create_engine(CONN_STR)
 async_engine = create_async_engine(ASYNC_CONN_STR)
 
-Session = sessionmaker(bind=engine)
+session = sessionmaker(bind=engine)
 async_session = async_sessionmaker(bind=async_engine)
 
 

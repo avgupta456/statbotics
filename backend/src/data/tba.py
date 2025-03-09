@@ -419,6 +419,6 @@ def process_year(
     )
 
 
-def post_process():
-    remove_teams_with_no_events()
-    update_team_districts()
+async def post_process():
+    await remove_teams_with_no_events()
+    await update_team_districts()

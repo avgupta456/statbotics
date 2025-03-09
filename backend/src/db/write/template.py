@@ -5,7 +5,7 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.session import Session as SessionType
 from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from src.db.main import Session
+from src.db.main import session
 from src.db.models.etag import ETagORM
 from src.db.models.event import EventORM
 from src.db.models.main import TModel, TModelORM
@@ -72,6 +72,6 @@ def update_template(
         if len(items) == 0:
             return
 
-        run_transaction(Session, callback)
+        run_transaction(session, callback)
 
     return upsert

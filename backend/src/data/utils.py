@@ -61,14 +61,14 @@ async def read_objs(year: int) -> objs_type:
     )
 
 
-def write_objs(
+async def write_objs(
     year_num: int,
     objs: objs_type,
     orig_objs: Optional[objs_type] = None,
     clean: bool = False,
 ) -> None:
     if clean:
-        clear_year(year_num)
+        await clear_year(year_num)
 
     if orig_objs is None:
         # Ensure that all objects are updated

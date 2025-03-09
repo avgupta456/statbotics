@@ -69,7 +69,7 @@ async def read_upcoming_matches(
     metric: str = "predicted_time",
     no_cache: bool = False,
 ) -> Any:
-    upcoming_matches = get_upcoming_matches(
+    upcoming_matches = await get_upcoming_matches(
         country=country,
         state=state,
         district=district,
