@@ -37,7 +37,7 @@ async def read_all_events(response: Response, no_cache: bool = False) -> Any:
 async def read_events(response: Response, year: int, no_cache: bool = False) -> Any:
     year_obj, events = await asyncio.gather(
         get_year_cached(year=year, no_cache=no_cache),
-        get_events_cached(year=year, no_cache=no_cache),
+        get_events_cached(year=year, site=True, no_cache=no_cache),
     )
 
     if year_obj is None:

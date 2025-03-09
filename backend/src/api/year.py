@@ -20,7 +20,7 @@ async def read_root_year():
     return {"name": "Year V3 Router"}
 
 
-@alru_cache(ttl=timedelta(minutes=2))
+@alru_cache(ttl=timedelta(minutes=60))
 async def get_year_cached(
     year: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[Year]]:

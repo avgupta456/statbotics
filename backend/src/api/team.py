@@ -36,7 +36,7 @@ async def get_team_cached(
     return (True, await get_team(team=team))
 
 
-@alru_cache(ttl=timedelta(minutes=2))
+@alru_cache(ttl=timedelta(minutes=60))
 async def get_teams_cached(
     country: Optional[str] = None,
     state: Optional[str] = None,
@@ -52,8 +52,10 @@ async def get_teams_cached(
     if not site:
         limit = min(limit or 1000, 1000)
 
+    cache = site and country is None and state is None and district is None
+
     return (
-        True,
+        cache,
         await get_teams(
             country=country,
             state=state,
