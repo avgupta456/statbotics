@@ -22,7 +22,7 @@ CUTOFF = 1000
 def update_template(
     orm_type: Type[TModelORM], obj_type: Type[TModel]
 ) -> Callable[[List[TModel], bool], None]:
-    def upsert(items: List[obj_type], insert_only: bool = False) -> None:
+    def upsert(items: List[obj_type], insert_only: bool = False) -> None:  # type: ignore
         def _insert(session: SessionType, data: List[Dict[str, Any]]):
             for i in range(0, len(data), CUTOFF):
                 session.bulk_insert_mappings(orm_type, data[i : i + CUTOFF])  # type: ignore

@@ -45,19 +45,19 @@ def create_objs(year: int) -> objs_type:
     return (Year(year=year), {}, {}, {}, {}, {}, {})
 
 
-def read_objs(year: int) -> objs_type:
-    year_obj = get_year_db(year)
+async def read_objs(year: int) -> objs_type:
+    year_obj = await get_year_db(year)
     if year_obj is None:
         raise Exception("Year not found")
 
     return (
         year_obj,
-        {t.pk(): t for t in get_team_years_db(year=year)},
-        {e.pk(): e for e in get_events_db(year=year)},
-        {te.pk(): te for te in get_team_events_db(year=year)},
-        {m.pk(): m for m in get_matches_db(year=year)},
-        {tm.pk(): tm for tm in get_team_matches_db(year=year)},
-        {e.pk(): e for e in get_etags_db(year=year)},
+        {t.pk(): t for t in await get_team_years_db(year=year)},
+        {e.pk(): e for e in await get_events_db(year=year)},
+        {te.pk(): te for te in await get_team_events_db(year=year)},
+        {m.pk(): m for m in await get_matches_db(year=year)},
+        {tm.pk(): tm for tm in await get_team_matches_db(year=year)},
+        {e.pk(): e for e in await get_etags_db(year=year)},
     )
 
 

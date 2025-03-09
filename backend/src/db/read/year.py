@@ -1,38 +1,52 @@
 from typing import List, Optional
 
-from sqlalchemy.orm.session import Session as SessionType
-from sqlalchemy_cockroachdb import run_transaction  # type: ignore
-
-from src.db.main import Session
+from sqlalchemy import func
+from sqlalchemy.future import select
+from src.db.main import async_session
 from src.db.models.year import Year, YearORM
-from src.db.read.main import common_filters
 
 
-def get_year(year: int) -> Optional[Year]:
-    def callback(session: SessionType):
-        data = session.query(YearORM).filter(YearORM.year == year).first()
-        if data is None:
-            return None
-        return Year.from_dict(data.__dict__)
+async def get_year(year: int) -> Optional[Year]:
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(select(YearORM).where(YearORM.year == year))
+            data = result.scalars().first()
+            if data is None:
+                return None
 
-    return run_transaction(Session, callback)  # type: ignore
+            return Year.from_dict(data.__dict__)
 
 
-def get_years(
+async def get_years(
     metric: Optional[str] = None,
     ascending: Optional[bool] = None,
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Year]:
-    @common_filters(YearORM, Year, metric, ascending, limit, offset)
-    def callback(session: SessionType):
-        return session.query(YearORM)
+    async with async_session() as session:
+        query = select(YearORM)
 
-    return run_transaction(Session, callback)  # type: ignore
+        if metric is not None:
+            column = getattr(YearORM, metric, None)
+            if column:
+                if ascending:
+                    query = query.order_by(column.asc())
+                else:
+                    query = query.order_by(column.desc())
+
+        if limit is not None:
+            query = query.limit(limit)
+        if offset is not None:
+            query = query.offset(offset)
+
+        result = await session.execute(query)
+        data = result.scalars().all()
+
+        return [Year.from_dict(year.__dict__) for year in data]
 
 
-def get_num_years() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(YearORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore
+async def get_num_years() -> int:
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(select(func.count()).select_from(YearORM))
+            return result.scalar() or 0
