@@ -11,7 +11,6 @@ steps:
       - "CRDB_USER=abhijit"
       - "CRDB_PWD=${_CRDB_PWD}"
       - "CRDB_HOST=free-tier.gcp-us-central1.cockroachlabs.cloud:26257"
-      - "CRDB_CLUSTER=statbotics-5256"
       - "PROD=True"
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy", "--appyaml", "./deploy/site_app.yaml"]
