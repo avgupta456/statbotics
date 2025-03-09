@@ -32,7 +32,7 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
 
   useEffect(() => {
     const _getTeamDataForYear = async (team: number) => {
-      if (teamData) {
+      if (teamData && teamData.team == team) {
         return;
       }
 
@@ -46,7 +46,7 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
 
   useEffect(() => {
     const _getTeamYearDataForYear = async (team: number, year: number) => {
-      if (teamYearDataDict[year]) {
+      if (teamYearDataDict[year] && teamYearDataDict[year]?.team_year.team === team) {
         return;
       }
 
