@@ -8,15 +8,12 @@ from src.db.models.match import Match, MatchORM
 
 async def get_match(match: str) -> Optional[Match]:
     async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(
-                select(MatchORM).where(MatchORM.key == match)
-            )
-            data = result.scalars().first()
-            if data is None:
-                return None
+        result = await session.execute(select(MatchORM).where(MatchORM.key == match))
+        data = result.scalars().first()
+        if data is None:
+            return None
 
-            return Match.from_dict(data.__dict__)
+        return Match.from_dict(data.__dict__)
 
 
 async def get_matches(
@@ -31,10 +28,10 @@ async def get_matches(
     offset: Optional[int] = None,
 ) -> List[Match]:
     async with async_session() as session:
-        query = select(MatchORM)
+        filters = []
 
         if team is not None:
-            query = query.filter(
+            filters.append(
                 (MatchORM.red_1 == team)
                 | (MatchORM.red_2 == team)
                 | (MatchORM.red_3 == team)
@@ -43,21 +40,19 @@ async def get_matches(
                 | (MatchORM.blue_3 == team)
             )
         if year is not None:
-            query = query.filter(MatchORM.year == year)
+            filters.append(MatchORM.year == year)
         if event is not None:
-            query = query.filter(MatchORM.event == event)
+            filters.append(MatchORM.event == event)
         if week is not None:
-            query = query.filter(MatchORM.week == week)
+            filters.append(MatchORM.week == week)
         if elim is not None:
-            query = query.filter(MatchORM.elim == elim)
+            filters.append(MatchORM.elim == elim)
 
-        if metric is not None:
-            column = getattr(MatchORM, metric, None)
-            if column:
-                if ascending:
-                    query = query.order_by(column.asc())
-                else:
-                    query = query.order_by(column.desc())
+        query = select(MatchORM).filter(*filters)
+
+        if metric and hasattr(MatchORM, metric):
+            column = getattr(MatchORM, metric)
+            query = query.order_by(column.asc() if ascending else column.desc())
 
         if limit is not None:
             query = query.limit(limit)
@@ -65,13 +60,10 @@ async def get_matches(
             query = query.offset(offset)
 
         result = await session.execute(query)
-        data = result.scalars().all()
-
-        return [Match.from_dict(match.__dict__) for match in data]
+        return [Match.from_dict(match.__dict__) for match in result.scalars()]
 
 
 async def get_num_matches() -> int:
     async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(func.count()).select_from(MatchORM))
-            return result.scalar() or 0
+        result = await session.execute(select(func.count()).select_from(MatchORM))
+        return result.scalar() or 0

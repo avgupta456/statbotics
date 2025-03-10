@@ -8,13 +8,12 @@ from src.db.models.year import Year, YearORM
 
 async def get_year(year: int) -> Optional[Year]:
     async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(YearORM).where(YearORM.year == year))
-            data = result.scalars().first()
-            if data is None:
-                return None
+        result = await session.execute(select(YearORM).where(YearORM.year == year))
+        data = result.scalars().first()
+        if data is None:
+            return None
 
-            return Year.from_dict(data.__dict__)
+        return Year.from_dict(data.__dict__)
 
 
 async def get_years(
@@ -26,27 +25,20 @@ async def get_years(
     async with async_session() as session:
         query = select(YearORM)
 
-        if metric is not None:
-            column = getattr(YearORM, metric, None)
-            if column:
-                if ascending:
-                    query = query.order_by(column.asc())
-                else:
-                    query = query.order_by(column.desc())
+        if metric and hasattr(YearORM, metric):
+            column = getattr(YearORM, metric)
+            query = query.order_by(column.asc() if ascending else column.desc())
 
-        if limit is not None:
+        if limit:
             query = query.limit(limit)
-        if offset is not None:
+        if offset:
             query = query.offset(offset)
 
         result = await session.execute(query)
-        data = result.scalars().all()
-
-        return [Year.from_dict(year.__dict__) for year in data]
+        return [Year.from_dict(year.__dict__) for year in result.scalars()]
 
 
 async def get_num_years() -> int:
     async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(func.count()).select_from(YearORM))
-            return result.scalar() or 0
+        result = await session.execute(select(func.count()).select_from(YearORM))
+        return result.scalar() or 0
