@@ -5,13 +5,7 @@ from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass
 from src.constants import CONN_STR, ASYNC_CONN_STR
 
 engine = create_engine(CONN_STR)
-async_engine = create_async_engine(
-    ASYNC_CONN_STR,
-    pool_size=1,  # Test no concurrency
-    max_overflow=0,
-    pool_timeout=30,
-    pool_recycle=300,
-)
+async_engine = create_async_engine(ASYNC_CONN_STR)
 
 async_session = async_sessionmaker(bind=async_engine)
 
