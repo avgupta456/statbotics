@@ -26,6 +26,8 @@ export const FilterBar = ({
   includeProjections = false,
   showProjections = false,
   setShowProjections = () => {},
+  loadAllData = true,
+  setLoadAllData = () => {},
 }: {
   defaultFilters: { [key: string]: any };
   filters: { [key: string]: any };
@@ -33,6 +35,8 @@ export const FilterBar = ({
   includeProjections?: boolean;
   showProjections?: boolean;
   setShowProjections?: any;
+  loadAllData?: boolean;
+  setLoadAllData?: any;
 }) => {
   const filterKeys = Object.keys(filters);
   const stateOptions = filters?.country === "Canada" ? canadaOptions : usaOptions;
@@ -132,14 +136,16 @@ export const FilterBar = ({
           />
         </>
       )}
-      {includeProjections && (
+      {(includeProjections || !loadAllData) && (
         <>
           <div className="w-0.5 h-10 ml-2 mr-2 mb-4 bg-gray-500 rounded" />
           <div
             className="h-10 p-2 mb-4 rounded bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200"
-            onClick={() => setShowProjections(!showProjections)}
+            onClick={() =>
+              loadAllData ? setShowProjections(!showProjections) : setLoadAllData(true)
+            }
           >
-            {showProjections ? "Hide" : "Show"} Projections
+            {loadAllData ? `${showProjections ? "Hide" : "Show"} Projections` : "Load All Teams"}
           </div>
         </>
       )}

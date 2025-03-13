@@ -41,11 +41,15 @@ const PageTeamInsightsTable = ({
   data,
   filters,
   setFilters,
+  loadAllData,
+  setLoadAllData,
 }: {
   year: number;
   data: TeamYearsData;
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
+  loadAllData: boolean;
+  setLoadAllData: (loadAllData: boolean) => void;
 }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
   const [showProjections, setShowProjections] = useState(true);
@@ -248,6 +252,8 @@ const PageTeamInsightsTable = ({
           includeProjections={year === CURR_YEAR}
           showProjections={showProjections}
           setShowProjections={setShowProjections}
+          loadAllData={loadAllData}
+          setLoadAllData={setLoadAllData}
         />
       </div>
       <InsightsTable

@@ -14,6 +14,7 @@ import Tabs from "../../pagesContent/teams/tabs";
 import { TeamYearsData } from "../../types/data";
 
 const InnerPage = () => {
+  const [loadAllData, setLoadAllData] = useState(false);
   const { teamYearDataDict, setTeamYearDataDict, year, setYear } = useContext(AppContext);
   const data: TeamYearsData | undefined = teamYearDataDict[year];
   const [error, setError] = useState(false);
@@ -65,9 +66,9 @@ const InnerPage = () => {
       const numTeamYears = teamYearDataDict[year]?.team_years?.length ?? 0;
 
       let data: TeamYearsData | null = null;
-      if (numTeamYears < 100) {
+      if (numTeamYears < 100 && !loadAllData) {
         data = await getYearTeamYears(year, 100);
-      } else if (numTeamYears < 101) {
+      } else if (numTeamYears < 101 && loadAllData) {
         data = await getYearTeamYears(year);
       } else {
         return;
@@ -81,11 +82,19 @@ const InnerPage = () => {
     };
 
     getDataForYear(year);
-  }, [teamYearDataDict, setTeamYearDataDict, year, error]);
+  }, [teamYearDataDict, setTeamYearDataDict, year, error, loadAllData]);
 
   return (
     <PageLayout title="Teams" year={year} setYear={setYear}>
-      <Tabs year={year} data={data} error={error} filters={filters} setFilters={setFilters} />
+      <Tabs
+        year={year}
+        data={data}
+        error={error}
+        filters={filters}
+        setFilters={setFilters}
+        loadAllData={loadAllData}
+        setLoadAllData={setLoadAllData}
+      />
     </PageLayout>
   );
 };
