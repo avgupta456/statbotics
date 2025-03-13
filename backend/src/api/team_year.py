@@ -14,7 +14,6 @@ from src.api.query import (
     team_query,
     year_query,
 )
-from src.constants import CURR_YEAR
 from src.db.models import TeamYear
 from src.db.read import get_team_year, get_team_years
 from src.utils.alru_cache import alru_cache
@@ -35,10 +34,10 @@ async def read_root_team_year():
 async def get_team_year_cached(
     team: int, year: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamYear]]:
-    return (True, await get_team_year(team=team, year=year))
+    return (True, get_team_year(team=team, year=year))
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_team_years_cached(
     team: Optional[int] = None,
     year: Optional[int] = None,
@@ -55,18 +54,9 @@ async def get_team_years_cached(
     if not site:
         limit = min(limit or 1000, 1000)
 
-    cache = (
-        site
-        and team is None
-        and year == CURR_YEAR
-        and country is None
-        and state is None
-        and district is None
-    )
-
     return (
-        cache,
-        await get_team_years(
+        True,
+        get_team_years(
             team=team,
             year=year,
             country=country,

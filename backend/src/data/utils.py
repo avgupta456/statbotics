@@ -7,6 +7,14 @@ from src.db.read import (
     get_etags as get_etags_db,
     get_events as get_events_db,
     get_matches as get_matches_db,
+    get_num_etags as get_num_etags_db,
+    get_num_events as get_num_events_db,
+    get_num_matches as get_num_matches_db,
+    get_num_team_events as get_num_team_events_db,
+    get_num_team_matches as get_num_team_matches_db,
+    get_num_team_years as get_num_team_years_db,
+    get_num_teams as get_num_teams_db,
+    get_num_years as get_num_years_db,
     get_team_events as get_team_events_db,
     get_team_matches as get_team_matches_db,
     get_team_years as get_team_years_db,
@@ -37,36 +45,36 @@ def create_objs(year: int) -> objs_type:
     return (Year(year=year), {}, {}, {}, {}, {}, {})
 
 
-async def read_objs(year: int) -> objs_type:
-    year_obj = await get_year_db(year)
+def read_objs(year: int) -> objs_type:
+    year_obj = get_year_db(year)
     if year_obj is None:
         raise Exception("Year not found")
 
     return (
         year_obj,
-        {t.pk(): t for t in await get_team_years_db(year=year)},
-        {e.pk(): e for e in await get_events_db(year=year)},
-        {te.pk(): te for te in await get_team_events_db(year=year)},
-        {m.pk(): m for m in await get_matches_db(year=year)},
-        {tm.pk(): tm for tm in await get_team_matches_db(year=year)},
-        {e.pk(): e for e in await get_etags_db(year=year)},
+        {t.pk(): t for t in get_team_years_db(year=year)},
+        {e.pk(): e for e in get_events_db(year=year)},
+        {te.pk(): te for te in get_team_events_db(year=year)},
+        {m.pk(): m for m in get_matches_db(year=year)},
+        {tm.pk(): tm for tm in get_team_matches_db(year=year)},
+        {e.pk(): e for e in get_etags_db(year=year)},
     )
 
 
-async def write_objs(
+def write_objs(
     year_num: int,
     objs: objs_type,
     orig_objs: Optional[objs_type] = None,
     clean: bool = False,
 ) -> None:
     if clean:
-        await clear_year(year_num)
+        clear_year(year_num)
 
     if orig_objs is None:
         # Ensure that all objects are updated
         orig_objs = create_objs(-1)
 
-    await update_years_db([objs[0]], clean)
+    update_years_db([objs[0]], clean)
 
     for prev, curr, update_func in [
         (orig_objs[1], objs[1], update_team_years_db),
@@ -82,7 +90,18 @@ async def write_objs(
             if str(obj) != str(prev.get(obj.pk(), ""))
         ]
 
-        await update_func(new_objs, clean)  # type: ignore
+        update_func(new_objs, clean)  # type: ignore
+
+
+def print_table_stats() -> None:
+    print("Num Teams:", get_num_teams_db())
+    print("Num Years:", get_num_years_db())
+    print("Num Team Years:", get_num_team_years_db())
+    print("Num Events:", get_num_events_db())
+    print("Num Team Events:", get_num_team_events_db())
+    print("Num Matches:", get_num_matches_db())
+    print("Num Team Matches:", get_num_team_matches_db())
+    print("Num ETags", get_num_etags_db())
 
 
 class Timer:

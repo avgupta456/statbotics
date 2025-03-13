@@ -1,5 +1,4 @@
-import asyncio
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter
 from fastapi.responses import Response
@@ -12,6 +11,7 @@ from src.api import (
     get_year_cached,
 )
 from src.db.functions import get_noteworthy_matches, get_upcoming_matches
+from src.db.models import Event, Match, TeamEvent, TeamMatch, Year
 
 # from src.site.helper import compress
 from src.utils.decorators import (
@@ -25,24 +25,28 @@ router = APIRouter()
 @router.get("/match/{match_id}")
 @async_fail_gracefully_singular
 async def read_match(response: Response, match_id: str, no_cache: bool = False) -> Any:
-    event_id = match_id.split("_")[0]
-    year_num = int(event_id[:4])
-    match, event, year, team_matches, team_events = await asyncio.gather(
-        get_match_cached(match=match_id, no_cache=no_cache),
-        get_event_cached(event=event_id, no_cache=no_cache),
-        get_year_cached(year=year_num, no_cache=no_cache),
-        get_team_matches_cached(match=match_id, no_cache=no_cache),
-        get_team_events_cached(year=year_num, event=event_id, no_cache=no_cache),
-    )
-
+    match: Optional[Match] = await get_match_cached(match=match_id, no_cache=no_cache)
     if match is None:
         raise Exception("Match not found")
+
+    event: Optional[Event] = await get_event_cached(
+        event=match.event, no_cache=no_cache
+    )
     if event is None:
         raise Exception("Event not found")
+
+    year: Optional[Year] = await get_year_cached(year=match.year, no_cache=no_cache)
     if year is None:
         raise Exception("Year not found")
 
+    team_matches: List[TeamMatch] = await get_team_matches_cached(
+        match=match_id, no_cache=no_cache
+    )
     team_nums = [x.team for x in team_matches]
+
+    team_events: List[TeamEvent] = await get_team_events_cached(
+        year=year.year, event=match.event, no_cache=no_cache
+    )
     team_events = [x for x in team_events if x.team in team_nums]
 
     out = {
@@ -69,7 +73,7 @@ async def read_upcoming_matches(
     metric: str = "predicted_time",
     no_cache: bool = False,
 ) -> Any:
-    upcoming_matches = await get_upcoming_matches(
+    upcoming_matches = get_upcoming_matches(
         country=country,
         state=state,
         district=district,
@@ -96,7 +100,7 @@ async def read_noteworthy_matches(
     week: Optional[int] = None,
     no_cache: bool = False,
 ) -> Any:
-    noteworthy_matches = await get_noteworthy_matches(
+    noteworthy_matches = get_noteworthy_matches(
         year=year,
         country=country,
         state=state,

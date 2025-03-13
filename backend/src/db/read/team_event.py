@@ -1,26 +1,27 @@
 from typing import List, Optional
 
-from sqlalchemy import func
-from sqlalchemy.future import select
-from src.db.main import async_session
+from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
+
+from src.db.main import Session
 from src.db.models.team_event import TeamEvent, TeamEventORM
+from src.db.read.main import common_filters
 
 
-async def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
-    async with async_session() as session:
-        result = await session.execute(
-            select(TeamEventORM).where(
-                TeamEventORM.team == team, TeamEventORM.event == event
-            )
+def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
+    def callback(session: SessionType):
+        data = session.query(TeamEventORM).filter(
+            TeamEventORM.team == team, TeamEventORM.event == event
         )
-        data = result.scalars().first()
-        if data is None:
+        out_data: Optional[TeamEventORM] = data.first()
+        if out_data is None:
             return None
+        return TeamEvent.from_dict(out_data.__dict__)
 
-        return TeamEvent.from_dict(data.__dict__)
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_team_events(
+def get_team_events(
     team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
@@ -34,44 +35,33 @@ async def get_team_events(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[TeamEvent]:
-    async with async_session() as session:
-        filters = []
-
+    @common_filters(TeamEventORM, TeamEvent, metric, ascending, limit, offset)
+    def callback(session: SessionType):
+        data = session.query(TeamEventORM)
         if team is not None:
-            filters.append(TeamEventORM.team == team)
+            data = data.filter(TeamEventORM.team == team)
         if year is not None:
-            filters.append(TeamEventORM.year == year)
+            data = data.filter(TeamEventORM.year == year)
         if event is not None:
-            filters.append(TeamEventORM.event == event)
+            data = data.filter(TeamEventORM.event == event)
         if country is not None:
-            filters.append(TeamEventORM.country == country)
+            data = data.filter(TeamEventORM.country == country)
         if state is not None:
-            filters.append(TeamEventORM.state == state)
+            data = data.filter(TeamEventORM.state == state)
         if district is not None:
-            filters.append(TeamEventORM.district == district)
+            data = data.filter(TeamEventORM.district == district)
         if type is not None:
-            filters.append(TeamEventORM.type == type)
+            data = data.filter(TeamEventORM.type == type)
         if week is not None:
-            filters.append(TeamEventORM.week == week)
+            data = data.filter(TeamEventORM.week == week)
 
-        query = select(TeamEventORM).filter(*filters)
+        return data
 
-        if metric and hasattr(TeamEventORM, metric):
-            column = getattr(TeamEventORM, metric)
-            query = query.order_by(column.asc() if ascending else column.desc())
-
-        if limit is not None:
-            query = query.limit(limit)
-        if offset is not None:
-            query = query.offset(offset)
-
-        result = await session.execute(query)
-        return [
-            TeamEvent.from_dict(team_event.__dict__) for team_event in result.scalars()
-        ]
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_num_team_events() -> int:
-    async with async_session() as session:
-        result = await session.execute(select(func.count()).select_from(TeamEventORM))
-        return result.scalar() or 0
+def get_num_team_events() -> int:
+    def callback(session: SessionType) -> int:
+        return session.query(TeamEventORM).count()
+
+    return run_transaction(Session, callback)  # type: ignore

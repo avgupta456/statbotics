@@ -15,7 +15,6 @@ from src.api.query import (
     week_query,
     year_query,
 )
-from src.constants import CURR_YEAR
 from src.db.models import Event
 from src.db.read import get_event, get_events
 from src.utils.alru_cache import alru_cache
@@ -37,10 +36,10 @@ async def get_event_cached(
     event: str,
     no_cache: bool = False,
 ) -> Tuple[bool, Optional[Event]]:
-    return (True, await get_event(event_id=event))
+    return (True, get_event(event_id=event))
 
 
-@alru_cache(ttl=timedelta(minutes=5))
+@alru_cache(ttl=timedelta(minutes=2))
 async def get_events_cached(
     year: Optional[int] = None,
     country: Optional[str] = None,
@@ -58,19 +57,9 @@ async def get_events_cached(
     if not site:
         limit = min(limit or 1000, 1000)
 
-    cache = (
-        site
-        and year == CURR_YEAR
-        and country is None
-        and state is None
-        and district is None
-        and type is None
-        and week is None
-    )
-
     return (
-        cache,
-        await get_events(
+        True,
+        get_events(
             year=year,
             country=country,
             state=state,

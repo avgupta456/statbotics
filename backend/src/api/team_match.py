@@ -35,7 +35,7 @@ async def read_root_team_match():
 async def get_team_match_cached(
     team: int, match: str, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamMatch]]:
-    return (True, await get_team_match(team=team, match=match))
+    return (True, get_team_match(team=team, match=match))
 
 
 @alru_cache(ttl=timedelta(minutes=2))
@@ -58,7 +58,7 @@ async def get_team_matches_cached(
 
     return (
         True,
-        await get_team_matches(
+        get_team_matches(
             team=team,
             year=year,
             event=event,
