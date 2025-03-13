@@ -1,18 +1,14 @@
-from datetime import timedelta
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from sqlalchemy import asc, desc, func
 from sqlalchemy.future import select
 
-from src.constants import CURR_YEAR
 from src.db.main import async_session
 from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
 from src.types.enums import MatchStatus
-from src.utils.alru_cache import alru_cache
 
 
-@alru_cache(ttl=timedelta(minutes=15))
 async def get_noteworthy_matches(
     year: int,
     country: Optional[str],
@@ -20,8 +16,7 @@ async def get_noteworthy_matches(
     district: Optional[str],
     elim: Optional[bool],
     week: Optional[int],
-    no_cache: bool = False,
-) -> Tuple[bool, Dict[str, List[Match]]]:
+) -> Dict[str, List[Match]]:
     async with async_session() as session:
         matches = select(
             MatchORM,
@@ -138,7 +133,7 @@ async def get_noteworthy_matches(
                 ],
             }
 
-        out = {
+        return {
             "high_score": [
                 Match.from_dict(match.__dict__)
                 for (match, *_args) in high_score_matches
@@ -153,14 +148,3 @@ async def get_noteworthy_matches(
             ],
             **extra,
         }
-
-        cache = (
-            year == CURR_YEAR
-            and country is None
-            and state is None
-            and district is None
-            and elim is None
-            and week is None
-        )
-
-        return (cache, out)

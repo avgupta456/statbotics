@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Optional, Tuple
 
 from sqlalchemy import func, text
@@ -9,10 +9,8 @@ from src.db.main import async_session
 from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
 from src.types.enums import EventStatus
-from src.utils.alru_cache import alru_cache
 
 
-@alru_cache(ttl=timedelta(minutes=5))
 async def get_upcoming_matches(
     country: Optional[str],
     state: Optional[str],
@@ -21,7 +19,7 @@ async def get_upcoming_matches(
     minutes: int,
     limit: int,
     metric: str,
-) -> Tuple[bool, List[Tuple[Match, str]]]:
+) -> List[Tuple[Match, str]]:
     curr_timestamp = int(datetime.now().timestamp()) - 60 * 5  # 5 minutes
 
     if minutes == -1:
@@ -81,13 +79,7 @@ async def get_upcoming_matches(
             result = await session.execute(stmt)
             matches = result.all()
 
-            out = [
+            return [
                 (Match.from_dict(match.__dict__), event_name)
                 for match, event_name, *_args in matches
             ]
-
-            cache = (
-                country is None and state is None and district is None and elim is None
-            )
-
-            return cache, out
