@@ -8,12 +8,15 @@ from src.db.models.event import Event, EventORM
 
 async def get_event(event_id: str) -> Optional[Event]:
     async with async_session() as session:
-        result = await session.execute(select(EventORM).where(EventORM.key == event_id))
-        data = result.scalars().first()
-        if data is None:
-            return None
+        async with session.begin():
+            result = await session.execute(
+                select(EventORM).where(EventORM.key == event_id)
+            )
+            data = result.scalars().first()
+            if data is None:
+                return None
 
-        return Event.from_dict(data.__dict__)
+            return Event.from_dict(data.__dict__)
 
 
 async def get_events(
@@ -31,26 +34,26 @@ async def get_events(
     async with async_session() as session:
         query = select(EventORM)
 
-        filters = []
         if year is not None:
-            filters.append(EventORM.year == year)
+            query = query.filter(EventORM.year == year)
         if country is not None:
-            filters.append(EventORM.country == country)
+            query = query.filter(EventORM.country == country)
         if state is not None:
-            filters.append(EventORM.state == state)
+            query = query.filter(EventORM.state == state)
         if district is not None:
-            filters.append(EventORM.district == district)
+            query = query.filter(EventORM.district == district)
         if type is not None:
-            filters.append(EventORM.type == type)
+            query = query.filter(EventORM.type == type)
         if week is not None:
-            filters.append(EventORM.week == week)
+            query = query.filter(EventORM.week == week)
 
-        if filters:
-            query = query.filter(*filters)
-
-        if metric is not None and hasattr(EventORM, metric):
-            column = getattr(EventORM, metric)
-            query = query.order_by(column.asc() if ascending else column.desc())
+        if metric is not None:
+            column = getattr(EventORM, metric, None)
+            if column:
+                if ascending:
+                    query = query.order_by(column.asc())
+                else:
+                    query = query.order_by(column.desc())
 
         if limit is not None:
             query = query.limit(limit)
@@ -64,5 +67,6 @@ async def get_events(
 
 async def get_num_events() -> int:
     async with async_session() as session:
-        result = await session.execute(select(func.count()).select_from(EventORM))
-        return result.scalar() or 0
+        async with session.begin():
+            result = await session.execute(select(func.count()).select_from(EventORM))
+            return result.scalar() or 0

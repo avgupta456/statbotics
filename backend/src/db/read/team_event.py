@@ -8,16 +8,17 @@ from src.db.models.team_event import TeamEvent, TeamEventORM
 
 async def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
     async with async_session() as session:
-        result = await session.execute(
-            select(TeamEventORM).where(
-                TeamEventORM.team == team, TeamEventORM.event == event
+        async with session.begin():
+            result = await session.execute(
+                select(TeamEventORM).where(
+                    TeamEventORM.team == team, TeamEventORM.event == event
+                )
             )
-        )
-        data = result.scalars().first()
-        if data is None:
-            return None
+            data = result.scalars().first()
+            if data is None:
+                return None
 
-        return TeamEvent.from_dict(data.__dict__)
+            return TeamEvent.from_dict(data.__dict__)
 
 
 async def get_team_events(
@@ -35,30 +36,32 @@ async def get_team_events(
     offset: Optional[int] = None,
 ) -> List[TeamEvent]:
     async with async_session() as session:
-        filters = []
+        query = select(TeamEventORM)
 
         if team is not None:
-            filters.append(TeamEventORM.team == team)
+            query = query.filter(TeamEventORM.team == team)
         if year is not None:
-            filters.append(TeamEventORM.year == year)
+            query = query.filter(TeamEventORM.year == year)
         if event is not None:
-            filters.append(TeamEventORM.event == event)
+            query = query.filter(TeamEventORM.event == event)
         if country is not None:
-            filters.append(TeamEventORM.country == country)
+            query = query.filter(TeamEventORM.country == country)
         if state is not None:
-            filters.append(TeamEventORM.state == state)
+            query = query.filter(TeamEventORM.state == state)
         if district is not None:
-            filters.append(TeamEventORM.district == district)
+            query = query.filter(TeamEventORM.district == district)
         if type is not None:
-            filters.append(TeamEventORM.type == type)
+            query = query.filter(TeamEventORM.type == type)
         if week is not None:
-            filters.append(TeamEventORM.week == week)
+            query = query.filter(TeamEventORM.week == week)
 
-        query = select(TeamEventORM).filter(*filters)
-
-        if metric and hasattr(TeamEventORM, metric):
-            column = getattr(TeamEventORM, metric)
-            query = query.order_by(column.asc() if ascending else column.desc())
+        if metric is not None:
+            column = getattr(TeamEventORM, metric, None)
+            if column:
+                if ascending:
+                    query = query.order_by(column.asc())
+                else:
+                    query = query.order_by(column.desc())
 
         if limit is not None:
             query = query.limit(limit)
@@ -66,12 +69,15 @@ async def get_team_events(
             query = query.offset(offset)
 
         result = await session.execute(query)
-        return [
-            TeamEvent.from_dict(team_event.__dict__) for team_event in result.scalars()
-        ]
+        data = result.scalars().all()
+
+        return [TeamEvent.from_dict(team_event.__dict__) for team_event in data]
 
 
 async def get_num_team_events() -> int:
     async with async_session() as session:
-        result = await session.execute(select(func.count()).select_from(TeamEventORM))
-        return result.scalar() or 0
+        async with session.begin():
+            result = await session.execute(
+                select(func.count()).select_from(TeamEventORM)
+            )
+            return result.scalar() or 0

@@ -11,19 +11,21 @@ async def get_etags(
     year: Optional[int] = None, path: Optional[str] = None
 ) -> List[ETag]:
     async with async_session() as session:
-        filters = []
-        if year is not None:
-            filters.append(ETagORM.year == year)
-        if path is not None:
-            filters.append(ETagORM.path == path)
+        query = select(ETagORM)
 
-        query = select(ETagORM).filter(*filters)
+        if year is not None:
+            query = query.filter(ETagORM.year == year)
+        if path is not None:
+            query = query.filter(ETagORM.path == path)
 
         result = await session.execute(query)
-        return [ETag.from_dict(etag.__dict__) for etag in result.scalars()]
+        etags_orm = result.scalars().all()
+
+        return [ETag.from_dict(etag.__dict__) for etag in etags_orm]
 
 
 async def get_num_etags() -> int:
     async with async_session() as session:
-        result = await session.execute(select(func.count()).select_from(ETagORM))
-        return result.scalar() or 0
+        async with session.begin():
+            result = await session.execute(select(func.count()).select_from(ETagORM))
+            return result.scalar() or 0

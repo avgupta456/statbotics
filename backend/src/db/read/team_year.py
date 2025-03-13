@@ -8,16 +8,17 @@ from src.db.models.team_year import TeamYear, TeamYearORM
 
 async def get_team_year(team: int, year: int) -> Optional[TeamYear]:
     async with async_session() as session:
-        result = await session.execute(
-            select(TeamYearORM).where(
-                TeamYearORM.team == team, TeamYearORM.year == year
+        async with session.begin():
+            result = await session.execute(
+                select(TeamYearORM).where(
+                    TeamYearORM.team == team, TeamYearORM.year == year
+                )
             )
-        )
-        data = result.scalars().first()
-        if data is None:
-            return None
+            data = result.scalars().first()
+            if data is None:
+                return None
 
-        return TeamYear.from_dict(data.__dict__)
+            return TeamYear.from_dict(data.__dict__)
 
 
 async def get_team_years(
@@ -33,26 +34,28 @@ async def get_team_years(
     offset: Optional[int] = None,
 ) -> List[TeamYear]:
     async with async_session() as session:
-        filters = []
+        query = select(TeamYearORM)
 
         if team is not None:
-            filters.append(TeamYearORM.team == team)
-        if teams:
-            filters.append(TeamYearORM.team.in_(teams))
+            query = query.filter(TeamYearORM.team == team)
+        if teams is not None:
+            query = query.filter(TeamYearORM.team.in_(teams))
         if year is not None:
-            filters.append(TeamYearORM.year == year)
+            query = query.filter(TeamYearORM.year == year)
         if country is not None:
-            filters.append(TeamYearORM.country == country)
+            query = query.filter(TeamYearORM.country == country)
         if state is not None:
-            filters.append(TeamYearORM.state == state)
+            query = query.filter(TeamYearORM.state == state)
         if district is not None:
-            filters.append(TeamYearORM.district == district)
+            query = query.filter(TeamYearORM.district == district)
 
-        query = select(TeamYearORM).filter(*filters)
-
-        if metric and hasattr(TeamYearORM, metric):
-            column = getattr(TeamYearORM, metric)
-            query = query.order_by(column.asc() if ascending else column.desc())
+        if metric is not None:
+            column = getattr(TeamYearORM, metric, None)
+            if column:
+                if ascending:
+                    query = query.order_by(column.asc())
+                else:
+                    query = query.order_by(column.desc())
 
         if limit is not None:
             query = query.limit(limit)
@@ -60,12 +63,15 @@ async def get_team_years(
             query = query.offset(offset)
 
         result = await session.execute(query)
-        return [
-            TeamYear.from_dict(team_year.__dict__) for team_year in result.scalars()
-        ]
+        data = result.scalars().all()
+
+        return [TeamYear.from_dict(team_year.__dict__) for team_year in data]
 
 
 async def get_num_team_years() -> int:
     async with async_session() as session:
-        result = await session.execute(select(func.count()).select_from(TeamYearORM))
-        return result.scalar() or 0
+        async with session.begin():
+            result = await session.execute(
+                select(func.count()).select_from(TeamYearORM)
+            )
+            return result.scalar() or 0

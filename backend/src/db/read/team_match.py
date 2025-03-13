@@ -8,16 +8,17 @@ from src.db.models.team_match import TeamMatch, TeamMatchORM
 
 async def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
     async with async_session() as session:
-        result = await session.execute(
-            select(TeamMatchORM).where(
-                TeamMatchORM.team == team, TeamMatchORM.match == match
+        async with session.begin():
+            result = await session.execute(
+                select(TeamMatchORM).where(
+                    TeamMatchORM.team == team, TeamMatchORM.match == match
+                )
             )
-        )
-        data = result.scalars().first()
-        if data is None:
-            return None
+            data = result.scalars().first()
+            if data is None:
+                return None
 
-        return TeamMatch.from_dict(data.__dict__)
+            return TeamMatch.from_dict(data.__dict__)
 
 
 async def get_team_matches(
@@ -33,26 +34,28 @@ async def get_team_matches(
     offset: Optional[int] = None,
 ) -> List[TeamMatch]:
     async with async_session() as session:
-        filters = []
+        query = select(TeamMatchORM)
 
         if team is not None:
-            filters.append(TeamMatchORM.team == team)
+            query = query.filter(TeamMatchORM.team == team)
         if year is not None:
-            filters.append(TeamMatchORM.year == year)
+            query = query.filter(TeamMatchORM.year == year)
         if event is not None:
-            filters.append(TeamMatchORM.event == event)
+            query = query.filter(TeamMatchORM.event == event)
         if week is not None:
-            filters.append(TeamMatchORM.week == week)
+            query = query.filter(TeamMatchORM.week == week)
         if match is not None:
-            filters.append(TeamMatchORM.match == match)
+            query = query.filter(TeamMatchORM.match == match)
         if elim is not None:
-            filters.append(TeamMatchORM.elim == elim)
+            query = query.filter(TeamMatchORM.elim == elim)
 
-        query = select(TeamMatchORM).filter(*filters)
-
-        if metric and hasattr(TeamMatchORM, metric):
-            column = getattr(TeamMatchORM, metric)
-            query = query.order_by(column.asc() if ascending else column.desc())
+        if metric is not None:
+            column = getattr(TeamMatchORM, metric, None)
+            if column:
+                if ascending:
+                    query = query.order_by(column.asc())
+                else:
+                    query = query.order_by(column.desc())
 
         if limit is not None:
             query = query.limit(limit)
@@ -60,12 +63,15 @@ async def get_team_matches(
             query = query.offset(offset)
 
         result = await session.execute(query)
-        return [
-            TeamMatch.from_dict(team_match.__dict__) for team_match in result.scalars()
-        ]
+        data = result.scalars().all()
+
+        return [TeamMatch.from_dict(team_match.__dict__) for team_match in data]
 
 
 async def get_num_team_matches() -> int:
     async with async_session() as session:
-        result = await session.execute(select(func.count()).select_from(TeamMatchORM))
-        return result.scalar() or 0
+        async with session.begin():
+            result = await session.execute(
+                select(func.count()).select_from(TeamMatchORM)
+            )
+            return result.scalar() or 0
