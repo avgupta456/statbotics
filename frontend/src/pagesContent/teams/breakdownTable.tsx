@@ -13,11 +13,15 @@ const EPABreakdownSection = ({
   data,
   filters,
   setFilters,
+  loadAllData,
+  setLoadAllData,
 }: {
   year: number;
   data: TeamYearsData;
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
+  loadAllData: boolean;
+  setLoadAllData: (loadAllData: boolean) => void;
 }) => {
   let defaultFilters = {
     country: "",
@@ -42,6 +46,8 @@ const EPABreakdownSection = ({
           filters={actualFilters}
           setFilters={setFilters}
           includeProjections={false}
+          loadAllData={loadAllData}
+          setLoadAllData={setLoadAllData}
         />
       </div>
       <BreakdownTable
