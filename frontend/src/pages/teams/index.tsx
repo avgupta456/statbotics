@@ -66,7 +66,7 @@ const InnerPage = () => {
       const numTeamYears = teamYearDataDict[year]?.team_years?.length ?? 0;
 
       let data: TeamYearsData | null = null;
-      if (numTeamYears < 100) {
+      if (numTeamYears < 100 && !loadAllData) {
         data = await getYearTeamYears(year, 100);
       } else if (numTeamYears < 101 && loadAllData) {
         data = await getYearTeamYears(year);
