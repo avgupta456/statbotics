@@ -1,23 +1,22 @@
 from typing import List, Optional
 
-from sqlalchemy import func
-from sqlalchemy.future import select
-from src.db.main import async_session
+from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
+
+from src.db.main import Session
 from src.db.models.team import Team, TeamORM
+from src.db.read.main import common_filters
 
 
-async def get_team(team: int) -> Optional[Team]:
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(TeamORM).where(TeamORM.team == team))
-            data = result.scalars().first()
-            if data is None:
-                return None
+def get_team(team: int) -> Optional[Team]:
+    def callback(session: SessionType):
+        out_data = session.query(TeamORM).filter(TeamORM.team == team).first()
+        return Team.from_dict(out_data.__dict__) if out_data else None
 
-            return Team.from_dict(data.__dict__)
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_teams(
+def get_teams(
     country: Optional[str] = None,
     state: Optional[str] = None,
     district: Optional[str] = None,
@@ -27,39 +26,25 @@ async def get_teams(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Team]:
-    async with async_session() as session:
-        query = select(TeamORM)
-
+    @common_filters(TeamORM, Team, metric, ascending, limit, offset)
+    def callback(session: SessionType):
+        data = session.query(TeamORM)
         if country is not None:
-            query = query.filter(TeamORM.country == country)
+            data = data.filter(TeamORM.country == country)
         if state is not None:
-            query = query.filter(TeamORM.state == state)
+            data = data.filter(TeamORM.state == state)
         if district is not None:
-            query = query.filter(TeamORM.district == district)
+            data = data.filter(TeamORM.district == district)
         if active is not None:
-            query = query.filter(TeamORM.active == active)
+            data = data.filter(TeamORM.active == active)
 
-        if metric is not None:
-            column = getattr(TeamORM, metric, None)
-            if column:
-                if ascending:
-                    query = query.order_by(column.asc())
-                else:
-                    query = query.order_by(column.desc())
+        return data
 
-        if limit is not None:
-            query = query.limit(limit)
-        if offset is not None:
-            query = query.offset(offset)
-
-        result = await session.execute(query)
-        data = result.scalars().all()
-
-        return [Team.from_dict(team.__dict__) for team in data]
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_num_teams() -> int:
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(func.count()).select_from(TeamORM))
-            return result.scalar() or 0
+def get_num_teams() -> int:
+    def callback(session: SessionType) -> int:
+        return session.query(TeamORM).count()
+
+    return run_transaction(Session, callback)  # type: ignore

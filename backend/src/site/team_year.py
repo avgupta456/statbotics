@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any, List, Optional
 
 from fastapi import APIRouter
@@ -6,7 +5,7 @@ from fastapi.responses import Response
 
 from src.api import get_team_matches_cached, get_team_years_cached, get_year_cached
 from src.constants import CURR_YEAR
-from src.db.models import TeamMatch
+from src.db.models import TeamMatch, TeamYear, Year
 
 # from src.site.helper import compress
 from src.utils.decorators import (
@@ -26,16 +25,13 @@ async def read_team_years(
     metric: Optional[str] = None,
     no_cache: bool = False,
 ) -> Any:
-    year_obj, team_years = await asyncio.gather(
-        get_year_cached(year=year, no_cache=no_cache),
-        get_team_years_cached(
-            year=year, limit=limit, metric=metric, site=True, no_cache=no_cache
-        ),
-    )
-
+    year_obj: Optional[Year] = await get_year_cached(year=year, no_cache=no_cache)
     if year_obj is None:
         raise Exception("Year not found")
 
+    team_years: List[TeamYear] = await get_team_years_cached(
+        year=year, limit=limit, metric=metric, site=True, no_cache=no_cache
+    )
     team_years = [x for x in team_years if x.count > 0 or year >= CURR_YEAR]
 
     out = {

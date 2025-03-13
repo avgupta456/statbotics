@@ -1,25 +1,24 @@
 from typing import List, Optional
 
-from sqlalchemy import func
-from sqlalchemy.future import select
-from src.db.main import async_session
+from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
+
+from src.db.main import Session
 from src.db.models.event import Event, EventORM
+from src.db.read.main import common_filters
 
 
-async def get_event(event_id: str) -> Optional[Event]:
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(
-                select(EventORM).where(EventORM.key == event_id)
-            )
-            data = result.scalars().first()
-            if data is None:
-                return None
+def get_event(event_id: str) -> Optional[Event]:
+    def callback(session: SessionType):
+        data = session.query(EventORM).filter(EventORM.key == event_id).first()
+        if data is None:
+            return None
+        return Event.from_dict(data.__dict__)
 
-            return Event.from_dict(data.__dict__)
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_events(
+def get_events(
     year: Optional[int] = None,
     country: Optional[str] = None,
     state: Optional[str] = None,
@@ -31,42 +30,29 @@ async def get_events(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[Event]:
-    async with async_session() as session:
-        query = select(EventORM)
-
+    @common_filters(EventORM, Event, metric, ascending, limit, offset)
+    def callback(session: SessionType):
+        data = session.query(EventORM)
         if year is not None:
-            query = query.filter(EventORM.year == year)
+            data = data.filter(EventORM.year == year)
         if country is not None:
-            query = query.filter(EventORM.country == country)
+            data = data.filter(EventORM.country == country)
         if state is not None:
-            query = query.filter(EventORM.state == state)
+            data = data.filter(EventORM.state == state)
         if district is not None:
-            query = query.filter(EventORM.district == district)
+            data = data.filter(EventORM.district == district)
         if type is not None:
-            query = query.filter(EventORM.type == type)
+            data = data.filter(EventORM.type == type)
         if week is not None:
-            query = query.filter(EventORM.week == week)
+            data = data.filter(EventORM.week == week)
 
-        if metric is not None:
-            column = getattr(EventORM, metric, None)
-            if column:
-                if ascending:
-                    query = query.order_by(column.asc())
-                else:
-                    query = query.order_by(column.desc())
+        return data
 
-        if limit is not None:
-            query = query.limit(limit)
-        if offset is not None:
-            query = query.offset(offset)
-
-        result = await session.execute(query)
-        data = result.scalars().all()
-        return [Event.from_dict(event.__dict__) for event in data]
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_num_events() -> int:
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(func.count()).select_from(EventORM))
-            return result.scalar() or 0
+def get_num_events() -> int:
+    def callback(session: SessionType) -> int:
+        return session.query(EventORM).count()
+
+    return run_transaction(Session, callback)  # type: ignore

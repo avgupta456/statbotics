@@ -33,7 +33,7 @@ async def read_root_team():
 async def get_team_cached(
     team: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[Team]]:
-    return (True, await get_team(team=team))
+    return (True, get_team(team=team))
 
 
 @alru_cache(ttl=timedelta(minutes=2))
@@ -54,7 +54,7 @@ async def get_teams_cached(
 
     return (
         True,
-        await get_teams(
+        get_teams(
             country=country,
             state=state,
             district=district,

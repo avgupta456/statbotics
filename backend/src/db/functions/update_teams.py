@@ -1,26 +1,22 @@
-from sqlalchemy import update
-from sqlalchemy.future import select
+from sqlalchemy.orm import Session as SessionType
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 
-from src.db.main import async_session
+from src.db.main import Session
 from src.db.models.team import TeamORM
 from src.db.models.team_year import TeamYearORM
 
 
-async def update_team_districts() -> None:
-    async with async_session() as session:
-        async with session.begin():
-            # Subquery to get the most recent district for each team
-            stmt = (
-                select(TeamYearORM.district)
+def update_team_districts() -> None:
+    def callback(session: SessionType):
+        session.query(TeamORM).update(
+            {
+                TeamORM.district: session.query(TeamYearORM.district)  # type: ignore
                 .filter(TeamYearORM.team == TeamORM.team)
                 .order_by(TeamYearORM.year.desc())
                 .limit(1)
-                .scalar_subquery()
-            )
+                .as_scalar()
+            },
+            synchronize_session=False,
+        )
 
-            # Perform the update operation using the `update()` method on the table
-            await session.execute(
-                update(TeamORM)
-                .where(TeamORM.team == TeamORM.team)
-                .values({TeamORM.district: stmt})
-            )
+    run_transaction(Session, callback)

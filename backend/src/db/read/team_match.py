@@ -1,27 +1,27 @@
 from typing import List, Optional
 
-from sqlalchemy import func
-from sqlalchemy.future import select
-from src.db.main import async_session
+from sqlalchemy.orm.session import Session as SessionType
+from sqlalchemy_cockroachdb import run_transaction  # type: ignore
+
+from src.db.main import Session
 from src.db.models.team_match import TeamMatch, TeamMatchORM
+from src.db.read.main import common_filters
 
 
-async def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(
-                select(TeamMatchORM).where(
-                    TeamMatchORM.team == team, TeamMatchORM.match == match
-                )
-            )
-            data = result.scalars().first()
-            if data is None:
-                return None
+def get_team_match(team: int, match: str) -> Optional[TeamMatch]:
+    def callback(session: SessionType):
+        data = session.query(TeamMatchORM).filter(
+            TeamMatchORM.team == team, TeamMatchORM.match == match
+        )
+        out_data: Optional[TeamMatchORM] = data.first()
+        if out_data is None:
+            return None
+        return TeamMatch.from_dict(out_data.__dict__)
 
-            return TeamMatch.from_dict(data.__dict__)
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_team_matches(
+def get_team_matches(
     team: Optional[int] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
@@ -33,45 +33,29 @@ async def get_team_matches(
     limit: Optional[int] = None,
     offset: Optional[int] = None,
 ) -> List[TeamMatch]:
-    async with async_session() as session:
-        query = select(TeamMatchORM)
-
+    @common_filters(TeamMatchORM, TeamMatch, metric, ascending, limit, offset)
+    def callback(session: SessionType):
+        data = session.query(TeamMatchORM)
         if team is not None:
-            query = query.filter(TeamMatchORM.team == team)
+            data = data.filter(TeamMatchORM.team == team)
         if year is not None:
-            query = query.filter(TeamMatchORM.year == year)
+            data = data.filter(TeamMatchORM.year == year)
         if event is not None:
-            query = query.filter(TeamMatchORM.event == event)
+            data = data.filter(TeamMatchORM.event == event)
         if week is not None:
-            query = query.filter(TeamMatchORM.week == week)
+            data = data.filter(TeamMatchORM.week == week)
         if match is not None:
-            query = query.filter(TeamMatchORM.match == match)
+            data = data.filter(TeamMatchORM.match == match)
         if elim is not None:
-            query = query.filter(TeamMatchORM.elim == elim)
+            data = data.filter(TeamMatchORM.elim == elim)
 
-        if metric is not None:
-            column = getattr(TeamMatchORM, metric, None)
-            if column:
-                if ascending:
-                    query = query.order_by(column.asc())
-                else:
-                    query = query.order_by(column.desc())
+        return data
 
-        if limit is not None:
-            query = query.limit(limit)
-        if offset is not None:
-            query = query.offset(offset)
-
-        result = await session.execute(query)
-        data = result.scalars().all()
-
-        return [TeamMatch.from_dict(team_match.__dict__) for team_match in data]
+    return run_transaction(Session, callback)  # type: ignore
 
 
-async def get_num_team_matches() -> int:
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(
-                select(func.count()).select_from(TeamMatchORM)
-            )
-            return result.scalar() or 0
+def get_num_team_matches() -> int:
+    def callback(session: SessionType) -> int:
+        return session.query(TeamMatchORM).count()
+
+    return run_transaction(Session, callback)  # type: ignore

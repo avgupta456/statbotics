@@ -34,7 +34,7 @@ async def read_root_team_year():
 async def get_team_year_cached(
     team: int, year: int, no_cache: bool = False
 ) -> Tuple[bool, Optional[TeamYear]]:
-    return (True, await get_team_year(team=team, year=year))
+    return (True, get_team_year(team=team, year=year))
 
 
 @alru_cache(ttl=timedelta(minutes=2))
@@ -56,7 +56,7 @@ async def get_team_years_cached(
 
     return (
         True,
-        await get_team_years(
+        get_team_years(
             team=team,
             year=year,
             country=country,
