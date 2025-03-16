@@ -991,4 +991,13 @@ def post_clean_breakdown(
         red_breakdown["comp_10"] = min(1, red_opp_switch_secs / 145)
         blue_breakdown["comp_10"] = min(1, blue_opp_switch_secs / 145)
 
+    if year == 2025:
+        # tiebreaker is not set correctly in the API so we compute it manually
+        # requires at least two processor algae (comp_11) per alliance
+        red_processor_algae = red_breakdown["comp_11"] or 0
+        blue_processor_algae = blue_breakdown["comp_11"] or 0
+        coopertition = min(red_processor_algae, blue_processor_algae) >= 2
+        red_breakdown["tiebreaker"] = int(coopertition)
+        blue_breakdown["tiebreaker"] = int(coopertition)
+
     return red_breakdown, blue_breakdown
