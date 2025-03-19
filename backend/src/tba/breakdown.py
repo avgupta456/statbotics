@@ -827,7 +827,7 @@ def clean_breakdown_2025(
     teleop_top_coral = teleop_reef.get("tba_topRowCount", 0) - auto_top_coral
     teleop_mid_coral = teleop_reef.get("tba_midRowCount", 0) - auto_mid_coral
     teleop_bot_coral = teleop_reef.get("tba_botRowCount", 0) - auto_bot_coral
-    teleop_trough_coral = teleop_reef.get("trough", 0) - auto_trough_coral
+    teleop_trough_coral = teleop_reef.get("trough", 0)
     processor_algae = breakdown.get("wallAlgaeCount", 0)
     processor_algae_points = 6 * processor_algae
     net_algae = breakdown.get("netAlgaeCount", 0)
