@@ -6,7 +6,7 @@ instance_class: F1
 
 automatic_scaling:
   min_instances: 0
-  max_instances: 2
+  max_instances: 4
 
 env_variables:
   LOCAL_DB: false
