@@ -98,8 +98,8 @@ export const eventNameMap = {
   "FIRST Ontario Provincial Championship - Technology Division":
     "Ontario Champs - Technology Division",
   // 2025
-  "New England FIRST District Championship - Ballard Division": "NE Champs - Ballard Division"
-  "New England FIRST District Championship - Sosik Division presented by GE Aerospace": "NE Champs - Sosik Division"
+  "New England FIRST District Championship - Ballard Division": "NE Champs - Ballard Division",
+  "New England FIRST District Championship - Sosik Division presented by GE Aerospace": "NE Champs - Sosik Division",
 };
 
 export const divisionToMainEvent = {
