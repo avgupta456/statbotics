@@ -97,6 +97,9 @@ export const eventNameMap = {
   "FIRST Ontario Provincial Championship - Science Division": "Ontario Champs - Science Division",
   "FIRST Ontario Provincial Championship - Technology Division":
     "Ontario Champs - Technology Division",
+  // 2025
+  "New England FIRST District Championship - Ballard Division": "NE Champs - Ballard Division"
+  "New England FIRST District Championship - Sosik Division presented by GE Aerospace": "NE Champs - Sosik Division"
 };
 
 export const divisionToMainEvent = {
@@ -146,6 +149,9 @@ export const divisionToMainEvent = {
   "2024joh": "2024cmptx",
   "2024mil": "2024cmptx",
   "2024new": "2024cmptx",
+  "2025necmp": "2025necmp",
+  "2025necmp1": "2025necmp",
+  "2025necmp2": "2025necmp",
 };
 
 export const mainEventToDivisions = {
@@ -214,5 +220,10 @@ export const mainEventToDivisions = {
     { name: "Johnson", key: "2024joh" },
     { name: "Milstein", key: "2024mil" },
     { name: "Newton", key: "2024new" },
+  ],
+  "2025necmp": [
+    { name: "Overall", key: "2025necmp" },
+    { name: "Ballard", key: "2025necmp1" },
+    { name: "Sosik", key: "2025necmp2" },
   ],
 };
