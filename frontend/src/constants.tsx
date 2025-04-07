@@ -9,7 +9,7 @@ export const BACKEND_URL = PROD
 export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
 
 export const CURR_YEAR = 2025;
-export const CURR_WEEK = 6;
+export const CURR_WEEK = 8;
 
 // 9970 to 9999 are placeholder teams
 export const PLACEHOLDER_TEAMS = Array.from({ length: 30 }, (_, i) => 9970 + i);
@@ -90,6 +90,10 @@ export const eventNameMap = {
   "New England FIRST District Championship - Ganson Division": "NE Champs - Ganson Division",
   "New England FIRST District Championship - Richardson Division":
     "NE Champs - Richardson Division",
+  "New England FIRST District Championship - Ballard Division presented by Altair":
+    "NE Champs - Ballard Division",
+  "New England FIRST District Championship - Sosik Division presented by GE Aerospace":
+    "NE Champs - Sosik Division",
   "FIRST In Texas District Championship": "FIT Champs - Overall",
   "FIRST In Texas District Championship - Mercury Division": "FIT Champs - Mercury Division",
   "FIRST In Texas District Championship - Apollo Division": "FIT Champs - Apollo Division",
@@ -97,9 +101,6 @@ export const eventNameMap = {
   "FIRST Ontario Provincial Championship - Science Division": "Ontario Champs - Science Division",
   "FIRST Ontario Provincial Championship - Technology Division":
     "Ontario Champs - Technology Division",
-  // 2025
-  "New England FIRST District Championship - Ballard Division presented by Altair": "NE Champs - Ballard Division",
-  "New England FIRST District Championship - Sosik Division presented by GE Aerospace": "NE Champs - Sosik Division",
 };
 
 export const divisionToMainEvent = {
