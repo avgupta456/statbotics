@@ -60,7 +60,6 @@ def _read_event(
     team_events: List[TeamEvent],
     team_matches: List[TeamMatch],
 ) -> Dict[str, Any]:
-
     team_matches = sorted(team_matches, key=lambda x: x.time)
     matches = sorted(matches, key=lambda x: x.time)
 
