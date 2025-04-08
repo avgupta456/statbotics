@@ -32,6 +32,7 @@ from src.db.read import (
     get_teams as get_teams_db,
 )
 from src.db.write.main import update_teams as update_teams_db
+from src.google.storage import write_objs as write_objs_storage
 
 
 def process_year(
@@ -67,7 +68,11 @@ def process_year(
     timer.print(str(year_num) + " EPA")
 
     write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
-    timer.print(str(year_num) + " Write")
+    timer.print(str(year_num) + " Write DB")
+
+    if year_num == CURR_YEAR:
+        write_objs_storage(objs, orig_objs if partial else None)
+        timer.print(str(year_num) + " Write Storage")
 
     return teams
 

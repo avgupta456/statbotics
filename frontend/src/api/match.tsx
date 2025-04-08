@@ -5,5 +5,5 @@ export async function getMatch(match: string): Promise<MatchData> {
   const urlSuffix = `/match/${match}`;
   const storageKey = `match_${match}_${version}`;
 
-  return query(storageKey, urlSuffix, 0, 60); // 1 minute
+  return query(storageKey, urlSuffix, false, 0, 60); // 1 minute
 }

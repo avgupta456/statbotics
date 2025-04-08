@@ -30,8 +30,6 @@ const BubbleChart = ({
   defaultFilters,
   filters,
   setFilters,
-  loadAllData,
-  setLoadAllData,
 }: {
   year: number;
   data: (APITeamYear | APITeamEvent)[];
@@ -39,8 +37,6 @@ const BubbleChart = ({
   defaultFilters: { [key: string]: any };
   filters: { [key: string]: any };
   setFilters: (filters: { [key: string]: any }) => void;
-  loadAllData: boolean;
-  setLoadAllData: (loadAllData: boolean) => void;
 }) => {
   const [width, setWidth] = useState(0);
   // update width on resize
@@ -252,8 +248,6 @@ const BubbleChart = ({
               defaultFilters={defaultFilters}
               filters={actualFilters}
               setFilters={setFilters}
-              loadAllData={loadAllData}
-              setLoadAllData={setLoadAllData}
             />
           </div>
         )}

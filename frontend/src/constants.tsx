@@ -4,7 +4,10 @@ export const PROD = process.env.PROD === "True";
 export const BACKEND_URL = PROD
   ? "https://api.statbotics.io/v3/site"
   : "http://127.0.0.1:8000/v3/site";
-// export const BACKEND_URL = "https://api.statbotics.io/site";
+
+export const BUCKET_URL = PROD
+  ? "https://storage.googleapis.com/site_v1"
+  : "https://storage.googleapis.com/site_dev_v1";
 
 export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
 
