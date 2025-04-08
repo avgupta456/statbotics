@@ -6,7 +6,7 @@ export async function getEvent(event: string): Promise<EventData> {
   const urlSuffix = `/event/${event}`;
   const storageKey = `event_${event}_${version}`;
 
-  return query(storageKey, urlSuffix, 0, 60); // 1 minute
+  return query(storageKey, urlSuffix, true, 0, 60); // 1 minute
 }
 
 export async function getTeamEventTeamMatches(
@@ -16,5 +16,5 @@ export async function getTeamEventTeamMatches(
   const urlSuffix = `/event/${event}/team_matches/${team}`;
   const storageKey = `event_${event}_team_matches_${team}_${version}`;
 
-  return query(storageKey, urlSuffix, 0, 60); // 1 minute
+  return query(storageKey, urlSuffix, false, 0, 60); // 1 minute
 }

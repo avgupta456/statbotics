@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
 from fastapi.responses import Response
@@ -14,6 +14,17 @@ from src.utils.decorators import (
 )
 
 router = APIRouter()
+
+
+def _read_team_years(
+    year: int, year_obj: Year, team_years: List[TeamYear]
+) -> Dict[str, Any]:
+    team_years = [x for x in team_years if x.count > 0 or year >= CURR_YEAR]
+
+    return {
+        "team_years": [x.to_dict() for x in team_years],
+        "year": year_obj.to_dict(),
+    }
 
 
 @router.get("/team_years/{year}")
@@ -32,14 +43,8 @@ async def read_team_years(
     team_years: List[TeamYear] = await get_team_years_cached(
         year=year, limit=limit, metric=metric, site=True, no_cache=no_cache
     )
-    team_years = [x for x in team_years if x.count > 0 or year >= CURR_YEAR]
 
-    out = {
-        "team_years": [x.to_dict() for x in team_years],
-        "year": year_obj.to_dict(),
-    }
-
-    return out
+    return _read_team_years(year, year_obj, team_years)
 
 
 @router.get("/team_year/{year}/{team}/matches")

@@ -1,7 +1,7 @@
 import { del, get, set } from "idb-keyval";
 import pako from "pako";
 
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL, BUCKET_URL } from "../constants";
 import { log, round } from "../utils";
 
 export const version = "v3";
@@ -31,34 +31,54 @@ async function getWithExpiry(key: string) {
   return get(key);
 }
 
-// function decompress(buffer: any) {
-//   const strData = pako.inflate(buffer, { to: "string" });
-//   const data = JSON.parse(strData);
-//   return data;
-// }
+function decompress(buffer: any) {
+  const strData = pako.inflate(buffer, { to: "string" });
+  const data = JSON.parse(strData);
+  return data;
+}
 
-async function query(storageKey: string, apiPath: string, minLength: number, expiry: number) {
-  const cacheRawData = await getWithExpiry(storageKey);
-  // const cacheData = cacheRawData ? decompress(cacheRawData) : null;
-  const cacheData = cacheRawData;
+async function query(
+  storageKey: string,
+  apiPath: string,
+  checkBucket: boolean,
+  minLength: number,
+  expiry: number
+) {
+  const cacheData = await getWithExpiry(storageKey);
   if (cacheData && (minLength === 0 || cacheData?.length > minLength)) {
     log(`Used Local Storage: ${storageKey}`);
     return cacheData;
   }
 
   const start = performance.now();
-  const res = await fetch(`${BACKEND_URL}${apiPath}`, { next: { revalidate: 0 } });
-  log(`${apiPath} took ${round(performance.now() - start, 0)}ms`);
 
-  if (!res.ok) {
-    return undefined;
+  let buffer = null;
+  try {
+    if (!checkBucket) {
+      throw new Error("Skip bucket check");
+    }
+    const fileName = apiPath.replace("?", ".").replace("&", ".");
+    const res = await fetch(`${BUCKET_URL}${fileName}`, {
+      next: { revalidate: 0 },
+    });
+    log(`${fileName} (bucket) took ${round(performance.now() - start, 0)}ms`);
+    if (res.ok) {
+      buffer = decompress(await res.arrayBuffer());
+    } else {
+      throw new Error(`Failed to fetch from bucket: ${res.status}`);
+    }
+  } catch (e) {
+    const res = await fetch(`${BACKEND_URL}${apiPath}`, { next: { revalidate: 0 } });
+    log(`${apiPath} (backend) took ${round(performance.now() - start, 0)}ms`);
+    if (res.ok) {
+      buffer = await res.json();
+    }
   }
 
-  // const buffer = await res.arrayBuffer();
-  const buffer = await res.json();
-  setWithExpiry(storageKey, buffer, expiry);
-  return buffer;
-  // return decompress(buffer);
+  if (buffer) {
+    await setWithExpiry(storageKey, buffer, expiry);
+    return buffer;
+  }
 }
 
 export default query;

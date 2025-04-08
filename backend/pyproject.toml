@@ -23,6 +23,7 @@ flake8 = "^6.1.0"
 isort = "^5.12.0"
 pyright = "^1.1.324"
 numpy = "1.26.4"
+google-cloud-storage = "^3.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pyinstrument = "^4.6.1"

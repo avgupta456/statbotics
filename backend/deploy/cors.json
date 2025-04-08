@@ -1,0 +1,8 @@
+[
+    {
+      "origin": ["http://localhost:3000", "https://statbotics.io"], 
+      "responseHeader": ["Content-Type"],
+      "method": ["GET", "HEAD", "OPTIONS"],
+      "maxAgeSeconds": 3600
+    }
+  ]

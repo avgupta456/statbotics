@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
 from fastapi.responses import Response
@@ -23,12 +23,23 @@ from src.utils.decorators import (
 router = APIRouter()
 
 
+def _read_all_events(events: List[Event]) -> List[Dict[str, Any]]:
+    return [{"key": x.key, "name": x.name} for x in events]
+
+
 @router.get("/events/all")
 @async_fail_gracefully_plural
 async def read_all_events(response: Response, no_cache: bool = False) -> Any:
     events: List[Event] = await get_events_cached(no_cache=no_cache, site=True)
-    data = [{"key": event.key, "name": event.name} for event in events]
-    return data
+    return _read_all_events(events)
+
+
+def _read_events(year_obj: Year, events: List[Event]) -> Dict[str, Any]:
+    events = sorted(events, key=lambda x: x.time)
+    return {
+        "year": year_obj.to_dict(),
+        "events": [x.to_dict() for x in events if x.status != EventStatus.INVALID],
+    }
 
 
 @router.get("/events/{year}")
@@ -39,14 +50,27 @@ async def read_events(response: Response, year: int, no_cache: bool = False) -> 
         raise Exception("Year not found")
 
     events: List[Event] = await get_events_cached(year=year, no_cache=no_cache)
-    data = {
+    return _read_events(year_obj, events)
+
+
+def _read_event(
+    year_obj: Year,
+    event: Event,
+    matches: List[Match],
+    team_events: List[TeamEvent],
+    team_matches: List[TeamMatch],
+) -> Dict[str, Any]:
+
+    team_matches = sorted(team_matches, key=lambda x: x.time)
+    matches = sorted(matches, key=lambda x: x.time)
+
+    return {
+        "event": event.to_dict(),
+        "matches": [x.to_dict() for x in matches],
+        "team_events": [x.to_dict() for x in team_events],
+        "team_matches": [x.to_dict() for x in team_matches],
         "year": year_obj.to_dict(),
-        "events": [x.to_dict() for x in events if x.status != EventStatus.INVALID],
     }
-
-    events = sorted(events, key=lambda x: x.time)
-
-    return data
 
 
 @router.get("/event/{event_id}")
@@ -68,18 +92,7 @@ async def read_event(response: Response, event_id: str, no_cache: bool = False) 
         event=event_id, no_cache=no_cache
     )
 
-    team_matches = sorted(team_matches, key=lambda x: x.time)
-    matches = sorted(matches, key=lambda x: x.time)
-
-    out = {
-        "event": event.to_dict(),
-        "matches": [x.to_dict() for x in matches],
-        "team_events": [x.to_dict() for x in team_events],
-        "team_matches": [x.to_dict() for x in team_matches],
-        "year": year.to_dict(),
-    }
-
-    return out
+    return _read_event(year, event, matches, team_events, team_matches)
 
 
 @router.get("/event/{event_id}/team_matches/{team}")

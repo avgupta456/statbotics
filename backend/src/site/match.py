@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter
 from fastapi.responses import Response
@@ -60,6 +60,12 @@ async def read_match(response: Response, match_id: str, no_cache: bool = False) 
     return out
 
 
+def _read_upcoming_matches(
+    upcoming_matches: List[Tuple[Match, str]],
+) -> List[Dict[str, Any]]:
+    return [{"match": m.to_dict(), "event_name": e} for m, e in upcoming_matches]
+
+
 @router.get("/upcoming_matches")
 @async_fail_gracefully_plural
 async def read_upcoming_matches(
@@ -83,9 +89,13 @@ async def read_upcoming_matches(
         metric=metric,
     )
 
-    data = [{"match": m.to_dict(), "event_name": e} for m, e in upcoming_matches]
+    return _read_upcoming_matches(upcoming_matches)
 
-    return data
+
+def _read_noteworthy_matches(
+    noteworthy_matches: Dict[str, List[Match]],
+) -> Dict[str, Any]:
+    return {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}
 
 
 @router.get("/noteworthy_matches/{year}")
@@ -109,6 +119,4 @@ async def read_noteworthy_matches(
         week=week,
     )
 
-    data = {k: [x.to_dict() for x in v] for k, v in noteworthy_matches.items()}
-
-    return data
+    return _read_noteworthy_matches(noteworthy_matches)

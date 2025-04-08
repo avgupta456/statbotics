@@ -17,7 +17,7 @@ export async function getYearTeamYears(
   }
   storageKey += "_v3";
 
-  return query(storageKey, urlSuffix, 0, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
+  return query(storageKey, urlSuffix, year === CURR_YEAR, 0, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
 }
 
 export async function getTeamYearTeamMatches(
@@ -27,5 +27,5 @@ export async function getTeamYearTeamMatches(
   const urlSuffix = `/team_year/${year}/${teamNum}/matches`;
   const storageKey = `team_year_matches_${year}_${teamNum}_${version}`;
 
-  return query(storageKey, urlSuffix, 0, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
+  return query(storageKey, urlSuffix, false, 0, year === CURR_YEAR ? 60 : 60 * 60); // 1 minute / 1 hour
 }

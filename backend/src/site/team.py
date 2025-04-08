@@ -24,12 +24,15 @@ from src.utils.decorators import (
 router = APIRouter()
 
 
+def _read_all_teams(teams: List[Team]) -> List[Dict[str, Any]]:
+    return [{"team": x.team, "name": x.name, "active": x.active} for x in teams]
+
+
 @router.get("/teams/all")
 @async_fail_gracefully_plural
 async def read_all_teams(response: Response, no_cache: bool = False) -> Any:
     teams: List[Team] = await get_teams_cached(site=True, no_cache=no_cache)
-    data = [{"team": x.team, "name": x.name, "active": x.active} for x in teams]
-    return data
+    return _read_all_teams(teams)
 
 
 @router.get("/team/{team_num}")

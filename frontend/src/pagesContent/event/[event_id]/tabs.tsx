@@ -54,8 +54,6 @@ const Tabs = ({ eventId, year, data }: { eventId: string; year: number; data: Ev
         defaultFilters={{}}
         filters={{}}
         setFilters={() => {}}
-        loadAllData={true}
-        setLoadAllData={() => {}}
         columnOptions={
           [
             "Total EPA",
