@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { Button } from "@mantine/core";
+import { Button, Switch } from "@mantine/core";
 import { Annotation, CircleSubject, Label } from "@visx/annotation";
 import { Axis, Orientation } from "@visx/axis";
 import { RectClipPath } from "@visx/clip-path";
@@ -14,6 +14,7 @@ import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withToolti
 import { voronoi } from "@visx/voronoi";
 import { Zoom } from "@visx/zoom";
 
+import { useColors } from "../../contexts/colorsContext";
 import { useLocation } from "../../contexts/locationContext";
 import { usePreferences } from "../../contexts/preferencesContext";
 import { APITeamYear } from "../../types/api";
@@ -55,6 +56,7 @@ type DotsProps = {
   yLabel: string;
   showEqualLines: boolean;
   selectedTeam: string | null;
+  colorsEnabled: boolean;
 };
 
 let tooltipTimeout: number;
@@ -74,6 +76,7 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
     tooltipData,
     tooltipLeft,
     tooltipTop,
+    colorsEnabled,
   }: DotsProps & WithTooltipProvidedProps<Datum>) => {
     const { colorScheme } = usePreferences();
 
@@ -176,6 +179,12 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
       (i) => xMin + yMin + (dataXRange + dataYRange) * ((i - 5) / 10),
     );
 
+    const getColor = useColors(
+      data.map((d) => Number(d.label)),
+      colorsEnabled,
+      "#3884ff",
+    );
+
     return (
       <Zoom<SVGSVGElement>
         width={width}
@@ -241,7 +250,11 @@ const RawBubbles = withTooltip<DotsProps, Datum>(
                           cx={xScale(point.x)}
                           cy={yScale(point.y)}
                           r={radius}
-                          fill={tooltipData?.label === point.label ? "#f87171" : "#3884ff"}
+                          fill={
+                            tooltipData?.label === point.label
+                              ? "#f87171"
+                              : getColor(Number(point.label))
+                          }
                         />
                       );
                     })}
@@ -351,6 +364,8 @@ function Bubbles({
   const [yKey, setYKey] = useState<string | null>(defaultAxes.y);
   const [zKey, setZKey] = useState<string | null>(defaultAxes.z);
 
+  const [colorsEnabled, setColorsEnabled] = useState(false);
+
   const getX = useCallback(
     (d: APITeamYear) => {
       const axis = axisOptions.find((a) => a.key === xKey);
@@ -438,6 +453,12 @@ function Bubbles({
           label="Radius"
           className="w-40"
         />
+        <Switch
+          label="Use colors"
+          checked={colorsEnabled}
+          onChange={() => setColorsEnabled((value) => !value)}
+          className="pb-2"
+        />
       </FilterBar>
       <div className="m-4">
         <div>
@@ -451,6 +472,7 @@ function Bubbles({
                 yLabel={yOption?.label ?? ""}
                 showEqualLines={xOption?.units === yOption?.units}
                 selectedTeam={selectedTeam}
+                colorsEnabled={colorsEnabled}
               />
             )}
           </ParentSize>
