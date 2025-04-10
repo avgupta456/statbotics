@@ -221,8 +221,11 @@ class Year(_Year, Model):
         # Only refresh DB if these change (during 1 min partial update)
         return "_".join([str(self.year), str(self.count)])
 
-    def get_foul_rate(self: "Year") -> float:
-        return (self.foul_mean or 0) / (self.no_foul_mean or 1)
+    def get_expected_fouls(self: "Year", score: float) -> float:
+        if self.year == 2025:
+            return -0.0116 * score + 4.33
+        else:
+            return score * (self.foul_mean or 0) / (self.no_foul_mean or 1)
 
     def get_mean_components(self: "Year") -> Any:
         if self.year < 2016:
