@@ -100,6 +100,11 @@ def write_objs(
             object_names.append(f"event/{event.key}")
         upload_files_to_gcs(data, object_names)
 
+    team_to_events = defaultdict(list)
+    for team_event in objs[3].values():
+        team_to_events[team_event.team].append(team_event.event)
+    upload_file_to_gcs(team_to_events, "team_to_events")
+
     # noteworthy_matches/{year}
     noteworthy_matches = get_noteworthy_matches(
         year=year, country=None, state=None, district=None, elim=None, week=None

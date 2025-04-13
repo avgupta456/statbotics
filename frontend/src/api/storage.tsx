@@ -31,7 +31,7 @@ async function getWithExpiry(key: string) {
   return get(key);
 }
 
-function decompress(buffer: any) {
+export function decompress(buffer: any) {
   const strData = pako.inflate(buffer, { to: "string" });
   const data = JSON.parse(strData);
   return data;
