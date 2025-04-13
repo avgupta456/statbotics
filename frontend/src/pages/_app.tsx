@@ -70,6 +70,15 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
             >
               <Image src="/tba.png" alt="TBA" unoptimized fill className="object-contain" />
             </Link>
+            | Sponsored by{" "}
+            <Link
+              href="https://wcproducts.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative ml-1 h-4 w-10 sm:h-5 sm:w-12 lg:h-6 lg:w-16"
+            >
+              <Image src="/wcp.png" alt="WCP" unoptimized fill className="object-contain" />
+            </Link>
           </div>
         </footer>
       </div>
