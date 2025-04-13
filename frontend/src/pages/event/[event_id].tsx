@@ -22,7 +22,7 @@ const InnerPage = () => {
 
   useEffect(() => {
     const fetchEventData = async () => {
-      if (!event_id || data) return;
+      if (!event_id || data?.event?.key == event_id) return;
 
       try {
         const eventData = await getEvent(event_id as string);

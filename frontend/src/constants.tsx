@@ -153,9 +153,14 @@ export const divisionToMainEvent = {
   "2024joh": "2024cmptx",
   "2024mil": "2024cmptx",
   "2024new": "2024cmptx",
-  // "2025necmp": "2025necmp",
-  // "2025necmp1": "2025necmp",
-  // "2025necmp2": "2025necmp",
+  "2025arc": "2025cmptx",
+  "2025cur": "2025cmptx",
+  "2025dal": "2025cmptx",
+  "2025gal": "2025cmptx",
+  "2025hop": "2025cmptx",
+  "2025joh": "2025cmptx",
+  "2025mil": "2025cmptx",
+  "2025new": "2025cmptx",
 };
 
 export const mainEventToDivisions = {
@@ -225,9 +230,15 @@ export const mainEventToDivisions = {
     { name: "Milstein", key: "2024mil" },
     { name: "Newton", key: "2024new" },
   ],
-  // "2025necmp": [
-  //   { name: "Overall", key: "2025necmp" },
-  //   { name: "Ballard", key: "2025necmp1" },
-  //   { name: "Sosik", key: "2025necmp2" },
-  // ],
+  "2025cmptx": [
+    { name: "Overall", key: "2025cmptx" },
+    { name: "Archimedes", key: "2025arc" },
+    { name: "Curie", key: "2025cur" },
+    { name: "Daly", key: "2025dal" },
+    { name: "Galileo", key: "2025gal" },
+    { name: "Hopper", key: "2025hop" },
+    { name: "Johnson", key: "2025joh" },
+    { name: "Milstein", key: "2025mil" },
+    { name: "Newton", key: "2025new" },
+  ],
 };
