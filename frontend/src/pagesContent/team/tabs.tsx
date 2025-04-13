@@ -11,22 +11,20 @@ import OverviewSection from "./overview";
 const Tabs = ({
   teamNum,
   year,
-  teamData,
   teamYearData,
   fallbackTeamYearData,
 }: {
   teamNum: number;
   year: number;
-  teamData: APITeam | undefined;
   teamYearData: TeamYearData | undefined;
   fallbackTeamYearData: TeamYearData | undefined;
 }) => {
-  const matches = teamYearData?.matches || fallbackTeamYearData?.matches || [];
+  const matches = teamYearData?.matches || [];
   const numCompletedMatches = matches.filter((match) => match.status === "Completed").length;
 
   const MemoizedOverviewSection = useMemo(
-    () => <OverviewSection teamData={teamData} teamYearData={teamYearData} />,
-    [teamData, teamYearData]
+    () => <OverviewSection teamYearData={teamYearData} />,
+    [teamYearData]
   );
 
   const MemoizedFigureSection = useMemo(() => {
@@ -41,13 +39,7 @@ const Tabs = ({
     numCompletedMatches > 0 && { title: "Figures", content: MemoizedFigureSection },
   ].filter(Boolean);
 
-  return (
-    <TabsSection
-      loading={teamData === undefined || teamYearData === undefined}
-      error={false}
-      tabs={tabs}
-    />
-  );
+  return <TabsSection loading={teamYearData === undefined} error={false} tabs={tabs} />;
 };
 
 export default Tabs;
