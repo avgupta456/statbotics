@@ -5,15 +5,13 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getTeam, getTeamYear } from "../../api/team";
+import { getTeamYear } from "../../api/team";
 import { CURR_YEAR } from "../../constants";
-import { APITeam } from "../../types/api";
 import { TeamYearData } from "../../types/data";
 import PageLayout from "../shared/layout";
 import NotFound from "../shared/notFound";
 import SummaryTabs from "./summaryTabs";
 import Tabs from "./tabs";
-import { SummaryRow } from "./types";
 
 const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) => {
   const [prevYear, _setPrevYear] = useState(paramYear);
@@ -24,32 +22,13 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
     _setYear(newYear);
   };
 
-  const [teamData, setTeamData] = useState<APITeam | undefined>();
-  const [teamYearsData, setTeamYearsData] = useState<SummaryRow[] | undefined>();
   const [teamYearDataDict, setTeamYearDataDict] = useState<{
     [key: number]: TeamYearData | undefined;
   }>({});
 
   useEffect(() => {
-    const _getTeamDataForYear = async (team: number) => {
-      if (teamData) {
-        if (teamData.team == team) {
-          return;
-        } else {
-          setTeamData(undefined);
-          setTeamYearsData(undefined);
-          setTeamYearDataDict({});
-          return; // Will trigger useEffect again
-        }
-      }
-
-      const data = await getTeam(team);
-      setTeamData(data.team);
-      setTeamYearsData(data.team_years);
-    };
-
-    _getTeamDataForYear(team);
-  }, [team, teamData]);
+    setTeamYearDataDict({});
+  }, [team]);
 
   useEffect(() => {
     const _getTeamYearDataForYear = async (team: number, year: number) => {
@@ -70,30 +49,23 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
     }
   }, [team, year, teamYearDataDict]);
 
-  useEffect(() => {
-    if (teamYearsData && year !== -1 && !teamYearsData.map((x) => x.year).includes(year)) {
-      _setPrevYear(-1);
-      _setYear(-1);
-    }
-  }, [teamYearsData, year]);
-
-  if (!teamData) {
-    return <NotFound type="Team" />;
-  }
-
   const teamYearData = teamYearDataDict?.[year];
   const fallbackTeamYearData = teamYearDataDict?.[prevYear];
 
-  const rookieYear = teamData?.rookie_year ?? 2002;
+  if (!teamYearData && !fallbackTeamYearData) {
+    return <NotFound type="Team" />;
+  }
+
+  const rookieYear = teamYearData?.team_year?.rookie_year ?? 2002;
 
   let yearOptions = Array.from(
     { length: CURR_YEAR - rookieYear + 1 },
     (_, i) => rookieYear + i
   ).reverse();
 
-  if (teamYearsData) {
-    yearOptions = teamYearsData.map((year) => year.year);
-  }
+  // remembers name when selecting a year without data
+  const teamName = Object.values(teamYearDataDict).find((data) => data?.team_year?.team === team)
+    ?.team_year?.name;
 
   return (
     <PageLayout
@@ -104,7 +76,7 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
       includeSummary
     >
       <div className="w-full flex items-center justify-center mb-4">
-        <div className="text-2xl lg:text-3xl">{teamData?.name}</div>
+        <div className="text-2xl lg:text-3xl">{teamName}</div>
         <Link
           href={`https://www.thebluealliance.com/team/${team}`}
           rel="noopener noreferrer"
@@ -118,12 +90,11 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
         <Tabs
           teamNum={team}
           year={year}
-          teamData={teamData}
           teamYearData={teamYearData}
           fallbackTeamYearData={fallbackTeamYearData}
         />
       ) : (
-        <SummaryTabs teamData={teamData} teamYearsData={teamYearsData} />
+        <SummaryTabs team={team} />
       )}
     </PageLayout>
   );

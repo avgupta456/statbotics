@@ -40,32 +40,32 @@ const rankCard = (rank: number, count: number, label: string, filter: string) =>
   );
 };
 
-const OverviewSection = ({
-  teamData,
-  teamYearData,
-}: {
-  teamData: APITeam | undefined;
-  teamYearData: TeamYearData | undefined;
-}) => {
+const OverviewSection = ({ teamYearData }: { teamYearData: TeamYearData | undefined }) => {
   const [alliance, setAlliance] = useState<boolean>(true);
   const [media, setMedia] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (teamData && teamYearData) {
-      getMediaUrl(teamData.team, teamYearData.year.year).then((data) => setMedia(data));
-    }
-  }, [teamData, teamYearData]);
+  const teamNum = teamYearData?.team_year?.team;
+  const teamName = teamYearData?.team_year?.name;
+  const teamState = teamYearData?.team_year?.state;
+  const teamDistrict = teamYearData?.team_year?.district;
+  const teamCountry = teamYearData?.team_year?.country;
 
-  if (!teamData || !teamYearData) {
+  useEffect(() => {
+    if (teamYearData?.team_year) {
+      getMediaUrl(teamNum, teamYearData.year.year).then((data) => setMedia(data));
+    }
+  }, [teamNum, teamYearData]);
+
+  if (!teamYearData) {
     return (
       <div className="w-full h-auto flex flex-col justify-center items-center px-2">Loading...</div>
     );
   }
 
   const year = teamYearData.year;
-  const teamYear = teamYearData.team_year;
-  const teamEvents = teamYearData.team_events;
-  const matches = teamYearData.matches;
+  const teamYear = teamYearData?.team_year;
+  const teamEvents = teamYearData?.team_events;
+  const matches = teamYearData?.matches || [];
 
   if (year.year !== CURR_YEAR && matches.length === 0) {
     return (
@@ -75,22 +75,22 @@ const OverviewSection = ({
     );
   }
 
-  let state = teamData.state;
+  let state = teamState;
   usaOptions.forEach((option) => {
-    if (option.value === teamData.state) {
+    if (option.value === teamState) {
       state = option.label;
     }
   });
 
   canadaOptions.forEach((option) => {
-    if (option.value === teamData.state) {
+    if (option.value === teamState) {
       state = option.label;
     }
   });
 
-  let district: any = teamData.district;
+  let district: any = teamDistrict;
   districtOptions.forEach((option) => {
-    if (option.value === teamData.district) {
+    if (option.value === teamDistrict) {
       district = option.label;
     }
   });
@@ -115,7 +115,7 @@ const OverviewSection = ({
       <div className="w-full flex flex-wrap">
         <div className={classnames("w-full", media && "lg:w-auto lg:flex-grow")}>
           <div className="w-full mb-4">
-            Team {teamData.team} ({teamData.name}) had a record of{" "}
+            Team {teamNum} ({teamName}) had a record of{" "}
             <strong>
               {teamYear?.record?.wins}-{teamYear?.record?.losses}-{teamYear?.record?.ties}
             </strong>{" "}
@@ -164,20 +164,20 @@ const OverviewSection = ({
             {rankCard(
               teamYear?.epa?.ranks?.country?.rank,
               teamYear?.epa?.ranks?.country?.team_count,
-              teamData?.country,
-              `?country=${teamData?.country}`
+              teamCountry,
+              `?country=${teamCountry}`
             )}
             {rankCard(
               teamYear?.epa?.ranks?.district?.rank,
               teamYear?.epa?.ranks?.district?.team_count,
               district,
-              `?district=${teamData?.district}`
+              `?district=${teamDistrict}`
             )}
             {rankCard(
               teamYear?.epa?.ranks?.state?.rank,
               teamYear?.epa?.ranks?.state?.team_count,
               state,
-              `?state=${teamData?.state}`
+              `?state=${teamState}`
             )}
           </div>
         </div>
@@ -283,7 +283,7 @@ const OverviewSection = ({
             <div className="w-full lg:w-3/4 h-full pl-4 overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
               <MatchTable
                 year={year.year}
-                teamNum={teamData.team}
+                teamNum={teamNum}
                 matches={eventMatches}
                 myAlliance={alliance}
               />

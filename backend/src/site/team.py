@@ -88,7 +88,9 @@ async def read_team_year(
         no_cache=no_cache,
     )
     if team_year is None:
-        raise Exception("TeamYear not found")
+        return {
+            "year": year_obj.to_dict(),
+        }
 
     team_events: List[TeamEvent] = await get_team_events_cached(
         year=year,

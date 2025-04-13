@@ -30,6 +30,7 @@ class TeamYearORM(Base, ModelORM):
     country: MOS = mapped_column(String(30))
     state: MOS = mapped_column(String(10))
     district: MOS = mapped_column(String(10))
+    rookie_year: MOI = mapped_column(Integer, nullable=True)
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
     competing_this_week: MB = mapped_column(Boolean)
@@ -133,6 +134,7 @@ class TeamYear(_TeamYear, Model):
             "country": self.country,
             "state": self.state,
             "district": self.district,
+            "rookie_year": self.rookie_year,
             "epa": {
                 "total_points": {
                     "mean": self.epa,

@@ -390,6 +390,7 @@ def process_year(
                 country=team_obj.country,
                 state=team_obj.state,
                 district=None,
+                rookie_year=team_obj.rookie_year,
                 district_points=None,
                 district_rank=None,
                 competing_this_week=competing_this_week,

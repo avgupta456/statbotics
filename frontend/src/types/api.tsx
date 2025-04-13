@@ -130,6 +130,7 @@ export type APITeamYear = {
   country: string;
   state?: string;
   district?: string;
+  rookie_year: number;
   epa: {
     total_points: { mean: number; sd: number };
     unitless: number;

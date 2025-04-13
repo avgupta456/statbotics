@@ -20,10 +20,10 @@ export const emptyTeamYearsData: TeamYearsData = {
 
 export type TeamYearData = {
   year: APIYear;
-  team_year: APITeamYear;
-  team_events: APITeamEvent[];
-  matches: APIMatch[];
-  team_matches: APITeamMatch[];
+  team_year: APITeamYear | undefined;
+  team_events: APITeamEvent[] | undefined;
+  matches: APIMatch[] | undefined;
+  team_matches: APITeamMatch[] | undefined;
 };
 
 export type EventsData = {
