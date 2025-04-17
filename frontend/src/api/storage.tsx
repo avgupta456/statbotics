@@ -60,6 +60,10 @@ async function query(
     const fileName = apiPath.replace("?", ".").replace("&", ".");
     const res = await fetch(`${BUCKET_URL}${fileName}`, {
       next: { revalidate: 0 },
+      headers: {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/octet-stream",
+      },
     });
     log(`${fileName} (bucket) took ${round(performance.now() - start, 0)}ms`);
     if (res.ok) {

@@ -1,0 +1,2 @@
+gsutil cors set cors.json gs://site_dev_v1
+gsutil cors set cors.json gs://site_v1
