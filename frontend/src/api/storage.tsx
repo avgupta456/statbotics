@@ -58,7 +58,7 @@ async function query(
       throw new Error("Skip bucket check");
     }
     const fileName = apiPath.replace("?", ".").replace("&", ".");
-    const res = await fetch(`${BUCKET_URL}${fileName}`, {
+    const res = await fetch(`${BUCKET_URL}${fileName}?t=${Date.now()}`, {
       next: { revalidate: 0 },
       headers: {
         "Cache-Control": "no-cache",
