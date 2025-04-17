@@ -17,7 +17,6 @@ from src.site.event import _read_all_events, _read_events, _read_event
 from src.site.match import _read_noteworthy_matches, _read_upcoming_matches
 from src.site.team_year import _read_team_years
 from src.site.team import _read_all_teams
-from src.types.enums import EventStatus
 
 BUCKET_NAME = "site_v1" if PROD else "site_dev_v1"
 
@@ -78,11 +77,7 @@ def write_objs(
 
     # event/{event.key}
     orig_events = orig_objs[2] if orig_objs else {}
-    new_events = [
-        e
-        for e in events
-        if e.status == EventStatus.ONGOING or str(e) != str(orig_events.get(e.pk(), ""))
-    ]
+    new_events = [e for e in events if str(e) != str(orig_events.get(e.pk(), ""))]
     if len(new_events) > 0:
         event_to_matches = defaultdict(list)
         event_to_team_events = defaultdict(list)
