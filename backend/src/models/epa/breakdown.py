@@ -81,31 +81,6 @@ def post_process_breakdown(
         breakdown[keys.index("grid_points")] = grid_points
 
     elif year == 2025:
-        # the l2, l3, and l4 coral maximum is 12. Assume extra coral in high slots trickles down.
-        coral_l1 = breakdown[keys.index("coral_l1")]
-        coral_l2 = breakdown[keys.index("coral_l2")]
-        coral_l3 = breakdown[keys.index("coral_l3")]
-        coral_l4 = breakdown[keys.index("coral_l4")]
-        if coral_l4 > 12:
-            extra_l4 = coral_l4 - 12
-            coral_l3 += extra_l4
-            coral_l4 = 12
-            total_change -= extra_l4
-        if coral_l3 > 12:
-            extra_l3 = coral_l3 - 12
-            coral_l2 += extra_l3
-            coral_l3 = 12
-            total_change -= extra_l3
-        if coral_l2 > 12:
-            extra_l2 = coral_l2 - 12
-            coral_l1 += extra_l2
-            coral_l2 = 12
-            total_change -= extra_l2
-        breakdown[keys.index("teleop_coral_points")] += total_change
-        breakdown[keys.index("total_coral_points")] += total_change
-        breakdown[keys.index("total_game_pieces")] += total_change
-        breakdown[keys.index("teleop_points")] += total_change
-
         # we internally assign 3 points per processor algae. in reality, it's worth 6 points
         # for your alliance and 3 points for the opponent (assuming 75% success rate at 4 point net).
         # Adjust by adding 3 points per processor algae scored by both alliances
