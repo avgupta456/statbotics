@@ -138,9 +138,8 @@ class EPA(Model):
         norm_diff = (red_score - blue_score) / self.year_obj.score_sd
         win_prob = 1 / (1 + 10 ** (self.k * norm_diff))
 
-        foul_rate = self.year_obj.get_foul_rate()
-        red_score_with_fouls = red_score * (1 + foul_rate)
-        blue_score_with_fouls = blue_score * (1 + foul_rate)
+        red_score_with_fouls = red_score + self.year_obj.get_expected_fouls(red_score)
+        blue_score_with_fouls = blue_score + self.year_obj.get_expected_fouls(blue_score)
         red_pred = AlliancePred(
             red_score_with_fouls, breakdowns[0], rp_1s[0], rp_2s[0], rp_3s[0]
         )
