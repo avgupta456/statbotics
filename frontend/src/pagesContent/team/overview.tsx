@@ -6,9 +6,63 @@ import Link from "next/link";
 import MatchTable from "../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../components/filterConstants";
 import { CURR_YEAR, Category10Colors } from "../../constants";
-import { APITeam } from "../../types/api";
+import { APITeam, APITeamYear } from "../../types/api";
 import { TeamYearData } from "../../types/data";
 import { classnames, getMediaUrl } from "../../utils";
+import { MdAssessment } from "react-icons/md";
+
+
+type Config = {
+  points: {
+    [keyToName: string]: string;
+  };
+  gamepieces: {
+    [keyToName: string]: string;
+  } | undefined;
+};
+
+const pre2016Keys: Config = {
+  points: {
+    total_points: "Total Points",
+  },
+  gamepieces: undefined
+}
+
+const post2015Keys: Config = {
+  points: {
+    auto_points: "Auto Points",
+    teleop_points: "Teleop Points",
+    endgame_points: "Endgame Points",
+    total_points: "Total Points",
+  },
+  gamepieces: undefined
+}
+
+const configs: { [key: number]: Config } = {
+  2025: {
+    points: post2015Keys.points,
+    gamepieces: {
+      auto_coral: "Auto Coral",
+      coral_l1: "L1",
+      coral_l2: "L2",
+      coral_l3: "L3",
+      coral_l4: "L4",
+      processor_algae: "Processor",
+      net_algae: "Net",
+      total_game_pieces: "Total Game Pieces",
+    }
+  },
+  2024: {
+    points: post2015Keys.points,
+    gamepieces: {
+      auto_notes: "Auto Notes",
+      speaker_notes: "Speaker",
+      amplified_notes: "Amplified Speaker",
+      amp_notes: "Amp",
+      total_notes: "Total Game Pieces",
+    },
+  },
+};
 
 const epaCard = (epa: string, label: string, bg: string) => {
   if (!epa || !label || !bg) {
@@ -40,8 +94,62 @@ const rankCard = (rank: number, count: number, label: string, filter: string) =>
   );
 };
 
+const epaCards = (year: number, breakdown: { [key: string]: number; }, gamepieces: boolean, gamepieceSettingCallback?: (v: boolean) => void, header: boolean = false) => {
+
+  if (!gamepieceSettingCallback) {
+    gamepieceSettingCallback = (bool) => { };
+  }
+
+  const fallbackConfig = year < 2016 ? pre2016Keys : post2015Keys;
+  const config = configs[year] || fallbackConfig;
+
+  const cardTemplates: [string, string][] = []
+  if (gamepieces) {
+    Object.entries(config.gamepieces || {}).forEach(([key, label]) => {
+      const epa = breakdown?.[key]?.toFixed(1) || "0.0";
+      cardTemplates.push([epa, label]);
+    });
+  } else {
+    Object.entries(config.points).forEach(([key, label]) => {
+      const epa = breakdown?.[key]?.toFixed(1) || "0.0";
+      cardTemplates.push([epa, label]);
+    });
+  }
+
+  var colorIndex = 0;
+  const cards = cardTemplates.map(([epa, label]) => {
+    const bg = Category10Colors[colorIndex % Category10Colors.length];
+    colorIndex++;
+    return epaCard(epa, label, bg);
+  });
+
+  if (header) {
+    const text = gamepieces ? "GP Breakdown" : "EPA Breakdown";
+    const swapText = gamepieces ? "EPA" : "Gamepieces";
+    return (
+      <div className="w-full mb-8 lg:mb-12">
+        <div className="tooltip flex" data-tip={swapText}>
+          <MdAssessment
+            className="hover_icon mr-1 cursor-pointer"
+            onClick={() => gamepieceSettingCallback(!gamepieces)}
+          />
+          <strong className="h-1">{text}: </strong>
+        </div>
+        <div className="flex flex-row flex-wrap mb-2">{cards}</div>
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex flex-row flex-wrap mb-2">
+        {cards}
+      </div>
+    );
+  }
+}
+
 const OverviewSection = ({ teamYearData }: { teamYearData: TeamYearData | undefined }) => {
   const [alliance, setAlliance] = useState<boolean>(true);
+  const [gamepieceEpa, setGamepieceEpa] = useState<boolean>(true);
   const [media, setMedia] = useState<string | null>(null);
 
   const teamNum = teamYearData?.team_year?.team;
@@ -121,39 +229,7 @@ const OverviewSection = ({ teamYearData }: { teamYearData: TeamYearData | undefi
             </strong>{" "}
             in {year.year}.
           </div>
-          <div className="w-full mb-8 lg:mb-12 flex flex-wrap items-center">
-            EPA Breakdown:
-            {year.year >= 2016 ? (
-              <>
-                {epaCard(
-                  teamYear?.epa?.breakdown?.auto_points?.toFixed(1),
-                  "Auto",
-                  Category10Colors[0]
-                )}
-                {epaCard(
-                  teamYear?.epa?.breakdown?.teleop_points?.toFixed(1),
-                  "Teleop",
-                  Category10Colors[1]
-                )}
-                {epaCard(
-                  teamYear?.epa?.breakdown?.endgame_points?.toFixed(1),
-                  "Endgame",
-                  Category10Colors[2]
-                )}
-                {epaCard(
-                  teamYear?.epa?.breakdown?.total_points?.toFixed(1),
-                  "Total",
-                  Category10Colors[3]
-                )}
-              </>
-            ) : (
-              epaCard(
-                teamYear?.epa?.breakdown?.total_points?.toFixed(1),
-                "Total",
-                Category10Colors[0]
-              )
-            )}
-          </div>
+          {epaCards(teamYear?.year, teamYear?.epa?.breakdown, gamepieceEpa, setGamepieceEpa, true)}
           <div className="w-full mb-8 lg:mb-12 flex justify-center gap-2 md:gap-4">
             {rankCard(
               teamYear?.epa?.ranks?.total?.rank,
@@ -247,38 +323,7 @@ const OverviewSection = ({ teamYearData }: { teamYearData: TeamYearData | undefi
                   </div>
                 )}
               </div>
-              <div className="flex flex-row flex-wrap mb-2">
-                {year.year >= 2016 ? (
-                  <>
-                    {epaCard(
-                      event?.epa?.breakdown?.auto_points?.toFixed(1),
-                      "Auto",
-                      Category10Colors[0]
-                    )}
-                    {epaCard(
-                      event?.epa?.breakdown?.teleop_points?.toFixed(1),
-                      "Teleop",
-                      Category10Colors[1]
-                    )}
-                    {epaCard(
-                      event?.epa?.breakdown?.endgame_points?.toFixed(1),
-                      "Endgame",
-                      Category10Colors[2]
-                    )}
-                    {epaCard(
-                      event?.epa?.breakdown?.total_points?.toFixed(1),
-                      "Total",
-                      Category10Colors[3]
-                    )}
-                  </>
-                ) : (
-                  epaCard(
-                    event?.epa?.breakdown?.total_points?.toFixed(1),
-                    "Total",
-                    Category10Colors[0]
-                  )
-                )}
-              </div>
+              {epaCards(event?.year, event?.epa?.breakdown, gamepieceEpa)}
             </div>
             <div className="w-full lg:w-3/4 h-full pl-4 overflow-x-scroll lg:overflow-x-auto overflow-y-hidden">
               <MatchTable
