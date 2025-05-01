@@ -125,15 +125,17 @@ const epaCards = (year: number, breakdown: { [key: string]: number; }, gamepiece
 
   if (header) {
     const text = gamepieces ? "GP Breakdown" : "EPA Breakdown";
-    const swapText = gamepieces ? "EPA" : "Gamepieces";
+    const swapText = gamepieces ? "Swap to EPA" : "Swap to Gamepieces";
     return (
       <div className="w-full mb-8 lg:mb-12">
-        <div className="tooltip flex" data-tip={swapText}>
-          <MdAssessment
-            className="hover_icon mr-1 cursor-pointer"
-            onClick={() => gamepieceSettingCallback(!gamepieces)}
-          />
-          <strong className="h-1">{text}: </strong>
+        <div className="flex" >
+          <div className="tooltip" data-tip={swapText}>
+            <MdAssessment
+              className="tooltip hover_icon mr-1 cursor-pointer"
+              onClick={() => gamepieceSettingCallback(!gamepieces)}
+            />
+          </div>
+          <strong className="h-1 mt-2">{text}: </strong>
         </div>
         <div className="flex flex-row flex-wrap mb-2">{cards}</div>
       </div>
