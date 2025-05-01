@@ -12,38 +12,40 @@ import Table from "./Table";
 import { TableKey } from "./shared";
 
 const InsightsTable = ({
-  title,
+  title = null,
   data,
   columns,
   detailedData = [],
   detailedColumns = [],
-  searchCols,
-  csvFilename,
-  toggleDisableHighlight,
-  includeKey = true,
+  searchCols = [],
+  toggleDisableHighlight = undefined,
 }: {
-  title: string;
+  title?: string | null | undefined;
   data: any[];
   columns: ColumnDef<any, any>[];
   detailedData?: any[];
   detailedColumns?: ColumnDef<any, any>[];
-  searchCols: string[];
-  csvFilename: string;
+  searchCols?: string[];
   toggleDisableHighlight?: () => void;
-  includeKey?: boolean;
 }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
 
   const [expanded, setExpanded] = useState(false);
 
+  const hasTitle = title !== undefined && title !== null && title !== "";
   const expandable = detailedData?.length > 0;
+  const searchable = searchCols?.length > 0;
   const currData = expanded ? detailedData : data;
   const currColumns = expanded ? detailedColumns : columns;
 
-  const filteredData = currData.filter((row) =>
-    searchCols.some((col) => row[col].toString().toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredData = searchable
+    ? currData.filter((row) =>
+      searchCols.some((col) => row[col].toString().toLowerCase().includes(search.toLowerCase()))
+    )
+    : currData.filter((row) =>
+      Object.values(row).some((value) => value.toString().toLowerCase().includes(search.toLowerCase()))
+    );
 
   const headerClassName = () => "border-b-2 border-gray-800";
 
@@ -80,22 +82,20 @@ const InsightsTable = ({
               />
             </div>
           ) : (
-            <div className="text-lg text-gray-800">{title}</div>
+            hasTitle && (
+              <div className="text-lg text-gray-800 font-bold">{title}</div>
+            )
           )}
         </div>
-        <div className="tooltip" data-tip="Search">
+        {searchable && (<div className="tooltip" data-tip="Search">
           <MdSearch className="hover_icon ml-2" onClick={() => setShowSearch(!showSearch)} />
-        </div>
+        </div>)
+        }
         {toggleDisableHighlight && (
           <div className="tooltip" data-tip="Toggle Highlight">
             <MdColorLens className="hover_icon ml-2" onClick={toggleDisableHighlight} />
           </div>
         )}
-        <div className="tooltip" data-tip="Download CSV">
-          <CSVLink data={filteredData} filename={csvFilename}>
-            <MdCloudDownload className="hover_icon ml-2" />
-          </CSVLink>
-        </div>
         {expandable && (
           <div className="tooltip" data-tip={expanded ? "Shrink" : "Expand"}>
             <MdAdd
@@ -123,7 +123,7 @@ const InsightsTable = ({
           cellClassName={cellClassName}
         />
       </div>
-      {includeKey && <TableKey />}
+      {toggleDisableHighlight && <TableKey />}
     </div>
   );
 };

@@ -124,12 +124,10 @@ const EPABreakdownTable = ({
   year,
   yearData,
   data,
-  csvFilename,
 }: {
   year: number;
   yearData: APIYear;
   data: (APITeamYear | APITeamEvent)[];
-  csvFilename: string;
 }) => {
   const [disableHighlight, setDisableHighlight] = useState(false);
 
@@ -202,7 +200,6 @@ const EPABreakdownTable = ({
         detailedData={yearInsightsData}
         detailedColumns={detailedColumns}
         searchCols={["num", "team"]}
-        csvFilename={csvFilename}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}
       />
     </>
