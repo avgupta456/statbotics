@@ -4,7 +4,6 @@ import {
   countryOptions,
   districtOptions,
   usaOptions,
-  weekOptions,
   yearOptions,
 } from "./filterConstants";
 

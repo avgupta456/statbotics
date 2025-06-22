@@ -5,7 +5,12 @@ from typing import Dict, List, Optional, Tuple, cast
 
 from src.tba.breakdown import clean_breakdown, post_clean_breakdown
 from src.tba.clean_data import clean_district, clean_state, get_match_time
-from src.tba.constants import DISTRICT_OVERRIDES, EVENT_BLACKLIST, MATCH_BLACKLIST
+from src.tba.constants import (
+    DISTRICT_OVERRIDES,
+    EVENT_BLACKLIST,
+    MATCH_BLACKLIST,
+    PLACEHOLDER_TEAMS,
+)
 from src.tba.main import get_tba
 from src.tba.types import EventDict, MatchDict, TeamDict
 from src.types.enums import CompLevel, EventType, MatchStatus, MatchWinner
@@ -87,6 +92,17 @@ def get_district_rankings(
     return (team_to_points, team_to_rank, team_event_to_points), new_etag
 
 
+def get_event_teams(
+    event: str, etag: Optional[str] = None, cache: bool = True
+) -> Tuple[List[int], Optional[str]]:
+    query_str = "event/" + str(event) + "/teams/simple"
+    data, new_etag = get_tba(query_str, etag=etag, cache=cache)
+    if type(data) is bool:
+        return [], new_etag
+    out = [int(x["key"][3:]) for x in data]
+    return out, new_etag
+
+
 def get_events(
     year: int, etag: Optional[str] = None, cache: bool = True
 ) -> Tuple[List[EventDict], Optional[str]]:
@@ -104,10 +120,28 @@ def get_events(
         if key in EVENT_BLACKLIST:
             continue
 
-        # preseason or offseason events
         event_type_int = int(event["event_type"])
-        if event_type_int >= 99:
-            continue
+        if event_type_int == 99:
+            # only keep some offseason events after 2025
+            if year < 2025:
+                continue
+            try:
+                event_teams = get_event_teams(key, etag=None, cache=cache)[0]
+                # remove events with less than 6 teams
+                if len(event_teams) < 6:
+                    continue
+                if len(set(PLACEHOLDER_TEAMS).intersection(set(event_teams))) > 0:
+                    continue
+                matches = get_tba(f"event/{key}/matches", etag=None, cache=cache)[0]
+                for match in matches:  # type: ignore
+                    all_teams = match["alliances"]["red"]["team_keys"]
+                    all_teams += match["alliances"]["blue"]["team_keys"]
+                    all_teams = [int(x[3:]) for x in all_teams]  # asserts no B teams
+            except Exception:
+                # remove events with B teams
+                continue
+        if event_type_int == 100:
+            continue  # preseason
 
         event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
         event_type_dict[0] = EventType.REGIONAL
@@ -119,6 +153,11 @@ def get_events(
         event_type_dict[5] = EventType.DISTRICT_CMP
         # rename festival of championships to einsteins
         event_type_dict[6] = EventType.EINSTEIN
+
+        # TODO: map to OFFSEASON (might require reloading DB)
+        event_type_dict[99] = EventType.REGIONAL
+        # event_type_dict[99] = EventType.OFFSEASON
+
         event_type = event_type_dict[event_type_int]
 
         if event["district"] is not None:
@@ -131,6 +170,10 @@ def get_events(
         if event_type.is_champs():
             event["week"] = 8
 
+        # TODO: go through event_type once offseason mapped correctly
+        if event_type_int == 99:
+            event["week"] = 8  # gets incremented by 1 later
+
         # filter out incomplete events
         if "week" not in event or event["week"] is None:
             continue
@@ -141,6 +184,7 @@ def get_events(
             EventType.DISTRICT,
             EventType.DISTRICT_CMP,
         ]:
+            # NOTE: affects offseason too (since REGIONAL -> OFFSEASON)
             event["week"] += 1
 
         video: Optional[str] = None
@@ -172,17 +216,6 @@ def get_events(
 
         out.append(new_data)
 
-    return out, new_etag
-
-
-def get_event_teams(
-    event: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[List[int], Optional[str]]:
-    query_str = "event/" + str(event) + "/teams/simple"
-    data, new_etag = get_tba(query_str, etag=etag, cache=cache)
-    if type(data) is bool:
-        return [], new_etag
-    out = [int(x["key"][3:]) for x in data]
     return out, new_etag
 
 

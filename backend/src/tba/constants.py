@@ -92,7 +92,7 @@ DISTRICT_MAPPING: Dict[str, str] = {
 
 # TEAMS
 
-PLACEHOLDER_TEAMS = range(9970, 10000)
+PLACEHOLDER_TEAMS = list(range(9970, 10000))
 
 
 # BLACKLISTS
@@ -105,6 +105,7 @@ EVENT_BLACKLIST: List[str] = [
     "2007ga",
     "2022zhha",  # no matches
     "2024nywz",  # malformed
+    "2025mnsp",  # no elim matches
 ]
 
 MATCH_BLACKLIST: List[str] = []
