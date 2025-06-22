@@ -78,14 +78,15 @@ class Model:
 
         attributions = self.attribute_match(match, red_pred, blue_pred)
 
-        # Don't update if 1) placeholder match, 2) elim dq
+        # Don't update if 1) offseason, 2) placeholder match, 3) elim dq
+        offseason_event = event.week == 9
         teams = set(match.get_red() + match.get_blue())
         placeholder_match = len(set(PLACEHOLDER_TEAMS).intersection(teams)) > 0
         elim_dq = match.elim and (
             len(match.get_red_dqs()) >= self.num_teams
             or len(match.get_blue_dqs()) >= self.num_teams
         )
-        skip_update = placeholder_match or elim_dq
+        skip_update = offseason_event or placeholder_match or elim_dq
 
         for team, attr in attributions.items():
             team_match = team_matches[team]

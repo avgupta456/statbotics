@@ -18,6 +18,7 @@ TRP = Tuple[int, int]
 
 def process_year(objs: objs_type) -> objs_type:
     year_num = objs[0].year
+    event_to_week = {e.key: e.week for e in objs[2].values()}
 
     ty_record: Dict[int, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     te_record: Dict[Tuple[int, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
@@ -30,7 +31,11 @@ def process_year(objs: objs_type) -> objs_type:
         status = m_obj.status
         winner = m_obj.winner
 
-        if status != MatchStatus.COMPLETED or winner is None:
+        if (
+            event_to_week[event] == 9
+            or status != MatchStatus.COMPLETED
+            or winner is None
+        ):
             continue
 
         for alliance in ["red", "blue"]:
@@ -141,7 +146,7 @@ def process_year(objs: objs_type) -> objs_type:
         events = [
             e
             for e in team_to_events[team_year.team]
-            if e.week >= CURR_WEEK and e.status != EventStatus.COMPLETED
+            if e.week >= CURR_WEEK and e.week != 9 and e.status != EventStatus.COMPLETED
         ]
         if len(events) > 0:
             next_event = min(events, key=lambda x: (x.week, x.num_teams))
