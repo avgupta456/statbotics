@@ -10,6 +10,7 @@ import "@mantine/spotlight/styles.css";
 
 import { get, set } from "idb-keyval";
 
+import { ColorsProvider } from "../contexts/colorsContext";
 import { DataContext } from "../contexts/dataContext";
 import { PreferencesContext } from "../contexts/preferencesContext";
 import Footer from "../layout/footer";
@@ -109,11 +110,13 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <PreferencesContext.Provider value={memoizedPreferencesValue}>
       <DataContext.Provider value={memoizedDataValue}>
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <Component {...pageProps} />
-          <Footer />
-        </div>
+        <ColorsProvider>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </div>
+        </ColorsProvider>
       </DataContext.Provider>
     </PreferencesContext.Provider>
   );
