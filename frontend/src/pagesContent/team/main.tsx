@@ -14,6 +14,10 @@ import SummaryTabs from "./summaryTabs";
 import Tabs from "./tabs";
 
 const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) => {
+  if (isNaN(team)) {
+    return <NotFound type="Team" />;
+  }
+
   const [prevYear, _setPrevYear] = useState(paramYear);
   const [year, _setYear] = useState(paramYear);
 
@@ -47,7 +51,7 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
     if (year >= 2002 && year <= CURR_YEAR) {
       _getTeamYearDataForYear(team, year);
     }
-  }, [team, year, teamYearDataDict]);
+  }, [team, year]);
 
   const teamYearData = teamYearDataDict?.[year];
   const fallbackTeamYearData = teamYearDataDict?.[prevYear];
