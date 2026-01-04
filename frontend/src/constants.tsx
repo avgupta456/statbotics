@@ -11,8 +11,8 @@ export const BUCKET_URL = PROD
 
 export const TBA_API_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr";
 
-export const CURR_YEAR = 2025;
-export const CURR_WEEK = 9;
+export const CURR_YEAR = 2026;
+export const CURR_WEEK = 1;
 
 // 9970 to 9999 are placeholder teams
 export const PLACEHOLDER_TEAMS = Array.from({ length: 30 }, (_, i) => 9970 + i);
@@ -57,6 +57,8 @@ export const RP_NAMES: { [key: number]: string[] } = {
   2023: ["Links RP", "Activation RP"],
   2024: ["Melody RP", "Ensemble RP"],
   2025: ["Auto RP", "Coral RP", "Barge RP"],
+  // TODO: Update once official breakdown is released
+  2026: ["RP 1", "RP 2", "RP 3"],
 };
 
 export const eventNameMap = {

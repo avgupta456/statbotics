@@ -29,6 +29,8 @@ const EventCard = ({ event }: { event: APIEvent }) => {
     return `${startMonth} ${startDate} to ${endMonth} ${endDate}`;
   };
 
+  const weekStr = event.week === 9 ? "Offseason" : `Week ${event.week}`;
+
   return (
     <Link href={`/event/${event.key}`}>
       <div className="h-40 m-2 p-4 rounded flex flex-col border-[1px] shadow hover:bg-blue-100 cursor-pointer">
@@ -36,7 +38,7 @@ const EventCard = ({ event }: { event: APIEvent }) => {
           {formatEventName(event.name, 45)}
         </div>
         <div className="w-full mb-2">
-          Week {event.week}, {formatDates(new Date(event.start_date), new Date(event.end_date))}
+          {weekStr}, {formatDates(new Date(event.start_date), new Date(event.end_date))}
         </div>
         {event.status === "Ongoing" && <div className="w-full">{event.status_str}</div>}
       </div>

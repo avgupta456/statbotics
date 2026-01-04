@@ -187,6 +187,16 @@ key_to_name = {
         "comp_16": "total_game_pieces",
         "comp_17": "barge_points",
     },
+    2026: {
+        "auto": "auto_points",
+        "teleop": "teleop_points",
+        "endgame": "endgame_points",
+        # TODO: Update once official breakdown is released
+        "rp_1": "rp_1",
+        "rp_2": "rp_2",
+        "rp_3": "rp_3",
+        "tiebreaker": "tiebreaker_points",
+    },
 }
 
 all_keys: Dict[int, List[str]] = {}
