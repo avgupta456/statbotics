@@ -202,7 +202,7 @@ def get_events(
         new_data: EventDict = {
             "year": year,
             "key": key,
-            "name": cast(str, event["name"]),
+            "name": cast(str, event["name"])[:100],
             "country": cast(str, event["country"]),
             "state": clean_state(event["state_prov"]),
             "district": clean_district(event["district"]),

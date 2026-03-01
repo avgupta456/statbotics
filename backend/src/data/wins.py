@@ -151,7 +151,7 @@ def process_year(objs: objs_type) -> objs_type:
         if len(events) > 0:
             next_event = min(events, key=lambda x: (x.week, x.num_teams))
             team_year.next_event_key = next_event.key
-            team_year.next_event_name = next_event.name
+            team_year.next_event_name = next_event.name[:100]
             team_year.next_event_week = next_event.week
 
     return objs
