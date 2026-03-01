@@ -236,9 +236,7 @@ def refresh_teams() -> Dict[str, int]:
         update_team_years_db(changed_team_years)
         timer.print(f"Update TeamYears ({len(changed_team_years)} rows)")
 
-        all_team_events = get_team_events_db(
-            teams=[str(t) for t in teams_to_update]
-        )
+        all_team_events = get_team_events_db(teams=[str(t) for t in teams_to_update])
         for te in all_team_events:
             te.team_name = teams_to_update[te.team].name
         update_team_events_db(all_team_events)
