@@ -91,8 +91,19 @@ DISTRICT_MAPPING: Dict[str, str] = {
 }
 
 VALID_DISTRICTS: Set[str] = {
-    "ca", "fch", "fim", "fin", "fit", "fma", "fnc", "fsc",
-    "isr", "ne", "ont", "pch", "pnw",
+    "ca",
+    "fch",
+    "fim",
+    "fin",
+    "fit",
+    "fma",
+    "fnc",
+    "fsc",
+    "isr",
+    "ne",
+    "ont",
+    "pch",
+    "pnw",
 }
 
 
