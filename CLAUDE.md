@@ -23,8 +23,7 @@ Statbotics is an open-source data analytics platform for the FIRST Robotics Comp
 
 ## Season Prep Checklist
 
-When preparing for a new FRC season (year N), update these in order:
+When preparing for a new FRC season, update backend first, then frontend. Full file-by-file details are in each subdirectory's CLAUDE.md:
 
-1. `backend/src/constants.py` — update `CURR_YEAR` and `CURR_WEEK`
-2. `backend/src/tba/breakdown.py` — add `all_keys[N]` and a `clean_breakdown_{N}()` function with game-specific score parsing
-3. `frontend/src/constants.tsx` — update `CURR_YEAR`, `CURR_WEEK`, add year to `RP_KEYS`/`RP_NAMES`
+- **Backend** — see `backend/CLAUDE.md` → Season Prep
+- **Frontend** — see `frontend/CLAUDE.md` → Season Prep

@@ -86,7 +86,7 @@ CockroachDB via SQLAlchemy 2.0. Seven tables defined in `src/db/models/`:
 - `breakdown.py` — game-specific score breakdown parsing (see above).
 - Auth key is in `src/tba/constants.py` via env var `TBA_KEY`.
 
-## Season Config
+## Season Prep
 
 Update these at the start of each new season:
 - `src/constants.py`: `CURR_YEAR`, `CURR_WEEK`

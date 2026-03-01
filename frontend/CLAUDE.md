@@ -71,4 +71,6 @@ Note: uses `127.0.0.1` instead of `localhost` in dev due to a Node.js `undici` b
 1. Update `CURR_YEAR` and `CURR_WEEK` in `src/constants.tsx`
 2. Add the new year to `RP_KEYS` and `RP_NAMES` in `src/constants.tsx`
 3. Add the new year to `BREAKDOWN_YEARS` once breakdown parsing is implemented in the backend
-4. Add a year-specific case to `getRandomTiebreaker()` in `src/pagesContent/event/[event_id]/worker.ts` — set a cold-start range based on preseason match data (e.g. `BASE + Math.round(Math.random() * RANGE)`). The tiebreaker value is year-specific; check `clean_breakdown_{year}()` in `backend/src/tba/breakdown.py` to confirm what it represents.
+4. Add `{ value: "N", label: "N" }` to the **top** of `yearOptions` in `src/components/filterConstants.tsx` — this list is hardcoded and must be updated manually each season
+5. Add a `configs[N]` entry to `src/components/Table/BreakdownTable.tsx` with game-specific score field names and layout structure
+6. Add a year-specific case to `getRandomTiebreaker()` in `src/pagesContent/event/[event_id]/worker.ts` — set a cold-start range based on preseason match data (e.g. `BASE + Math.round(Math.random() * RANGE)`). The tiebreaker value is year-specific; check `clean_breakdown_{year}()` in `backend/src/tba/breakdown.py` to confirm what it represents.
