@@ -17,10 +17,13 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
   const [prevYear, _setPrevYear] = useState(paramYear);
   const [year, _setYear] = useState(paramYear);
 
-  const setYear = useCallback((newYear: number) => {
-    _setPrevYear(year);
-    _setYear(newYear);
-  }, [year]);
+  const setYear = useCallback(
+    (newYear: number) => {
+      _setPrevYear(year);
+      _setYear(newYear);
+    },
+    [year]
+  );
 
   const [teamYearDataDict, setTeamYearDataDict] = useState<{
     [key: number]: TeamYearData | undefined;
@@ -52,7 +55,7 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
       setTeamYearDataDict((prev) => ({ ...prev, [year]: data as TeamYearData }));
     };
 
-    if (year >= 2002 && year <= CURR_YEAR) {
+    if (!isNaN(team) && year >= 2002 && year <= CURR_YEAR) {
       _getTeamYearDataForYear(team, year);
     }
   }, [team, year, teamYearDataDict, setYear]);
