@@ -64,7 +64,7 @@ const OverviewSection = ({ teamYearData }: { teamYearData: TeamYearData | undefi
 
   const year = teamYearData.year;
   const teamYear = teamYearData?.team_year;
-  const teamEvents = teamYearData?.team_events;
+  const teamEvents = teamYearData?.team_events || [];
   const matches = teamYearData?.matches || [];
 
   if (year.year !== CURR_YEAR && matches.length === 0) {

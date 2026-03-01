@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
 
@@ -11,14 +11,6 @@ import PageContent from "../../../pagesContent/team/main";
 const InnerPage = () => {
   const router = useRouter();
   const { team, year: paramYear } = router.query;
-  const [year, setYear] = useState(CURR_YEAR);
-
-  useEffect(() => {
-    if (paramYear && paramYear !== "-1") {
-      const numericYear = Math.min(Math.max(Number(paramYear), 2002), CURR_YEAR);
-      setYear(numericYear);
-    }
-  }, [paramYear]);
 
   useEffect(() => {
     if (team) {
@@ -26,7 +18,14 @@ const InnerPage = () => {
     }
   }, [team]);
 
-  return <PageContent team={Number(team)} paramYear={year} />;
+  if (!router.isReady) return null;
+
+  const urlYear =
+    paramYear && !Array.isArray(paramYear) && paramYear !== "-1"
+      ? Math.min(Math.max(Number(paramYear), 2002), CURR_YEAR)
+      : CURR_YEAR;
+
+  return <PageContent team={Number(team)} paramYear={urlYear} />;
 };
 
 const Page = () => {

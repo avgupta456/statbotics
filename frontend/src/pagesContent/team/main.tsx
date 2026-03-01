@@ -37,7 +37,11 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
       }
 
       const data: TeamYearData | undefined = await getTeamYear(team, year);
-      if (!data) {
+      if (!data?.team_year) {
+        // No data for this year (e.g. before team's rookie year); fall back to CURR_YEAR
+        if (year !== CURR_YEAR) {
+          setYear(CURR_YEAR);
+        }
         return;
       }
 
