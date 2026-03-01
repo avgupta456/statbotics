@@ -82,6 +82,10 @@ async def read_team_year(
     if year_obj is None:
         raise Exception("Year not found")
 
+    team: Optional[Team] = await get_team_cached(team=team_num, no_cache=no_cache)
+    if team is None:
+        raise Exception("Team not found")
+
     team_year: Optional[TeamYear] = await get_team_year_cached(
         team=team_num,
         year=year,
@@ -90,6 +94,10 @@ async def read_team_year(
     if team_year is None:
         return {
             "year": year_obj.to_dict(),
+            "team_active_years": {
+                "rookie_year": team.rookie_year,
+                "last_active_year": team.last_active_year,
+            },
         }
 
     team_events: List[TeamEvent] = await get_team_events_cached(
@@ -120,6 +128,7 @@ async def read_team_year(
 
     out = {
         "year": year_obj.to_dict(),
+        "team": team.to_dict(),
         "team_year": team_year.to_dict(),
         "team_events": [x.to_dict() for x in team_events],
         "matches": [x.to_dict() for x in matches],

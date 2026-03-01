@@ -1,5 +1,6 @@
 import { BUCKET_URL, CURR_YEAR } from "../constants";
-import { APIMatch, APITeam, APITeamEvent, APITeamMatch, APITeamYear, APIYear } from "../types/api";
+import { APITeam, APITeamEvent } from "../types/api";
+import { TeamYearData, TeamYearRedirect } from "../types/data";
 import { getEvent } from "./event";
 import query, { decompress, version } from "./storage";
 import { getYearTeamYears } from "./teams";
@@ -14,13 +15,7 @@ export async function getTeam(team: number): Promise<{ team: APITeam; team_years
 export async function getTeamYear(
   team: number,
   year: number
-): Promise<{
-  year: APIYear;
-  team_year: APITeamYear;
-  team_events: APITeamEvent[];
-  matches: APIMatch[];
-  team_matches: APITeamMatch[];
-}> {
+): Promise<TeamYearData | TeamYearRedirect | undefined> {
   const urlSuffix = `/team/${team}/${year}`;
   const storageKey = `team_${team}_${year}_${version}`;
 

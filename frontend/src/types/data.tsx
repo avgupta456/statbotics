@@ -1,6 +1,7 @@
 import {
   APIEvent,
   APIMatch,
+  APITeam,
   APITeamEvent,
   APITeamMatch,
   APITeamYear,
@@ -20,10 +21,19 @@ export const emptyTeamYearsData: TeamYearsData = {
 
 export type TeamYearData = {
   year: APIYear;
-  team_year: APITeamYear | undefined;
-  team_events: APITeamEvent[] | undefined;
-  matches: APIMatch[] | undefined;
-  team_matches: APITeamMatch[] | undefined;
+  team: APITeam;
+  team_year: APITeamYear;
+  team_events: APITeamEvent[];
+  matches: APIMatch[];
+  team_matches: APITeamMatch[];
+};
+
+export type TeamYearRedirect = {
+  year: APIYear;
+  team_active_years: {
+    rookie_year: number;
+    last_active_year: number;
+  };
 };
 
 export type EventsData = {

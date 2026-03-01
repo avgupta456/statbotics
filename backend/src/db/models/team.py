@@ -23,6 +23,7 @@ class TeamORM(Base, ModelORM):
     """GENERAL"""
     district: MOS = mapped_column(String(10), nullable=True, default=None)
     active: MB = mapped_column(Boolean, default=False)
+    last_active_year: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """STATS"""
     wins: MI = mapped_column(Integer, default=0)
@@ -61,6 +62,7 @@ class Team(_Team, Model):
             "district": self.district,
             "rookie_year": self.rookie_year,
             "active": self.active,
+            "last_active_year": self.last_active_year,
             "record": {
                 "wins": self.wins,
                 "losses": self.losses,

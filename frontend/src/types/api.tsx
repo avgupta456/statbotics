@@ -105,6 +105,7 @@ export type APITeam = {
   district?: string;
   rookie_year: number;
   active: boolean;
+  last_active_year?: number;
   record: {
     season: Record;
     full: Record;

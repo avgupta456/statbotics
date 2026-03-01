@@ -18,7 +18,6 @@ TRP = Tuple[int, int]
 
 def process_year(objs: objs_type) -> objs_type:
     year_num = objs[0].year
-    event_to_week = {e.key: e.week for e in objs[2].values()}
     event_to_type = {e.key: e.type for e in objs[2].values()}
 
     ty_record: Dict[int, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
@@ -147,7 +146,9 @@ def process_year(objs: objs_type) -> objs_type:
         events = [
             e
             for e in team_to_events[team_year.team]
-            if e.week >= CURR_WEEK and e.type != EventType.OFFSEASON and e.status != EventStatus.COMPLETED
+            if e.week >= CURR_WEEK
+            and e.type != EventType.OFFSEASON
+            and e.status != EventStatus.COMPLETED
         ]
         if len(events) > 0:
             next_event = min(events, key=lambda x: (x.week, x.num_teams))
@@ -162,7 +163,7 @@ def post_process(
     teams: List[Team], all_team_years: Dict[int, Dict[int, TeamYear]]
 ) -> List[Team]:
     t_record: Dict[int, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
-    t_active: Dict[int, bool] = defaultdict(lambda: False)
+    t_last_active_year: Dict[int, int] = defaultdict(lambda: 0)
 
     all_team_years_list: List[TeamYear] = []
     for team_years_dict in all_team_years.values():
@@ -178,13 +179,13 @@ def post_process(
             t_record[team][3] + team_year.count,
         )
 
-        if team_year.year == CURR_YEAR:
-            t_active[team] = True
+        t_last_active_year[team] = max(t_last_active_year[team], team_year.year)
 
     for team in teams:
         team.wins, team.losses, team.ties, team.count = t_record[team.team]
         team.winrate = winrate(team.wins, team.ties, team.count)
 
-        team.active = t_active[team.team]
+        team.last_active_year = t_last_active_year.get(team.team)
+        team.active = team.last_active_year == CURR_YEAR
 
     return teams

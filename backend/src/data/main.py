@@ -1,6 +1,6 @@
 from collections import defaultdict
 from copy import deepcopy
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from src.constants import CURR_YEAR
 from src.data.avg import process_year as process_year_avg
@@ -23,6 +23,7 @@ from src.data.utils import (
 from src.data.wins import (
     post_process as post_process_wins,
     process_year as process_year_wins,
+    winrate,
 )
 from src.db.main import clean_db
 from src.db.models import Team, TeamYear
@@ -155,46 +156,92 @@ def update_curr_year(partial: bool):
     if not partial:
         # triggers loading all team years
         post_process(teams, None)
-        refresh_team_names()
 
 
-def refresh_team_names() -> int:
+def refresh_teams() -> Dict[str, int]:
+    """Refresh all stale team fields from TBA and recompute win records."""
     timer = Timer()
 
     fresh_teams = load_teams_tba(cache=False)
-    fresh_name_map: Dict[int, str] = {t.team: t.name for t in fresh_teams}
+    fresh_team_map: Dict[int, Team] = {t.team: t for t in fresh_teams}
     timer.print("Fetch TBA Teams")
 
     db_teams = get_teams_db()
-    changed: Dict[int, str] = {
-        t.team: fresh_name_map[t.team]
-        for t in db_teams
-        if t.team in fresh_name_map and fresh_name_map[t.team] != t.name
-    }
-    timer.print("Fetch DB Teams")
+    all_team_years_list = get_team_years_db()
+    timer.print("Fetch DB Teams + TeamYears")
 
-    if not changed:
-        return 0
+    # Compute true last_active_year per team
+    true_last: Dict[int, int] = {}
+    for ty in all_team_years_list:
+        if ty.team not in true_last or ty.year > true_last[ty.team]:
+            true_last[ty.team] = ty.year
 
-    # Update teams table
+    # Compute aggregate win record per team from TeamYear data
+    t_record: Dict[int, Tuple[int, int, int, int]] = defaultdict(lambda: (0, 0, 0, 0))
+    for ty in all_team_years_list:
+        t_record[ty.team] = (
+            t_record[ty.team][0] + ty.wins,
+            t_record[ty.team][1] + ty.losses,
+            t_record[ty.team][2] + ty.ties,
+            t_record[ty.team][3] + ty.count,
+        )
+
+    # Find teams with any stale fields
+    teams_to_update: List[Team] = []
+    propagate_teams: Dict[int, Team] = (
+        {}
+    )  # teams needing name/country/state propagation
     for t in db_teams:
-        if t.team in changed:
-            t.name = changed[t.team]
-    update_teams_db([t for t in db_teams if t.team in changed])
-    timer.print(f"Update Teams DB ({len(changed)} rows)")
+        dirty = False
+        fresh = fresh_team_map.get(t.team)
 
-    # Propagate to all-years team_years
-    all_team_years = get_team_years_db(teams=[str(t) for t in changed])
-    for ty in all_team_years:
-        ty.name = changed[ty.team]
-    update_team_years_db(all_team_years)
-    timer.print(f"Update TeamYears ({len(all_team_years)} rows)")
+        if fresh is not None:
+            for field in ("name", "country", "state", "rookie_year"):
+                fresh_val = getattr(fresh, field)
+                if fresh_val is not None and getattr(t, field) != fresh_val:
+                    setattr(t, field, fresh_val)
+                    dirty = True
+                    if field in ("name", "country", "state"):
+                        propagate_teams[t.team] = t
 
-    # Propagate to all-years team_events
-    all_team_events = get_team_events_db(teams=[str(t) for t in changed])
-    for te in all_team_events:
-        te.team_name = changed[te.team]
-    update_team_events_db(all_team_events)
-    timer.print(f"Update TeamEvents ({len(all_team_events)} rows)")
+        if true_last.get(t.team) != t.last_active_year:
+            t.last_active_year = true_last.get(t.team)
+            dirty = True
 
-    return len(changed)
+        rec = t_record[t.team]
+        if (t.wins, t.losses, t.ties, t.count) != rec:
+            t.wins, t.losses, t.ties, t.count = rec
+            t.winrate = winrate(t.wins, t.ties, t.count)
+            dirty = True
+
+        if dirty:
+            teams_to_update.append(t)
+
+    if teams_to_update:
+        update_teams_db(teams_to_update)
+    timer.print(f"Update Teams ({len(teams_to_update)} rows)")
+
+    # Propagate name/country/state changes to TeamYear and TeamEvent
+    if propagate_teams:
+        changed_team_years = [
+            ty for ty in all_team_years_list if ty.team in propagate_teams
+        ]
+        for ty in changed_team_years:
+            src = propagate_teams[ty.team]
+            ty.name = src.name
+            ty.country = src.country
+            ty.state = src.state
+        update_team_years_db(changed_team_years)
+        timer.print(f"Update TeamYears ({len(changed_team_years)} rows)")
+
+        all_team_events = get_team_events_db(teams=[str(t) for t in propagate_teams])
+        for te in all_team_events:
+            src = propagate_teams[te.team]
+            te.team_name = src.name
+        update_team_events_db(all_team_events)
+        timer.print(f"Update TeamEvents ({len(all_team_events)} rows)")
+
+    return {
+        "fields_propagated": len(propagate_teams),
+        "teams_updated": len(teams_to_update),
+    }

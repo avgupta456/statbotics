@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 
 import { getTeamYear } from "../../api/team";
 import { CURR_YEAR } from "../../constants";
-import { TeamYearData } from "../../types/data";
+import { TeamYearData, TeamYearRedirect } from "../../types/data";
 import PageLayout from "../shared/layout";
 import NotFound from "../shared/notFound";
 import SummaryTabs from "./summaryTabs";
@@ -17,10 +17,10 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
   const [prevYear, _setPrevYear] = useState(paramYear);
   const [year, _setYear] = useState(paramYear);
 
-  const setYear = (newYear: number) => {
+  const setYear = useCallback((newYear: number) => {
     _setPrevYear(year);
     _setYear(newYear);
-  };
+  }, [year]);
 
   const [teamYearDataDict, setTeamYearDataDict] = useState<{
     [key: number]: TeamYearData | undefined;
@@ -36,22 +36,26 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
         return;
       }
 
-      const data: TeamYearData | undefined = await getTeamYear(team, year);
-      if (!data?.team_year) {
-        // No data for this year (e.g. before team's rookie year); fall back to CURR_YEAR
-        if (year !== CURR_YEAR) {
-          setYear(CURR_YEAR);
+      const data = await getTeamYear(team, year);
+      if (!data) return;
+
+      if (!("team_year" in data)) {
+        // No data for this year (e.g. before rookie year); redirect to most recent valid year
+        const redirect = data as TeamYearRedirect;
+        const lastActiveYear = redirect.team_active_years?.last_active_year;
+        if (lastActiveYear && year !== lastActiveYear) {
+          setYear(lastActiveYear);
         }
         return;
       }
 
-      setTeamYearDataDict((prev) => ({ ...prev, [year]: data }));
+      setTeamYearDataDict((prev) => ({ ...prev, [year]: data as TeamYearData }));
     };
 
     if (year >= 2002 && year <= CURR_YEAR) {
       _getTeamYearDataForYear(team, year);
     }
-  }, [team, year, teamYearDataDict]);
+  }, [team, year, teamYearDataDict, setYear]);
 
   const teamYearData = teamYearDataDict?.[year];
   const fallbackTeamYearData = teamYearDataDict?.[prevYear];
@@ -60,10 +64,13 @@ const PageContent = ({ team, paramYear }: { team: number; paramYear: number }) =
     return <NotFound type="Team" />;
   }
 
-  const rookieYear = teamYearData?.team_year?.rookie_year ?? 2002;
+  const effectiveData = teamYearData ?? fallbackTeamYearData;
+  const rookieYear = effectiveData?.team?.rookie_year ?? 2002;
+  const lastActiveYear = effectiveData?.team?.last_active_year;
+  const lastYear = lastActiveYear ? Math.min(lastActiveYear, CURR_YEAR) : CURR_YEAR;
 
-  let yearOptions = Array.from(
-    { length: CURR_YEAR - rookieYear + 1 },
+  const yearOptions = Array.from(
+    { length: lastYear - rookieYear + 1 },
     (_, i) => rookieYear + i
   ).reverse();
 
