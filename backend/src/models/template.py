@@ -3,7 +3,7 @@ from typing import Dict, Optional, Tuple
 from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
 from src.models.types import AlliancePred, Attribution, MatchPred
 from src.tba.constants import PLACEHOLDER_TEAMS
-from src.types.enums import MatchStatus
+from src.types.enums import EventType, MatchStatus
 
 
 class Model:
@@ -79,7 +79,7 @@ class Model:
         attributions = self.attribute_match(match, red_pred, blue_pred)
 
         # Don't update if 1) offseason, 2) placeholder match, 3) elim dq
-        offseason_event = event.week == 9
+        offseason_event = event.type == EventType.OFFSEASON
         teams = set(match.get_red() + match.get_blue())
         placeholder_match = len(set(PLACEHOLDER_TEAMS).intersection(teams)) > 0
         elim_dq = match.elim and (

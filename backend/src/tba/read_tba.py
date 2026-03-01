@@ -121,8 +121,8 @@ def get_events(
             continue
 
         event_type_int = int(event["event_type"])
-        if event_type_int == 99:
-            # only keep some offseason events after 2025
+        if event_type_int in (99, 100):
+            # only keep some offseason/preseason events after 2025
             if year < 2025:
                 continue
             try:
@@ -133,6 +133,9 @@ def get_events(
                 if len(set(PLACEHOLDER_TEAMS).intersection(set(event_teams))) > 0:
                     continue
                 matches = get_tba(f"event/{key}/matches", etag=None, cache=cache)[0]
+                end_date = datetime.strptime(event["end_date"], "%Y-%m-%d")
+                if len(matches) == 0 and (datetime.now() - end_date).days >= 1:  # type: ignore
+                    continue
                 for match in matches:  # type: ignore
                     all_teams = match["alliances"]["red"]["team_keys"]
                     all_teams += match["alliances"]["blue"]["team_keys"]
@@ -140,8 +143,6 @@ def get_events(
             except Exception:
                 # remove events with B teams
                 continue
-        if event_type_int == 100:
-            continue  # preseason
 
         event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
         event_type_dict[0] = EventType.REGIONAL
@@ -154,9 +155,8 @@ def get_events(
         # rename festival of championships to einsteins
         event_type_dict[6] = EventType.EINSTEIN
 
-        # TODO: map to OFFSEASON (might require reloading DB)
-        event_type_dict[99] = EventType.REGIONAL
-        # event_type_dict[99] = EventType.OFFSEASON
+        event_type_dict[99] = EventType.OFFSEASON
+        event_type_dict[100] = EventType.OFFSEASON
 
         event_type = event_type_dict[event_type_int]
 
@@ -170,9 +170,10 @@ def get_events(
         if event_type.is_champs():
             event["week"] = 8
 
-        # TODO: go through event_type once offseason mapped correctly
         if event_type_int == 99:
-            event["week"] = 8  # gets incremented by 1 later
+            event["week"] = 9
+        elif event_type_int == 100:
+            event["week"] = 0
 
         # filter out incomplete events
         if "week" not in event or event["week"] is None:
@@ -184,7 +185,6 @@ def get_events(
             EventType.DISTRICT,
             EventType.DISTRICT_CMP,
         ]:
-            # NOTE: affects offseason too (since REGIONAL -> OFFSEASON)
             event["week"] += 1
 
         video: Optional[str] = None
