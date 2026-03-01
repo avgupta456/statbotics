@@ -16,6 +16,11 @@ Statbotics is an open-source data analytics platform for the FIRST Robotics Comp
 | `api/` | `statbotics` Python package published to PyPI | See `api/CLAUDE.md` |
 | `scripts/` | Jupyter notebooks for EPA model analysis and API demos | See `scripts/CLAUDE.md` |
 
+## Working Style
+
+- **Ask before implementing.** When diagnosing a bug or unexpected behavior, ask clarifying questions before proposing or making a fix. Don't assume the most obvious explanation is correct — there may be intentional design reasons or missing context. Investigate first, present findings, then ask what the right fix is.
+- **Suggest CLAUDE.md updates proactively.** When exploring the codebase to fix a task, if important architectural patterns, non-obvious behaviors, or gotchas are discovered, suggest adding them to the relevant CLAUDE.md file so they're available in future sessions.
+
 ## Season Prep Checklist
 
 When preparing for a new FRC season (year N), update these in order:
