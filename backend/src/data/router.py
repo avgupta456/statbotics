@@ -2,7 +2,7 @@ import requests
 from fastapi import APIRouter, BackgroundTasks
 
 from src.constants import BACKEND_URL, CURR_YEAR
-from src.data.main import refresh_teams, reset_all_years, update_curr_year
+from src.data.main import refresh_teams, update_curr_year  # reset_all_years
 from src.data.tba import check_year_partial as check_year_partial_tba
 from src.db.read import get_etags as get_etags_db, get_events as get_events_db
 
@@ -17,9 +17,9 @@ async def read_root():
 
 @data_router.get("/reset_all_years")
 async def reset_all_years_endpoint():
-    # return {"status": "skipped"}
-    reset_all_years()
-    return {"status": "success"}
+    return {"status": "skipped"}
+    # reset_all_years()
+    # return {"status": "success"}
 
 
 @data_router.get("/reset_curr_year")
