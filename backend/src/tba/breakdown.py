@@ -887,6 +887,70 @@ def clean_breakdown_2025(
     }
 
 
+def clean_breakdown_2026(
+    key: str,
+    alliance: str,
+    breakdown: Dict[str, Any],
+    score: int,
+    no_foul_points: int,
+    foul_points: int,
+) -> BreakdownDict:
+    hub: Dict[str, Any] = breakdown.get("hubScore", {})
+
+    auto_fuel = hub.get("autoPoints", 0)
+    endgame_fuel = hub.get("endgamePoints", 0)
+    transition_fuel = hub.get("transitionPoints", 0)
+    first_shift_fuel = hub.get("shift1Points", 0) + hub.get("shift2Points", 0)
+    second_shift_fuel = hub.get("shift3Points", 0) + hub.get("shift4Points", 0)
+    teleop_fuel = transition_fuel + first_shift_fuel + second_shift_fuel
+    total_fuel = hub.get("totalPoints", 0)
+
+    auto_tower = breakdown.get("autoTowerPoints", 0)
+    endgame_tower = breakdown.get("endGameTowerPoints", 0)
+    total_tower = auto_tower + endgame_tower
+
+    auto_points = auto_fuel + auto_tower
+    teleop_points = teleop_fuel
+    endgame_points = endgame_fuel + endgame_tower
+
+    rp_1 = bool(breakdown.get("energizedAchieved", False))
+    rp_2 = bool(breakdown.get("superchargedAchieved", False))
+    rp_3 = bool(breakdown.get("traversalAchieved", False))
+
+    tiebreaker = no_foul_points
+
+    return {
+        "score": score,
+        "no_foul_points": no_foul_points,
+        "foul_points": foul_points,
+        "auto_points": auto_points,
+        "teleop_points": teleop_points,
+        "endgame_points": endgame_points,
+        "rp_1": rp_1,
+        "rp_2": rp_2,
+        "rp_3": rp_3,
+        "tiebreaker": tiebreaker,
+        "comp_1": auto_fuel,
+        "comp_2": auto_tower,
+        "comp_3": transition_fuel,
+        "comp_4": first_shift_fuel,
+        "comp_5": second_shift_fuel,
+        "comp_6": teleop_fuel,
+        "comp_7": endgame_fuel,
+        "comp_8": endgame_tower,
+        "comp_9": total_fuel,
+        "comp_10": total_tower,
+        "comp_11": None,
+        "comp_12": None,
+        "comp_13": None,
+        "comp_14": None,
+        "comp_15": None,
+        "comp_16": None,
+        "comp_17": None,
+        "comp_18": None,
+    }
+
+
 def clean_breakdown(
     key: str,
     alliance: str,
@@ -931,6 +995,8 @@ def clean_breakdown(
         out = clean_breakdown_2024(*inputs)
     elif year == 2025:
         out = clean_breakdown_2025(*inputs)
+    elif year == 2026:
+        out = clean_breakdown_2026(*inputs)
     else:
         out["no_foul_points"] = score
 

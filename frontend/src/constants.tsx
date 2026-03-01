@@ -17,7 +17,7 @@ export const CURR_WEEK = 1;
 // 9970 to 9999 are placeholder teams
 export const PLACEHOLDER_TEAMS = Array.from({ length: 30 }, (_, i) => 9970 + i);
 
-export const BREAKDOWN_YEARS = [2024, 2025]; // TODO: implement 2016-2023
+export const BREAKDOWN_YEARS = [2024, 2025, 2026]; // TODO: implement 2016-2023
 
 export const CORRECT_COLOR = "#86CFA3";
 export const INCORRECT_COLOR = "#F77F84";
@@ -45,6 +45,7 @@ export const RP_KEYS: { [key: number]: string[] } = {
   2023: ["links_rp", "activation_rp"],
   2024: ["melody_rp", "ensemble_rp"],
   2025: ["auto_rp", "coral_rp", "barge_rp"],
+  2026: ["energized_rp", "supercharged_rp", "traversal_rp"],
 };
 
 export const RP_NAMES: { [key: number]: string[] } = {
@@ -57,8 +58,7 @@ export const RP_NAMES: { [key: number]: string[] } = {
   2023: ["Links RP", "Activation RP"],
   2024: ["Melody RP", "Ensemble RP"],
   2025: ["Auto RP", "Coral RP", "Barge RP"],
-  // TODO: Update once official breakdown is released
-  2026: ["RP 1", "RP 2", "RP 3"],
+  2026: ["Energized RP", "Supercharged RP", "Traversal RP"],
 };
 
 export const eventNameMap = {

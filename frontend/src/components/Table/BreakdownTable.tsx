@@ -24,6 +24,36 @@ type Config = {
 };
 
 const configs: { [key: number]: Config } = {
+  2026: {
+    keys: {
+      total_points: { name: "Total Points", digits: 1 },
+      auto_points: { name: "Auto Points", digits: 1 },
+      teleop_points: { name: "Teleop Points", digits: 1 },
+      endgame_points: { name: "Endgame Points", digits: 1 },
+      auto_fuel: { name: "Auto Fuel", digits: 1 },
+      auto_tower: { name: "Auto Tower", digits: 1 },
+      transition_fuel: { name: "Transition Fuel", digits: 1 },
+      first_shift_fuel: { name: "First Shift Fuel", digits: 1 },
+      second_shift_fuel: { name: "Second Shift Fuel", digits: 1 },
+      teleop_fuel: { name: "Teleop Fuel", digits: 1 },
+      endgame_fuel: { name: "Endgame Fuel", digits: 1 },
+      endgame_tower: { name: "Endgame Tower", digits: 1 },
+      total_fuel: { name: "Total Fuel", digits: 1 },
+      total_tower: { name: "Total Tower", digits: 1 },
+    },
+    layout: {
+      0: {
+        Overall: ["total_points", "total_fuel", "total_tower"],
+        Fuel: ["auto_fuel", "teleop_fuel", "endgame_fuel"],
+        Tower: ["auto_tower", "endgame_tower"],
+      },
+      1: {
+        Overall: ["total_points", "total_fuel", "total_tower"],
+        Fuel: ["auto_fuel", "transition_fuel", "first_shift_fuel", "second_shift_fuel", "teleop_fuel", "endgame_fuel"],
+        Tower: ["auto_tower", "endgame_tower"],
+      },
+    },
+  },
   2025: {
     keys: {
       total_points: { name: "Total Points", digits: 1 },

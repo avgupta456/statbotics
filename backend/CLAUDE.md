@@ -92,6 +92,10 @@ Update these at the start of each new season:
 - `src/constants.py`: `CURR_YEAR`, `CURR_WEEK`
 - `src/tba/breakdown.py`: add `all_keys[YEAR]` and `clean_breakdown_{year}()`
 
+## Seeding EPA Means from Preseason Events
+
+See `src/data/CLAUDE.md` for the query and instructions.
+
 ## GCS / Deployment
 
 - Production uses three separate Cloud Run services (api, data, site) defined in `deploy/`.

@@ -39,6 +39,8 @@ const getRandomTiebreaker = (year: number, currArr: number[]) => {
       return 45 + Math.round(Math.random() * 20);
     } else if (year === 2025) {
       return Math.random() < 0.3 ? 1 : 0;
+    } else if (year === 2026) {
+      return 50 + Math.round(Math.random() * 120);
     } else {
       return 0;
     }
