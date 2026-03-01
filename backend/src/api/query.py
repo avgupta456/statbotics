@@ -15,7 +15,7 @@ country_query = Query(
 
 district_query = Query(
     None,
-    description="One of [`fma`, `fnc`, `fsc`, `fit`, `fin`, `fim`, `ne`, `chs`, `ont`, `pnw`, `pch`, `isr`]",
+    description="One of [`ca`, `fch`, `fim`, `fin`, `fit`, `fma`, `fnc`, `fsc`, `isr`, `ne`, `ont`, `pch`, `pnw`]",
 )
 
 elim_query = Query(None, description="Whether the match is an elimination match.")

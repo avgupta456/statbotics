@@ -80,7 +80,8 @@ export const canadaOptions = [
 
 export const districtOptions = [
   { value: "", label: "All" },
-  { value: "chs", label: "Chesapeake" },
+  { value: "ca", label: "California" },
+  { value: "fch", label: "FIRST Chesapeake" },
   { value: "fim", label: "Michigan" },
   { value: "fin", label: "Indiana" },
   { value: "fit", label: "Texas" },

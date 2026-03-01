@@ -97,14 +97,15 @@ const OverviewSection = ({ teamYearData }: { teamYearData: TeamYearData | undefi
 
   if (
     [
-      "Michigan",
-      "Israel",
+      "California",
       "Indiana",
-      "Texas",
+      "Israel",
+      "Michigan",
       "North Carolina",
-      "South Carolina",
       "Ontario",
       "Regionals",
+      "South Carolina",
+      "Texas",
     ].includes(district)
   ) {
     district = undefined;

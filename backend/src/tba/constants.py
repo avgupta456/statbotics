@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Set
 
 # DEV SETUP
 
@@ -87,6 +87,12 @@ DISTRICT_MAPPING: Dict[str, str] = {
     "nc": "fnc",
     "tx": "fit",
     "in": "fin",
+    "chs": "fch",
+}
+
+VALID_DISTRICTS: Set[str] = {
+    "ca", "fch", "fim", "fin", "fit", "fma", "fnc", "fsc",
+    "isr", "ne", "ont", "pch", "pnw",
 }
 
 

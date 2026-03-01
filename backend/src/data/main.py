@@ -13,6 +13,7 @@ from src.data.tba import (
     post_process as post_process_tba,
     process_year as process_year_tba,
 )
+from src.tba.clean_data import clean_district
 from src.data.utils import (
     Timer,
     create_objs,
@@ -187,10 +188,7 @@ def refresh_teams() -> Dict[str, int]:
         )
 
     # Find teams with any stale fields
-    teams_to_update: List[Team] = []
-    propagate_teams: Dict[int, Team] = (
-        {}
-    )  # teams needing name/country/state propagation
+    teams_to_update: Dict[int, Team] = {}
     for t in db_teams:
         dirty = False
         fresh = fresh_team_map.get(t.team)
@@ -201,8 +199,11 @@ def refresh_teams() -> Dict[str, int]:
                 if fresh_val is not None and getattr(t, field) != fresh_val:
                     setattr(t, field, fresh_val)
                     dirty = True
-                    if field in ("name", "country", "state"):
-                        propagate_teams[t.team] = t
+
+        cleaned = clean_district(t.district)
+        if cleaned != t.district:
+            t.district = cleaned
+            dirty = True
 
         if true_last.get(t.team) != t.last_active_year:
             t.last_active_year = true_last.get(t.team)
@@ -215,33 +216,32 @@ def refresh_teams() -> Dict[str, int]:
             dirty = True
 
         if dirty:
-            teams_to_update.append(t)
+            teams_to_update[t.team] = t
 
     if teams_to_update:
-        update_teams_db(teams_to_update)
+        update_teams_db(list(teams_to_update.values()))
     timer.print(f"Update Teams ({len(teams_to_update)} rows)")
 
-    # Propagate name/country/state changes to TeamYear and TeamEvent
-    if propagate_teams:
+    # Propagate team fields to TeamYear and TeamEvent for all updated teams
+    if teams_to_update:
         changed_team_years = [
-            ty for ty in all_team_years_list if ty.team in propagate_teams
+            ty for ty in all_team_years_list if ty.team in teams_to_update
         ]
         for ty in changed_team_years:
-            src = propagate_teams[ty.team]
+            src = teams_to_update[ty.team]
             ty.name = src.name
             ty.country = src.country
             ty.state = src.state
+            ty.district = clean_district(ty.district)
         update_team_years_db(changed_team_years)
         timer.print(f"Update TeamYears ({len(changed_team_years)} rows)")
 
-        all_team_events = get_team_events_db(teams=[str(t) for t in propagate_teams])
+        all_team_events = get_team_events_db(
+            teams=[str(t) for t in teams_to_update]
+        )
         for te in all_team_events:
-            src = propagate_teams[te.team]
-            te.team_name = src.name
+            te.team_name = teams_to_update[te.team].name
         update_team_events_db(all_team_events)
         timer.print(f"Update TeamEvents ({len(all_team_events)} rows)")
 
-    return {
-        "fields_propagated": len(propagate_teams),
-        "teams_updated": len(teams_to_update),
-    }
+    return {"teams_updated": len(teams_to_update)}

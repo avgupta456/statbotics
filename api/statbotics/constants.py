@@ -101,22 +101,24 @@ Canada = {
 }
 
 districts = {
-    "mar": "fma",
+    "ca": "ca",
+    "chs": "fch",
+    "fch": "fch",
+    "fim": "fim",
+    "fin": "fin",
+    "fit": "fit",
     "fma": "fma",
-    "nc": "fnc",
     "fnc": "fnc",
     "fsc": "fsc",
-    "tx": "fit",
-    "fit": "fit",
     "in": "fin",
-    "fin": "fin",
-    "fim": "fim",
-    "ne": "ne",
-    "chs": "chs",
-    "ont": "ont",
-    "pnw": "pnw",
-    "pch": "pch",
     "isr": "isr",
+    "mar": "fma",
+    "nc": "fnc",
+    "ne": "ne",
+    "ont": "ont",
+    "pch": "pch",
+    "pnw": "pnw",
+    "tx": "fit",
 }
 
 team_metrics = [

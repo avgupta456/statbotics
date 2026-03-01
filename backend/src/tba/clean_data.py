@@ -1,6 +1,11 @@
 from typing import Optional
 
-from src.tba.constants import CANADA_MAPPING, DISTRICT_MAPPING, USA_MAPPING
+from src.tba.constants import (
+    CANADA_MAPPING,
+    DISTRICT_MAPPING,
+    USA_MAPPING,
+    VALID_DISTRICTS,
+)
 from src.types.enums import CompLevel
 
 
@@ -18,7 +23,9 @@ def clean_state(state: str) -> Optional[str]:
 
 def clean_district(district: Optional[str]) -> Optional[str]:
     if district in DISTRICT_MAPPING:
-        return DISTRICT_MAPPING[district]
+        district = DISTRICT_MAPPING[district]
+    if district is not None and district not in VALID_DISTRICTS:
+        return None
     return district
 
 
