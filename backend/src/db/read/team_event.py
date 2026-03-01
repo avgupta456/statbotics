@@ -23,6 +23,7 @@ def get_team_event(team: int, event: str) -> Optional[TeamEvent]:
 
 def get_team_events(
     team: Optional[int] = None,
+    teams: Optional[List[str]] = None,
     year: Optional[int] = None,
     event: Optional[str] = None,
     country: Optional[str] = None,
@@ -40,6 +41,8 @@ def get_team_events(
         data = session.query(TeamEventORM)
         if team is not None:
             data = data.filter(TeamEventORM.team == team)
+        if teams is not None:
+            data = data.filter(TeamEventORM.team.in_(teams))
         if year is not None:
             data = data.filter(TeamEventORM.year == year)
         if event is not None:

@@ -28,10 +28,15 @@ from src.db.main import clean_db
 from src.db.models import Team, TeamYear
 from src.db.read import (
     get_num_years,
+    get_team_events as get_team_events_db,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
 )
-from src.db.write.main import update_teams as update_teams_db
+from src.db.write.main import (
+    update_team_events as update_team_events_db,
+    update_team_years as update_team_years_db,
+    update_teams as update_teams_db,
+)
 from src.google.storage import write_objs as write_objs_storage
 
 
@@ -150,3 +155,46 @@ def update_curr_year(partial: bool):
     if not partial:
         # triggers loading all team years
         post_process(teams, None)
+        refresh_team_names()
+
+
+def refresh_team_names() -> int:
+    timer = Timer()
+
+    fresh_teams = load_teams_tba(cache=False)
+    fresh_name_map: Dict[int, str] = {t.team: t.name for t in fresh_teams}
+    timer.print("Fetch TBA Teams")
+
+    db_teams = get_teams_db()
+    changed: Dict[int, str] = {
+        t.team: fresh_name_map[t.team]
+        for t in db_teams
+        if t.team in fresh_name_map and fresh_name_map[t.team] != t.name
+    }
+    timer.print("Fetch DB Teams")
+
+    if not changed:
+        return 0
+
+    # Update teams table
+    for t in db_teams:
+        if t.team in changed:
+            t.name = changed[t.team]
+    update_teams_db([t for t in db_teams if t.team in changed])
+    timer.print(f"Update Teams DB ({len(changed)} rows)")
+
+    # Propagate to all-years team_years
+    all_team_years = get_team_years_db(teams=[str(t) for t in changed])
+    for ty in all_team_years:
+        ty.name = changed[ty.team]
+    update_team_years_db(all_team_years)
+    timer.print(f"Update TeamYears ({len(all_team_years)} rows)")
+
+    # Propagate to all-years team_events
+    all_team_events = get_team_events_db(teams=[str(t) for t in changed])
+    for te in all_team_events:
+        te.team_name = changed[te.team]
+    update_team_events_db(all_team_events)
+    timer.print(f"Update TeamEvents ({len(all_team_events)} rows)")
+
+    return len(changed)
