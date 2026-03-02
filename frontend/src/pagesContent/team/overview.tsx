@@ -6,7 +6,6 @@ import Link from "next/link";
 import MatchTable from "../../components/MatchTable";
 import { canadaOptions, districtOptions, usaOptions } from "../../components/filterConstants";
 import { CURR_YEAR, Category10Colors } from "../../constants";
-import { APITeam } from "../../types/api";
 import { TeamYearData } from "../../types/data";
 import { classnames, getMediaUrl } from "../../utils";
 
@@ -103,9 +102,10 @@ const OverviewSection = ({ teamYearData }: { teamYearData: TeamYearData | undefi
       "Michigan",
       "North Carolina",
       "Ontario",
-      "Regionals",
       "South Carolina",
       "Texas",
+      "Wisconsin",
+      "Regionals",
     ].includes(district)
   ) {
     district = undefined;

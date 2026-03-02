@@ -119,6 +119,7 @@ districts = {
     "pch": "pch",
     "pnw": "pnw",
     "tx": "fit",
+    "win": "win",
 }
 
 team_metrics = [

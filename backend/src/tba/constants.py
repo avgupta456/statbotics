@@ -104,6 +104,7 @@ VALID_DISTRICTS: Set[str] = {
     "ont",
     "pch",
     "pnw",
+    "win",
 }
 
 
