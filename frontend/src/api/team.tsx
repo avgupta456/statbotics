@@ -37,10 +37,11 @@ export async function getTeamYear(
     if (year !== CURR_YEAR) {
       throw new Error("Not current year");
     }
-    const teamToEvents: {
-      [key: number]: string[];
-    } = await readBucket(`${BUCKET_URL}/team_to_events`);
-    const teamYearData = await getYearTeamYears(year);
+    const [teamToEvents, teamData, teamYearData] = await Promise.all([
+      readBucket(`${BUCKET_URL}/team_to_events`) as Promise<{ [key: number]: string[] }>,
+      getTeam(team),
+      getYearTeamYears(year),
+    ]);
     const teamYear = teamYearData?.team_years?.find((teamYear) => teamYear.team === team);
     const events = await Promise.all(
       teamToEvents[team].map(async (eventKey) => await getEvent(eventKey))
@@ -77,6 +78,7 @@ export async function getTeamYear(
       });
     return {
       year: teamYearData.year,
+      team: teamData.team,
       team_year: teamYear,
       team_events: teamEvents,
       matches,
