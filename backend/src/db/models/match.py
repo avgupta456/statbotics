@@ -282,7 +282,7 @@ class Match(_Match, Model):
 
         if self.year >= 2016:
             rps = ["rp_1", "rp_2"]
-            if self.year == 2025:
+            if self.year >= 2025:
                 rps += ["rp_3"]
 
             for rp in rps:
