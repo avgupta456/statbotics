@@ -74,29 +74,4 @@ def process_year(year: Year, matches: List[Match]) -> Year:
         year.comp_12_mean -= update
         year.comp_15_mean -= update
 
-    if year.year == 2026:
-        # Seeded from week 1 data (64 matches)
-        # TODO: Remove once week 1 data is available
-        year.score_mean = 108.34
-        year.score_sd = 69.25
-        year.no_foul_mean = 103.92
-        year.foul_mean = 4.41
-        year.auto_mean = 20.71
-        year.teleop_mean = 59.89
-        year.endgame_mean = 23.32
-        year.rp_1_mean = 0.34
-        year.rp_2_mean = 0.05
-        year.rp_3_mean = 0.0
-        year.tiebreaker_mean = 103.92  # no_foul_points
-        year.comp_1_mean = 20.71  # auto_fuel
-        year.comp_2_mean = 0.0  # auto_tower
-        year.comp_3_mean = 3.77  # transition_fuel
-        year.comp_4_mean = 30.98  # first_shift_fuel
-        year.comp_5_mean = 25.14  # second_shift_fuel
-        year.comp_6_mean = 59.89  # teleop_fuel
-        year.comp_7_mean = 22.15  # endgame_fuel
-        year.comp_8_mean = 1.17  # endgame_tower
-        year.comp_9_mean = 102.75  # total_fuel
-        year.comp_10_mean = 1.17  # total_tower
-
     return year
