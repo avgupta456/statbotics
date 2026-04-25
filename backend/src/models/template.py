@@ -78,7 +78,7 @@ class Model:
 
         attributions = self.attribute_match(match, red_pred, blue_pred)
 
-        # Don't update if 1) offseason, 2) placeholder match, 3) elim dq
+        # Don't update if 1) offseason, 2) placeholder match, 3) elim dq, 4) all fouls
         offseason_event = event.type == EventType.OFFSEASON
         # allow this event to update EPAs (no 2026 isr district events before champs)
         if event.key == "2026isrtp":
@@ -90,7 +90,13 @@ class Model:
             len(match.get_red_dqs()) >= self.num_teams
             or len(match.get_blue_dqs()) >= self.num_teams
         )
-        skip_update = offseason_event or placeholder_match or elim_dq
+        all_fouls = (
+            match.blue_no_foul == 0
+            and (match.blue_foul or 0) > 0
+            and match.red_no_foul == 0
+            and (match.red_foul or 0) > 0
+        )
+        skip_update = offseason_event or placeholder_match or elim_dq or all_fouls
 
         for team, attr in attributions.items():
             team_match = team_matches[team]
