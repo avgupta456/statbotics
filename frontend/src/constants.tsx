@@ -155,6 +155,7 @@ export const divisionToMainEvent = {
   "2024joh": "2024cmptx",
   "2024mil": "2024cmptx",
   "2024new": "2024cmptx",
+  "2025cmptx": "2025cmptx",
   "2025arc": "2025cmptx",
   "2025cur": "2025cmptx",
   "2025dal": "2025cmptx",
@@ -163,6 +164,15 @@ export const divisionToMainEvent = {
   "2025joh": "2025cmptx",
   "2025mil": "2025cmptx",
   "2025new": "2025cmptx",
+  "2026cmptx": "2026cmptx",
+  "2026arc": "2026cmptx",
+  "2026cur": "2026cmptx",
+  "2026dal": "2026cmptx",
+  "2026gal": "2026cmptx",
+  "2026hop": "2026cmptx",
+  "2026joh": "2026cmptx",
+  "2026mil": "2026cmptx",
+  "2026new": "2026cmptx",
 };
 
 export const mainEventToDivisions = {
@@ -242,5 +252,16 @@ export const mainEventToDivisions = {
     { name: "Johnson", key: "2025joh" },
     { name: "Milstein", key: "2025mil" },
     { name: "Newton", key: "2025new" },
+  ],
+  "2026cmptx": [
+    { name: "Overall", key: "2026cmptx" },
+    { name: "Archimedes", key: "2026arc" },
+    { name: "Curie", key: "2026cur" },
+    { name: "Daly", key: "2026dal" },
+    { name: "Galileo", key: "2026gal" },
+    { name: "Hopper", key: "2026hop" },
+    { name: "Johnson", key: "2026joh" },
+    { name: "Milstein", key: "2026mil" },
+    { name: "Newton", key: "2026new" },
   ],
 };

@@ -125,6 +125,12 @@ EVENT_BLACKLIST: List[str] = [
     "2024nywz",  # malformed
     "2025mnsp",  # no elim matches
     "2025miwrc",  # B teams in matches
+    # no matches
+    "2026isde1",
+    "2026isde2",
+    "2026isde3",
+    "2026isde4",
+    "2026iscmp",
 ]
 
 MATCH_BLACKLIST: List[str] = []
