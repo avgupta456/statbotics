@@ -175,6 +175,9 @@ def get_events(
         elif event_type_int == 100:
             event["week"] = 0
 
+        if key == "2026isrtp":
+            event["week"] = 0
+
         # filter out incomplete events
         if "week" not in event or event["week"] is None:
             continue

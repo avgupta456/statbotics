@@ -58,7 +58,9 @@ const EventsLayout = ({
     });
   const ongoingN = ongoingEvents.length;
 
-  const upcomingEvents = sortedData?.filter((event) => event.status === "Upcoming");
+  const upcomingEvents = sortedData?.filter(
+    (event) => event.status === "Upcoming" && event.week >= CURR_WEEK
+  );
   const upcomingN = upcomingEvents.length;
 
   const completedEvents = sortedData?.filter(
