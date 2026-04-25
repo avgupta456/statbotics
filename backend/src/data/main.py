@@ -45,6 +45,7 @@ from src.google.storage import write_objs as write_objs_storage
 def process_year(
     year_num: int,
     partial: bool,
+    tba_partial: bool,
     cache: bool,
     teams: List[Team],
     objs: objs_type,
@@ -59,7 +60,7 @@ def process_year(
             for ty in team_years:
                 all_team_years[ty.year][ty.team] = ty
 
-    new_teams, objs = process_year_tba(year_num, teams, objs, partial, cache)
+    new_teams, objs = process_year_tba(year_num, teams, objs, tba_partial, cache)
     teams += new_teams
     timer.print(str(year_num) + " TBA")
 
@@ -132,13 +133,13 @@ def reset_all_years():
         if year_num == 2021:
             continue
 
-        teams = process_year(year_num, False, True, teams, objs, all_team_years)
+        teams = process_year(year_num, False, False, True, teams, objs, all_team_years)
         all_team_years[year_num] = {ty.team: ty for ty in objs[1].values()}
 
     post_process(teams, all_team_years)
 
 
-def update_curr_year(partial: bool):
+def update_curr_year(partial: bool, tba_partial: bool):
     year = CURR_YEAR
     timer = Timer()
 
@@ -152,7 +153,9 @@ def update_curr_year(partial: bool):
         objs = create_objs(year)
         timer.print("Create Objs")
 
-    teams = process_year(year, partial, year < CURR_YEAR, teams, objs, None)
+    teams = process_year(
+        year, partial, tba_partial, year < CURR_YEAR, teams, objs, None
+    )
 
     if not partial:
         # triggers loading all team years

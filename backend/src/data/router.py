@@ -24,14 +24,20 @@ async def reset_all_years_endpoint():
 
 @data_router.get("/reset_curr_year")
 async def reset_curr_year_endpoint():
-    update_curr_year(partial=False)
+    update_curr_year(partial=False, tba_partial=False)
     refresh_teams()
     return {"status": "success"}
 
 
 @data_router.get("/update_curr_year")
 async def update_curr_year_endpoint():
-    update_curr_year(partial=True)
+    update_curr_year(partial=True, tba_partial=True)
+    return {"status": "success"}
+
+
+@data_router.get("/update_curr_year_debug")
+async def update_curr_year_debug_endpoint():
+    update_curr_year(partial=True, tba_partial=False)
     return {"status": "success"}
 
 
