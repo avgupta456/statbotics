@@ -5,7 +5,6 @@ from src.constants import EPS
 from src.db.models import TeamYear, Year
 from src.models.epa.constants import (
     INIT_PENALTY,
-    MEAN_REVERSION,
     NORM_MEAN,
     NORM_SD,
     YEAR_ONE_WEIGHT,
@@ -31,7 +30,10 @@ def norm_epa_to_next_season_epa(
 
 
 def get_init_epa(
-    year: Year, team_year_1: Optional[TeamYear], team_year_2: Optional[TeamYear]
+    year: Year,
+    team_year_1: Optional[TeamYear],
+    team_year_2: Optional[TeamYear],
+    mean_reversion: float,
 ) -> SkewNormal:
     num_teams, year_mean, year_sd = get_constants(year)
 
@@ -43,7 +45,7 @@ def get_init_epa(
         norm_epa_2 = team_year_2.norm_epa
 
     prev_norm_epa = YEAR_ONE_WEIGHT * norm_epa_1 + (1 - YEAR_ONE_WEIGHT) * norm_epa_2
-    curr_norm_epa = (1 - MEAN_REVERSION) * prev_norm_epa + MEAN_REVERSION * INIT_EPA
+    curr_norm_epa = (1 - mean_reversion) * prev_norm_epa + mean_reversion * INIT_EPA
 
     curr_epa_z_score = (curr_norm_epa - NORM_MEAN) / NORM_SD
 

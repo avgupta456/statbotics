@@ -10,7 +10,7 @@ from src.models.epa.breakdown import (
     post_process_attrib,
     post_process_breakdown,
 )
-from src.models.epa.constants import ELIM_WEIGHT
+from src.models.epa.constants import ELIM_WEIGHT, MEAN_REVERSION
 from src.models.epa.init import get_init_epa
 from src.models.epa.math import SkewNormal
 
@@ -51,7 +51,7 @@ class EPA(Model):
         super().start_season(year, all_team_years, team_years)
         self.k = EPA.k_func(self.year_num)
 
-        init_rating = get_init_epa(year, None, None)
+        init_rating = get_init_epa(year, None, None, MEAN_REVERSION)
         self.epas: Dict[int, SkewNormal] = defaultdict(lambda: init_rating)
         self.counts: Dict[int, int] = defaultdict(int)
 
@@ -67,7 +67,14 @@ class EPA(Model):
             past_team_year_1 = past_team_years[0] if len(past_team_years) > 0 else None
             past_team_year_2 = past_team_years[1] if len(past_team_years) > 1 else None
 
-            rating = get_init_epa(year, past_team_year_1, past_team_year_2)
+            # did not compete in events before champs
+            mean_reversion = MEAN_REVERSION
+            if year.year == 2026 and team_year.district == "isr":
+                mean_reversion = 0
+
+            rating = get_init_epa(
+                year, past_team_year_1, past_team_year_2, mean_reversion
+            )
 
             self.epas[num] = rating
             team_year.epa_start = r(rating.mean[0], 2)
