@@ -133,6 +133,6 @@ EVENT_BLACKLIST: List[str] = [
     "2026iscmp",
 ]
 
-MATCH_BLACKLIST: List[str] = []
+MATCH_BLACKLIST: List[str] = ["2026isrtp_qm4" "2026isrtp_qm7"]
 
 DISTRICT_OVERRIDES: Dict[str, str] = {}

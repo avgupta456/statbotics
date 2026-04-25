@@ -80,6 +80,10 @@ class Model:
 
         # Don't update if 1) offseason, 2) placeholder match, 3) elim dq
         offseason_event = event.type == EventType.OFFSEASON
+        # allow this event to update EPAs (no 2026 isr district events before champs)
+        if event.key == "2026isrtp":
+            offseason_event = False
+
         teams = set(match.get_red() + match.get_blue())
         placeholder_match = len(set(PLACEHOLDER_TEAMS).intersection(teams)) > 0
         elim_dq = match.elim and (
