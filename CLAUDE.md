@@ -14,6 +14,7 @@ Statbotics is an open-source data analytics platform for the FIRST Robotics Comp
 | `frontend/` | Next.js 13 frontend — the active, deployed website | See `frontend/CLAUDE.md` |
 | `new/frontend/` | **Paused** Next.js 14 rewrite — do not read or modify unless explicitly asked | — |
 | `api/` | `statbotics` Python package published to PyPI | See `api/CLAUDE.md` |
+| `mcp/` | `statbotics-mcp` MCP server wrapping the public API for LLM clients | See `mcp/CLAUDE.md` |
 | `scripts/` | Jupyter notebooks for EPA model analysis and API demos | See `scripts/CLAUDE.md` |
 
 ## Working Style

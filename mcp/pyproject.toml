@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "statbotics-mcp"
+version = "0.1.0"
+description = "MCP (Model Context Protocol) server for the public Statbotics API"
+authors = ["Statbotics contributors"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/avgupta456/statbotics"
+homepage = "https://statbotics.io"
+keywords = ["FIRST", "robotics", "FRC", "EPA", "MCP", "statbotics"]
+packages = [{ include = "statbotics_mcp" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+statbotics = "^3.0.0"
+fastmcp = "^2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+
+[tool.poetry.scripts]
+statbotics-mcp = "statbotics_mcp.cli:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88

@@ -41,6 +41,10 @@ print(sb.get_team(254))
 
 More details are available [here](https://www.statbotics.io/api/python).
 
+## MCP Server
+
+An MCP (Model Context Protocol) server is also shipped in this repo under [`mcp/`](./mcp), exposing the public Statbotics API as MCP tools so any MCP-aware LLM client (Claude Desktop, VS Code, Cursor, etc.) can query team, year, event, and match data directly. It is published to PyPI as [`statbotics-mcp`](https://pypi.org/project/statbotics-mcp/) and runnable from a clone. See [`mcp/README.md`](./mcp/README.md) for client config snippets.
+
 ## Website
 
 The website is written in NextJS, TypeScript, and TailwindCSS and aims to make EPA statistics accessible and actionable. The website includes EPA tables (with location filters, sortable columns), figures (Bubble charts, line graphs, bar graphs, etc.), live event simulation (including ranking points and tiebreakers), match breakdowns (with component predictions), and so much more. Check it out at [statbotics.io](https://www.statbotics.io)!
