@@ -7,6 +7,7 @@ from cachecontrol import CacheControl
 from .validate import check_type, get_locations, get_type
 from .constants import (
     event_metrics,
+    team_event_metric_aliases,
     match_metrics,
     team_event_metrics,
     team_match_metrics,
@@ -433,6 +434,7 @@ class Statbotics:
 
         if metric not in team_event_metrics:
             raise ValueError("Invalid metric")
+        metric = team_event_metric_aliases.get(metric, metric)
         if ascending is None:
             ascending = True if metric in ["year", "week"] else False
         url += "&metric=" + metric + "&ascending=" + str(ascending)
