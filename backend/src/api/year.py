@@ -4,13 +4,10 @@ from typing import Any, Dict, List, Optional, Tuple
 from fastapi import APIRouter, Response
 
 from src.api.query import (
-    SortDirection,
     ascending_query,
     limit_query,
     metric_query,
     offset_query,
-    resolve_sort_direction,
-    sort_query,
 )
 from src.db.models import Year
 from src.db.read import get_year, get_years
@@ -80,11 +77,9 @@ async def read_years(
     response: Response,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
-    sort: Optional[SortDirection] = sort_query,
     limit: Optional[int] = limit_query,
     offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
-    ascending = resolve_sort_direction(ascending, sort)
     years: List[Year] = await get_years_cached(
         metric=metric, ascending=ascending, limit=limit, offset=offset
     )

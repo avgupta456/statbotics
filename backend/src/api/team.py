@@ -11,9 +11,6 @@ from src.api.query import (
     limit_query,
     metric_query,
     offset_query,
-    resolve_sort_direction,
-    SortDirection,
-    sort_query,
     state_query,
 )
 from src.db.models import Team
@@ -101,11 +98,9 @@ async def read_teams(
     active: Optional[bool] = active_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
-    sort: Optional[SortDirection] = sort_query,
     limit: Optional[int] = limit_query,
     offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
-    ascending = resolve_sort_direction(ascending, sort)
     teams: List[Team] = await get_teams_cached(
         country=country,
         state=state,

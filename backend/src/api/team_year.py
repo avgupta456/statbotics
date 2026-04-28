@@ -10,9 +10,6 @@ from src.api.query import (
     limit_query,
     metric_query,
     offset_query,
-    resolve_sort_direction,
-    SortDirection,
-    sort_query,
     state_query,
     team_query,
     year_query,
@@ -106,11 +103,9 @@ async def read_team_years(
     district: Optional[str] = district_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
-    sort: Optional[SortDirection] = sort_query,
     limit: Optional[int] = limit_query,
     offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
-    ascending = resolve_sort_direction(ascending, sort)
     team_years: List[TeamYear] = await get_team_years_cached(
         team=team,
         year=year,

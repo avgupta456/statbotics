@@ -11,9 +11,6 @@ from src.api.query import (
     limit_query,
     metric_query,
     offset_query,
-    resolve_sort_direction,
-    SortDirection,
-    sort_query,
     state_query,
     week_query,
     year_query,
@@ -107,11 +104,9 @@ async def read_events(
     week: Optional[int] = week_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
-    sort: Optional[SortDirection] = sort_query,
     limit: Optional[int] = limit_query,
     offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
-    ascending = resolve_sort_direction(ascending, sort)
     events = await get_events_cached(
         year=year,
         country=country,

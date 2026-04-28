@@ -6,7 +6,6 @@ from fastapi import Response
 
 from src.api.event import read_events
 from src.api.match import read_matches
-from src.api.query import resolve_sort_direction
 from src.api.team import read_teams
 from src.api.team_event import read_team_events
 from src.api.team_match import read_team_matches
@@ -15,22 +14,7 @@ from src.api.year import read_years
 
 
 class TestTeamEventSort(unittest.IsolatedAsyncioTestCase):
-    def test_resolve_sort_direction_uses_sort_when_present(self):
-        self.assertTrue(resolve_sort_direction(None, "asc"))
-        self.assertTrue(resolve_sort_direction(False, "ascending"))
-        self.assertFalse(resolve_sort_direction(None, "desc"))
-        self.assertFalse(resolve_sort_direction(True, "descending"))
-
-    def test_resolve_sort_direction_preserves_ascending_without_sort(self):
-        self.assertTrue(resolve_sort_direction(True, None))
-        self.assertFalse(resolve_sort_direction(False, None))
-        self.assertIsNone(resolve_sort_direction(None, None))
-
-    def test_resolve_sort_direction_rejects_invalid_sort(self):
-        with self.assertRaises(ValueError):
-            resolve_sort_direction(None, cast(Any, "epa"))
-
-    async def test_read_endpoints_apply_sort_direction_to_metric(self):
+    async def test_read_endpoints_apply_boolean_ascending_to_metric(self):
         cases = [
             (read_teams, "src.api.team.get_teams_cached", "norm_epa"),
             (read_years, "src.api.year.get_years_cached", "epa_acc"),
@@ -49,7 +33,7 @@ class TestTeamEventSort(unittest.IsolatedAsyncioTestCase):
                     await cast(Any, read_endpoint)(
                         Response(),
                         metric=metric,
-                        sort="asc",
+                        ascending=True,
                     )
 
                 get_cached.assert_awaited_once()
