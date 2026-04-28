@@ -11,6 +11,9 @@ from src.api.query import (
     match_query,
     metric_query,
     offset_query,
+    resolve_sort_direction,
+    SortDirection,
+    sort_query,
     team_query,
     week_query,
     year_query,
@@ -105,9 +108,11 @@ async def read_team_matches(
     elim: Optional[bool] = elim_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
+    sort: Optional[SortDirection] = sort_query,
     limit: Optional[int] = limit_query,
     offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
+    ascending = resolve_sort_direction(ascending, sort)
     team_matches: List[TeamMatch] = await get_team_matches_cached(
         team=team,
         year=year,

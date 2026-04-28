@@ -1,6 +1,10 @@
+from typing import Literal, Optional
+
 from fastapi import Query
 
 from src.constants import CURR_YEAR
+
+SortDirection = Literal["asc", "ascending", "desc", "descending"]
 
 active_query = Query(None, description="Whether the team has played in the last year.")
 
@@ -58,3 +62,17 @@ week_query = Query(
 )
 
 year_query = Query(None, ge=2002, le=CURR_YEAR, description="Four-digit year")
+
+
+def resolve_sort_direction(
+    ascending: Optional[bool], sort: Optional[SortDirection]
+) -> Optional[bool]:
+    if sort is None:
+        return ascending
+
+    normalized_sort = sort.lower()
+    if normalized_sort in ["asc", "ascending"]:
+        return True
+    if normalized_sort in ["desc", "descending"]:
+        return False
+    raise ValueError("sort must be one of: asc, ascending, desc, descending")
