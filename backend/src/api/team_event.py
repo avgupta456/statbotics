@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
@@ -12,6 +12,7 @@ from src.api.query import (
     limit_query,
     metric_query,
     offset_query,
+    sort_query,
     state_query,
     team_query,
     week_query,
@@ -26,6 +27,21 @@ from src.utils.decorators import (
 )
 
 router = APIRouter()
+
+
+def _resolve_sort_direction(
+    ascending: Optional[bool],
+    sort: Optional[Literal["asc", "ascending", "desc", "descending"]],
+) -> Optional[bool]:
+    if sort is None:
+        return ascending
+
+    normalized_sort = sort.lower()
+    if normalized_sort in ["asc", "ascending"]:
+        return True
+    if normalized_sort in ["desc", "descending"]:
+        return False
+    raise ValueError("sort must be one of: asc, ascending, desc, descending")
 
 
 @router.get("/")
@@ -113,9 +129,11 @@ async def read_team_events(
     week: Optional[int] = week_query,
     metric: Optional[str] = metric_query,
     ascending: Optional[bool] = ascending_query,
+    sort: Optional[Literal["asc", "ascending", "desc", "descending"]] = sort_query,
     limit: Optional[int] = limit_query,
     offset: Optional[int] = offset_query,
 ) -> List[Dict[str, Any]]:
+    ascending = _resolve_sort_direction(ascending, sort)
     team_events: List[TeamEvent] = await get_team_events_cached(
         team=team,
         year=year,

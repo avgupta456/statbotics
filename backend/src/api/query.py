@@ -9,6 +9,11 @@ ascending_query = Query(
     description="Whether to sort the returned values in ascending order. Default is ascending",
 )
 
+sort_query = Query(
+    None,
+    description="Sort direction to apply to the requested metric. Use `asc` or `desc`.",
+)
+
 country_query = Query(
     None, description="Capitalized country name, e.g. `USA` or `Canada`."
 )
