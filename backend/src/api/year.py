@@ -3,12 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Response
 
-from src.api.query import (
-    ascending_query,
-    limit_query,
-    metric_query,
-    offset_query,
-)
+from src.api.query import ascending_query, limit_query, metric_query, offset_query
 from src.db.models import Year
 from src.db.read import get_year, get_years
 from src.utils.alru_cache import alru_cache

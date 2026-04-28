@@ -96,10 +96,10 @@ async def read_teams(
     state: Optional[str] = state_query,
     district: Optional[str] = district_query,
     active: Optional[bool] = active_query,
-    metric: Optional[str] = metric_query,
-    ascending: Optional[bool] = ascending_query,
-    limit: Optional[int] = limit_query,
-    offset: Optional[int] = offset_query,
+    metric: str = metric_query,
+    ascending: bool = ascending_query,
+    limit: int = limit_query,
+    offset: int = offset_query,
 ) -> List[Dict[str, Any]]:
     teams: List[Team] = await get_teams_cached(
         country=country,
