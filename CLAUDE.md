@@ -12,9 +12,6 @@ Statbotics is an open-source data analytics platform for the FIRST Robotics Comp
 |-----------|-------------|---------|
 | `backend/` | FastAPI server: fetches data from TBA, computes EPA, serves REST + site APIs | See `backend/CLAUDE.md` |
 | `frontend/` | Next.js 13 frontend — the active, deployed website | See `frontend/CLAUDE.md` |
-| `new/frontend/` | **Paused** Next.js 14 rewrite — do not read or modify unless explicitly asked | — |
-| `api/` | `statbotics` Python package published to PyPI | See `api/CLAUDE.md` |
-| `scripts/` | Jupyter notebooks for EPA model analysis and API demos | See `scripts/CLAUDE.md` |
 
 ## Working Style
 
