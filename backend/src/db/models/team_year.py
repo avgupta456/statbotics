@@ -9,7 +9,6 @@ from src.constants import CURR_YEAR
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
-from src.models.epa.math import get_skew_normal_95_conf_interval
 
 
 class TeamYearORM(Base, ModelORM):
@@ -44,9 +43,6 @@ class TeamYearORM(Base, ModelORM):
     epa_max: MF = mapped_column(Float, default=0)
 
     epa: MF = mapped_column(Float, index=True, default=0)
-    epa_sd: MF = mapped_column(Float, default=0)
-    epa_skew: MF = mapped_column(Float, default=0)
-    epa_n: MF = mapped_column(Float, default=0)
     auto_epa: MOF = mapped_column(Float, default=None)
     teleop_epa: MOF = mapped_column(Float, default=None)
     endgame_epa: MOF = mapped_column(Float, default=None)
@@ -123,10 +119,6 @@ class TeamYear(_TeamYear, Model):
         )
 
     def to_dict(self: "TeamYear") -> Dict[str, Any]:
-        lower, upper = get_skew_normal_95_conf_interval(
-            0, 1, self.epa_skew, self.epa_n, 2
-        )
-
         clean: Dict[str, Any] = {
             "team": self.team,
             "year": self.year,
@@ -136,13 +128,9 @@ class TeamYear(_TeamYear, Model):
             "district": self.district,
             "rookie_year": self.rookie_year,
             "epa": {
-                "total_points": {
-                    "mean": self.epa,
-                    "sd": self.epa_sd,
-                },
+                "total_points": self.epa,
                 "unitless": self.unitless_epa,
                 "norm": self.norm_epa,
-                "conf": [lower, upper],
                 "breakdown": {},
                 "stats": {
                     "start": self.epa_start,

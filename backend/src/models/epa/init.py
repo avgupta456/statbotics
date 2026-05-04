@@ -9,7 +9,7 @@ from src.models.epa.constants import (
     NORM_SD,
     YEAR_ONE_WEIGHT,
 )
-from src.models.epa.math import SkewNormal, inv_unit_sigmoid
+from src.models.epa.math import EPARating, inv_unit_sigmoid
 
 
 @lru_cache(maxsize=None)
@@ -34,7 +34,7 @@ def get_init_epa(
     team_year_1: Optional[TeamYear],
     team_year_2: Optional[TeamYear],
     mean_reversion: float,
-) -> SkewNormal:
+) -> EPARating:
     num_teams, year_mean, year_sd = get_constants(year)
 
     INIT_EPA = NORM_MEAN - INIT_PENALTY * NORM_SD
@@ -63,6 +63,5 @@ def get_init_epa(
         mean[6] = max(-1, inv_unit_sigmoid(max(EPS, min(1 - EPS, mean[6]))))
 
     curr_epa_mean = mean / num_teams + sd * curr_epa_z_score
-    curr_epa_sd = sd / num_teams
 
-    return SkewNormal(curr_epa_mean, curr_epa_sd, 0)
+    return EPARating(curr_epa_mean)

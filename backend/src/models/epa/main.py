@@ -12,7 +12,7 @@ from src.models.epa.breakdown import (
 )
 from src.models.epa.constants import ELIM_WEIGHT, MEAN_REVERSION
 from src.models.epa.init import get_init_epa
-from src.models.epa.math import SkewNormal
+from src.models.epa.math import EPARating
 
 # from src.models.epa.math import t_prob_gt_0
 from src.models.template import Model
@@ -52,7 +52,7 @@ class EPA(Model):
         self.k = EPA.k_func(self.year_num)
 
         init_rating = get_init_epa(year, None, None, MEAN_REVERSION)
-        self.epas: Dict[int, SkewNormal] = defaultdict(lambda: init_rating)
+        self.epas: Dict[int, EPARating] = defaultdict(lambda: init_rating)
         self.counts: Dict[int, int] = defaultdict(int)
 
         for team_year in team_years.values():
@@ -217,16 +217,12 @@ class EPA(Model):
         ty: Optional[TeamYear],
     ):
         rounded_mean: Any = np.round(self.epas[team].mean, 2)
-        rounded_sd: Any = np.round(np.sqrt(self.epas[team].var), 2)
 
         if tm is not None:
             tm.post_epa = rounded_mean[0]
 
         if te is not None:
             te.epa = rounded_mean[0]
-            te.epa_sd = rounded_sd[0]
-            te.epa_skew = r(self.epas[team].skew, 4)
-            te.epa_n = r(self.epas[team].n, 4)
 
             if self.year_num >= 2016:
                 te.auto_epa = rounded_mean[1]
@@ -241,9 +237,6 @@ class EPA(Model):
 
         if ty is not None:
             ty.epa = rounded_mean[0]
-            ty.epa_sd = rounded_sd[0]
-            ty.epa_skew = r(self.epas[team].skew, 4)
-            ty.epa_n = r(self.epas[team].n, 4)
 
             if self.year_num >= 2016:
                 ty.auto_epa = rounded_mean[1]
