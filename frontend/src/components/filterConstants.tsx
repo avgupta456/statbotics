@@ -1,4 +1,3 @@
-import { CURR_WEEK } from "../constants";
 
 export const countryOptions = [
   { value: "", label: "All" },
@@ -135,12 +134,11 @@ export const weekOptions = [
   { value: 6, label: "Week 6" },
   { value: 7, label: "Week 7" },
   { value: 8, label: "Week 8" },
-  { value: 9, label: "Offseason" },
 ];
 
 export const competingOptions = [
   { value: "", label: "All Weeks" },
-  { value: CURR_WEEK, label: "This Week" },
+  { value: "true", label: "This Week" },
 ];
 
 export const playoffOptions = [

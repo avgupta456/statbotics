@@ -8,6 +8,7 @@ from src.tba.clean_data import clean_district, clean_state, get_match_time
 from src.tba.constants import (
     DISTRICT_OVERRIDES,
     EVENT_BLACKLIST,
+    EVENT_TYPE_OVERRIDES,
     MATCH_BLACKLIST,
     PLACEHOLDER_TEAMS,
 )
@@ -121,28 +122,8 @@ def get_events(
             continue
 
         event_type_int = int(event["event_type"])
-        if event_type_int in (99, 100):
-            # only keep some offseason/preseason events after 2025
-            if year < 2025:
-                continue
-            try:
-                event_teams = get_event_teams(key, etag=None, cache=cache)[0]
-                # remove events with less than 6 teams
-                if len(event_teams) < 6:
-                    continue
-                if len(set(PLACEHOLDER_TEAMS).intersection(set(event_teams))) > 0:
-                    continue
-                matches = get_tba(f"event/{key}/matches", etag=None, cache=cache)[0]
-                end_date = datetime.strptime(event["end_date"], "%Y-%m-%d")
-                if len(matches) == 0 and (datetime.now() - end_date).days >= 1:  # type: ignore
-                    continue
-                for match in matches:  # type: ignore
-                    all_teams = match["alliances"]["red"]["team_keys"]
-                    all_teams += match["alliances"]["blue"]["team_keys"]
-                    all_teams = [int(x[3:]) for x in all_teams]  # asserts no B teams
-            except Exception:
-                # remove events with B teams
-                continue
+        if event_type_int in (99, 100) and key not in EVENT_TYPE_OVERRIDES:
+            continue
 
         event_type_dict: Dict[int, EventType] = defaultdict(lambda: EventType.INVALID)
         event_type_dict[0] = EventType.REGIONAL
@@ -155,10 +136,9 @@ def get_events(
         # rename festival of championships to einsteins
         event_type_dict[6] = EventType.EINSTEIN
 
-        event_type_dict[99] = EventType.OFFSEASON
-        event_type_dict[100] = EventType.OFFSEASON
-
         event_type = event_type_dict[event_type_int]
+        if key in EVENT_TYPE_OVERRIDES:
+            event_type = EVENT_TYPE_OVERRIDES[key]
 
         if event["district"] is not None:
             event["district"] = event["district"]["abbreviation"]
@@ -169,11 +149,6 @@ def get_events(
         # assigns worlds to week 8
         if event_type.is_champs():
             event["week"] = 8
-
-        if event_type_int == 99:
-            event["week"] = 9
-        elif event_type_int == 100:
-            event["week"] = 0
 
         # filter out incomplete events
         if "week" not in event or event["week"] is None:

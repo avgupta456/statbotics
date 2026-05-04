@@ -12,7 +12,6 @@ from src.db.models.main import TModel, TModelORM
 from src.db.models.match import MatchORM
 from src.db.models.team import TeamORM
 from src.db.models.team_event import TeamEventORM
-from src.db.models.team_match import TeamMatchORM
 from src.db.models.team_year import TeamYearORM
 from src.db.models.year import YearORM
 
@@ -59,8 +58,6 @@ def update_template(
                 primary_key = ["team", "event"]
             elif orm_type == MatchORM:
                 primary_key = ["key"]
-            elif orm_type == TeamMatchORM:
-                primary_key = ["team", "match"]
             else:
                 raise Exception("Unknown orm_type: " + str(orm_type))
 

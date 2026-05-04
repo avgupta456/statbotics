@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy import Boolean, Enum, Float, Integer, JSON, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -131,6 +131,11 @@ class MatchORM(Base, ModelORM):
     epa_blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_3_pred: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """PER-TEAM EPA (JSON dict of str(team) -> epa fields)"""
+    team_epas: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON, nullable=True, default=None
+    )
 
 
 _Match = generate_attr_class("Match", MatchORM)
@@ -297,5 +302,7 @@ class Match(_Match, Model):
             for key, name in pairs:
                 clean["result"][f"red_{name}"] = getattr(self, f"red_{key}")
                 clean["result"][f"blue_{name}"] = getattr(self, f"blue_{key}")
+
+        clean["team_epas"] = self.team_epas or {}
 
         return clean

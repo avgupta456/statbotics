@@ -150,10 +150,10 @@ export type APITeamYear = {
   district_points?: number;
   district_rank?: number;
   competing?: {
-    this_week: boolean;
     next_event_key: string;
     next_event_name: string;
     next_event_week: number;
+    next_event_start_date: string | null;
   };
 };
 
@@ -291,19 +291,20 @@ export type APIMatch = {
 export type APITeamMatch = {
   team: number;
   match: string;
-  year: number;
   event: string;
   alliance: string;
   time: number;
   week: number;
   elim: boolean;
-  dq: boolean;
-  surrogate: boolean;
   status: string;
-  epa: {
-    post: number;
-    breakdown: { [key: string]: number };
-  };
+  epa: number;
+  auto_epa: number | null;
+  teleop_epa: number | null;
+  endgame_epa: number | null;
+  rp_1_epa: number | null;
+  rp_2_epa: number | null;
+  rp_3_epa: number | null;
+  post_epa: number | null;
 };
 
 export type APIShortTeam = {

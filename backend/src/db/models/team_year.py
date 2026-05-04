@@ -1,14 +1,14 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Float, Integer, JSON, String
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
 from src.breakdown import key_to_name
 from src.constants import CURR_YEAR
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
+from src.db.models.types import MF, MI, MOF, MOI, MOS, MS
 
 
 class TeamYearORM(Base, ModelORM):
@@ -32,10 +32,10 @@ class TeamYearORM(Base, ModelORM):
     rookie_year: MOI = mapped_column(Integer, nullable=True)
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
-    competing_this_week: MB = mapped_column(Boolean)
     next_event_key: MOS = mapped_column(String(10), nullable=True)
     next_event_name: MOS = mapped_column(String(100), nullable=True)
     next_event_week: MOI = mapped_column(Integer, nullable=True)
+    next_event_start_date: MOS = mapped_column(String(10), nullable=True)
 
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
@@ -97,6 +97,9 @@ class TeamYearORM(Base, ModelORM):
     district_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
     district_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
     district_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
+
+    """MATCHES (JSON list of compact match entries)"""
+    team_matches: Mapped[Optional[List[Any]]] = mapped_column(JSON, nullable=True, default=None)
 
 
 _TeamYear = generate_attr_class("TeamYear", TeamYearORM)
@@ -182,10 +185,10 @@ class TeamYear(_TeamYear, Model):
 
         if self.year == CURR_YEAR:
             clean["competing"] = {
-                "this_week": self.competing_this_week,
                 "next_event_key": self.next_event_key,
                 "next_event_name": self.next_event_name,
                 "next_event_week": self.next_event_week,
+                "next_event_start_date": self.next_event_start_date,
             }
 
         return clean

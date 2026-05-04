@@ -11,12 +11,10 @@ from src.db.read import (
     get_num_events as get_num_events_db,
     get_num_matches as get_num_matches_db,
     get_num_team_events as get_num_team_events_db,
-    get_num_team_matches as get_num_team_matches_db,
     get_num_team_years as get_num_team_years_db,
     get_num_teams as get_num_teams_db,
     get_num_years as get_num_years_db,
     get_team_events as get_team_events_db,
-    get_team_matches as get_team_matches_db,
     get_team_years as get_team_years_db,
     get_year as get_year_db,
 )
@@ -25,7 +23,6 @@ from src.db.write.main import (
     update_events as update_events_db,
     update_matches as update_matches_db,
     update_team_events as update_team_events_db,
-    update_team_matches as update_team_matches_db,
     update_team_years as update_team_years_db,
     update_years as update_years_db,
 )
@@ -56,7 +53,7 @@ def read_objs(year: int) -> objs_type:
         {e.pk(): e for e in get_events_db(year=year)},
         {te.pk(): te for te in get_team_events_db(year=year)},
         {m.pk(): m for m in get_matches_db(year=year)},
-        {tm.pk(): tm for tm in get_team_matches_db(year=year)},
+        {},  # TeamMatch objects are in-memory only; rebuilt each run
         {e.pk(): e for e in get_etags_db(year=year)},
     )
 
@@ -81,7 +78,6 @@ def write_objs(
         (orig_objs[2], objs[2], update_events_db),
         (orig_objs[3], objs[3], update_team_events_db),
         (orig_objs[4], objs[4], update_matches_db),
-        (orig_objs[5], objs[5], update_team_matches_db),
         (orig_objs[6], objs[6], update_etags_db),
     ]:
         new_objs = [
@@ -100,7 +96,6 @@ def print_table_stats() -> None:
     print("Num Events:", get_num_events_db())
     print("Num Team Events:", get_num_team_events_db())
     print("Num Matches:", get_num_matches_db())
-    print("Num Team Matches:", get_num_team_matches_db())
     print("Num ETags", get_num_etags_db())
 
 

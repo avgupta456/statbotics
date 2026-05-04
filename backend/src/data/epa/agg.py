@@ -8,6 +8,8 @@ from src.models.epa.unitless import epa_to_unitless_epa, get_epa_to_norm_epa_fun
 from src.utils.utils import get_team_event_key, r
 
 
+
+
 def process_year_epas(
     tms: List[TeamMatch], acc: Callable[[TeamMatch], Optional[float]], default: float
 ):
@@ -54,6 +56,9 @@ def process_year(objs: objs_type) -> objs_type:
         ty.epa_pre_champs, ty.epa, ty.epa_max = process_year_epas(
             ms, lambda m: m.post_epa, ty.epa_start
         )
+
+        # Store compact team match list on TeamYear
+        ty.team_matches = [tm.to_compact_dict() for tm in ms]
 
         epa_list.append(ty.epa)
         total_epas.append((ty.team, ty.epa))

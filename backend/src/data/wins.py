@@ -1,10 +1,11 @@
 from collections import defaultdict
+from datetime import datetime
 from typing import Dict, List, Tuple
 
-from src.constants import CURR_WEEK, CURR_YEAR
+from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.models import Event, Match, Team, TeamEvent, TeamYear
-from src.types.enums import EventStatus, EventType, MatchStatus, MatchWinner
+from src.types.enums import EventStatus, MatchStatus, MatchWinner
 from src.utils.utils import r
 
 
@@ -18,7 +19,6 @@ TRP = Tuple[int, int]
 
 def process_year(objs: objs_type) -> objs_type:
     year_num = objs[0].year
-    event_to_type = {e.key: e.type for e in objs[2].values()}
 
     ty_record: Dict[int, TRecord] = defaultdict(lambda: (0, 0, 0, 0))
     te_record: Dict[Tuple[int, str], TRecord] = defaultdict(lambda: (0, 0, 0, 0))
@@ -31,11 +31,7 @@ def process_year(objs: objs_type) -> objs_type:
         status = m_obj.status
         winner = m_obj.winner
 
-        if (
-            event_to_type[event] == EventType.OFFSEASON
-            or status != MatchStatus.COMPLETED
-            or winner is None
-        ):
+        if status != MatchStatus.COMPLETED or winner is None:
             continue
 
         for alliance in ["red", "blue"]:
@@ -136,7 +132,9 @@ def process_year(objs: objs_type) -> objs_type:
         )
         event.qual_matches = len([m for m in curr_matches if not m.elim])
 
-    # Also handles team_year_obj next_event_{key, name, week}
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    # Also handles team_year_obj next_event_{key, name, week, start_date}
     team_to_events: Dict[int, List[Event]] = defaultdict(list)
     for event in objs[2].values():
         for team_event in event_to_team_events[event.key]:
@@ -146,15 +144,14 @@ def process_year(objs: objs_type) -> objs_type:
         events = [
             e
             for e in team_to_events[team_year.team]
-            if e.week >= CURR_WEEK
-            and e.type != EventType.OFFSEASON
-            and e.status != EventStatus.COMPLETED
+            if e.start_date > today
         ]
         if len(events) > 0:
-            next_event = min(events, key=lambda x: (x.week, x.num_teams))
+            next_event = min(events, key=lambda x: (x.start_date, x.num_teams))
             team_year.next_event_key = next_event.key
             team_year.next_event_name = next_event.name[:100]
             team_year.next_event_week = next_event.week
+            team_year.next_event_start_date = next_event.start_date
 
     return objs
 

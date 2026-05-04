@@ -47,6 +47,10 @@ def process_year(
             curr_team_events,
             curr_team_years,
         )
+        # Store per-team EPA data on the match (set after pre_record_team and post_record_team)
+        curr_match.team_epas = {
+            str(team): tm.to_epa_dict() for team, tm in curr_team_matches.items()
+        }
 
     # Records TeamEvent EPA stats if no matches played yet
     for team_event in team_events.values():

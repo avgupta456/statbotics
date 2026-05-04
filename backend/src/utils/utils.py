@@ -1,6 +1,3 @@
-import uuid
-
-
 def get_team_year_key(team: int, year: int) -> str:
     return str(team) + "_" + str(year)
 
@@ -61,9 +58,3 @@ def r(x: float, n: int = 0) -> float:
     return int(x * (10**n) + 0.5) / (10**n)
 
 
-def is_uuid(s: str) -> bool:
-    try:
-        uuid.UUID(s)
-        return True
-    except ValueError:
-        return False

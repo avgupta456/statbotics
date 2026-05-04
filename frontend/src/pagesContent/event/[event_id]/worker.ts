@@ -325,10 +325,10 @@ async function indexSim(
       const team = teamMatch.team;
       if (!postEvent) {
         // only update EPAs if we're simulating pre-event
-        currEPAs[team] = teamMatch.epa.post ?? teamMatch.epa.breakdown.total_points;
-        currRP1EPAs[team] = teamMatch.epa.breakdown.rp_1;
-        currRP2EPAs[team] = teamMatch.epa.breakdown.rp_2;
-        currRP3EPAs[team] = teamMatch.epa.breakdown.rp_3;
+        currEPAs[team] = teamMatch.post_epa ?? teamMatch.epa;
+        currRP1EPAs[team] = teamMatch.rp_1_epa;
+        currRP2EPAs[team] = teamMatch.rp_2_epa;
+        currRP3EPAs[team] = teamMatch.rp_3_epa;
       }
       if (
         !match.alliances.red.surrogate_team_keys.includes(team) &&

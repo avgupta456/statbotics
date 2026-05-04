@@ -7,11 +7,10 @@ from src.api import (
     get_event_cached,
     get_match_cached,
     get_team_events_cached,
-    get_team_matches_cached,
     get_year_cached,
 )
 from src.db.functions import get_noteworthy_matches, get_upcoming_matches
-from src.db.models import Event, Match, TeamEvent, TeamMatch, Year
+from src.db.models import Event, Match, TeamEvent, Year
 
 # from src.site.helper import compress
 from src.utils.decorators import (
@@ -20,6 +19,31 @@ from src.utils.decorators import (
 )
 
 router = APIRouter()
+
+
+def _build_team_matches_for_match(match: Match) -> List[Dict[str, Any]]:
+    """Build per-team match entries from Match.team_epas."""
+    if not match.team_epas:
+        return []
+    red_teams = set(match.get_red())
+    team_matches = []
+    for team_str, epa_data in match.team_epas.items():
+        team_num = int(team_str)
+        alliance = "red" if team_num in red_teams else "blue"
+        team_matches.append(
+            {
+                "match": match.key,
+                "event": match.event,
+                "team": team_num,
+                "alliance": alliance,
+                "time": match.time,
+                "week": match.week,
+                "elim": match.elim,
+                "status": match.status,
+                **epa_data,
+            }
+        )
+    return team_matches
 
 
 @router.get("/match/{match_id}")
@@ -39,10 +63,8 @@ async def read_match(response: Response, match_id: str, no_cache: bool = False) 
     if year is None:
         raise Exception("Year not found")
 
-    team_matches: List[TeamMatch] = await get_team_matches_cached(
-        match=match_id, no_cache=no_cache
-    )
-    team_nums = [x.team for x in team_matches]
+    team_matches = _build_team_matches_for_match(match)
+    team_nums = [tm["team"] for tm in team_matches]
 
     team_events: List[TeamEvent] = await get_team_events_cached(
         year=year.year, event=match.event, no_cache=no_cache
@@ -54,7 +76,7 @@ async def read_match(response: Response, match_id: str, no_cache: bool = False) 
         "event": event.to_dict(),
         "team_events": [x.to_dict() for x in team_events],
         "match": match.to_dict(),
-        "team_matches": [x.to_dict() for x in team_matches],
+        "team_matches": team_matches,
     }
 
     return out

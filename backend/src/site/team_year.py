@@ -3,9 +3,9 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter
 from fastapi.responses import Response
 
-from src.api import get_team_matches_cached, get_team_years_cached, get_year_cached
+from src.api import get_team_year_cached, get_team_years_cached, get_year_cached
 from src.constants import CURR_YEAR
-from src.db.models import TeamMatch, TeamYear, Year
+from src.db.models import TeamYear, Year
 
 # from src.site.helper import compress
 from src.utils.decorators import (
@@ -52,12 +52,11 @@ async def read_team_years(
 async def read_team_matches(
     response: Response, year: int, team: int, no_cache: bool = False
 ) -> Any:
-    team_matches: List[TeamMatch] = await get_team_matches_cached(
+    team_year: Optional[TeamYear] = await get_team_year_cached(
         team=team, year=year, no_cache=no_cache
     )
+    if team_year is None:
+        return []
 
-    team_matches = sorted(team_matches, key=lambda x: x.time)
-
-    out = [x.to_dict() for x in team_matches]
-
-    return out
+    team_matches = sorted(team_year.team_matches or [], key=lambda x: x["time"])
+    return [{"team": team, **tm} for tm in team_matches]

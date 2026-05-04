@@ -81,21 +81,17 @@ def write_objs(
     if len(new_events) > 0:
         event_to_matches = defaultdict(list)
         event_to_team_events = defaultdict(list)
-        event_to_team_matches = defaultdict(list)
         for m in objs[4].values():
             event_to_matches[m.event].append(m)
         for te in objs[3].values():
             event_to_team_events[te.event].append(te)
-        for tm in objs[5].values():
-            event_to_team_matches[tm.event].append(tm)
         data = []
         object_names = []
         for event in new_events:
             matches = event_to_matches.get(event.key, [])
             team_events = event_to_team_events.get(event.key, [])
-            team_matches = event_to_team_matches.get(event.key, [])
             data.append(
-                _read_event(year_obj, event, matches, team_events, team_matches)
+                _read_event(year_obj, event, matches, team_events)
             )
             object_names.append(f"event/{event.key}")
         upload_files_to_gcs(data, object_names)

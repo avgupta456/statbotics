@@ -35,7 +35,6 @@ AUTH_KEY_BLACKLIST: List[str] = []
 # CONFIG
 
 CURR_YEAR = 2026
-CURR_WEEK = 8
 
 # MISC
 

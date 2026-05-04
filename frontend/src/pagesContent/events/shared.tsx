@@ -4,7 +4,6 @@ import React, { FC } from "react";
 
 import { filterData } from "../../components/filter";
 import { FilterBar } from "../../components/filterBar";
-import { CURR_WEEK } from "../../constants";
 import { APIEvent } from "../../types/api";
 import { EventsData } from "../../types/data";
 
@@ -50,7 +49,7 @@ const EventsLayout = ({
   const today = new Date().toISOString().split("T")[0];
 
   const ongoingEvents = sortedData
-    ?.filter((event) => event.status === "Ongoing" && event.week >= CURR_WEEK)
+    ?.filter((event) => event.status === "Ongoing" && event.end_date >= today)
     .sort((a, b) => {
       if (a.current_match > 0 && b.current_match === 0) return -1;
       if (a.current_match === 0 && b.current_match > 0) return 1;
@@ -59,12 +58,12 @@ const EventsLayout = ({
   const ongoingN = ongoingEvents.length;
 
   const upcomingEvents = sortedData?.filter(
-    (event) => event.status === "Upcoming" && event.week >= CURR_WEEK
+    (event) => event.status === "Upcoming" && event.start_date >= today
   );
   const upcomingN = upcomingEvents.length;
 
   const completedEvents = sortedData?.filter(
-    (event) => event.status === "Completed" || (event.status == "Ongoing" && event.week < CURR_WEEK)
+    (event) => event.status === "Completed" || event.end_date < today
   );
   const completedN = completedEvents.length;
 

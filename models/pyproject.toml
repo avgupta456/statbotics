@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "statbotics-models"
+version = "0.1.0"
+description = "Standalone match prediction models and evaluation framework for FRC"
+authors = ["Abhijit Gupta"]
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.0"
+sqlalchemy = "^2.0"
+psycopg2-binary = "^2.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

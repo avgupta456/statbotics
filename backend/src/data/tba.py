@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
-from src.constants import CURR_WEEK, CURR_YEAR
+from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.functions import remove_teams_with_no_events, update_team_districts
 from src.db.models import ETag, Event, Team, TeamEvent, TeamYear, match_dict_to_objs
@@ -170,8 +170,9 @@ def process_year(
             out, new_etag = func(None, cache)
         return out, new_etag is not None and new_etag != prev_etag
 
+    today = datetime.now().strftime("%Y-%m-%d")
+
     teams_dict: Dict[int, Team] = {team.team: team for team in teams}
-    team_competing_this_week_dict: Dict[int, bool] = {}
     team_first_event_dict: Dict[int, Tuple[OS, int]] = {}
 
     # maps team to district_abbrev (or None if not in a district)
@@ -237,7 +238,9 @@ def process_year(
 
     for event_obj in event_objs_dict.values():
         if partial:
-            if event_obj.week != CURR_WEEK and event_obj.status != EventStatus.ONGOING:
+            start = (datetime.strptime(event_obj.start_date, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
+            end = (datetime.strptime(event_obj.end_date, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
+            if not (start <= today <= end) and event_obj.status != EventStatus.ONGOING:
                 continue
 
         event_key, event_time = event_obj.key, event_obj.time
@@ -261,11 +264,6 @@ def process_year(
             all_teams.add(team)
             event_teams.add(team)
             event_week = event_obj.week
-            event_year = event_obj.year
-
-            # Stores whether a team is competing this week
-            if event_year == CURR_YEAR and event_week == CURR_WEEK:
-                team_competing_this_week_dict[team] = True
 
             # Store first event
             if team not in team_first_event_dict:
@@ -377,7 +375,6 @@ def process_year(
 
     for team in all_teams:
         team_obj = teams_dict[team]
-        competing_this_week = team_competing_this_week_dict.get(team, False)
 
         team_year_key = get_team_year_key(team, year_num)
         curr_ty = team_year_objs_dict.get(team_year_key, None)
@@ -393,10 +390,10 @@ def process_year(
                 rookie_year=team_obj.rookie_year,
                 district_points=None,
                 district_rank=None,
-                competing_this_week=competing_this_week,
                 next_event_key=None,
                 next_event_name=None,
                 next_event_week=None,
+                next_event_start_date=None,
             )
 
         curr_ty.district = team_to_district.get(team, curr_ty.district)

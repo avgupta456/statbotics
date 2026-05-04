@@ -24,7 +24,7 @@ event_query = Query(None, description="Event key, e.g. `2019ncwak`.")
 
 event_type_query = Query(
     None,
-    description="One of [`regional`, `district`, `district_cmp`, `champs_div`, `einstein`, or `offseason`].",
+    description="One of [`regional`, `district`, `district_cmp`, `champs_div`, or `einstein`].",
 )
 
 limit_query = Query(

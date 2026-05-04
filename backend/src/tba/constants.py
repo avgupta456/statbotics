@@ -1,5 +1,7 @@
 from typing import Dict, List, Set
 
+from src.types.enums import EventType
+
 # DEV SETUP
 
 AUTH_KEY = "XeUIxlvO4CPc44NlLE3ncevDg7bAhp6CRy6zC9M2aQb2zGfys0M30eKwavFJSEJr"
@@ -130,3 +132,8 @@ EVENT_BLACKLIST: List[str] = [
 MATCH_BLACKLIST: List[str] = []
 
 DISTRICT_OVERRIDES: Dict[str, str] = {}
+
+# Override TBA's event type classification for specific events
+EVENT_TYPE_OVERRIDES: Dict[str, EventType] = {
+    "2026isrtp": EventType.DISTRICT,
+}
