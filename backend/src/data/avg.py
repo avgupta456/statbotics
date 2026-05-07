@@ -56,7 +56,7 @@ def process_year(year: Year, matches: List[Match]) -> Year:
             lambda m: m.red_tiebreaker, lambda m: m.blue_tiebreaker
         )
 
-        for i in range(1, 19):
+        for i in range(0, 10):
             mean = get_mean(
                 lambda m: getattr(m, f"red_comp_{i}"),
                 lambda m: getattr(m, f"blue_comp_{i}"),
@@ -65,13 +65,11 @@ def process_year(year: Year, matches: List[Match]) -> Year:
 
     if year.year == 2025:
         # have to manually set processor algae to 3 points instead of 6
-        # this affects no_foul_mean, teleop_mean, comp_12 (processor_algae_points),
-        # and comp 15 (total algae points)
+        # this affects no_foul_mean, teleop_mean, and comp_7 (processor_algae_points)
 
-        update = 3 * year.comp_11_mean  # from 6 to 3 points
+        update = 3 * year.comp_6_mean  # processor_algae, from 6 to 3 points
         year.no_foul_mean -= update
         year.teleop_mean -= update
-        year.comp_12_mean -= update
-        year.comp_15_mean -= update
+        year.comp_7_mean -= update  # processor_algae_points
 
     return year

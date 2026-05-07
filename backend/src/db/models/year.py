@@ -28,6 +28,7 @@ class YearORM(Base, ModelORM):
     rp_2_mean: MF = mapped_column(Float, default=0)
     rp_3_mean: MF = mapped_column(Float, default=0)
     tiebreaker_mean: MF = mapped_column(Float, default=0)
+    comp_0_mean: MF = mapped_column(Float, default=0)
     comp_1_mean: MF = mapped_column(Float, default=0)
     comp_2_mean: MF = mapped_column(Float, default=0)
     comp_3_mean: MF = mapped_column(Float, default=0)
@@ -37,15 +38,6 @@ class YearORM(Base, ModelORM):
     comp_7_mean: MF = mapped_column(Float, default=0)
     comp_8_mean: MF = mapped_column(Float, default=0)
     comp_9_mean: MF = mapped_column(Float, default=0)
-    comp_10_mean: MF = mapped_column(Float, default=0)
-    comp_11_mean: MF = mapped_column(Float, default=0)
-    comp_12_mean: MF = mapped_column(Float, default=0)
-    comp_13_mean: MF = mapped_column(Float, default=0)
-    comp_14_mean: MF = mapped_column(Float, default=0)
-    comp_15_mean: MF = mapped_column(Float, default=0)
-    comp_16_mean: MF = mapped_column(Float, default=0)
-    comp_17_mean: MF = mapped_column(Float, default=0)
-    comp_18_mean: MF = mapped_column(Float, default=0)
 
     """EPA"""
     epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
@@ -82,6 +74,11 @@ class YearORM(Base, ModelORM):
     rp_3_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
     rp_3_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
     rp_3_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
+
+    comp_0_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_0_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_0_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
+    comp_0_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
     comp_1_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
     comp_1_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
@@ -127,51 +124,6 @@ class YearORM(Base, ModelORM):
     comp_9_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
     comp_9_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
     comp_9_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_10_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_10_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_10_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_10_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_11_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_11_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_11_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_11_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_12_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_12_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_12_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_12_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_13_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_13_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_13_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_13_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_14_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_14_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_14_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_14_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_15_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_15_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_15_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_15_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_16_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_16_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_16_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_16_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_17_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_17_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_17_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_17_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
-
-    comp_18_epa_99p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_18_epa_90p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_18_epa_75p: MOF = mapped_column(Float, nullable=True, default=None)
-    comp_18_epa_25p: MOF = mapped_column(Float, nullable=True, default=None)
 
     """WIN PROB PRED"""
     count: MI = mapped_column(Integer, default=0)
@@ -237,6 +189,7 @@ class Year(_Year, Model):
                 self.rp_2_mean,
                 self.rp_3_mean,
                 self.tiebreaker_mean,
+                self.comp_0_mean,
                 self.comp_1_mean,
                 self.comp_2_mean,
                 self.comp_3_mean,
@@ -246,15 +199,6 @@ class Year(_Year, Model):
                 self.comp_7_mean,
                 self.comp_8_mean,
                 self.comp_9_mean,
-                self.comp_10_mean,
-                self.comp_11_mean,
-                self.comp_12_mean,
-                self.comp_13_mean,
-                self.comp_14_mean,
-                self.comp_15_mean,
-                self.comp_16_mean,
-                self.comp_17_mean,
-                self.comp_18_mean,
             ]
         )
 

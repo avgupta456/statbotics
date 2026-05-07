@@ -18,10 +18,10 @@ SELECT
     AVG((red_rp_1::int + blue_rp_1::int) / 2.0)   AS rp_1_mean,
     AVG((red_rp_2::int + blue_rp_2::int) / 2.0)   AS rp_2_mean,
     AVG((red_rp_3::int + blue_rp_3::int) / 2.0)   AS rp_3_mean,
-    -- Include comp_1 through comp_N where N is the number of comps defined
-    -- for that year in key_to_name[YEAR] in src/breakdown.py (max 18, varies by year)
+    -- Include comp_0 through comp_N where N is the number of comps defined
+    -- for that year in key_to_name[YEAR] in src/breakdown.py (max 10, varies by year)
+    AVG((red_comp_0 + blue_comp_0) / 2.0)          AS comp_0_mean,
     AVG((red_comp_1 + blue_comp_1) / 2.0)          AS comp_1_mean,
-    AVG((red_comp_2 + blue_comp_2) / 2.0)          AS comp_2_mean,
     -- ... through comp_N_mean
     COUNT(*)                                        AS num_matches
 FROM matches

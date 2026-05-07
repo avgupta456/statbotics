@@ -205,8 +205,8 @@ class EPA(Model):
             tm.rp_2_epa = round(self.epas[team].mean[5], 4)
             tm.rp_3_epa = round(self.epas[team].mean[6], 4)
             tm.tiebreaker_epa = rounded_mean[7]
-            for i in range(1, 19):
-                new_value = rounded_mean[i + 7]
+            for i in range(0, 10):
+                new_value = rounded_mean[i + 8]
                 setattr(tm, f"comp_{i}_epa", new_value)
 
     def post_record_team(
@@ -232,8 +232,8 @@ class EPA(Model):
                 te.rp_2_epa = round(self.epas[team].mean[5], 4)
                 te.rp_3_epa = round(self.epas[team].mean[6], 4)
                 te.tiebreaker_epa = rounded_mean[7]
-                for i in range(1, 19):
-                    setattr(te, f"comp_{i}_epa", rounded_mean[i + 7])
+                for i in range(0, 10):
+                    setattr(te, f"comp_{i}_epa", rounded_mean[i + 8])
 
         if ty is not None:
             ty.epa = rounded_mean[0]
@@ -246,8 +246,8 @@ class EPA(Model):
                 ty.rp_2_epa = round(self.epas[team].mean[5], 4)
                 ty.rp_3_epa = round(self.epas[team].mean[6], 5)
                 ty.tiebreaker_epa = rounded_mean[7]
-                for i in range(1, 19):
-                    setattr(ty, f"comp_{i}_epa", rounded_mean[i + 7])
+                for i in range(0, 10):
+                    setattr(ty, f"comp_{i}_epa", rounded_mean[i + 8])
 
     def record_match(self, match: Match, match_pred: MatchPred) -> None:
         match.epa_win_prob = r(match_pred.win_prob, 4)

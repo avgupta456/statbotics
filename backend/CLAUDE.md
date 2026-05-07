@@ -54,7 +54,7 @@ The `EPA` class (in `main.py`) extends the `Model` base class (`src/models/templ
 
 Each team's rating is a `SkewNormal` distribution (`src/models/epa/math.py`).
 
-**EPA dimensions** (for 2016+): `[total, auto, teleop, endgame, rp_1, rp_2, rp_3, tiebreaker, comp_1..comp_18]` — indices 0-25. Pre-2016 only uses `total`.
+**EPA dimensions** (for 2016+): `[total, auto, teleop, endgame, rp_1, rp_2, rp_3, tiebreaker, comp_0..comp_9]` — indices 0-17 (max). Pre-2016 only uses `total`.
 
 **Key constants** (`src/models/epa/constants.py`):
 - `NORM_MEAN = 1500`, `NORM_SD = 250` — normalized EPA scale

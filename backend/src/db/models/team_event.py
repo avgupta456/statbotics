@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
-from src.breakdown import key_to_name
+from src.breakdown import derived_breakdown, key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS, values_callable
@@ -78,6 +78,7 @@ class TeamEventORM(Base, ModelORM):
     rp_2_epa: MOF = mapped_column(Float, default=None)
     rp_3_epa: MOF = mapped_column(Float, default=None)
     tiebreaker_epa: MOF = mapped_column(Float, default=None)
+    comp_0_epa: MOF = mapped_column(Float, default=None)
     comp_1_epa: MOF = mapped_column(Float, default=None)
     comp_2_epa: MOF = mapped_column(Float, default=None)
     comp_3_epa: MOF = mapped_column(Float, default=None)
@@ -87,15 +88,6 @@ class TeamEventORM(Base, ModelORM):
     comp_7_epa: MOF = mapped_column(Float, default=None)
     comp_8_epa: MOF = mapped_column(Float, default=None)
     comp_9_epa: MOF = mapped_column(Float, default=None)
-    comp_10_epa: MOF = mapped_column(Float, default=None)
-    comp_11_epa: MOF = mapped_column(Float, default=None)
-    comp_12_epa: MOF = mapped_column(Float, default=None)
-    comp_13_epa: MOF = mapped_column(Float, default=None)
-    comp_14_epa: MOF = mapped_column(Float, default=None)
-    comp_15_epa: MOF = mapped_column(Float, default=None)
-    comp_16_epa: MOF = mapped_column(Float, default=None)
-    comp_17_epa: MOF = mapped_column(Float, default=None)
-    comp_18_epa: MOF = mapped_column(Float, default=None)
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)
@@ -194,13 +186,16 @@ class TeamEvent(_TeamEvent, Model):
             "district_points": self.district_points,
         }
 
-        clean["epa"]["breakdown"]["total_points"] = self.epa
+        bd = clean["epa"]["breakdown"]
+        bd["total_points"] = self.epa
         if self.year >= 2016:
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
             if self.year >= 2025:
                 pairs += [("rp_3", "rp_3")]
             for key, name in pairs:
-                clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
+                bd[name] = getattr(self, f"{key}_epa")
+            for derived_name, sources in derived_breakdown.get(self.year, {}).items():
+                bd[derived_name] = sum(bd.get(src) or 0 for src in sources)
 
         return clean

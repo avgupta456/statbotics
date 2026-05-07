@@ -28,6 +28,7 @@ class TeamMatch:
     rp_2_epa: Optional[float] = None
     rp_3_epa: Optional[float] = None
     tiebreaker_epa: Optional[float] = None
+    comp_0_epa: Optional[float] = None
     comp_1_epa: Optional[float] = None
     comp_2_epa: Optional[float] = None
     comp_3_epa: Optional[float] = None
@@ -37,15 +38,6 @@ class TeamMatch:
     comp_7_epa: Optional[float] = None
     comp_8_epa: Optional[float] = None
     comp_9_epa: Optional[float] = None
-    comp_10_epa: Optional[float] = None
-    comp_11_epa: Optional[float] = None
-    comp_12_epa: Optional[float] = None
-    comp_13_epa: Optional[float] = None
-    comp_14_epa: Optional[float] = None
-    comp_15_epa: Optional[float] = None
-    comp_16_epa: Optional[float] = None
-    comp_17_epa: Optional[float] = None
-    comp_18_epa: Optional[float] = None
     post_epa: Optional[float] = None
 
     def sort(self) -> int:
