@@ -147,8 +147,6 @@ export type APITeamYear = {
     };
   };
   record: Record;
-  district_points?: number;
-  district_rank?: number;
   competing?: {
     next_event_key: string;
     next_event_name: string;

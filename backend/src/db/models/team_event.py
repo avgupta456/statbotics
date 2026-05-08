@@ -62,8 +62,6 @@ class TeamEventORM(Base, ModelORM):
     num_teams: MOI = mapped_column(Integer, nullable=True, default=None)
     elim_alliance: MOS = mapped_column(String(30), nullable=True, default=None)
     is_captain: MOB = mapped_column(Boolean, nullable=True, default=None)
-    district_points: MOI = mapped_column(Integer, nullable=True, default=None)
-
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
     epa_pre_elim: MF = mapped_column(Float, default=0)
@@ -183,7 +181,6 @@ class TeamEvent(_TeamEvent, Model):
                     "winrate": self.winrate,
                 },
             },
-            "district_points": self.district_points,
         }
 
         bd = clean["epa"]["breakdown"]

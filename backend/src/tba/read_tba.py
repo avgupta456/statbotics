@@ -15,7 +15,6 @@ from src.tba.constants import (
 from src.tba.main import get_tba
 from src.tba.types import EventDict, MatchDict, TeamDict
 from src.types.enums import CompLevel, EventType, MatchStatus, MatchWinner
-from src.utils.utils import get_team_event_key
 
 
 def get_timestamp_from_str(date: str):
@@ -65,32 +64,6 @@ def get_district_teams(
     for team in data:
         out.append(int(team["key"][3:]))
     return out, new_etag
-
-
-def get_district_rankings(
-    district: str, etag: Optional[str] = None, cache: bool = True
-) -> Tuple[Tuple[Dict[int, int], Dict[int, int], Dict[str, int]], Optional[str]]:
-    team_to_points: Dict[int, int] = {}
-    team_to_rank: Dict[int, int] = {}
-    team_event_to_points: Dict[str, int] = {}
-    data, new_etag = get_tba(
-        "district/" + str(district) + "/rankings", etag=etag, cache=cache
-    )
-    if type(data) is bool or data is None:
-        return (team_to_points, team_to_rank, team_event_to_points), new_etag
-    for team in data:
-        team_num = int(team["team_key"][3:])
-        points = int(team["point_total"])
-        rank = int(team["rank"])
-        team_to_points[team_num] = points
-        team_to_rank[team_num] = rank
-        for event in team["event_points"]:
-            event_key = event["event_key"]
-            team_event_key = get_team_event_key(team_num, event_key)
-            event_points = int(event["total"])
-            team_event_to_points[team_event_key] = event_points
-
-    return (team_to_points, team_to_rank, team_event_to_points), new_etag
 
 
 def get_event_teams(
