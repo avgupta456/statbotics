@@ -2,18 +2,11 @@ from datetime import datetime
 from typing import Dict, Optional, Tuple
 
 from src.db.functions import clear_year
-from src.db.models import ETag, Event, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import ETag, Event, Match, TeamEvent, TeamYear, Year
 from src.db.read import (
     get_etags as get_etags_db,
     get_events as get_events_db,
     get_matches as get_matches_db,
-    get_num_etags as get_num_etags_db,
-    get_num_events as get_num_events_db,
-    get_num_matches as get_num_matches_db,
-    get_num_team_events as get_num_team_events_db,
-    get_num_team_years as get_num_team_years_db,
-    get_num_teams as get_num_teams_db,
-    get_num_years as get_num_years_db,
     get_team_events as get_team_events_db,
     get_team_years as get_team_years_db,
     get_year as get_year_db,
@@ -33,13 +26,12 @@ objs_type = Tuple[
     Dict[str, Event],
     Dict[str, TeamEvent],
     Dict[str, Match],
-    Dict[str, TeamMatch],
     Dict[str, ETag],
 ]
 
 
 def create_objs(year: int) -> objs_type:
-    return (Year(year=year), {}, {}, {}, {}, {}, {})
+    return (Year(year=year), {}, {}, {}, {}, {})
 
 
 def read_objs(year: int) -> objs_type:
@@ -53,7 +45,6 @@ def read_objs(year: int) -> objs_type:
         {e.pk(): e for e in get_events_db(year=year)},
         {te.pk(): te for te in get_team_events_db(year=year)},
         {m.pk(): m for m in get_matches_db(year=year)},
-        {},  # TeamMatch objects are in-memory only; rebuilt each run
         {e.pk(): e for e in get_etags_db(year=year)},
     )
 
@@ -78,7 +69,7 @@ def write_objs(
         (orig_objs[2], objs[2], update_events_db),
         (orig_objs[3], objs[3], update_team_events_db),
         (orig_objs[4], objs[4], update_matches_db),
-        (orig_objs[6], objs[6], update_etags_db),
+        (orig_objs[5], objs[5], update_etags_db),
     ]:
         new_objs = [
             obj
@@ -87,16 +78,6 @@ def write_objs(
         ]
 
         update_func(new_objs, clean)  # type: ignore
-
-
-def print_table_stats() -> None:
-    print("Num Teams:", get_num_teams_db())
-    print("Num Years:", get_num_years_db())
-    print("Num Team Years:", get_num_team_years_db())
-    print("Num Events:", get_num_events_db())
-    print("Num Team Events:", get_num_team_events_db())
-    print("Num Matches:", get_num_matches_db())
-    print("Num ETags", get_num_etags_db())
 
 
 class Timer:

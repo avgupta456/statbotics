@@ -22,14 +22,15 @@ router = APIRouter()
 
 
 def _build_team_matches_for_match(match: Match) -> List[Dict[str, Any]]:
-    """Build per-team match entries from Match.team_epas."""
-    if not match.team_epas:
+    """Build per-team match entries from Match.pre_epas and Match.epas."""
+    if not match.pre_epas:
         return []
     red_teams = set(match.get_red())
     team_matches = []
-    for team_str, epa_data in match.team_epas.items():
+    for team_str, pre_data in match.pre_epas.items():
         team_num = int(team_str)
         alliance = "red" if team_num in red_teams else "blue"
+        post_data = (match.epas or {}).get(team_str, {})
         team_matches.append(
             {
                 "match": match.key,
@@ -40,7 +41,8 @@ def _build_team_matches_for_match(match: Match) -> List[Dict[str, Any]]:
                 "week": match.week,
                 "elim": match.elim,
                 "status": match.status,
-                **epa_data,
+                **pre_data,
+                "post_epa": post_data.get("epa"),
             }
         )
     return team_matches

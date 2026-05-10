@@ -57,8 +57,3 @@ def get_matches(
     return run_transaction(Session, callback)  # type: ignore
 
 
-def get_num_matches() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(MatchORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore

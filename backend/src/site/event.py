@@ -54,15 +54,16 @@ async def read_events(response: Response, year: int, no_cache: bool = False) -> 
 
 
 def _build_team_matches_from_matches(matches: List[Match]) -> List[Dict[str, Any]]:
-    """Build per-team match entries from Match.team_epas for event/match page responses."""
+    """Build per-team match entries from Match.pre_epas and Match.epas."""
     team_matches = []
     for match in matches:
-        if not match.team_epas:
+        if not match.pre_epas:
             continue
         red_teams = set(match.get_red())
-        for team_str, epa_data in match.team_epas.items():
+        for team_str, pre_data in match.pre_epas.items():
             team_num = int(team_str)
             alliance = "red" if team_num in red_teams else "blue"
+            post_data = (match.epas or {}).get(team_str, {})
             team_matches.append(
                 {
                     "match": match.key,
@@ -73,7 +74,8 @@ def _build_team_matches_from_matches(matches: List[Match]) -> List[Dict[str, Any
                     "week": match.week,
                     "elim": match.elim,
                     "status": match.status,
-                    **epa_data,
+                    **pre_data,
+                    "post_epa": post_data.get("epa"),
                 }
             )
     return team_matches

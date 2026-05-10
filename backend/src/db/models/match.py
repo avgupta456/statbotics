@@ -117,7 +117,10 @@ class MatchORM(Base, ModelORM):
     epa_blue_rp_3_pred: MOF = mapped_column(Float, nullable=True, default=None)
 
     """PER-TEAM EPA (JSON dict of str(team) -> epa fields)"""
-    team_epas: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+    pre_epas: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON, nullable=True, default=None
+    )
+    epas: Mapped[Optional[Dict[str, Any]]] = mapped_column(
         JSON, nullable=True, default=None
     )
 
@@ -270,6 +273,7 @@ class Match(_Match, Model):
                 clean["result"][f"red_{name}"] = getattr(self, f"red_{key}")
                 clean["result"][f"blue_{name}"] = getattr(self, f"blue_{key}")
 
-        clean["team_epas"] = self.team_epas or {}
+        clean["pre_epas"] = self.pre_epas or {}
+        clean["epas"] = self.epas or {}
 
         return clean

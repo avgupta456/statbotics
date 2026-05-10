@@ -1,6 +1,6 @@
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
-from src.db.models import Event, Match, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Event, Match, TeamEvent, TeamYear, Year
 from src.models.types import AlliancePred, Attribution, MatchPred
 from src.tba.constants import PLACEHOLDER_TEAMS
 from src.types.enums import MatchStatus
@@ -35,23 +35,22 @@ class Model:
         raise NotImplementedError
 
     def update_team(
-        self, team: int, attrib: Attribution, match: Match, team_match: TeamMatch
+        self, team: int, attrib: Attribution, match: Match
     ) -> None:
         raise NotImplementedError
 
     def pre_record_team(
-        self, team: int, tm: TeamMatch, te: TeamEvent, ty: TeamYear
-    ) -> None:
-        pass
+        self, team: int, te: TeamEvent, ty: TeamYear
+    ) -> Dict[str, Any]:
+        return {}
 
     def post_record_team(
         self,
         team: int,
-        tm: Optional[TeamMatch],
         te: Optional[TeamEvent],
         ty: Optional[TeamYear],
-    ) -> None:
-        pass
+    ) -> Dict[str, Any]:
+        return {}
 
     def record_match(self, match: Match, match_pred: MatchPred) -> None:
         pass
@@ -60,17 +59,18 @@ class Model:
         self,
         match: Match,
         event: Event,
-        team_matches: Dict[int, TeamMatch],
         team_events: Dict[int, TeamEvent],
         team_years: Dict[int, TeamYear],
     ):
         win_prob, red_pred, blue_pred = self.predict_match(match, event)
         match_pred = MatchPred(win_prob, red_pred, blue_pred)
 
-        for team, team_match in team_matches.items():
-            team_event = team_events[team]
-            team_year = team_years[team]
-            self.pre_record_team(team, team_match, team_event, team_year)
+        pre_epas: Dict[str, Any] = {}
+        for team in team_events.keys():
+            pre_epas[str(team)] = self.pre_record_team(
+                team, team_events[team], team_years[team]
+            )
+        match.pre_epas = pre_epas
 
         self.record_match(match, match_pred)
         if match.status == MatchStatus.UPCOMING:
@@ -93,10 +93,11 @@ class Model:
         )
         skip_update = placeholder_match or elim_dq or all_fouls
 
+        epas: Dict[str, Any] = {}
         for team, attr in attributions.items():
-            team_match = team_matches[team]
-            team_event = team_events[team]
-            team_year = team_years[team]
             if not skip_update:
-                self.update_team(team, attr, match, team_match)
-            self.post_record_team(team, team_match, team_event, team_year)
+                self.update_team(team, attr, match)
+            epas[str(team)] = self.post_record_team(
+                team, team_events[team], team_years[team]
+            )
+        match.epas = epas

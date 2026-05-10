@@ -54,8 +54,3 @@ def get_team_years(
     return run_transaction(Session, callback)  # type: ignore
 
 
-def get_num_team_years() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(TeamYearORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore

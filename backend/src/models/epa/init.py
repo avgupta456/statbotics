@@ -21,13 +21,6 @@ def get_constants(year: Year) -> Tuple[int, float, float]:
     return num_teams, curr_mean, curr_sd
 
 
-def norm_epa_to_next_season_epa(
-    norm_epa: float, curr_mean: float, curr_sd: float, curr_num_teams: int
-) -> float:
-    return max(
-        curr_mean / curr_num_teams + curr_sd * (norm_epa - NORM_MEAN) / NORM_SD, 0
-    )
-
 
 def get_init_epa(
     year: Year,

@@ -1,14 +1,9 @@
-from typing import List, Tuple
-
 from src.db.models.match import Match
-from src.db.models.team_match import TeamMatch
 from src.tba.read_tba import MatchDict
 from src.types.enums import CompLevel
 
 
-def match_dict_to_objs(
-    data: MatchDict, year: int, week: int
-) -> Tuple[Match, List[TeamMatch]]:
+def match_dict_to_objs(data: MatchDict, year: int, week: int) -> Match:
     elim = data["comp_level"] != CompLevel.QUAL
 
     red_breakdown = data["red_score_breakdown"]
@@ -80,34 +75,4 @@ def match_dict_to_objs(
         blue_comp_9=blue_breakdown["comp_9"],
     )
 
-    team_matches: List[TeamMatch] = []
-    for alliance in ["red", "blue"]:
-        team_1 = data["red_1"] if alliance == "red" else data["blue_1"]
-        team_2 = data["red_2"] if alliance == "red" else data["blue_2"]
-        team_3 = data["red_3"] if alliance == "red" else data["blue_3"]
-        dq = data["red_dq"] if alliance == "red" else data["blue_dq"]
-        surrogate = (
-            data["red_surrogate"] if alliance == "red" else data["blue_surrogate"]
-        )
-
-        teams = [team_1, team_2, team_3]
-        teams = [team for team in teams if team is not None]
-        for team in teams:
-            team_matches.append(
-                TeamMatch(
-                    id=None,
-                    team=team,
-                    year=year,
-                    event=data["event"],
-                    match=data["key"],
-                    alliance=alliance,
-                    time=data["time"],
-                    week=week,
-                    elim=elim,
-                    dq=team in dq.split(","),
-                    surrogate=team in surrogate.split(","),
-                    status=data["status"],
-                )
-            )
-
-    return (match, team_matches)
+    return match

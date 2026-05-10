@@ -51,8 +51,3 @@ def get_events(
     return run_transaction(Session, callback)  # type: ignore
 
 
-def get_num_events() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(EventORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore

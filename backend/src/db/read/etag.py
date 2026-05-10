@@ -20,8 +20,3 @@ def get_etags(year: Optional[int] = None, path: Optional[str] = None) -> List[ET
     return run_transaction(Session, callback)  # type: ignore
 
 
-def get_num_etags() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(ETagORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore
