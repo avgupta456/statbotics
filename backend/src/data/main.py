@@ -2,7 +2,7 @@ from collections import defaultdict
 from copy import deepcopy
 from typing import Dict, List, Optional, Tuple
 
-from src.constants import CURR_YEAR
+from src.constants import CURR_YEAR, DISABLE_GCS
 from src.data.avg import process_year as process_year_avg
 from src.data.epa.main import (
     post_process as post_process_epa,
@@ -29,7 +29,6 @@ from src.data.wins import (
 from src.db.main import clean_db
 from src.db.models import Team, TeamYear
 from src.db.read import (
-    get_num_years,
     get_team_events as get_team_events_db,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
@@ -78,7 +77,7 @@ def process_year(
     write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
     timer.print(str(year_num) + " Write DB")
 
-    if year_num == CURR_YEAR:
+    if year_num == CURR_YEAR and not DISABLE_GCS:
         write_objs_storage(objs, orig_objs if partial else None)
         timer.print(str(year_num) + " Write Storage")
 
@@ -115,16 +114,10 @@ def reset_all_years():
     start_year = 2002
     end_year = CURR_YEAR
 
-    try:
-        if get_num_years() > 0:
-            return
-    except Exception:
-        pass
-
     clean_db()
     timer.print("Clean DB")
 
-    teams = load_teams_tba(cache=False)
+    teams = load_teams_tba(cache=True)
     timer.print("Load Teams")
 
     all_team_years: Dict[int, Dict[int, TeamYear]] = {}

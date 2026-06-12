@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Callable, Dict, List, Optional, Set, Tuple, TypeVar
 
-from src.constants import CURR_WEEK, CURR_YEAR
+from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.functions import remove_teams_with_no_events, update_team_districts
 from src.db.models import ETag, Event, Team, TeamEvent, TeamYear, match_dict_to_objs
@@ -9,7 +9,6 @@ from src.tba.constants import DISTRICT_MAPPING
 from src.tba.read_tba import (
     EventDict,
     MatchDict,
-    get_district_rankings as get_district_rankings_tba,
     get_district_teams as get_district_teams_tba,
     get_districts as get_districts_tba,
     get_event_alliances as get_event_alliances_tba,
@@ -150,7 +149,6 @@ def process_year(
         event_objs_dict,
         team_event_objs_dict,
         match_objs_dict,
-        team_match_objs_dict,
         etags_dict,
     ) = objs
 
@@ -170,15 +168,13 @@ def process_year(
             out, new_etag = func(None, cache)
         return out, new_etag is not None and new_etag != prev_etag
 
+    today = datetime.now().strftime("%Y-%m-%d")
+
     teams_dict: Dict[int, Team] = {team.team: team for team in teams}
-    team_competing_this_week_dict: Dict[int, bool] = {}
     team_first_event_dict: Dict[int, Tuple[OS, int]] = {}
 
     # maps team to district_abbrev (or None if not in a district)
     team_to_district: Dict[int, OS] = {}
-    team_to_district_points: Dict[int, int] = {}
-    team_to_district_rank: Dict[int, int] = {}
-    team_event_to_district_points: Dict[str, int] = {}
 
     all_teams: Set[int] = set()
 
@@ -197,18 +193,6 @@ def process_year(
                 team_to_district[team] = DISTRICT_MAPPING.get(
                     district_abbrev, district_abbrev
                 )
-            (
-                team_to_points,
-                team_to_rank,
-                team_event_to_points,
-            ), _ = get_district_rankings_tba(district_key, cache=cache)
-            for team in team_to_points:
-                team_to_district_points[team] = team_to_points[team]
-                team_to_district_rank[team] = team_to_rank[team]
-            for team_event in team_event_to_points:
-                team_event_to_district_points[team_event] = team_event_to_points[
-                    team_event
-                ]
 
     def get_events_tba_year(etag: OS, cache: bool) -> Tuple[List[EventDict], OS]:
         return get_events_tba(year_num, etag=etag, cache=cache)
@@ -237,7 +221,13 @@ def process_year(
 
     for event_obj in event_objs_dict.values():
         if partial:
-            if event_obj.week != CURR_WEEK and event_obj.status != EventStatus.ONGOING:
+            start = (
+                datetime.strptime(event_obj.start_date, "%Y-%m-%d") - timedelta(days=1)
+            ).strftime("%Y-%m-%d")
+            end = (
+                datetime.strptime(event_obj.end_date, "%Y-%m-%d") + timedelta(days=1)
+            ).strftime("%Y-%m-%d")
+            if not (start <= today <= end) and event_obj.status != EventStatus.ONGOING:
                 continue
 
         event_key, event_time = event_obj.key, event_obj.time
@@ -245,12 +235,11 @@ def process_year(
         def get_event_matches_tba_year(
             etag: OS, cache: bool
         ) -> Tuple[List[MatchDict], OS]:
-            # TODO: use etag to avoid querying every time (needed to get matches)
-            return get_event_matches_tba(year_num, event_key, event_time, None, cache)
+            return get_event_matches_tba(year_num, event_key, event_time, etag, cache)
 
-        matches, _ = call_tba(get_event_matches_tba_year, event_key + "/matches")
-        event_status = get_event_status(matches, year_num)
-        event_obj.status = event_status
+        matches, matches_changed = call_tba(
+            get_event_matches_tba_year, event_key + "/matches"
+        )
 
         event_teams: Set[int] = set()
         rankings: Dict[int, int] = {}
@@ -261,11 +250,6 @@ def process_year(
             all_teams.add(team)
             event_teams.add(team)
             event_week = event_obj.week
-            event_year = event_obj.year
-
-            # Stores whether a team is competing this week
-            if event_year == CURR_YEAR and event_week == CURR_WEEK:
-                team_competing_this_week_dict[team] = True
 
             # Store first event
             if team not in team_first_event_dict:
@@ -274,6 +258,15 @@ def process_year(
             elif (team_first_event_dict[team][1] or -1) > event_week:
                 # event is closer than previous closest event
                 team_first_event_dict[team] = (event_key, event_week)
+
+        if partial and not matches_changed:
+            for te in team_event_objs_dict.values():
+                if te.event == event_key:
+                    add_team_event(te.team)
+            continue
+
+        event_status = get_event_status(matches, year_num)
+        event_obj.status = event_status
 
         if event_status == EventStatus.INVALID:
             continue
@@ -291,35 +284,33 @@ def process_year(
                 add_team_event(team)
 
         elif event_status in [EventStatus.ONGOING, EventStatus.COMPLETED]:
-            # Update event_obj, accumulate match_obj, alliance_objs, team_match_objs
             for match in matches:
-                (match_obj, curr_team_match_objs) = match_dict_to_objs(
-                    match, year_num, event_obj.week
-                )
-
-                # Replace even if present, since may be Upcoming -> Completed
+                match_obj = match_dict_to_objs(match, year_num, event_obj.week)
                 match_objs_dict[match_obj.key] = match_obj
-                for team_match_obj in curr_team_match_objs:
-                    add_team_event(team_match_obj.team)
-                    team_match_objs_dict[team_match_obj.pk()] = team_match_obj
+                for team in match_obj.get_red() + match_obj.get_blue():
+                    add_team_event(team)
 
             def get_event_rankings_tba_year(
                 etag: OS, cache: bool
             ) -> Tuple[Dict[int, int], OS]:
-                # TODO: use etag to avoid querying every time (needed to get rankings)
-                return get_event_rankings_tba(event_key, None, cache)
+                return get_event_rankings_tba(event_key, etag, cache)
 
-            rankings, _ = call_tba(get_event_rankings_tba_year, event_key + "/rankings")
+            raw_rankings, _ = call_tba(
+                get_event_rankings_tba_year, event_key + "/rankings"
+            )
+            if raw_rankings is not True:
+                rankings = raw_rankings
 
             def get_event_alliances_tba_year(
                 etag: OS, cache: bool
             ) -> Tuple[Tuple[Dict[int, str], Dict[int, bool]], OS]:
-                # TODO: use etag to avoid querying every time (needed to get alliances)
-                return get_event_alliances_tba(event_key, None, cache)
+                return get_event_alliances_tba(event_key, etag, cache)
 
-            (alliance_dict, captain_dict), _ = call_tba(
+            raw_alliances, _ = call_tba(
                 get_event_alliances_tba_year, event_key + "/alliances"
             )
+            if raw_alliances is not True:
+                alliance_dict, captain_dict = raw_alliances
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:
@@ -356,16 +347,12 @@ def process_year(
                     num_teams=None,
                     elim_alliance=None,
                     is_captain=None,
-                    district_points=None,
                 )
 
             curr_te.rank = rankings.get(team, curr_te.rank)
             curr_te.num_teams = len(event_teams)
             curr_te.elim_alliance = alliance_dict.get(team, curr_te.elim_alliance)
             curr_te.is_captain = captain_dict.get(team, curr_te.is_captain)
-            curr_te.district_points = team_event_to_district_points.get(
-                team_event_key, curr_te.district_points
-            )
             team_event_objs_dict[team_event_key] = curr_te
 
     if not partial:
@@ -377,7 +364,6 @@ def process_year(
 
     for team in all_teams:
         team_obj = teams_dict[team]
-        competing_this_week = team_competing_this_week_dict.get(team, False)
 
         team_year_key = get_team_year_key(team, year_num)
         curr_ty = team_year_objs_dict.get(team_year_key, None)
@@ -391,19 +377,13 @@ def process_year(
                 state=team_obj.state,
                 district=None,
                 rookie_year=team_obj.rookie_year,
-                district_points=None,
-                district_rank=None,
-                competing_this_week=competing_this_week,
                 next_event_key=None,
                 next_event_name=None,
                 next_event_week=None,
+                next_event_start_date=None,
             )
 
         curr_ty.district = team_to_district.get(team, curr_ty.district)
-        curr_ty.district_points = team_to_district_points.get(
-            team, curr_ty.district_points
-        )
-        curr_ty.district_rank = team_to_district_rank.get(team, curr_ty.district_rank)
         team_year_objs_dict[team_year_key] = curr_ty
 
     orig_teams = set([team.team for team in teams])
@@ -415,7 +395,6 @@ def process_year(
         event_objs_dict,
         team_event_objs_dict,
         match_objs_dict,
-        team_match_objs_dict,
         new_etags_dict,
     )
 

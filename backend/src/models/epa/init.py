@@ -9,7 +9,7 @@ from src.models.epa.constants import (
     NORM_SD,
     YEAR_ONE_WEIGHT,
 )
-from src.models.epa.math import SkewNormal, inv_unit_sigmoid
+from src.models.epa.math import EPARating, inv_unit_sigmoid
 
 
 @lru_cache(maxsize=None)
@@ -21,20 +21,12 @@ def get_constants(year: Year) -> Tuple[int, float, float]:
     return num_teams, curr_mean, curr_sd
 
 
-def norm_epa_to_next_season_epa(
-    norm_epa: float, curr_mean: float, curr_sd: float, curr_num_teams: int
-) -> float:
-    return max(
-        curr_mean / curr_num_teams + curr_sd * (norm_epa - NORM_MEAN) / NORM_SD, 0
-    )
-
-
 def get_init_epa(
     year: Year,
     team_year_1: Optional[TeamYear],
     team_year_2: Optional[TeamYear],
     mean_reversion: float,
-) -> SkewNormal:
+) -> EPARating:
     num_teams, year_mean, year_sd = get_constants(year)
 
     INIT_EPA = NORM_MEAN - INIT_PENALTY * NORM_SD
@@ -63,6 +55,5 @@ def get_init_epa(
         mean[6] = max(-1, inv_unit_sigmoid(max(EPS, min(1 - EPS, mean[6]))))
 
     curr_epa_mean = mean / num_teams + sd * curr_epa_z_score
-    curr_epa_sd = sd / num_teams
 
-    return SkewNormal(curr_epa_mean, curr_epa_sd, 0)
+    return EPARating(curr_epa_mean)

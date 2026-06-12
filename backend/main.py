@@ -3,20 +3,16 @@ from typing import Any, Callable
 
 from dotenv import load_dotenv  # type: ignore
 
-# from fastapi import APIRouter, Depends, FastAPI, Request, Security
-# from fastapi.exceptions import HTTPException
-from fastapi import APIRouter, FastAPI, Request
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from fastapi.security.api_key import APIKeyHeader
 from pyinstrument import Profiler
 
 load_dotenv()
 
 # flake8: noqa E402
 from src.api.router import router as api_router
-
-# from src.constants import AUTH_KEY_BLACKLIST, CONN_STR, PROD
+from src.auth import generate_api_key, get_api_key
 from src.constants import CONN_STR, PROD
 from src.data.router import (
     data_router as data_data_router,
@@ -24,24 +20,18 @@ from src.data.router import (
 )
 from src.site.router import router as site_router
 
-# from src.utils.utils import is_uuid
-
 """
 SETUP
 """
-
-api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
-
 
 app = FastAPI(
     title="Statbotics REST API",
     description="The REST API for Statbotics. Please be nice to our servers! If you are looking to do large-scale data science projects, use the CSV exports on the GitHub repo.",
     version="3.0.0",
-    # dependencies=[Security(get_api_key)],
+    dependencies=[Depends(get_api_key)],
     swagger_ui_parameters={"persistAuthorization": True},
 )
 
-# Removed CORS to enable website integrationss
 origins = [
     "http://localhost:3000",
     "https://statbotics.io",
@@ -87,6 +77,14 @@ def get_info():
         "CONN_STR": "REDACTED" if PROD else CONN_STR,
         "PYTHON_VERSION": platform.python_version(),
     }
+
+
+@router.get("/generate_key/{counter}")
+def get_generate_key(counter: int, request: Request):
+    origin = request.headers.get("origin", "")
+    if origin not in origins:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return {"key": generate_api_key(counter)}
 
 
 app.include_router(router, include_in_schema=False)

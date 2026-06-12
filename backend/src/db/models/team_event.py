@@ -4,11 +4,10 @@ from sqlalchemy import Boolean, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
-from src.breakdown import key_to_name
+from src.breakdown import derived_breakdown, key_to_name
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
 from src.db.models.types import MB, MF, MI, MOB, MOF, MOI, MOS, MS, values_callable
-from src.models.epa.math import get_skew_normal_95_conf_interval
 from src.types.enums import EventStatus, EventType
 
 
@@ -63,8 +62,6 @@ class TeamEventORM(Base, ModelORM):
     num_teams: MOI = mapped_column(Integer, nullable=True, default=None)
     elim_alliance: MOS = mapped_column(String(30), nullable=True, default=None)
     is_captain: MOB = mapped_column(Boolean, nullable=True, default=None)
-    district_points: MOI = mapped_column(Integer, nullable=True, default=None)
-
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
     epa_pre_elim: MF = mapped_column(Float, default=0)
@@ -72,9 +69,6 @@ class TeamEventORM(Base, ModelORM):
     epa_max: MF = mapped_column(Float, default=0)
 
     epa: MF = mapped_column(Float, default=0)
-    epa_sd: MF = mapped_column(Float, default=0)
-    epa_skew: MF = mapped_column(Float, default=0)
-    epa_n: MF = mapped_column(Float, default=0)
     auto_epa: MOF = mapped_column(Float, default=None)
     teleop_epa: MOF = mapped_column(Float, default=None)
     endgame_epa: MOF = mapped_column(Float, default=None)
@@ -82,6 +76,7 @@ class TeamEventORM(Base, ModelORM):
     rp_2_epa: MOF = mapped_column(Float, default=None)
     rp_3_epa: MOF = mapped_column(Float, default=None)
     tiebreaker_epa: MOF = mapped_column(Float, default=None)
+    comp_0_epa: MOF = mapped_column(Float, default=None)
     comp_1_epa: MOF = mapped_column(Float, default=None)
     comp_2_epa: MOF = mapped_column(Float, default=None)
     comp_3_epa: MOF = mapped_column(Float, default=None)
@@ -91,15 +86,6 @@ class TeamEventORM(Base, ModelORM):
     comp_7_epa: MOF = mapped_column(Float, default=None)
     comp_8_epa: MOF = mapped_column(Float, default=None)
     comp_9_epa: MOF = mapped_column(Float, default=None)
-    comp_10_epa: MOF = mapped_column(Float, default=None)
-    comp_11_epa: MOF = mapped_column(Float, default=None)
-    comp_12_epa: MOF = mapped_column(Float, default=None)
-    comp_13_epa: MOF = mapped_column(Float, default=None)
-    comp_14_epa: MOF = mapped_column(Float, default=None)
-    comp_15_epa: MOF = mapped_column(Float, default=None)
-    comp_16_epa: MOF = mapped_column(Float, default=None)
-    comp_17_epa: MOF = mapped_column(Float, default=None)
-    comp_18_epa: MOF = mapped_column(Float, default=None)
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)
@@ -132,10 +118,6 @@ class TeamEvent(_TeamEvent, Model):
         )
 
     def to_dict(self: "TeamEvent") -> Dict[str, Any]:
-        lower, upper = get_skew_normal_95_conf_interval(
-            0, 1, self.epa_skew, self.epa_n, 2
-        )
-
         elim_wins = self.wins - self.qual_wins
         elim_losses = self.losses - self.qual_losses
         elim_ties = self.ties - self.qual_ties
@@ -159,13 +141,9 @@ class TeamEvent(_TeamEvent, Model):
             "status": self.status,
             "first_event": self.first_event,
             "epa": {
-                "total_points": {
-                    "mean": self.epa,
-                    "sd": self.epa_sd,
-                },
+                "total_points": self.epa,
                 "unitless": self.unitless_epa,
                 "norm": self.norm_epa,
-                "conf": [lower, upper],
                 "breakdown": {},
                 "stats": {
                     "start": self.epa_start,
@@ -203,16 +181,18 @@ class TeamEvent(_TeamEvent, Model):
                     "winrate": self.winrate,
                 },
             },
-            "district_points": self.district_points,
         }
 
-        clean["epa"]["breakdown"]["total_points"] = self.epa
+        bd = clean["epa"]["breakdown"]
+        bd["total_points"] = self.epa
         if self.year >= 2016:
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
             if self.year >= 2025:
                 pairs += [("rp_3", "rp_3")]
             for key, name in pairs:
-                clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
+                bd[name] = getattr(self, f"{key}_epa")
+            for derived_name, sources in derived_breakdown.get(self.year, {}).items():
+                bd[derived_name] = sum(bd.get(src) or 0 for src in sources)
 
         return clean

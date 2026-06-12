@@ -1,0 +1,6 @@
+.env
+poetry.lock
+__pycache__
+cache
+
+*.csv

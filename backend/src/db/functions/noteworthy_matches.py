@@ -7,7 +7,7 @@ from sqlalchemy_cockroachdb import run_transaction  # type: ignore
 from src.db.main import Session
 from src.db.models.event import EventORM
 from src.db.models.match import Match, MatchORM
-from src.types.enums import EventType, MatchStatus
+from src.types.enums import MatchStatus
 
 
 def get_noteworthy_matches(
@@ -29,7 +29,6 @@ def get_noteworthy_matches(
             (MatchORM.year == year)
             & (MatchORM.status == MatchStatus.COMPLETED)
             & (MatchORM.event == EventORM.key)
-            & (EventORM.type != EventType.OFFSEASON)
         )
 
         if country is not None:

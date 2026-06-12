@@ -7,13 +7,12 @@ from src.api import (
     get_matches_cached,
     get_team_cached,
     get_team_events_cached,
-    get_team_matches_cached,
     get_team_year_cached,
     get_team_years_cached,
     get_teams_cached,
     get_year_cached,
 )
-from src.db.models import Match, Team, TeamEvent, TeamMatch, TeamYear, Year
+from src.db.models import Match, Team, TeamEvent, TeamYear, Year
 
 # from src.site.helper import compress
 from src.utils.decorators import (
@@ -109,11 +108,7 @@ async def read_team_year(
     matches: List[Match] = await get_matches_cached(
         team=team_num, year=year, no_cache=no_cache
     )
-    team_matches: List[TeamMatch] = await get_team_matches_cached(
-        team=team_num, year=year, no_cache=no_cache
-    )
 
-    team_matches = sorted(team_matches, key=lambda x: x.time)
     matches = sorted(matches, key=lambda x: x.time)
 
     event_times: Dict[str, Optional[int]] = {e.event: None for e in team_events}
@@ -126,13 +121,15 @@ async def read_team_year(
         team_events, key=lambda x: (x.week, event_times[x.event] or x.time)
     )
 
+    team_matches = sorted(team_year.team_matches or [], key=lambda x: x["time"])
+
     out = {
         "year": year_obj.to_dict(),
         "team": team.to_dict(),
         "team_year": team_year.to_dict(),
         "team_events": [x.to_dict() for x in team_events],
         "matches": [x.to_dict() for x in matches],
-        "team_matches": [x.to_dict() for x in team_matches],
+        "team_matches": [{"team": team_num, **tm} for tm in team_matches],
     }
 
     return out

@@ -1,7 +1,7 @@
 import { del, get, set } from "idb-keyval";
 import pako from "pako";
 
-import { BACKEND_URL, BUCKET_URL } from "../constants";
+import { BACKEND_URL, BUCKET_URL, DISABLE_GCS } from "../constants";
 import { log, round } from "../utils";
 
 export const version = "v4";
@@ -54,7 +54,7 @@ async function query(
 
   let buffer = null;
   try {
-    if (!checkBucket) {
+    if (!checkBucket || DISABLE_GCS) {
       throw new Error("Skip bucket check");
     }
     const fileName = apiPath.replace("?", ".").replace("&", ".");

@@ -1,15 +1,14 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import Boolean, Float, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Float, Integer, JSON, String
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
-from src.breakdown import key_to_name
+from src.breakdown import derived_breakdown, key_to_name
 from src.constants import CURR_YEAR
 from src.db.main import Base
 from src.db.models.main import Model, ModelORM, generate_attr_class
-from src.db.models.types import MB, MF, MI, MOF, MOI, MOS, MS
-from src.models.epa.math import get_skew_normal_95_conf_interval
+from src.db.models.types import MF, MI, MOF, MOI, MOS, MS
 
 
 class TeamYearORM(Base, ModelORM):
@@ -33,10 +32,10 @@ class TeamYearORM(Base, ModelORM):
     rookie_year: MOI = mapped_column(Integer, nullable=True)
 
     """PRE JOINS (FOR FRONTEND LOAD TIME)"""
-    competing_this_week: MB = mapped_column(Boolean)
     next_event_key: MOS = mapped_column(String(10), nullable=True)
     next_event_name: MOS = mapped_column(String(100), nullable=True)
     next_event_week: MOI = mapped_column(Integer, nullable=True)
+    next_event_start_date: MOS = mapped_column(String(10), nullable=True)
 
     """EPA"""
     epa_start: MF = mapped_column(Float, default=0)
@@ -44,9 +43,6 @@ class TeamYearORM(Base, ModelORM):
     epa_max: MF = mapped_column(Float, default=0)
 
     epa: MF = mapped_column(Float, index=True, default=0)
-    epa_sd: MF = mapped_column(Float, default=0)
-    epa_skew: MF = mapped_column(Float, default=0)
-    epa_n: MF = mapped_column(Float, default=0)
     auto_epa: MOF = mapped_column(Float, default=None)
     teleop_epa: MOF = mapped_column(Float, default=None)
     endgame_epa: MOF = mapped_column(Float, default=None)
@@ -54,6 +50,7 @@ class TeamYearORM(Base, ModelORM):
     rp_2_epa: MOF = mapped_column(Float, default=None)
     rp_3_epa: MOF = mapped_column(Float, default=None)
     tiebreaker_epa: MOF = mapped_column(Float, default=None)
+    comp_0_epa: MOF = mapped_column(Float, default=None)
     comp_1_epa: MOF = mapped_column(Float, default=None)
     comp_2_epa: MOF = mapped_column(Float, default=None)
     comp_3_epa: MOF = mapped_column(Float, default=None)
@@ -63,15 +60,6 @@ class TeamYearORM(Base, ModelORM):
     comp_7_epa: MOF = mapped_column(Float, default=None)
     comp_8_epa: MOF = mapped_column(Float, default=None)
     comp_9_epa: MOF = mapped_column(Float, default=None)
-    comp_10_epa: MOF = mapped_column(Float, default=None)
-    comp_11_epa: MOF = mapped_column(Float, default=None)
-    comp_12_epa: MOF = mapped_column(Float, default=None)
-    comp_13_epa: MOF = mapped_column(Float, default=None)
-    comp_14_epa: MOF = mapped_column(Float, default=None)
-    comp_15_epa: MOF = mapped_column(Float, default=None)
-    comp_16_epa: MOF = mapped_column(Float, default=None)
-    comp_17_epa: MOF = mapped_column(Float, default=None)
-    comp_18_epa: MOF = mapped_column(Float, default=None)
 
     unitless_epa: MF = mapped_column(Float, default=0)
     norm_epa: MOF = mapped_column(Float, default=0)
@@ -82,9 +70,6 @@ class TeamYearORM(Base, ModelORM):
     ties: MI = mapped_column(Integer, default=0)
     count: MI = mapped_column(Integer, default=0)
     winrate: MF = mapped_column(Float, default=0)
-
-    district_points: MOI = mapped_column(Integer, nullable=True, default=None)
-    district_rank: MOI = mapped_column(Integer, nullable=True, default=None)
 
     total_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
     total_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
@@ -101,6 +86,11 @@ class TeamYearORM(Base, ModelORM):
     district_epa_rank: MOI = mapped_column(Integer, nullable=True, default=None)
     district_epa_percentile: MOF = mapped_column(Float, nullable=True, default=None)
     district_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
+
+    """MATCHES (JSON list of compact match entries)"""
+    team_matches: Mapped[Optional[List[Any]]] = mapped_column(
+        JSON, nullable=True, default=None
+    )
 
 
 _TeamYear = generate_attr_class("TeamYear", TeamYearORM)
@@ -123,10 +113,6 @@ class TeamYear(_TeamYear, Model):
         )
 
     def to_dict(self: "TeamYear") -> Dict[str, Any]:
-        lower, upper = get_skew_normal_95_conf_interval(
-            0, 1, self.epa_skew, self.epa_n, 2
-        )
-
         clean: Dict[str, Any] = {
             "team": self.team,
             "year": self.year,
@@ -136,13 +122,9 @@ class TeamYear(_TeamYear, Model):
             "district": self.district,
             "rookie_year": self.rookie_year,
             "epa": {
-                "total_points": {
-                    "mean": self.epa,
-                    "sd": self.epa_sd,
-                },
+                "total_points": self.epa,
                 "unitless": self.unitless_epa,
                 "norm": self.norm_epa,
-                "conf": [lower, upper],
                 "breakdown": {},
                 "stats": {
                     "start": self.epa_start,
@@ -179,25 +161,26 @@ class TeamYear(_TeamYear, Model):
                 "count": self.count,
                 "winrate": self.winrate,
             },
-            "district_points": self.district_points,
-            "district_rank": self.district_rank,
         }
 
-        clean["epa"]["breakdown"]["total_points"] = self.epa
+        bd = clean["epa"]["breakdown"]
+        bd["total_points"] = self.epa
         if self.year >= 2016:
             pairs = list(key_to_name[self.year].items())
             pairs += [("rp_1", "rp_1"), ("rp_2", "rp_2")]
             if self.year >= 2025:
                 pairs += [("rp_3", "rp_3")]
             for key, name in pairs:
-                clean["epa"]["breakdown"][name] = getattr(self, f"{key}_epa")
+                bd[name] = getattr(self, f"{key}_epa")
+            for derived_name, sources in derived_breakdown.get(self.year, {}).items():
+                bd[derived_name] = sum(bd.get(src) or 0 for src in sources)
 
         if self.year == CURR_YEAR:
             clean["competing"] = {
-                "this_week": self.competing_this_week,
                 "next_event_key": self.next_event_key,
                 "next_event_name": self.next_event_name,
                 "next_event_week": self.next_event_week,
+                "next_event_start_date": self.next_event_start_date,
             }
 
         return clean

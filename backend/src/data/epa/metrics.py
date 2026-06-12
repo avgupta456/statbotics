@@ -31,20 +31,6 @@ def get_rmse(pred: Any, actual: Any) -> float:
     return math.sqrt(get_mse(pred, actual))
 
 
-def get_ll(pred: Any, actual: Any) -> float:
-    return -np.mean(actual * np.log(pred) + (1 - actual) * np.log(1 - pred))  # type: ignore
-
-
-def get_f1(pred: Any, actual: Any) -> float:
-    tp = np.sum(np.logical_and(pred >= 0.5, actual == 1))
-    fp = np.sum(np.logical_and(pred >= 0.5, actual == 0))
-    fn = np.sum(np.logical_and(pred < 0.5, actual == 1))
-
-    prec = tp / max(1, (tp + fp))
-    rec = tp / max(1, (tp + fn))
-    return 2 * prec * rec / (prec + rec) if prec + rec > 0 else 0
-
-
 outcome_dict = {
     MatchWinner.RED: 1,
     MatchWinner.BLUE: 0,

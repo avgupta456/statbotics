@@ -29,7 +29,7 @@ const EventCard = ({ event }: { event: APIEvent }) => {
     return `${startMonth} ${startDate} to ${endMonth} ${endDate}`;
   };
 
-  const weekStr = event.week === 9 ? "Offseason" : `Week ${event.week}`;
+  const weekStr = `Week ${event.week}`;
 
   return (
     <Link href={`/event/${event.key}`}>

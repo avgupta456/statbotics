@@ -1,24 +1,42 @@
 import statistics
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from src.data.utils import objs_type
-from src.db.models import TeamEvent, TeamMatch
+from src.db.models import Match, TeamEvent
 from src.models.epa.unitless import epa_to_unitless_epa, get_epa_to_norm_epa_func
-from src.utils.utils import get_team_event_key, r
+from src.utils.utils import r
 
 
 def process_year_epas(
-    tms: List[TeamMatch], acc: Callable[[TeamMatch], Optional[float]], default: float
-):
-    _arr = [acc(tm) for tm in tms]
-    arr = [x for x in _arr if x is not None]
-    _pre_champs_arr = [acc(tm) for tm in tms if acc(tm) if tm.week < 8]
-    pre_champs_arr = [x for x in _pre_champs_arr if x is not None]
-    pre_champs = pre_champs_arr[-1] if len(pre_champs_arr) > 0 else default
-    end = arr[-1] if len(arr) > 0 else default
+    matches: List[Match], team: int, default: float
+) -> Tuple[float, float, float]:
+    post_epas = [(m.epas or {}).get(str(team), {}).get("epa") for m in matches]
+    arr = [x for x in post_epas if x is not None]
+    pre_champs_arr = [
+        x for x, m in zip(post_epas, matches) if x is not None and m.week < 8
+    ]
+    pre_champs = pre_champs_arr[-1] if pre_champs_arr else default
+    end = arr[-1] if arr else default
     max_ = max(arr[8:]) if len(arr) > 8 else end
     return pre_champs, end, max_
+
+
+def compact_from_match(match: Match, team: int) -> Dict[str, Any]:
+    pre = (match.pre_epas or {}).get(str(team), {})
+    post = (match.epas or {}).get(str(team), {})
+    alliance = "red" if team in match.get_red() else "blue"
+    return {
+        "match": match.key,
+        "event": match.event,
+        "alliance": alliance,
+        "time": match.time,
+        "week": match.week,
+        "elim": match.elim,
+        "status": match.status,
+        **pre,
+        "post_epa": post.get("epa"),
+    }
 
 
 def process_year(objs: objs_type) -> objs_type:
@@ -33,12 +51,10 @@ def process_year(objs: objs_type) -> objs_type:
     for team_event in objs[3].values():
         event_team_events_dict[team_event.event].append(team_event)
 
-    team_team_matches_dict: Dict[int, List[TeamMatch]] = defaultdict(list)
-    team_event_team_matches_dict: Dict[str, List[TeamMatch]] = defaultdict(list)
-    for team_match in sorted(objs[5].values(), key=lambda tm: tm.sort()):
-        team_team_matches_dict[team_match.team].append(team_match)
-        team_event_key = get_team_event_key(team_match.team, team_match.event)
-        team_event_team_matches_dict[team_event_key].append(team_match)
+    team_matches_dict: Dict[int, List[Match]] = defaultdict(list)
+    for match in sorted(objs[4].values(), key=lambda m: m.time):
+        for team in match.get_red() + match.get_blue():
+            team_matches_dict[team].append(match)
 
     # TEAM YEARS
     epa_list: List[float] = []
@@ -49,11 +65,13 @@ def process_year(objs: objs_type) -> objs_type:
     for ty in objs[1].values():
         curr_epas[ty.team] = ty.epa_start
 
-        ms = team_team_matches_dict[ty.team]
+        ms = team_matches_dict[ty.team]
 
         ty.epa_pre_champs, ty.epa, ty.epa_max = process_year_epas(
-            ms, lambda m: m.post_epa, ty.epa_start
+            ms, ty.team, ty.epa_start
         )
+
+        ty.team_matches = [compact_from_match(m, ty.team) for m in ms]
 
         epa_list.append(ty.epa)
         total_epas.append((ty.team, ty.epa))
@@ -125,7 +143,7 @@ def process_year(objs: objs_type) -> objs_type:
 
     if year.year >= 2016:
         for key in ["auto", "teleop", "endgame", "rp_1", "rp_2", "rp_3"] + [
-            f"comp_{i}" for i in range(1, 19)
+            f"comp_{i}" for i in range(0, 10)
         ]:
             raw_epas = [getattr(ty, f"{key}_epa") for ty in objs[1].values()]
             epas: List[float] = [epa for epa in raw_epas if epa is not None]
@@ -143,23 +161,29 @@ def process_year(objs: objs_type) -> objs_type:
         norm_epa: float = epa_to_norm_epa(te.epa)
         te.norm_epa = r(norm_epa)
 
-        team_event_key = get_team_event_key(te.team, te.event)
-        tms = sorted(
-            team_event_team_matches_dict[team_event_key], key=lambda tm: tm.time
-        )
-        qual_tms = [tm for tm in tms if not tm.elim]
+        tms = [m for m in team_matches_dict[te.team] if m.event == te.event]
+        qual_tms = [m for m in tms if not m.elim]
 
         te.epa_start = r(curr_epas[te.team], 2)
 
         if len(tms) > 0:
-            te.epa_start = r(tms[0].epa, 2)
-            te.epa_mean = r(statistics.mean([tm.epa for tm in tms]), 2)
-            te.epa_max = r(max([tm.epa for tm in tms]), 2)
+            pre_epas = [
+                (m.pre_epas or {}).get(str(te.team), {}).get("epa") for m in tms
+            ]
+            pre_epas_nonnull = [x for x in pre_epas if x is not None]
+            if pre_epas_nonnull:
+                te.epa_start = r(pre_epas_nonnull[0], 2)
+                te.epa_mean = r(statistics.mean(pre_epas_nonnull), 2)
+                te.epa_max = r(max(pre_epas_nonnull), 2)
 
             curr_epas[te.team] = te.epa  # for next event epa_start
 
         if len(qual_tms) > 0:
-            te.epa_pre_elim = r(qual_tms[-1].epa, 2)
+            last_qual_pre = (
+                (qual_tms[-1].pre_epas or {}).get(str(te.team), {}).get("epa")
+            )
+            if last_qual_pre is not None:
+                te.epa_pre_elim = r(last_qual_pre, 2)
 
     # EVENTS
     for e in objs[2].values():

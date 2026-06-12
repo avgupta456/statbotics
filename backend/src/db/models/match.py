@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from sqlalchemy import Boolean, Enum, Float, Integer, String
+from sqlalchemy import Boolean, Enum, Float, Integer, JSON, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKeyConstraint, PrimaryKeyConstraint
 
@@ -70,6 +70,7 @@ class MatchORM(Base, ModelORM):
     red_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_rp_3: MOB = mapped_column(Boolean, nullable=True, default=None)
     red_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    red_comp_0: MOF = mapped_column(Float, nullable=True, default=None)
     red_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
     red_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
     red_comp_3: MOF = mapped_column(Float, nullable=True, default=None)
@@ -79,15 +80,6 @@ class MatchORM(Base, ModelORM):
     red_comp_7: MOF = mapped_column(Float, nullable=True, default=None)
     red_comp_8: MOF = mapped_column(Float, nullable=True, default=None)
     red_comp_9: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_10: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_11: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_12: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_13: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_14: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_15: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_16: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_17: MOF = mapped_column(Float, nullable=True, default=None)
-    red_comp_18: MOF = mapped_column(Float, nullable=True, default=None)
 
     blue_score: MOI = mapped_column(Integer, nullable=True, default=None)
     blue_no_foul: MOI = mapped_column(Integer, nullable=True, default=None)
@@ -99,6 +91,7 @@ class MatchORM(Base, ModelORM):
     blue_rp_2: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_rp_3: MOB = mapped_column(Boolean, nullable=True, default=None)
     blue_tiebreaker: MOI = mapped_column(Integer, nullable=True, default=None)
+    blue_comp_0: MOF = mapped_column(Float, nullable=True, default=None)
     blue_comp_1: MOF = mapped_column(Float, nullable=True, default=None)
     blue_comp_2: MOF = mapped_column(Float, nullable=True, default=None)
     blue_comp_3: MOF = mapped_column(Float, nullable=True, default=None)
@@ -108,15 +101,6 @@ class MatchORM(Base, ModelORM):
     blue_comp_7: MOF = mapped_column(Float, nullable=True, default=None)
     blue_comp_8: MOF = mapped_column(Float, nullable=True, default=None)
     blue_comp_9: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_10: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_11: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_12: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_13: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_14: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_15: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_16: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_17: MOF = mapped_column(Float, nullable=True, default=None)
-    blue_comp_18: MOF = mapped_column(Float, nullable=True, default=None)
 
     """EPA"""
     epa_winner: Mapped[Optional[MatchWinner]] = mapped_column(
@@ -131,6 +115,14 @@ class MatchORM(Base, ModelORM):
     epa_blue_rp_1_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_2_pred: MOF = mapped_column(Float, nullable=True, default=None)
     epa_blue_rp_3_pred: MOF = mapped_column(Float, nullable=True, default=None)
+
+    """PER-TEAM EPA (JSON dict of str(team) -> epa fields)"""
+    pre_epas: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON, nullable=True, default=None
+    )
+    epas: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON, nullable=True, default=None
+    )
 
 
 _Match = generate_attr_class("Match", MatchORM)
@@ -213,24 +205,7 @@ class Match(_Match, Model):
                 int(getattr(self, f"{alliance}_rp_2") or False),
                 int(getattr(self, f"{alliance}_rp_3") or False),
                 getattr(self, f"{alliance}_tiebreaker") or 0,
-                getattr(self, f"{alliance}_comp_1") or 0,
-                getattr(self, f"{alliance}_comp_2") or 0,
-                getattr(self, f"{alliance}_comp_3") or 0,
-                getattr(self, f"{alliance}_comp_4") or 0,
-                getattr(self, f"{alliance}_comp_5") or 0,
-                getattr(self, f"{alliance}_comp_6") or 0,
-                getattr(self, f"{alliance}_comp_7") or 0,
-                getattr(self, f"{alliance}_comp_8") or 0,
-                getattr(self, f"{alliance}_comp_9") or 0,
-                getattr(self, f"{alliance}_comp_10") or 0,
-                getattr(self, f"{alliance}_comp_11") or 0,
-                getattr(self, f"{alliance}_comp_12") or 0,
-                getattr(self, f"{alliance}_comp_13") or 0,
-                getattr(self, f"{alliance}_comp_14") or 0,
-                getattr(self, f"{alliance}_comp_15") or 0,
-                getattr(self, f"{alliance}_comp_16") or 0,
-                getattr(self, f"{alliance}_comp_17") or 0,
-                getattr(self, f"{alliance}_comp_18") or 0,
+                *[getattr(self, f"{alliance}_comp_{i}") or 0 for i in range(0, 10)],
             ],
             dtype=np.float32,
         )
@@ -297,5 +272,8 @@ class Match(_Match, Model):
             for key, name in pairs:
                 clean["result"][f"red_{name}"] = getattr(self, f"red_{key}")
                 clean["result"][f"blue_{name}"] = getattr(self, f"blue_{key}")
+
+        clean["pre_epas"] = self.pre_epas or {}
+        clean["epas"] = self.epas or {}
 
         return clean

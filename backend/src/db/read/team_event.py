@@ -61,10 +61,3 @@ def get_team_events(
         return data
 
     return run_transaction(Session, callback)  # type: ignore
-
-
-def get_num_team_events() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(TeamEventORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore

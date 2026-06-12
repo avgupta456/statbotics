@@ -49,7 +49,14 @@ const configs: { [key: number]: Config } = {
       },
       1: {
         Overall: ["total_points", "total_fuel", "total_tower"],
-        Fuel: ["auto_fuel", "transition_fuel", "first_shift_fuel", "second_shift_fuel", "teleop_fuel", "endgame_fuel"],
+        Fuel: [
+          "auto_fuel",
+          "transition_fuel",
+          "first_shift_fuel",
+          "second_shift_fuel",
+          "teleop_fuel",
+          "endgame_fuel",
+        ],
         Tower: ["auto_tower", "endgame_tower"],
       },
     },
@@ -60,9 +67,7 @@ const configs: { [key: number]: Config } = {
       auto_points: { name: "Auto Points", digits: 1 },
       teleop_points: { name: "Teleop Points", digits: 1 },
       endgame_points: { name: "Endgame Points", digits: 1 },
-      auto_coral: { name: "Auto Coral", digits: 1 },
       auto_coral_points: { name: "Auto Coral Points", digits: 1 },
-      teleop_coral: { name: "Teleop Coral", digits: 1 },
       teleop_coral_points: { name: "Teleop Coral Points", digits: 1 },
       coral_l1: { name: "Coral L1", digits: 1 },
       coral_l2: { name: "Coral L2", digits: 1 },
@@ -71,53 +76,55 @@ const configs: { [key: number]: Config } = {
       total_coral_points: { name: "Total Coral Points", digits: 1 },
       processor_algae: { name: "Processor Algae", digits: 1 },
       processor_algae_points: { name: "Processor Algae Points", digits: 1 },
-      net_algae: { name: "Net Algae", digits: 1 },
       net_algae_points: { name: "Net Algae Points", digits: 1 },
       total_algae_points: { name: "Total Algae Points", digits: 1 },
-      total_game_pieces: { name: "Total Game Pieces", digits: 1 },
+      barge_points: { name: "Barge Points", digits: 1 },
     },
     layout: {
       0: {
-        Overall: ["total_points", "total_game_pieces", "total_coral_points", "total_algae_points"],
-        Coral: ["auto_coral", "teleop_coral", "coral_l1", "coral_l2", "coral_l3", "coral_l4"],
-        Algae: ["processor_algae", "net_algae"],
-        Endgame: ["endgame_points"],
-      },
-      1: {
-        Overall: [
-          "total_points",
-          "auto_points",
-          "teleop_points",
-          "total_game_pieces",
-          "total_coral_points",
-          "total_algae_points",
-        ],
+        Overall: ["total_points", "total_coral_points", "total_algae_points"],
         Coral: [
-          "auto_coral",
           "auto_coral_points",
-          "teleop_coral",
           "teleop_coral_points",
           "coral_l1",
           "coral_l2",
           "coral_l3",
           "coral_l4",
         ],
-        Algae: ["processor_algae", "processor_algae_points", "net_algae", "net_algae_points"],
-        Endgame: ["endgame_points"],
+        Algae: ["processor_algae", "net_algae_points"],
+        Endgame: ["barge_points"],
+      },
+      1: {
+        Overall: [
+          "total_points",
+          "auto_points",
+          "teleop_points",
+          "total_coral_points",
+          "total_algae_points",
+        ],
+        Coral: [
+          "auto_coral_points",
+          "teleop_coral_points",
+          "coral_l1",
+          "coral_l2",
+          "coral_l3",
+          "coral_l4",
+        ],
+        Algae: ["processor_algae", "processor_algae_points", "net_algae_points"],
+        Endgame: ["barge_points"],
       },
     },
   },
   2024: {
     keys: {
       total_points: { name: "Total Points", digits: 1 },
-      total_notes: { name: "Total Notes", digits: 1 },
-      total_note_points: { name: "Total Note Points", digits: 1 },
-      auto_notes: { name: "Auto Notes", digits: 1 },
       auto_points: { name: "Auto Points", digits: 1 },
-      teleop_notes: { name: "Teleop Notes", digits: 1 },
+      auto_leave_points: { name: "Leave Points", digits: 1 },
+      auto_note_points: { name: "Auto Note Points", digits: 1 },
       teleop_points: { name: "Teleop Points", digits: 1 },
-      amp_notes: { name: "Amp Notes", digits: 1 },
-      speaker_notes: { name: "Speaker Notes", digits: 1 },
+      teleop_note_points: { name: "Teleop Note Points", digits: 1 },
+      total_note_points: { name: "Total Note Points", digits: 1 },
+      speaker_points: { name: "Speaker Points", digits: 1 },
       amplified_notes: { name: "Amplified Notes", digits: 1 },
       endgame_points: { name: "Endgame Points", digits: 1 },
       endgame_park_points: { name: "Park Points", digits: 2 },
@@ -128,15 +135,15 @@ const configs: { [key: number]: Config } = {
     },
     layout: {
       0: {
-        Overall: ["total_points", "total_notes", "total_note_points"],
-        "Scoring Period": ["auto_notes", "teleop_notes"],
-        "Scoring Location": ["amp_notes", "speaker_notes", "amplified_notes"],
+        Overall: ["total_points", "total_note_points"],
+        "Scoring Period": ["auto_note_points", "teleop_note_points"],
+        "Scoring Location": ["speaker_points", "amplified_notes"],
         Endgame: ["endgame_points"],
       },
       1: {
-        Overall: ["total_points", "total_notes", "total_note_points"],
-        "Scoring Period": ["auto_notes", "auto_points", "teleop_notes", "teleop_points"],
-        "Scoring Location": ["amp_notes", "speaker_notes", "amplified_notes"],
+        Overall: ["total_points", "total_note_points", "auto_points", "teleop_points"],
+        Auto: ["auto_leave_points", "auto_note_points"],
+        Teleop: ["teleop_note_points", "speaker_points", "amplified_notes"],
         Endgame: [
           "endgame_points",
           "endgame_park_points",
@@ -188,29 +195,27 @@ const EPABreakdownTable = ({
       };
     });
 
-  const { columns, detailedColumns } = useMemo<any>(() => {
-    const getColumns = (detailed: number) => [
-      ...[
-        {
-          header: "Team",
-          columns: [
-            columnHelper.accessor("num", {
-              cell: (info) => info.getValue(),
-              header: "Number",
-            }),
-            columnHelper.accessor("team", {
-              cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
-              header: "Name",
-            }),
-          ],
-        },
-      ],
-      ...Object.entries(config.layout[detailed]).reduce((acc, [header, cols]) => {
+  const columns = useMemo<any>(() => {
+    return [
+      {
+        header: "Team",
+        columns: [
+          columnHelper.accessor("num", {
+            cell: (info) => info.getValue(),
+            header: "Number",
+          }),
+          columnHelper.accessor("team", {
+            cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
+            header: "Name",
+          }),
+        ],
+      },
+      ...Object.entries(config.layout[1]).reduce((acc: any[], [header, cols]) => {
         return [
           ...acc,
           {
             header,
-            columns: cols.map((col) =>
+            columns: (cols as string[]).map((col) =>
               columnHelper.accessor(col, {
                 cell: (info) => formatEPACell(yearData?.percentiles[col], info, disableHighlight),
                 header: config.keys[col]["name"],
@@ -220,7 +225,6 @@ const EPABreakdownTable = ({
         ];
       }, []),
     ];
-    return { columns: getColumns(0), detailedColumns: getColumns(1) };
   }, [config, yearData, year, disableHighlight]);
 
   return (
@@ -229,8 +233,6 @@ const EPABreakdownTable = ({
         title={"EPA Breakdown"}
         data={yearInsightsData}
         columns={columns}
-        detailedData={yearInsightsData}
-        detailedColumns={detailedColumns}
         searchCols={["num", "team"]}
         csvFilename={csvFilename}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}

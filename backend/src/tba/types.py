@@ -37,6 +37,7 @@ class BreakdownDict(TypedDict):
     rp_2: Optional[bool]
     rp_3: Optional[bool]
     tiebreaker: Optional[int]
+    comp_0: Optional[Union[int, float]]
     comp_1: Optional[Union[int, float]]
     comp_2: Optional[Union[int, float]]
     comp_3: Optional[Union[int, float]]
@@ -46,15 +47,6 @@ class BreakdownDict(TypedDict):
     comp_7: Optional[Union[int, float]]
     comp_8: Optional[Union[int, float]]
     comp_9: Optional[Union[int, float]]
-    comp_10: Optional[Union[int, float]]
-    comp_11: Optional[Union[int, float]]
-    comp_12: Optional[Union[int, float]]
-    comp_13: Optional[Union[int, float]]
-    comp_14: Optional[Union[int, float]]
-    comp_15: Optional[Union[int, float]]
-    comp_16: Optional[Union[int, float]]
-    comp_17: Optional[Union[int, float]]
-    comp_18: Optional[Union[int, float]]
 
 
 empty_breakdown: BreakdownDict = {
@@ -68,6 +60,7 @@ empty_breakdown: BreakdownDict = {
     "rp_2": False,
     "rp_3": False,
     "tiebreaker": None,
+    "comp_0": None,
     "comp_1": None,
     "comp_2": None,
     "comp_3": None,
@@ -77,15 +70,6 @@ empty_breakdown: BreakdownDict = {
     "comp_7": None,
     "comp_8": None,
     "comp_9": None,
-    "comp_10": None,
-    "comp_11": None,
-    "comp_12": None,
-    "comp_13": None,
-    "comp_14": None,
-    "comp_15": None,
-    "comp_16": None,
-    "comp_17": None,
-    "comp_18": None,
 }
 
 
