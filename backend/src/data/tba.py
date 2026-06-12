@@ -221,8 +221,12 @@ def process_year(
 
     for event_obj in event_objs_dict.values():
         if partial:
-            start = (datetime.strptime(event_obj.start_date, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
-            end = (datetime.strptime(event_obj.end_date, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
+            start = (
+                datetime.strptime(event_obj.start_date, "%Y-%m-%d") - timedelta(days=1)
+            ).strftime("%Y-%m-%d")
+            end = (
+                datetime.strptime(event_obj.end_date, "%Y-%m-%d") + timedelta(days=1)
+            ).strftime("%Y-%m-%d")
             if not (start <= today <= end) and event_obj.status != EventStatus.ONGOING:
                 continue
 
@@ -233,7 +237,9 @@ def process_year(
         ) -> Tuple[List[MatchDict], OS]:
             return get_event_matches_tba(year_num, event_key, event_time, etag, cache)
 
-        matches, matches_changed = call_tba(get_event_matches_tba_year, event_key + "/matches")
+        matches, matches_changed = call_tba(
+            get_event_matches_tba_year, event_key + "/matches"
+        )
 
         event_teams: Set[int] = set()
         rankings: Dict[int, int] = {}
@@ -289,16 +295,22 @@ def process_year(
             ) -> Tuple[Dict[int, int], OS]:
                 return get_event_rankings_tba(event_key, etag, cache)
 
-            rankings, _ = call_tba(get_event_rankings_tba_year, event_key + "/rankings")
+            raw_rankings, _ = call_tba(
+                get_event_rankings_tba_year, event_key + "/rankings"
+            )
+            if raw_rankings is not True:
+                rankings = raw_rankings
 
             def get_event_alliances_tba_year(
                 etag: OS, cache: bool
             ) -> Tuple[Tuple[Dict[int, str], Dict[int, bool]], OS]:
                 return get_event_alliances_tba(event_key, etag, cache)
 
-            (alliance_dict, captain_dict), _ = call_tba(
+            raw_alliances, _ = call_tba(
                 get_event_alliances_tba_year, event_key + "/alliances"
             )
+            if raw_alliances is not True:
+                alliance_dict, captain_dict = raw_alliances
 
         # For Upcoming, Ongoing, and Completed events
         for team in event_teams:

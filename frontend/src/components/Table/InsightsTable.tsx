@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import { DebounceInput } from "react-debounce-input";
-import { MdAdd, MdClose, MdCloudDownload, MdColorLens, MdRemove, MdSearch } from "react-icons/md";
+import { MdClose, MdCloudDownload, MdColorLens, MdSearch } from "react-icons/md";
 
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -15,8 +15,6 @@ const InsightsTable = ({
   title,
   data,
   columns,
-  detailedData = [],
-  detailedColumns = [],
   searchCols,
   csvFilename,
   toggleDisableHighlight,
@@ -25,8 +23,6 @@ const InsightsTable = ({
   title: string;
   data: any[];
   columns: ColumnDef<any, any>[];
-  detailedData?: any[];
-  detailedColumns?: ColumnDef<any, any>[];
   searchCols: string[];
   csvFilename: string;
   toggleDisableHighlight?: () => void;
@@ -35,13 +31,7 @@ const InsightsTable = ({
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
 
-  const [expanded, setExpanded] = useState(false);
-
-  const expandable = detailedData?.length > 0;
-  const currData = expanded ? detailedData : data;
-  const currColumns = expanded ? detailedColumns : columns;
-
-  const filteredData = currData.filter((row) =>
+  const filteredData = data.filter((row) =>
     searchCols.some((col) => row[col].toString().toLowerCase().includes(search.toLowerCase()))
   );
 
@@ -96,26 +86,12 @@ const InsightsTable = ({
             <MdCloudDownload className="hover_icon ml-2" />
           </CSVLink>
         </div>
-        {expandable && (
-          <div className="tooltip" data-tip={expanded ? "Shrink" : "Expand"}>
-            <MdAdd
-              className="hover_icon ml-2"
-              onClick={() => setExpanded(!expanded)}
-              style={{ display: expanded ? "none" : "block" }}
-            />
-            <MdRemove
-              className="hover_icon ml-2"
-              onClick={() => setExpanded(!expanded)}
-              style={{ display: expanded ? "block" : "none" }}
-            />
-          </div>
-        )}
       </div>
       <div className="h-2" />
       <div className="overflow-x-scroll overflow-y-hidden scrollbar-hide">
         <Table
           data={filteredData}
-          columns={currColumns}
+          columns={columns}
           paginate={true}
           headerClassName={headerClassName}
           headerCellClassName={headerCellClassName}

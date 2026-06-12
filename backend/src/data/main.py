@@ -29,7 +29,6 @@ from src.data.wins import (
 from src.db.main import clean_db
 from src.db.models import Team, TeamYear
 from src.db.read import (
-    get_num_years,
     get_team_events as get_team_events_db,
     get_team_years as get_team_years_db,
     get_teams as get_teams_db,
@@ -115,16 +114,10 @@ def reset_all_years():
     start_year = 2002
     end_year = CURR_YEAR
 
-    try:
-        if get_num_years() > 0:
-            return
-    except Exception:
-        pass
-
     clean_db()
     timer.print("Clean DB")
 
-    teams = load_teams_tba(cache=False)
+    teams = load_teams_tba(cache=True)
     timer.print("Load Teams")
 
     all_team_years: Dict[int, Dict[int, TeamYear]] = {}

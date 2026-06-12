@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 
 # 5 represent the asymptote of the sample size of the moving average

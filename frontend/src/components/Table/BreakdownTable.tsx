@@ -175,29 +175,27 @@ const EPABreakdownTable = ({
       };
     });
 
-  const { columns, detailedColumns } = useMemo<any>(() => {
-    const getColumns = (detailed: number) => [
-      ...[
-        {
-          header: "Team",
-          columns: [
-            columnHelper.accessor("num", {
-              cell: (info) => info.getValue(),
-              header: "Number",
-            }),
-            columnHelper.accessor("team", {
-              cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
-              header: "Name",
-            }),
-          ],
-        },
-      ],
-      ...Object.entries(config.layout[detailed]).reduce((acc, [header, cols]) => {
+  const columns = useMemo<any>(() => {
+    return [
+      {
+        header: "Team",
+        columns: [
+          columnHelper.accessor("num", {
+            cell: (info) => info.getValue(),
+            header: "Number",
+          }),
+          columnHelper.accessor("team", {
+            cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
+            header: "Name",
+          }),
+        ],
+      },
+      ...Object.entries(config.layout[1]).reduce((acc: any[], [header, cols]) => {
         return [
           ...acc,
           {
             header,
-            columns: cols.map((col) =>
+            columns: (cols as string[]).map((col) =>
               columnHelper.accessor(col, {
                 cell: (info) => formatEPACell(yearData?.percentiles[col], info, disableHighlight),
                 header: config.keys[col]["name"],
@@ -207,7 +205,6 @@ const EPABreakdownTable = ({
         ];
       }, []),
     ];
-    return { columns: getColumns(0), detailedColumns: getColumns(1) };
   }, [config, yearData, year, disableHighlight]);
 
   return (
@@ -216,8 +213,6 @@ const EPABreakdownTable = ({
         title={"EPA Breakdown"}
         data={yearInsightsData}
         columns={columns}
-        detailedData={yearInsightsData}
-        detailedColumns={detailedColumns}
         searchCols={["num", "team"]}
         csvFilename={csvFilename}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}

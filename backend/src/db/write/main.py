@@ -7,7 +7,26 @@ from src.db.models.team import Team, TeamORM
 from src.db.models.team_event import TeamEvent, TeamEventORM
 from src.db.models.team_year import TeamYear, TeamYearORM
 from src.db.models.year import Year, YearORM
-from src.db.write.template import update_template
+from src.db.write.template import update_template, write_all
+
+
+def write_year(
+    years: List[Year],
+    team_years: List[TeamYear],
+    events: List[Event],
+    team_events: List[TeamEvent],
+    matches: List[Match],
+    etags: List[ETag],
+    insert_only: bool = False,
+) -> None:
+    write_all([
+        (YearORM, years, insert_only),
+        (TeamYearORM, team_years, insert_only),
+        (EventORM, events, insert_only),
+        (TeamEventORM, team_events, insert_only),
+        (MatchORM, matches, insert_only),
+        (ETagORM, etags, insert_only),
+    ])
 
 
 def update_etags(items: List[ETag], only_insert: bool = False) -> None:

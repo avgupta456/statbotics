@@ -11,14 +11,7 @@ from src.db.read import (
     get_team_years as get_team_years_db,
     get_year as get_year_db,
 )
-from src.db.write.main import (
-    update_etags as update_etags_db,
-    update_events as update_events_db,
-    update_matches as update_matches_db,
-    update_team_events as update_team_events_db,
-    update_team_years as update_team_years_db,
-    update_years as update_years_db,
-)
+from src.db.write.main import write_year as write_year_db
 
 objs_type = Tuple[
     Year,
@@ -59,25 +52,20 @@ def write_objs(
         clear_year(year_num)
 
     if orig_objs is None:
-        # Ensure that all objects are updated
         orig_objs = create_objs(-1)
 
-    update_years_db([objs[0]], clean)
+    def changed(curr: dict, prev: dict) -> list:
+        return [obj for obj in curr.values() if str(obj) != str(prev.get(obj.pk(), ""))]
 
-    for prev, curr, update_func in [
-        (orig_objs[1], objs[1], update_team_years_db),
-        (orig_objs[2], objs[2], update_events_db),
-        (orig_objs[3], objs[3], update_team_events_db),
-        (orig_objs[4], objs[4], update_matches_db),
-        (orig_objs[5], objs[5], update_etags_db),
-    ]:
-        new_objs = [
-            obj
-            for obj in list(curr.values())
-            if str(obj) != str(prev.get(obj.pk(), ""))
-        ]
-
-        update_func(new_objs, clean)  # type: ignore
+    write_year_db(
+        years=[objs[0]],
+        team_years=changed(objs[1], orig_objs[1]),
+        events=changed(objs[2], orig_objs[2]),
+        team_events=changed(objs[3], orig_objs[3]),
+        matches=changed(objs[4], orig_objs[4]),
+        etags=changed(objs[5], orig_objs[5]),
+        insert_only=clean,
+    )
 
 
 class Timer:

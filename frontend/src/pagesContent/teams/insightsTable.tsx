@@ -32,9 +32,7 @@ export type TeamYearInsights = {
   record: string;
 };
 
-const columnHelper = createColumnHelper<TeamYearInsights>();
-
-const detailedColumnHelper = createColumnHelper<any>();
+const columnHelper = createColumnHelper<any>();
 
 const PageTeamInsightsTable = ({
   year,
@@ -102,7 +100,7 @@ const PageTeamInsightsTable = ({
     });
 
   const columns = useMemo<any>(() => {
-    const showColumns = [
+    return [
       columnHelper.accessor("num", {
         cell: (info) => info.getValue(),
         header: "Number",
@@ -146,6 +144,21 @@ const PageTeamInsightsTable = ({
             formatEPACell(data.year.percentiles.endgame_points, info, disableHighlight),
           header: "Endgame EPA",
         }),
+      year >= 2016 &&
+        columnHelper.accessor("rp_1_epa", {
+          cell: (info) => formatEPACell(data.year.percentiles.rp_1, info, disableHighlight),
+          header: RP_NAMES[year][0],
+        }),
+      year >= 2016 &&
+        columnHelper.accessor("rp_2_epa", {
+          cell: (info) => formatEPACell(data.year.percentiles.rp_2, info, disableHighlight),
+          header: RP_NAMES[year][1],
+        }),
+      year >= 2025 &&
+        columnHelper.accessor("rp_3_epa", {
+          cell: (info) => formatEPACell(data.year.percentiles.rp_3, info, disableHighlight),
+          header: RP_NAMES[year][2],
+        }),
       year == CURR_YEAR &&
         columnHelper.accessor("next_event_name", {
           cell: (info) =>
@@ -156,86 +169,11 @@ const PageTeamInsightsTable = ({
         cell: (info) => formatCell(info),
         header: "Record",
       }),
-    ].filter((x) => x);
-    return showColumns;
-  }, [year, data.year, disableHighlight]);
-
-  const detailedColumns = useMemo<any>(() => {
-    const showColumns = [
-      detailedColumnHelper.accessor("num", {
-        cell: (info) => info.getValue(),
-        header: "Number",
-      }),
-      detailedColumnHelper.accessor("team", {
-        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
-        header: "Name",
-      }),
-      detailedColumnHelper.accessor("epa_rank", {
-        cell: (info) => formatCell(info),
-        header: "EPA Rank",
-      }),
-      year < CURR_YEAR &&
-        detailedColumnHelper.accessor("norm_epa", {
-          cell: (info) => formatCell(info),
-          header: "Normalized EPA",
-        }),
-      year >= CURR_YEAR &&
-        detailedColumnHelper.accessor("unitless_epa", {
-          cell: (info) => formatCell(info),
-          header: "Unitless EPA",
-        }),
-      detailedColumnHelper.accessor("total_epa", {
-        cell: (info) => formatEPACell(data.year.percentiles.total_points, info, disableHighlight),
-        header: "EPA",
-      }),
-      year >= 2016 &&
-        detailedColumnHelper.accessor("auto_epa", {
-          cell: (info) => formatEPACell(data.year.percentiles.auto_points, info, disableHighlight),
-          header: "Auto EPA",
-        }),
-      year >= 2016 &&
-        detailedColumnHelper.accessor("teleop_epa", {
-          cell: (info) =>
-            formatEPACell(data.year.percentiles.teleop_points, info, disableHighlight),
-          header: "Teleop EPA",
-        }),
-      year >= 2016 &&
-        detailedColumnHelper.accessor("endgame_epa", {
-          cell: (info) =>
-            formatEPACell(data.year.percentiles.endgame_points, info, disableHighlight),
-          header: "Endgame EPA",
-        }),
-      year >= 2016 &&
-        detailedColumnHelper.accessor("rp_1_epa", {
-          cell: (info) => formatEPACell(data.year.percentiles.rp_1, info, disableHighlight),
-          header: RP_NAMES[year][0],
-        }),
-      year >= 2016 &&
-        detailedColumnHelper.accessor("rp_2_epa", {
-          cell: (info) => formatEPACell(data.year.percentiles.rp_2, info, disableHighlight),
-          header: RP_NAMES[year][1],
-        }),
-      year >= 2025 &&
-        detailedColumnHelper.accessor("rp_3_epa", {
-          cell: (info) => formatEPACell(data.year.percentiles.rp_3, info, disableHighlight),
-          header: RP_NAMES[year][2],
-        }),
-      year == CURR_YEAR &&
-        detailedColumnHelper.accessor("next_event_name", {
-          cell: (info) =>
-            EventLink({ key: info.row.original.next_event_key, event: info.getValue() }),
-          header: "Next Event",
-        }),
-      detailedColumnHelper.accessor("record", {
-        cell: (info) => formatCell(info),
-        header: "Record",
-      }),
-      detailedColumnHelper.accessor("winrate", {
+      columnHelper.accessor("winrate", {
         cell: (info) => formatCell(info),
         header: "Winrate",
       }),
     ].filter((x) => x);
-    return showColumns;
   }, [year, data.year, disableHighlight]);
 
   return (
@@ -254,8 +192,6 @@ const PageTeamInsightsTable = ({
         title={"Team Insights"}
         data={yearInsightsData}
         columns={columns}
-        detailedData={yearInsightsData}
-        detailedColumns={detailedColumns}
         searchCols={["num", "team"]}
         csvFilename={`${year}_insights.csv`}
         toggleDisableHighlight={() => setDisableHighlight(!disableHighlight)}

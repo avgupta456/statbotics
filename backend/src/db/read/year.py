@@ -29,10 +29,3 @@ def get_years(
         return session.query(YearORM)
 
     return run_transaction(Session, callback)  # type: ignore
-
-
-def get_num_years() -> int:
-    def callback(session: SessionType) -> int:
-        return session.query(YearORM).count()
-
-    return run_transaction(Session, callback)  # type: ignore
