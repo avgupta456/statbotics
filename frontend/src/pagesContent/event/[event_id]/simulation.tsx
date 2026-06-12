@@ -158,12 +158,47 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: EventData
       return {
         num: teamEvent.team,
         team: teamEvent?.team_name,
-        epa: round(teamEvent?.epa?.breakdown?.total_points ?? 0, 1),
+        epa: round(teamEvent?.epa?.total_points?.mean ?? 0, 1),
         rankMean: rankMean[teamEvent.team] ? round(rankMean[teamEvent.team], 2) : "",
         RPMean: RPMean[teamEvent.team] ? round(RPMean[teamEvent.team], 2) : "",
         ...probsObj,
       };
     });
+
+  const detailedColumns = useMemo<any>(
+    () => [
+      detailedColumnHelper.accessor("num", {
+        cell: (info) => info.getValue(),
+        header: "Number",
+      }),
+      detailedColumnHelper.accessor("team", {
+        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
+        header: "Team",
+      }),
+      detailedColumnHelper.accessor("epa", {
+        cell: (info) => formatEPACell(data.year.percentiles.total_points, info, false),
+        header: "EPA",
+      }),
+      detailedColumnHelper.accessor("rankMean", {
+        cell: (info) => formatCell(info),
+        header: "Mean Rank",
+      }),
+      detailedColumnHelper.accessor("RPMean", {
+        cell: (info) => formatCell(info),
+        header: "Mean RPs",
+      }),
+      ...emptyArr
+        .slice()
+        .map((_, i) => i + 1)
+        .map((i) =>
+          detailedColumnHelper.accessor("prob" + i, {
+            cell: (info) => formatProbCell(info),
+            header: "P(" + i + ")",
+          })
+        ),
+    ],
+    [year, data.year, emptyArr]
+  );
 
   const columns = useMemo<any>(
     () => [
@@ -205,41 +240,6 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: EventData
       }),
     ],
     [year, data.year]
-  );
-
-  const detailedColumns = useMemo<any>(
-    () => [
-      detailedColumnHelper.accessor("num", {
-        cell: (info) => info.getValue(),
-        header: "Number",
-      }),
-      detailedColumnHelper.accessor("team", {
-        cell: (info) => TeamLink({ team: info.getValue(), num: info.row.original.num, year }),
-        header: "Team",
-      }),
-      detailedColumnHelper.accessor("epa", {
-        cell: (info) => formatEPACell(data.year.percentiles.total_points, info, false),
-        header: "EPA",
-      }),
-      detailedColumnHelper.accessor("rankMean", {
-        cell: (info) => formatCell(info),
-        header: "Mean Rank",
-      }),
-      detailedColumnHelper.accessor("RPMean", {
-        cell: (info) => formatCell(info),
-        header: "Mean RPs",
-      }),
-      ...emptyArr
-        .slice()
-        .map((_, i) => i + 1)
-        .map((i) =>
-          detailedColumnHelper.accessor("prob" + i, {
-            cell: (info) => formatProbCell(info),
-            header: "P(" + i + ")",
-          })
-        ),
-    ],
-    [year, data.year, emptyArr]
   );
 
   return (
