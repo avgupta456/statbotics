@@ -1,4 +1,3 @@
-
 export const countryOptions = [
   { value: "", label: "All" },
   { value: "USA", label: "USA" },

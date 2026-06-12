@@ -35,6 +35,7 @@ AUTH_KEY_BLACKLIST: List[str] = []
 # CONFIG
 
 CURR_YEAR = 2026
+DISABLE_GCS = True  # TODO: Re-enable for 2027 season
 
 # MISC
 

@@ -49,7 +49,14 @@ const configs: { [key: number]: Config } = {
       },
       1: {
         Overall: ["total_points", "total_fuel", "total_tower"],
-        Fuel: ["auto_fuel", "transition_fuel", "first_shift_fuel", "second_shift_fuel", "teleop_fuel", "endgame_fuel"],
+        Fuel: [
+          "auto_fuel",
+          "transition_fuel",
+          "first_shift_fuel",
+          "second_shift_fuel",
+          "teleop_fuel",
+          "endgame_fuel",
+        ],
         Tower: ["auto_tower", "endgame_tower"],
       },
     },
@@ -76,12 +83,25 @@ const configs: { [key: number]: Config } = {
     layout: {
       0: {
         Overall: ["total_points", "total_coral_points", "total_algae_points"],
-        Coral: ["auto_coral_points", "teleop_coral_points", "coral_l1", "coral_l2", "coral_l3", "coral_l4"],
+        Coral: [
+          "auto_coral_points",
+          "teleop_coral_points",
+          "coral_l1",
+          "coral_l2",
+          "coral_l3",
+          "coral_l4",
+        ],
         Algae: ["processor_algae", "net_algae_points"],
         Endgame: ["barge_points"],
       },
       1: {
-        Overall: ["total_points", "auto_points", "teleop_points", "total_coral_points", "total_algae_points"],
+        Overall: [
+          "total_points",
+          "auto_points",
+          "teleop_points",
+          "total_coral_points",
+          "total_algae_points",
+        ],
         Coral: [
           "auto_coral_points",
           "teleop_coral_points",

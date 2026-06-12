@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API_URL =
-  process.env.PROD === "True" ? "https://api.statbotics.io" : "http://127.0.0.1:8000";
+const API_URL = process.env.PROD === "True" ? "https://api.statbotics.io" : "http://127.0.0.1:8000";
 
 const STORAGE_KEY = "statbotics_api_key";
 const STORAGE_TS_KEY = "statbotics_api_key_ts";

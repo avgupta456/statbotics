@@ -87,7 +87,9 @@ export const filterData = (data: any[] | undefined, filter: any) => {
     if (key !== "search" && value !== "") {
       if (key === "is_competing") {
         const today = new Date().toISOString().split("T")[0];
-        const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+        const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0];
         filteredData = filteredData.filter((datum) => {
           const startDate = datum["competing"]?.["next_event_start_date"];
           return startDate && startDate >= today && startDate <= sevenDaysFromNow;

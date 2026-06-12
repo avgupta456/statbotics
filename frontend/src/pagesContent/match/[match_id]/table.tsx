@@ -63,14 +63,10 @@ const PageMatchTable = ({ data }: { data: MatchData }) => {
 
   const redMatchAuto = red1Data?.auto_epa + red2Data?.auto_epa + red3Data?.auto_epa;
   const blueMatchAuto = blue1Data?.auto_epa + blue2Data?.auto_epa + blue3Data?.auto_epa;
-  const redMatchTeleop =
-    red1Data?.teleop_epa + red2Data?.teleop_epa + red3Data?.teleop_epa;
-  const blueMatchTeleop =
-    blue1Data?.teleop_epa + blue2Data?.teleop_epa + blue3Data?.teleop_epa;
-  const redMatchEndgame =
-    red1Data?.endgame_epa + red2Data?.endgame_epa + red3Data?.endgame_epa;
-  const blueMatchEndgame =
-    blue1Data?.endgame_epa + blue2Data?.endgame_epa + blue3Data?.endgame_epa;
+  const redMatchTeleop = red1Data?.teleop_epa + red2Data?.teleop_epa + red3Data?.teleop_epa;
+  const blueMatchTeleop = blue1Data?.teleop_epa + blue2Data?.teleop_epa + blue3Data?.teleop_epa;
+  const redMatchEndgame = red1Data?.endgame_epa + red2Data?.endgame_epa + red3Data?.endgame_epa;
+  const blueMatchEndgame = blue1Data?.endgame_epa + blue2Data?.endgame_epa + blue3Data?.endgame_epa;
   const redMatchFouls = redPredTotal - (redMatchAuto + redMatchTeleop + redMatchEndgame);
   const blueMatchFouls = bluePredTotal - (blueMatchAuto + blueMatchTeleop + blueMatchEndgame);
 
