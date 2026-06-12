@@ -8,7 +8,6 @@ import numpy as np
 # the mean is a t-distribution with equal degrees of freedom
 
 
-
 class EPARating:
     # all inputs are 1d np arrays, does not handle covariance between variables
     def __init__(self, mean: Any):

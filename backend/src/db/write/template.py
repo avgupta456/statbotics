@@ -37,16 +37,25 @@ def _primary_key(orm_type: Type[TModelORM]) -> List[str]:
         raise Exception("Unknown orm_type: " + str(orm_type))
 
 
-def _insert(session: SessionType, orm_type: Type[TModelORM], data: List[Dict[str, Any]]) -> None:
+def _insert(
+    session: SessionType, orm_type: Type[TModelORM], data: List[Dict[str, Any]]
+) -> None:
     for i in range(0, len(data), CUTOFF):
         session.bulk_insert_mappings(orm_type, data[i : i + CUTOFF])  # type: ignore
 
 
-def _update(session: SessionType, orm_type: Type[TModelORM], primary_key: List[str], data: List[Dict[str, Any]]) -> None:
+def _update(
+    session: SessionType,
+    orm_type: Type[TModelORM],
+    primary_key: List[str],
+    data: List[Dict[str, Any]],
+) -> None:
     for i in range(0, len(data), CUTOFF):
         insert = postgresql.insert(orm_type.__table__).values(data[i : i + CUTOFF])
         update_cols = {c.name: c for c in insert.excluded if c.name not in primary_key}
-        update = insert.on_conflict_do_update(index_elements=primary_key, set_=update_cols)
+        update = insert.on_conflict_do_update(
+            index_elements=primary_key, set_=update_cols
+        )
         session.execute(update.execution_options(synchronize_session=False))
 
 

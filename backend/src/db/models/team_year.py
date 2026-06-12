@@ -88,7 +88,9 @@ class TeamYearORM(Base, ModelORM):
     district_team_count: MOI = mapped_column(Integer, nullable=True, default=None)
 
     """MATCHES (JSON list of compact match entries)"""
-    team_matches: Mapped[Optional[List[Any]]] = mapped_column(JSON, nullable=True, default=None)
+    team_matches: Mapped[Optional[List[Any]]] = mapped_column(
+        JSON, nullable=True, default=None
+    )
 
 
 _TeamYear = generate_attr_class("TeamYear", TeamYearORM)

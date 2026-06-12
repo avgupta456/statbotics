@@ -34,14 +34,10 @@ class Model:
     ) -> Dict[int, Attribution]:
         raise NotImplementedError
 
-    def update_team(
-        self, team: int, attrib: Attribution, match: Match
-    ) -> None:
+    def update_team(self, team: int, attrib: Attribution, match: Match) -> None:
         raise NotImplementedError
 
-    def pre_record_team(
-        self, team: int, te: TeamEvent, ty: TeamYear
-    ) -> Dict[str, Any]:
+    def pre_record_team(self, team: int, te: TeamEvent, ty: TeamYear) -> Dict[str, Any]:
         return {}
 
     def post_record_team(

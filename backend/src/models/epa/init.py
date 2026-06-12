@@ -21,7 +21,6 @@ def get_constants(year: Year) -> Tuple[int, float, float]:
     return num_teams, curr_mean, curr_sd
 
 
-
 def get_init_epa(
     year: Year,
     team_year_1: Optional[TeamYear],

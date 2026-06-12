@@ -10,7 +10,6 @@ from src.tba.constants import (
     EVENT_BLACKLIST,
     EVENT_TYPE_OVERRIDES,
     MATCH_BLACKLIST,
-    PLACEHOLDER_TEAMS,
 )
 from src.tba.main import get_tba
 from src.tba.types import EventDict, MatchDict, TeamDict

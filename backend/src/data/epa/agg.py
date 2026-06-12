@@ -13,7 +13,9 @@ def process_year_epas(
 ) -> Tuple[float, float, float]:
     post_epas = [(m.epas or {}).get(str(team), {}).get("epa") for m in matches]
     arr = [x for x in post_epas if x is not None]
-    pre_champs_arr = [x for x, m in zip(post_epas, matches) if x is not None and m.week < 8]
+    pre_champs_arr = [
+        x for x, m in zip(post_epas, matches) if x is not None and m.week < 8
+    ]
     pre_champs = pre_champs_arr[-1] if pre_champs_arr else default
     end = arr[-1] if arr else default
     max_ = max(arr[8:]) if len(arr) > 8 else end
@@ -65,7 +67,9 @@ def process_year(objs: objs_type) -> objs_type:
 
         ms = team_matches_dict[ty.team]
 
-        ty.epa_pre_champs, ty.epa, ty.epa_max = process_year_epas(ms, ty.team, ty.epa_start)
+        ty.epa_pre_champs, ty.epa, ty.epa_max = process_year_epas(
+            ms, ty.team, ty.epa_start
+        )
 
         ty.team_matches = [compact_from_match(m, ty.team) for m in ms]
 
@@ -163,7 +167,9 @@ def process_year(objs: objs_type) -> objs_type:
         te.epa_start = r(curr_epas[te.team], 2)
 
         if len(tms) > 0:
-            pre_epas = [(m.pre_epas or {}).get(str(te.team), {}).get("epa") for m in tms]
+            pre_epas = [
+                (m.pre_epas or {}).get(str(te.team), {}).get("epa") for m in tms
+            ]
             pre_epas_nonnull = [x for x in pre_epas if x is not None]
             if pre_epas_nonnull:
                 te.epa_start = r(pre_epas_nonnull[0], 2)
@@ -173,7 +179,9 @@ def process_year(objs: objs_type) -> objs_type:
             curr_epas[te.team] = te.epa  # for next event epa_start
 
         if len(qual_tms) > 0:
-            last_qual_pre = (qual_tms[-1].pre_epas or {}).get(str(te.team), {}).get("epa")
+            last_qual_pre = (
+                (qual_tms[-1].pre_epas or {}).get(str(te.team), {}).get("epa")
+            )
             if last_qual_pre is not None:
                 te.epa_pre_elim = r(last_qual_pre, 2)
 

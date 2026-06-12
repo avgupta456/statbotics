@@ -52,5 +52,3 @@ def get_team_years(
         return data
 
     return run_transaction(Session, callback)  # type: ignore
-
-

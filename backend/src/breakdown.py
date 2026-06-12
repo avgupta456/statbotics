@@ -190,8 +190,19 @@ derived_breakdown: Dict[int, Dict[str, List[str]]] = {
         "total_algae_points": ["processor_algae_points", "net_algae_points"],
     },
     2026: {
-        "teleop_fuel": ["transition_fuel", "first_shift_fuel", "second_shift_fuel", "endgame_fuel"],
-        "total_fuel": ["auto_fuel", "transition_fuel", "first_shift_fuel", "second_shift_fuel", "endgame_fuel"],
+        "teleop_fuel": [
+            "transition_fuel",
+            "first_shift_fuel",
+            "second_shift_fuel",
+            "endgame_fuel",
+        ],
+        "total_fuel": [
+            "auto_fuel",
+            "transition_fuel",
+            "first_shift_fuel",
+            "second_shift_fuel",
+            "endgame_fuel",
+        ],
         "total_tower": ["auto_tower", "endgame_tower"],
     },
 }

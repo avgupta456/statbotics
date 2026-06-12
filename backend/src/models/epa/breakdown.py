@@ -59,7 +59,9 @@ def post_process_breakdown(
         teleop_grid_points = breakdown[keys.index("teleop_grid_points")]
         cube_points = breakdown[keys.index("cube_points")]
         cone_points = breakdown[keys.index("cone_points")]
-        grid_points = cube_points + cone_points  # computed inline (not a stored component)
+        grid_points = (
+            cube_points + cone_points
+        )  # computed inline (not a stored component)
         teleop_grid_points += total_change
         if grid_points > 0:
             cube_points += total_change * cube_points / grid_points

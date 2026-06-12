@@ -18,5 +18,3 @@ def get_etags(year: Optional[int] = None, path: Optional[str] = None) -> List[ET
         return [ETag.from_dict(x.__dict__) for x in out_data]
 
     return run_transaction(Session, callback)  # type: ignore
-
-

@@ -90,9 +90,7 @@ def write_objs(
         for event in new_events:
             matches = event_to_matches.get(event.key, [])
             team_events = event_to_team_events.get(event.key, [])
-            data.append(
-                _read_event(year_obj, event, matches, team_events)
-            )
+            data.append(_read_event(year_obj, event, matches, team_events))
             object_names.append(f"event/{event.key}")
         upload_files_to_gcs(data, object_names)
 

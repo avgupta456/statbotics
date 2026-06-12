@@ -19,14 +19,16 @@ def write_year(
     etags: List[ETag],
     insert_only: bool = False,
 ) -> None:
-    write_all([
-        (YearORM, years, insert_only),
-        (TeamYearORM, team_years, insert_only),
-        (EventORM, events, insert_only),
-        (TeamEventORM, team_events, insert_only),
-        (MatchORM, matches, insert_only),
-        (ETagORM, etags, insert_only),
-    ])
+    write_all(
+        [
+            (YearORM, years, insert_only),
+            (TeamYearORM, team_years, insert_only),
+            (EventORM, events, insert_only),
+            (TeamEventORM, team_events, insert_only),
+            (MatchORM, matches, insert_only),
+            (ETagORM, etags, insert_only),
+        ]
+    )
 
 
 def update_etags(items: List[ETag], only_insert: bool = False) -> None:

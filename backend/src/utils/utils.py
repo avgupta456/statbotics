@@ -6,7 +6,6 @@ def get_team_event_key(team: int, event: str) -> str:
     return str(team) + "_" + event
 
 
-
 def get_match_name(key: str) -> str:
     if "_" in key:
         key = key.split("_")[1]
@@ -31,8 +30,5 @@ def get_match_name(key: str) -> str:
     raise Exception("Invalid match key")
 
 
-
 def r(x: float, n: int = 0) -> float:
     return int(x * (10**n) + 0.5) / (10**n)
-
-

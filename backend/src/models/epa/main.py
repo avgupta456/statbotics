@@ -164,18 +164,14 @@ class EPA(Model):
 
         return out
 
-    def update_team(
-        self, team: int, attrib: Attribution, match: Match
-    ) -> None:
+    def update_team(self, team: int, attrib: Attribution, match: Match) -> None:
         weight = ELIM_WEIGHT if match.elim else 1
         percent = EPA.percent_func(self.year_num, self.counts[team])
         self.epas[team].add_obs(attrib.epa, percent, weight)
         if not match.elim:
             self.counts[team] += 1
 
-    def pre_record_team(
-        self, team: int, te: TeamEvent, ty: TeamYear
-    ) -> Dict[str, Any]:
+    def pre_record_team(self, team: int, te: TeamEvent, ty: TeamYear) -> Dict[str, Any]:
         rounded_mean: Any = np.round(self.epas[team].mean, 2)
         result: Dict[str, Any] = {"epa": float(rounded_mean[0])}
 

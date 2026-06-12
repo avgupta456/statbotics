@@ -61,5 +61,3 @@ def get_team_events(
         return data
 
     return run_transaction(Session, callback)  # type: ignore
-
-

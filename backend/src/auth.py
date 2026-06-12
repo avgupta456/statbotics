@@ -62,7 +62,9 @@ def _check_rate_limit(key: str) -> None:
     _rate_limits[key] = [t for t in _rate_limits[key] if t > window_start]
 
     if len(_rate_limits[key]) >= RATE_LIMIT:
-        raise HTTPException(status_code=429, detail="Rate limit exceeded. Max 100 requests per minute.")
+        raise HTTPException(
+            status_code=429, detail="Rate limit exceeded. Max 100 requests per minute."
+        )
 
     _rate_limits[key].append(now)
 
@@ -74,11 +76,17 @@ async def get_api_key(
     """FastAPI dependency that validates the API key and enforces rate limits."""
     # Skip auth for non-API routes (site, data, docs, root)
     path = request.url.path
-    if not path.startswith("/v3/") or path.startswith("/v3/site") or path.startswith("/v3/data"):
+    if (
+        not path.startswith("/v3/")
+        or path.startswith("/v3/site")
+        or path.startswith("/v3/data")
+    ):
         return ""
 
     if not api_key:
-        raise HTTPException(status_code=401, detail="Missing API key. Pass it via the X-API-Key header.")
+        raise HTTPException(
+            status_code=401, detail="Missing API key. Pass it via the X-API-Key header."
+        )
 
     if not validate_api_key(api_key):
         raise HTTPException(status_code=403, detail="Invalid API key.")

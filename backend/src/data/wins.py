@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 from src.constants import CURR_YEAR
 from src.data.utils import objs_type
 from src.db.models import Event, Match, Team, TeamEvent, TeamYear
-from src.types.enums import EventStatus, MatchStatus, MatchWinner
+from src.types.enums import MatchStatus, MatchWinner
 from src.utils.utils import r
 
 
@@ -141,11 +141,7 @@ def process_year(objs: objs_type) -> objs_type:
             team_to_events[team_event.team].append(event)
 
     for team_year in objs[1].values():
-        events = [
-            e
-            for e in team_to_events[team_year.team]
-            if e.start_date > today
-        ]
+        events = [e for e in team_to_events[team_year.team] if e.start_date > today]
         if len(events) > 0:
             next_event = min(events, key=lambda x: (x.start_date, x.num_teams))
             team_year.next_event_key = next_event.key
