@@ -28,7 +28,7 @@ app = FastAPI(
     title="Statbotics REST API",
     description="The REST API for Statbotics. Please be nice to our servers! If you are looking to do large-scale data science projects, use the CSV exports on the GitHub repo.",
     version="3.0.0",
-    dependencies=[Depends(get_api_key)],
+    # dependencies=[Depends(get_api_key)],
     swagger_ui_parameters={"persistAuthorization": True},
 )
 
