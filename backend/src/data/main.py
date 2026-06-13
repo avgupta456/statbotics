@@ -126,7 +126,9 @@ def reset_all_years():
         if year_num == 2021:
             continue
 
-        teams = process_year(year_num, False, False, year_num < CURR_YEAR, teams, objs, all_team_years)
+        teams = process_year(
+            year_num, False, False, year_num < CURR_YEAR, teams, objs, all_team_years
+        )
         all_team_years[year_num] = {ty.team: ty for ty in objs[1].values()}
 
     post_process(teams, all_team_years)
