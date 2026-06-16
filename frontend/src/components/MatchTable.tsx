@@ -54,14 +54,13 @@ const MatchRow = ({
   const Video = () => (
     <div className="w-16 h-full flex justify-center items-center border-r border-b border-gray-300">
       {match.video && (
-        <Link
-          href={`/match/${match.key}`}
-          // href={`https://www.youtube.com/watch?v=${match.video}`}
-          // rel="noreferrer noopener"
-          // target="_blank"
+        <a
+          href={`https://www.youtube.com/watch?v=${match.video}`}
+          rel="noreferrer noopener"
+          target="_blank"
         >
           <BsPlayCircle className="text-blue-600 hover:text-blue-700 cursor-pointer" />
-        </Link>
+        </a>
       )}
     </div>
   );
