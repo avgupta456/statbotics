@@ -201,13 +201,17 @@ const PageMatchTable = ({ data }: { data: MatchData }) => {
     const red2 = component.red2 !== null ? round(component.red2 ?? 0, digits) : "N/A";
     const red3 = component.red3 !== null ? round(component.red3 ?? 0, digits) : "N/A";
     const redTotal =
-      component.redTotal !== null ? round(component.redTotal ?? 0, digits === 2 ? 2 : 0) : "N/A";
+      component.redTotal !== null && !Number.isNaN(component.redTotal)
+        ? round(component.redTotal ?? 0, digits === 2 ? 2 : 0)
+        : "N/A";
     const redActual = component.redActual !== null ? round(component.redActual ?? 0, 0) : "-";
     const blue1 = component.blue1 !== null ? round(component.blue1 ?? 0, digits) : "N/A";
     const blue2 = component.blue2 !== null ? round(component.blue2 ?? 0, digits) : "N/A";
     const blue3 = component.blue3 !== null ? round(component.blue3 ?? 0, digits) : "N/A";
     const blueTotal =
-      component.blueTotal !== null ? round(component.blueTotal ?? 0, digits === 2 ? 2 : 0) : "N/A";
+      component.blueTotal !== null && !Number.isNaN(component.blueTotal)
+        ? round(component.blueTotal ?? 0, digits === 2 ? 2 : 0)
+        : "N/A";
     const blueActual = component.blueActual !== null ? round(component.blueActual ?? 0, 0) : "-";
     return {
       name: component.name,

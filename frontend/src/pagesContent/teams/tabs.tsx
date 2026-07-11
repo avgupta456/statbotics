@@ -64,8 +64,8 @@ const Tabs = ({
             year >= 2016 && "Teleop",
             year >= 2016 && "Endgame",
             year >= 2016 && "Auto + Endgame",
-            year >= 2016 && `${RP_NAMES[year][0]}`,
-            year >= 2016 && `${RP_NAMES[year][1]}`,
+            RP_NAMES[year] && `${RP_NAMES[year][0]}`,
+            RP_NAMES[year] && `${RP_NAMES[year][1]}`,
             "Wins",
             "Win Rate",
           ].filter(Boolean) as string[]

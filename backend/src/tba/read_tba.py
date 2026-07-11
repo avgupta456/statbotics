@@ -217,10 +217,14 @@ def get_event_matches(
                 winner = MatchWinner.RED
             elif raw_winner == "blue":
                 winner = MatchWinner.BLUE
+            elif red_score > blue_score:
+                winner = MatchWinner.RED
+            elif blue_score > red_score:
+                winner = MatchWinner.BLUE
             else:
                 winner = MatchWinner.TIE
 
-            if year == 2015 and match["comp_level"] != "f":
+            if year == 2015 and match["comp_level"] == "qm":
                 winner = None
 
         red_teams = [team[3:] for team in red_teams]
