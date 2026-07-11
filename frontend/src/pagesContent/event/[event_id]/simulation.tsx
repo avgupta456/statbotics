@@ -137,7 +137,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: EventData
       rank: i + 1,
       num: teamEvent.team,
       team: teamEvent?.team_name,
-      epa: round(teamEvent?.epa?.total_points?.mean ?? 0, 1),
+      epa: round(teamEvent?.epa?.breakdown?.total_points ?? 0, 1),
       rankMean: rankMean[teamEvent.team] ? round(rankMean[teamEvent.team], 2) : "",
       rank5: rank5[teamEvent.team] ? round(rank5[teamEvent.team], 2) : "",
       rank50: rank50[teamEvent.team] ? round(rank50[teamEvent.team], 2) : "",
@@ -158,7 +158,7 @@ const SimulationSection = ({ eventId, data }: { eventId: string; data: EventData
       return {
         num: teamEvent.team,
         team: teamEvent?.team_name,
-        epa: round(teamEvent?.epa?.total_points?.mean ?? 0, 1),
+        epa: round(teamEvent?.epa?.breakdown?.total_points ?? 0, 1),
         rankMean: rankMean[teamEvent.team] ? round(rankMean[teamEvent.team], 2) : "",
         RPMean: RPMean[teamEvent.team] ? round(RPMean[teamEvent.team], 2) : "",
         ...probsObj,

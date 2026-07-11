@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
 
@@ -10,8 +10,10 @@ import { getMediaUrls } from "../../../utils";
 const ImageRow = ({ data }: { data: MatchData }) => {
   const [media, setMedia] = useState<string[] | null>(null);
 
-  const reverseBlue = [...data?.match?.alliances?.blue?.team_keys].reverse();
-  const teams = data?.match?.alliances?.red?.team_keys?.concat(reverseBlue);
+  const teams = useMemo(() => {
+    const reverseBlue = [...data?.match?.alliances?.blue?.team_keys].reverse();
+    return data?.match?.alliances?.red?.team_keys?.concat(reverseBlue);
+  }, [data]);
   const year = data.year.year;
 
   useEffect(() => {

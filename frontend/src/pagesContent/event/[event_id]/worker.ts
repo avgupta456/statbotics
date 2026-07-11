@@ -570,7 +570,7 @@ async function _strengthOfSchedule(data: EventData, simCount: number, postEvent:
       currTeamOpponents.length;
 
     const deltaEPA = epaAvg + 2 * avgPartnerEPA - 3 * avgOpponentEPA;
-    const distrib = Gaussian(0, (epaSd * epaSd * 5) / N);
+    const distrib = Gaussian(0, (epaSd * epaSd * 5) / N || 1e-9);
     const epaPercentile = 1 - distrib.cdf(deltaEPA);
 
     const overallPercentile = (rankPercentile + rpPercentile + epaPercentile) / 3;

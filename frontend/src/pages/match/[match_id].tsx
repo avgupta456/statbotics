@@ -23,7 +23,7 @@ const InnerPage = () => {
 
   useEffect(() => {
     const fetchMatchData = async () => {
-      if (!match_id || data) return;
+      if (!match_id || data?.match?.key == match_id) return;
 
       try {
         const matchData = await getMatch(match_id as string);
