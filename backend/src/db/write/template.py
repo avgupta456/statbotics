@@ -15,7 +15,7 @@ from src.db.models.team_event import TeamEventORM
 from src.db.models.team_year import TeamYearORM
 from src.db.models.year import YearORM
 
-CUTOFF = 1000
+CUTOFF = 200
 
 
 def _primary_key(orm_type: Type[TModelORM]) -> List[str]:

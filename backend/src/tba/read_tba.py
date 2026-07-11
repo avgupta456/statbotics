@@ -20,6 +20,20 @@ def get_timestamp_from_str(date: str):
     return int(time.mktime(datetime.strptime(date, "%Y-%m-%d").timetuple()))
 
 
+BREAKDOWN_GRACE_SECONDS = 24 * 3600
+
+
+def defer_missing_breakdown(
+    year: int, completed: bool, has_breakdown: bool, match_time: int, now_ts: int
+) -> bool:
+    return (
+        year >= 2016
+        and completed
+        and not has_breakdown
+        and now_ts - match_time < BREAKDOWN_GRACE_SECONDS
+    )
+
+
 def get_teams(cache: bool = True) -> List[TeamDict]:
     out: List[TeamDict] = []
     for i in range(50):
@@ -180,6 +194,8 @@ def get_event_matches(
     if type(matches) is bool:
         return out, new_etag
 
+    now_ts = int(datetime.now().timestamp())
+
     for match in matches:
         red_teams: List[str] = match["alliances"]["red"]["team_keys"]
         red_dq_teams: List[str] = match["alliances"]["red"]["dq_team_keys"]
@@ -252,6 +268,18 @@ def get_event_matches(
             match["match_number"],
             event_time,
         )
+
+        if defer_missing_breakdown(
+            year,
+            status == MatchStatus.COMPLETED,
+            breakdown.get("red") is not None and breakdown.get("blue") is not None,
+            time,
+            now_ts,
+        ):
+            status = MatchStatus.UPCOMING
+            winner = None
+            red_score = None
+            blue_score = None
 
         comp_level = CompLevel.INVALID
         if match["comp_level"] == "qm":

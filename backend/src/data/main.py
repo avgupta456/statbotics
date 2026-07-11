@@ -74,12 +74,12 @@ def process_year(
     objs = process_year_epa(objs, all_team_years)
     timer.print(str(year_num) + " EPA")
 
-    write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
-    timer.print(str(year_num) + " Write DB")
-
     if year_num == CURR_YEAR and not DISABLE_GCS:
         write_objs_storage(objs, orig_objs if partial else None)
         timer.print(str(year_num) + " Write Storage")
+
+    write_objs_db(year_num, objs, orig_objs if partial else None, not partial)
+    timer.print(str(year_num) + " Write DB")
 
     return teams
 
