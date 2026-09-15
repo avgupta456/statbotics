@@ -23,6 +23,7 @@ const Table = ({
   headerCellClassName,
   rowClassName,
   cellClassName,
+  showRowNumbers = false,
 }: {
   data: any[];
   columns: ColumnDef<any, any>[];
@@ -31,6 +32,7 @@ const Table = ({
   headerCellClassName: (header: any) => string;
   rowClassName: (row: any) => string;
   cellClassName: (cell: any) => string;
+  showRowNumbers?: boolean;
 }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -68,6 +70,10 @@ const Table = ({
     .slice(0, -1);
 
   const showColDividers = table.getHeaderGroups().length > 1;
+  const numHeaderRows = table.getHeaderGroups().length;
+
+  // Row numbers follow the current sort and filter, and continue across pages
+  const rowNumberClassName = "px-1 md:px-2 text-xs text-gray-500";
 
   return (
     <div className="text-sm">
@@ -75,6 +81,11 @@ const Table = ({
         <thead className={headerClassName()}>
           {table.getHeaderGroups().map((headerGroup, i) => (
             <tr key={headerGroup.id}>
+              {showRowNumbers && i === 0 && (
+                <th rowSpan={numHeaderRows} className={rowNumberClassName}>
+                  #
+                </th>
+              )}
               {headerGroup.headers.map((header, j) => {
                 return (
                   <th
@@ -113,8 +124,11 @@ const Table = ({
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map((row, i) => (
             <tr key={row.id} className={rowClassName(row)}>
+              {showRowNumbers && (
+                <td className={rowNumberClassName}>{pageIndex * pageSize + i + 1}</td>
+              )}
               {row.getVisibleCells().map((cell, j) => (
                 <td
                   key={cell.id}

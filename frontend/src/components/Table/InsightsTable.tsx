@@ -1,9 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { CSVLink } from "react-csv";
 import { DebounceInput } from "react-debounce-input";
-import { MdAdd, MdClose, MdCloudDownload, MdColorLens, MdRemove, MdSearch } from "react-icons/md";
+import {
+  MdAdd,
+  MdClose,
+  MdCloudDownload,
+  MdColorLens,
+  MdFormatListNumbered,
+  MdRemove,
+  MdSearch,
+} from "react-icons/md";
 
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -21,6 +29,7 @@ const InsightsTable = ({
   csvFilename,
   toggleDisableHighlight,
   includeKey = true,
+  defaultShowRowNumbers = true,
 }: {
   title: string;
   data: any[];
@@ -31,9 +40,11 @@ const InsightsTable = ({
   csvFilename: string;
   toggleDisableHighlight?: () => void;
   includeKey?: boolean;
+  defaultShowRowNumbers?: boolean;
 }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
+  const [showRowNumbers, setShowRowNumbers] = useState(defaultShowRowNumbers);
 
   const [expanded, setExpanded] = useState(false);
 
@@ -41,8 +52,14 @@ const InsightsTable = ({
   const currData = expanded ? detailedData : data;
   const currColumns = expanded ? detailedColumns : columns;
 
-  const filteredData = currData.filter((row) =>
-    searchCols.some((col) => row[col].toString().toLowerCase().includes(search.toLowerCase()))
+  // Memoized so toggling display-only state (e.g. row numbers) does not hand
+  // TanStack a new data array, which would reset pagination to page 1.
+  const filteredData = useMemo(
+    () =>
+      currData.filter((row) =>
+        searchCols.some((col) => row[col].toString().toLowerCase().includes(search.toLowerCase()))
+      ),
+    [currData, search, searchCols]
   );
 
   const headerClassName = () => "border-b-2 border-gray-800";
@@ -86,6 +103,12 @@ const InsightsTable = ({
         <div className="tooltip" data-tip="Search">
           <MdSearch className="hover_icon ml-2" onClick={() => setShowSearch(!showSearch)} />
         </div>
+        <div className="tooltip" data-tip="Toggle Row Numbers">
+          <MdFormatListNumbered
+            className="hover_icon ml-2"
+            onClick={() => setShowRowNumbers(!showRowNumbers)}
+          />
+        </div>
         {toggleDisableHighlight && (
           <div className="tooltip" data-tip="Toggle Highlight">
             <MdColorLens className="hover_icon ml-2" onClick={toggleDisableHighlight} />
@@ -121,6 +144,7 @@ const InsightsTable = ({
           headerCellClassName={headerCellClassName}
           rowClassName={rowClassName}
           cellClassName={cellClassName}
+          showRowNumbers={showRowNumbers}
         />
       </div>
       {includeKey && <TableKey />}
