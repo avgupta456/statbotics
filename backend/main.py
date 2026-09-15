@@ -62,6 +62,27 @@ if not PROD:
             return await call_next(request)
 
 
+# Public REST API responses are served from a 2 minute server-side cache
+# (see alru_cache usage in src/api/), so tell clients they can reuse them.
+CACHE_CONTROL_HEADER = "public, max-age=60"
+CACHE_CONTROL_PREFIX = "/v3/"
+CACHE_CONTROL_EXCLUDE = ("/v3/data", "/v3/site")
+
+
+@app.middleware("http")
+async def add_cache_control(request: Request, call_next: Callable[[Any], Any]):
+    response = await call_next(request)
+    path = request.url.path
+    if (
+        request.method == "GET"
+        and response.status_code == 200
+        and path.startswith(CACHE_CONTROL_PREFIX)
+        and not path.startswith(CACHE_CONTROL_EXCLUDE)
+    ):
+        response.headers["Cache-Control"] = CACHE_CONTROL_HEADER
+    return response
+
+
 router = APIRouter()
 
 
