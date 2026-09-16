@@ -12,6 +12,11 @@ const lightRed = "#FFEEEE";
 const lightBlue = "#EEEEFF";
 const lightGray = "#F0F0F0";
 
+// Lighter tints than CORRECT_COLOR / INCORRECT_COLOR so a predicted
+// win/loss is visually distinct from a verified correct/incorrect prediction
+const lightGreen = "#DDF3E6";
+const lightPink = "#FDE1E2";
+
 const timestampToString = (timestamp: number) => {
   const date = new Date(timestamp * 1000);
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -50,6 +55,19 @@ const MatchRow = ({
 
   const myAllianceWinProb = alliance === match?.pred?.winner ? winProb : 100 - winProb;
   const myAllianceWinner = alliance === match?.result?.winner;
+
+  // Completed: green/red for a correct/incorrect prediction.
+  // Unplayed: on a team page tint by predicted win/loss, otherwise by predicted alliance.
+  let winPredColor = "#FFF";
+  if (match.status === "Completed") {
+    winPredColor = (myAlliance ? myAllianceWinner : correctWinner)
+      ? CORRECT_COLOR
+      : INCORRECT_COLOR;
+  } else if (myAlliance) {
+    winPredColor = match?.pred?.winner === alliance ? lightGreen : lightPink;
+  } else {
+    winPredColor = match?.pred?.winner === "red" ? lightRed : lightBlue;
+  }
 
   const Video = () => (
     <div className="w-16 h-full flex justify-center items-center border-r border-b border-gray-300">
@@ -247,14 +265,7 @@ const MatchRow = ({
             : "Blue"}
         </div>
         <div
-          style={{
-            backgroundColor:
-              match.status === "Completed"
-                ? (myAlliance ? myAllianceWinner : correctWinner)
-                  ? CORRECT_COLOR
-                  : INCORRECT_COLOR
-                : "#FFF",
-          }}
+          style={{ backgroundColor: winPredColor }}
           className={classnames(
             "flex justify-center items-center",
             stacked ? "w-full h-1/2" : "w-1/2 h-full"
