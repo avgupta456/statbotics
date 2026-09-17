@@ -1,17 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { GiHamburgerMenu as HamburgerIcon } from "react-icons/gi";
-import WindowedSelect, { createFilter } from "react-windowed-select";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-import { getAllEvents, getAllTeams } from "../api/header";
-import { Option } from "../components/multiSelect";
-import { ShortEvent, ShortTeam } from "../types/data";
+import SearchSelect from "../components/searchSelect";
 import { classnames } from "../utils";
 
 const loaderProp = ({ src }) => {
@@ -19,62 +16,10 @@ const loaderProp = ({ src }) => {
 };
 
 const Navbar = () => {
-  const router = useRouter();
-
   const [toggle, setToggle] = useState(false);
 
-  const [teams, setTeams] = useState<ShortTeam[]>([]);
-  const [events, setEvents] = useState<ShortEvent[]>([]);
-
-  useEffect(() => {
-    getAllTeams().then((data) => setTeams(data));
-  }, []);
-
-  useEffect(() => {
-    getAllEvents().then((data) => setEvents(data));
-  }, []);
-
-  const teamOptions = teams
-    ?.filter((team) => team.active)
-    ?.sort((a, b) => parseInt(a.team) - parseInt(b.team))
-    ?.map((team: ShortTeam) => ({
-      value: `/team/${team.team}`,
-      label: `${team.team} | ${team.name}`,
-    }));
-
-  const eventOptions = events
-    ?.sort((a, b) => parseInt(b.key.slice(0, 4)) - parseInt(a.key.slice(0, 4)))
-    ?.map((event: any) => ({
-      value: `/event/${event.key}`,
-      label: `${event.key.slice(0, 4)} ${event.name}`,
-    }));
-
-  const allOptions = [...teamOptions, ...eventOptions];
-
-  const TeamSelect = () => {
-    return (
-      <WindowedSelect
-        instanceId={"team-select"}
-        className="w-60 text-xs mr-2 text-gray-800"
-        styles={{
-          menu: (provided) => ({ ...provided, zIndex: 9999 }),
-        }}
-        options={allOptions}
-        onChange={(e: any) => {
-          if (e) {
-            router.push(e.value);
-            setToggle(false);
-          }
-        }}
-        placeholder="Search Teams and Events"
-        filterOption={createFilter({ ignoreAccents: false })}
-        windowThreshold={50}
-        components={{
-          Option: Option,
-        }}
-      />
-    );
-  };
+  // The home page renders its own search on mobile, so the menu doesn't need one there
+  const isHome = usePathname() === "/";
 
   return (
     <div className="w-full flex flex-col shadow-md text-gray-100" style={{ background: "#343A40" }}>
@@ -148,7 +93,7 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="hidden md:flex items-center gap-2 font-thin text-gray-800">
-          <TeamSelect />
+          <SearchSelect instanceId="navbar-search" className="w-60 mr-2" />
         </div>
         <div className="md:hidden flex ml-auto items-center">
           <button type="button" className="outline-none" onClick={() => setToggle(!toggle)}>
@@ -176,10 +121,18 @@ const Navbar = () => {
         <Link href="/blog" className="ml-4" onClick={() => setToggle(false)}>
           Blog
         </Link>
-        <div className="my-2 h-[1px] bg-gray-600" />
-        <div className="mx-auto">
-          <TeamSelect />
-        </div>
+        {!isHome && (
+          <>
+            <div className="my-2 h-[1px] bg-gray-600" />
+            <div className="mx-auto">
+              <SearchSelect
+                instanceId="navbar-search-mobile"
+                className="w-60 mr-2"
+                onSelect={() => setToggle(false)}
+              />
+            </div>
+          </>
+        )}
         <div className="h-2" />
       </div>
     </div>

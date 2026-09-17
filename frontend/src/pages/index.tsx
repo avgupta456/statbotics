@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import SearchSelect from "../components/searchSelect";
 import { classnames } from "../utils";
 
 export default function Home() {
@@ -32,6 +33,10 @@ export default function Home() {
           The <strong>Expected Points Added (EPA)</strong> metric is a highly predictive measure of
           team performance. Use our live-updating data to find actionable insights or analyze
           historical trends.
+        </div>
+        {/* The navbar search is hidden behind the hamburger menu below md */}
+        <div className="w-full max-w-xs mb-4 md:hidden">
+          <SearchSelect instanceId="home-search" />
         </div>
         <div className="flex flex-row justify-center items-center">
           <Link
