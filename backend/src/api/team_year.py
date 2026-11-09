@@ -14,6 +14,7 @@ from src.api.query import (
     team_query,
     year_query,
 )
+from .schemas import TeamYearResponse
 from src.db.models import TeamYear
 from src.db.read import get_team_year, get_team_years
 from src.utils.alru_cache import alru_cache
@@ -74,6 +75,7 @@ async def get_team_years_cached(
     "/team_year/{team}/{year}",
     summary="Query a single team year",
     description="Returns a single Team Year object. Requires a team number and year.",
+    response_model=TeamYearResponse,
 )
 @async_fail_gracefully_singular
 async def read_team_year(
@@ -92,6 +94,7 @@ async def read_team_year(
     "/team_years",
     summary="Query multiple team years",
     description="Returns up to 1000 team years at a time. Specify limit and offset to page through results.",
+    response_model=List[TeamYearResponse],
 )
 @async_fail_gracefully_plural
 async def read_team_years(

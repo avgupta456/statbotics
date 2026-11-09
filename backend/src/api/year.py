@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from fastapi import APIRouter, Response
 
 from src.api.query import ascending_query, limit_query, metric_query, offset_query
+from .schemas import YearResponse
 from src.db.models import Year
 from src.db.read import get_year, get_years
 from src.utils.alru_cache import alru_cache
@@ -49,6 +50,7 @@ async def get_years_cached(
     "/year/{year}",
     summary="Query a single year",
     description="Returns a single Year object. Requires a four-digit year, e.g. `2019`.",
+    response_model=YearResponse,
 )
 @async_fail_gracefully_singular
 async def read_year(
@@ -66,6 +68,7 @@ async def read_year(
     "/years",
     summary="Query multiple years",
     response_description="Returns a list of Years since 2002. Older data is not available.",
+    response_model=List[YearResponse],
 )
 @async_fail_gracefully_plural
 async def read_years(
