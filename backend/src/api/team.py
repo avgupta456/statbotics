@@ -13,6 +13,7 @@ from src.api.query import (
     offset_query,
     state_query,
 )
+from .schemas import TeamResponse
 from src.db.models import Team
 from src.db.read import get_team, get_teams
 from src.utils.alru_cache import alru_cache
@@ -71,6 +72,7 @@ async def get_teams_cached(
     "/team/{team}",
     summary="Query a single team",
     description="Returns a single Team object. Requires a team number (no prefix).",
+    response_model=TeamResponse,
 )
 @async_fail_gracefully_singular
 async def read_team(
@@ -88,6 +90,7 @@ async def read_team(
     "/teams",
     summary="Query multiple teams",
     description="Returns up to 1000 teams at a time. Specify limit and offset to page through results.",
+    response_model=List[TeamResponse],
 )
 @async_fail_gracefully_plural
 async def read_teams(

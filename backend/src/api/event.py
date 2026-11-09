@@ -15,6 +15,7 @@ from src.api.query import (
     week_query,
     year_query,
 )
+from .schemas import EventResponse
 from src.db.models import Event
 from src.db.read import get_event, get_events
 from src.utils.alru_cache import alru_cache
@@ -78,6 +79,7 @@ async def get_events_cached(
     "/event/{event}",
     summary="Query a single event",
     description="Returns a single Event object. Requires an event key, e.g. `2019ncwak`.",
+    response_model=EventResponse,
 )
 @async_fail_gracefully_singular
 async def read_event(response: Response, event: str) -> Dict[str, Any]:
@@ -92,6 +94,7 @@ async def read_event(response: Response, event: str) -> Dict[str, Any]:
     "/events",
     summary="Query multiple events",
     description="Returns up to 1000 events at a time. Specify limit and offset to page through results.",
+    response_model=List[EventResponse],
 )
 @async_fail_gracefully_plural
 async def read_events(

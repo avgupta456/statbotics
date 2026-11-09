@@ -14,6 +14,7 @@ from src.api.query import (
     week_query,
     year_query,
 )
+from .schemas import MatchResponse
 from src.db.models import Match
 from src.db.read import get_match, get_matches
 from src.utils.alru_cache import alru_cache
@@ -74,6 +75,7 @@ async def get_matches_cached(
     "/match/{match}",
     summary="Query a single match",
     description="Returns a single Match object. Requires a match key, e.g. `2019ncwak_f1m1`.",
+    response_model=MatchResponse,
 )
 @async_fail_gracefully_singular
 async def read_match(response: Response, match: str) -> Dict[str, Any]:
@@ -88,6 +90,7 @@ async def read_match(response: Response, match: str) -> Dict[str, Any]:
     "/matches",
     summary="Query multiple matches",
     description="Returns up to 1000 matches at a time. Specify limit and offset to page through results.",
+    response_model=List[MatchResponse],
 )
 @async_fail_gracefully_plural
 async def read_matches(

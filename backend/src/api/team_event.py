@@ -17,6 +17,7 @@ from src.api.query import (
     week_query,
     year_query,
 )
+from .schemas import TeamEventResponse
 from src.db.models import TeamEvent
 from src.db.read import get_team_event, get_team_events
 from src.utils.alru_cache import alru_cache
@@ -83,6 +84,7 @@ async def get_team_events_cached(
     "/team_event/{team}/{event}",
     summary="Query a single team event",
     description="Returns a single Team Event object. Requires a team number and event key, e.g. `5511` and `2019ncwak`.",
+    response_model=TeamEventResponse,
 )
 @async_fail_gracefully_singular
 async def read_team_event(response: Response, team: int, event: str) -> Dict[str, Any]:
@@ -99,6 +101,7 @@ async def read_team_event(response: Response, team: int, event: str) -> Dict[str
     "/team_events",
     summary="Query multiple team events",
     description="Returns up to 1000 team events at a time. Specify limit and offset to page through results.",
+    response_model=List[TeamEventResponse],
 )
 @async_fail_gracefully_plural
 async def read_team_events(
