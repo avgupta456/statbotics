@@ -26,6 +26,19 @@ Three FastAPI routers are mounted at `/v3` in `main.py`:
 
 In dev, the data router calls back to `http://localhost:8001` (a second uvicorn process). In prod, each router is deployed as a separate Cloud Run service (`deploy/`).
 
+## API Documentation / OpenAPI Spec
+
+Response schemas are defined in `src/api/schemas.py`. Each endpoint must declare its response type via the `response_model` parameter so FastAPI generates proper OpenAPI documentation instead of generic `application/json`.
+
+**Pattern:** Entity classes use `to_dict()` for serialization. Pydantic response schemas must match the actual serialized output shape, not just ORM column definitions. Some entities (e.g., `Team`) override `to_dict()` with custom nested structures — inspect the entity's `to_dict()` method to determine the correct schema shape.
+
+**Adding a new endpoint:**
+1. Create a Pydantic response schema in `src/api/schemas.py` matching the expected output structure
+2. Apply it as `response_model=YourSchema` (or `List[YourSchema]`) on the route decorator
+3. Add a validation test to `tests/test_schema_alignment.py` ensuring entity serialization matches the schema
+
+**Maintaining existing schemas:** When changing an entity's fields or its `to_dict()` output, update the corresponding response schema and run `pytest tests/test_schema_alignment.py` to verify alignment. Schema-to-entity drift will fail these tests.
+
 ## Data Pipeline (`src/data/`)
 
 For each year, `process_year()` in `src/data/main.py` runs these steps in order:
